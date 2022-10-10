@@ -1,9 +1,5 @@
 # GDX Data Share POC
 
-[![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-incentives-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-incentives-api)
-[![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-incentives-api/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-incentives-api)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://incentives-api-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
-
 **Data Sharing POC Microservice**
 
 ## Running locally
@@ -39,7 +35,7 @@ This assumes you have the [AWS CLI](https://aws.amazon.com/cli/) installed
 2. Find the ARN of the Domain Events topic created in your localstack instance and update the `topic-arn` parameter in the command below
     ```shell
     aws --endpoint-url=http://localhost:4566 sns publish \
-        --topic-arn arn:aws:sns:eu-west-2:000000000000:[find this in the Incentives API log for HmppsTopicFactory] \
+        --topic-arn arn:aws:sns:eu-west-2:000000000000:[find this in the log for HmppsTopicFactory] \
         --message-attributes '{
           "eventType": { "DataType": "String", "StringValue": "prison-offender-events.prisoner.received" }
         }' \

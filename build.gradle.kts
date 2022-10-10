@@ -9,6 +9,8 @@ dependencyCheck {
   suppressionFiles.add("postgres-suppressions.xml")
 }
 
+group = "uk.gov.gds"
+
 configurations {
   implementation { exclude(module = "applicationinsights-spring-boot-starter") }
   implementation { exclude(module = "applicationinsights-logging-logback") }

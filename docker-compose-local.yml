@@ -1,0 +1,39 @@
+version: "3"
+services:
+  localstack:
+    image: localstack/localstack:0.14.0
+    networks:
+      - gds
+    container_name: localstack
+    ports:
+      - "4566-4597:4566-4597"
+      - "8999:8080"
+    environment:
+      - SERVICES=sns,sqs
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=${DATA_DIR- }
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_EXECUTION_ENV=True
+      - DEFAULT_REGION=eu-west-2
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  datashare-db:
+    image: postgres
+    networks:
+      - gds
+    container_name: datashare-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=datashare
+      - POSTGRES_USER=datashare
+      - POSTGRES_DB=datashare
+
+networks:
+  gds:

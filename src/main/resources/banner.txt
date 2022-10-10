@@ -1,0 +1,2 @@
+${info.app.name}
+Powered by Spring Boot ${spring-boot.version}

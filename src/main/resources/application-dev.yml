@@ -1,0 +1,23 @@
+server:
+  shutdown: immediate
+
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+
+spring:
+  devtools:
+    add-properties: true
+
+  flyway:
+    url: jdbc:postgresql://localhost:5432/datashare?sslmode=prefer
+    user: datashare
+    password: datashare
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/datashare?sslmode=prefer
+    username: datashare
+    password: datashare
+    properties:
+      sslMode: DISABLE
+      sslRootCert:

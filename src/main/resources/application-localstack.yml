@@ -1,0 +1,21 @@
+hmpps.sqs:
+  reactiveApi: true
+  provider: localstack
+  queues:
+    audit:
+      queueName: ${random.uuid}
+    len:
+      queueName: len-event-queue
+      dlqName: len-event-dlq
+      subscribeTopicId: lifeevents
+      subscribeFilter: '{"eventType":[ "death" ] }'
+    dwp:
+      queueName: dwp-event-queue
+      dlqName: dwp-event-dlq
+      subscribeTopicId: datashare
+      subscribeFilter: '{"eventType":[ "citizen-death" ] }'
+  topics:
+    lifeevents:
+      arn: arn:aws:sns:eu-west-2:000000000000:${random.uuid}
+    datashare:
+      arn: arn:aws:sns:eu-west-2:000000000000:${random.uuid}

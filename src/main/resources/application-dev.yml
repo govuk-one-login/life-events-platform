@@ -21,3 +21,9 @@ spring:
     properties:
       sslMode: DISABLE
       sslRootCert:
+
+api:
+  base:
+    url:
+      oauth: https://dev-suelq5ax.us.auth0.com
+      lev: http://localhost:8099

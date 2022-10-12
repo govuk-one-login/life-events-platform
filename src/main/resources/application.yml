@@ -2,6 +2,9 @@ info.app:
   name: GDX Data Share POC
   version: 1.0
 
+auth0:
+  audience: http://localhost:8080
+
 spring:
   application:
     name: gdx-data-share-poc
@@ -10,6 +13,23 @@ spring:
   mvc:
     async:
       request-timeout: 1m
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${api.base.url.oauth}/
+
+#      client:
+#        registration:
+#          lev-api:
+#            provider: auth0
+#            client-id: ${datashare.api.client.id}
+#            client-secret: ${datashare.api.client.secret}
+#            authorization-grant-type: client_credentials
+#        provider:
+#          auth0:
+#            token-uri: ${api.base.url.oauth}/oauth/token
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"

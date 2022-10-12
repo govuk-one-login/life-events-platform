@@ -5,12 +5,11 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
-import java.util.UUID
 
 data class EventLookup(
   @Id
-  val eventId: UUID,
-  val levLookuId: Long,
+  val eventId: String,
+  val levLookupId: Long,
   val eventType: String,
   val whenCreated: LocalDateTime? = null,
 
@@ -20,7 +19,7 @@ data class EventLookup(
 
 ) : Persistable<String> {
 
-  override fun getId(): String = eventId.toString()
+  override fun getId(): String = eventId
 
   override fun isNew(): Boolean = new
 }

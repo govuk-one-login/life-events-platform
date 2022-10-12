@@ -27,6 +27,7 @@ class ResourceServerConfiguration {
         ).permitAll()
           .anyExchange().authenticated()
       }
+      .oauth2ResourceServer { it.jwt() }
       .build()
   }
 }

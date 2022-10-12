@@ -14,7 +14,7 @@ For running locally against docker instances of the following services:
 
 `docker-compose up`
 
-## Running locally against T3 test services
+## Running locally against test services
 
 This is straight-forward as authentication is delegated down to the calling services.  Environment variables to be set are as follows:-
 ```
@@ -37,19 +37,11 @@ This assumes you have the [AWS CLI](https://aws.amazon.com/cli/) installed
     aws --endpoint-url=http://localhost:4566 sns publish \
         --topic-arn arn:aws:sns:eu-west-2:000000000000:[find this in the log for HmppsTopicFactory] \
         --message-attributes '{
-          "eventType": { "DataType": "String", "StringValue": "prison-offender-events.prisoner.received" }
+          "eventType": { "DataType": "String", "StringValue": "death" }
         }' \
         --message '{
-          "version":"1.0",
-          "occurredAt":"2020-02-12T15:14:24.125533+00:00",
-          "publishedAt":"2020-02-12T15:15:09.902048716+00:00",
-          "description":"A prisoner has been received into prison",
-          "additionalInformation": {
-            "nomsNumber":"A0289IR",
-            "prisonId":"MDI",
-            "reason":"ADMISSION",
-            "details":"ecall referral date 2021-05-12"
-          }
+          "eventType":"death",
+          "id": 2323423
         }'
     ```
 3. Paste the command into your terminal

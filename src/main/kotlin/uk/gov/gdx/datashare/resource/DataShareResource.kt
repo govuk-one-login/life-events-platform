@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.gdx.datashare.service.DeathDataAndMore
+import uk.gov.gdx.datashare.service.DwpData
 import uk.gov.gdx.datashare.service.GdxDataShareService
 
 @RestController
 @RequestMapping("/datashare", produces = [ MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAuthority('SCOPE_event:read')")
+@PreAuthorize("hasAuthority('SCOPE_death:read')")
 class DataShareResource(
   private val dataShareService: GdxDataShareService
 ) {
@@ -31,7 +31,7 @@ class DataShareResource(
     ]
   )
   suspend fun getDataForEventId(
-    @Schema(description = "ID", required = true, type = "String")
+    @Schema(description = "Event ID", required = true, type = "UUID", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable id: String,
-  ): DeathDataAndMore = dataShareService.retrieveLevData(id)
+  ): DwpData = dataShareService.retrieveLevData(id)
 }

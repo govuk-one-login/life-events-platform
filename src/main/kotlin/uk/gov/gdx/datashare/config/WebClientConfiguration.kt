@@ -11,6 +11,7 @@ import java.time.Duration
 @Configuration
 class WebClientConfiguration(
   @Value("\${api.base.url.oauth}") val auth0BaseUri: String,
+  @Value("\${api.base.url.hmrc}") val hmrcApiRootUri: String,
   @Value("\${api.base.url.lev}") private val levApiRootUri: String
 ) {
 
@@ -29,6 +30,15 @@ class WebClientConfiguration(
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .defaultHeader("X-Auth-Aud", "gdx-data-share")
       .defaultHeader("X-Auth-Username", "gdx-data-share-user")
+      .build()
+  }
+
+  @Bean
+  fun hmrcApiWebClient(): WebClient {
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(hmrcApiRootUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
       .build()
   }
 }

@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.service
 
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.reactor.awaitSingle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,23 +14,32 @@ class GdxDataShareService(
   private val eventLookupRepository: EventLookupRepository,
   private val auditService: AuditService,
   private val levApiService: LevApiService,
+  private val hmrcApiService: HmrcApiService,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun retrieveLevData(eventId: String): DeathDataAndMore {
+  suspend fun retrieveLevData(eventId: String): DwpData {
     log.info("Looking up event Id {} for DWP request", eventId)
 
     // Retrieve the ID from the lookup table
     val event = eventLookupRepository.findById(eventId) ?: throw RuntimeException("Not Found")
 
     // get the data from the LEV
-    val deathRecord = levApiService.findDeathById(event.levLookupId.toInt())
+    val citizenDeathId = event.levLookupId.toInt()
+    val deathRecord = levApiService.findDeathById(citizenDeathId)
 
     val deathData = deathRecord.map {
-      // we could go off and get more data here
-      DeathDataAndMore(it.id, it.date, "More Data obtained from other sources")
+      // go off and get more data here
+      val nino = hmrcApiService.findNiNoByNameAndDob(
+        surname = it.deceased.surname,
+        firstname = it.deceased.forenames,
+        dob = it.deceased.dateOfDeath
+      )
+      val niNumber = nino.awaitSingle().ni_number
+
+      DwpData(id = it.id, date = it.date, deceased = it.deceased, partner = it.partner, niNumber = niNumber)
     }.first()
 
     // audit the event
@@ -39,8 +49,10 @@ class GdxDataShareService(
   }
 }
 
-data class DeathDataAndMore(
+data class DwpData(
   val id: Long,
   val date: LocalDate,
-  val moreData: String,
+  val deceased: Deceased,
+  val partner: Partner?,
+  val niNumber: String?,
 )

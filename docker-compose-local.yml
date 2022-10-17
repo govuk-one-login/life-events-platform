@@ -36,14 +36,37 @@ services:
       - POSTGRES_DB=datashare
 
   lev-api:
-    image: quay.io/ukhomeofficedigital/lev-api:latest
-    networks:
-      - gds
+    image: quay.io/governmentdigitalservices/lev-api:latest
     container_name: lev-api
+    networks:
+      - hmpo
+    environment:
+      - LISTEN_HOST=0.0.0.0
+      - LISTEN_PORT=8080
+      - POSTGRES_USER=lev
+      - POSTGRES_PASSWORD=lev
+      - POSTGRES_HOST=lev-db
+      - POSTGRES_ADMIN_USER=root
+      - POSTGRES_ADMIN_PASSWORD=root
+      - POSTGRES_SSL=FALSE
     ports:
       - "8099:8080"
+  lev-db:
+    build:
+      context: lev-data/
+    networks:
+      - hmpo
+    container_name: lev-db
+    restart: unless-stopped
     environment:
-      - MOCK=true
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=lev
+      - APP_USER=lev
+      - APP_PASSWORD=lev
+    ports:
+      - "5433:5432"
 
 networks:
   gds:
+  hmpo:

@@ -6,6 +6,7 @@ import kotlinx.coroutines.reactor.awaitSingle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.repository.EventLookupRepository
 import java.time.LocalDate
 
@@ -15,6 +16,7 @@ class GdxDataShareService(
   private val auditService: AuditService,
   private val levApiService: LevApiService,
   private val hmrcApiService: HmrcApiService,
+  private val authenticationFacade: AuthenticationFacade,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -43,7 +45,7 @@ class GdxDataShareService(
     }.first()
 
     // audit the event
-    auditService.sendMessage(auditType = AuditType.CLIENT_CONSUMED_EVENT, id = eventId, details = deathData, username = "DWP")
+    auditService.sendMessage(auditType = AuditType.CLIENT_CONSUMED_EVENT, id = eventId, details = deathData, username = authenticationFacade.getUsername())
 
     return deathData
   }

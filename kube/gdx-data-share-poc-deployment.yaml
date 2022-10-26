@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gdx-data-share-poc
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: gdx-data-share-poc
+  template:
+    metadata:
+      labels:
+        app: gdx-data-share-poc
+    spec:
+      containers:
+      - image: public.ecr.aws/n1k2s1a0/gdx-data-share-poc:latest
+        name: gdx-data-share-poc
+        ports:
+        - containerPort: 8080

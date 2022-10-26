@@ -14,7 +14,7 @@ import uk.gov.gdx.datashare.service.GdxDataShareService
 
 @RestController
 @RequestMapping("/datashare", produces = [ MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAuthority('SCOPE_death:read')")
+@PreAuthorize("hasAuthority('SCOPE_gdx-data-share/read:death')")
 class DataShareResource(
   private val dataShareService: GdxDataShareService
 ) {

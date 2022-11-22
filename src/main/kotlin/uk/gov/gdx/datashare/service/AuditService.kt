@@ -35,13 +35,12 @@ class AuditService(
     )
     log.debug("Audit {} ", auditEvent)
 
-    val result =
-      auditSqsClient.sendMessage(
-        SendMessageRequest(
-          auditQueueUrl,
-          auditEvent.toJson()
-        )
+    auditSqsClient.sendMessage(
+      SendMessageRequest(
+        auditQueueUrl,
+        auditEvent.toJson()
       )
+    )
   }
 
   private fun Any.toJson() = objectMapper.writeValueAsString(this)
@@ -55,7 +54,7 @@ data class AuditEvent(
   val details: String? = null,
 )
 enum class AuditType {
-  LEN_EVENT_OCCURRED,
+  EVENT_OCCURRED,
   DATA_SHARE_EVENT_PUBLISHED,
   CLIENT_CONSUMED_EVENT
 }

@@ -46,6 +46,7 @@ dependencies {
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.10.0")
   implementation("commons-codec:commons-codec")
+  implementation("commons-net:commons-net:3.8.0")
   implementation("com.google.code.gson:gson")
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
@@ -63,6 +64,8 @@ dependencies {
   testImplementation("org.testcontainers:postgresql:1.17.5")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+  testImplementation("org.mockftpserver:MockFtpServer:2.7.1")
+
 }
 
 java {

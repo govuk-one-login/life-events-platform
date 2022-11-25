@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.gdx.datashare.resource.EventType
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import java.time.Instant
 import java.time.LocalDateTime
@@ -18,16 +19,16 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  private val domaineventsTopic by lazy { hmppsQueueService.findByTopicId("datashare") ?: throw RuntimeException("Topic with name datashare doesn't exist") }
+  private val domaineventsTopic by lazy { hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist") }
   private val domaineventsTopicClient by lazy { domaineventsTopic.snsClient }
 
-  fun sendCitizenEvent(eventId: String, occurredAt: LocalDateTime, eventType: DataShareEventType) {
+  fun sendGovEvent(eventId: String, occurredAt: LocalDateTime, eventType: EventType) {
     publishToDomainEventsTopic(
       DataShareEvent(
-        eventType.value,
+        eventType.toString(),
         eventId,
         occurredAt.atZone(ZoneId.systemDefault()).toInstant(),
-        "Citizen Event: ${eventType.value}"
+        "Gov Event: $eventType"
       )
     )
   }
@@ -57,7 +58,7 @@ data class DataShareEvent(
     eventType: String,
     id: String,
     occurredAt: Instant,
-    description: String
+    description: String,
   ) : this(
     eventType,
     id,
@@ -66,10 +67,5 @@ data class DataShareEvent(
     description
   )
 }
-
-enum class DataShareEventType(val value: String) {
-  CITIZEN_DEATH("citizen-death"),
-}
-
 fun Instant.toOffsetDateFormat(): String =
   atZone(ZoneId.of("Europe/London")).toOffsetDateTime().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)

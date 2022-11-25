@@ -1,9 +1,9 @@
 # 2. Service consume LEN events, and forward on to interested parties
 
-[Next >>](9999-end.md)
+[Next >>](0003-gdx-death-notification-event.md)
 
 
-Date: 2022-02-02
+Date: 2022-09-10
 
 ## Status
 
@@ -32,4 +32,4 @@ This approach follows the agreed pattern of architecture for GDX
 
 - Complexity will grow
 
-[Next >>](9999-end.md)
+[Next >>](0003-gdx-death-notification-event.md)

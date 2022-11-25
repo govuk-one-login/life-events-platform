@@ -2,20 +2,20 @@ hmpps.sqs:
   reactiveApi: true
   provider: localstack
   queues:
+    dataprocessor:
+      queueName: ${random.uuid}
     audit:
       queueName: ${random.uuid}
-    len:
-      queueName: len-event-queue
-      dlqName: len-event-dlq
-      subscribeTopicId: lifeevents
-      subscribeFilter: '{"eventType":[ "death" ] }'
-    dwp:
-      queueName: dwp-event-queue
-      dlqName: dwp-event-dlq
-      subscribeTopicId: datashare
+    adaptor:
+      queueName: legacy-adaptor-event-queue
+      dlqName: legacy-adaptor-event-dlq
+      subscribeTopicId: event
+      subscribeFilter: '{"eventType":[ "citizen-death" ] }'
+    odg:
+      queueName: ogd-event-queue
+      dlqName: ogd-event-dlq
+      subscribeTopicId: event
       subscribeFilter: '{"eventType":[ "citizen-death" ] }'
   topics:
-    lifeevents:
-      arn: arn:aws:sns:eu-west-2:000000000000:${random.uuid}
-    datashare:
+    event:
       arn: arn:aws:sns:eu-west-2:000000000000:${random.uuid}

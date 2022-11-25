@@ -6,11 +6,16 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
 
-data class EventLookup(
+data class EventData(
   @Id
   val eventId: String,
-  val levLookupId: Long,
   val eventType: String,
+  val dataProvider: String,
+  val datasetType: String,
+  val dataId: String,
+  val dataPayload: String?,
+  val dataExpiryTime: LocalDateTime,
+
   val whenCreated: LocalDateTime? = null,
 
   @Transient

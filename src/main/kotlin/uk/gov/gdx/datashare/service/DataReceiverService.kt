@@ -53,7 +53,7 @@ class DataReceiverService(
       details = eventPayload.eventDetails,
     )
 
-    log.debug("DataReceiverMessage {} ", dataProcessorMessage)
+    log.debug("Notifying Data Processor of event type {} from {}", dataProcessorMessage.eventType, dataProcessorMessage.provider)
 
     dataReceiverSqsClient.sendMessage(
       SendMessageRequest(

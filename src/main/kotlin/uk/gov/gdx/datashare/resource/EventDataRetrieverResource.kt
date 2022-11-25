@@ -14,7 +14,7 @@ import uk.gov.gdx.datashare.service.EventDataRetrievalService
 
 @RestController
 @RequestMapping("/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read', 'SCOPE_gdx-data-share/read:death')")
+@PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 class EventDataRetrieverResource(
   private val eventDataRetrievalService: EventDataRetrievalService
 ) {

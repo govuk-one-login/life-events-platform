@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/event-data-receiver", produces = [ MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_data_receiver/notify', 'SCOPE_gdx-data-share/read:death')")
+@PreAuthorize("hasAnyAuthority('SCOPE_data_receiver/notify')")
 class DataReceiverResource(
   private val dataReceiverService: DataReceiverService
 ) {
@@ -47,15 +47,17 @@ data class ApiEventPayload(
   val eventType: EventType,
 
   @Schema(description = "Date and time when the event took place, default is now", required = false, example = "2021-12-31T12:34:56.789012")
-  val eventTime: LocalDateTime?,
+  val eventTime: LocalDateTime? = null,
 
   @Schema(description = "ID that references the event (optional)", required = false, example = "10a1bc74-3f81-44ef-af5f-662776950d80")
-  val id: String?,
+  val id: String? = null,
 
   @Schema(description = "Json payload of data", required = false, example = "data payload")
-  val eventDetails: String?,
+  val eventDetails: String? = null,
 )
 
 enum class EventType {
   DEATH_NOTIFICATION,
+  BIRTH_NOTIFICATION,
+  MARRIAGE_NOTIFICATION
 }

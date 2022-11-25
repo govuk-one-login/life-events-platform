@@ -10,10 +10,11 @@ create table data_consumer
 );
 
 insert into data_consumer (client_id, client_name, allowed_event_types, nino_required)
-values ('6cobo7t77hpgd8t8c7pqb1dlt4', 'Other Gov Dept 1 (High Tech)', 'DEATH_NOTIFICATION,BIRTH_NOTIFICATION', true);
+values ('2ippgk5eigcllh62oi1v35q9bp', 'Other Gov Dept 1 (High Tech)', 'DEATH_NOTIFICATION,BIRTH_NOTIFICATION', true);
 
 insert into data_consumer (client_id, client_name, allowed_event_types, nino_required)
-values ('fff2', 'Other Gov Dept 2 (API only)', 'DEATH_NOTIFICATION', false);
+values ('6obo37soq65d0iv301k0ul1cob', 'Other Gov Dept 2 (API only)', 'DEATH_NOTIFICATION', false);
 
 insert into data_consumer (client_id, client_name, allowed_event_types, nino_required)
-values ('fff3', 'Other Gov Dept 3 (Low Tech)', 'DEATH_NOTIFICATION', true);
+values ('73adfkd9b2gg45nchhrj6tob6r', 'Internal Outbound Adaptor', 'DEATH_NOTIFICATION', true);
+

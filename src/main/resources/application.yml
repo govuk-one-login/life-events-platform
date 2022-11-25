@@ -15,19 +15,22 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${api.base.url.oauth}
-#      client:
-#        registration:
-#          cognito:
-#            clientId: ${datashare.api.client.id}
-#            clientSecret: ${datashare.api.client.secret}
-#            scope: openid
-#            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
-#            clientName: ${datashare.api.client.name}
-#        provider:
-#          cognito:
-#            issuerUri: ${api.base.url.oauth}
-#            user-name-attribute: cognito:username
+          issuer-uri: ${api.base.url.issuer-uri}
+      client:
+        registration:
+          data-receiver:
+            provider: cognito
+            client-id: ${legacy-inbound.api.client.id}
+            client-secret: ${legacy-inbound.api.client.secret}
+            authorization-grant-type: client_credentials
+            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
+            clientName: Internal Inbound Adaptor
+        provider:
+          cognito:
+            issuer-uri: ${api.base.url.issuer-uri}
+            token-uri: ${api.base.url.oauth}/oauth/token
+            user-name-attribute: cognito:username
+            jwk-set-uri: ${api.base.url.issuer-uri}/.well-known/jwks.json
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"

@@ -10,7 +10,10 @@ create table data_provider
 
 
 insert into data_provider (client_id, client_name, event_type, dataset_type)
-values ('6cobo7t77hpgd8t8c7pqb1dlt4', 'HMPO', 'DEATH_NOTIFICATION', 'DEATH_LEV');
+values ('2koca5i6ct15orqh3g004pmvre', 'HMPO', 'DEATH_NOTIFICATION', 'DEATH_LEV');
 
 insert into data_provider (client_id, client_name, event_type, dataset_type, store_payload)
-values ('444', 'DWP', 'DEATH_NOTIFICATION', 'DEATH_CSV', true);
+values ('7audlmkc3fujbu0uuq7u3vnsp3', 'DWP', 'DEATH_NOTIFICATION', 'DEATH_CSV', true);
+
+insert into data_provider (client_id, client_name, event_type, dataset_type, store_payload)
+values ('2mesjc8s8vb496t325f2eojaha', 'Internal Inbound Adaptor', 'DEATH_NOTIFICATION', 'DEATH_CSV', true);

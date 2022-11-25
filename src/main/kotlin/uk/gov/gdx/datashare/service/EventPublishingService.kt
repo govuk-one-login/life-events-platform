@@ -20,6 +20,8 @@ class EventPublishingService(
 
   suspend fun storeAndPublishEvent(event: EventData) {
     // publish the change
+    log.debug("Publishing new event {} {} from {}", event.eventId, event.eventType, event.dataProvider)
+
     dataShareTopicService.sendGovEvent(
       eventId = event.eventId,
       eventType = EventType.valueOf(event.eventType),

@@ -51,6 +51,8 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
+  implementation("org.mockftpserver:MockFtpServer:2.7.1")
+
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   testImplementation("org.awaitility:awaitility-kotlin")
@@ -64,7 +66,7 @@ dependencies {
   testImplementation("org.testcontainers:postgresql:1.17.5")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("org.mockftpserver:MockFtpServer:2.7.1")
+
 
 }
 

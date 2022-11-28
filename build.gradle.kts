@@ -66,8 +66,6 @@ dependencies {
   testImplementation("org.testcontainers:postgresql:1.17.5")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-
-
 }
 
 java {

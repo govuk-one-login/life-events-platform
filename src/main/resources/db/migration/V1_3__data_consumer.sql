@@ -1,11 +1,12 @@
 create table data_consumer
 (
-    client_id           varchar(60)              NOT NULL PRIMARY KEY,
-    client_name         varchar(80)              NOT NULL,
-    allowed_event_types varchar(200)             NOT NULL,
-    nino_required       boolean                  NOT NULL default false,
-    other_data_sets     varchar(200),
-    when_created        timestamp with time zone not null default now()
+    client_id            varchar(60)              NOT NULL PRIMARY KEY,
+    client_name          varchar(80)              NOT NULL,
+    allowed_event_types  varchar(200)             NOT NULL,
+    last_poll_event_time timestamp with time zone,
+    nino_required        boolean                  NOT NULL default false,
+    other_data_sets      varchar(200),
+    when_created         timestamp with time zone not null default now()
 
 );
 

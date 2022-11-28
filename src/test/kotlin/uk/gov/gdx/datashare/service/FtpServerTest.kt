@@ -15,10 +15,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDateTime
 
-
-class FtpServerTest(
-) {
-  private val fakeFtpServer : FakeFtpServer = FakeFtpServer()
+class FtpServerTest() {
+  private val fakeFtpServer: FakeFtpServer = FakeFtpServer()
 
   @BeforeEach
   fun setup() {
@@ -37,7 +35,7 @@ class FtpServerTest(
 
     fakeFtpServer.start()
 
-    println("FTP started on : " + fakeFtpServer.serverControlPort);
+    println("FTP started on : " + fakeFtpServer.serverControlPort)
   }
 
   @AfterEach
@@ -45,7 +43,6 @@ class FtpServerTest(
     println("Stopping")
     fakeFtpServer.stop()
   }
-
 
   @Test
   fun `can connect to client`() {
@@ -56,12 +53,12 @@ class FtpServerTest(
     testFtpClient.connect(host, port)
     testFtpClient.login("user", "password")
 
-    listFiles(ftpClient = testFtpClient).forEach{
+    listFiles(ftpClient = testFtpClient).forEach {
       val newLocation = "/archive/${it.first}"
-      testFtpClient.rename(it.first, newLocation);
+      testFtpClient.rename(it.first, newLocation)
       println("Retrieving file $newLocation")
       val fileHandle = FileOutputStream(it.first)
-      testFtpClient.retrieveFile(newLocation, fileHandle);
+      testFtpClient.retrieveFile(newLocation, fileHandle)
       val file = File(it.first)
       assertThat(file).exists()
       file.delete()
@@ -82,15 +79,14 @@ class FtpServerTest(
     testFtpClient.connect(host, port)
     testFtpClient.login("demo", "demo")
 
-    listFiles(ftpClient = testFtpClient, path = "/download").forEach{
+    listFiles(ftpClient = testFtpClient, path = "/download").forEach {
       println("Retrieving file ${it.first}, timestamp = ${it.second}")
       val fileHandle = FileOutputStream(it.first)
-      testFtpClient.retrieveFile(it.first, fileHandle);
+      testFtpClient.retrieveFile(it.first, fileHandle)
       val file = File(it.first)
       assertThat(file).exists()
       file.delete()
     }
-
 
     testFtpClient.logout()
   }

@@ -1,7 +1,6 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactor.awaitSingle
@@ -43,10 +42,12 @@ class EventDataRetrievalService(
       throw RuntimeException("Client ${dataConsumer.clientName} is not allowed to consume ${event.eventType} events")
     }
 
-    auditService.sendMessage( auditType = AuditType.CLIENT_CONSUMED_EVENT,
+    auditService.sendMessage(
+      auditType = AuditType.CLIENT_CONSUMED_EVENT,
       id = eventId,
       details = event.eventType,
-      username = dataConsumer.clientName)
+      username = dataConsumer.clientName
+    )
 
     return when (event.datasetType) {
       "DEATH_LEV" -> {
@@ -111,15 +112,16 @@ class EventDataRetrievalService(
   }
 
   suspend fun getNino(
-      surname: String, forenames: String, dateOfBirth: LocalDate
-  ) : String? =
+    surname: String,
+    forenames: String,
+    dateOfBirth: LocalDate
+  ): String? =
     hmrcApiService.findNiNoByNameAndDob(
       surname = surname,
       firstname = forenames,
       dob = dateOfBirth
     ).map { nino -> nino.ni_number }
       .awaitSingle()
-
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -127,7 +129,6 @@ data class DeathNotification(
   val deathDetails: DeathDetails?,
   val additionalInformation: AdditionalInformation? = null
 )
-
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class DeathDetails(
@@ -138,7 +139,6 @@ data class DeathDetails(
   val sex: String,
   val address: String? = null,
 )
-
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class AdditionalInformation(

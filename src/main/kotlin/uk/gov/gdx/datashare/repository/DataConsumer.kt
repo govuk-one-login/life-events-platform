@@ -11,6 +11,7 @@ data class DataConsumer(
   val clientId: String,
   val clientName: String,
   val allowedEventTypes: String,
+  val lastPollEventTime: LocalDateTime? = null,
   val ninoRequired: Boolean = false,
   val otherDataSets: Boolean = false,
   val whenCreated: LocalDateTime? = null,
@@ -25,4 +26,3 @@ data class DataConsumer(
 
   override fun isNew(): Boolean = new
 }
-

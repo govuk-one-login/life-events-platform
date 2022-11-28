@@ -16,7 +16,7 @@ import java.net.ConnectException
 import java.time.LocalDateTime
 
 @Service
-class LegacyAdaptorInbound (
+class LegacyAdaptorInbound(
   private val auditService: AuditService,
   private val dataReceiverApiWebClient: WebClient
 ) {
@@ -24,7 +24,7 @@ class LegacyAdaptorInbound (
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(fixedRate = 60000)
+  @Scheduled(fixedRate = 60000 * 10)
   fun pollFtpServer() {
     val testFtpClient = FTPClient()
     val host = "localhost"
@@ -33,25 +33,24 @@ class LegacyAdaptorInbound (
       testFtpClient.connect(host, port)
       testFtpClient.login("user", "password")
 
-      listFiles(ftpClient = testFtpClient).forEach{
+      listFiles(ftpClient = testFtpClient).forEach {
         log.debug("Retrieving file ${it.first}")
         val fileHandle = FileOutputStream(it.first)
-        testFtpClient.retrieveFile(it.first, fileHandle);
+        testFtpClient.retrieveFile(it.first, fileHandle)
         File(it.first).forEachLine {
           runBlocking {
             postDataToReceiver(ApiEventPayload(eventType = EventType.DEATH_NOTIFICATION, eventDetails = it))
           }
         }
         val newLocation = "/archive/${it.first}"
-        testFtpClient.rename(it.first, newLocation);
-
+        testFtpClient.rename(it.first, newLocation)
       }
 
       testFtpClient.logout()
-    } catch( e: ConnectException) {
+    } catch (e: ConnectException) {
       log.warn("Failed to connect to FTP server")
-    } catch (e : RuntimeException) {
-      log.error("Failed process line",e)
+    } catch (e: RuntimeException) {
+      log.error("Failed process line", e)
     }
   }
 

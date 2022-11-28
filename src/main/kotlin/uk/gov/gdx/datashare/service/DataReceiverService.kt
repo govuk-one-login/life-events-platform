@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.repository.DataProviderRepository
@@ -15,7 +14,6 @@ import uk.gov.justice.hmpps.sqs.HmppsQueue
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import java.time.LocalDateTime
 import java.util.*
-
 
 @Service
 class DataReceiverService(
@@ -32,7 +30,7 @@ class DataReceiverService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun sendToDataProcessor(eventPayload : ApiEventPayload) {
+  suspend fun sendToDataProcessor(eventPayload: ApiEventPayload) {
 
     // check if client is allowed to send
     val dataProvider = dataProviderRepository.findById(authenticationFacade.getUsername())
@@ -46,7 +44,7 @@ class DataReceiverService(
     val dataProcessorMessage = DataProcessorMessage(
       dataSetType = dataProvider.datasetType,
       eventType = eventPayload.eventType,
-      eventTime = eventPayload.eventTime?: LocalDateTime.now(),
+      eventTime = eventPayload.eventTime ?: LocalDateTime.now(),
       provider = dataProvider.clientName,
       storePayload = dataProvider.storePayload,
       id = eventPayload.id,
@@ -76,4 +74,3 @@ data class DataProcessorMessage(
   val id: String?,
   val details: String?,
 )
-

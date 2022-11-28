@@ -4,10 +4,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.repository.EventData
-import uk.gov.gdx.datashare.repository.EventDataRepository
 import uk.gov.gdx.datashare.resource.EventType
 import java.time.LocalDateTime
-import java.util.UUID
 
 @Service
 class EventPublishingService(
@@ -25,7 +23,7 @@ class EventPublishingService(
     dataShareTopicService.sendGovEvent(
       eventId = event.eventId,
       eventType = EventType.valueOf(event.eventType),
-      occurredAt = event.whenCreated?: LocalDateTime.now()
+      occurredAt = event.whenCreated ?: LocalDateTime.now()
     )
 
     // audit the event
@@ -33,6 +31,7 @@ class EventPublishingService(
       auditType = AuditType.DATA_SHARE_EVENT_PUBLISHED,
       id = event.eventId,
       details = event.eventType,
-      username = event.dataProvider)
+      username = event.dataProvider
+    )
   }
 }

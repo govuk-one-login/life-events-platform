@@ -23,7 +23,7 @@ class DataProcessor(
   }
 
   @JmsListener(destination = "dataprocessor", containerFactory = "hmppsQueueContainerFactoryProxy")
- fun onGovEvent(message: String) {
+  fun onGovEvent(message: String) {
 
     runBlocking {
       val dataProcessorMessage: DataProcessorMessage = mapper.readValue(message, DataProcessorMessage::class.java)
@@ -33,7 +33,7 @@ class DataProcessor(
       auditService.sendMessage(
         auditType = AuditType.EVENT_OCCURRED,
         id = dataProcessorMessage.eventType.toString(),
-        details = dataProcessorMessage.details?: "NONE",
+        details = dataProcessorMessage.details ?: "NONE",
         username = dataProcessorMessage.provider
       )
 
@@ -50,18 +50,16 @@ class DataProcessor(
         dataId = details.id,
         dataPayload = details.data as String?,
         whenCreated = dataProcessorMessage.eventTime,
-        dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
+        dataExpiryTime = dataProcessorMessage.eventTime.plusDays(1)
       )
 
       eventDataRepository.save(eventData)
 
       eventPublishingService.storeAndPublishEvent(eventData)
     }
-
-
   }
 
-  fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage) : DataDetail {
+  fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage): DataDetail {
     val id = dataProcessorMessage.id ?: eventId.toString()
     val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 

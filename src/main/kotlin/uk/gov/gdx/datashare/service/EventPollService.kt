@@ -27,7 +27,6 @@ class EventPollService(
     toTime: LocalDateTime?
   ): Flow<SubscribedEvent> {
     val oauthClient = authenticationFacade.getUsername()
-    log.info("Looking up events for client {}", oauthClient)
 
     // check if client is allowed to poll
     val dataConsumer = dataConsumerRepository.findById(oauthClient)
@@ -62,7 +61,7 @@ class EventPollService(
       dataConsumerRepository.save(dataConsumer.copy(lastPollEventTime = lastPollEventTime))
     }
 
-    log.info("Retrieved {} events between {} and {} for event types {}", events.count(), beginTime, lastTime, eventTypes)
+    log.info("Client: {}: Retrieved {} events between {} and {} for event types {}", dataConsumer.clientName, events.count(), beginTime, lastTime, eventTypesToPoll)
     return events
   }
 

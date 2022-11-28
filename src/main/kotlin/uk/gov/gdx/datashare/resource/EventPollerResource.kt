@@ -47,9 +47,9 @@ class EventPollerResource(
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class SubscribedEvent(
-  @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
+  @Schema(description = "Event ID (UUID)", type = "UUID", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
   val eventId: String,
-  @Schema(description = "Events Type", required = true)
+  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
   @Schema(description = "Events Time", type = "date-time", required = true)
   val eventTime: LocalDateTime

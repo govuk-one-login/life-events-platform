@@ -19,8 +19,8 @@ class DataReceiverResource(
 
   @PostMapping
   @Operation(
-    summary = "Retrieves data from gov dept",
-    description = "The data must be fully well formed json",
+    summary = "Sending data to GDS for events",
+    description = "Scope is data_receiver/notify",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -45,13 +45,13 @@ data class ApiEventPayload(
   @Schema(description = "Date and time when the event took place", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
 
-  @Schema(description = "Date and time when the event took place, default is now", required = false, example = "2021-12-31T12:34:56.789012")
+  @Schema(description = "Date and time when the event took place, default is now", required = false, type="date-time", example = "2021-12-31T12:34:56.789012")
   val eventTime: LocalDateTime? = null,
 
   @Schema(description = "ID that references the event (optional)", required = false, example = "10a1bc74-3f81-44ef-af5f-662776950d80")
   val id: String? = null,
 
-  @Schema(description = "Json payload of data", required = false, example = "data payload")
+  @Schema(description = "Json payload of data", required = false, example = "{'data': 'payload'}")
   val eventDetails: String? = null,
 )
 

@@ -30,3 +30,10 @@ api:
       lev: http://localhost:8099
       hmrc: https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io
       data-receiver: http://localhost:8080
+
+
+legacy-inbound:
+  api:
+    client:
+      id: clientId
+      secret: clientSecret

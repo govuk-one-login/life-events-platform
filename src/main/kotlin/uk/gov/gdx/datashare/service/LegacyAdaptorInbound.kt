@@ -17,7 +17,6 @@ import java.time.LocalDateTime
 
 @Service
 class LegacyAdaptorInbound(
-  private val auditService: AuditService,
   private val dataReceiverApiWebClient: WebClient
 ) {
   companion object {

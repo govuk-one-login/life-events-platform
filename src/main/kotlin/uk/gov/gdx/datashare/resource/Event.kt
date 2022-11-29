@@ -18,14 +18,14 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
-class EventPollerResource(
+class Event(
   private val eventPollService: EventPollService
 ) {
 
   @GetMapping()
   @Operation(
-    summary = "Gets events for a client",
-    description = "Will return the basic event data needed to callback and obtain event data. Need scope of events/poll",
+    summary = "Tell me about events",
+    description = "Need scope of events/poll",
     responses = [
       ApiResponse(
         responseCode = "200",

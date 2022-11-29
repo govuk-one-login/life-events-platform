@@ -13,13 +13,13 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/event-data-receiver", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_receiver/notify')")
-class DataReceiverResource(
+class EventListener(
   private val dataReceiverService: DataReceiverService
 ) {
 
   @PostMapping
   @Operation(
-    summary = "Sending data to GDS for events",
+    summary = "Send events to GDS - Source",
     description = "Scope is data_receiver/notify",
     responses = [
       ApiResponse(

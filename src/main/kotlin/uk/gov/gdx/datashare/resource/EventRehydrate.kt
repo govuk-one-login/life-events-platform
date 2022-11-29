@@ -15,13 +15,13 @@ import uk.gov.gdx.datashare.service.EventDataRetrievalService
 @RestController
 @RequestMapping("/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
-class EventDataRetrieverResource(
+class EventRehydrate(
   private val eventDataRetrievalService: EventDataRetrievalService
 ) {
 
   @GetMapping("/{id}")
   @Operation(
-    summary = "Retrieves data from GDX and other services for return to client",
+    summary = "Event Rehydrate API - Lookup event data",
     description = "The event ID is the UUID received off the queue, Need scope of data_retriever/read",
     responses = [
       ApiResponse(

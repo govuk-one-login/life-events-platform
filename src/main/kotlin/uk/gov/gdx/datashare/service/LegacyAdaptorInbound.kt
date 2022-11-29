@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
-import uk.gov.gdx.datashare.resource.ApiEventPayload
+import uk.gov.gdx.datashare.resource.EventToPublish
 import uk.gov.gdx.datashare.resource.EventType
 import java.io.File
 import java.io.FileOutputStream
@@ -39,7 +39,7 @@ class LegacyAdaptorInbound(
         testFtpClient.retrieveFile(it.first, fileHandle)
         File(it.first).forEachLine {
           runBlocking {
-            postDataToReceiver(ApiEventPayload(eventType = EventType.DEATH_NOTIFICATION, eventDetails = it))
+            postDataToReceiver(EventToPublish(eventType = EventType.DEATH_NOTIFICATION, eventDetails = it))
           }
         }
         val newLocation = "/archive/${it.first}"
@@ -54,7 +54,7 @@ class LegacyAdaptorInbound(
     }
   }
 
-  suspend fun postDataToReceiver(payload: ApiEventPayload) =
+  suspend fun postDataToReceiver(payload: EventToPublish) =
     dataReceiverApiWebClient.post()
       .uri("/event-data-receiver")
       .bodyValue(payload)

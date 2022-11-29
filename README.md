@@ -2,6 +2,9 @@
 
 **Data Sharing POC Microservice**
 
+## API Contracts
+API documentation can be found  [here](doc/apicontracts/api-contract.md)
+
 ## Running locally
 
 For running locally against docker instances of the following services:

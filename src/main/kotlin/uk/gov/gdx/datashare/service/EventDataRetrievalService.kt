@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.repository.DataConsumerRepository
 import uk.gov.gdx.datashare.repository.EventDataRepository
-import uk.gov.gdx.datashare.resource.DataResponseMessage
+import uk.gov.gdx.datashare.resource.EventInformation
 import java.time.LocalDate
 
 @Service
@@ -26,7 +26,7 @@ class EventDataRetrievalService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun retrieveData(eventId: String): DataResponseMessage {
+  suspend fun retrieveData(eventId: String): EventInformation {
     val oauthClient = authenticationFacade.getUsername()
     log.info("Looking up event Id {} for client request {}", eventId, oauthClient)
 
@@ -61,7 +61,7 @@ class EventDataRetrievalService(
               it.deceased.dateOfDeath
             ) else null
 
-            DataResponseMessage(
+            EventInformation(
               eventType = event.eventType,
               eventId = eventId,
               details = DeathNotification(
@@ -88,7 +88,7 @@ class EventDataRetrievalService(
 
         val nino = if (dataConsumer.ninoRequired) getNino(surname, forenames, LocalDate.parse(dateOfBirth)) else null
 
-        DataResponseMessage(
+        EventInformation(
           eventType = event.eventType,
           eventId = eventId,
           details = DeathNotification(

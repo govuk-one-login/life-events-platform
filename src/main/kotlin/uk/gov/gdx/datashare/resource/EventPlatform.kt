@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
-class Event(
+class EventPlatform(
   private val eventPollService: EventPollService
 ) {
 
@@ -33,7 +33,7 @@ class Event(
       )
     ]
   )
-  suspend fun events(
+  suspend fun getEvents(
     @Schema(description = "Event Types", required = false)
     @RequestParam(name = "eventType") eventTypes: List<EventType> = listOf(),
     @Schema(description = "Events after this time", type = "date-time", required = false)

@@ -28,19 +28,19 @@ class EventListener(
       )
     ]
   )
-  suspend fun postEventData(
+  suspend fun publishEvent(
     @Schema(
       description = "Event Payload",
       required = true,
-      implementation = ApiEventPayload::class,
+      implementation = EventToPublish::class,
     )
-    @RequestBody eventPayload: ApiEventPayload,
+    @RequestBody eventPayload: EventToPublish,
   ) = dataReceiverService.sendToDataProcessor(eventPayload)
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Event Payload for GDX")
-data class ApiEventPayload(
+data class EventToPublish(
 
   @Schema(description = "Date and time when the event took place", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,

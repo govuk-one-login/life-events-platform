@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.repository.DataProviderRepository
-import uk.gov.gdx.datashare.resource.ApiEventPayload
+import uk.gov.gdx.datashare.resource.EventToPublish
 import uk.gov.gdx.datashare.resource.EventType
 import uk.gov.justice.hmpps.sqs.HmppsQueue
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
@@ -30,7 +30,7 @@ class DataReceiverService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun sendToDataProcessor(eventPayload: ApiEventPayload) {
+  suspend fun sendToDataProcessor(eventPayload: EventToPublish) {
 
     // check if client is allowed to send
     val dataProvider = dataProviderRepository.findById(authenticationFacade.getUsername())

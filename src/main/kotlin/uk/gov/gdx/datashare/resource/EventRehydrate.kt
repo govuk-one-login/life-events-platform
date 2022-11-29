@@ -30,14 +30,14 @@ class EventRehydrate(
       )
     ]
   )
-  suspend fun getDataForEventId(
+  suspend fun getEventDetails(
     @Schema(description = "Event ID", required = true, type = "UUID", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable id: String,
-  ): DataResponseMessage = eventDataRetrievalService.retrieveData(id)
+  ): EventInformation = eventDataRetrievalService.retrieveData(id)
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class DataResponseMessage(
+data class EventInformation(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION", allowableValues = ["DEATH_NOTIFICATION", "BIRTH_NOTIFICATION", "MARRIAGE_NOTIFICATION"])
   val eventType: String,
   @Schema(description = "Event ID (UUID)", required = true, type = "UUID", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$", example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")

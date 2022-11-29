@@ -42,7 +42,7 @@ null (empty response body)
 
 ### Authorization
 
-No authorization required
+OAUTH2 client credentials.
 
 ### HTTP request headers
 

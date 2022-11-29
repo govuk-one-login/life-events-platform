@@ -42,7 +42,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+OAUTH2 client credentials.
 
 ### HTTP request headers
 

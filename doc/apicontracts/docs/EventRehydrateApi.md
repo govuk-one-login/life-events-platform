@@ -1,4 +1,4 @@
-# GdxDataShareApi.EventRehydrateApi
+# EventRehydrateApi
 
 All URIs are relative to *http://localhost:8080*
 
@@ -18,7 +18,7 @@ The event ID is the UUID received off the queue, Need scope of data_retriever/re
 ```javascript
 import {GdxDataShareApi} from 'gdx_data_share_api';
 
-let apiInstance = new GdxDataShareApi.EventRehydrateApi();
+let apiInstance = new EventRehydrateApi();
 let id = "id_example"; // String | Event ID
 
 apiInstance.getEventDetails(id, (error, data, response) => {

@@ -1,4 +1,4 @@
-# GdxDataShareApi.SubscribedEvent
+# SubscribedEvent
 
 ## Properties
 Name | Type | Description | Notes

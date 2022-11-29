@@ -1,16 +1,16 @@
-# GdxDataShareApi.EventListenerApi
+# EventListenerApi
 
 All URIs are relative to *http://localhost:8080*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**publishEvent**](EventListenerApi.md#publishEvent) | **POST** /event-data-receiver | Send events to GDS - Source
+[**publishEvent**](EventListenerApi.md#publishEvent) | **POST** /event-data-receiver | Send events to GDS - The &#x27;Source&#x27; of the event - this could be HMPO or DWP for example
 
 <a name="publishEvent"></a>
 # **publishEvent**
 > publishEvent(body)
 
-Send events to GDS - Source
+Send events to GDS - The &#x27;Source&#x27; of the event - this could be HMPO or DWP for example
 
 Scope is data_receiver/notify
 
@@ -18,8 +18,8 @@ Scope is data_receiver/notify
 ```javascript
 import {GdxDataShareApi} from 'gdx_data_share_api';
 
-let apiInstance = new GdxDataShareApi.EventListenerApi();
-let body = new GdxDataShareApi.EventToPublish(); // EventToPublish | 
+let apiInstance = new EventListenerApi();
+let body = new EventToPublish(); // EventToPublish | 
 
 apiInstance.publishEvent(body, (error, data, response) => {
   if (error) {

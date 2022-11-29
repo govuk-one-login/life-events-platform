@@ -1,11 +1,11 @@
-# GdxDataShareApi.EventInformation
+# EventInformation
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **eventType** | **String** | Events Type | 
 **eventId** | **String** | Event ID (UUID) | 
-**details** | **Object** | Details of event | [optional] 
+**details** | **Object** | Details of event, a payload of JSON data | [optional] 
 
 <a name="EventTypeEnum"></a>
 ## Enum: EventTypeEnum

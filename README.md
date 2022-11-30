@@ -23,6 +23,8 @@ or from a published image:
 
 ## Using the application to simulate events
 
+The API schema is shown at `http://localhost:8080/swagger-ui.html`
+
 First you need tell the GDX data receiver about the event.  This is done by calling the `event-data-receiver` with a POST payload:
 
 ```json

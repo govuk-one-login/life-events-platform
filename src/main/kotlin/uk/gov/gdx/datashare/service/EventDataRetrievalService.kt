@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactor.awaitSingle
@@ -125,22 +126,34 @@ class EventDataRetrievalService(
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Death Notification Details", required = true)
 data class DeathNotification(
-  val deathDetails: DeathDetails?,
+  @Schema(description = "Core details about the event", required = true)
+  val deathDetails: DeathDetails,
+  @Schema(description = "Additional information that can be enriched with this event", required = false)
   val additionalInformation: AdditionalInformation? = null
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Core details about the death", required = true)
 data class DeathDetails(
+  @Schema(description = "Forenames of the deceased", required = true)
   val forenames: String,
+  @Schema(description = "Surname of the deceased", required = true)
   val surname: String,
+  @Schema(description = "Date of birth of the deceased", required = true)
   val dateOfBirth: LocalDate,
+  @Schema(description = "Date of death of the deceased", required = true)
   val dateOfDeath: LocalDate,
+  @Schema(description = "Address (if provided) of the deceased", required = true)
   val sex: String,
+  @Schema(description = "Core details about the event", required = false)
   val address: String? = null,
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Additional details about the event (enriched data)", required = false)
 data class AdditionalInformation(
+  @Schema(description = "National Insurance Number", required = false)
   val nino: String? = null,
 )

@@ -8,20 +8,47 @@
       "requestMappings": [
         {
           "requestParam": "scope",
-          "match": "notify",
+          "match": "len",
           "claims": {
-            "sub": "2koca5i6ct15orqh3g004pmvre",
+            "sub": "len",
             "scope": "data_receiver/notify",
-            "client_id": "2koca5i6ct15orqh3g004pmvre"
+            "client_id": "len"
           }
         },
         {
           "requestParam": "scope",
-          "match": "read",
+          "match": "internal-inbound",
           "claims": {
-            "sub": "2ippgk5eigcllh62oi1v35q9bp",
+            "sub": "internal-inbound",
+            "scope": "data_receiver/notify",
+            "client_id": "internal-inbound"
+          }
+        },
+        {
+          "requestParam": "scope",
+          "match": "dwp",
+          "claims": {
+            "sub": "dwp-event-receiver",
             "scope": "data_retriever/read events/poll",
-            "client_id": "2ippgk5eigcllh62oi1v35q9bp"
+            "client_id": "dwp-event-receiver"
+          }
+        },
+        {
+          "requestParam": "scope",
+          "match": "hmrc",
+          "claims": {
+            "sub": "hmrc-client",
+            "scope": "data_retriever/read events/poll",
+            "client_id": "hmrc-client"
+          }
+        },
+        {
+          "requestParam": "scope",
+          "match": "internal-outbound",
+          "claims": {
+            "sub": "internal-outbound",
+            "scope": "data_retriever/read",
+            "client_id": "internal-outbound"
           }
         }
       ]

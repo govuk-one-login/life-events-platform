@@ -1,5 +1,7 @@
 package uk.gov.gdx.datashare.config
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,8 +24,13 @@ class WebClientConfiguration(
   @Value("\${api.base.url.data-receiver}") private val dataReceiverUri: String
 ) {
 
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
   @Bean
   fun auth0WebClient(): WebClient {
+    log.info("Auth URL is {}", auth0BaseUri)
     return WebClient.builder()
       .baseUrl(auth0BaseUri)
       .build()

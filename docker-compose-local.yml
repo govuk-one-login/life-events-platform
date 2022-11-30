@@ -79,6 +79,7 @@ services:
       - SERVER_PORT=8080
     volumes:
       - ${PWD}/oauth2-data:/tmp/
+
 networks:
   gds:
   hmpo:

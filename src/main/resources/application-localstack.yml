@@ -10,12 +10,12 @@ hmpps.sqs:
       queueName: legacy-adaptor-event-queue
       dlqName: legacy-adaptor-event-dlq
       subscribeTopicId: event
-      subscribeFilter: '{"eventType":[ "citizen-death" ] }'
+      subscribeFilter: '{"eventType":[ "DEATH_NOTIFICATION" ] }'
     odg:
       queueName: ogd-event-queue
       dlqName: ogd-event-dlq
       subscribeTopicId: event
-      subscribeFilter: '{"eventType":[ "citizen-death" ] }'
+      subscribeFilter: '{"eventType":[ "DEATH_NOTIFICATION" ] }'
   topics:
     event:
       arn: arn:aws:sns:eu-west-2:000000000000:${random.uuid}

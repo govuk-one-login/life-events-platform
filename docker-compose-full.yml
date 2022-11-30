@@ -1,7 +1,7 @@
 version: "3"
 services:
   gdx-data-share-poc:
-    build: .
+    image: quay.io/governmentdigitalservices/gdx-data-share-poc:latest
     networks:
       - gds
     container_name: gdx-data-share-poc

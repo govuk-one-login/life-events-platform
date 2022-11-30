@@ -57,7 +57,7 @@ class EventPollService(
 
     // save the time of the last record
     val lastPollEventTime = events.lastOrNull()?.eventTime ?: lastTime
-    if (lastPollEventTime.isAfter(dataConsumer.lastPollEventTime)) {
+    if (dataConsumer.lastPollEventTime == null || lastPollEventTime.isAfter(dataConsumer.lastPollEventTime)) {
       dataConsumerRepository.save(dataConsumer.copy(lastPollEventTime = lastPollEventTime))
     }
 

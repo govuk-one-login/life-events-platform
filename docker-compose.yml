@@ -4,6 +4,7 @@ services:
     build: .
     networks:
       - gds
+      - hmpo
     container_name: gdx-data-share-poc
     depends_on:
       - datashare-db

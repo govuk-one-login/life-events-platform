@@ -11,7 +11,6 @@
           "match": "len",
           "claims": {
             "sub": "len",
-            "iss": "http://oauth2:8080/issuer1",
             "scope": "data_receiver/notify",
             "client_id": "len"
           }
@@ -21,7 +20,6 @@
           "match": "internal-inbound",
           "claims": {
             "sub": "internal-inbound",
-            "iss": "http://oauth2:8080/issuer1",
             "scope": "data_receiver/notify",
             "client_id": "internal-inbound"
           }
@@ -31,7 +29,6 @@
           "match": "dwp",
           "claims": {
             "sub": "dwp-event-receiver",
-            "iss": "http://oauth2:8080/issuer1",
             "scope": "data_retriever/read events/poll",
             "client_id": "dwp-event-receiver"
           }
@@ -41,7 +38,6 @@
           "match": "hmrc",
           "claims": {
             "sub": "hmrc-client",
-            "iss": "http://oauth2:8080/issuer1",
             "scope": "data_retriever/read events/poll",
             "client_id": "hmrc-client"
           }
@@ -51,7 +47,6 @@
           "match": "internal-outbound",
           "claims": {
             "sub": "internal-outbound",
-            "iss": "http://oauth2:8080/issuer1",
             "scope": "data_retriever/read",
             "client_id": "internal-outbound"
           }

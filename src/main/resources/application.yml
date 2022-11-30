@@ -23,14 +23,13 @@ spring:
             client-id: ${legacy-inbound.api.client.id}
             client-secret: ${legacy-inbound.api.client.secret}
             authorization-grant-type: client_credentials
-            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
             clientName: Internal Inbound Adaptor
         provider:
           cognito:
             issuer-uri: ${api.base.url.issuer-uri}
-            token-uri: ${api.base.url.oauth}/oauth/token
+            token-uri: ${api.base.url.oauth}/token
             user-name-attribute: cognito:username
-            jwk-set-uri: ${api.base.url.issuer-uri}/.well-known/jwks.json
+            jwk-set-uri: ${api.base.url.issuer-uri}/.well-known/openid-configuration
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"

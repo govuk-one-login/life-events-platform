@@ -25,8 +25,8 @@ spring:
 api:
   base:
     url:
-      issuer-uri: https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_qUBXvU9L8
-      oauth: https://gdx-data-share.auth.eu-west-2.amazoncognito.com
+      issuer-uri: http://localhost:9090/issuer1
+      oauth: http://localhost:9090/issuer1
       lev: http://localhost:8099
       hmrc: https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io
       data-receiver: http://localhost:8080

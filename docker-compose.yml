@@ -8,13 +8,22 @@ services:
     depends_on:
       - datashare-db
       - localstack
+      - oauth2
     ports:
       - "8080:8080"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
     environment:
+      - HMPPS_SQS_LOCALSTACK_URL=http://localstack:4566
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev,localstack
+      - API_BASE_URL_ISSUER_URI=http://oauth2:8080/issuer1
+      - API_BASE_URL_OAUTH=http://oauth2:8080/issuer1
+      - API_BASE_URL_LEV=http://lev-api:8080
+      - API_BASE_URL_HMRC=https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io
+      - API_BASE_URL_DATA_RECEIVER=http://gdx-data-share-poc:8080
+      - SPRING_FLYWAY_URL=jdbc:postgresql://datashare-db:5432/datashare?sslmode=prefer
+      - SPRING_R2DBC_URL=r2dbc:postgresql://datashare-db:5432/datashare?sslmode=prefer
 
   localstack:
     image: localstack/localstack:0.14.0
@@ -34,6 +43,8 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - AWS_EXECUTION_ENV=True
       - DEFAULT_REGION=eu-west-2
+      - HOSTNAME=localstack
+      - HOSTNAME_EXTERNAL=localstack
     volumes:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
@@ -82,6 +93,19 @@ services:
       - APP_PASSWORD=lev
     ports:
       - "5433:5432"
+
+  oauth2:
+    image: ghcr.io/navikt/mock-oauth2-server:0.5.6
+    container_name: oauth2
+    networks:
+      - gds
+    ports:
+      - "9090:8080"
+    environment:
+      - JSON_CONFIG_PATH=/tmp/config.json
+      - SERVER_PORT=8080
+    volumes:
+      - ${PWD}/oauth2-data:/tmp/
 
 networks:
   gds:

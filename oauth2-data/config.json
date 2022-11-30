@@ -1,0 +1,30 @@
+{
+  "interactiveLogin": true,
+  "httpServer": "NettyWrapper",
+  "tokenCallbacks": [
+    {
+      "issuerId": "issuer1",
+      "tokenExpiry": 300,
+      "requestMappings": [
+        {
+          "requestParam": "scope",
+          "match": "notify",
+          "claims": {
+            "sub": "2koca5i6ct15orqh3g004pmvre",
+            "scope": "data_receiver/notify",
+            "client_id": "2koca5i6ct15orqh3g004pmvre"
+          }
+        },
+        {
+          "requestParam": "scope",
+          "match": "read",
+          "claims": {
+            "sub": "2ippgk5eigcllh62oi1v35q9bp",
+            "scope": "data_retriever/read events/poll",
+            "client_id": "2ippgk5eigcllh62oi1v35q9bp"
+          }
+        }
+      ]
+    }
+  ]
+}

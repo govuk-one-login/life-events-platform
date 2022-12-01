@@ -1,6 +1,6 @@
-# 2. Service will consume a death event from DWP, store and publish to interested clients
+# 3. Service will consume a death event from DWP, store and publish to interested clients
 
-[Next >>](9999-end.md)
+[Next >>](0004-baseline-aws-infrastructure.md)
 
 
 Date: 2022-11-15
@@ -42,4 +42,4 @@ This approach follows the agreed pattern of architecture for GDX
 
 
 
-[Next >>](9999-end.md)
+[Next >>](0004-baseline-aws-infrastructure.md)

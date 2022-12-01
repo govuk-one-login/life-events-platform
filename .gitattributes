@@ -1,0 +1,12 @@
+# We should use lf for all files, even if core.autocrlf is set incorrectly
+* text eol=lf
+
+# Windows scripts need crlf
+*.{cmd,bat} text eol=crlf
+
+# binary files
+*.png binary
+*.jar binary
+*.jpg binary
+*.jpeg binary
+*.gif binary

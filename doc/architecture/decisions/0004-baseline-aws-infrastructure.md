@@ -15,7 +15,7 @@ Aiming to deploy existing codebase to a "real" environment to enable faster futu
 
 ## Architecture
 
-Following the same architecture as [ADR 4](0003-gdx-death-notification-event.md), deployed to a real AWS environment
+Following the same architecture as [ADR 3](0003-gdx-death-notification-event.md), deployed to a real AWS environment
 ![This is the Death event architecture{arch}](death-event-notifier.svg)
 
 ### Source Control

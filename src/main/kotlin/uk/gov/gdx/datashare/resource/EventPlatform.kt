@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -18,6 +19,7 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
+@Validated
 class EventPlatform(
   private val eventPollService: EventPollService
 ) {
@@ -48,10 +50,11 @@ class EventPlatform(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Subscribed event notification")
 data class SubscribedEvent(
-  @Schema(description = "Event ID (UUID)", type = "UUID", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
+  @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
   val eventId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
-  @Schema(description = "Events Time", type = "date-time", required = true)
+  @Schema(description = "Events Time", type = "date-time", required = true, example = "2021-12-31T12:34:56")
+  @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
   val eventTime: LocalDateTime
 )

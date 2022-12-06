@@ -1,0 +1,106 @@
+name: "Shared Terraform workflow"
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+        default: '.'
+        description: directory to run Terraform commands from
+      apply:
+        required: false
+        type: boolean
+        default: false
+        description: whether to apply config, or otherwise just plan
+      environment:
+        required: true
+        type: string
+        description: If applying, specify a release "environment"
+    secrets:
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+
+jobs:
+  plan:
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      plan: ${{ steps.plan.outputs.stdout }}
+      plan_exitcode: ${{ steps.plan.outputs.exitcode }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    env:
+      AWS_REGION: "eu-west-1"
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Set up Terraform
+        # Exposes stdout, stderr and exitcode as outputs for any steps that run terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.3.2
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -input=false
+
+      - name: Terraform Plan
+        id: plan
+        # Terraform's "detailed-exitcode" codes are: 0 for "no changes", 1 for errors, 2 for "valid changes"
+        # Output a plan even though we don't use it here - we need the printed output to be the same as in the apply job below
+        # We don't save the plan as an artefact as it's sensitive and this repo is public
+        run: >
+          terraform plan -no-color -input=false -detailed-exitcode -lock=${{ inputs.apply && 'true' || 'false' }} -out=plan.tfplan | sed '/ Refreshing state... /d' | sed '/ Reading...$/d' | sed '/ Read complete after /d';
+          exit ${PIPESTATUS[0]}
+        continue-on-error: true
+
+      - name: Fail job if plan failed
+        if: steps.plan.outputs.exitcode == 1
+        run: exit 1
+        
+  apply:
+    name: Terraform apply
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    if: inputs.apply && needs.plan.outputs.plan_exitcode == 2
+    defaults:
+      run:
+        working-directory: ${{ inputs.workdir }}
+    env:
+      AWS_REGION: "eu-west-1"
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.3.2
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -input=false
+
+      - name: Terraform Plan
+        id: repeat_plan
+        run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan | sed '/ Refreshing state... /d' | sed '/ Reading...$/d' | sed '/ Read complete after /d'
+
+      - name: Compare plans
+        if: steps.repeat_plan.outputs.stdout != needs.plan.outputs.plan
+        run: >
+          echo "Plans have changed; restart the planning job and review it again";
+          diff <(echo "${{steps.repeat_plan.outputs.stdout}}") <(echo "${{needs.plan.outputs.plan}}")
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false plan.tfplan

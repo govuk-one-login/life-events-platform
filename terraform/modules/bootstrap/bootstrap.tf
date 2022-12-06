@@ -18,12 +18,18 @@ resource "aws_s3_bucket_versioning" "state_bucket" {
   }
 }
 
+resource "aws_kms_key" "state_bucket" {
+  enable_key_rotation = true
+  description         = "Key used to encrypt state bucket"
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "state_bucket" {
   bucket = aws_s3_bucket.state_bucket.bucket
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      kms_master_key_id = aws_kms_key.state_bucket.arn
+      sse_algorithm     = "aws:kms"
     }
   }
 }
@@ -37,6 +43,8 @@ resource "aws_s3_bucket_public_access_block" "state_bucket" {
   restrict_public_buckets = true
 }
 
+# we're not storing anything sensitive in DynamoDB, just using it for locking, so encryption is unecessary
+#tfsec:ignore:aws-dynamodb-enable-at-rest-encryption tfsec:ignore:aws-dynamodb-table-customer-key tfsec:ignore:aws-dynamodb-enable-recovery
 resource "aws_dynamodb_table" "tf_lock_state" {
   name = var.dynamo_db_table_name
 

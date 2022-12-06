@@ -23,7 +23,7 @@ class LegacyAdaptorInbound(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(fixedRate = 60000 * 10)
+  @Scheduled(fixedRate = 5000)
   fun pollFtpServer() {
     val testFtpClient = FTPClient()
     val host = "localhost"
@@ -36,13 +36,15 @@ class LegacyAdaptorInbound(
         log.debug("Retrieving file ${it.first}")
         val fileHandle = FileOutputStream(it.first)
         testFtpClient.retrieveFile(it.first, fileHandle)
-        File(it.first).forEachLine {
+        val file = File(it.first)
+        file.forEachLine {
           runBlocking {
             postDataToReceiver(EventToPublish(eventType = EventType.DEATH_NOTIFICATION, eventDetails = it))
           }
         }
         val newLocation = "/archive/${it.first}"
         testFtpClient.rename(it.first, newLocation)
+        file.delete()
       }
 
       testFtpClient.logout()

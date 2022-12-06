@@ -18,12 +18,20 @@ spring:
           issuer-uri: ${api.base.url.issuer-uri}
       client:
         registration:
+          event-data-retrieval:
+            provider: cognito
+            client-id: ${legacy-outbound.api.client.id}
+            client-secret: ${legacy-outbound.api.client.secret}
+            authorization-grant-type: client_credentials
+            clientName: Internal Outbound Adaptor
+            scope: internal-outbound
           data-receiver:
             provider: cognito
             client-id: ${legacy-inbound.api.client.id}
             client-secret: ${legacy-inbound.api.client.secret}
             authorization-grant-type: client_credentials
             clientName: Internal Inbound Adaptor
+            scope: internal-inbound
         provider:
           cognito:
             issuer-uri: ${api.base.url.issuer-uri}

@@ -14,7 +14,8 @@ fun main(args: Array<String>) {
   val fileSystem: FileSystem = UnixFakeFileSystem()
   fileSystem.add(DirectoryEntry("/data"))
   fileSystem.add(DirectoryEntry("/archive"))
-  fileSystem.add(FileEntry("/data/death1.csv", "MULTIPLE,Tester One,1910-01-01,2010-01-01,Male"))
+  fileSystem.add(DirectoryEntry("/outbound"))
+  fileSystem.add(FileEntry("/data/death1.csv", "SMITH,Joan Narcissus Ouroboros,2008-08-08,2008-08-08,Male"))
   fakeFtpServer.fileSystem = fileSystem
   fakeFtpServer.serverControlPort = 31000
 

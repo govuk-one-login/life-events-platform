@@ -21,7 +21,8 @@ class WebClientConfiguration(
   @Value("\${api.base.url.oauth}") val auth0BaseUri: String,
   @Value("\${api.base.url.hmrc}") val hmrcApiRootUri: String,
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
-  @Value("\${api.base.url.data-receiver}") private val dataReceiverUri: String
+  @Value("\${api.base.url.data-receiver}") private val dataReceiverUri: String,
+  @Value("\${api.base.url.event-data-retrieval}") private val eventDataRetrievalUri: String
 ) {
 
   companion object {
@@ -60,6 +61,19 @@ class WebClientConfiguration(
       .build()
   }
 
+
+  @Bean
+  fun eventDataRetrievalApiWebClient(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId("event-data-retrieval")
+
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(eventDataRetrievalUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .filter(oauth2Client)
+      .build()
+  }
   @Bean
   fun hmrcApiWebClient(): WebClient {
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))

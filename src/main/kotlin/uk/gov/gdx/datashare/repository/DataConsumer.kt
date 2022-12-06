@@ -13,7 +13,8 @@ data class DataConsumer(
   val allowedEventTypes: String,
   val lastPollEventTime: LocalDateTime? = null,
   val ninoRequired: Boolean = false,
-  val otherDataSets: Boolean = false,
+  val otherDataSets: String? = null,
+  val legacyFtp: Boolean = false,
   val whenCreated: LocalDateTime? = null,
 
   @Transient

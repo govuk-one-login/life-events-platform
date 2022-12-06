@@ -56,5 +56,6 @@ data class AuditEvent(
 enum class AuditType {
   EVENT_OCCURRED,
   DATA_SHARE_EVENT_PUBLISHED,
+  FTP_OUTBOUND,
   CLIENT_CONSUMED_EVENT
 }

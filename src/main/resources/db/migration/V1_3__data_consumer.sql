@@ -6,6 +6,7 @@ create table data_consumer
     last_poll_event_time timestamp with time zone,
     nino_required        boolean                  NOT NULL default false,
     other_data_sets      varchar(200),
+    legacy_ftp           boolean                  NOT NULL default false,
     when_created         timestamp with time zone not null default now()
 
 );
@@ -19,3 +20,5 @@ values ('hmrc-client', 'HMRC', 'DEATH_NOTIFICATION', false);
 insert into data_consumer (client_id, client_name, allowed_event_types, nino_required)
 values ('internal-outbound', 'Internal Outbound Adaptor', 'DEATH_NOTIFICATION', true);
 
+insert into data_consumer (client_id, client_name, allowed_event_types, legacy_ftp)
+values ('old-gov-dep', 'Old Skool Gov Dept', 'DEATH_NOTIFICATION', true);

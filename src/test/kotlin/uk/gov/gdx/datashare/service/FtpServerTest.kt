@@ -4,6 +4,7 @@ import org.apache.commons.net.ftp.FTPClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockftpserver.fake.FakeFtpServer
 import org.mockftpserver.fake.UserAccount
@@ -71,6 +72,7 @@ class FtpServerTest() {
   }
 
   @Test
+  @Disabled("test hangs on GitHub actions")
   fun `can connect to remote client`() {
     val testFtpClient = FTPClient()
     val host = "demo.wftpserver.com"

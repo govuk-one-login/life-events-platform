@@ -74,7 +74,7 @@ jobs:
     if: inputs.apply && needs.plan.outputs.plan_exitcode == 2
     defaults:
       run:
-        working-directory: ${{ inputs.workdir }}
+        working-directory: ${{ inputs.working-directory }}
     env:
       AWS_REGION: "eu-west-1"
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

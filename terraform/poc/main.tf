@@ -18,8 +18,9 @@ provider "aws" {
   region = "eu-west-2"
   default_tags {
     tags = {
-      source     = "terraform"
-      repository = "https://github.com/alphagov/gdx-data-share-poc"
+      source      = "terraform"
+      repository  = "https://github.com/alphagov/gdx-data-share-poc"
+      environment = "poc"
     }
   }
 }

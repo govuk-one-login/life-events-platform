@@ -25,13 +25,13 @@ jobs:
       - name: Check formatting of all Terraform files
         run: terraform fmt -check -diff -recursive
 
-  validate-test:
-    name: Validate "test" Terraform
+  validate-poc:
+    name: Validate "poc" Terraform
     uses: ./.github/workflows/terraform-shared.yml
     with:
-      working-directory: terraform/test
+      working-directory: terraform/poc
       apply: false
-      environment: test
+      environment: poc
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

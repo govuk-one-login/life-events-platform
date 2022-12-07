@@ -6,7 +6,7 @@ on:
       working-directory:
         required: true
         type: string
-        default: '.'
+        default: "."
         description: directory to run Terraform commands from
       apply:
         required: false
@@ -39,9 +39,9 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Set up Terraform
         # Exposes stdout, stderr and exitcode as outputs for any steps that run terraform
         uses: hashicorp/setup-terraform@v2
@@ -65,7 +65,7 @@ jobs:
       - name: Fail job if plan failed
         if: steps.plan.outputs.exitcode == 1
         run: exit 1
-        
+
   apply:
     name: Terraform apply
     needs: plan
@@ -80,7 +80,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Terraform

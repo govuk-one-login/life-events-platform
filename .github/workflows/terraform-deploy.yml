@@ -12,23 +12,25 @@ jobs:
   tf-fmt:
     name: Validate Terraform formatting
     runs-on: ubuntu-latest
-    defaults: 
+    defaults:
       run:
         working-directory: terraform
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.3.2
+
       - name: Check formatting of all Terraform files
         run: terraform fmt -check -diff -recursive
   deploy-test:
     name: Deploy to "test" environment
     needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml
-    with: 
+    with:
       working-directory: terraform/test
       apply: true
       environment: test

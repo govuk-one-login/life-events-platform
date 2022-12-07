@@ -1,0 +1,25 @@
+name: TFSec
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "terraform/**"
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - "terraform/**"
+      - ".github/workflows/**"
+
+jobs:
+  tfsec:
+    name: tfsec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.2
+        with:
+          working_directory: terraform/

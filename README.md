@@ -5,6 +5,7 @@
 ## API Contracts
 API documentation can be found  [here](doc/apicontracts/api-contract.md)
 
+
 ## Running locally
 
 For running locally against docker instances of the following services:
@@ -20,6 +21,67 @@ For running locally against docker instances of the following services:
 or from a published image:
 
 `docker-compose -f docker-compose-full.yml up`
+
+## Running remotely
+
+### Environment Variables - Queues and Topics
+
+
+#### Event Topic (Pub/Sub)
+```env
+HMPPS_SQS_TOPICS_EVENT_ACCESS_KEY_ID: "access_key_id"
+HMPPS_SQS_TOPICS_EVENT_SECRET_ACCESS_KEY: "secret_access_key"
+HMPPS_SQS_TOPICS_EVENT_ARN: "arn:aws:sns:eu-west-2:000000000000:48ff4ceb-1f02-4da9-a0f3-4394024bcefe"
+```
+
+#### Data Processor Queue
+```env
+HMPPS_SQS_QUEUES_DATAPROCESSOR_QUEUE_ACCESS_KEY_ID: "access_key_id"
+HMPPS_SQS_QUEUES_DATAPROCESSOR_QUEUE_SECRET_ACCESS_KEY: "secret_access_key"
+HMPPS_SQS_QUEUES_DATAPROCESSOR_QUEUE_NAME: "dataprocessor-queue"
+```
+
+#### Data Processor DLQ
+```env
+HMPPS_SQS_QUEUES_DATAPROCESSOR_DLQ_ACCESS_KEY_ID: "access_key_id"
+HMPPS_SQS_QUEUES_DATAPROCESSOR_DLQ_SECRET_ACCESS_KEY: "secret_access_key"
+HMPPS_SQS_QUEUES_DATAPROCESSOR_DLQ_NAME: "dataprocessor-dlq"
+```
+
+#### Audit Queue
+```env
+HMPPS_SQS_QUEUES_AUDIT_QUEUE_ACCESS_KEY_ID: "access_key_id"
+HMPPS_SQS_QUEUES_AUDIT_QUEUE_SECRET_ACCESS_KEY: "secret_access_key"
+HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME: "61a253ac-7987-4373-8bc1-7f83a87b3d82"
+```
+
+#### Outbound Adaptor Queue
+```env
+HMPPS_SQS_QUEUES_ADAPTOR_QUEUE_ACCESS_KEY_ID: "access_key_id"
+HMPPS_SQS_QUEUES_ADAPTOR_QUEUE_SECRET_ACCESS_KEY: "secret_access_key"
+HMPPS_SQS_QUEUES_IADAPTOR_QUEUE_NAME: "legacy-adaptor-event-queue"
+```
+
+#### Outbound Adaptor DLQ
+```env
+HMPPS_SQS_QUEUES_ADAPTOR_DLQ_ACCESS_KEY_ID: "access_key_id"
+HMPPS_SQS_QUEUES_ADAPTOR_DLQ_SECRET_ACCESS_KEY: "secret_access_key"
+HMPPS_SQS_QUEUES_ADAPTOR_DLQ_NAME: "legacy-adaptor-event-dlq"
+```
+
+#### Another Gov Agency Queue
+```env
+HMPPS_SQS_QUEUES_ODG_QUEUE_ACCESS_KEY_ID: "access_key_id"
+HMPPS_SQS_QUEUES_ODG_QUEUE_SECRET_ACCESS_KEY: "secret_access_key"
+HMPPS_SQS_QUEUES_ODG_QUEUE_NAME: "ogd-event-queue"
+```
+
+#### Another Gov Agency DLQ
+```env
+HMPPS_SQS_QUEUES_ODG_DLQ_ACCESS_KEY_ID: "access_key_id"
+HMPPS_SQS_QUEUES_ODG_DLQ_SECRET_ACCESS_KEY: "secret_access_key"
+HMPPS_SQS_QUEUES_ODG_DLQ_NAME: "ogd-event-dlq"
+```
 
 ## Using the application to simulate events
 

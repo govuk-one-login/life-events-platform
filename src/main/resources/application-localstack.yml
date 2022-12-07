@@ -3,7 +3,8 @@ hmpps.sqs:
   provider: localstack
   queues:
     dataprocessor:
-      queueName: ${random.uuid}
+      queueName: dataprocessor-queue
+      dlqName: dataprocessor-dlq
     audit:
       queueName: ${random.uuid}
     adaptor:

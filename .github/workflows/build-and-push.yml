@@ -57,7 +57,7 @@ jobs:
           docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$ENVIRONMENT
 
       - name: Push image to Amazon ECR
-        if: inputs.deploy
+        if: inputs.push
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}

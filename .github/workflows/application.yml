@@ -28,6 +28,7 @@ jobs:
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
 
   build-and-push-image:
     if: github.event_name == 'push' && github.ref_name == 'main'
@@ -43,3 +44,4 @@ jobs:
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}

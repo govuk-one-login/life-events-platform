@@ -1,4 +1,4 @@
-name: "Shared Terraform workflow"
+name: Terraform plan and apply
 
 on:
   workflow_call:
@@ -7,16 +7,16 @@ on:
         required: true
         type: string
         default: "."
-        description: directory to run Terraform commands from
+        description: Directory to run Terraform commands from
       apply:
         required: false
         type: boolean
         default: false
-        description: whether to apply config, or otherwise just plan
+        description: Whether to apply config, or otherwise just plan
       environment:
         required: true
         type: string
-        description: If applying, specify a release "environment"
+        description: Specify the environment to plan/apply
     secrets:
       AWS_SECRET_ACCESS_KEY:
         required: true

@@ -20,7 +20,6 @@ jobs:
       matrix:
         env: [dev, poc]
     name: Build docker image for "${{ matrix.env }}" environment
-    needs: tf-fmt
     uses: ./.github/workflows/build-and-push.yml
     with:
       push: false
@@ -37,7 +36,7 @@ jobs:
     name: Build and push docker image for "${{ matrix.env }}" environment to ECR
     uses: ./.github/workflows/build-and-push.yml
     with:
-      push: false
+      push: true
       environment: ${{ matrix.env }}
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

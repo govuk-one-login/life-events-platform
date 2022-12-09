@@ -37,8 +37,16 @@ provider "aws" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 module "ecr" {
   source = "../modules/ecr"
+}
+
+module "ecs" {
+  source = "../modules/ecs"
+  environment = "poc"
+  ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/ecr-repo"
 }
 
 module "lev_api" {

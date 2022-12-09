@@ -28,3 +28,7 @@ provider "aws" {
 module "ecr" {
   source = "../modules/ecr"
 }
+
+module "lev_api" {
+  source = "../modules/lev_api"
+}

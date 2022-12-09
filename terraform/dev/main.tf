@@ -24,3 +24,7 @@ provider "aws" {
     }
   }
 }
+
+module "lev_api" {
+  source = "../modules/lev_api"
+}

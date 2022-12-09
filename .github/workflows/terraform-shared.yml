@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     outputs:
-      plan: ${{ steps.plan.outputs.stdout }}
+      plan: ${{ steps.plan.outputs.plan }}
       plan_exitcode: ${{ steps.plan.outputs.exitcode }}
     defaults:
       run:
@@ -58,7 +58,8 @@ jobs:
         # Output a plan even though we don't use it here - we need the printed output to be the same as in the apply job below
         # We don't save the plan as an artefact as it's sensitive and this repo is public
         run: >
-          terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan | sed '/ Refreshing state... /d' | sed '/ Reading...$/d' | sed '/ Read complete after /d';
+          terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan
+          echo ::set-output name=plan::$(terraform show -json plan.tfplan)
           exit ${PIPESTATUS[0]}
         continue-on-error: true
 
@@ -94,13 +95,13 @@ jobs:
 
       - name: Terraform Plan
         id: repeat_plan
-        run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan | sed '/ Refreshing state... /d' | sed '/ Reading...$/d' | sed '/ Read complete after /d'
+        run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan
 
       - name: Compare plans
         if: steps.repeat_plan.outputs.stdout != needs.plan.outputs.plan
         run: >
           echo "Plans have changed; restart the planning job and review it again";
-          diff <(echo "${{steps.repeat_plan.outputs.stdout}}") <(echo "${{needs.plan.outputs.plan}}")
+          diff <(terraform show -json plan.tfplan) <(echo "${{needs.plan.outputs.plan}}")
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false plan.tfplan

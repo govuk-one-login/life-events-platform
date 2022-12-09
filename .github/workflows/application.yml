@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         env: [dev, poc]
-    name: Build ${{ (github.event_name == 'push' && github.ref_name == 'main') && 'and push' || '' }} and push docker image for "${{ matrix.env }}" environment ${{ (github.event_name == 'push' && github.ref_name == 'main' && 'to ECR') || '' }}
+    name: Build ${{ (github.event_name == 'push' && github.ref_name == 'main') && 'and push' || '' }} docker image for "${{ matrix.env }}" environment ${{ (github.event_name == 'push' && github.ref_name == 'main' && 'to ECR') || '' }}
     needs: test
     uses: ./.github/workflows/build-and-push.yml
     with:

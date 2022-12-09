@@ -39,7 +39,7 @@ jobs:
     if: github.event_name == 'pull_request'
     strategy:
       matrix:
-        env: [dev, poc]
+        env: [dev, demo]
     name: Validate "${{ matrix.env }}" Terraform
     needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml
@@ -55,7 +55,7 @@ jobs:
     if: github.event_name == 'push' && github.ref_name == 'main'
     strategy:
       matrix:
-        env: [dev, poc]
+        env: [dev, demo]
     name: Deploy to "${{ matrix.env }}" environment
     needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml

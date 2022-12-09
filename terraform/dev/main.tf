@@ -25,6 +25,22 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  region = "eu-west-1"
+  alias  = "eu-west-1"
+  default_tags {
+    tags = {
+      source      = "terraform"
+      repository  = "https://github.com/alphagov/gdx-data-share-poc"
+      environment = "dev"
+    }
+  }
+}
+
 module "lev_api" {
   source = "../modules/lev_api"
+  providers = {
+    aws = aws.eu-west-1
+  }
+  environment_name = "dev"
 }

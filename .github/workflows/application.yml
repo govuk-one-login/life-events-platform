@@ -14,32 +14,16 @@ jobs:
   test:
     uses: ./.github/workflows/test.yml
 
-  build-image:
-    if: github.event_name == 'pull_request'
-    strategy:
-      matrix:
-        env: [dev, poc]
-    name: Build docker image for "${{ matrix.env }}" environment
-    needs: test
-    uses: ./.github/workflows/build-and-push.yml
-    with:
-      push: false
-      environment: ${{ matrix.env }}
-    secrets:
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
-
   build-and-push-image:
     if: github.event_name == 'push' && github.ref_name == 'main'
     strategy:
       matrix:
         env: [dev, poc]
-    name: Build and push docker image for "${{ matrix.env }}" environment to ECR
+    name: Build ${{ github.event_name == 'push' && github.ref_name == 'main' && 'and push'}} and push docker image for "${{ matrix.env }}" environment ${{ github.event_name == 'push' && github.ref_name == 'main' && 'to ECR'}}
     needs: test
     uses: ./.github/workflows/build-and-push.yml
     with:
-      push: true
+      push: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
       environment: ${{ matrix.env }}
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

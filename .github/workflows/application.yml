@@ -15,7 +15,6 @@ jobs:
     uses: ./.github/workflows/test.yml
 
   build-and-push-image:
-    if: github.event_name == 'push' && github.ref_name == 'main'
     strategy:
       matrix:
         env: [dev, poc]

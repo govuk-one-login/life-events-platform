@@ -58,7 +58,7 @@ jobs:
         # Output a plan even though we don't use it here - we need the printed output to be the same as in the apply job below
         # We don't save the plan as an artefact as it's sensitive and this repo is public
         run: >
-          terraform plan -no-color -input=false -detailed-exitcode -lock=${{ inputs.apply && 'true' || 'false' }} -out=plan.tfplan | sed '/ Refreshing state... /d' | sed '/ Reading...$/d' | sed '/ Read complete after /d';
+          terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan | sed '/ Refreshing state... /d' | sed '/ Reading...$/d' | sed '/ Read complete after /d';
           exit ${PIPESTATUS[0]}
         continue-on-error: true
 
@@ -94,7 +94,7 @@ jobs:
 
       - name: Terraform Plan
         id: repeat_plan
-        run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan | sed '/ Refreshing state... /d' | sed '/ Reading...$/d' | sed '/ Read complete after /d'
+        run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan | sed '/ Refreshing state... /d' | sed '/ Reading...$/d' | sed '/ Read complete after /d''
 
       - name: Compare plans
         if: steps.repeat_plan.outputs.stdout != needs.plan.outputs.plan

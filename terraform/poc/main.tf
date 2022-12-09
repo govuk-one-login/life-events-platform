@@ -24,3 +24,7 @@ provider "aws" {
     }
   }
 }
+
+module "ecr" {
+  source               = "../modules/ecr"
+}

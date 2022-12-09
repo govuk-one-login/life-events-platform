@@ -50,7 +50,7 @@ jobs:
         env:
           CONTEXT: ./
           IMAGE_TAG: ${{ github.sha }}
-          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com/gdx-data-share-poc
+          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com/ecr_repo/gdx-data-share-poc
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
           docker build -t $IMAGE_NAME:$IMAGE_TAG $CONTEXT
@@ -61,7 +61,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
-          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com/gdx-data-share-poc
+          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com/ecr_repo/gdx-data-share-poc
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
           docker push $IMAGE_NAME:$IMAGE_TAG

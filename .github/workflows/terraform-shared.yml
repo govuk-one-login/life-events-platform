@@ -57,15 +57,13 @@ jobs:
         # Terraform's "detailed-exitcode" codes are: 0 for "no changes", 1 for errors, 2 for "valid changes"
         # Output a plan even though we don't use it here - we need the printed output to be the same as in the apply job below
         # We don't save the plan as an artefact as it's sensitive and this repo is public
-        run: >
-          terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan;
-          echo ::set-output name=plan::$(terraform show -json plan.tfplan);
-          exit ${PIPESTATUS[0]}
+        run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan
         continue-on-error: true
-
       - name: Fail job if plan failed
         if: steps.plan.outputs.exitcode == 1
-        run: exit 1
+        run: exit 1        
+      - name: Output Plan file for apply cross check
+        run: echo ::set-output name=plan::$(terraform show -json plan.tfplan)
 
   apply:
     name: Terraform apply

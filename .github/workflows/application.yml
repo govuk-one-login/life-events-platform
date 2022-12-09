@@ -17,7 +17,7 @@ jobs:
   build-and-push-image:
     strategy:
       matrix:
-        env: [dev, poc]
+        env: [dev, demo]
     name: Build ${{ (github.event_name == 'push' && github.ref_name == 'main') && 'and push' || '' }} docker image for "${{ matrix.env }}" environment ${{ (github.event_name == 'push' && github.ref_name == 'main' && 'to ECR') || '' }}
     needs: test
     uses: ./.github/workflows/build-and-push.yml

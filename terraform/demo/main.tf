@@ -7,7 +7,7 @@ terraform {
   }
   backend "s3" {
     bucket         = "gdx-data-share-poc-tfstate"
-    key            = "terraform-poc.tfstate"
+    key            = "terraform-demo.tfstate"
     region         = "eu-west-2"
     dynamodb_table = "gdx-data-share-poc-lock"
     encrypt        = true
@@ -20,7 +20,7 @@ provider "aws" {
     tags = {
       source      = "terraform"
       repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = "poc"
+      environment = "demo"
     }
   }
 }

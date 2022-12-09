@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "ecr_repo" {
-  name                 = "ecr_repo"
+  name = "ecr_repo"
 }
 
 resource "aws_ecr_registry_scanning_configuration" "ecr_scanning_configuration" {

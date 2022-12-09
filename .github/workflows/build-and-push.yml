@@ -25,7 +25,7 @@ on:
 jobs:
   build-image:
     environment: ${{ inputs.environment }}
-    name: Build Docker image ${{ inputs.push && 'and push to ECR' }}
+    name: Build Docker image ${{ inputs.push && 'and push to ECR' || '' }}
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.build-image.outputs.name }}

@@ -40,7 +40,7 @@ jobs:
     strategy:
       matrix:
         env: [dev, demo]
-    name: Validate "${{ matrix.env }}" Terraform
+    name: Validate ${{ matrix.env }} Terraform
     needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml
     with:
@@ -56,7 +56,7 @@ jobs:
     strategy:
       matrix:
         env: [dev, demo]
-    name: Deploy to "${{ matrix.env }}" environment
+    name: Deploy to ${{ matrix.env }} environment
     needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml
     with:

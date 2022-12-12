@@ -63,7 +63,7 @@ jobs:
         if: steps.plan.outputs.exitcode == 1
         run: exit 1        
       - name: Output Plan file for apply cross check
-        run: echo ::set-output name=plan::$(terraform show -json plan.tfplan)
+        run: echo "plan=$(terraform show -json plan.tfplan)" >> $GITHUB_OUTPUT
 
   apply:
     name: Terraform apply

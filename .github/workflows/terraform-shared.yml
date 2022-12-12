@@ -102,7 +102,7 @@ jobs:
         if: steps.repeat_plan.outputs.plan != needs.plan.outputs.plan
         run: >
           echo "Plans have changed; restart the planning job and review it again";
-          diff <(echo $steps.repeat_plan.outputs.plan | cut -d "{" -f2-) <(echo $needs.plan.outputs.plan | cut -d "{" -f2-)
+          diff <(echo "${{steps.repeat_plan.outputs.plan}}" | cut -d "{" -f2-) <(echo "${{needs.plan.outputs.plan}}" | cut -d "{" -f2-)
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false plan.tfplan

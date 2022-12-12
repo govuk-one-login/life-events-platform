@@ -28,7 +28,21 @@ resource "aws_ecr_registry_scanning_configuration" "ecr_scanning_configuration" 
   }
 }
 
-resource "aws_ecr_pull_through_cache_rule" "example" {
+resource "aws_ecr_pull_through_cache_rule" "quay" {
   ecr_repository_prefix = "quay"
   upstream_registry_url = "quay.io"
+}
+
+#these images are hosted and provided externally so we don't enforce scanning or immutable tags
+#tfsec:ignore:aws-ecr-enforce-immutable-repository tfsec:ignore:aws-ecr-enable-image-scans
+resource "aws_ecr_repository" "lev_api" {
+  name = "quay/ukhomeofficedigital/lev-api"
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+  encryption_configuration {
+    encryption_type = "KMS"
+    kms_key         = aws_kms_key.gdx_data_share_poc_key.arn
+  }
 }

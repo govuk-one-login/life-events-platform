@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     outputs:
-      plan: ${{ steps.plan.outputs.plan }}
+      plan: ${{ steps.output.outputs.plan }}
       plan_exitcode: ${{ steps.plan.outputs.exitcode }}
     defaults:
       run:
@@ -61,8 +61,9 @@ jobs:
         continue-on-error: true
       - name: Fail job if plan failed
         if: steps.plan.outputs.exitcode == 1
-        run: exit 1        
+        run: exit 1
       - name: Output Plan file for apply cross check
+        id: output
         run: echo ::set-output name=plan::$(terraform show -json plan.tfplan)
 
   apply:

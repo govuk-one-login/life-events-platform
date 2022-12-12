@@ -64,7 +64,7 @@ jobs:
         run: exit 1
       - name: Output Plan file for apply cross check
         id: output
-        run: echo ::set-output name=plan::$(terraform show -json plan.tfplan)
+        run: terraform show -json plan.tfplan | echo ::set-output name=plan::$(</dev/stdin)
 
   apply:
     name: Terraform apply

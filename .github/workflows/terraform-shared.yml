@@ -57,5 +57,5 @@ jobs:
         continue-on-error: true
 
       - name: Terraform Apply
-        if: inputs.apply && steps.plan.outputs.plan_exitcode == 2
+        if: inputs.apply && steps.plan.outputs.exitcode == 2
         run: terraform apply -auto-approve -input=false plan.tfplan

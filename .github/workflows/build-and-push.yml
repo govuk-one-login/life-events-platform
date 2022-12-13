@@ -64,6 +64,7 @@ jobs:
           echo "name=$ECR_REPOSITORY/$IMAGE_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
   tag-environments:
+    needs: build-image
     if: inputs.push
     strategy:
       matrix:

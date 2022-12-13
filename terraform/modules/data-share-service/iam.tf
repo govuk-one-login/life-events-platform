@@ -1,4 +1,4 @@
-resource "aws_iam_role" "ecsTaskExecutionRole" {
+resource "aws_iam_role" "ecs_execution" {
   name               = "${var.environment}-task-execution-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
@@ -14,12 +14,12 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
-  role       = aws_iam_role.ecsTaskExecutionRole.name
+resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
+  role       = aws_iam_role.ecs_execution.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role" "ecsTaskRole" {
+resource "aws_iam_role" "ecs_task" {
   name               = "${var.environment}-task-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
@@ -44,6 +44,6 @@ resource "aws_iam_policy" "ecs_exec" {
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_exec" {
-  role       = aws_iam_role.ecsTaskRole.name
+  role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_exec.arn
 }

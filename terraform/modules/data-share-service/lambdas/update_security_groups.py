@@ -13,15 +13,15 @@ or in the "license" file accompanying this file. This file is distributed on an 
 
 # Ports your application uses that need inbound permissions from the service for
 # If all you're doing is HTTPS, this can be simply { 'https': 443 }
-INGRESS_PORTS = { 'http' : 80, 'tcp': 8080 }
+INGRESS_PORTS = {'http': 80}
 # Tags which identify the security groups you want to update
 # For a group to be updated it will need to have 3 properties that are true:
 # 1. It has to be tagged 'Protocol: X' (Where 'X' is one of your INGRESS_PORTS above)
 # 2. It has to be tagged 'Name: cloudfront_g' or 'Name: cloudfront_r'
 # 3. It has to be tagged 'AutoUpdate: true'
 # If any of these 3 are not true, the security group will be unmodified.
-GLOBAL_SG_TAGS = { 'Name': 'cloudfront_g', 'AutoUpdate': 'true' }
-REGION_SG_TAGS = { 'Name': 'cloudfront_r', 'AutoUpdate': 'true' }
+GLOBAL_SG_TAGS = {'Name': 'cloudfront_g', 'AutoUpdate': 'true'}
+REGION_SG_TAGS = {'Name': 'cloudfront_r', 'AutoUpdate': 'true'}
 
 import boto3
 import hashlib
@@ -29,6 +29,7 @@ import json
 import logging
 import urllib.request, urllib.error, urllib.parse
 import os
+
 
 def lambda_handler(event, context):
     # Set up logging
@@ -52,23 +53,22 @@ def lambda_handler(event, context):
     result = fetch_cloudfront_ips_and_update_security_groups(ip_ranges)
     return result
 
-def fetch_cloudfront_ips_and_update_security_groups(ip_ranges):
 
-    account_tag = os.getenv('account_tag')
+def fetch_cloudfront_ips_and_update_security_groups(ip_ranges):
+    environment = os.getenv('environment')
 
     # Extract the service ranges
     global_cf_ranges = get_ranges_for_cloudfront(ip_ranges, "GLOBAL")
     region_cf_ranges = get_ranges_for_cloudfront(ip_ranges, "REGION")
 
     # Update the security groups
-    result = update_security_groups(global_cf_ranges, "GLOBAL", account_tag)
-    result = result + update_security_groups(region_cf_ranges, "REGION", account_tag)
+    result = update_security_groups(global_cf_ranges, "GLOBAL", environment)
+    result = result + update_security_groups(region_cf_ranges, "REGION", environment)
 
     return result
 
 
 def get_ip_groups_json(url, expected_hash):
-
     logging.debug("Updating from " + url)
 
     response = urllib.request.urlopen(url)
@@ -83,8 +83,8 @@ def get_ip_groups_json(url, expected_hash):
 
     return ip_json
 
-def get_ranges_for_cloudfront(ranges, subset):
 
+def get_ranges_for_cloudfront(ranges, subset):
     service = 'CLOUDFRONT'
     service_ranges = list()
     for prefix in ranges['prefixes']:
@@ -94,8 +94,8 @@ def get_ranges_for_cloudfront(ranges, subset):
 
     return service_ranges
 
-def update_security_groups(new_ranges, rangeType, account_tag):
 
+def update_security_groups(new_ranges, rangeType, environment):
     client = boto3.client('ec2')
     result = list()
 
@@ -109,19 +109,19 @@ def update_security_groups(new_ranges, rangeType, account_tag):
         else:
             tagToFind = REGION_SG_TAGS
         tagToFind['Protocol'] = curGroup
-        rangeToUpdate = get_security_groups_for_update(client, tagToFind, account_tag)
-        msg = 'tagged Name: {}, Protocol: {} to update'.format( tagToFind["Name"], curGroup )
-        logging.info('Found {} groups {}'.format( str(len(rangeToUpdate)), msg ) )
+        rangeToUpdate = get_security_groups_for_update(client, tagToFind, environment)
+        msg = 'tagged Name: {}, Protocol: {} to update'.format(tagToFind["Name"], curGroup)
+        logging.info('Found {} groups {}'.format(str(len(rangeToUpdate)), msg))
 
         if len(rangeToUpdate) == 0:
-            result.append( 'No groups {}'.format(msg) )
-            logging.warning( 'No groups {}'.format(msg) )
+            result.append('No groups {}'.format(msg))
+            logging.warning('No groups {}'.format(msg))
         else:
             for securityGroupToUpdate in rangeToUpdate:
-                if update_security_group(client, securityGroupToUpdate, new_ranges, INGRESS_PORTS[curGroup] ):
-                    result.append('Security Group {} updated.'.format( securityGroupToUpdate['GroupId'] ) )
+                if update_security_group(client, securityGroupToUpdate, new_ranges, INGRESS_PORTS[curGroup]):
+                    result.append('Security Group {} updated.'.format(securityGroupToUpdate['GroupId']))
                 else:
-                    result.append('Security Group {} unchanged.'.format( securityGroupToUpdate['GroupId'] ) )
+                    result.append('Security Group {} unchanged.'.format(securityGroupToUpdate['GroupId']))
 
     return result
 
@@ -145,7 +145,7 @@ def update_security_group(client, group, new_ranges, port):
 
                 for range in new_ranges:
                     if old_prefixes.count(range) == 0:
-                        to_add.append({ 'CidrIp': range })
+                        to_add.append({'CidrIp': range})
                         logging.debug((group['GroupId'] + ": Adding " + range + ":" + str(permission['ToPort'])))
 
                 removed += revoke_permissions(client, group, permission, to_revoke)
@@ -153,9 +153,9 @@ def update_security_group(client, group, new_ranges, port):
     else:
         to_add = list()
         for range in new_ranges:
-            to_add.append({ 'CidrIp': range })
+            to_add.append({'CidrIp': range})
             logging.info((group['GroupId'] + ": Adding " + range + ":" + str(port)))
-        permission = { 'ToPort': port, 'FromPort': port, 'IpProtocol': 'tcp'}
+        permission = {'ToPort': port, 'FromPort': port, 'IpProtocol': 'tcp'}
         added += add_permissions(client, group, permission, to_add)
 
     logging.debug((group['GroupId'] + ": Added " + str(added) + ", Revoked " + str(removed)))
@@ -190,14 +190,15 @@ def add_permissions(client, group, permission, to_add):
     return len(to_add)
 
 
-def get_security_groups_for_update(client, security_group_tag, account_tag):
-    filters = [{ 'Name': 'tag:Account', 'Values': [ account_tag ] }]
+def get_security_groups_for_update(client, security_group_tag, environment):
+    filters = [{'Name': 'tag:environment', 'Values': [environment]}]
     for key, value in security_group_tag.items():
-        filters.append({ 'Name': f'tag:{key}', 'Values': [ value ] })
+        filters.append({'Name': f'tag:{key}', 'Values': [value]})
 
     response = client.describe_security_groups(Filters=filters)
 
     return response['SecurityGroups']
+
 
 # This is a handy test event you can use when testing your lambda function.
 '''

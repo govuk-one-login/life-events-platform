@@ -5,6 +5,11 @@ resource "aws_lb" "load_balancer" {
   security_groups    = aws_security_group.lb_auto.*.id
 }
 
+# We would use name_prefix, but it has a length limit of 6 characters
+resource "random_id" "payments_http_sufix" {
+  byte_length = 2
+}
+
 resource "aws_lb_listener" "listener-http" {
   load_balancer_arn = aws_lb.load_balancer.arn
   port              = 80
@@ -12,56 +17,14 @@ resource "aws_lb_listener" "listener-http" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.default.arn
+    target_group_arn = aws_lb_target_group.green.arn
   }
-  #  default_action {
-  #    type = "redirect"
-  #    redirect {
-  #      port        = "443"
-  #      protocol    = "HTTPS"
-  #      status_code = "HTTP_301"
-  #    }
-  #  }
 
-  depends_on = [aws_lb_target_group.default]
-}
-
-#resource "aws_lb_listener" "listener-https" {
-#  load_balancer_arn = aws_lb.load_balancer.arn
-#  port              = "443"
-#  protocol          = "HTTPS"
-#  certificate_arn   = aws_cloudfront_distribution.gdx_data_share_poc.viewer_certificate[0].acm_certificate_arn
-#
-#  default_action {
-#    type             = "forward"
-#    target_group_arn = aws_lb_target_group.default.arn
-#  }
-#
-#  lifecycle {
-#    ignore_changes = [default_action]
-#  }
-#
-#  depends_on = [
-#    aws_lb.load_balancer,
-#    aws_lb_target_group.default,
-#    aws_cloudfront_distribution.gdx_data_share_poc
-#  ]
-#}
-
-resource "aws_lb_target_group" "default" {
-  name        = "${var.environment}-default-tg"
-  port        = 80
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = module.vpc.vpc_id
-
-  health_check {
-    path = "/health/ping"
-  }
+  depends_on = [aws_lb_target_group.green]
 }
 
 resource "aws_lb_target_group" "green" {
-  name        = "${var.environment}-green-tg"
+  name        = "${var.environment}-green-${random_id.payments_http_sufix.hex}"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -69,5 +32,25 @@ resource "aws_lb_target_group" "green" {
 
   health_check {
     path = "/health/ping"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_lb_target_group" "blue" {
+  name        = "${var.environment}-blue-${random_id.payments_http_sufix.hex}"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = module.vpc.vpc_id
+
+  health_check {
+    path = "/health/ping"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }

@@ -8,8 +8,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
   network_mode             = "awsvpc"
   memory                   = 512
   cpu                      = 256
-  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
-  task_role_arn            = aws_iam_role.ecsTaskRole.arn
+  execution_role_arn       = aws_iam_role.ecs_execution.arn
+  task_role_arn            = aws_iam_role.ecs_task.arn
 
   container_definitions = jsonencode([
     {
@@ -41,7 +41,7 @@ resource "aws_ecs_service" "gdx_data_share_poc" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.default.arn
+    target_group_arn = aws_lb_target_group.green.arn
     container_name   = "${var.environment}-gdx-data-share-poc"
     container_port   = 80
   }
@@ -53,7 +53,7 @@ resource "aws_ecs_service" "gdx_data_share_poc" {
 
   depends_on = [
     aws_security_group.ecs_tasks,
-    aws_lb_target_group.default,
+    aws_lb_target_group.green,
     aws_lb_listener.listener-http
   ]
 }

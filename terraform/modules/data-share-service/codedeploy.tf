@@ -6,7 +6,7 @@ resource "aws_codedeploy_app" "gdx_data_share_poc" {
 resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
   app_name               = aws_codedeploy_app.gdx_data_share_poc.name
   deployment_group_name  = aws_codedeploy_app.gdx_data_share_poc.name
-  service_role_arn       = aws_iam_role.ecsCodeDeployRole.arn
+  service_role_arn       = aws_iam_role.ecs_codedeploy.arn
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
 
   auto_rollback_configuration {
@@ -43,11 +43,11 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
       }
 
       target_group {
-        name = aws_lb_target_group.default.name
+        name = aws_lb_target_group.green.name
       }
 
       target_group {
-        name = aws_lb_target_group.green.name
+        name = aws_lb_target_group.blue.name
       }
     }
   }
@@ -82,12 +82,13 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
 data "aws_iam_policy_document" "passrole_codedeploy" {
   statement {
     effect = "Allow"
-
     actions = [
       "iam:PassRole",
     ]
-
-    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${aws_iam_role.ecsTaskExecutionRole.name}"]
+    resources = [
+      aws_iam_role.ecs_execution.arn,
+      aws_iam_role.ecs_task.arn,
+    ]
   }
 }
 

@@ -1,7 +1,7 @@
 # Auto-updating security group for Cloudfront
 # See https://aws.amazon.com/blogs/security/how-to-automatically-update-your-security-groups-for-amazon-cloudfront-and-aws-waf-by-using-aws-lambda/
 locals {
-  lb_sg_protocols = ["http", "tcp"]
+  lb_sg_protocols = ["http"]
   lb_sg_names     = ["cloudfront_g", "cloudfront_r"]
 
   lb_sg_opts = setproduct(local.lb_sg_names, local.lb_sg_protocols)
@@ -109,7 +109,7 @@ resource "aws_lambda_function" "lb_sg_update" {
 
   environment {
     variables = {
-      account_tag = "gdx-data-share-poc-environment-${var.environment}"
+      environment = var.environment
       region      = "eu-west-2"
     }
   }

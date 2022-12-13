@@ -1,18 +1,10 @@
 resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
+  provider = aws.us-east-1
+
   origin {
     domain_name = aws_lb.load_balancer.dns_name
     origin_id   = "${var.environment}-gdx-data-share-poc-lb"
-
-    custom_origin_config {
-      http_port              = local.primary_listener_port
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      # Required but irrelevant - we do not use HTTPS to talk to ALB
-      origin_ssl_protocols = ["TLSv1.2"]
-    }
   }
-
-  aliases = [aws_lb.load_balancer.dns_name]
 
   enabled         = true
   is_ipv6_enabled = false
@@ -53,5 +45,5 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     cloudfront_default_certificate = true
   }
 
-  web_acl_id = aws_wafv2_web_acl.gdx_data_share_poc.id
+  web_acl_id = aws_wafv2_web_acl.gdx_data_share_poc.arn
 }

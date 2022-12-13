@@ -27,8 +27,9 @@ locals {
 }
 
 resource "aws_wafv2_ip_set" "blocked_ipset" {
+  provider           = aws.us-east-1 # To work with CloudFront, you must also specify the region us-east-1 (N. Virginia) on the AWS provider
   name               = "${local.waf_acl_name}-blocked-ipset"
-  scope              = "REGIONAL"
+  scope              = "CLOUDFRONT"
   ip_address_version = "IPV4"
   addresses          = local.blocked_ips
 }
@@ -169,7 +170,7 @@ resource "aws_wafv2_web_acl" "gdx_data_share_poc" {
 
   rule {
     name     = "${local.waf_acl_name}-blocked-ips-rule"
-    priority = 1
+    priority = length(local.waf_rules_fields) + length(local.waf_rules_fields) + 1
 
     action {
       block {}

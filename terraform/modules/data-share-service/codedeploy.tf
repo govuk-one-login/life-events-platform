@@ -24,7 +24,6 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
     }
   }
 
-  # For ECS deployment, the deployment type must be BLUE_GREEN, and deployment option must be WITH_TRAFFIC_CONTROL.
   deployment_style {
     deployment_option = "WITH_TRAFFIC_CONTROL"
     deployment_type   = "BLUE_GREEN"
@@ -40,7 +39,7 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
     target_group_pair_info {
 
       prod_traffic_route {
-        listener_arns = [aws_lb_listener.listener-https.arn]
+        listener_arns = [aws_lb_listener.listener-http.arn]
       }
 
       target_group {
@@ -52,35 +51,32 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
       }
     }
   }
-  
+
   depends_on = [
     aws_ecs_service.gdx_data_share_poc
   ]
 }
 
-resource "aws_iam_role" "ecsCodeDeployRole" {
+resource "aws_iam_role" "ecs_codedeploy" {
   name = "${var.environment}-ecs-code-deploy-role"
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "codedeploy.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "sts:AssumeRole"
+        Principal = {
+          Service = "codedeploy.amazonaws.com"
+        },
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
-  role       = aws_iam_role.ecsCodeDeployRole.name
+  role       = aws_iam_role.ecs_codedeploy.name
 }
 
 data "aws_iam_policy_document" "passrole_codedeploy" {
@@ -102,5 +98,5 @@ resource "aws_iam_policy" "passrole_codedeploy" {
 
 resource "aws_iam_role_policy_attachment" "passrole_codedeploy" {
   policy_arn = aws_iam_policy.passrole_codedeploy.arn
-  role       = aws_iam_role.ecsCodeDeployRole.name
+  role       = aws_iam_role.ecs_codedeploy.name
 }

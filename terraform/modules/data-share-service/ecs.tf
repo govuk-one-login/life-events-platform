@@ -53,7 +53,8 @@ resource "aws_ecs_service" "gdx_data_share_poc" {
 
   depends_on = [
     aws_security_group.ecs_tasks,
-    aws_lb_target_group.default
+    aws_lb_target_group.default,
+    aws_lb_listener.listener-http
   ]
 }
 

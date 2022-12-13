@@ -18,9 +18,7 @@ resource "aws_iam_role" "lev_api_ecr_role" {
       {
         Action : "sts:AssumeRole",
         Principal : {
-          Service : [
-            "build.apprunner.amazonaws.com",
-          ]
+          Service : "build.apprunner.amazonaws.com",
         },
         Effect : "Allow",
       }
@@ -63,4 +61,6 @@ resource "aws_apprunner_service" "lev_api" {
     path     = "/readiness"
     protocol = "HTTP"
   }
+
+  depends_on = [aws_iam_role.lev_api_ecr_role]
 }

@@ -55,6 +55,15 @@ module "ecr" {
   source = "../modules/ecr"
 }
 
+module "lev_api" {
+  source = "../modules/lev_api"
+  providers = {
+    aws = aws.eu-west-1
+  }
+  environment_name = "demo"
+}
+
+
 module "data-share-service" {
   source = "../modules/data-share-service"
   providers = {
@@ -65,12 +74,4 @@ module "data-share-service" {
   service_port                = 8080
   cloudwatch_retention_period = 30
   vpc_cidr                    = "10.158.16.0/20"
-}
-
-module "lev_api" {
-  source = "../modules/lev_api"
-  providers = {
-    aws = aws.eu-west-1
-  }
-  environment_name = "demo"
 }

@@ -25,17 +25,13 @@ on:
 
 jobs:
   plan:
-    name: Terraform plan
+    name: Terraform plan ${{ inputs.apply && 'and apply' || '' }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    outputs:
-      plan: ${{ steps.output.outputs.plan }}
-      plan_exitcode: ${{ steps.plan.outputs.exitcode }}
     defaults:
       run:
         working-directory: ${{ inputs.working-directory }}
     env:
-      AWS_REGION: "eu-west-1"
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     steps:
@@ -59,50 +55,11 @@ jobs:
         # We don't save the plan as an artefact as it's sensitive and this repo is public
         run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan
         continue-on-error: true
+
       - name: Fail job if plan failed
         if: steps.plan.outputs.exitcode == 1
         run: exit 1
-      - name: Output Plan file for apply cross check
-        id: output
-        run: echo ::set-output name=plan::$(terraform show -json plan.tfplan)
-
-  apply:
-    name: Terraform apply
-    needs: plan
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
-    if: inputs.apply && needs.plan.outputs.plan_exitcode == 2
-    defaults:
-      run:
-        working-directory: ${{ inputs.working-directory }}
-    env:
-      AWS_REGION: "eu-west-1"
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.3.2
-
-      - name: Terraform Init
-        id: init
-        run: terraform init -input=false
-
-      - name: Terraform Plan
-        id: repeat_plan
-        run: >
-          terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan;
-          echo ::set-output name=plan::$(terraform show -json plan.tfplan)
-
-      - name: Compare plans
-        if: steps.repeat_plan.outputs.plan != needs.plan.outputs.plan
-        run: >
-          echo "Plans have changed; restart the planning job and review it again";
-          diff <(echo "${{steps.repeat_plan.outputs.plan}}" | cut -d "{" -f2-) <(echo "${{needs.plan.outputs.plan}}" | cut -d "{" -f2-)
 
       - name: Terraform Apply
+        if: inputs.apply && steps.plan.outputs.plan_exitcode == 2
         run: terraform apply -auto-approve -input=false plan.tfplan

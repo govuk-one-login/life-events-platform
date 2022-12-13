@@ -3,7 +3,7 @@ resource "aws_ecs_cluster" "main" {
 }
 
 resource "aws_ecs_task_definition" "gdx_data_share_poc" {
-  family = "${var.environment}-gdx-data-share-poc"
+  family                   = "${var.environment}-gdx-data-share-poc"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   memory                   = 512

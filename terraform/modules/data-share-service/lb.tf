@@ -5,8 +5,8 @@ locals {
 resource "aws_lb" "load_balancer" {
   name               = "${var.environment}-lb"
   load_balancer_type = "application"
-  subnets              = module.vpc.public_subnet_ids
-  security_groups      = aws_security_group.lb_auto.*.id
+  subnets            = module.vpc.public_subnet_ids
+  security_groups    = aws_security_group.lb_auto.*.id
 }
 
 resource "aws_lb_listener" "listener-http" {
@@ -48,7 +48,7 @@ resource "aws_lb_target_group" "default" {
   vpc_id      = module.vpc.vpc_id
 
   health_check {
-    path    = "/health/ping"
+    path = "/health/ping"
   }
 }
 
@@ -60,6 +60,6 @@ resource "aws_lb_target_group" "green" {
   vpc_id      = module.vpc.vpc_id
 
   health_check {
-    path    = "/health/ping"
+    path = "/health/ping"
   }
 }

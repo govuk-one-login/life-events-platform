@@ -38,7 +38,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "us-east-1"
+  alias  = "us-east-1"
   region = "us-east-1"
   default_tags {
     tags = {
@@ -54,14 +54,14 @@ data "aws_caller_identity" "current" {}
 module "data-share-service" {
   source = "../modules/data-share-service"
   providers = {
-    aws = aws
+    aws           = aws
     aws.us-east-1 = aws.us-east-1
   }
-  environment = "dev"
-  ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
-  service_port = 8080
+  environment                 = "dev"
+  ecr_url                     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
+  service_port                = 8080
   cloudwatch_retention_period = 30
-  vpc_cidr = "10.158.0.0/20"
+  vpc_cidr                    = "10.158.0.0/20"
 }
 
 module "lev_api" {

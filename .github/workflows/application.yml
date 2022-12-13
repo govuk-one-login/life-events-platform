@@ -15,15 +15,11 @@ jobs:
     uses: ./.github/workflows/test.yml
 
   build-and-push-image:
-    strategy:
-      matrix:
-        env: [dev, demo]
-    name: Build ${{ (github.event_name == 'push' && github.ref_name == 'main') && 'and push' || '' }} docker image for "${{ matrix.env }}" environment ${{ (github.event_name == 'push' && github.ref_name == 'main' && 'to ECR') || '' }}
+    name: Build ${{ (github.event_name == 'push' && github.ref_name == 'main') && 'and push' || '' }} docker image
     needs: test
     uses: ./.github/workflows/build-and-push.yml
     with:
       push: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
-      environment: ${{ matrix.env }}
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

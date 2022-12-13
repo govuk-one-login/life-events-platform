@@ -87,7 +87,7 @@ resource "aws_iam_role_policy" "lb_sg_update" {
   })
 }
 
-resource "aws_cloudwatch_log_group" "example" {
+resource "aws_cloudwatch_log_group" "lb_sg_update" {
   name              = "/aws/lambda/${aws_lambda_function.lb_sg_update.function_name}"
   retention_in_days = var.cloudwatch_retention_period
 }

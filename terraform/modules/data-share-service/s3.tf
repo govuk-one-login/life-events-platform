@@ -1,10 +1,29 @@
 data "aws_canonical_user_id" "current" {}
 
+# This is the logging bucket, it doesn't need logs or versioning
+#tfsec:ignore:aws-s3-enable-bucket-logging
+#tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "cloudfront_logs_bucket" {
   bucket = "${var.environment}-cloudfront-logs"
+  block_public_acls = true
+  block_public_policy = true
 
   lifecycle {
     prevent_destroy = true
+  }
+  versioning {
+    enabled = true
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "cloudfront_logs_bucket_encryption" {
+  bucket = aws_s3_bucket.cloudfront_logs_bucket.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.log_key.arn
+      sse_algorithm     = "aws:kms"
+    }
   }
 }
 

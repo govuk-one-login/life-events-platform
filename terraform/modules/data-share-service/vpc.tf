@@ -1,3 +1,4 @@
+#tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 module "vpc" {
   source = "git::https://github.com/Softwire/terraform-vpc-aws?ref=e6121cadfdd852d0f6cb398882e5babcc6bfa047"
 

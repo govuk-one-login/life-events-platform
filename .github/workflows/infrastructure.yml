@@ -40,6 +40,7 @@ jobs:
     strategy:
       matrix:
         env: [dev, demo]
+      fail-fast: false
     name: Validate ${{ matrix.env }} Terraform
     needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml
@@ -56,6 +57,7 @@ jobs:
     strategy:
       matrix:
         env: [dev, demo]
+      fail-fast: false
     name: Deploy to ${{ matrix.env }} environment
     needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml

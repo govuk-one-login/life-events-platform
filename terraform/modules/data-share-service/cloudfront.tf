@@ -53,5 +53,5 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     cloudfront_default_certificate = true
   }
 
-  web_acl_id = aws_waf_web_acl.gdx_data_share_poc.id
+  web_acl_id = aws_wafv2_web_acl.gdx_data_share_poc.id
 }

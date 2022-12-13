@@ -5,15 +5,16 @@ data "aws_canonical_user_id" "current" {}
 #tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "cloudfront_logs_bucket" {
   bucket = "${var.environment}-cloudfront-logs"
-  block_public_acls = true
-  block_public_policy = true
 
   lifecycle {
     prevent_destroy = true
   }
-  versioning {
-    enabled = true
-  }
+}
+
+resource "aws_s3_bucket_public_access_block" "cloudfront_logs_bucket_public_access" {
+  bucket              = aws_s3_bucket.cloudfront_logs_bucket.id
+  block_public_acls   = true
+  block_public_policy = true
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudfront_logs_bucket_encryption" {

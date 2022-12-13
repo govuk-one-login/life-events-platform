@@ -1,3 +1,7 @@
+locals {
+  env = "dev"
+}
+
 terraform {
   required_providers {
     aws = {
@@ -7,7 +11,7 @@ terraform {
   }
   backend "s3" {
     bucket         = "gdx-data-share-poc-tfstate"
-    key            = "terraform-dev.tfstate"
+    key            = "terraform-${local.env}.tfstate"
     region         = "eu-west-2"
     dynamodb_table = "gdx-data-share-poc-lock"
     encrypt        = true
@@ -20,7 +24,7 @@ provider "aws" {
     tags = {
       source      = "terraform"
       repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = "dev"
+      environment = local.env
     }
   }
 }
@@ -32,7 +36,7 @@ provider "aws" {
     tags = {
       source      = "terraform"
       repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = "dev"
+      environment = local.env
     }
   }
 }
@@ -44,7 +48,7 @@ provider "aws" {
     tags = {
       source      = "terraform"
       repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = "dev"
+      environment = local.env
     }
   }
 }
@@ -56,7 +60,7 @@ module "lev_api" {
   providers = {
     aws = aws.eu-west-1
   }
-  environment_name = "dev"
+  environment_name = local.env
 }
 
 module "data-share-service" {
@@ -65,7 +69,7 @@ module "data-share-service" {
     aws           = aws
     aws.us-east-1 = aws.us-east-1
   }
-  environment                 = "dev"
+  environment                 = local.env
   ecr_url                     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
   cloudwatch_retention_period = 30
   vpc_cidr                    = "10.158.0.0/20"

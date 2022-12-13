@@ -63,7 +63,6 @@ module "lev_api" {
   environment_name = "demo"
 }
 
-
 module "data-share-service" {
   source = "../modules/data-share-service"
   providers = {

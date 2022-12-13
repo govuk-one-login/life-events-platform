@@ -11,7 +11,7 @@ terraform {
   }
   backend "s3" {
     bucket         = "gdx-data-share-poc-tfstate"
-    key            = "terraform-${local.env}.tfstate"
+    key            = "terraform-dev.tfstate"
     region         = "eu-west-2"
     dynamodb_table = "gdx-data-share-poc-lock"
     encrypt        = true

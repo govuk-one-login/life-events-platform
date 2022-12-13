@@ -50,5 +50,10 @@ resource "aws_ecs_service" "gdx_data_share_poc" {
     security_groups = [aws_security_group.ecs_tasks.id]
     subnets         = module.vpc.private_subnet_ids
   }
+
+  depends_on = [
+    aws_security_group.ecs_tasks,
+    aws_lb_target_group.default
+  ]
 }
 

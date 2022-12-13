@@ -52,6 +52,10 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
       }
     }
   }
+  
+  depends_on = [
+    aws_ecs_service.gdx_data_share_poc
+  ]
 }
 
 resource "aws_iam_role" "ecsCodeDeployRole" {

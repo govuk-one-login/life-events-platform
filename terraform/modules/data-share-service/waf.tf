@@ -193,4 +193,8 @@ resource "aws_wafv2_web_acl" "gdx_data_share_poc" {
     metric_name                = local.waf_acl_name_short
     sampled_requests_enabled   = true
   }
+
+  depends_on = [
+    aws_wafv2_ip_set.blocked_ipset
+  ]
 }

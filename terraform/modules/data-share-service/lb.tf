@@ -22,6 +22,8 @@ resource "aws_lb_listener" "listener-http" {
       status_code = "HTTP_301"
     }
   }
+
+  depends_on = [aws_lb.load_balancer]
 }
 
 resource "aws_lb_listener" "listener-https" {
@@ -38,6 +40,12 @@ resource "aws_lb_listener" "listener-https" {
   lifecycle {
     ignore_changes = [default_action]
   }
+
+  depends_on = [
+    aws_lb.load_balancer,
+    aws_cloudfront_distribution.gdx_data_share_poc,
+    aws_lb_target_group.default
+  ]
 }
 
 resource "aws_lb_target_group" "default" {

@@ -3,9 +3,6 @@ name: Build and push
 on:
   workflow_call:
     inputs:
-      environment:
-        required: true
-        type: string
       push:
         required: true
         type: boolean

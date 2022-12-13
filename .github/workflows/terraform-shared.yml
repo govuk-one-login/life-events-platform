@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-D
+
       - name: Set up Terraform
         # Exposes stdout, stderr and exitcode as outputs for any steps that run terraform
         uses: hashicorp/setup-terraform@v2

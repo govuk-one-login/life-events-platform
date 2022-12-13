@@ -1,3 +1,5 @@
+#TODO-https://github.com/alphagov/gdx-data-share-poc/issues/20: When we have our own route53 we can specify certs and not use default
+#tfsec:ignore:aws-cloudfront-use-secure-tls-policy
 resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
   provider = aws.us-east-1
 
@@ -17,14 +19,14 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     }
   }
 
+  logging_config {
+    include_cookies = false
+    bucket          = "${aws_s3_bucket.cloudfront_logs_bucket.bucket}.s3.amazonaws.com"
+    prefix          = var.environment
+  }
+
   enabled         = true
   is_ipv6_enabled = false
-
-  #  logging_config {
-  #    include_cookies = false
-  #    bucket          = "${aws_s3_bucket.cloudfront_logs_bucket.bucket}.s3.amazonaws.com"
-  #    prefix          = var.environment
-  #  }
 
   default_cache_behavior {
     allowed_methods  = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]

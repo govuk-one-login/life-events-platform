@@ -11,6 +11,7 @@ locals {
   update_ips_sns_arn = "arn:aws:sns:us-east-1:806199016981:AmazonIpSpaceChanged"
 }
 
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "lb_auto" {
   count       = length(local.lb_sg_opts)
   name_prefix = "${var.environment}-ecs-alb-auto-${count.index}-"
@@ -22,6 +23,7 @@ resource "aws_security_group" "lb_auto" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "LB egress rule"
   }
 
   lifecycle {
@@ -66,7 +68,7 @@ resource "aws_iam_role_policy" "lb_sg_update" {
           "logs:CreateLogStream",
           "logs:CreateLogGroup"
         ]
-        Resource = "arn:aws:logs:*:*:*"
+        Resource = aws_cloudwatch_log_group.lb_sg_update.arn
       },
       {
         Effect = "Allow"
@@ -90,6 +92,8 @@ resource "aws_iam_role_policy" "lb_sg_update" {
 resource "aws_cloudwatch_log_group" "lb_sg_update" {
   name              = "/aws/lambda/${aws_lambda_function.lb_sg_update.function_name}"
   retention_in_days = var.cloudwatch_retention_period
+
+  kms_key_id = aws_kms_key.log_key.arn
 }
 
 data "archive_file" "lb_sg_update_lambda" {
@@ -112,6 +116,9 @@ resource "aws_lambda_function" "lb_sg_update" {
       environment = var.environment
       region      = "eu-west-2"
     }
+  }
+  tracing_config {
+    mode = "Active"
   }
 }
 

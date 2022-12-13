@@ -1,5 +1,10 @@
 resource "aws_ecs_cluster" "main" {
   name = var.environment
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 resource "aws_ecs_task_definition" "gdx_data_share_poc" {

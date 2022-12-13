@@ -8,11 +8,11 @@ locals {
     "HTML_ENTITY_DECODE",
     "URL_DECODE",
   ]
-  waf_rules_fields = [
-    "BODY",
-    "HEADER.cookie",
-    "QUERY_STRING",
-    "URI",
+  waf_rules_fields = [ # values are [ field name, max size limit ]
+    ["body", 65536],
+    ["cookies", 8192],
+    ["query_string", 1024],
+    ["uri_path", 1024],
   ]
   waf_transform_field_pairs = setproduct(local.waf_rules_transforms, local.waf_rules_fields)
 
@@ -23,132 +23,174 @@ locals {
     "URI"           = 1024,
   }
 
-  blocked_ips    = ["94.9.95.206/32", "86.107.21.87/32", "170.39.116.186/32"]
+  blocked_ips = []
 }
 
-resource "aws_waf_web_acl" "gdx_data_share_poc" {
-  name        = local.waf_acl_name
-  metric_name = local.waf_acl_name_short
+resource "aws_wafv2_ip_set" "blocked_ipset" {
+  name               = "${local.waf_acl_name}-blocked-ipset"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = local.blocked_ips
+}
+
+resource "aws_wafv2_web_acl" "gdx_data_share_poc" {
+  name     = local.waf_acl_name
+  scope    = "CLOUDFRONT"
+  provider = aws.us-east-1 # To work with CloudFront, you must also specify the region us-east-1 (N. Virginia) on the AWS provider
 
   default_action {
-    type = "ALLOW"
+    allow {}
   }
 
-  dynamic "rules" {
-    for_each = [
-      {
-        id     = aws_waf_rule.max_size.id
-        type   = "REGULAR"
-        action = "BLOCK"
-      },
-      {
-        id     = aws_waf_rule.sql_injection.id
-        type   = "REGULAR"
-        action = "BLOCK"
-      },
-      {
-        id     = aws_waf_rule.blocked_ips.id
-        type   = "REGULAR"
-        action = "BLOCK"
-      },
-    ]
-    iterator = rule
+  dynamic "rule" {
+    for_each = local.waf_rules_fields
+    iterator = field
     content {
+      name     = "${local.waf_acl_name}-max-field-size-${field.value[0]}"
+      priority = field.key + 1
+
       action {
-        type = rule.value.action
+        block {}
       }
-      rule_id  = rule.value.id
-      type     = rule.value.type
-      priority = rule.key + 1
-    }
-  }
 
-  depends_on = [
-    aws_waf_rule.max_size,
-    aws_waf_rule.sql_injection,
-    aws_waf_rule.blocked_ips,
-  ]
-}
+      statement {
+        size_constraint_statement {
+          dynamic "field_to_match" {
+            for_each = field.value[0] == "body" ? [""] : []
+            content {
+              body {}
+            }
+          }
+          dynamic "field_to_match" {
+            for_each = field.value[0] == "cookies" ? [""] : []
+            content {
+              cookies {
+                match_pattern {
+                  all {}
+                }
+                match_scope       = "ALL"
+                oversize_handling = "MATCH"
+              }
+            }
+          }
+          dynamic "field_to_match" {
+            for_each = field.value[0] == "query_string" ? [""] : []
+            content {
+              query_string {}
+            }
+          }
+          dynamic "field_to_match" {
+            for_each = field.value[0] == "uri_path" ? [""] : []
+            content {
+              uri_path {}
+            }
+          }
 
-resource "aws_waf_rule" "sql_injection" {
-  name        = "${local.waf_acl_name}-sql-injection-rule"
-  metric_name = "${local.waf_acl_name_short}sqlinjectionrule"
-
-  predicates {
-    data_id = aws_waf_sql_injection_match_set.sql.id
-    negated = false
-    type    = "SqlInjectionMatch"
-  }
-}
-
-resource "aws_waf_rule" "max_size" {
-  name        = "${local.waf_acl_name}-max-field-size-rule"
-  metric_name = "${local.waf_acl_name_short}maxfieldsizesrule"
-
-  predicates {
-    data_id = aws_waf_size_constraint_set.max_size.id
-    negated = false
-    type    = "SizeConstraint"
-  }
-}
-
-resource "aws_waf_sql_injection_match_set" "sql" {
-  name = "${local.waf_acl_name}-sql"
-
-  dynamic "sql_injection_match_tuples" {
-    # Create a match for every combination of transform and request field
-    for_each = local.waf_transform_field_pairs
-    iterator = transform_field_pair
-    content {
-      text_transformation = transform_field_pair.value[0]
-      field_to_match {
-        type = split(".", transform_field_pair.value[1])[0]
-        data = length(split(".", transform_field_pair.value[1])) > 1 ? split(".", transform_field_pair.value[1])[1] : ""
+          text_transformation {
+            priority = 1
+            type     = "NONE"
+          }
+          comparison_operator = "GT"
+          size                = field.value[1]
+        }
       }
-    }
-  }
-}
 
-resource "aws_waf_size_constraint_set" "max_size" {
-  name = "${local.waf_acl_name}-max-size"
-
-  dynamic "size_constraints" {
-    for_each = local.waf_rules_max_sizes
-    iterator = size
-    content {
-      text_transformation = "NONE"
-      comparison_operator = "GT"
-      size                = size.value
-      field_to_match {
-        type = split(".", size.key)[0]
-        data = length(split(".", size.key)) > 1 ? split(".", size.key)[1] : ""
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "${local.waf_acl_name_short}maxfieldsize${join("", split("_", field.value[0]))}"
+        sampled_requests_enabled   = true
       }
     }
   }
-}
 
-resource "aws_waf_ipset" "blocked_ipset" {
-  name = "${local.waf_acl_name}-blocked-ipset"
-
-  dynamic "ip_set_descriptors" {
-    for_each = local.blocked_ips
-    iterator = cidr
-
+  dynamic "rule" {
+    for_each = local.waf_rules_fields
+    iterator = field
     content {
-      type  = "IPV4"
-      value = cidr.value
+      name     = "${local.waf_acl_name}-sql-injection-${field.value[0]}"
+      priority = length(local.waf_rules_fields) + field.key + 1
+
+      action {
+        block {}
+      }
+
+      statement {
+        sqli_match_statement {
+          dynamic "field_to_match" {
+            for_each = field.value[0] == "body" ? [""] : []
+            content {
+              body {}
+            }
+          }
+          dynamic "field_to_match" {
+            for_each = field.value[0] == "cookies" ? [""] : []
+            content {
+              cookies {
+                match_pattern {
+                  all {}
+                }
+                match_scope       = "ALL"
+                oversize_handling = "MATCH"
+              }
+            }
+          }
+          dynamic "field_to_match" {
+            for_each = field.value[0] == "query_string" ? [""] : []
+            content {
+              query_string {}
+            }
+          }
+          dynamic "field_to_match" {
+            for_each = field.value[0] == "uri_path" ? [""] : []
+            content {
+              uri_path {}
+            }
+          }
+
+          dynamic "text_transformation" {
+            # Create a match for each transform
+            for_each = local.waf_rules_transforms
+            iterator = transform
+            content {
+              type     = transform.value
+              priority = transform.key + 1
+            }
+          }
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "${local.waf_acl_name_short}sqlinjection${join("", split("_", field.value[0]))}"
+        sampled_requests_enabled   = true
+      }
     }
   }
-}
 
-resource "aws_waf_rule" "blocked_ips" {
-  depends_on  = [aws_waf_ipset.blocked_ipset]
-  name        = "${local.waf_acl_name}-blocked-ips-rule"
-  metric_name = "${local.waf_acl_name_short}blockedipsrule"
+  rule {
+    name     = "${local.waf_acl_name}-blocked-ips-rule"
+    priority = 1
 
-  predicates {
-    data_id = aws_waf_ipset.blocked_ipset.id
-    negated = false
-    type    = "IPMatch"
+    action {
+      block {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.blocked_ipset.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${local.waf_acl_name_short}blockedipsrule"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = local.waf_acl_name_short
+    sampled_requests_enabled   = true
   }
 }

@@ -40,7 +40,7 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
     target_group_pair_info {
 
       prod_traffic_route {
-        listener_arns = [aws_lb_listener.lb-listener-https.arn]
+        listener_arns = [aws_lb_listener.listener-https.arn]
       }
 
       target_group {
@@ -78,8 +78,6 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
   role       = aws_iam_role.ecsCodeDeployRole.name
 }
-
-data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "passrole_codedeploy" {
   statement {

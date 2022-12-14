@@ -51,11 +51,25 @@ resource "aws_iam_role_policy_attachment" "ecs_task" {
   policy_arn = aws_iam_policy.ecs_task.arn
 }
 
-data "aws_iam_policy" "ecs_task_cloudwatch_access" {
-  name = "CloudWatchFullAccess"
+data "aws_iam_policy_document" "ecs_task_cloudwatch_access" {
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogStreams"
+    ]
+    resources = ["arn:aws:logs:*:*:*"]
+    effect    = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_cloudwatch_access" {
+  name   = "${var.environment}-ecs-task-policy"
+  policy = data.aws_iam_policy_document.ecs_task_cloudwatch_access.json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
   role       = aws_iam_role.ecs_task.name
-  policy_arn = data.aws_iam_policy.ecs_task_cloudwatch_access.arn
+  policy_arn = aws_iam_policy.ecs_task_cloudwatch_access.arn
 }

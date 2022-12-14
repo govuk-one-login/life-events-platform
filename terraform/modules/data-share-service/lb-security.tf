@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "lb_sg_update_policy" {
       "ec2:RevokeSecurityGroupIngress",
       "ec2:AuthorizeSecurityGroupIngress"
     ]
-    resources = [aws_security_group.lb_auto[*].arn]
+    resources = aws_security_group.lb_auto[*].arn
   }
 }
 

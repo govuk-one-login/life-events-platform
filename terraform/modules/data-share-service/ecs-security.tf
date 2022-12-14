@@ -5,7 +5,7 @@ resource "aws_security_group" "ecs_tasks" {
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    protocol        = "http"
+    protocol        = "tcp"
     from_port       = 80
     to_port         = 80
     security_groups = aws_security_group.lb_auto.*.id

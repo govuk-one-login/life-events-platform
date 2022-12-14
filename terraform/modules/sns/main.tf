@@ -3,7 +3,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_sns_topic" "topic" {
   name_prefix       = "${var.environment}-gdx-sns-topic"
   display_name      = var.topic_display_name
-  kms_master_key_id = aws_kms_key.kms_key.arn
+  kms_master_key_id = aws_kms_key.sns_key.arn
 }
 
 # rework as part of #46
@@ -36,7 +36,12 @@ resource "aws_iam_user_policy" "sns_policy" {
   user   = aws_iam_user.sns_user.name
 }
 
-resource "aws_kms_key" "kms_key" {
+resource "aws_kms_key" "sns_key" {
   enable_key_rotation = true
   description         = "Key used to encrypt sns queue"
+}
+
+resource "aws_kms_alias" "sns_key_alias" {
+  name          = "alias/${var.environment}-sns-key"
+  target_key_id = aws_kms_key.sns_key.arn
 }

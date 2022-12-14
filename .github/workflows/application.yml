@@ -34,7 +34,7 @@ jobs:
         env: [dev, demo]
     environment: ${{ matrix.env }}
     name: Trigger codedeploy for ${{ matrix.env }} environment
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/trigger_codedeploy.yml
     with:
       environment: ${{ matrix.env }}
       ecs_task_definition_filepath: .aws/task-definition.json

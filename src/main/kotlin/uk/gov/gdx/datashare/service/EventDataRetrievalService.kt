@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -116,13 +116,15 @@ class EventDataRetrievalService(
     surname: String,
     forenames: String,
     dateOfBirth: LocalDate
-  ): String? =
-    hmrcApiService.findNiNoByNameAndDob(
+  ): String? {
+    log.debug("Looking up NINO from HMRC : search by {}, {}, {}", surname, forenames, dateOfBirth)
+    return hmrcApiService.findNiNoByNameAndDob(
       surname = surname,
       firstname = forenames,
       dob = dateOfBirth
     ).map { nino -> nino.ni_number }
-      .awaitSingle()
+      .awaitSingleOrNull()
+  }
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

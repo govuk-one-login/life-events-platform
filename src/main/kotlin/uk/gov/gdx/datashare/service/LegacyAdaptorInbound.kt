@@ -23,7 +23,7 @@ class LegacyAdaptorInbound(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(fixedRate = 5000)
+  @Scheduled(fixedRate = 1000 * 60)
   fun pollFtpServer() {
     val testFtpClient = FTPClient()
     val host = "localhost"

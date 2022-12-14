@@ -50,45 +50,50 @@ class LegacyAdaptorOutbound(
   suspend fun processDeathEvent(event: EventMessage) {
     log.debug("processing {}", event)
 
-    // Go and get data from Event Retrieval API
-    val deathData = getEventPayload(event.id)
+    try {
+      // Go and get data from Event Retrieval API
+      val deathData = getEventPayload(event.id)
 
-    // turn into file and send to FTP
-    val details = deathData.details
-    if (details != null) {
+      // turn into file and send to FTP
+      val details = deathData.details
+      if (details != null) {
 
-      // who needs it?
-      val findAllByLegacyFtp = dataConsumerRepository.findAllByLegacyFtp(true)
-      findAllByLegacyFtp.collect {
+        // who needs it?
+        val findAllByLegacyFtp = dataConsumerRepository.findAllByLegacyFtp(true)
+        findAllByLegacyFtp.collect {
 
-        log.debug("Sending event via FTP to ${it.clientName}")
-        val testFtpClient = FTPClient()
-        val host = "localhost"
-        val port = 31000
-        try {
-          testFtpClient.connect(host, port)
-          testFtpClient.login("user", "password")
+          log.debug("Sending event via FTP to ${it.clientName}")
+          val testFtpClient = FTPClient()
+          val host = "localhost"
+          val port = 31000
+          try {
+            testFtpClient.connect(host, port)
+            testFtpClient.login("user", "password")
 
-          val filename = "${event.id}.csv"
-          withContext(Dispatchers.IO) {
-            FileOutputStream(filename).apply { writeCsv(details) }
-            testFtpClient.setFileType(FTP.ASCII_FILE_TYPE)
-            testFtpClient.storeFile("/outbound/$filename", FileInputStream(filename))
+            val filename = "${event.id}.csv"
+            withContext(Dispatchers.IO) {
+              FileOutputStream(filename).apply { writeCsv(details) }
+              testFtpClient.setFileType(FTP.ASCII_FILE_TYPE)
+              testFtpClient.storeFile("/outbound/$filename", FileInputStream(filename))
 
-            log.debug("File $filename sent to FTP Server")
+              log.debug("File $filename sent to FTP Server")
+            }
+            testFtpClient.logout()
+
+            auditService.sendMessage(
+              auditType = AuditType.FTP_OUTBOUND,
+              id = event.id,
+              details = "FTP to ${it.clientName} : ${event.description}",
+              username = it.clientId
+            )
+          } catch (e: ConnectException) {
+            log.warn("Failed to connect to FTP server")
           }
-          testFtpClient.logout()
-
-          auditService.sendMessage(
-            auditType = AuditType.FTP_OUTBOUND,
-            id = event.id,
-            details = "FTP to ${it.clientName} : ${event.description}",
-            username = it.clientId
-          )
-        } catch (e: ConnectException) {
-          LegacyAdaptorInbound.log.warn("Failed to connect to FTP server")
         }
+
       }
+    } catch (e: Exception) {
+      log.warn("Unable to retrieve event data")
     }
   }
 

@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "ecs_task_cloudwatch_access" {
 }
 
 resource "aws_iam_policy" "ecs_task_cloudwatch_access" {
-  name   = "${var.environment}-ecs-task-policy"
+  name   = "${var.environment}-ecs-task-cloudwatch-access-policy"
   policy = data.aws_iam_policy_document.ecs_task_cloudwatch_access.json
 }
 

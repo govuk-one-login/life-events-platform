@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "lb_sg_update_assume_policy" {
 }
 
 resource "aws_iam_role" "lb_sg_update" {
-  name = "${var.environment}-lb-sg-update"
+  name               = "${var.environment}-lb-sg-update"
   assume_role_policy = data.aws_iam_policy_document.lb_sg_update_assume_policy.json
 }
 
@@ -83,8 +83,8 @@ data "aws_iam_policy_document" "lb_sg_update_policy" {
 }
 
 resource "aws_iam_role_policy" "lb_sg_update" {
-  name = "${var.environment}-lb-sg-update"
-  role = aws_iam_role.lb_sg_update.id
+  name   = "${var.environment}-lb-sg-update"
+  role   = aws_iam_role.lb_sg_update.id
   policy = data.aws_iam_policy_document.lb_sg_update_policy.json
 }
 

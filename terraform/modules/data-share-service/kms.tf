@@ -8,7 +8,7 @@ resource "aws_kms_key" "log_key" {
 data "aws_iam_policy_document" "kms_log_key_policy" {
   statement {
     effect = "Allow"
-    sid = "Enable IAM User Permissions"
+    sid    = "Enable IAM User Permissions"
     principals {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]

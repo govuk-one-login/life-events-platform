@@ -61,7 +61,6 @@ class WebClientConfiguration(
       .build()
   }
 
-
   @Bean
   fun eventDataRetrievalApiWebClient(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
     val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)

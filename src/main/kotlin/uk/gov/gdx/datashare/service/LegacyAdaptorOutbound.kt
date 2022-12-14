@@ -2,8 +2,6 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.forEach
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.apache.commons.net.ftp.FTP
@@ -21,7 +19,6 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import java.net.ConnectException
 import java.time.LocalDateTime
-
 
 @Service
 class LegacyAdaptorOutbound(
@@ -92,10 +89,8 @@ class LegacyAdaptorOutbound(
           LegacyAdaptorInbound.log.warn("Failed to connect to FTP server")
         }
       }
-
     }
   }
-
 
   fun OutputStream.writeCsv(deathData: DeathNotification) {
     val writer = bufferedWriter()
@@ -105,7 +100,6 @@ class LegacyAdaptorOutbound(
     writer.newLine()
     writer.flush()
   }
-
 
   suspend fun getEventPayload(id: String): EventInformation =
     eventDataRetrievalApiWebClient.get()

@@ -48,7 +48,7 @@ data class EventToPublish(
   @Schema(description = "Type of event", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
 
-  @Schema(description = "Date and time when the event took place, default is now", required = false, type="date-time", example = "2021-12-31T12:34:56")
+  @Schema(description = "Date and time when the event took place, default is now", required = false, type = "date-time", example = "2021-12-31T12:34:56")
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
   val eventTime: LocalDateTime? = null,
 

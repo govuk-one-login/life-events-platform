@@ -1,9 +1,12 @@
 package uk.gov.gdx.datashare.service
 
 import kotlinx.coroutines.flow.Flow
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToFlow
+import uk.gov.gdx.datashare.config.NoDataFoundException
 import java.time.LocalDate
 
 @Service
@@ -11,11 +14,17 @@ class LevApiService(
   private val levApiWebClient: WebClient
 ) {
 
-  suspend fun findDeathById(id: Int): Flow<DeathRecord> =
-    levApiWebClient.get()
-      .uri("/v1/registration/death/$id")
-      .retrieve()
-      .bodyToFlow()
+  suspend fun findDeathById(id: Int): Flow<DeathRecord> {
+    try {
+      return levApiWebClient.get()
+        .uri("/v1/registration/death/$id")
+        .retrieve()
+        .bodyToFlow()
+    } catch (e: WebClientResponseException) {
+      throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) NoDataFoundException(id.toString())
+      else e
+    }
+  }
 }
 
 data class DeathRecord(

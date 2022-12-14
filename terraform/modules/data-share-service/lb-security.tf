@@ -106,7 +106,7 @@ resource "aws_lambda_function" "lb_sg_update" {
   environment {
     variables = {
       environment = var.environment
-      region      = "eu-west-2"
+      region      = var.region
     }
   }
   tracing_config {

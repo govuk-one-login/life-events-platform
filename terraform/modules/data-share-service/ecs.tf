@@ -31,7 +31,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         logDriver : "awslogs",
         options : {
           awslogs-group : aws_cloudwatch_log_group.ecs_logs.name,
-          awslogs-region : "eu-west-2",
+          awslogs-region : var.region,
           awslogs-stream-prefix : "gdx-data-share-poc",
           awslogs-create-group : "true"
         }

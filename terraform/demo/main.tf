@@ -54,6 +54,7 @@ provider "aws" {
 }
 
 data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
 module "ecr" {
   source = "../modules/ecr"
@@ -64,7 +65,8 @@ module "lev_api" {
   providers = {
     aws = aws.eu-west-1
   }
-  environment_name = local.env
+  environment = local.env
+  ecr_url     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
 }
 
 module "data-share-service" {
@@ -73,6 +75,7 @@ module "data-share-service" {
     aws.us-east-1 = aws.us-east-1
   }
   environment                 = local.env
+  region                      = data.aws_region.current.name
   ecr_url                     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
   cloudwatch_retention_period = 30
   vpc_cidr                    = "10.158.16.0/20"

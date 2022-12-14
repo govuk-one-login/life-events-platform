@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "lev_api_ecr_role_assume_policy" {
 }
 
 resource "aws_iam_role" "lev_api_ecr_role" {
-  name = "${var.environment_name}-lev-api-ecr-role"
+  name = "${var.environment}-lev-api-ecr-role"
 
   assume_role_policy = data.aws_iam_policy_document.lev_api_ecr_role_assume_policy.json
 }
@@ -36,7 +36,7 @@ resource "aws_iam_role_policy_attachment" "lev_api_ecr_role" {
 }
 
 resource "aws_apprunner_service" "lev_api" {
-  service_name = "${var.environment_name}-lev-api"
+  service_name = "${var.environment}-lev-api"
 
   source_configuration {
     image_repository {
@@ -48,7 +48,7 @@ resource "aws_apprunner_service" "lev_api" {
           MOCK        = "true"
         }
       }
-      image_identifier      = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com/quay/ukhomeofficedigital/lev-api:latest"
+      image_identifier      = "${var.ecr_url}/quay/ukhomeofficedigital/lev-api:latest"
       image_repository_type = "ECR"
     }
     authentication_configuration {

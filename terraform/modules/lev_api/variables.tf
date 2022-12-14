@@ -1,1 +1,2 @@
-variable "environment_name" {}
+variable "environment" {}
+variable "ecr_url" {}

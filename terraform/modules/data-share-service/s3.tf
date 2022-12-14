@@ -4,7 +4,7 @@ data "aws_canonical_user_id" "current" {}
 #tfsec:ignore:aws-s3-enable-bucket-logging
 #tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "cloudfront_logs_bucket" {
-  bucket = "${var.environment}-cloudfront-logs"
+  bucket = "${var.environment}-cloudfront-logs-gdx-data-share-poc"
 
   lifecycle {
     prevent_destroy = true

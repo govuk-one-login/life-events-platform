@@ -108,3 +108,5 @@ terraform.rc
 
 .trivyignore
 sonar-project.properties
+
+bin

@@ -39,54 +39,53 @@ resource "aws_security_group" "lb_auto" {
   }
 }
 
+data "aws_iam_policy_document" "lb_sg_update_assume_policy" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
 resource "aws_iam_role" "lb_sg_update" {
-  name = "${var.environment}-lb-sg-update"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      }
+  name               = "${var.environment}-lb-sg-update"
+  assume_role_policy = data.aws_iam_policy_document.lb_sg_update_assume_policy.json
+}
+
+data "aws_iam_policy_document" "lb_sg_update_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:PutLogEvents",
+      "logs:CreateLogStream",
+      "logs:CreateLogGroup"
     ]
-  })
+    resources = [aws_cloudwatch_log_group.lb_sg_update.arn]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeSecurityGroups"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:RevokeSecurityGroupIngress",
+      "ec2:AuthorizeSecurityGroupIngress"
+    ]
+    resources = aws_security_group.lb_auto[*].arn
+  }
 }
 
 resource "aws_iam_role_policy" "lb_sg_update" {
-  name = "${var.environment}-lb-sg-update"
-  role = aws_iam_role.lb_sg_update.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "logs:PutLogEvents",
-          "logs:CreateLogStream",
-          "logs:CreateLogGroup"
-        ]
-        Resource = aws_cloudwatch_log_group.lb_sg_update.arn
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:DescribeSecurityGroups",
-        ],
-        Resource = "*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:RevokeSecurityGroupIngress",
-          "ec2:AuthorizeSecurityGroupIngress"
-        ],
-        Resource = aws_security_group.lb_auto[*].arn
-      }
-    ]
-  })
+  name   = "${var.environment}-lb-sg-update"
+  role   = aws_iam_role.lb_sg_update.id
+  policy = data.aws_iam_policy_document.lb_sg_update_policy.json
 }
 
 resource "aws_cloudwatch_log_group" "lb_sg_update" {

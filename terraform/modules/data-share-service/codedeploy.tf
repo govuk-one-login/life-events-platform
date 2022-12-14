@@ -57,21 +57,21 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
   ]
 }
 
+data "aws_iam_policy_document" "ecs_codeploy_assume_policy" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["codedeploy.amazonaws.com"]
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
 resource "aws_iam_role" "ecs_codedeploy" {
   name = "${var.environment}-ecs-code-deploy-role"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = "sts:AssumeRole"
-        Principal = {
-          Service = "codedeploy.amazonaws.com"
-        },
-      }
-    ]
-  })
+  assume_role_policy = data.aws_iam_policy_document.ecs_codeploy_assume_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
@@ -79,7 +79,7 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
   role       = aws_iam_role.ecs_codedeploy.name
 }
 
-data "aws_iam_policy_document" "passrole_codedeploy" {
+data "aws_iam_policy_document" "passrole_codedeploy_policy" {
   statement {
     effect = "Allow"
     actions = [
@@ -94,7 +94,7 @@ data "aws_iam_policy_document" "passrole_codedeploy" {
 
 resource "aws_iam_policy" "passrole_codedeploy" {
   name   = "${var.environment}-passrole-ecstaskexecution"
-  policy = data.aws_iam_policy_document.passrole_codedeploy.json
+  policy = data.aws_iam_policy_document.passrole_codedeploy_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "passrole_codedeploy" {

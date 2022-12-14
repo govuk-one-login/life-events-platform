@@ -6,7 +6,7 @@ resource "aws_kms_key" "log_key" {
 }
 
 resource "aws_kms_alias" "log_key_alias" {
-  name          = "alias/${var.environment}-log-key"
+  name          = "alias/${var.environment}/log-key"
   target_key_id = aws_kms_key.log_key.arn
 }
 

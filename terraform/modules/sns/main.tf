@@ -42,6 +42,6 @@ resource "aws_kms_key" "sns_key" {
 }
 
 resource "aws_kms_alias" "sns_key_alias" {
-  name          = "alias/${var.environment}-sns-key"
+  name          = "alias/${var.environment}/sns-key"
   target_key_id = aws_kms_key.sns_key.arn
 }

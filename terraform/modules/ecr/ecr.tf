@@ -7,13 +7,18 @@ resource "aws_ecr_repository" "gdx_data_share_poc" {
   }
   encryption_configuration {
     encryption_type = "KMS"
-    kms_key         = aws_kms_key.gdx_data_share_poc_key.arn
+    kms_key         = aws_kms_key.ecr_key.arn
   }
 }
 
-resource "aws_kms_key" "gdx_data_share_poc_key" {
-  description         = "ECR repository encryption key"
+resource "aws_kms_key" "ecr_key" {
+  description         = "Key used to encrypt ECR repository"
   enable_key_rotation = true
+}
+
+resource "aws_kms_alias" "ecr_key_alias" {
+  name          = "alias/ecr-key"
+  target_key_id = aws_kms_key.ecr_key.arn
 }
 
 resource "aws_ecr_registry_scanning_configuration" "ecr_scanning_configuration" {

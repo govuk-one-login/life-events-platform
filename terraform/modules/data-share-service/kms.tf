@@ -1,8 +1,13 @@
 resource "aws_kms_key" "log_key" {
-  description         = "Logs encryption key"
+  description         = "Key used to encrypt cloudfront and cloudwatch logs"
   enable_key_rotation = true
 
   policy = data.aws_iam_policy_document.kms_log_key_policy.json
+}
+
+resource "aws_kms_alias" "log_key_alias" {
+  name          = "alias/${var.environment}/log-key"
+  target_key_id = aws_kms_key.log_key.arn
 }
 
 data "aws_iam_policy_document" "kms_log_key_policy" {

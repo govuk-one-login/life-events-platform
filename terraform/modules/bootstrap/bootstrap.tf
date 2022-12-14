@@ -25,6 +25,11 @@ resource "aws_kms_key" "state_bucket" {
   description         = "Key used to encrypt state bucket"
 }
 
+resource "aws_kms_alias" "state_bucket_key_alias" {
+  name          = "alias/state-bucket-key"
+  target_key_id = aws_kms_key.state_bucket.arn
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "state_bucket" {
   bucket = aws_s3_bucket.state_bucket.bucket
 

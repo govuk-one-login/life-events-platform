@@ -4,13 +4,11 @@ on:
   push:
     branches:
       - "main"
-    paths:
-      - "**/**"
-      - "!terraform/**"
+    paths-ignore:
+      - "terraform/**"
   pull_request:
-    paths:
-      - "**/**"
-      - "!terraform/**"
+    paths-ignore:
+      - "terraform/**"
 
 concurrency:
   group: application-pipeline-${{ github.ref_name }}
@@ -36,7 +34,7 @@ jobs:
         env: [dev, demo]
     environment: ${{ matrix.env }}
     name: Trigger codedeploy for ${{ matrix.env }} environment
-    uses: ./.github/workflows/trigger_codedeploy.yml
+    uses: ./.github/workflows/deploy.yml
     with:
       environment: ${{ matrix.env }}
       ecs_task_definition_filepath: .aws/task-definition.json

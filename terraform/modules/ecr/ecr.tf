@@ -48,6 +48,6 @@ resource "aws_ecr_repository" "lev_api" {
   }
   encryption_configuration {
     encryption_type = "KMS"
-    kms_key         = aws_kms_key.gdx_data_share_poc_key.arn
+    kms_key         = aws_kms_key.ecr_key.arn
   }
 }

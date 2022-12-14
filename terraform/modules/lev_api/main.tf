@@ -9,21 +9,21 @@ terraform {
 
 data "aws_caller_identity" "current" {}
 
+data "aws_iam_policy_document" "lev_api_ecr_role_assume_policy" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["build.apprunner.amazonaws.com"]
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
 resource "aws_iam_role" "lev_api_ecr_role" {
   name = "${var.environment_name}-lev-api-ecr-role"
 
-  assume_role_policy = jsonencode({
-    Version : "2012-10-17",
-    Statement : [
-      {
-        Action : "sts:AssumeRole",
-        Principal : {
-          Service : "build.apprunner.amazonaws.com",
-        },
-        Effect : "Allow",
-      }
-    ]
-  })
+  assume_role_policy = data.aws_iam_policy_document.lev_api_ecr_role_assume_policy.json
 }
 
 data "aws_iam_policy" "apprunner_ecr_policy" {

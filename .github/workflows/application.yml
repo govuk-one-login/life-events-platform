@@ -5,10 +5,10 @@ on:
     branches:
       - "main"
     paths-ignore:
-      - "terraform/**"
+      - "**.tf"
   pull_request:
     paths-ignore:
-      - "terraform/**"
+      - "**.tf"
 
 concurrency:
   group: application-pipeline-${{ github.ref_name }}

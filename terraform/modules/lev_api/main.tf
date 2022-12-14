@@ -62,5 +62,5 @@ resource "aws_apprunner_service" "lev_api" {
     protocol = "HTTP"
   }
 
-  depends_on = [aws_iam_role.lev_api_ecr_role]
+  depends_on = [aws_iam_role_policy_attachment.lev_api_ecr_role]
 }

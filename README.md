@@ -308,7 +308,7 @@ Notice how the NINO is not returned. This is because the client is not setup to 
 | dwp-event-receiver | DWP | DEATH\_NOTIFICATION,BIRTH\_NOTIFICATION | 2022-11-30 16:41:31.908146 +00:00 | true |
 
 
-
 ### Architecture
 
 Architecture decision records start [here](doc/architecture/decisions/0001-use-adr.md)
+

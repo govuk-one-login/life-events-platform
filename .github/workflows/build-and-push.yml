@@ -21,8 +21,8 @@ on:
 
 jobs:
   build-image:
-    environment: dev
     name: Build Docker image ${{ inputs.push && 'and push to ECR' || '' }}
+    environment: dev
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.build-image.outputs.name }}
@@ -64,13 +64,13 @@ jobs:
           echo "name=$ECR_REPOSITORY/$IMAGE_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
   tag-environments:
+    name: Tag docker image for ${{ matrix.env }} environment
     needs: build-image
     if: inputs.push
     strategy:
       matrix:
         env: [dev, demo]
     environment: ${{ matrix.env }}
-    name: Tag docker image for ${{ matrix.env }} environment
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials

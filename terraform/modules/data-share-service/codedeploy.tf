@@ -74,9 +74,13 @@ resource "aws_iam_role" "ecs_codedeploy" {
   assume_role_policy = data.aws_iam_policy_document.ecs_codeploy_assume_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
+data "aws_iam_policy" "codedeploy_for_ecs" {
+  name = "AWSCodeDeployRoleForECS"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_codedeploy" {
   role       = aws_iam_role.ecs_codedeploy.name
+  policy_arn = data.aws_iam_policy.codedeploy_for_ecs.arn
 }
 
 data "aws_iam_policy_document" "passrole_codedeploy_policy" {
@@ -98,6 +102,6 @@ resource "aws_iam_policy" "passrole_codedeploy" {
 }
 
 resource "aws_iam_role_policy_attachment" "passrole_codedeploy" {
-  policy_arn = aws_iam_policy.passrole_codedeploy.arn
   role       = aws_iam_role.ecs_codedeploy.name
+  policy_arn = aws_iam_policy.passrole_codedeploy.arn
 }

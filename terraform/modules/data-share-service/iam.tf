@@ -1,5 +1,5 @@
 resource "aws_iam_role" "ecs_execution" {
-  name               = "${var.environment}-task-execution-role"
+  name               = "${var.environment}-execution-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
@@ -14,9 +14,13 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
+data "aws_iam_policy" "ecs_task_execution" {
+  name = "AmazonECSTaskExecutionRolePolicy"
+}
+
 resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
   role       = aws_iam_role.ecs_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  policy_arn = data.aws_iam_policy.ecs_task_execution.arn
 }
 
 resource "aws_iam_role" "ecs_task" {
@@ -24,7 +28,7 @@ resource "aws_iam_role" "ecs_task" {
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
-data "aws_iam_policy_document" "ecs_exec" {
+data "aws_iam_policy_document" "ecs_task" {
   statement {
     actions = [
       "ssmmessages:CreateControlChannel",
@@ -37,13 +41,35 @@ data "aws_iam_policy_document" "ecs_exec" {
   }
 }
 
-resource "aws_iam_policy" "ecs_exec" {
-  name   = "${var.environment}-ecs-exec-policy"
-  path   = "/"
-  policy = data.aws_iam_policy_document.ecs_exec.json
+resource "aws_iam_policy" "ecs_task" {
+  name   = "${var.environment}-ecs-task-policy"
+  policy = data.aws_iam_policy_document.ecs_task.json
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_exec" {
+resource "aws_iam_role_policy_attachment" "ecs_task" {
   role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.ecs_exec.arn
+  policy_arn = aws_iam_policy.ecs_task.arn
+}
+
+data "aws_iam_policy_document" "ecs_task_cloudwatch_access" {
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogStreams"
+    ]
+    resources = [aws_cloudwatch_log_group.ecs_logs.arn]
+    effect    = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_cloudwatch_access" {
+  name   = "${var.environment}-ecs-task-policy"
+  policy = data.aws_iam_policy_document.ecs_task_cloudwatch_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_cloudwatch_access.arn
 }

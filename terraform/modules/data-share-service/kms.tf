@@ -25,7 +25,7 @@ data "aws_iam_policy_document" "kms_log_key_policy" {
     effect = "Allow"
     principals {
       type        = "Service"
-      identifiers = ["logs.eu-west-2.amazonaws.com"]
+      identifiers = ["logs.${var.region}.amazonaws.com"]
     }
     actions = [
       "kms:Encrypt*",

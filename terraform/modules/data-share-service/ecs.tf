@@ -27,6 +27,15 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "HMPPS_SQS_TOPICS_EVENT_SECRET_ACCESS_KEY", "value" : module.sns.access_key_secret },
         { "name" : "HMPPS_SQS_TOPICS_EVENT_ARN", "value" : module.sns.sns_topic_arn }
       ]
+      logConfiguration : {
+        logDriver : "awslogs",
+        options : {
+          awslogs-group : aws_cloudwatch_log_group.ecs_logs.name,
+          awslogs-region : var.region,
+          awslogs-stream-prefix : "gdx-data-share-poc",
+          awslogs-create-group : "true"
+        }
+      }
     }
   ])
 }

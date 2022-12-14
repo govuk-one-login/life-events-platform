@@ -88,13 +88,6 @@ resource "aws_iam_role_policy" "lb_sg_update" {
   policy = data.aws_iam_policy_document.lb_sg_update_policy.json
 }
 
-resource "aws_cloudwatch_log_group" "lb_sg_update" {
-  name              = "/aws/lambda/${aws_lambda_function.lb_sg_update.function_name}"
-  retention_in_days = var.cloudwatch_retention_period
-
-  kms_key_id = aws_kms_key.log_key.arn
-}
-
 data "archive_file" "lb_sg_update_lambda" {
   type        = "zip"
   source_file = "${path.module}/lambdas/update_security_groups.py"
@@ -113,7 +106,7 @@ resource "aws_lambda_function" "lb_sg_update" {
   environment {
     variables = {
       environment = var.environment
-      region      = "eu-west-2"
+      region      = var.region
     }
   }
   tracing_config {

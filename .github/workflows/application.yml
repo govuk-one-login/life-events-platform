@@ -36,6 +36,7 @@ jobs:
     strategy:
       matrix:
         env: [dev, demo]
+      fail-fast: false
     uses: ./.github/workflows/trigger-codedeploy.yml
     with:
       environment: ${{ matrix.env }}

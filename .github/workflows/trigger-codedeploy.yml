@@ -29,8 +29,8 @@ on:
 
 jobs:
   trigger-codedeploy:
-    environment: inputs.environment
     name: Trigger Codedeploy
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Setup variables for environment

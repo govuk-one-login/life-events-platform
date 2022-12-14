@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "ecs_task_cloudwatch_access" {
       "logs:PutLogEvents",
       "logs:DescribeLogStreams"
     ]
-    resources = ["arn:aws:logs:*:*:*"]
+    resources = [aws_cloudwatch_log_group.ecs_logs.arn]
     effect    = "Allow"
   }
 }

@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - "main"
+    paths-ignore:
+      - "terraform/**"
   pull_request:
+    paths-ignore:
+      - "terraform/**"
 
 concurrency:
   group: application-pipeline-${{ github.ref_name }}

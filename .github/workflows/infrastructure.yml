@@ -36,13 +36,13 @@ jobs:
         run: terraform fmt -check -diff -recursive
 
   validate-infrastructure:
+    name: Validate ${{ matrix.env }} Terraform
+    needs: tf-fmt
     if: github.event_name == 'pull_request'
     strategy:
       matrix:
         env: [dev, demo]
       fail-fast: false
-    name: Validate ${{ matrix.env }} Terraform
-    needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml
     with:
       working-directory: terraform/${{ matrix.env }}
@@ -51,13 +51,13 @@ jobs:
     secrets: inherit
 
   deploy-infrastructure:
+    name: Deploy to ${{ matrix.env }} environment
+    needs: tf-fmt
     if: github.event_name == 'push' && github.ref_name == 'main'
     strategy:
       matrix:
         env: [dev, demo]
       fail-fast: false
-    name: Deploy to ${{ matrix.env }} environment
-    needs: tf-fmt
     uses: ./.github/workflows/terraform-shared.yml
     with:
       working-directory: terraform/${{ matrix.env }}

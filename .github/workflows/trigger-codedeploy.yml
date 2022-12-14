@@ -7,14 +7,17 @@ on:
         required: true
         type: string
       ecs_task_definition_filepath:
-        required: true
+        required: false
         type: string
+        default: .aws/task-definition.json
       ecs_task_definition_directory:
-        required: true
+        required: false
         type: string
+        default: .aws
       container_port:
-        required: true
+        required: false
         type: number
+        default: 8080
       image:
         required: true
         type: string
@@ -37,12 +40,11 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
           CONTAINER_NAME: ${{ inputs.container_name }}
-          ECS_CLUSTER: ${{ github.ref_name }}
         run: |
           echo "ecs_task_definition_name=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "container_name=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "ecs_service=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
-          echo "ecs_cluster=$ECS_CLUSTER" >> $GITHUB_OUTPUT
+          echo "ecs_cluster=$ENVIRONMENT" >> $GITHUB_OUTPUT
           echo "codedeploy_application=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "codedeploy_deployment_group=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
 

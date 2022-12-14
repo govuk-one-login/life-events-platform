@@ -6,12 +6,14 @@ resource "aws_sns_topic" "topic" {
   kms_master_key_id = aws_kms_key.kms_key.arn
 }
 
+# rework as part of #46
+#tfsec:ignore:aws-iam-no-user-attached-policies 
 resource "aws_iam_user" "sns_user" {
   name = "${var.environment}-sns-topic-${var.topic_display_name}"
 }
 
-resource "aws_iam_access_key" "user" {
-  user = aws_iam_user.user.sns_user
+resource "aws_iam_access_key" "sns_user" {
+  user = aws_iam_user.sns_user.name
 }
 
 data "aws_iam_policy_document" "sns_policy" {
@@ -28,10 +30,10 @@ data "aws_iam_policy_document" "sns_policy" {
   }
 }
 
-resource "aws_iam_user_policy" "policy" {
+resource "aws_iam_user_policy" "sns_policy" {
   name   = "sns-topic"
-  policy = data.aws_iam_policy_document.policy.json
-  user   = aws_iam_user.user.name
+  policy = data.aws_iam_policy_document.sns_policy.json
+  user   = aws_iam_user.sns_user.name
 }
 
 resource "aws_kms_key" "kms_key" {

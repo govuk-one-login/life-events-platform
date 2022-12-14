@@ -1,5 +1,7 @@
 data "aws_caller_identity" "current" {}
 
+# rework as part of #46
+#tfsec:ignore:aws-iam-no-user-attached-policies 
 resource "aws_iam_user" "sqs_user" {
   name = "${var.environment}-sqs-queue-${var.queue_name}"
 }

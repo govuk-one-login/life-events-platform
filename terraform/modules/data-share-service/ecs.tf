@@ -20,7 +20,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
     {
       name         = "${var.environment}-gdx-data-share-poc",
       image        = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
-      portMappings = [{ "containerPort" : 80, "hostPort" : 80 }],
+      portMappings = [{ "containerPort" : 8080, "hostPort" : 80 }],
       environment = [
         { "name" : "API_BASE_URL_LEV", "value" : var.lev_url },
         { "name" : "HMPPS_SQS_TOPICS_EVENT_ACCESS_KEY_ID", "value" : module.sns.access_key_id },

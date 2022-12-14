@@ -22,7 +22,10 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       image        = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
       portMappings = [{ "containerPort" : 80, "hostPort" : 80 }],
       environment = [
-        { "name" : "API_BASE_URL_LEV", "value" : var.lev_url }
+        { "name" : "API_BASE_URL_LEV", "value" : var.lev_url },
+        { "name" : "HMPPS_SQS_TOPICS_EVENT_ACCESS_KEY_ID", "value" : module.sns.access_key_id },
+        { "name" : "HMPPS_SQS_TOPICS_EVENT_SECRET_ACCESS_KEY", "value" : module.sns.access_key_secret },
+        { "name" : "HMPPS_SQS_TOPICS_EVENT_ARN", "value" : module.sns.sns_topic_arn }
       ]
     }
   ])

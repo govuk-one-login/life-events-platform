@@ -53,7 +53,14 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "HMPPS_SQS_QUEUES_ODG_QUEUE_NAME", "value" : module.other_department_queue.queue_name },
         { "name" : "HMPPS_SQS_QUEUES_ODG_DLQ_ACCESS_KEY_ID", "value" : module.other_department_queue.dead_letter_queue_access_key_id },
         { "name" : "HMPPS_SQS_QUEUES_ODG_DLQ_SECRET_ACCESS_KEY", "value" : module.other_department_queue.dead_letter_queue_access_key_secret },
-        { "name" : "HMPPS_SQS_QUEUES_ODG_DLQ_NAME", "value" : module.other_department_queue.dead_letter_queue_name }
+        { "name" : "HMPPS_SQS_QUEUES_ODG_DLQ_NAME", "value" : module.other_department_queue.dead_letter_queue_name },
+
+        { "name" : "SPRING_FLYWAY_URL", "value" : "jdbc:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}" },
+        { "name" : "SPRING_FLYWAY_USERNAME", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },
+        { "name" : "SPRING_FLYWAY_PASSWORD", "value" : random_password.rds_password.result },
+        { "name" : "SPRING_R2DBC_URL", "value" : "r2dbc:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}" },
+        { "name" : "SPRING_R2DBC_USERNAME", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },
+        { "name" : "SPRING_R2DBC_PASSWORD", "value" : random_password.rds_password.result },
       ]
       logConfiguration : {
         logDriver : "awslogs",

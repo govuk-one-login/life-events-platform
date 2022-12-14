@@ -34,6 +34,11 @@ jobs:
         env: [dev, demo]
     name: Trigger codedeploy for ${{ matrix.env }} environment
     uses: ./.github/workflows/trigger_codedeploy.yml
-
+    with:
+      environment: ${{ matrix.env }}
+      ecs_task_definition_filepath: .aws/task-definition.json
+      ecs_task_definition_directory: .aws
+      container_port: 8080
+      image: ${{ needs.build-and-push-image.outputs.image }}
     secrets: inherit
 

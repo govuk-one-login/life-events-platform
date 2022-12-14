@@ -76,4 +76,5 @@ module "data-share-service" {
   ecr_url                     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
   cloudwatch_retention_period = 30
   vpc_cidr                    = "10.158.16.0/20"
+  lev_url                     = module.lev_api.service_url
 }

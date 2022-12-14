@@ -28,6 +28,16 @@
         },
         {
           "requestParam": "scope",
+          "match": "passthru",
+          "claims": {
+            "sub": "passthru",
+            "iss": "http://oauth2:8080/issuer1",
+            "scope": "data_receiver/notify",
+            "client_id": "passthru"
+          }
+        },
+        {
+          "requestParam": "scope",
           "match": "dwp",
           "claims": {
             "sub": "dwp-event-receiver",

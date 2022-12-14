@@ -46,5 +46,5 @@ data class EventInformation(
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
   val eventId: String,
   @Schema(description = "Details of event, a payload of JSON data", required = false)
-  val details: DeathNotification? = null,
+  val details: Any? = null,
 )

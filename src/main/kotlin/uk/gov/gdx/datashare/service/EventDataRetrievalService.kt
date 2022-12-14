@@ -106,6 +106,14 @@ class EventDataRetrievalService(
           )
         )
       }
+
+      "PASS_THROUGH" -> {
+        EventInformation(
+          eventType = event.eventType,
+          eventId = eventId,
+          details = event.dataPayload,
+          )
+      }
       else -> {
         throw RuntimeException("Unknown DataSet ${event.datasetType}")
       }

@@ -18,7 +18,7 @@ insert into data_consumer (client_id, client_name, allowed_event_types, nino_req
 values ('hmrc-client', 'HMRC', 'DEATH_NOTIFICATION', false);
 
 insert into data_consumer (client_id, client_name, allowed_event_types, nino_required)
-values ('internal-outbound', 'Internal Outbound Adaptor', 'DEATH_NOTIFICATION', true);
+values ('internal-outbound', 'Internal Outbound Adaptor', 'DEATH_NOTIFICATION,LIFE_EVENT', false);
 
 insert into data_consumer (client_id, client_name, allowed_event_types, legacy_ftp)
 values ('old-gov-dep', 'Old Skool Gov Dept', 'DEATH_NOTIFICATION', true);

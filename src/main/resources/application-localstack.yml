@@ -11,7 +11,7 @@ hmpps.sqs:
       queueName: legacy-adaptor-event-queue
       dlqName: legacy-adaptor-event-dlq
       subscribeTopicId: event
-      subscribeFilter: '{"eventType":[ "DEATH_NOTIFICATION" ] }'
+      subscribeFilter: '{"eventType":[ "LIFE_EVENT" ] }'
     odg:
       queueName: ogd-event-queue
       dlqName: ogd-event-dlq

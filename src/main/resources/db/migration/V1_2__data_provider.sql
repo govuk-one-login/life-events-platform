@@ -14,3 +14,6 @@ values ('len', 'HMPO', 'DEATH_NOTIFICATION', 'DEATH_LEV');
 
 insert into data_provider (client_id, client_name, event_type, dataset_type, store_payload)
 values ('internal-inbound', 'Internal Inbound Adaptor', 'DEATH_NOTIFICATION', 'DEATH_CSV', true);
+
+insert into data_provider (client_id, client_name, event_type, dataset_type, store_payload)
+values ('passthru', 'Sample Pass Thru Publisher', 'LIFE_EVENT', 'PASS_THROUGH', true);

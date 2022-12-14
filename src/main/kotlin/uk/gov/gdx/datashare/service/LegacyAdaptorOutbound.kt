@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.repository.DataConsumerRepository
 import uk.gov.gdx.datashare.resource.EventInformation
+import uk.gov.gdx.datashare.resource.EventType
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -40,7 +41,8 @@ class LegacyAdaptorOutbound(
 
     val event = mapper.readValue(message, EventMessage::class.java)
     when (eventType) {
-      "DEATH_NOTIFICATION" -> processDeathEvent(event)
+      EventType.DEATH_NOTIFICATION.toString() -> processDeathEvent(event)
+      EventType.LIFE_EVENT.toString() -> processLifeEvent(event)
       else -> {
         log.debug("Ignoring message with type $eventType")
       }
@@ -72,7 +74,7 @@ class LegacyAdaptorOutbound(
 
             val filename = "${event.id}.csv"
             withContext(Dispatchers.IO) {
-              FileOutputStream(filename).apply { writeCsv(details) }
+              FileOutputStream(filename).apply { writeCsv(details as DeathNotification) }
               testFtpClient.setFileType(FTP.ASCII_FILE_TYPE)
               testFtpClient.storeFile("/outbound/$filename", FileInputStream(filename))
 
@@ -96,6 +98,36 @@ class LegacyAdaptorOutbound(
       log.warn("Unable to retrieve event data")
     }
   }
+
+  suspend fun processLifeEvent(event: EventMessage) {
+    log.debug("processing {}", event)
+
+    try {
+      // Go and get data from Event Retrieval API
+      val lifeEvent = getEventPayload(event.id)
+
+      // turn into file and send to FTP
+      val details = lifeEvent.details
+      if (details != null) {
+
+        // who needs it?
+        val findAllByLegacyFtp = dataConsumerRepository.findAllByLegacyFtp(true)
+        findAllByLegacyFtp.collect {
+
+            auditService.sendMessage(
+              auditType = AuditType.WEBHOOK,
+              id = event.id,
+              details = "Webhook to ${it.clientName} : ${event.description}",
+              username = it.clientId
+            )
+          }
+        }
+
+    } catch (e: Exception) {
+      log.warn("Unable to retrieve event data")
+    }
+  }
+
 
   fun OutputStream.writeCsv(deathData: DeathNotification) {
     val writer = bufferedWriter()

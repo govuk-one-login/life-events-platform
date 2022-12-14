@@ -50,7 +50,7 @@ class DataProcessor(
         dataId = details.id,
         dataPayload = details.data as String?,
         whenCreated = dataProcessorMessage.eventTime,
-        dataExpiryTime = dataProcessorMessage.eventTime.plusDays(1)
+        dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
       )
 
       eventDataRepository.save(eventData)

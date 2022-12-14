@@ -25,7 +25,35 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_LEV", "value" : var.lev_url },
         { "name" : "HMPPS_SQS_TOPICS_EVENT_ACCESS_KEY_ID", "value" : module.sns.access_key_id },
         { "name" : "HMPPS_SQS_TOPICS_EVENT_SECRET_ACCESS_KEY", "value" : module.sns.access_key_secret },
-        { "name" : "HMPPS_SQS_TOPICS_EVENT_ARN", "value" : module.sns.sns_topic_arn }
+        { "name" : "HMPPS_SQS_TOPICS_EVENT_ARN", "value" : module.sns.sns_topic_arn },
+
+        { "name" : "HMPPS_SQS_QUEUES_DATAPROCESSOR_QUEUE_ACCESS_KEY_ID", "value" : module.data_processor_queue.queue_access_key_id },
+        { "name" : "HMPPS_SQS_QUEUES_DATAPROCESSOR_QUEUE_SECRET_ACCESS_KEY", "value" : module.data_processor_queue.queue_access_key_secret },
+        { "name" : "HMPPS_SQS_QUEUES_DATAPROCESSOR_QUEUE_NAME", "value" : module.data_processor_queue.queue_name },
+        { "name" : "HMPPS_SQS_QUEUES_DATAPROCESSOR_DLQ_ACCESS_KEY_ID", "value" : module.data_processor_queue.dead_letter_queue_access_key_id },
+        { "name" : "HMPPS_SQS_QUEUES_DATAPROCESSOR_DLQ_SECRET_ACCESS_KEY", "value" : module.data_processor_queue.dead_letter_queue_access_key_secret },
+        { "name" : "HMPPS_SQS_QUEUES_DATAPROCESSOR_DLQ_NAME", "value" : module.data_processor_queue.dead_letter_queue_name },
+
+        { "name" : "HMPPS_SQS_QUEUES_AUDIT_QUEUE_ACCESS_KEY_ID", "value" : module.audit_queue.queue_access_key_id },
+        { "name" : "HMPPS_SQS_QUEUES_AUDIT_QUEUE_SECRET_ACCESS_KEY", "value" : module.audit_queue.queue_access_key_secret },
+        { "name" : "HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME", "value" : module.audit_queue.queue_name },
+        { "name" : "HMPPS_SQS_QUEUES_AUDIT_DLQ_ACCESS_KEY_ID", "value" : module.audit_queue.dead_letter_queue_access_key_id },
+        { "name" : "HMPPS_SQS_QUEUES_AUDIT_DLQ_SECRET_ACCESS_KEY", "value" : module.audit_queue.dead_letter_queue_access_key_secret },
+        { "name" : "HMPPS_SQS_QUEUES_AUDIT_DLQ_NAME", "value" : module.audit_queue.dead_letter_queue_name },
+
+        { "name" : "HMPPS_SQS_QUEUES_ADAPTOR_QUEUE_ACCESS_KEY_ID", "value" : module.outbound_adaptor_queue.queue_access_key_id },
+        { "name" : "HMPPS_SQS_QUEUES_ADAPTOR_QUEUE_SECRET_ACCESS_KEY", "value" : module.outbound_adaptor_queue.queue_access_key_secret },
+        { "name" : "HMPPS_SQS_QUEUES_ADAPTOR_QUEUE_NAME", "value" : module.outbound_adaptor_queue.queue_name },
+        { "name" : "HMPPS_SQS_QUEUES_ADAPTOR_DLQ_ACCESS_KEY_ID", "value" : module.outbound_adaptor_queue.dead_letter_queue_access_key_id },
+        { "name" : "HMPPS_SQS_QUEUES_ADAPTOR_DLQ_SECRET_ACCESS_KEY", "value" : module.outbound_adaptor_queue.dead_letter_queue_access_key_secret },
+        { "name" : "HMPPS_SQS_QUEUES_ADAPTOR_DLQ_NAME", "value" : module.outbound_adaptor_queue.dead_letter_queue_name },
+
+        { "name" : "HMPPS_SQS_QUEUES_ODG_QUEUE_ACCESS_KEY_ID", "value" : module.other_department_queue.queue_access_key_id },
+        { "name" : "HMPPS_SQS_QUEUES_ODG_QUEUE_SECRET_ACCESS_KEY", "value" : module.other_department_queue.queue_access_key_secret },
+        { "name" : "HMPPS_SQS_QUEUES_ODG_QUEUE_NAME", "value" : module.other_department_queue.queue_name },
+        { "name" : "HMPPS_SQS_QUEUES_ODG_DLQ_ACCESS_KEY_ID", "value" : module.other_department_queue.dead_letter_queue_access_key_id },
+        { "name" : "HMPPS_SQS_QUEUES_ODG_DLQ_SECRET_ACCESS_KEY", "value" : module.other_department_queue.dead_letter_queue_access_key_secret },
+        { "name" : "HMPPS_SQS_QUEUES_ODG_DLQ_NAME", "value" : module.other_department_queue.dead_letter_queue_name }
       ]
       logConfiguration : {
         logDriver : "awslogs",

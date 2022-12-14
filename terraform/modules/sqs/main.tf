@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "sqs_policy" {
 }
 
 resource "aws_iam_user_policy" "sqs_policy" {
-  name   = "{var.environment}-sqs-queue-${var.queue_name}"
+  name   = "${var.queue_name}-sqs-queue"
   policy = data.aws_iam_policy_document.sqs_policy.json
   user   = aws_iam_user.sqs_user.name
 }

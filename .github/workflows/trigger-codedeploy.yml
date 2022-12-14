@@ -26,8 +26,6 @@ on:
         required: true
       AWS_ACCESS_KEY_ID:
         required: true
-      AWS_ACCOUNT:
-        required: true
 
 jobs:
   trigger-codedeploy:

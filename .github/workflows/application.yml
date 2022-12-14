@@ -1,6 +1,7 @@
 name: Application
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "main"
@@ -19,11 +20,11 @@ jobs:
     uses: ./.github/workflows/test.yml
 
   build-and-push-image:
-    name: Build ${{ (github.event_name == 'push' && github.ref_name == 'main') && 'and push' || '' }} docker image
+    name: Build ${{ ((github.event_name == 'push' && github.ref_name == 'main') || || github.event_name == 'workflow_dispatch') && 'and push' || '' }} docker image
     needs: test
     uses: ./.github/workflows/build-and-push.yml
     with:
-      push: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+      push: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' }}
       aws_account: 776473272850
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -32,7 +33,7 @@ jobs:
   trigger-codedeploy:
     name: Trigger codedeploy for ${{ matrix.env }} environment
     needs: build-and-push-image
-    if: github.event_name == 'push' && github.ref_name == 'main'
+    if: (github.event_name == 'push' && github.ref_name == 'main') || || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
         env: [dev, demo]

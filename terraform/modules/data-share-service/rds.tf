@@ -22,4 +22,32 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   kms_key_id          = aws_kms_key.rds_key.arn
   storage_encrypted   = true
   skip_final_snapshot = true
+
+  vpc_security_group_ids = [aws_security_group.rds_postgres_cluster.id]
+}
+
+resource "aws_security_group" "rds_postgres_cluster" {
+  name_prefix = "${var.environment}-rds-postgres-cluster-"
+  description = "For RDS cluster, inbound access from ECS only"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    protocol        = "tcp"
+    from_port       = 5432
+    to_port         = 5432
+    security_groups = [aws_security_group.ecs_tasks.id]
+    description     = "ECS task ingress rule, allow access from ECS tasks only"
+  }
+
+  egress {
+    protocol        = "tcp"
+    from_port       = 5432
+    to_port         = 5432
+    security_groups = [aws_security_group.ecs_tasks.id]
+    description     = "ECS task egress rule, allow access to ECS tasks only"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

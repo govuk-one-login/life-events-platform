@@ -56,7 +56,7 @@ jobs:
         if: inputs.push
         id: push-image
         env:
-          IMAGE: ${{ steps.login-ecr.outputs.registry }}/gdx-data-share-poc:${{ github.sha }
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/gdx-data-share-poc:${{ github.sha }}
         run: |
           docker tag ${{ github.sha } $IMAGE
           docker push $IMAGE

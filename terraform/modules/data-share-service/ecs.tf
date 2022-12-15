@@ -31,6 +31,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_OAUTH", "value" : "http://localhost:9090/issuer1" },
         { "name" : "API_BASE_URL_HMRC", "value" : "https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io" },
         { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://gdx-data-share-poc:8080" },
+        { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },
 
         { "name" : "HMPPS_SQS_TOPICS_EVENT_ACCESS_KEY_ID", "value" : module.sns.access_key_id },
         { "name" : "HMPPS_SQS_TOPICS_EVENT_SECRET_ACCESS_KEY", "value" : module.sns.access_key_secret },

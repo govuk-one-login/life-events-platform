@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "HMPPS_SQS_QUEUES_ODG_DLQ_NAME", "value" : module.other_department_queue.dead_letter_queue_name },
 
         { "name" : "SPRING_FLYWAY_URL", "value" : "jdbc:${local.rds_db_url}" },
-        { "name" : "SPRING_FLYWAY_USERNAME", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },
+        { "name" : "SPRING_FLYWAY_USER", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },
         { "name" : "SPRING_FLYWAY_PASSWORD", "value" : random_password.rds_password.result },
         { "name" : "SPRING_R2DBC_URL", "value" : "r2dbc:${local.rds_db_url}" },
         { "name" : "SPRING_R2DBC_USERNAME", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },

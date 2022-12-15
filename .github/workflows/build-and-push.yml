@@ -37,6 +37,8 @@ jobs:
           context: ./
           push: false
           tags: ${{ github.sha }}
+          cache-to: type=gha
+          cache-from: type=gha
 
       - name: Configure AWS credentials
         if: inputs.push

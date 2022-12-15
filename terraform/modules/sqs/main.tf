@@ -53,7 +53,7 @@ resource "aws_kms_key" "dead_letter_queue_kms_key" {
 
 resource "aws_kms_alias" "dead_letter_queue_kms_key_alias" {
   name          = "alias/${var.environment}/sqs-dead-letter-queue-${var.queue_name}"
-  target_key_id = aws_kms_key.sqs_key.arn
+  target_key_id = aws_kms_key.dead_letter_queue_kms_key.arn
 }
 
 resource "aws_sqs_queue" "dead_letter_queue" {

@@ -36,7 +36,7 @@ jobs:
         with:
           context: ./
           push: false
-          tags: ${{ github.sha }}:latest
+          tags: ${{ github.ref_name }}:latest
           load: true
           cache-to: type=gha
           cache-from: type=gha

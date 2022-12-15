@@ -1,5 +1,5 @@
 output "auth_domain" {
-  value = aws_cognito_user_pool.pool.endpoint
+  value = aws_cognito_user_pool.pool.domain
 }
 
 output "legacy_inbound_client_id" {

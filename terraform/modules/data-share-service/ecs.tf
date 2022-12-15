@@ -26,9 +26,9 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       image        = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
       portMappings = [{ "containerPort" : 80, "hostPort" : 80 }],
       environment = [
-        { "name" : "API_BASE_URL_LEV", "value" : var.lev_url },
-        { "name" : "API_BASE_URL_ISSUER_URI", "value" : module.cognito.auth_domain },
-        { "name" : "API_BASE_URL_OAUTH", "value" : module.cognito.auth_domain },
+        { "name" : "API_BASE_URL_LEV", "value" : "https://${var.lev_url}" },
+        { "name" : "API_BASE_URL_ISSUER_URI", "value" : "https://${module.cognito.auth_domain}" },
+        { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },
         { "name" : "API_BASE_URL_HMRC", "value" : "https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io" },
         { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://gdx-data-share-poc:8080" },
         { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },

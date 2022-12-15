@@ -31,7 +31,7 @@ resource "aws_lb_listener" "listener-http" {
 
 resource "aws_lb_target_group" "green" {
   name        = "${var.environment}-green-${random_id.http_sufix.hex}"
-  port        = 80
+  port        = 8080
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = module.vpc.vpc_id
@@ -47,7 +47,7 @@ resource "aws_lb_target_group" "green" {
 
 resource "aws_lb_target_group" "blue" {
   name        = "${var.environment}-blue-${random_id.http_sufix.hex}"
-  port        = 80
+  port        = 8080
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = module.vpc.vpc_id

@@ -6,8 +6,8 @@ resource "aws_security_group" "ecs_tasks" {
 
   ingress {
     protocol        = "tcp"
-    from_port       = 80
-    to_port         = 80
+    from_port       = 8080
+    to_port         = 8080
     security_groups = aws_security_group.lb_auto.*.id
     description     = "ECS task ingress rule, allow access from LB only"
   }

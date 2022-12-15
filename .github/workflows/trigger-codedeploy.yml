@@ -17,7 +17,7 @@ on:
       container_port:
         required: false
         type: number
-        default: 80
+        default: 8080
       image:
         required: true
         type: string

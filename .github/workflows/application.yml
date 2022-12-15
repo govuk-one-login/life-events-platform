@@ -1,8 +1,5 @@
 name: Application
 
-env:
-  AWS_ACCOUNT: 776473272850
-
 on:
   push:
     branches:
@@ -16,6 +13,9 @@ on:
 concurrency:
   group: application-pipeline-${{ github.ref_name }}
   cancel-in-progress: true
+
+env:
+  AWS_ACCOUNT: 776473272850
 
 jobs:
   test:

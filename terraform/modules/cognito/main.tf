@@ -7,6 +7,7 @@ resource "aws_cognito_user_pool_client" "legacy_inbound_adapter" {
   user_pool_id         = aws_cognito_user_pool.pool.id
   allowed_oauth_flows  = ["client_credentials"]
   allowed_oauth_scopes = aws_cognito_resource_server.data_receiver.scope_identifiers
+  generate_secret      = true
 }
 
 resource "aws_cognito_user_pool_client" "legacy_outbound_adapter" {
@@ -14,6 +15,7 @@ resource "aws_cognito_user_pool_client" "legacy_outbound_adapter" {
   user_pool_id         = aws_cognito_user_pool.pool.id
   allowed_oauth_flows  = ["client_credentials"]
   allowed_oauth_scopes = aws_cognito_resource_server.data_retriever.scope_identifiers
+  generate_secret      = true
 }
 
 resource "aws_cognito_resource_server" "data_receiver" {

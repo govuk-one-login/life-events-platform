@@ -7,9 +7,11 @@ on:
       - "main"
     paths-ignore:
       - "terraform/**"
+      - "!terraform/modules/data-share-service/ecs.tf"
   pull_request:
     paths-ignore:
       - "terraform/**"
+      - "!terraform/modules/data-share-service/ecs.tf"
 
 concurrency:
   group: application-pipeline-${{ github.ref_name }}

@@ -24,6 +24,7 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   skip_final_snapshot = true
 
   vpc_security_group_ids = [aws_security_group.rds_postgres_cluster.id]
+  db_subnet_group_name   = aws_db_subnet_group.rds_postgres_cluster.name
 }
 
 resource "aws_security_group" "rds_postgres_cluster" {
@@ -50,4 +51,9 @@ resource "aws_security_group" "rds_postgres_cluster" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_db_subnet_group" "rds_postgres_cluster" {
+  name = "${var.environment}-rds-postgres-cluster-subnet"
+  subnet_ids = module.vpc.private_subnet_ids
 }

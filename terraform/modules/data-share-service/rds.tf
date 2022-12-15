@@ -19,7 +19,8 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"
 
-  kms_key_id        = aws_kms_key.rds_key.arn
-  storage_encrypted = true
+  kms_key_id          = aws_kms_key.rds_key.arn
+  storage_encrypted   = true
+  skip_final_snapshot = true
 }
 

@@ -37,7 +37,6 @@ jobs:
         id: vars
         env:
           ENVIRONMENT: ${{ inputs.environment }}
-          CONTAINER_NAME: ${{ inputs.container_name }}
         run: |
           echo "ecs_task_definition_name=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "container_name=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
@@ -55,7 +54,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
-          mask-aws-account-id: true
 
       - name: Set ECS task definition
         id: task-definition

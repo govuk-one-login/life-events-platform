@@ -54,6 +54,6 @@ resource "aws_security_group" "rds_postgres_cluster" {
 }
 
 resource "aws_db_subnet_group" "rds_postgres_cluster" {
-  name = "${var.environment}-rds-postgres-cluster-subnet"
+  name       = "${var.environment}-rds-postgres-cluster-subnet"
   subnet_ids = module.vpc.private_subnet_ids
 }

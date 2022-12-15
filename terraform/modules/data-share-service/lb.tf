@@ -30,7 +30,7 @@ resource "aws_lb_listener" "listener-http" {
 }
 
 resource "aws_lb_target_group" "green" {
-  name        = "${var.environment}-green1-${random_id.http_sufix.hex}"
+  name        = "${var.environment}-green-${random_id.http_sufix.hex}"
   port        = 8080
   protocol    = "HTTP"
   target_type = "ip"
@@ -46,7 +46,7 @@ resource "aws_lb_target_group" "green" {
 }
 
 resource "aws_lb_target_group" "blue" {
-  name        = "${var.environment}-blue1-${random_id.http_sufix.hex}"
+  name        = "${var.environment}-blue-${random_id.http_sufix.hex}"
   port        = 8080
   protocol    = "HTTP"
   target_type = "ip"

@@ -1,5 +1,5 @@
 resource "random_string" "rds_username" {
-  length  = 16
+  length  = 8
   special = false
 }
 

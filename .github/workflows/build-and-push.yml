@@ -51,6 +51,7 @@ jobs:
           mask-aws-account-id: false
 
       - name: Login to Amazon ECR
+        if: inputs.push
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 

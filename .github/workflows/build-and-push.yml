@@ -8,12 +8,13 @@ on:
         type: boolean
         default: false
         description: Whether to push the image, or otherwise just build
+      aws_account:
+        required: true
+        type: string
     secrets:
       AWS_SECRET_ACCESS_KEY:
         required: true
       AWS_ACCESS_KEY_ID:
-        required: true
-      AWS_ACCOUNT:
         required: true
     outputs:
       image:
@@ -34,7 +35,7 @@ jobs:
         id: build-image
         env:
           CONTEXT: ./
-          ECR_REPOSITORY: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com
+          ECR_REPOSITORY: ${{ inputs.aws_account }}.dkr.ecr.eu-west-2.amazonaws.com
           IMAGE_TAG: ${{ github.sha }}
           IMAGE_NAME: gdx-data-share-poc
         run: |
@@ -47,7 +48,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
-          mask-aws-account-id: false
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -58,7 +58,7 @@ jobs:
         id: push-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com
+          ECR_REPOSITORY: ${{ inputs.aws_account }}.dkr.ecr.eu-west-2.amazonaws.com
           IMAGE_TAG: ${{ github.sha }}
           IMAGE_NAME: gdx-data-share-poc
         run: |
@@ -81,7 +81,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
-          mask-aws-account-id: false
 
       - name: Add tag for ${{ matrix.env }} environment
         uses: abronin/ecr-retag-action@v1

@@ -23,8 +23,25 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   storage_encrypted   = true
   skip_final_snapshot = true
 
-  vpc_security_group_ids = [aws_security_group.rds_postgres_cluster.id]
-  db_subnet_group_name   = aws_db_subnet_group.rds_postgres_cluster.name
+  vpc_security_group_ids          = [aws_security_group.rds_postgres_cluster.id]
+  db_subnet_group_name            = aws_db_subnet_group.rds_postgres_cluster.name
+  enabled_cloudwatch_logs_exports = ["postgresql"]
+
+  serverlessv2_scaling_configuration {
+    min_capacity = 0.5
+    max_capacity = 2.0
+  }
+}
+
+resource "aws_rds_cluster_instance" "db_aurora" {
+  identifier         = "${var.environment}-rds-db"
+  cluster_identifier = aws_rds_cluster.rds_postgres_cluster.id
+  instance_class     = "db.serverless"
+  engine             = aws_rds_cluster.rds_postgres_cluster.engine
+  engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
+
+  performance_insights_enabled    = true
+  performance_insights_kms_key_id = aws_kms_key.rds_key.arn
 }
 
 resource "aws_security_group" "rds_postgres_cluster" {

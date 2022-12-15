@@ -27,8 +27,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       portMappings = [{ "containerPort" : 80, "hostPort" : 80 }],
       environment = [
         { "name" : "API_BASE_URL_LEV", "value" : var.lev_url },
-        { "name" : "API_BASE_URL_ISSUER_URI", "value" : "http://localhost:9090/issuer1" },
-        { "name" : "API_BASE_URL_OAUTH", "value" : "http://localhost:9090/issuer1" },
+        { "name" : "API_BASE_URL_ISSUER_URI", "value" : module.cognito.auth_domain },
+        { "name" : "API_BASE_URL_OAUTH", "value" : module.cognito.auth_domain },
         { "name" : "API_BASE_URL_HMRC", "value" : "https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io" },
         { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://gdx-data-share-poc:8080" },
         { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },
@@ -71,6 +71,11 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SPRING_R2DBC_URL", "value" : "r2dbc:${local.rds_db_url}" },
         { "name" : "SPRING_R2DBC_USERNAME", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },
         { "name" : "SPRING_R2DBC_PASSWORD", "value" : random_password.rds_password.result },
+
+        { "name" : "LEGACY_INBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_inbound_client_id },
+        { "name" : "LEGACY_INBOUND_API_CLIENT_SECRET", "value" : module.cognito.legacy_inbound_client_secret },
+        { "name" : "LEGACY_OUTBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_outbound_client_id },
+        { "name" : "LEGACY_OUTBOUND_API_CLIENT_SECRET", "value" : module.cognito.legacy_outbound_client_secret },
       ]
       logConfiguration : {
         logDriver : "awslogs",

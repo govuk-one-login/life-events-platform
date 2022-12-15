@@ -14,9 +14,6 @@ concurrency:
   group: application-pipeline-${{ github.ref_name }}
   cancel-in-progress: true
 
-env:
-  AWS_ACCOUNT: 776473272850
-
 jobs:
   test:
     uses: ./.github/workflows/test.yml
@@ -27,7 +24,7 @@ jobs:
     uses: ./.github/workflows/build-and-push.yml
     with:
       push: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
-      aws_account: ${{ env.AWS_ACCOUNT }}
+      aws_account: 776473272850
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

@@ -2,6 +2,10 @@ output "auth_domain" {
   value = aws_cognito_user_pool.pool.domain
 }
 
+output "issuer_domain" {
+  value = aws_cognito_user_pool.pool.endpoint
+}
+
 output "legacy_inbound_client_id" {
   value = aws_cognito_user_pool_client.legacy_inbound_adapter.id
 }

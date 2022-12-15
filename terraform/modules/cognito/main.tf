@@ -2,6 +2,11 @@ resource "aws_cognito_user_pool" "pool" {
   name = "${var.environment}-gdx-data-share"
 }
 
+resource "aws_cognito_user_pool_domain" "domain" {
+  domain       = "${var.environment}-gdx-data-share"
+  user_pool_id = aws_cognito_user_pool.pool.id
+}
+
 resource "aws_cognito_user_pool_client" "legacy_inbound_adapter" {
   name                 = "${var.environment}-legacy-inbound-adapter"
   user_pool_id         = aws_cognito_user_pool.pool.id

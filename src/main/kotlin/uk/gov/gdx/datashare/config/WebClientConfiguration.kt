@@ -30,14 +30,6 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun auth0WebClient(): WebClient {
-    log.info("Auth URL is {}", auth0BaseUri)
-    return WebClient.builder()
-      .baseUrl(auth0BaseUri)
-      .build()
-  }
-
-  @Bean
   fun levApiWebClient(): WebClient {
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()

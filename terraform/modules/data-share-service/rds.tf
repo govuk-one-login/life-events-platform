@@ -8,16 +8,6 @@ resource "random_password" "rds_password" {
   special = false
 }
 
-resource "aws_kms_key" "rds_key" {
-  description         = "Key for RDS encryption"
-  enable_key_rotation = true
-}
-
-resource "aws_kms_alias" "rds_key_alias" {
-  name          = "alias/${var.environment}/rds-cluster"
-  target_key_id = aws_kms_key.rds_key.key_id
-}
-
 resource "aws_rds_cluster" "rds_postgres_cluster" {
   cluster_identifier = "${var.environment}-rds-db"
   engine             = "aurora-postgresql"

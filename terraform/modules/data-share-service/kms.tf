@@ -37,3 +37,13 @@ data "aws_iam_policy_document" "kms_log_key_policy" {
     resources = ["*"]
   }
 }
+
+resource "aws_kms_key" "rds_key" {
+  description         = "Key for RDS encryption"
+  enable_key_rotation = true
+}
+
+resource "aws_kms_alias" "rds_key_alias" {
+  name          = "alias/${var.environment}/rds-cluster"
+  target_key_id = aws_kms_key.rds_key.key_id
+}

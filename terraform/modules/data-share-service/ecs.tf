@@ -26,6 +26,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       image        = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
       portMappings = [{ "containerPort" : 80, "hostPort" : 80 }],
       environment = [
+        { "name" : "SERVER_PORT", "value" : "80" },
+
         { "name" : "API_BASE_URL_LEV", "value" : "https://${var.lev_url}" },
         { "name" : "API_BASE_URL_ISSUER_URI", "value" : "https://${module.cognito.issuer_domain}" },
         { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },

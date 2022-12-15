@@ -23,4 +23,3 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   storage_encrypted   = true
   skip_final_snapshot = true
 }
-

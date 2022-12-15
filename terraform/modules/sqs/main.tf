@@ -15,7 +15,8 @@ data "aws_iam_policy_document" "sqs_policy" {
     actions = [
       "sqs:DeleteMessage",
       "sqs:ReceiveMessage",
-      "sqs:SendMessage"
+      "sqs:SendMessage",
+      "sqs:GetQueueUrl"
     ]
 
     resources = [

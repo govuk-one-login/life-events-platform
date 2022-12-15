@@ -1,5 +1,5 @@
 output "auth_domain" {
-  value = aws_cognito_user_pool.pool.domain
+  value = "${aws_cognito_user_pool.pool.domain}.auth.${var.region}.amazoncognito.com"
 }
 
 output "issuer_domain" {

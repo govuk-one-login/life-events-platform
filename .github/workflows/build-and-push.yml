@@ -61,7 +61,7 @@ jobs:
         env:
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/gdx-data-share-poc:${{ github.sha }}
         run: |
-          docker tag ${{ github.sha }}:latest $IMAGE
+          docker tag ${{ github.ref_name }}:latest $IMAGE
           docker push $IMAGE
           echo "image=$IMAGE" >> $GITHUB_OUTPUT
 

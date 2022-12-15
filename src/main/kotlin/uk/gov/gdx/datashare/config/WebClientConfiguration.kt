@@ -4,7 +4,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Lazy
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager
@@ -42,7 +41,6 @@ class WebClientConfiguration(
   }
 
   @Bean
-  @Lazy
   fun dataReceiverApiWebClient(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
     val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId("data-receiver")
@@ -56,7 +54,6 @@ class WebClientConfiguration(
   }
 
   @Bean
-  @Lazy
   fun eventDataRetrievalApiWebClient(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
     val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId("event-data-retrieval")
@@ -68,6 +65,7 @@ class WebClientConfiguration(
       .filter(oauth2Client)
       .build()
   }
+
   @Bean
   fun hmrcApiWebClient(): WebClient {
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
@@ -78,7 +76,6 @@ class WebClientConfiguration(
   }
 
   @Bean
-  @Lazy
   fun authorizedClientManager(
     clientRegistrationRepository: ReactiveClientRegistrationRepository,
     oAuth2AuthorizedClientService: ReactiveOAuth2AuthorizedClientService,

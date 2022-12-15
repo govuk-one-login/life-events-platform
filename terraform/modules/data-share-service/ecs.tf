@@ -24,9 +24,9 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
     {
       name         = "${var.environment}-gdx-data-share-poc",
       image        = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
-      portMappings = [{ "containerPort" : 80, "hostPort" : 80 }],
+      portMappings = [{ "containerPort" : 8080, "hostPort" : 8080 }],
       environment = [
-        { "name" : "SERVER_PORT", "value" : "80" },
+        { "name" : "SERVER_PORT", "value" : "8080" },
 
         { "name" : "API_BASE_URL_LEV", "value" : "https://${var.lev_url}" },
         { "name" : "API_BASE_URL_ISSUER_URI", "value" : "https://${module.cognito.issuer_domain}" },
@@ -115,7 +115,7 @@ resource "aws_ecs_service" "gdx_data_share_poc" {
   load_balancer {
     target_group_arn = aws_lb_target_group.green.arn
     container_name   = "${var.environment}-gdx-data-share-poc"
-    container_port   = 80
+    container_port   = 8080
   }
 
   network_configuration {

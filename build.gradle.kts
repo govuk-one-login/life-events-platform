@@ -38,7 +38,7 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql:42.5.1")
 
   implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.11")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.11")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.13")
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("io.opentelemetry:opentelemetry-api:1.19.0")

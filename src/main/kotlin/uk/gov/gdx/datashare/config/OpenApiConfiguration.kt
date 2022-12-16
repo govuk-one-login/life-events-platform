@@ -51,7 +51,6 @@ class OpenApiConfiguration(
           SecurityScheme()
             .type(SecurityScheme.Type.OPENIDCONNECT)
             .openIdConnectUrl("$issuerUri/.well-known/openid-configuration")
-
         )
       )
     .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))

@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.repository.EventDataRepository
 import java.time.LocalDateTime.now
+import java.util.concurrent.TimeUnit
 
 @Service
 class EventCleanup(
@@ -16,9 +17,8 @@ class EventCleanup(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(fixedRate = 60000 * 60)
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
   fun removeExpiredEvents() {
-
     runBlocking {
       val expiredTime = now()
       log.debug("Looking for events older than {}", expiredTime)

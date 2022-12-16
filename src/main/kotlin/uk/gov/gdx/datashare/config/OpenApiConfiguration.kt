@@ -11,12 +11,16 @@ import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.servers.Server
 import org.springdoc.core.customizers.OpenApiCustomiser
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class OpenApiConfiguration(buildProperties: BuildProperties) {
+class OpenApiConfiguration(
+  buildProperties: BuildProperties,
+  @Value("\${api.base.url.issuer-uri}") val issuerUri: String,
+) {
   private val version: String = buildProperties.version
 
   @Bean
@@ -24,6 +28,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
     .servers(
       listOf(
         Server().url("http://localhost:8080").description("Local"),
+        Server().url("https://d33v84mi0vopmk.cloudfront.net").description("Dev")
       )
     )
     .info(
@@ -40,10 +45,16 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
           .scheme("bearer")
           .bearerFormat("JWT")
           .`in`(SecurityScheme.In.HEADER)
-          .name("Authorization")
+          .name("Authorization"))
+        .addSecuritySchemes(
+          "cognito",
+          SecurityScheme()
+            .type(SecurityScheme.Type.OPENIDCONNECT)
+            .openIdConnectUrl("$issuerUri/.well-known/openid-configuration")
+        )
       )
-    )
     .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
+    .addSecurityItem(SecurityRequirement().addList("cognito"))
 
   @Bean
   fun openAPICustomiser(): OpenApiCustomiser = OpenApiCustomiser {

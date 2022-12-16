@@ -55,7 +55,7 @@ class OpenApiConfiguration(
         )
       )
     .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
-    .addSecurityItem(SecurityRequirement().addList("cognito", listOf("read", "write")))
+    .addSecurityItem(SecurityRequirement().addList("cognito"))
 
   @Bean
   fun openAPICustomiser(): OpenApiCustomiser = OpenApiCustomiser {

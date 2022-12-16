@@ -7,6 +7,17 @@ resource "aws_cognito_user_pool_domain" "domain" {
   user_pool_id = aws_cognito_user_pool.pool.id
 }
 
+resource "aws_cognito_user_pool_client" "management_client" {
+  name                         = "${var.environment}-management-client"
+  user_pool_id                 = aws_cognito_user_pool.pool.id
+  allowed_oauth_flows          = ["implicit"]
+  allowed_oauth_scopes         = concat(aws_cognito_resource_server.data_receiver.scope_identifiers, aws_cognito_resource_server.data_retriever.scope_identifiers)
+  generate_secret              = true
+  explicit_auth_flows          = ["ADMIN_NO_SRP_AUTH"]
+  callback_urls                = [var.callback_url]
+  supported_identity_providers = ["COGNITO"]
+}
+
 resource "aws_cognito_user_pool_client" "legacy_inbound_adapter" {
   name                 = "${var.environment}-legacy-inbound-adapter"
   user_pool_id         = aws_cognito_user_pool.pool.id

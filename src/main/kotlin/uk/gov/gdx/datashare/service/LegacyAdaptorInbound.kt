@@ -14,6 +14,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.ConnectException
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 
 @Service
 class LegacyAdaptorInbound(
@@ -23,7 +24,7 @@ class LegacyAdaptorInbound(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(fixedRate = 1000 * 60)
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   fun pollFtpServer() {
     val testFtpClient = FTPClient()
     val host = "localhost"

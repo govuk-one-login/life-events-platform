@@ -78,6 +78,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "LEGACY_INBOUND_API_CLIENT_SECRET", "value" : module.cognito.legacy_inbound_client_secret },
         { "name" : "LEGACY_OUTBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_outbound_client_id },
         { "name" : "LEGACY_OUTBOUND_API_CLIENT_SECRET", "value" : module.cognito.legacy_outbound_client_secret },
+
+        { "name" : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL", "value" : "https://${aws_cloudfront_distribution.gdx_data_share_poc.domain_name}/webjars/swagger-ui/oauth2-redirect.html" },
       ]
       logConfiguration : {
         logDriver : "awslogs",

@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.service
 
+import aws.sdk.kotlin.runtime.auth.credentials.EnvironmentCredentialsProvider
 import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.CopyObjectRequest
 import aws.sdk.kotlin.services.s3.model.DeleteObjectRequest
@@ -72,20 +73,26 @@ class LegacyAdaptorInbound(
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   fun pollS3Bucket() {
-    runBlocking {
-      S3Client.fromEnvironment().use { s3 ->
-        log.debug("Polling S3 bucket: $ingressBucket")
-        val listObjectsRequest = ListObjectsRequest {
-          bucket = ingressBucket
-        }
-        val objects = s3.listObjects(listObjectsRequest).contents
+    try {
+      runBlocking {
+        S3Client {
+          region = "eu-west-2"
+        }.use { s3 ->
+          log.debug("Polling S3 bucket: $ingressBucket")
+          val listObjectsRequest = ListObjectsRequest {
+            bucket = ingressBucket
+          }
+          val objects = s3.listObjects(listObjectsRequest).contents
 
-        objects?.forEach { s3Object ->
-          s3Object.key?.let {
-            processBucketObject(s3, it)
+          objects?.forEach { s3Object ->
+            s3Object.key?.let {
+              processBucketObject(s3, it)
+            }
           }
         }
       }
+    } catch (e: Exception) {
+      log.error("Failed to connect to S3", e)
     }
   }
 

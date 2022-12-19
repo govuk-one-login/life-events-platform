@@ -32,8 +32,8 @@ api:
       data-receiver: http://localhost:8080
       event-data-retrieval: http://localhost:8080
     s3:
-      ingress: tmp
-      ingress-archive: tmp
+      ingress: ingress
+      ingress-archive: ingress-archive
 
 legacy-inbound:
   api:

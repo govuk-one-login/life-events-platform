@@ -73,7 +73,7 @@ class LegacyAdaptorInbound(
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   fun pollS3Bucket() {
     runBlocking {
-      S3Client { region = "eu-west-2" }.use { s3 ->
+      S3Client.fromEnvironment().use { s3 ->
         log.debug("Polling S3 bucket: $ingressBucket")
         val listObjectsRequest = ListObjectsRequest {
           bucket = ingressBucket

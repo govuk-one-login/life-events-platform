@@ -31,6 +31,9 @@ api:
       hmrc: https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io
       data-receiver: http://localhost:8080
       event-data-retrieval: http://localhost:8080
+    s3:
+      ingress: tmp
+      archive-ingress: tmp
 
 legacy-inbound:
   api:

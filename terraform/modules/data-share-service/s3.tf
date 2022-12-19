@@ -66,3 +66,15 @@ resource "aws_s3_bucket_acl" "cloudfront_logs_bucket_grants" {
     }
   }
 }
+
+module "ingress" {
+  source      = "../s3"
+  environment = var.environment
+  name        = "ingress"
+}
+
+module "ingress_archive" {
+  source      = "../s3"
+  environment = var.environment
+  name        = "ingress-archive"
+}

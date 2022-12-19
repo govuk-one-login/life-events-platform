@@ -53,7 +53,7 @@ dependencies {
 
   implementation("org.mockftpserver:MockFtpServer:2.7.1")
 
-  implementation("aws.sdk.kotlin:s3:0.19.0-beta")
+  implementation("aws.sdk.kotlin:s3:0.19.1-beta")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 

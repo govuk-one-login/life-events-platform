@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -112,8 +111,9 @@ class EventDataRetrievalService(
           eventType = event.eventType,
           eventId = eventId,
           details = event.dataPayload,
-          )
+        )
       }
+
       else -> {
         throw RuntimeException("Unknown DataSet ${event.datasetType}")
       }
@@ -126,12 +126,11 @@ class EventDataRetrievalService(
     dateOfBirth: LocalDate
   ): String? {
     log.debug("Looking up NINO from HMRC : search by {}, {}, {}", surname, forenames, dateOfBirth)
-    return hmrcApiService.findNiNoByNameAndDob(
+    return hmrcApiService.generateNiNoFromNameAndDob(
       surname = surname,
       firstname = forenames,
       dob = dateOfBirth
-    ).map { nino -> nino.ni_number }
-      .awaitSingleOrNull()
+    ).ni_number
   }
 }
 

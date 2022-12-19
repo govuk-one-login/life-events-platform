@@ -1,22 +1,17 @@
 package uk.gov.gdx.datashare.service
 
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
-import reactor.core.publisher.Mono
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
-class HmrcApiService(
-  private val hmrcApiWebClient: WebClient
-) {
+class HmrcApiService() {
 
-  suspend fun findNiNoByNameAndDob(surname: String, firstname: String, dob: LocalDate): Mono<NinoRecord> {
-    return hmrcApiWebClient.get()
-      .uri("/hmrc/surname/$surname/firstname/$firstname/dob/$dob")
-      .retrieve()
-      .bodyToMono<NinoRecord>()
-      .onErrorResume { Mono.empty() }
+  fun generateNiNoFromNameAndDob(surname: String, firstname: String, dob: LocalDate): NinoRecord {
+    val id = (firstname + surname + dob.toString()).hashCode().toLong()
+    val niNumber = surname.substring(0, 1) + firstname.substring(0, 1) + dob.format(DateTimeFormatter.BASIC_ISO_DATE)
+      .substring(2) + surname.substring(surname.length - 1)
+    return NinoRecord(id = id, ni_number = niNumber)
   }
 }
 

@@ -21,7 +21,6 @@ services:
       - API_BASE_URL_ISSUER_URI=http://oauth2:8080/issuer1
       - API_BASE_URL_OAUTH=http://oauth2:8080/issuer1
       - API_BASE_URL_LEV=http://lev-api:8080
-      - API_BASE_URL_HMRC=https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io
       - API_BASE_URL_DATA_RECEIVER=http://gdx-data-share-poc:8080
       - SPRING_FLYWAY_URL=jdbc:postgresql://datashare-db:5432/datashare?sslmode=prefer
       - SPRING_R2DBC_URL=r2dbc:postgresql://datashare-db:5432/datashare?sslmode=prefer

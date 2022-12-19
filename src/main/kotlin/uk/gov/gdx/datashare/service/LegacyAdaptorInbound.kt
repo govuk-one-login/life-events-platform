@@ -1,6 +1,5 @@
 package uk.gov.gdx.datashare.service
 
-import aws.sdk.kotlin.runtime.auth.credentials.EnvironmentCredentialsProvider
 import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.CopyObjectRequest
 import aws.sdk.kotlin.services.s3.model.DeleteObjectRequest

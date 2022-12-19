@@ -90,6 +90,8 @@ class LegacyAdaptorInbound(
           }
         }
       }
+    } catch (e: NoSuchMethodError) {
+      log.error("Failed to connect to S3")
     } catch (e: Exception) {
       log.error("Failed to connect to S3", e)
     }

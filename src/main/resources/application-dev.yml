@@ -33,7 +33,7 @@ api:
       event-data-retrieval: http://localhost:8080
     s3:
       ingress: tmp
-      archive-ingress: tmp
+      ingress-archive: tmp
 
 legacy-inbound:
   api:

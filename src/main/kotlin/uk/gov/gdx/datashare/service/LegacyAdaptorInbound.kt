@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit
 @Service
 class LegacyAdaptorInbound(
   @Value("\${api.base.s3.ingress}") private val ingressBucket: String,
-  @Value("\${api.base.s3.archive-ingress}") private val archiveIngressBucket: String,
+  @Value("\${api.base.s3.ingress-archive}") private val archiveIngressBucket: String,
   private val dataReceiverApiWebClient: WebClient
 ) {
   companion object {

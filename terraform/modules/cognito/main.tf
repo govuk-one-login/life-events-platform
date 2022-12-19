@@ -10,7 +10,7 @@ resource "aws_cognito_user_pool_domain" "domain" {
 resource "aws_cognito_user_pool_client" "management_client" {
   name                         = "${var.environment}-management-client"
   user_pool_id                 = aws_cognito_user_pool.pool.id
-  allowed_oauth_flows          = ["implicit"]
+  allowed_oauth_flows          = ["client_credentials"]
   allowed_oauth_scopes         = concat(aws_cognito_resource_server.data_receiver.scope_identifiers, aws_cognito_resource_server.data_retriever.scope_identifiers)
   generate_secret              = true
   explicit_auth_flows          = ["ADMIN_NO_SRP_AUTH"]

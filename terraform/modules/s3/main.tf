@@ -10,7 +10,7 @@ resource "aws_s3_bucket" "bucket" {
 #tfsec:ignore:aws-s3-enable-bucket-logging
 #tfsec:ignore:aws-s3-enable-versioning
 resource "aws_s3_bucket" "log_bucket" {
-  bucket = "${aws_s3_bucket.bucket.bucket}-logs-gdx-data-share-poc"
+  bucket = "${var.environment}-${var.name}-logs-gdx-data-share-poc"
 
   lifecycle {
     prevent_destroy = true

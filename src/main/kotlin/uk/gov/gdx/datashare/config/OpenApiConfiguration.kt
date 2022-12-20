@@ -45,14 +45,15 @@ class OpenApiConfiguration(
           .scheme("bearer")
           .bearerFormat("JWT")
           .`in`(SecurityScheme.In.HEADER)
-          .name("Authorization"))
+          .name("Authorization")
+      )
         .addSecuritySchemes(
           "cognito",
           SecurityScheme()
             .type(SecurityScheme.Type.OPENIDCONNECT)
             .openIdConnectUrl("$issuerUri/.well-known/openid-configuration")
         )
-      )
+    )
     .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
     .addSecurityItem(SecurityRequirement().addList("cognito"))
 

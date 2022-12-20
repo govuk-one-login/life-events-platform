@@ -4,17 +4,16 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
+import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
 
-data class EventData(
+data class EventDataset(
   @Id
-  val eventId: String,
-  val eventTypeId: String,
+  @Column("id")
   val datasetId: String,
-  val subscriptionId: Long,
-  val dataId: String,
-  val dataPayload: String?,
-  val dataExpiryTime: LocalDateTime,
+  val description: String,
+  val storePayload: Boolean = false,
+  val active: Boolean = true,
   val whenCreated: LocalDateTime? = null,
 
   @Transient
@@ -22,8 +21,7 @@ data class EventData(
   val new: Boolean = true
 
 ) : Persistable<String> {
-
-  override fun getId(): String = eventId
+  override fun getId() = datasetId
 
   override fun isNew(): Boolean = new
 }

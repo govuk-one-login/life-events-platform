@@ -132,7 +132,7 @@ This access token has the required scope of `data_receiver/notify` to access the
 The token can then be used to call the event receiver
 ```shell
 curl --location --request POST 'http://localhost:8080/event-data-receiver' \
---header 'Authorization: Bearer eyJraWQiOiJpc3N1ZXIxIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJsZW4iLCJuYmYiOjE2Njk4MjY0ODksInNjb3BlIjoiZGF0YV9yZWNlaXZlci9ub3RpZnkiLCJpc3MiOiJodHRwOi8vb2F1dGgyOjgwODAvaXNzdWVyMSIsImV4cCI6MTY2OTgyNjc4OSwiaWF0IjoxNjY5ODI2NDg5LCJqdGkiOiJiNDdjMzIwNC0xMGMwLTQ0MmMtODVmNS1hMTM0ZWViYTljY2QiLCJjbGllbnRfaWQiOiJsZW4ifQ.Kf-IAxyQJe6Nk16CdYFyl-NPWCce6T6iOBS9-Ex2iiCGbnllnqYB2ELRt0U1VUuGQbmKBfecXUfbPXM553rgvYWwS_21ArdGImnvDCmzv8HyszUsOCfeAeXzne3sJI4SE5UiKAfnUUdGiDEFzhV2vpbNW4Oc8I-NkFI8okkec26fWfRuWvCaPTf-eYRK07CNh4xXHMiuqihhwxDrRV1Bh7bb8Zw2FN_ykkuoZUm5uDUqrY1WsclnX8S0ejdpOMWPRkh-XU2jAFC_2Ck3mtdf7ADDrQrlOFmdDgprDneNissTMTFpLzoWZ4HNh_gYR7cZWNxOJH1BQzVIw1_iUHZeHg' \
+--header "Authorization: Bearer $TOKEN" \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "eventType": "DEATH_NOTIFICATION",
@@ -179,7 +179,7 @@ We can now poll for events:
 
 ```shell
 curl --location --request GET 'http://localhost:8080/events' \
---header 'Authorization: Bearer eyJraWQiOiJpc3N1ZXIxIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJkd3AtZXZlbnQtcmVjZWl2ZXIiLCJuYmYiOjE2Njk4MjY4MDMsInNjb3BlIjoiZGF0YV9yZXRyaWV2ZXIvcmVhZCBldmVudHMvcG9sbCIsImlzcyI6Imh0dHA6Ly9vYXV0aDI6ODA4MC9pc3N1ZXIxIiwiZXhwIjoxNjY5ODI3MTAzLCJpYXQiOjE2Njk4MjY4MDMsImp0aSI6ImYxZmY1YjIyLTZiZDEtNDQ3My04MTQwLTQwNTVmOTk1YThiOSIsImNsaWVudF9pZCI6ImR3cC1ldmVudC1yZWNlaXZlciJ9.n4ct6P6lisuPNQRta3esrA6MB-2Yc5Wzi2iOqAe1t9-uklOMStcuyQrN87r6a7_1pmhR07gI0ETXjHKXFjDljoU6x5PtfzFKps9d9AubOOypz4_MR1kOUKpbBLC1zcE9XKCEs4KxE8nhdjyJ4hXbVKbBqh7jZsuln2O-xiaQrAGLLJ1vbczcAWpyDNttDZ1kTadnuUMz0a-tU5LYjiBWqQSBg-fLu3ilkF8kt8ZnbQnCBY2Vx9Gyqpwi7oSPWz73BxCU0jY_eA6FeuRTYlSTsDejopqn7WioiWlrRd1qOFPO-Wry6DweOJAiPAg56ssFnRh2v_LgWV3pFWQNDUJtmQ'
+--header "Authorization: Bearer $TOKEN"
 ```
 
 This returns a list of events that have occurred since the last poll.
@@ -236,7 +236,7 @@ Scope needed is `data_retriever/read` which this token provides
 then call with token and the event ID
 ```shell
 curl --location --request GET 'http://localhost:8080/event-data-retrieval/4c1f7599-f7b4-43c8-9c0e-cd59be7e717a' \
---header 'Authorization: Bearer eyJraWQiOiJpc3N1ZXIxIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJkd3AtZXZlbnQtcmVjZWl2ZXIiLCJuYmYiOjE2Njk4MjcyNTcsInNjb3BlIjoiZGF0YV9yZXRyaWV2ZXIvcmVhZCBldmVudHMvcG9sbCIsImlzcyI6Imh0dHA6Ly9vYXV0aDI6ODA4MC9pc3N1ZXIxIiwiZXhwIjoxNjY5ODI3NTU3LCJpYXQiOjE2Njk4MjcyNTcsImp0aSI6IjQ1YTAxYTM2LTc2NDctNGJhMy04MzQ0LTBlNDEyMzY3OGUzYyIsImNsaWVudF9pZCI6ImR3cC1ldmVudC1yZWNlaXZlciJ9.EVLvi1QELzY29RsU8TLxOB12vBz0B-YKdWLMNjJiSu2lXjdxsqnhxBV64uSWzOOeRsUAqn6lHuE29o837njUW7LnyW1ag878RpTliISv2RNumxmjSJFpixeeSDZqNymp7K8mNkCk0S-K0eI2tE6q-1ACaV8CBqqcNSvsXWcQk2xvY0_xwwLUxCbExDo_EStOQ_ievuI71_kQt9rhtlSL_lQfJAfgAzBSRqxASTZRQeql-IWbwPWa8_GANSKTT2lKslSaL-leunm4BOjO0QnJ7_Fl_ysP6oVIcAX4kcOTLmyt-g3jFE3u7WpzS-AW6voF4yz7LvFhJD25YQ0S8bnRSw'
+--header "Authorization: Bearer $TOKEN"
 ```
 
 returns

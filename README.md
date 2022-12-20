@@ -217,7 +217,7 @@ This returns the event id in the message payload:
 
 ### Getting the data
 Using the retrieved event ID you can now get the full event data.  Depending on which client you use will return different data:
-- The `dwp-event-receiver` client also gets NINO data by calling a mocked HMRC API
+- The `dwp-event-receiver` client also gets NINO data by generating a programmatic NI number
 - The `hmrc-client` client only gets the death core data
 
 #### Examples for : `dwp-event-receiver`

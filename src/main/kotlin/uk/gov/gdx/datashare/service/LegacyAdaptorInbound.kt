@@ -9,7 +9,6 @@ import aws.smithy.kotlin.runtime.content.writeToFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.apache.commons.net.ftp.FTPClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -20,11 +19,8 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
 import uk.gov.gdx.datashare.resource.EventToPublish
 import java.io.File
-import java.io.FileOutputStream
-import java.net.ConnectException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 @Service
@@ -35,38 +31,6 @@ class LegacyAdaptorInbound(
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
-  }
-
-  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
-  fun pollFtpServer() {
-    val testFtpClient = FTPClient()
-    val host = "localhost"
-    val port = 31000
-    try {
-      testFtpClient.connect(host, port)
-      testFtpClient.login("user", "password")
-
-      listFiles(ftpClient = testFtpClient).forEach {
-        log.debug("Retrieving file ${it.first}")
-        val fileHandle = FileOutputStream(it.first)
-        testFtpClient.retrieveFile(it.first, fileHandle)
-        val file = File(it.first)
-        file.forEachLine {
-          runBlocking {
-            postDataToReceiver(EventToPublish(eventType = "DEATH_NOTIFICATION", eventDetails = it))
-          }
-        }
-        val newLocation = "/archive/${it.first}"
-        testFtpClient.rename(it.first, newLocation)
-        file.delete()
-      }
-
-      testFtpClient.logout()
-    } catch (e: ConnectException) {
-      log.warn("Failed to connect to FTP server")
-    } catch (e: RuntimeException) {
-      log.error("Failed process line", e)
-    }
   }
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
@@ -127,7 +91,7 @@ class LegacyAdaptorInbound(
       response.body?.writeToFile(file)
       file.forEachLine {
         runBlocking {
-          postDataToReceiver(EventToPublish(eventType = EventType.DEATH_NOTIFICATION, eventDetails = it))
+          postDataToReceiver(EventToPublish(eventType = "DEATH_NOTIFICATION", eventDetails = it))
         }
       }
 
@@ -139,11 +103,4 @@ class LegacyAdaptorInbound(
     }
     file.delete()
   }
-}
-
-private fun listFiles(ftpClient: FTPClient, path: String? = null): List<Pair<String, LocalDateTime>> {
-  return ftpClient.listFiles(path)
-    .map { fp -> Pair(fp.name, LocalDateTime.ofInstant(fp.timestamp.toInstant(), fp.timestamp.timeZone.toZoneId())) }
-    .sortedBy { it.second }
-    .toList()
 }

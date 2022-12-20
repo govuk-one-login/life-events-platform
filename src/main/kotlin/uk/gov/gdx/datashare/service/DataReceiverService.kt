@@ -36,8 +36,8 @@ class DataReceiverService(
     // check if client is allowed to send
     val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
       authenticationFacade.getUsername(),
-      eventPayload.eventType.toString()
-    ) ?: throw RuntimeException("Publisher ${authenticationFacade.getUsername()} does not have a subscription for event type ${eventPayload.eventType}")
+      eventPayload.eventType
+    ) ?: throw RuntimeException("${authenticationFacade.getUsername()} does not have permission")
 
     val dataSet = eventDatasetRepository.findById(subscription.datasetId)
       ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known dataset")

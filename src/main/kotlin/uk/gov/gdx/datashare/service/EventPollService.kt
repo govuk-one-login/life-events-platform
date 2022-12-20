@@ -31,15 +31,14 @@ class EventPollService(
   ): Flow<SubscribedEvent> {
 
     val now = LocalDateTime.now()
-    val lastTime = toTime ?: now
+    val lastPollEventTime = toTime ?: now
 
     return consumerSubscriptionRepository.findAllByPollerClientId(authenticationFacade.getUsername())
       .filter { eventTypes.isNullOrEmpty() || it.eventTypeId in eventTypes }
       .flatMapMerge { sub ->
         val beginTime = fromTime ?: sub.lastPollEventTime ?: now.minusDays(1)
-        val events = eventDataRepository.findAllByEventType(sub.eventTypeId, beginTime, lastTime)
+        val events = eventDataRepository.findAllByEventType(sub.eventTypeId, beginTime, lastPollEventTime)
 
-        val lastPollEventTime = events.lastOrNull()?.whenCreated ?: lastTime
         if (sub.lastPollEventTime == null || lastPollEventTime.isAfter(sub.lastPollEventTime)) {
           consumerSubscriptionRepository.updateLastPollTime(lastPollEventTime = lastPollEventTime, consumerId = sub.consumerId, sub.eventTypeId)
         }

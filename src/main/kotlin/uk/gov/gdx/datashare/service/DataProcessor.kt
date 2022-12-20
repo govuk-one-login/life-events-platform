@@ -32,7 +32,7 @@ class DataProcessor(
       // audit the event
       auditService.sendMessage(
         auditType = AuditType.EVENT_OCCURRED,
-        id = dataProcessorMessage.eventTypeId.toString(),
+        id = dataProcessorMessage.eventTypeId,
         details = dataProcessorMessage.details ?: "NONE",
         username = dataProcessorMessage.publisher
       )
@@ -44,7 +44,7 @@ class DataProcessor(
 
       val eventData = EventData(
         eventId = eventId,
-        eventTypeId = dataProcessorMessage.eventTypeId.toString(),
+        eventTypeId = dataProcessorMessage.eventTypeId,
         subscriptionId = dataProcessorMessage.subscriptionId,
         datasetId = dataProcessorMessage.datasetId,
         dataId = details.id,

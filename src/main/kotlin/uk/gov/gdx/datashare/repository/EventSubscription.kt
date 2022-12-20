@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
 
-data class PublisherSubscription(
+data class EventSubscription(
   @Id
   val id: Long,
   val publisherId: Long,

@@ -40,7 +40,7 @@ class EventRehydrate(
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class EventInformation(
-  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION", allowableValues = ["DEATH_NOTIFICATION", "BIRTH_NOTIFICATION", "MARRIAGE_NOTIFICATION"])
+  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION", allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"])
   val eventType: String,
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
   val eventId: String,

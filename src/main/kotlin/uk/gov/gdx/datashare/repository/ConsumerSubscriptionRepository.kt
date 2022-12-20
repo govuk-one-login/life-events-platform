@@ -19,7 +19,7 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
   @Query("SELECT * FROM consumer_subscription cs where cs.push_uri is not null and cs.event_type_id = :eventType")
   fun findClientToSendDataTo(eventType: String): Flow<ConsumerSubscription>
 
-  @Query("UPDATE consumer_subscription set last_poll_event_time = :lastTime where consumer_subscription.consumer_id < :consumerId")
+  @Query("UPDATE consumer_subscription set last_poll_event_time = :lastTime where consumer_id = :consumerId and event_type_id = :eventType")
   @Modifying
-  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, consumerId: Long)
+  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, consumerId: Long, eventType: String)
 }

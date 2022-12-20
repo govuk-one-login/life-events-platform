@@ -110,3 +110,5 @@ terraform.rc
 sonar-project.properties
 
 bin
+
+.env*

@@ -27,26 +27,26 @@ class DataProcessor(
 
     runBlocking {
       val dataProcessorMessage: DataProcessorMessage = mapper.readValue(message, DataProcessorMessage::class.java)
-      log.info("Received event [{}] from [{}]", dataProcessorMessage.eventType, dataProcessorMessage.provider)
+      log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
 
       // audit the event
       auditService.sendMessage(
         auditType = AuditType.EVENT_OCCURRED,
-        id = dataProcessorMessage.eventType.toString(),
+        id = dataProcessorMessage.eventTypeId,
         details = dataProcessorMessage.details ?: "NONE",
-        username = dataProcessorMessage.provider
+        username = dataProcessorMessage.publisher
       )
 
-      val eventId = UUID.randomUUID()
+      val eventId = UUID.randomUUID().toString()
 
       // lookup provider
       val details = getDataFromProvider(eventId, dataProcessorMessage)
 
       val eventData = EventData(
-        eventId = eventId.toString(),
-        eventType = dataProcessorMessage.eventType.toString(),
-        dataProvider = dataProcessorMessage.provider,
-        datasetType = dataProcessorMessage.dataSetType,
+        eventId = eventId,
+        eventTypeId = dataProcessorMessage.eventTypeId,
+        subscriptionId = dataProcessorMessage.subscriptionId,
+        datasetId = dataProcessorMessage.datasetId,
         dataId = details.id,
         dataPayload = details.data as String?,
         whenCreated = dataProcessorMessage.eventTime,
@@ -55,15 +55,15 @@ class DataProcessor(
 
       eventDataRepository.save(eventData)
 
-      eventPublishingService.storeAndPublishEvent(eventData)
+      eventPublishingService.storeAndPublishEvent(eventId, dataProcessorMessage)
     }
   }
 
-  fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage): DataDetail {
-    val id = dataProcessorMessage.id ?: eventId.toString()
+  fun getDataFromProvider(eventId: String, dataProcessorMessage: DataProcessorMessage): DataDetail {
+    val id = dataProcessorMessage.id ?: eventId
     val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 
-    return when (dataProcessorMessage.dataSetType) {
+    return when (dataProcessorMessage.datasetId) {
       "DEATH_CSV" -> {
         DataDetail(id = id, data = dataPayload)
       }

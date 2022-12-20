@@ -51,7 +51,9 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("org.mockftpserver:MockFtpServer:2.7.1")
+  implementation("org.mockftpserver:MockFtpServer:3.1.0")
+
+  implementation("aws.sdk.kotlin:s3:0.19.0-beta")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 

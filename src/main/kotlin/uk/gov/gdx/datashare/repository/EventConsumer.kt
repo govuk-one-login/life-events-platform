@@ -6,13 +6,10 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
 
-data class DataProvider(
+data class EventConsumer(
   @Id
-  val clientId: String,
-  val clientName: String,
-  val eventType: String,
-  val datasetType: String,
-  val storePayload: Boolean = false,
+  val id: Long,
+  val consumerName: String,
   val whenCreated: LocalDateTime? = null,
 
   @Transient
@@ -21,7 +18,7 @@ data class DataProvider(
 
 ) : Persistable<String> {
 
-  override fun getId(): String = clientId
+  override fun getId(): String = id.toString()
 
   override fun isNew(): Boolean = new
 }

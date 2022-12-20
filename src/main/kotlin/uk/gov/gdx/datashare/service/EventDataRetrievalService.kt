@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
-import uk.gov.gdx.datashare.repository.DataConsumerRepository
+import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.repository.EventConsumerRepository
 import uk.gov.gdx.datashare.repository.EventDataRepository
 import uk.gov.gdx.datashare.resource.EventInformation
 import java.time.LocalDate
@@ -21,36 +21,33 @@ class EventDataRetrievalService(
   private val authenticationFacade: AuthenticationFacade,
   private val levApiService: LevApiService,
   private val hmrcApiService: HmrcApiService,
-  private val dataConsumerRepository: DataConsumerRepository,
+  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
+  private val consumerRepository: EventConsumerRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
   suspend fun retrieveData(eventId: String): EventInformation {
-    val oauthClient = authenticationFacade.getUsername()
-    log.info("Looking up event Id {} for client request {}", eventId, oauthClient)
-
-    // check if client is allowed to send
-    val dataConsumer = dataConsumerRepository.findById(oauthClient)
-      ?: throw RuntimeException("Client $oauthClient is not a known data consumer")
 
     // Retrieve the ID from the lookup table
     val event = eventDataRepository.findById(eventId) ?: throw RuntimeException("Event $eventId Not Found")
 
-    // check if client is allowed to consume this type of event
-    if (event.eventType !in dataConsumer.allowedEventTypes.split(",").toTypedArray()) {
-      throw RuntimeException("Client ${dataConsumer.clientName} is not allowed to consume ${event.eventType} events")
-    }
+    val oauthClient = authenticationFacade.getUsername()
+    log.info("Looking up event Id {} for client request {}", eventId, oauthClient)
+
+    // check if client is allowed to send
+    val dataConsumer = consumerSubscriptionRepository.findByClientIdAndEventType(oauthClient, event.eventTypeId)
+      ?: throw RuntimeException("Client $oauthClient is not allowed to consume ${event.eventTypeId} events")
 
     auditService.sendMessage(
       auditType = AuditType.CLIENT_CONSUMED_EVENT,
       id = eventId,
-      details = event.eventType,
-      username = dataConsumer.clientName
+      details = event.eventTypeId,
+      username = consumerRepository.findById(dataConsumer.consumerId)?.consumerName ?: throw RuntimeException("Consumer not found for ID ${dataConsumer.consumerId}")
     )
 
-    return when (event.datasetType) {
+    return when (event.datasetId) {
       "DEATH_LEV" -> {
         // get the data from the LEV
         val citizenDeathId = event.dataId.toInt()
@@ -63,7 +60,7 @@ class EventDataRetrievalService(
             ) else null
 
             EventInformation(
-              eventType = event.eventType,
+              eventType = event.eventTypeId,
               eventId = eventId,
               details = DeathNotification(
                 deathDetails = DeathDetails(
@@ -90,7 +87,7 @@ class EventDataRetrievalService(
         val nino = if (dataConsumer.ninoRequired) getNino(surname, forenames, LocalDate.parse(dateOfBirth)) else null
 
         EventInformation(
-          eventType = event.eventType,
+          eventType = event.eventTypeId,
           eventId = eventId,
           details = DeathNotification(
             deathDetails = DeathDetails(
@@ -109,13 +106,14 @@ class EventDataRetrievalService(
 
       "PASS_THROUGH" -> {
         EventInformation(
-          eventType = event.eventType,
+          eventType = event.eventTypeId,
           eventId = eventId,
           details = event.dataPayload,
-          )
+        )
       }
+
       else -> {
-        throw RuntimeException("Unknown DataSet ${event.datasetType}")
+        throw RuntimeException("Unknown DataSet ${event.datasetId}")
       }
     }
   }
@@ -126,12 +124,11 @@ class EventDataRetrievalService(
     dateOfBirth: LocalDate
   ): String? {
     log.debug("Looking up NINO from HMRC : search by {}, {}, {}", surname, forenames, dateOfBirth)
-    return hmrcApiService.findNiNoByNameAndDob(
+    return hmrcApiService.generateNiNoFromNameAndDob(
       surname = surname,
       firstname = forenames,
       dob = dateOfBirth
-    ).map { nino -> nino.ni_number }
-      .awaitSingleOrNull()
+    ).ni_number
   }
 }
 

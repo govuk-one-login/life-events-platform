@@ -45,8 +45,8 @@ class EventListener(
 @Schema(description = "Event Payload for GDX")
 data class EventToPublish(
 
-  @Schema(description = "Type of event", required = true, example = "DEATH_NOTIFICATION")
-  val eventType: EventType,
+  @Schema(description = "Type of event", required = true, example = "DEATH_NOTIFICATION", allowableValues = [ "DEATH_NOTIFICATION", "LIFE_EVENT"])
+  val eventType: String,
 
   @Schema(description = "Date and time when the event took place, default is now", required = false, type = "date-time", example = "2021-12-31T12:34:56")
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
@@ -58,10 +58,3 @@ data class EventToPublish(
   @Schema(description = "Json payload of data, normally no additional data would be sent", required = false)
   val eventDetails: String? = null,
 )
-
-enum class EventType {
-  DEATH_NOTIFICATION,
-  BIRTH_NOTIFICATION,
-  MARRIAGE_NOTIFICATION,
-  LIFE_EVENT
-}

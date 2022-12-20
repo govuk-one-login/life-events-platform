@@ -2,7 +2,8 @@
 * text eol=lf
 
 # Windows scripts need crlf
-*.{cmd,bat} text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
 
 # binary files
 *.png binary

@@ -10,8 +10,8 @@ import java.time.LocalDateTime
 @Repository
 interface EventDataRepository : CoroutineCrudRepository<EventData, String> {
 
-  @Query("SELECT ed.* FROM event_data ed where ed.event_type in (:eventTypes) and ed.when_created > :fromTime and ed.when_created <= :toTime order by when_created")
-  fun findAllByEventTypes(eventTypes: List<String>, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EventData>
+  @Query("SELECT ed.* FROM event_data ed where ed.event_type_id = :eventType and ed.when_created > :fromTime and ed.when_created <= :toTime order by when_created")
+  fun findAllByEventType(eventType: String, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EventData>
 
   @Query("DELETE FROM event_data where data_expiry_time < :expiredTime")
   @Modifying

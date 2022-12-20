@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.resource.EventType
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import java.time.Instant
 import java.time.LocalDateTime
@@ -22,10 +21,10 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
   private val domaineventsTopic by lazy { hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist") }
   private val domaineventsTopicClient by lazy { domaineventsTopic.snsClient }
 
-  fun sendGovEvent(eventId: String, occurredAt: LocalDateTime, eventType: EventType) {
+  fun sendGovEvent(eventId: String, occurredAt: LocalDateTime, eventType: String) {
     publishToDomainEventsTopic(
       DataShareEvent(
-        eventType.toString(),
+        eventType,
         eventId,
         occurredAt.atZone(ZoneId.systemDefault()).toInstant(),
         "Gov Event: $eventType"

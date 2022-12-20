@@ -6,15 +6,16 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
 
-data class EventData(
+data class ConsumerSubscription(
   @Id
-  val eventId: String,
+  val id: Long,
+  val consumerId: Long,
   val eventTypeId: String,
-  val datasetId: String,
-  val subscriptionId: Long,
-  val dataId: String,
-  val dataPayload: String?,
-  val dataExpiryTime: LocalDateTime,
+  val pollClientId: String?,
+  val callbackClientId: String?,
+  val lastPollEventTime: LocalDateTime? = null,
+  val pushUri: String?,
+  val ninoRequired: Boolean = false,
   val whenCreated: LocalDateTime? = null,
 
   @Transient
@@ -23,7 +24,7 @@ data class EventData(
 
 ) : Persistable<String> {
 
-  override fun getId(): String = eventId
+  override fun getId(): String = id.toString()
 
   override fun isNew(): Boolean = new
 }

@@ -36,8 +36,8 @@ class EventPlatform(
     ]
   )
   suspend fun getEvents(
-    @Schema(description = "Event Types required, if none supplied it will be the allowed types for this client", required = false)
-    @RequestParam(name = "eventType") eventTypes: List<EventType> = listOf(),
+    @Schema(description = "Event Types required, if none supplied it will be the allowed types for this client", required = false, allowableValues = [ "DEATH_NOTIFICATION", "LIFE_EVENT"])
+    @RequestParam(name = "eventType") eventTypes: List<String> = listOf(),
     @Schema(description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client", type = "date-time", required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
     @RequestParam fromTime: LocalDateTime? = null,
@@ -52,8 +52,8 @@ class EventPlatform(
 data class SubscribedEvent(
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
   val eventId: String,
-  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
-  val eventType: EventType,
+  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION", allowableValues = [ "DEATH_NOTIFICATION", "LIFE_EVENT"])
+  val eventType: String,
   @Schema(description = "Events Time", type = "date-time", required = true, example = "2021-12-31T12:34:56")
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
   val eventTime: LocalDateTime

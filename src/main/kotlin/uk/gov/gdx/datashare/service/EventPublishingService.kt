@@ -3,35 +3,34 @@ package uk.gov.gdx.datashare.service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.repository.EventData
-import uk.gov.gdx.datashare.resource.EventType
-import java.time.LocalDateTime
+import uk.gov.gdx.datashare.repository.PublisherSubscriptionRepository
 
 @Service
 class EventPublishingService(
   private val dataShareTopicService: DataShareTopicService,
   private val auditService: AuditService,
+  private val publisherSubscriptionRepository: PublisherSubscriptionRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun storeAndPublishEvent(event: EventData) {
+  suspend fun storeAndPublishEvent(eventId: String, dataProcessorMessage: DataProcessorMessage) {
     // publish the change
-    log.debug("Publishing new event {} {} from {}", event.eventId, event.eventType, event.dataProvider)
+    log.debug("Publishing new event {} {} {} from {}", eventId, dataProcessorMessage.eventTypeId, dataProcessorMessage.datasetId, dataProcessorMessage.publisher)
 
     dataShareTopicService.sendGovEvent(
-      eventId = event.eventId,
-      eventType = EventType.valueOf(event.eventType),
-      occurredAt = event.whenCreated ?: LocalDateTime.now()
+      eventId = eventId,
+      eventType = dataProcessorMessage.eventTypeId,
+      occurredAt = dataProcessorMessage.eventTime
     )
 
     // audit the event
     auditService.sendMessage(
       auditType = AuditType.DATA_SHARE_EVENT_PUBLISHED,
-      id = event.eventId,
-      details = event.eventType,
-      username = event.dataProvider
+      id = eventId,
+      details = dataProcessorMessage.eventTypeId,
+      username = dataProcessorMessage.publisher
     )
   }
 }

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
 import uk.gov.gdx.datashare.resource.EventToPublish
-import uk.gov.gdx.datashare.resource.EventType
 import java.io.File
 import java.io.FileOutputStream
 import java.net.ConnectException
@@ -40,7 +39,7 @@ class LegacyAdaptorInbound(
         val file = File(it.first)
         file.forEachLine {
           runBlocking {
-            postDataToReceiver(EventToPublish(eventType = EventType.DEATH_NOTIFICATION, eventDetails = it))
+            postDataToReceiver(EventToPublish(eventType = "DEATH_NOTIFICATION", eventDetails = it))
           }
         }
         val newLocation = "/archive/${it.first}"

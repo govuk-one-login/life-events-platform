@@ -8,13 +8,15 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EventDataRepository
+import uk.gov.gdx.datashare.repository.EgressEventDataRepository
+import uk.gov.gdx.datashare.repository.EgressEventTypeRepository
 import uk.gov.gdx.datashare.resource.SubscribedEvent
 import java.time.LocalDateTime
 
 @Service
 class EventPollService(
-  private val eventDataRepository: EventDataRepository,
+  private val egressEventDataRepository: EgressEventDataRepository,
+  private val egressEventTypeRepository: EgressEventTypeRepository,
   private val authenticationFacade: AuthenticationFacade,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository
 ) {
@@ -32,20 +34,36 @@ class EventPollService(
 
     val now = LocalDateTime.now()
     val lastPollEventTime = toTime ?: now
+    val clientId = authenticationFacade.getUsername()
+    val egressEventTypes = eventTypes?.let {
+      egressEventTypeRepository.findAllByIngressEventTypesAndClient(clientId, eventTypes)
+        .toList()
+        .associateBy({ it.eventTypeId }, {it.ingressEventType})
+    }
 
     return consumerSubscriptionRepository.findAllByPollerClientId(authenticationFacade.getUsername())
-      .filter { eventTypes.isNullOrEmpty() || it.eventTypeId in eventTypes }
+      .filter { egressEventTypes.isNullOrEmpty() || it.eventTypeId in egressEventTypes.keys }
       .flatMapMerge { sub ->
         val beginTime = fromTime ?: sub.lastPollEventTime ?: now.minusDays(1)
-        val events = eventDataRepository.findAllByEventType(sub.eventTypeId, beginTime, lastPollEventTime)
+        val events =
+          egressEventDataRepository.findAllByEventType(sub.eventTypeId, beginTime, lastPollEventTime)
 
         if (sub.lastPollEventTime == null || lastPollEventTime.isAfter(sub.lastPollEventTime)) {
-          consumerSubscriptionRepository.updateLastPollTime(lastPollEventTime = lastPollEventTime, consumerId = sub.consumerId, sub.eventTypeId)
+          consumerSubscriptionRepository.updateLastPollTime(
+            lastPollEventTime = lastPollEventTime,
+            consumerId = sub.consumerId,
+            sub.eventTypeId
+          )
         }
         events
       }.map { event ->
+        val eventType = egressEventTypes?.let {
+          egressEventTypes[event.typeId]
+        } ?: egressEventTypeRepository.findById(event.typeId)?.ingressEventType
+          ?: throw RuntimeException("Event type $event.typeId Not Found")
+
         SubscribedEvent(
-          eventType = event.eventTypeId,
+          eventType = eventType,
           eventId = event.eventId,
           eventTime = event.whenCreated!!
         )

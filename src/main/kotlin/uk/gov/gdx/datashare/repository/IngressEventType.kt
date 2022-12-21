@@ -7,11 +7,11 @@ import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
 
-data class EventType(
+data class IngressEventType(
 
   @Id
   @Column("id")
-  val eventId: String,
+  val eventTypeId: String,
   val description: String,
   val active: Boolean = true,
   val whenCreated: LocalDateTime? = null,
@@ -21,7 +21,7 @@ data class EventType(
   val new: Boolean = true
 
 ) : Persistable<String> {
-  override fun getId() = eventId
+  override fun getId() = eventTypeId
 
   override fun isNew(): Boolean = new
 }

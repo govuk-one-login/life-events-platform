@@ -29,7 +29,7 @@ class PubSubProviderManager(
       )
     ]
   )
-  fun getPublishers() = subscriptionManagerService.getPublishers()
+  suspend fun getPublishers() = subscriptionManagerService.getPublishers()
 
   @GetMapping("/sub")
   @Operation(
@@ -42,5 +42,5 @@ class PubSubProviderManager(
       )
     ]
   )
-  fun getConsumers() = subscriptionManagerService.getConsumers()
+  suspend fun getConsumers() = subscriptionManagerService.getConsumers()
 }

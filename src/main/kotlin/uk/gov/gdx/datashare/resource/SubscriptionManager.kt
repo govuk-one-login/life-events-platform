@@ -3,6 +3,7 @@ package uk.gov.gdx.datashare.resource
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import kotlinx.coroutines.flow.toList
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -37,7 +38,7 @@ class SubscriptionManager(
       )
     ]
   )
-  fun getEventSubscriptions() = subscriptionManagerService.getEventSubscriptions()
+  suspend fun getEventSubscriptions() = subscriptionManagerService.getEventSubscriptions().toList()
 
   @GetMapping("/consumers")
   @Operation(
@@ -50,7 +51,7 @@ class SubscriptionManager(
       )
     ]
   )
-  fun getConsumerSubscriptions() = subscriptionManagerService.getConsumersSubscriptions()
+  suspend fun getConsumerSubscriptions() = subscriptionManagerService.getConsumersSubscriptions()
 
   @PostMapping("/event")
   @Operation(

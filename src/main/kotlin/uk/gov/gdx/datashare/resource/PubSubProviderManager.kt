@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
+import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 import uk.gov.gdx.datashare.service.ConsumerRequest
 import uk.gov.gdx.datashare.service.PublisherRequest
 import uk.gov.gdx.datashare.service.SubscriptionManagerService

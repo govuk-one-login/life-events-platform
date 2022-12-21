@@ -16,7 +16,7 @@ data class EventPublisher(
   @Id
   @Column("id")
   @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-  val publisherId: UUID,
+  val publisherId: UUID = UUID.randomUUID(),
   @Schema(description = "Publisher Name", required = true, example = "HMPO")
   val publisherName: String,
   val whenCreated: LocalDateTime? = null,

@@ -120,6 +120,18 @@ class SubscriptionManagerService(
     }
   }
 
+  suspend fun addPublisher(
+    publisherRequest: PublisherRequest
+  ): EventPublisher {
+    with(publisherRequest) {
+      return eventPublisherRepository.save(
+        EventPublisher(
+          publisherName = name
+        )
+      )
+    }
+  }
+
   suspend fun addConsumer(
     consumerRequest: ConsumerRequest
   ): EventConsumer {
@@ -167,5 +179,12 @@ data class ConsumerSubRequest(
 @Schema(description = "Consumer Request")
 data class ConsumerRequest(
   @Schema(description = "Consumer name", required = true, example = "DWP")
+  val name: String,
+)
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Publisher Request")
+data class PublisherRequest(
+  @Schema(description = "Publisher name", required = true, example = "DWP")
   val name: String,
 )

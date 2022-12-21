@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.service.ConsumerRequest
-import uk.gov.gdx.datashare.service.ConsumerSubRequest
+import uk.gov.gdx.datashare.service.PublisherRequest
 import uk.gov.gdx.datashare.service.SubscriptionManagerService
 
 @RestController
@@ -31,6 +31,26 @@ class PubSubProviderManager(
     ]
   )
   suspend fun getPublishers() = subscriptionManagerService.getPublishers()
+
+  @PostMapping("/pub")
+  @Operation(
+    summary = "Add Publisher",
+    description = "Need scope of pubsub/maintain",
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Publisher Added"
+      )
+    ]
+  )
+  suspend fun addPublisher(
+    @Schema(
+      description = "Publisher",
+      required = true,
+      implementation = PublisherRequest::class,
+    )
+    @RequestBody publisherRequest: PublisherRequest,
+  ) = subscriptionManagerService.addPublisher(publisherRequest)
 
   @GetMapping("/sub")
   @Operation(
@@ -60,7 +80,7 @@ class PubSubProviderManager(
     @Schema(
       description = "Consumer",
       required = true,
-      implementation = ConsumerSubRequest::class,
+      implementation = ConsumerRequest::class,
     )
     @RequestBody consumerRequest: ConsumerRequest,
   ) = subscriptionManagerService.addConsumer(consumerRequest)

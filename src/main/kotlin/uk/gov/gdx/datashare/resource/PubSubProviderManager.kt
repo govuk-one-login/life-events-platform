@@ -1,13 +1,14 @@
 package uk.gov.gdx.datashare.resource
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import uk.gov.gdx.datashare.service.ConsumerRequest
+import uk.gov.gdx.datashare.service.ConsumerSubRequest
 import uk.gov.gdx.datashare.service.SubscriptionManagerService
 
 @RestController
@@ -43,4 +44,24 @@ class PubSubProviderManager(
     ]
   )
   suspend fun getConsumers() = subscriptionManagerService.getConsumers()
+
+  @PostMapping("/sub")
+  @Operation(
+    summary = "Add Consumer",
+    description = "Need scope of pubsub/maintain",
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Consumer Added"
+      )
+    ]
+  )
+  suspend fun addConsumer(
+    @Schema(
+      description = "Consumer",
+      required = true,
+      implementation = ConsumerSubRequest::class,
+    )
+    @RequestBody consumerRequest: ConsumerRequest,
+  ) = subscriptionManagerService.addConsumer(consumerRequest)
 }

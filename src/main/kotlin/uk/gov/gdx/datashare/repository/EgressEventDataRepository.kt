@@ -17,7 +17,7 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
     "WHERE ed.when_created > :fromTime " +
     "AND ed.when_created <= :toTime " +
     "ORDER BY ed.when_created")
-  fun findAllByEventType(eventType: UUID, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
+  fun findAllByEventType(eventType: String, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
 
   @Query("DELETE FROM egress_event_data where data_expiry_time < :expiredTime")
   @Modifying

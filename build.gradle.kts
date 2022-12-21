@@ -55,6 +55,9 @@ dependencies {
 
   implementation("aws.sdk.kotlin:s3:0.19.0-beta")
 
+  implementation("io.micrometer:micrometer-core:1.10.2")
+  implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")
+
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   testImplementation("org.awaitility:awaitility-kotlin")

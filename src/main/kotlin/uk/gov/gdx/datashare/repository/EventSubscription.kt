@@ -8,11 +8,13 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class EventSubscription(
   @Id
-  val id: Long,
+  @JvmField
+  val id: UUID,
   @Schema(description = "Publisher ID", required = true, example = "1")
   val publisherId: Long,
   @Schema(description = "Client ID", required = true, example = "a-client-id")
@@ -28,9 +30,8 @@ data class EventSubscription(
   @JsonIgnore
   val new: Boolean = true
 
-) : Persistable<Long> {
-
-  override fun getId(): Long = id
+) : Persistable<UUID> {
+  override fun getId(): UUID = id
 
   override fun isNew(): Boolean = new
 }

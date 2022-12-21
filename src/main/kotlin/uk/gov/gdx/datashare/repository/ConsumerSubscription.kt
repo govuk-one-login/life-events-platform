@@ -8,11 +8,13 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ConsumerSubscription(
   @Id
-  val id: Long,
+  @JvmField
+  val id: UUID = UUID.randomUUID(),
   @Schema(description = "Consumer ID", required = true, example = "1")
   val consumerId: Long,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
@@ -34,9 +36,9 @@ data class ConsumerSubscription(
   @JsonIgnore
   val new: Boolean = true
 
-) : Persistable<Long> {
+) : Persistable<UUID> {
 
-  override fun getId(): Long = id
+  override fun getId(): UUID = id
 
   override fun isNew(): Boolean = new
 }

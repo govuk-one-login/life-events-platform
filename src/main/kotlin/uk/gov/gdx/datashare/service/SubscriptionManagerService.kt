@@ -12,6 +12,7 @@ import uk.gov.gdx.datashare.repository.EventConsumerRepository
 import uk.gov.gdx.datashare.repository.EventPublisherRepository
 import uk.gov.gdx.datashare.repository.EventSubscription
 import uk.gov.gdx.datashare.repository.EventSubscriptionRepository
+import java.util.*
 
 @Service
 @Transactional
@@ -43,7 +44,7 @@ class SubscriptionManagerService(
           clientId = clientId,
           eventTypeId = eventTypeId,
           datasetId = datasetId,
-          id = 0
+          id = UUID.randomUUID()
         )
       )
     }
@@ -77,7 +78,7 @@ class SubscriptionManagerService(
           callbackClientId = callbackClientId,
           pushUri = pushUri,
           ninoRequired = ninoRequired,
-          id = 0
+          id = UUID.randomUUID()
         )
       )
     }

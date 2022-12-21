@@ -5,13 +5,14 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
+import java.util.*
 
 data class EventData(
   @Id
   val eventId: String,
   val eventTypeId: String,
   val datasetId: String,
-  val subscriptionId: Long,
+  val subscriptionId: UUID,
   val dataId: String,
   val dataPayload: String?,
   val dataExpiryTime: LocalDateTime,

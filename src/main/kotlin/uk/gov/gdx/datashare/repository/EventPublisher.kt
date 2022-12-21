@@ -8,12 +8,14 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class EventPublisher(
   @Id
+  @JvmField
   @Schema(description = "Publisher ID", required = true, example = "1")
-  val id: Long,
+  val id: UUID,
   @Schema(description = "Publisher Name", required = true, example = "HMPO")
   val publisherName: String,
   val whenCreated: LocalDateTime? = null,
@@ -23,9 +25,8 @@ data class EventPublisher(
   @JsonIgnore
   val new: Boolean = true
 
-) : Persistable<Long> {
-
-  override fun getId(): Long = id
+) : Persistable<UUID> {
+  override fun getId(): UUID = id
 
   override fun isNew(): Boolean = new
 }

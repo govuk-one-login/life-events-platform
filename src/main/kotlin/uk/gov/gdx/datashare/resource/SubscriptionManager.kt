@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.gdx.datashare.service.ConsumerSubRequest
 import uk.gov.gdx.datashare.service.PublisherSubRequest
 import uk.gov.gdx.datashare.service.SubscriptionManagerService
+import java.util.UUID
 
 @RestController
 @RequestMapping("/subscriptions", produces = [ MediaType.APPLICATION_JSON_VALUE])
@@ -84,7 +85,7 @@ class SubscriptionManager(
   )
   suspend fun updateEventSubscription(
     @Schema(description = "Event Subscription ID", required = true)
-    @PathVariable subscriptionId: Long,
+    @PathVariable subscriptionId: UUID,
     @Schema(
       description = "Event Subscription to update",
       required = true,
@@ -126,7 +127,7 @@ class SubscriptionManager(
   )
   suspend fun updateConsumerSubscription(
     @Schema(description = "Consumer Subscription ID", required = true)
-    @PathVariable subscriptionId: Long,
+    @PathVariable subscriptionId: UUID,
     @Schema(
       description = "Consumer Subscription to update",
       required = true,

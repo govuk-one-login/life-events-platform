@@ -12,6 +12,7 @@ import uk.gov.gdx.datashare.repository.EventConsumerRepository
 import uk.gov.gdx.datashare.repository.EventPublisherRepository
 import uk.gov.gdx.datashare.repository.EventSubscription
 import uk.gov.gdx.datashare.repository.EventSubscriptionRepository
+import java.util.*
 
 @Service
 @Transactional
@@ -43,14 +44,14 @@ class SubscriptionManagerService(
           clientId = clientId,
           eventTypeId = eventTypeId,
           datasetId = datasetId,
-          id = 0
+          eventSubscriptionId = UUID.randomUUID()
         )
       )
     }
   }
 
   suspend fun updateEventSubscription(
-    subscriptionId: Long,
+    subscriptionId: UUID,
     publisherSubRequest: PublisherSubRequest
   ): EventSubscription {
     with(publisherSubRequest) {
@@ -77,14 +78,14 @@ class SubscriptionManagerService(
           callbackClientId = callbackClientId,
           pushUri = pushUri,
           ninoRequired = ninoRequired,
-          id = 0
+          consumerSubscriptionId = UUID.randomUUID()
         )
       )
     }
   }
 
   suspend fun updateConsumerSubscription(
-    subId: Long,
+    subId: UUID,
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
@@ -105,8 +106,8 @@ class SubscriptionManagerService(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Publisher Subscription Request")
 data class PublisherSubRequest(
-  @Schema(description = "Publisher ID", required = true, example = "1")
-  val publisherId: Long,
+  @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val publisherId: UUID,
   @Schema(description = "Client ID", required = true, example = "a-client-id")
   val clientId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
@@ -118,8 +119,8 @@ data class PublisherSubRequest(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Consumer Subscription Request")
 data class ConsumerSubRequest(
-  @Schema(description = "Consumer ID", required = true, example = "1")
-  val consumerId: Long,
+  @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val consumerId: UUID,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventTypeId: String,
   @Schema(description = "Client ID used to poll event platform", required = false, example = "a-polling-client")

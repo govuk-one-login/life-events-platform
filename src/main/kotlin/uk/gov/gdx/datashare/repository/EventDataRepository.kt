@@ -6,9 +6,10 @@ import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
+import java.util.*
 
 @Repository
-interface EventDataRepository : CoroutineCrudRepository<EventData, String> {
+interface EventDataRepository : CoroutineCrudRepository<EventData, UUID> {
 
   @Query("SELECT ed.* FROM event_data ed where ed.event_type_id = :eventType and ed.when_created > :fromTime and ed.when_created <= :toTime order by when_created")
   fun findAllByEventType(eventType: String, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EventData>

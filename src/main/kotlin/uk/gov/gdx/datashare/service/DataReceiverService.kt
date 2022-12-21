@@ -84,7 +84,7 @@ data class DataProcessorMessage(
   val eventTime: LocalDateTime,
   val publisher: String,
   val storePayload: Boolean = false,
-  val subscriptionId: Long,
+  val subscriptionId: UUID,
   val id: String?,
   val details: String?,
 )

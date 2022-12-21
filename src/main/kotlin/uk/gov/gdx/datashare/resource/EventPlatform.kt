@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.gdx.datashare.service.EventPollService
 import java.time.LocalDateTime
+import java.util.UUID
 
 @RestController
 @RequestMapping("/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
@@ -51,7 +52,7 @@ class EventPlatform(
 @Schema(description = "Subscribed event notification")
 data class SubscribedEvent(
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
-  val eventId: String,
+  val eventId: UUID,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION", allowableValues = [ "DEATH_NOTIFICATION", "LIFE_EVENT"])
   val eventType: String,
   @Schema(description = "Events Time", type = "date-time", required = true, example = "2021-12-31T12:34:56")

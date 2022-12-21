@@ -11,6 +11,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val objectMapper: ObjectMapper) {
@@ -21,7 +22,7 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
   private val domaineventsTopic by lazy { hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist") }
   private val domaineventsTopicClient by lazy { domaineventsTopic.snsClient }
 
-  fun sendGovEvent(eventId: String, occurredAt: LocalDateTime, eventType: String) {
+  fun sendGovEvent(eventId: UUID, occurredAt: LocalDateTime, eventType: String) {
     publishToDomainEventsTopic(
       DataShareEvent(
         eventType,
@@ -48,14 +49,14 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
 
 data class DataShareEvent(
   val eventType: String? = null,
-  val id: String,
+  val id: UUID,
   val version: String,
   val occurredAt: String,
   val description: String
 ) {
   constructor(
     eventType: String,
-    id: String,
+    id: UUID,
     occurredAt: Instant,
     description: String,
   ) : this(

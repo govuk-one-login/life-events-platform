@@ -12,12 +12,11 @@ import java.util.*
 interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, UUID> {
 
   @Query("SELECT ed.* FROM egress_event_data ed " +
-    "JOIN egress_event_type et ON ed.type_id = et.id " +
-    "AND et.ingress_event_type = :eventType " +
     "WHERE ed.when_created > :fromTime " +
     "AND ed.when_created <= :toTime " +
+    "AND ed.type_id = :eventTypeId " +
     "ORDER BY ed.when_created")
-  fun findAllByEventType(eventType: String, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
+  fun findAllByEventType(eventTypeId: UUID, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
 
   @Query("DELETE FROM egress_event_data where data_expiry_time < :expiredTime")
   @Modifying

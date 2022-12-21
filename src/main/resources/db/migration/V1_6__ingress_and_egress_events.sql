@@ -7,11 +7,11 @@ rename to ingress_event_type;
 
 create table egress_event_type
 (
-    id           UUID PRIMARY KEY         NOT NULL DEFAULT gen_random_uuid(),
-    ingress_event_type VARCHAR(50)        NOT NULL,
-    description  VARCHAR(200)             NOT NULL,
-    active       BOOLEAN                  NOT NULL DEFAULT true,
-    when_created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    id                 UUID PRIMARY KEY         NOT NULL DEFAULT gen_random_uuid(),
+    ingress_event_type VARCHAR(50)              NOT NULL,
+    description        VARCHAR(200)             NOT NULL,
+    active             BOOLEAN                  NOT NULL DEFAULT true,
+    when_created       TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 
     CONSTRAINT fk_ingress_event_type
         FOREIGN KEY (ingress_event_type)

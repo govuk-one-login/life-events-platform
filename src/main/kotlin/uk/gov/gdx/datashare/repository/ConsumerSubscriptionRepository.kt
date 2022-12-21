@@ -12,15 +12,15 @@ import java.util.*
 interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubscription, UUID> {
 
   @Query("SELECT * FROM consumer_subscription cs where cs.callback_client_id = :clientId and cs.event_type_id = :eventType")
-  suspend fun findByClientIdAndEventType(clientId: String, eventType: String): ConsumerSubscription?
+  suspend fun findByClientIdAndEventType(clientId: String, eventType: UUID): ConsumerSubscription?
 
   @Query("SELECT * FROM consumer_subscription cs where cs.poll_client_id = :clientId")
   fun findAllByPollerClientId(clientId: String): Flow<ConsumerSubscription>
 
   @Query("SELECT * FROM consumer_subscription cs where cs.push_uri is not null and cs.event_type_id = :eventType")
-  fun findClientToSendDataTo(eventType: String): Flow<ConsumerSubscription>
+  fun findClientToSendDataTo(eventType: UUID): Flow<ConsumerSubscription>
 
   @Query("UPDATE consumer_subscription set last_poll_event_time = :lastTime where consumer_id = :consumerId and event_type_id = :eventType")
   @Modifying
-  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, consumerId: UUID, eventType: String)
+  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, consumerId: UUID, eventType: UUID)
 }

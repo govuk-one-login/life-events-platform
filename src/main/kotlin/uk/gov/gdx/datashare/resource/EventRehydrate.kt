@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.gdx.datashare.service.EventDataRetrievalService
+import java.util.*
 
 @RestController
 @RequestMapping("/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
@@ -34,7 +35,7 @@ class EventRehydrate(
   )
   suspend fun getEventDetails(
     @Schema(description = "Event ID", required = true)
-    @PathVariable id: String,
+    @PathVariable id: UUID,
   ): EventInformation = eventDataRetrievalService.retrieveData(id)
 }
 
@@ -43,7 +44,7 @@ data class EventInformation(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION", allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"])
   val eventType: String,
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
-  val eventId: String,
+  val eventId: UUID,
   @Schema(description = "Details of event, a payload of JSON data", required = false)
   val details: Any? = null,
 )

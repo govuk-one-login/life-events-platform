@@ -13,6 +13,7 @@ import uk.gov.gdx.datashare.repository.EventConsumerRepository
 import uk.gov.gdx.datashare.repository.EventDataRepository
 import uk.gov.gdx.datashare.resource.EventInformation
 import java.time.LocalDate
+import java.util.UUID
 
 @Service
 class EventDataRetrievalService(
@@ -28,7 +29,7 @@ class EventDataRetrievalService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun retrieveData(eventId: String): EventInformation {
+  suspend fun retrieveData(eventId: UUID): EventInformation {
 
     // Retrieve the ID from the lookup table
     val event = eventDataRepository.findById(eventId) ?: throw RuntimeException("Event $eventId Not Found")
@@ -42,7 +43,7 @@ class EventDataRetrievalService(
 
     auditService.sendMessage(
       auditType = AuditType.CLIENT_CONSUMED_EVENT,
-      id = eventId,
+      id = eventId.toString(),
       details = event.eventTypeId,
       username = consumerRepository.findById(dataConsumer.consumerId)?.consumerName ?: throw RuntimeException("Consumer not found for ID ${dataConsumer.consumerId}")
     )

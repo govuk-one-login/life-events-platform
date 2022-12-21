@@ -7,13 +7,16 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
+import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class EventConsumer(
   @Id
-  @Schema(description = "Consumer ID", required = true, example = "1")
-  val id: Long,
+  @Column("id")
+  @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val eventConsumerId: UUID = UUID.randomUUID(),
   @Schema(description = "Consumer Name", required = true, example = "DVLA")
   val consumerName: String,
   val whenCreated: LocalDateTime? = null,
@@ -23,9 +26,9 @@ data class EventConsumer(
   @JsonIgnore
   val new: Boolean = true
 
-) : Persistable<Long> {
+) : Persistable<UUID> {
 
-  override fun getId(): Long = id
+  override fun getId(): UUID = eventConsumerId
 
   override fun isNew(): Boolean = new
 }

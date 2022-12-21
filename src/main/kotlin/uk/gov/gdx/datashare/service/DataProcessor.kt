@@ -76,9 +76,11 @@ class DataProcessor(
 
       log.debug("Saving events {}", egressEventData.joinToString())
 
-      egressEventDataRepository.saveAll(egressEventData)
+      val savedEgressEvents = egressEventDataRepository.saveAll(egressEventData).toList()
 
-      egressEventData.forEach {
+      log.debug("Saved events {}", savedEgressEvents.joinToString())
+
+      savedEgressEvents.forEach {
         eventPublishingService.storeAndPublishEvent(it.eventId, dataProcessorMessage)
       }
     }

@@ -110,7 +110,7 @@ resource "aws_cognito_resource_server" "subscriptions" {
 
 resource "aws_cognito_resource_server" "pubsub" {
   identifier = "pubsub"
-  name       = "Publisher / Consumer management"
+  name       = "Publisher Consumer management"
 
   user_pool_id = aws_cognito_user_pool.pool.id
 

@@ -22,5 +22,5 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
 
   @Query("UPDATE consumer_subscription set last_poll_event_time = :lastTime where consumer_id = :consumerId and event_type_id = :eventType")
   @Modifying
-  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, consumerId: Long, eventType: String)
+  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, consumerId: UUID, eventType: String)
 }

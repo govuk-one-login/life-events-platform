@@ -20,7 +20,7 @@ import uk.gov.gdx.datashare.service.SubscriptionManagerService
 class PubSubProviderManager(
   private val subscriptionManagerService: SubscriptionManagerService,
   private val egressEventDataRepository: EgressEventDataRepository,
-  private val ingressEventDataRepository: EgressEventDataRepository
+  private val ingressEventDataRepository: IngressEventDataRepository
 ) {
 
   @GetMapping("/pub")

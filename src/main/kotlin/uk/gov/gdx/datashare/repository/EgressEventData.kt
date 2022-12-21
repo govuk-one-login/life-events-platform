@@ -21,8 +21,8 @@ data class EgressEventData(
   val datasetId: String,
   @Schema(description = "Event data specific ID", required = true, example = "HMPO Death certificate number")
   val dataId: String,
-  @Schema(description = "Event data", required = true, example = "{\"firstName\": \"Bob\",...}}")
-  val dataPayload: String,
+  @Schema(description = "Event data", required = false, example = "{\"firstName\": \"Bob\",...}}")
+  val dataPayload: String?,
   val dataExpiryTime: LocalDateTime,
   val whenCreated: LocalDateTime? = null,
 

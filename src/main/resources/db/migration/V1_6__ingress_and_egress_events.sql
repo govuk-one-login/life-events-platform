@@ -25,7 +25,7 @@ create table egress_event_data
     ingress_event_id UUID                     NOT NULL,
     dataset_id       VARCHAR(50)              NOT NULL,
     data_id          VARCHAR(80)              NOT NULL,
-    data_payload     TEXT                     NOT NULL,
+    data_payload     TEXT                     NULL,
     data_expiry_time TIMESTAMP WITH TIME ZONE NOT NULL,
     when_created     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 

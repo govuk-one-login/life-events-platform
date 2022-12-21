@@ -19,8 +19,8 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  private val domaineventsTopic by lazy { hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist") }
-  private val domaineventsTopicClient by lazy { domaineventsTopic.snsClient }
+  private val domainEventsTopic by lazy { hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist") }
+  private val domainEventsTopicClient by lazy { domainEventsTopic.snsClient }
 
   fun sendGovEvent(eventId: UUID, occurredAt: LocalDateTime, eventType: String) {
     publishToDomainEventsTopic(
@@ -35,8 +35,8 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
 
   private fun publishToDomainEventsTopic(payload: DataShareEvent) {
     log.debug("Event {} for id {}", payload.eventType, payload.id)
-    domaineventsTopicClient.publish(
-      PublishRequest(domaineventsTopic.arn, objectMapper.writeValueAsString(payload))
+    domainEventsTopicClient.publish(
+      PublishRequest(domainEventsTopic.arn, objectMapper.writeValueAsString(payload))
         .withMessageAttributes(
           mapOf(
             "eventType" to MessageAttributeValue().withDataType("String").withStringValue(payload.eventType)

@@ -84,7 +84,7 @@ class EventDataRetrievalService(
 
       "DEATH_CSV" -> {
         // get the data from the data store - it's a CSV file
-        val csvLine = event.dataPayload.split(",").toTypedArray()
+        val csvLine = event.dataPayload!!.split(",").toTypedArray()
         val (surname, forenames, dateOfBirth, dateOfDeath, sex) = csvLine
 
         val nino = if (dataConsumer.ninoRequired) getNino(surname, forenames, LocalDate.parse(dateOfBirth)) else null

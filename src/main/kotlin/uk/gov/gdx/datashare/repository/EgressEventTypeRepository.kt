@@ -13,4 +13,8 @@ interface EgressEventTypeRepository : CoroutineCrudRepository<EgressEventType, U
     "AND cs.poll_client_id = :clientId " +
     "WHERE et.ingress_event_type IN :ingressEventTypes ")
   fun findAllByIngressEventTypesAndClient(clientId: String, ingressEventTypes: List<String>): Flow<EgressEventType>
+
+  @Query("SELECT et.* FROM egress_event_type et " +
+    "WHERE et.ingress_event_type = :ingressEventType ")
+  fun findAllByIngressEventType(ingressEventType: String): Flow<EgressEventType>
 }

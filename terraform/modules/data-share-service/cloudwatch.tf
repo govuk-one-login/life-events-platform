@@ -15,19 +15,19 @@ resource "aws_cloudwatch_log_group" "lb_sg_update" {
 resource "aws_cloudwatch_dashboard" "metrics_dashboard" {
   dashboard_name = "metrics-dashboard"
   dashboard_body = jsonencode({
-    "widgets": [
+    "widgets" : [
       {
-        "type": "metric",
-        "properties": {
-          "metrics": [
+        "type" : "metric",
+        "properties" : {
+          "metrics" : [
             [
               "gdxApp",
               "API_CALLS.IngestedEvents.count"
             ]
           ],
-          "period": 300,
-          "region": var.region,
-          "title": "API calls"
+          "period" : 300,
+          "region" : var.region,
+          "title" : "API calls"
         }
       }
     ]

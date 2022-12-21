@@ -18,8 +18,8 @@ data class ConsumerSubscription(
   val consumerSubscriptionId: UUID = UUID.randomUUID(),
   @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
   val consumerId: UUID,
-  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
-  val eventTypeId: String,
+  @Schema(description = "Egress Event Type ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val eventTypeId: UUID,
   @Schema(description = "Client ID used to poll event platform", required = false, example = "a-polling-client")
   val pollClientId: String?,
   @Schema(description = "Client ID used to callback to event platform", required = false, example = "a-callback-client")

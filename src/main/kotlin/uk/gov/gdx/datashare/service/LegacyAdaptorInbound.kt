@@ -67,7 +67,7 @@ class LegacyAdaptorInbound(
       .retrieve()
       .awaitBodilessEntity()
 
-  //TODO-https://github.com/alphagov/gdx-data-share-poc/issues/97: Fix S3 client
+  // TODO-https://github.com/alphagov/gdx-data-share-poc/issues/97: Fix S3 client
   suspend fun processBucketObject(s3: S3Client, objectKey: String) {
     val getObjectRequest = GetObjectRequest {
       key = objectKey

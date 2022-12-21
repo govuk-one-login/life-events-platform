@@ -65,6 +65,15 @@
             "scope": "data_retriever/read",
             "client_id": "internal-outbound"
           }
+        },
+        {
+          "requestParam": "scope",
+          "match": "maintainer",
+          "claims": {
+            "sub": "maintainer",
+            "scope": ["subscriptions/maintain","pubsub/maintain"],
+            "client_id": "maintainer"
+          }
         }
       ]
     }

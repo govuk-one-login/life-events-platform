@@ -1,6 +1,8 @@
 package uk.gov.gdx.datashare.resource
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -11,16 +13,16 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.service.DataReceiverService
 import java.time.LocalDateTime
-import java.util.*
 
 @RestController
 @RequestMapping("/event-data-receiver", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_receiver/notify')")
 @Validated
 class EventListener(
-  private val dataReceiverService: DataReceiverService
+  private val dataReceiverService: DataReceiverService,
+  meterRegistry: MeterRegistry
 ) {
-
+  private val ingestedEventsCounter: Counter = meterRegistry.counter("API_CALLS.IngestedEvents")
   @PostMapping
   @Operation(
     summary = "Send events to GDS - The 'Source' of the event - this could be HMPO or DWP for example",
@@ -39,7 +41,10 @@ class EventListener(
       implementation = EventToPublish::class,
     )
     @RequestBody eventPayload: EventToPublish,
-  ) = dataReceiverService.sendToDataProcessor(eventPayload)
+  ) = run {
+    dataReceiverService.sendToDataProcessor(eventPayload)
+    ingestedEventsCounter.increment()
+  }
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

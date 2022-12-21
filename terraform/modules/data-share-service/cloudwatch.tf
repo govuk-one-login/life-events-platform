@@ -14,7 +14,7 @@ resource "aws_cloudwatch_log_group" "lb_sg_update" {
 
 resource "aws_cloudwatch_dashboard" "metrics_dashboard" {
   dashboard_name = "metrics-dashboard"
-  dashboard_body = <<EOF
+  dashboard_body = <<-EOF
 {
   "widgets": [
     {

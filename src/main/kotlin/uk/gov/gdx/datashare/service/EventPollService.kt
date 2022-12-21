@@ -41,6 +41,8 @@ class EventPollService(
         .associateBy({ it.eventTypeId }, {it.ingressEventType})
     }
 
+    log.debug("Egress event types {} polled", egressEventTypes?.keys?.joinToString())
+
     return consumerSubscriptionRepository.findAllByPollerClientId(authenticationFacade.getUsername())
       .filter { egressEventTypes.isNullOrEmpty() || it.eventTypeId in egressEventTypes.keys }
       .flatMapMerge { sub ->

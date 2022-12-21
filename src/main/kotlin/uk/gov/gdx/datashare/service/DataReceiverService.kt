@@ -18,7 +18,7 @@ import java.util.*
 class DataReceiverService(
   private val hmppsQueueService: HmppsQueueService,
   private val authenticationFacade: AuthenticationFacade,
-  private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
+  private val eventSubscriptionRepository: EventSubscriptionRepository,
   private val eventPublisherRepository: EventPublisherRepository,
   private val eventDatasetRepository: EventDatasetRepository,
   private val objectMapper: ObjectMapper,
@@ -34,7 +34,7 @@ class DataReceiverService(
   suspend fun sendToDataProcessor(eventPayload: EventToPublish) {
 
     // check if client is allowed to send
-    val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
+    val subscription = eventSubscriptionRepository.findByClientIdAndEventType(
       authenticationFacade.getUsername(),
       eventPayload.eventType
     ) ?: throw RuntimeException("${authenticationFacade.getUsername()} does not have permission")

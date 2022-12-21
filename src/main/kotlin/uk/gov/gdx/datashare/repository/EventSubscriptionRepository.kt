@@ -5,8 +5,8 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PublisherSubscriptionRepository : CoroutineCrudRepository<EventSubscription, Long> {
+interface EventSubscriptionRepository : CoroutineCrudRepository<EventSubscription, Long> {
 
-  @Query("SELECT * FROM publisher_subscription ps where ps.client_id = :clientId and ps.event_type_id = :eventType")
+  @Query("SELECT * FROM event_subscription ps where ps.client_id = :clientId and ps.event_type_id = :eventType")
   suspend fun findByClientIdAndEventType(clientId: String, eventType: String): EventSubscription?
 }

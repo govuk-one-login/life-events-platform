@@ -3,13 +3,11 @@ package uk.gov.gdx.datashare.service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.repository.PublisherSubscriptionRepository
 
 @Service
 class EventPublishingService(
   private val dataShareTopicService: DataShareTopicService,
-  private val auditService: AuditService,
-  private val publisherSubscriptionRepository: PublisherSubscriptionRepository
+  private val auditService: AuditService
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)

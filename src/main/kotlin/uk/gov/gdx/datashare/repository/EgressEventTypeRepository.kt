@@ -15,6 +15,12 @@ interface EgressEventTypeRepository : CoroutineCrudRepository<EgressEventType, U
   fun findAllByIngressEventTypesAndClient(clientId: String, ingressEventTypes: List<String>): Flow<EgressEventType>
 
   @Query("SELECT et.* FROM egress_event_type et " +
+    "JOIN consumer_subscription cs ON cs.event_type_id = et.id " +
+    "AND cs.id = :consumerId " +
+    "WHERE et.ingress_event_type = :ingressEventType ")
+  fun findByIngressEventTypeAndConsumerId(ingressEventType: String, consumerId: UUID): EgressEventType?
+
+  @Query("SELECT et.* FROM egress_event_type et " +
     "WHERE et.ingress_event_type = :ingressEventType ")
   fun findAllByIngressEventType(ingressEventType: String): Flow<EgressEventType>
 }

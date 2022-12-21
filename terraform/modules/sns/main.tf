@@ -28,6 +28,16 @@ data "aws_iam_policy_document" "sns_policy" {
       aws_sns_topic.topic.arn
     ]
   }
+
+  statement {
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    resources = [
+      aws_kms_key.sns_key.arn
+    ]
+  }
 }
 
 resource "aws_iam_user_policy" "sns_policy" {

@@ -3,6 +3,7 @@ package uk.gov.gdx.datashare.service
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -71,11 +72,13 @@ class DataProcessor(
           whenCreated = dataProcessorMessage.eventTime,
           dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
         )
-      }
+      }.toList()
+
+      log.debug("Saving events {}", egressEventData.joinToString())
 
       egressEventDataRepository.saveAll(egressEventData)
 
-      egressEventData.collect {
+      egressEventData.forEach {
         eventPublishingService.storeAndPublishEvent(it.eventId, dataProcessorMessage)
       }
     }

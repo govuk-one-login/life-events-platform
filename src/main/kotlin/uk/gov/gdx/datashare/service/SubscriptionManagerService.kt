@@ -119,6 +119,18 @@ class SubscriptionManagerService(
       )
     }
   }
+
+  suspend fun addConsumer(
+    consumerRequest: ConsumerRequest
+  ): EventConsumer {
+    with(consumerRequest) {
+      return eventConsumerRepository.save(
+        EventConsumer(
+          consumerName = name
+        )
+      )
+    }
+  }
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -149,4 +161,11 @@ data class ConsumerSubRequest(
   val pushUri: String? = null,
   @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
   val ninoRequired: Boolean = false,
+)
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Consumer Request")
+data class ConsumerRequest(
+  @Schema(description = "Consumer name", required = true, example = "DWP")
+  val name: String,
 )

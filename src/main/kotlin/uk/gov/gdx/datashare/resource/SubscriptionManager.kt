@@ -98,6 +98,26 @@ class SubscriptionManager(
   @PostMapping("/consumer")
   @Operation(
     summary = "Add Consumer",
+    description = "Need scope of pubsub/maintain",
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Consumer Subscription Added"
+      )
+    ]
+  )
+  suspend fun addConsumer(
+    @Schema(
+      description = "Consumer Subscription",
+      required = true,
+      implementation = ConsumerSubRequest::class,
+    )
+    @RequestBody consumerSubRequest: ConsumerSubRequest,
+  ) = subscriptionManagerService.addConsumerSubscription(consumerSubRequest)
+
+  @PostMapping("/consumer/subscription")
+  @Operation(
+    summary = "Add Consumer",
     description = "Need scope of subscriptions/maintain",
     responses = [
       ApiResponse(

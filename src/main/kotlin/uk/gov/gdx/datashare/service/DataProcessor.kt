@@ -37,7 +37,7 @@ class DataProcessor(
         username = dataProcessorMessage.publisher
       )
 
-      val eventId = UUID.randomUUID().toString()
+      val eventId = UUID.randomUUID()
 
       // lookup provider
       val details = getDataFromProvider(eventId, dataProcessorMessage)
@@ -59,8 +59,8 @@ class DataProcessor(
     }
   }
 
-  fun getDataFromProvider(eventId: String, dataProcessorMessage: DataProcessorMessage): DataDetail {
-    val id = dataProcessorMessage.id ?: eventId
+  fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage): DataDetail {
+    val id = dataProcessorMessage.id ?: eventId.toString()
     val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 
     return when (dataProcessorMessage.datasetId) {

@@ -39,7 +39,7 @@ create table event_subscription
 
 create table event_data
 (
-    event_id         VARCHAR(39) PRIMARY KEY  NOT NULL,
+    id               UUID PRIMARY KEY         NOT NULL DEFAULT gen_random_uuid(),
     event_type_id    VARCHAR(50)              NOT NULL,
     dataset_id       VARCHAR(50)              NOT NULL,
     subscription_id  UUID                     NOT NULL,

@@ -3,6 +3,7 @@ package uk.gov.gdx.datashare.service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class EventPublishingService(
@@ -13,7 +14,7 @@ class EventPublishingService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun storeAndPublishEvent(eventId: String, dataProcessorMessage: DataProcessorMessage) {
+  suspend fun storeAndPublishEvent(eventId: UUID, dataProcessorMessage: DataProcessorMessage) {
     // publish the change
     log.debug("Publishing new event {} {} {} from {}", eventId, dataProcessorMessage.eventTypeId, dataProcessorMessage.datasetId, dataProcessorMessage.publisher)
 
@@ -26,7 +27,7 @@ class EventPublishingService(
     // audit the event
     auditService.sendMessage(
       auditType = AuditType.DATA_SHARE_EVENT_PUBLISHED,
-      id = eventId,
+      id = eventId.toString(),
       details = dataProcessorMessage.eventTypeId,
       username = dataProcessorMessage.publisher
     )

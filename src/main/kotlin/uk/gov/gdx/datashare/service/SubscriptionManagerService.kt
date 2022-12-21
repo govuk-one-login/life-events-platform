@@ -26,13 +26,13 @@ class SubscriptionManagerService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getPublishers() = eventPublisherRepository.findAll()
+  suspend fun getPublishers() = eventPublisherRepository.findAll()
 
-  fun getEventSubscriptions() = eventSubscriptionRepository.findAll()
+  suspend fun getEventSubscriptions() = eventSubscriptionRepository.findAll()
 
-  fun getConsumers() = eventConsumerRepository.findAll()
+  suspend fun getConsumers() = eventConsumerRepository.findAll()
 
-  fun getConsumersSubscriptions() = consumerSubscriptionRepository.findAll()
+  suspend fun getConsumersSubscriptions() = consumerSubscriptionRepository.findAll()
 
   suspend fun addEventSubscription(
     publisherSubRequest: PublisherSubRequest

@@ -6,9 +6,10 @@ import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
+import java.util.*
 
 @Repository
-interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubscription, Long> {
+interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubscription, UUID> {
 
   @Query("SELECT * FROM consumer_subscription cs where cs.callback_client_id = :clientId and cs.event_type_id = :eventType")
   suspend fun findByClientIdAndEventType(clientId: String, eventType: String): ConsumerSubscription?

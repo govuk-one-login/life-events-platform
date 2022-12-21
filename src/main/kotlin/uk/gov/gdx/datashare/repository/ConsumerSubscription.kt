@@ -1,5 +1,7 @@
 package uk.gov.gdx.datashare.repository
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
@@ -7,6 +9,7 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import java.time.LocalDateTime
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class ConsumerSubscription(
   @Id
   val id: Long,
@@ -19,6 +22,7 @@ data class ConsumerSubscription(
   @Schema(description = "Client ID used to callback to event platform", required = false, example = "a-callback-client")
   val callbackClientId: String?,
   val lastPollEventTime: LocalDateTime? = null,
+  @JsonIgnore
   @Schema(description = "URI where to push data, can be s3 or http", required = false, example = "http://localhost/callback")
   val pushUri: String?,
   @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
@@ -27,6 +31,7 @@ data class ConsumerSubscription(
 
   @Transient
   @Value("false")
+  @JsonIgnore
   val new: Boolean = true
 
 ) : Persistable<Long> {

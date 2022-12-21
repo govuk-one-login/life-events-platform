@@ -6,27 +6,22 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
-import java.util.*
 
-data class EventData(
+data class IngressEventType(
+
   @Id
   @Column("id")
-  val eventId: UUID,
   val eventTypeId: String,
-  val datasetId: String,
-  val subscriptionId: UUID,
-  val dataId: String,
-  val dataPayload: String?,
-  val dataExpiryTime: LocalDateTime,
+  val description: String,
+  val active: Boolean = true,
   val whenCreated: LocalDateTime? = null,
 
   @Transient
   @Value("false")
   val new: Boolean = true
 
-) : Persistable<UUID> {
-
-  override fun getId() = eventId
+) : Persistable<String> {
+  override fun getId() = eventTypeId
 
   override fun isNew(): Boolean = new
 }

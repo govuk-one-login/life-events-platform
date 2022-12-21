@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EventConsumerRepository
-import uk.gov.gdx.datashare.repository.EventDataRepository
+import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 import uk.gov.gdx.datashare.resource.EventInformation
 import java.time.LocalDate
 import java.util.UUID
 
 @Service
 class EventDataRetrievalService(
-  private val eventDataRepository: EventDataRepository,
+  private val ingressEventDataRepository: IngressEventDataRepository,
   private val auditService: AuditService,
   private val authenticationFacade: AuthenticationFacade,
   private val levApiService: LevApiService,
@@ -32,7 +32,7 @@ class EventDataRetrievalService(
   suspend fun retrieveData(eventId: UUID): EventInformation {
 
     // Retrieve the ID from the lookup table
-    val event = eventDataRepository.findById(eventId) ?: throw RuntimeException("Event $eventId Not Found")
+    val event = ingressEventDataRepository.findById(eventId) ?: throw RuntimeException("Event $eventId Not Found")
 
     val oauthClient = authenticationFacade.getUsername()
     log.info("Looking up event Id {} for client request {}", eventId, oauthClient)

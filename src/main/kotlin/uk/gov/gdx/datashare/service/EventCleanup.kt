@@ -5,13 +5,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.repository.EventDataRepository
+import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 import java.time.LocalDateTime.now
 import java.util.concurrent.TimeUnit
 
 @Service
 class EventCleanup(
-  private val eventDataRepository: EventDataRepository
+  private val ingressEventDataRepository: IngressEventDataRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -22,7 +22,7 @@ class EventCleanup(
     runBlocking {
       val expiredTime = now()
       log.debug("Looking for events older than {}", expiredTime)
-      eventDataRepository.deleteAllExpiredEvents(expiredTime)
+      ingressEventDataRepository.deleteAllExpiredEvents(expiredTime)
     }
   }
 }

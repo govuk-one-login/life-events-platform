@@ -7,15 +7,15 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.repository.EventData
-import uk.gov.gdx.datashare.repository.EventDataRepository
+import uk.gov.gdx.datashare.repository.IngressEventData
+import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 import java.util.*
 
 @Service
 class DataProcessor(
   private val eventPublishingService: EventPublishingService,
   private val auditService: AuditService,
-  private val eventDataRepository: EventDataRepository,
+  private val ingressEventDataRepository: IngressEventDataRepository,
   private val mapper: ObjectMapper
 ) {
   companion object {
@@ -42,7 +42,7 @@ class DataProcessor(
       // lookup provider
       val details = getDataFromProvider(eventId, dataProcessorMessage)
 
-      val eventData = EventData(
+      val eventData = IngressEventData(
         eventId = eventId,
         eventTypeId = dataProcessorMessage.eventTypeId,
         subscriptionId = dataProcessorMessage.subscriptionId,
@@ -53,7 +53,7 @@ class DataProcessor(
         dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
       )
 
-      eventDataRepository.save(eventData)
+      ingressEventDataRepository.save(eventData)
 
       eventPublishingService.storeAndPublishEvent(eventId, dataProcessorMessage)
     }

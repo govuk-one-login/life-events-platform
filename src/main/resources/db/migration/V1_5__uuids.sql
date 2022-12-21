@@ -4,16 +4,13 @@ drop table event_data;
 drop table event_subscription;
 drop table event_publisher;
 
+
 create table event_publisher
 (
     id             UUID PRIMARY KEY         NOT NULL DEFAULT gen_random_uuid(),
     publisher_name VARCHAR(80)              NOT NULL UNIQUE,
     when_created   TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
-
-insert into event_publisher (publisher_name)
-values ('HMPO');
-
 
 create table event_subscription
 (
@@ -68,22 +65,6 @@ create table event_consumer
     when_created  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
-insert into event_consumer (consumer_name)
-values ('DWP Poller');
-
-insert into event_consumer (consumer_name)
-values ('Pub/Sub Consumer');
-
-insert into event_consumer (consumer_name)
-values ('S3 Consumer');
-
-insert into event_consumer (consumer_name)
-values ('Webhook Consumer');
-
-insert into event_consumer (consumer_name)
-values ('Internal Adaptor');
-
-
 create table consumer_subscription
 (
     id                   UUID PRIMARY KEY         NOT NULL DEFAULT gen_random_uuid(),
@@ -106,3 +87,22 @@ create table consumer_subscription
 
     CONSTRAINT uk_event_client UNIQUE (event_type_id, callback_client_id)
 );
+
+
+insert into event_publisher (publisher_name)
+values ('HMPO');
+
+insert into event_consumer (consumer_name)
+values ('DWP Poller');
+
+insert into event_consumer (consumer_name)
+values ('Pub/Sub Consumer');
+
+insert into event_consumer (consumer_name)
+values ('S3 Consumer');
+
+insert into event_consumer (consumer_name)
+values ('Webhook Consumer');
+
+insert into event_consumer (consumer_name)
+values ('Internal Adaptor');

@@ -6,12 +6,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.gdx.datashare.repository.ConsumerSubscription
-import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EventConsumerRepository
-import uk.gov.gdx.datashare.repository.EventPublisherRepository
-import uk.gov.gdx.datashare.repository.EventSubscription
-import uk.gov.gdx.datashare.repository.EventSubscriptionRepository
+import uk.gov.gdx.datashare.repository.*
 import java.util.*
 
 @Service
@@ -20,7 +15,8 @@ class SubscriptionManagerService(
   private val eventSubscriptionRepository: EventSubscriptionRepository,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val eventPublisherRepository: EventPublisherRepository,
-  private val eventConsumerRepository: EventConsumerRepository
+  private val eventConsumerRepository: EventConsumerRepository,
+  private val egressEventTypeRepository: EgressEventTypeRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -70,11 +66,21 @@ class SubscriptionManagerService(
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
+      val consumer = eventConsumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
+
+      val egressEventType = EgressEventType(
+        eventTypeId = UUID.randomUUID(),
+        ingressEventType = eventTypeId,
+        description = "$eventTypeId for ${consumer.consumerName}"
+      )
+
+      egressEventTypeRepository.save(egressEventType)
+
       return consumerSubscriptionRepository.save(
         ConsumerSubscription(
           consumerId = consumerId,
           pollClientId = pollClientId,
-          eventTypeId = eventTypeId,
+          eventTypeId = egressEventType.eventTypeId,
           callbackClientId = callbackClientId,
           pushUri = pushUri,
           ninoRequired = ninoRequired,
@@ -89,11 +95,23 @@ class SubscriptionManagerService(
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
+      val consumer = eventConsumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
+
+      val existingEgressEventType = egressEventTypeRepository.findByIngressEventTypeAndConsumerId(eventTypeId, consumerId)
+      val egressEventType = existingEgressEventType ?: EgressEventType(
+        eventTypeId = UUID.randomUUID(),
+        ingressEventType = eventTypeId,
+        description = "$eventTypeId for ${consumer.consumerName}"
+      )
+      if (existingEgressEventType == null) {
+        egressEventTypeRepository.save(egressEventType)
+      }
+
       return consumerSubscriptionRepository.save(
         consumerSubscriptionRepository.findById(subId)?.copy(
           consumerId = consumerId,
           pollClientId = pollClientId,
-          eventTypeId = eventTypeId,
+          eventTypeId = egressEventType.eventTypeId,
           callbackClientId = callbackClientId,
           pushUri = pushUri,
           ninoRequired = ninoRequired

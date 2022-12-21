@@ -2,20 +2,22 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.repository.EventData
-import uk.gov.gdx.datashare.repository.EventDataRepository
+import uk.gov.gdx.datashare.repository.*
 import java.util.*
 
 @Service
 class DataProcessor(
   private val eventPublishingService: EventPublishingService,
   private val auditService: AuditService,
-  private val eventDataRepository: EventDataRepository,
+  private val ingressEventDataRepository: IngressEventDataRepository,
+  private val egressEventDataRepository: EgressEventDataRepository,
+  private val egressEventTypeRepository: EgressEventTypeRepository,
   private val mapper: ObjectMapper
 ) {
   companion object {
@@ -37,13 +39,13 @@ class DataProcessor(
         username = dataProcessorMessage.publisher
       )
 
-      val eventId = UUID.randomUUID()
+      val ingressEventId = UUID.randomUUID()
 
       // lookup provider
-      val details = getDataFromProvider(eventId, dataProcessorMessage)
+      val details = getDataFromProvider(ingressEventId, dataProcessorMessage)
 
-      val eventData = EventData(
-        eventId = eventId,
+      val eventData = IngressEventData(
+        eventId = ingressEventId,
         eventTypeId = dataProcessorMessage.eventTypeId,
         subscriptionId = dataProcessorMessage.subscriptionId,
         datasetId = dataProcessorMessage.datasetId,
@@ -53,9 +55,29 @@ class DataProcessor(
         dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
       )
 
-      eventDataRepository.save(eventData)
+      ingressEventDataRepository.save(eventData)
 
-      eventPublishingService.storeAndPublishEvent(eventId, dataProcessorMessage)
+      val egressTypes = egressEventTypeRepository.findAllByIngressEventType(eventData.eventTypeId)
+
+      val egressEventData = egressTypes.map {
+        val egressEventId = UUID.randomUUID()
+        EgressEventData(
+          eventId = egressEventId,
+          typeId = it.id,
+          ingressEventId = eventData.eventId,
+          datasetId = dataProcessorMessage.datasetId,
+          dataId = details.id,
+          dataPayload = details.data as String?,
+          whenCreated = dataProcessorMessage.eventTime,
+          dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
+        )
+      }
+
+      egressEventDataRepository.saveAll(egressEventData)
+
+      egressEventData.collect {
+        eventPublishingService.storeAndPublishEvent(it.eventId, dataProcessorMessage)
+      }
     }
   }
 

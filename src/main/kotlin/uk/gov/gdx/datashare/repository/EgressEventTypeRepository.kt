@@ -16,7 +16,7 @@ interface EgressEventTypeRepository : CoroutineCrudRepository<EgressEventType, U
 
   @Query("SELECT et.* FROM egress_event_type et " +
     "JOIN consumer_subscription cs ON cs.event_type_id = et.id " +
-    "AND cs.id = :consumerId " +
+    "AND cs.consumer_id = :consumerId " +
     "WHERE et.ingress_event_type = :ingressEventType ")
   suspend fun findByIngressEventTypeAndConsumerId(ingressEventType: String, consumerId: UUID): EgressEventType?
 

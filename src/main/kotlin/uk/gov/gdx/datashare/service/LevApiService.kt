@@ -8,7 +8,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.reactive.function.client.bodyToFlow
 import uk.gov.gdx.datashare.config.NoDataFoundException
 import java.time.LocalDate
-import java.util.*
 
 @Service
 class LevApiService(
@@ -29,7 +28,7 @@ class LevApiService(
 }
 
 data class DeathRecord(
-  val id: UUID,
+  val id: String,
   val date: LocalDate,
   val deceased: Deceased,
   val partner: Partner?,

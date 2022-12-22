@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.repository
 
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
@@ -13,6 +14,8 @@ data class IngressEventType(
   @Column("id")
   val eventTypeId: String,
   val description: String,
+  @Schema(description = "CSV List of fields that can be enriched", required = true, example = "firstName,lastName")
+  val fields: String,
   val active: Boolean = true,
   val whenCreated: LocalDateTime? = null,
 

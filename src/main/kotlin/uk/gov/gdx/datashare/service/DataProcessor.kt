@@ -14,12 +14,10 @@ import java.util.*
 
 @Service
 class DataProcessor(
-  private val eventPublishingService: EventPublishingService,
   private val auditService: AuditService,
   private val ingressEventDataRepository: IngressEventDataRepository,
-  private val egressEventDataRepository: EgressEventDataRepository,
-  private val egressEventTypeRepository: EgressEventTypeRepository,
-  private val mapper: ObjectMapper
+  private val mapper: ObjectMapper,
+  private val deathNotificationService: DeathNotificationService
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -58,30 +56,9 @@ class DataProcessor(
 
       ingressEventDataRepository.save(eventData)
 
-      val egressTypes = egressEventTypeRepository.findAllByIngressEventType(eventData.eventTypeId)
-
-      val egressEventData = egressTypes.map {
-        val egressEventId = UUID.randomUUID()
-        EgressEventData(
-          eventId = egressEventId,
-          typeId = it.id,
-          ingressEventId = eventData.eventId,
-          datasetId = dataProcessorMessage.datasetId,
-          dataId = details.id,
-          dataPayload = details.data as String?,
-          whenCreated = dataProcessorMessage.eventTime,
-          dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
-        )
-      }.toList()
-
-      log.debug("Saving events {}", egressEventData.joinToString())
-
-      val savedEgressEvents = egressEventDataRepository.saveAll(egressEventData).toList()
-
-      log.debug("Saved events {}", savedEgressEvents.joinToString())
-
-      savedEgressEvents.forEach {
-        eventPublishingService.storeAndPublishEvent(it.eventId, dataProcessorMessage)
+      when (eventData.eventTypeId) {
+        "DEATH_NOTIFICATION" -> deathNotificationService.saveDeathNotificationEvents(eventData, details, dataProcessorMessage)
+        "LIFE_EVENT" -> print("x == 2")
       }
     }
   }

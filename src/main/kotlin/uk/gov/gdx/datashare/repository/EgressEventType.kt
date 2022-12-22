@@ -17,6 +17,8 @@ data class EgressEventType(
   val ingressEventType: String,
   @Schema(description = "Description", required = true, example = "Enriched Death Notification for DWP")
   val description: String,
+  @Schema(description = "CSV List of required fields to enrich the event with", required = true, example = "firstName,lastName")
+  val enrichmentFields: String,
   val active: Boolean = true,
   val whenCreated: LocalDateTime? = null,
 

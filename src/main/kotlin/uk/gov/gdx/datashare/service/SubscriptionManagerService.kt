@@ -71,7 +71,8 @@ class SubscriptionManagerService(
       val egressEventType = EgressEventType(
         eventTypeId = UUID.randomUUID(),
         ingressEventType = eventTypeId,
-        description = "$eventTypeId for ${consumer.consumerName}"
+        description = "$eventTypeId for ${consumer.consumerName}",
+        enrichmentFields = enrichmentFields
       )
 
       egressEventTypeRepository.save(egressEventType)
@@ -101,7 +102,8 @@ class SubscriptionManagerService(
       val egressEventType = existingEgressEventType ?: EgressEventType(
         eventTypeId = UUID.randomUUID(),
         ingressEventType = eventTypeId,
-        description = "$eventTypeId for ${consumer.consumerName}"
+        description = "$eventTypeId for ${consumer.consumerName}",
+        enrichmentFields = enrichmentFields
       )
       if (existingEgressEventType == null) {
         egressEventTypeRepository.save(egressEventType)
@@ -171,6 +173,8 @@ data class ConsumerSubRequest(
   val callbackClientId: String? = null,
   @Schema(description = "URI where to push data, can be s3 or http", required = false, example = "http://localhost/callback")
   val pushUri: String? = null,
+  @Schema(description = "CSV List of required fields to enrich the event with", required = true, example = "firstName,lastName")
+  val enrichmentFields: String,
   @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
   val ninoRequired: Boolean = false,
 )

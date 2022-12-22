@@ -1,6 +1,8 @@
 package uk.gov.gdx.datashare.resource
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -19,8 +21,10 @@ import java.util.*
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
 class EventRehydrate(
-  private val eventDataRetrievalService: EventDataRetrievalService
+  private val eventDataRetrievalService: EventDataRetrievalService,
+  meterRegistry: MeterRegistry
 ) {
+  private val callsToEnrichCounter: Counter = meterRegistry.counter("API_CALLS.CallsToEnrich")
 
   @GetMapping("/{id}")
   @Operation(
@@ -36,7 +40,10 @@ class EventRehydrate(
   suspend fun getEventDetails(
     @Schema(description = "Event ID", required = true)
     @PathVariable id: UUID,
-  ): EventInformation = eventDataRetrievalService.retrieveData(id)
+  ): EventInformation = run {
+    callsToEnrichCounter.increment()
+    eventDataRetrievalService.retrieveData(id)
+  }
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -21,4 +21,15 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
   @Query("DELETE FROM egress_event_data where data_expiry_time < :expiredTime")
   @Modifying
   suspend fun deleteAllExpiredEvents(expiredTime: LocalDateTime)
+
+  @Query("SELECT ed.* FROM egress_event_data ed " +
+    "JOIN egress_event_type eet on ed.type_id = eet.id " +
+    "JOIN consumer_subscription cs on eet.id = cs.event_type_id " +
+    "AND cs.poll_client_id = :pollerClientId " +
+    "WHERE ed.id = :id")
+  suspend fun findByPollerClientIdAndId(pollerClientId: String, id: UUID): EgressEventData?
+
+  @Query("SELECT ed.* FROM egress_event_data ed " +
+    "WHERE ed.ingress_event_id = :ingressEventId")
+  fun findAllByIngressEventId(ingressEventId: UUID): Flow<EgressEventData>
 }

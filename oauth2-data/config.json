@@ -71,6 +71,7 @@
           "match": "maintainer",
           "claims": {
             "sub": "maintainer",
+            "iss": "http://oauth2:8080/issuer1",
             "scope": ["subscriptions/maintain","pubsub/maintain"],
             "client_id": "maintainer"
           }

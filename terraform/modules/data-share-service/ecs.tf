@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_S3_INGRESS", "value" : module.ingress.name },
         { "name" : "API_BASE_S3_INGRESS_ARCHIVE", "value" : module.ingress_archive.name },
 
-        { "name" : "MANAGEMENT_METRICS_EXPORT_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },
+        { "name" : "METRICS_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },
 
         { "name" : "HMPPS_SQS_TOPICS_EVENT_ACCESSKEYID", "value" : module.sns.access_key_id },
         { "name" : "HMPPS_SQS_TOPICS_EVENT_SECRETACCESSKEY", "value" : module.sns.access_key_secret },

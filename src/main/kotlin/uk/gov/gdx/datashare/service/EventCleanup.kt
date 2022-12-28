@@ -24,8 +24,8 @@ class EventCleanup(
     runBlocking {
       val expiredTime = now()
       log.debug("Looking for events older than {}", expiredTime)
-      ingressEventDataRepository.deleteAllExpiredEvents(expiredTime)
       egressEventDataRepository.deleteAllExpiredEvents(expiredTime)
+      ingressEventDataRepository.deleteAllOrphanedEvents()
     }
   }
 }

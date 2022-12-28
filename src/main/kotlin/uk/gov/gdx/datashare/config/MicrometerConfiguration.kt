@@ -4,6 +4,7 @@ import io.micrometer.cloudwatch2.CloudWatchConfig
 import io.micrometer.cloudwatch2.CloudWatchMeterRegistry
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.MeterRegistry
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.regions.Region
@@ -23,8 +24,8 @@ class MicrometerConfiguration {
   }
 
   @Bean
-  fun getMeterRegistry(): MeterRegistry? {
-    val cloudWatchConfig: CloudWatchConfig = setupCloudWatchConfig()
+  fun getMeterRegistry(@Value("\${metrics.cloudwatch.namespace}") namespace: String): MeterRegistry? {
+    val cloudWatchConfig: CloudWatchConfig = setupCloudWatchConfig(namespace)
     return CloudWatchMeterRegistry(
       cloudWatchConfig,
       Clock.SYSTEM,
@@ -32,9 +33,10 @@ class MicrometerConfiguration {
     )
   }
 
-  private fun setupCloudWatchConfig(): CloudWatchConfig {
+  private fun setupCloudWatchConfig(namespace: String): CloudWatchConfig {
     val cloudWatchConfig = object : CloudWatchConfig {
       private val configuration = mapOf(
+        "cloudwatch.namespace" to namespace,
         "cloudwatch.step" to Duration.ofMinutes(1).toString()
       )
       override fun get(key: String): String? {

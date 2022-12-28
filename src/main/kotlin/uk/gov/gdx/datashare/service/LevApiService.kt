@@ -18,6 +18,7 @@ class LevApiService(
 ) {
   private val callsToLevCounter: Counter = meterRegistry.counter("API_CALLS.CallsToLev")
   private val responsesFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromLev")
+
   suspend fun findDeathById(id: Int): Flow<DeathRecord> {
     try {
       callsToLevCounter.increment()

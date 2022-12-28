@@ -28,6 +28,7 @@ class EventPlatform(
   meterRegistry: MeterRegistry,
 ) {
   private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
+
   @GetMapping()
   @Operation(
     summary = "Returns all events for this client since the last call",

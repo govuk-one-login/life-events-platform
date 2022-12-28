@@ -1,6 +1,8 @@
 package uk.gov.gdx.datashare.resource
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -22,8 +24,10 @@ import java.util.UUID
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
 @Validated
 class EventPlatform(
-  private val eventPollService: EventPollService
+  private val eventPollService: EventPollService,
+  meterRegistry: MeterRegistry,
 ) {
+  private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
 
   @GetMapping()
   @Operation(
@@ -45,7 +49,10 @@ class EventPlatform(
     @Schema(description = "Events before this time, if not supplied it will be now", type = "date-time", required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @RequestParam(name = "toTime", required = false) toTime: LocalDateTime? = null
-  ): Flow<SubscribedEvent> = eventPollService.getEvents(eventTypes, fromTime, toTime)
+  ): Flow<SubscribedEvent> = run {
+    callsToPollCounter.increment()
+    eventPollService.getEvents(eventTypes, fromTime, toTime)
+  }
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

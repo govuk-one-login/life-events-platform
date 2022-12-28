@@ -23,11 +23,36 @@ resource "aws_cloudwatch_dashboard" "metrics_dashboard" {
             [
               "gdxApp",
               "API_CALLS.IngestedEvents.count"
+            ],
+            [
+              ".",
+              "API_CALLS.CallsToLev.count"
+            ],
+            [
+              ".",
+              "API_CALLS.ResponsesFromLev.count"
+            ],
+            [
+              ".",
+              "API_CALLS.CallsToHmrc.count"
+            ],
+            [
+              ".",
+              "API_CALLS.ResponsesFromHmrc.count"
+            ],
+            [
+              ".",
+              "API_CALLS.CallsToPoll.count"
+            ],
+            [
+              ".",
+              "API_CALLS.CallsToEnrich.count"
             ]
           ],
           "period" : 300,
           "region" : var.region,
-          "title" : "API calls"
+          "title" : "API calls",
+          "stat" : "SUM"
         }
       }
     ]

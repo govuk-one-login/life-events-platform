@@ -127,7 +127,7 @@ class EventDataRetrievalService(
     dateOfBirth: LocalDate
   ): String? {
     log.debug("Looking up NINO from HMRC : search by {}, {}, {}", surname, forenames, dateOfBirth)
-    return hmrcApiService.generateNiNoFromNameAndDob(
+    return hmrcApiService.getNiNo(
       surname = surname,
       firstname = forenames,
       dob = dateOfBirth

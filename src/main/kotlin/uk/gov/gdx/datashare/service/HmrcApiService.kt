@@ -1,14 +1,25 @@
 package uk.gov.gdx.datashare.service
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Service
-class HmrcApiService() {
+class HmrcApiService(meterRegistry: MeterRegistry) {
+  private val callsToHmrcCounter: Counter = meterRegistry.counter("API_CALLS.CallsToHmrc")
+  private val responsesFromHmrcCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromHmrc")
 
-  fun generateNiNoFromNameAndDob(surname: String, firstname: String, dob: LocalDate): NinoRecord {
+  fun getNiNo(surname: String, firstname: String, dob: LocalDate): NinoRecord {
+    callsToHmrcCounter.increment()
+    val nino = generateNiNoFromNameAndDob(surname, firstname, dob)
+    responsesFromHmrcCounter.increment()
+    return nino
+  }
+
+  private fun generateNiNoFromNameAndDob(surname: String, firstname: String, dob: LocalDate): NinoRecord {
     val uniqueIdentifier = (firstname + surname + dob.toString()).hashCode().toLong()
     val id = UUID(uniqueIdentifier, 0)
     val niNumber = surname.substring(0, 1) + firstname.substring(0, 1) + dob.format(DateTimeFormatter.BASIC_ISO_DATE)

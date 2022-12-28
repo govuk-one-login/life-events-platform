@@ -35,7 +35,6 @@ class MicrometerConfiguration {
   private fun setupCloudWatchConfig(): CloudWatchConfig {
     val cloudWatchConfig = object : CloudWatchConfig {
       private val configuration = mapOf(
-        "cloudwatch.namespace" to "gdxApp",
         "cloudwatch.step" to Duration.ofMinutes(1).toString()
       )
       override fun get(key: String): String? {

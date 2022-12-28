@@ -1,6 +1,6 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.4"
-  kotlin("plugin.spring") version "1.7.10"
+  kotlin("plugin.spring") version "1.8.0"
 }
 
 dependencyCheck {

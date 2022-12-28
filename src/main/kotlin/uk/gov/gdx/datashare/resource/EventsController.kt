@@ -1,5 +1,7 @@
 package uk.gov.gdx.datashare.resource
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -11,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.service.EventDataService
+import uk.gov.gdx.datashare.service.EventNotification
 import java.time.LocalDateTime
 import java.util.*
 
@@ -19,8 +22,11 @@ import java.util.*
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
 class EventsController(
-  private val eventDataService: EventDataService
+  private val eventDataService: EventDataService,
+  meterRegistry: MeterRegistry,
 ) {
+  private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
+
   @DeleteMapping("/{id}")
   @Operation(
     summary = "Event Delete API - Delete event data",
@@ -72,7 +78,8 @@ class EventsController(
     )
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
-  ) {
+  ): List<EventNotification> = run {
+    callsToPollCounter.increment()
     eventDataService.getEvents(eventTypes, startTime, endTime)
   }
 }

@@ -52,7 +52,7 @@ resource "aws_cloudwatch_dashboard" "metrics_dashboard" {
           "period" : 300,
           "region" : var.region,
           "title" : "API calls",
-          "stat" : "SUM"
+          "stat" : "Sum"
         }
       }
     ]

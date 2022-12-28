@@ -74,9 +74,13 @@ INSERT INTO consumer_subscription
     (callback_client_id, consumer_id, event_type_id, nino_required)
 VALUES
     ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), getIdFromDescription('Death notification event for HMRC'), true),
-    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), getIdFromDescription('Life event for HMRC'), false),
-    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), getIdFromDescription('Death notification event for Internal Adaptor'), true),
-    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), getIdFromDescription('Life event for Internal Adaptor'), false);
+    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), getIdFromDescription('Life event for HMRC'), false);
+
+INSERT INTO consumer_subscription
+    (callback_client_id, consumer_id, event_type_id, nino_required, is_legacy)
+VALUES
+    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), getIdFromDescription('Death notification event for Internal Adaptor'), true, true),
+    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), getIdFromDescription('Life event for Internal Adaptor'), false, true);
 
 INSERT INTO consumer_subscription
     (consumer_id, event_type_id, push_uri, nino_required)

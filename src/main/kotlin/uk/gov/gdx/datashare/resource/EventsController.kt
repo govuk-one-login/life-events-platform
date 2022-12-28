@@ -52,8 +52,8 @@ class EventsController(
     description = "Get all events for consumer, Need scope of data_retriever/read",
     responses = [
       ApiResponse(
-        responseCode = "204",
-        description = "Event deleted"
+        responseCode = "200",
+        description = "Events"
       )
     ]
   )

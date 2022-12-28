@@ -4,14 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.EventConsumerRepository
 import uk.gov.gdx.datashare.resource.EventInformation
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Service
 class LegacyAdaptorOutbound(
@@ -19,7 +22,8 @@ class LegacyAdaptorOutbound(
   private val eventDataRetrievalApiWebClient: WebClient,
   private val auditService: AuditService,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: EventConsumerRepository
+  private val consumerRepository: EventConsumerRepository,
+  private val egressEventDataRepository: EgressEventDataRepository,
 ) {
 
   companion object {
@@ -44,6 +48,11 @@ class LegacyAdaptorOutbound(
   suspend fun processLifeEvent(event: EventMessage) {
     log.debug("processing {}", event)
 
+    if (!egressEventDataRepository.isLegacyEvent(event.id)) {
+      log.debug("Event {} is not legacy", event.id)
+      return
+    }
+
     // Go and get data from Event Retrieval API
     val lifeEvent = getEventPayload(event.id)
 
@@ -62,7 +71,7 @@ class LegacyAdaptorOutbound(
 
         auditService.sendMessage(
           auditType = AuditType.PUSH_EVENT,
-          id = event.id,
+          id = event.id.toString(),
           details = "Push Event to ${consumer.consumerName} : ${event.description}",
           username = consumer.consumerName
         )
@@ -70,7 +79,7 @@ class LegacyAdaptorOutbound(
     }
   }
 
-  suspend fun getEventPayload(id: String): EventInformation =
+  suspend fun getEventPayload(id: UUID): EventInformation =
     eventDataRetrievalApiWebClient.get()
       .uri("/event-data-retrieval/$id")
       .retrieve()
@@ -85,7 +94,8 @@ data class EventTopicMessage(
 )
 
 data class EventMessage(
-  val id: String,
+  val id: UUID,
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   val occurredAt: LocalDateTime,
   val description: String
 )

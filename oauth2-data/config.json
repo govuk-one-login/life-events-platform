@@ -80,10 +80,10 @@
           "requestParam": "scope",
           "match": "everything",
           "claims": {
-            "sub": "maintainer",
+            "sub": "everything",
             "iss": "http://oauth2:8080/issuer1",
             "scope": ["subscriptions/maintain", "pubsub/maintain", "data_retriever/read", "events/poll", "data_receiver/notify"],
-            "client_id": "maintainer"
+            "client_id": "everything"
           }
         }
       ]

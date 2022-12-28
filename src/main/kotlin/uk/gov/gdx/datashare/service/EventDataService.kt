@@ -42,7 +42,7 @@ class EventDataService(
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?
   ): List<EventNotification> {
-    val startTime = optionalStartTime ?: LocalDateTime.MIN
+    val startTime = optionalStartTime ?: LocalDateTime.of(2000, 1, 1, 12, 0)
     val endTime = optionalEndTime ?: LocalDateTime.now()
     val clientId = authenticationFacade.getUsername()
 

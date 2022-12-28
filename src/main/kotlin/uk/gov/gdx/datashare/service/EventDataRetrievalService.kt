@@ -36,7 +36,7 @@ class EventDataRetrievalService(
     val oauthClient = authenticationFacade.getUsername()
     log.info("Looking up event Id {} for client request {}", eventId, oauthClient)
 
-    val eventType = egressEventTypeRepository.findById(event.typeId) ?: throw RuntimeException("Event type $event.typeId Not Found")
+    val eventType = egressEventTypeRepository.findById(event.typeId) ?: throw RuntimeException("Event type ${event.typeId} Not Found")
 
     // check if client is allowed to send
     val dataConsumer = consumerSubscriptionRepository.findByClientIdAndEventType(oauthClient, event.typeId)

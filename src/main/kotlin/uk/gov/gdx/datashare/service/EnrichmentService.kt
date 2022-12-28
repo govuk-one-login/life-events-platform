@@ -1,21 +1,27 @@
 package uk.gov.gdx.datashare.service
 
-import kotlin.reflect.KMutableProperty
+import com.fasterxml.jackson.databind.ObjectMapper
+import java.util.HashMap
 import kotlin.reflect.full.memberProperties
 
 class EnrichmentService {
   companion object {
-    inline fun <reified T : Any> enrichFields(completeObject: T?, consumerObject: T, enrichmentFields: List<String>): T? {
+    inline fun <reified T : Any> getDataWithOnlyFields(
+      mapper: ObjectMapper,
+      completeObject: T?,
+      enrichmentFields: List<String>
+    ): T? {
       if (completeObject == null) {
         return null
       }
+      val hashMap = HashMap<String, Any?>()
       for (prop in T::class.memberProperties) {
-        if (enrichmentFields.contains(prop.name) && prop is KMutableProperty<*>) {
+        if (enrichmentFields.contains(prop.name)) {
           val value = prop.getter.call(completeObject)
-          prop.setter.call(consumerObject, value)
+          hashMap[prop.name] = value
         }
       }
-      return consumerObject
+      return mapper.convertValue(hashMap, T::class.java)
     }
   }
 }

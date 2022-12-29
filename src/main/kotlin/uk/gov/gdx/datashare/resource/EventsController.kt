@@ -47,12 +47,6 @@ class EventsController(
     ]
   )
   suspend fun getEventsStatus(
-    @RequestParam(name = "eventType", required = false) eventTypes: List<String> = listOf(),
-    @Schema(
-      description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
-      type = "date-time",
-      required = false
-    )
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
     @RequestParam(name = "fromTime", required = false) startTime: LocalDateTime? = null,
     @Schema(

@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @RestController
-@RequestMapping("/old/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/v0/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
 @Validated
 class EventPlatform(

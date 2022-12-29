@@ -17,11 +17,7 @@ SET enrichment_fields  = eet.enrichment_fields,
 FROM consumer_subscription cs
     JOIN egress_event_type eet ON cs.event_type_id = eet.id;
 
-UPDATE egress_event_data
-    SET type_id = cs.id
-FROM egress_event_data eed
-    JOIN egress_event_type eet ON eed.type_id = eet.id
-    JOIN consumer_subscription cs ON cs.event_type_id = eet.id;
+DELETE FROM egress_event_data;
 
 
 ALTER TABLE egress_event_data

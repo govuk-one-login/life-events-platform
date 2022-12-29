@@ -13,29 +13,30 @@ import java.util.*
 @Transactional
 class ConsumersService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val eventConsumerRepository: EventConsumerRepository,
+  private val consumerRepository: ConsumerRepository,
   private val egressEventTypeRepository: EgressEventTypeRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getConsumers() = eventConsumerRepository.findAll()
+  suspend fun getConsumers() = consumerRepository.findAll()
 
   suspend fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
 
-  suspend fun getSubscriptionsForConsumer(consumerId: UUID) = consumerSubscriptionRepository.findAllByConsumerId(consumerId)
+  suspend fun getSubscriptionsForConsumer(consumerId: UUID) =
+    consumerSubscriptionRepository.findAllByConsumerId(consumerId)
 
   suspend fun addConsumerSubscription(
     consumerId: UUID,
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
-      val consumer = eventConsumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
+      val consumer = consumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
 
       val egressEventType = EgressEventType(
         ingressEventType = ingressEventType,
-        description = "$ingressEventType for ${consumer.consumerName}",
+        description = "$ingressEventType for ${consumer.name}",
         enrichmentFields = enrichmentFields
       )
 
@@ -61,19 +62,27 @@ class ConsumersService(
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
-      val consumer = eventConsumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
+      val consumer = consumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
 
-      val existingEgressEventType = egressEventTypeRepository.findByIngressEventTypeAndConsumerId(ingressEventType, consumerId)
-      val egressEventType = existingEgressEventType ?: EgressEventType(
-        ingressEventType = ingressEventType,
-        description = "$ingressEventType for ${consumer.consumerName}",
-        enrichmentFields = enrichmentFields
-      )
-      if (existingEgressEventType == null) {
+      val existingEgressEventType =
+        egressEventTypeRepository.findByIngressEventTypeAndConsumerId(ingressEventType, consumerId)
+      val shouldUpdateEventType = existingEgressEventType == null
+        || existingEgressEventType.enrichmentFields != enrichmentFields
+      val egressEventType = if (shouldUpdateEventType) {
+        EgressEventType(
+          ingressEventType = ingressEventType,
+          description = "$ingressEventType for ${consumer.name}",
+          enrichmentFields = enrichmentFields
+        )
+      } else {
+        existingEgressEventType!!
+      }
+
+      if (shouldUpdateEventType) {
         egressEventTypeRepository.save(egressEventType)
       }
 
-      return consumerSubscriptionRepository.save(
+      val consumerSubscription = consumerSubscriptionRepository.save(
         consumerSubscriptionRepository.findById(subscriptionId)?.copy(
           consumerId = consumerId,
           pollClientId = pollClientId,
@@ -83,16 +92,22 @@ class ConsumersService(
           ninoRequired = ninoRequired
         ) ?: throw RuntimeException("Subscription not found")
       )
+
+      if (shouldUpdateEventType) {
+        egressEventTypeRepository.delete(existingEgressEventType!!)
+      }
+
+      return consumerSubscription
     }
   }
 
   suspend fun addConsumer(
     consumerRequest: ConsumerRequest
-  ): EventConsumer {
+  ): Consumer {
     with(consumerRequest) {
-      return eventConsumerRepository.save(
-        EventConsumer(
-          consumerName = name
+      return consumerRepository.save(
+        Consumer(
+          name = name
         )
       )
     }
@@ -108,9 +123,17 @@ data class ConsumerSubRequest(
   val pollClientId: String? = null,
   @Schema(description = "Client ID used to callback to event platform", required = false, example = "a-callback-client")
   val callbackClientId: String? = null,
-  @Schema(description = "URI where to push data, can be s3 or http", required = false, example = "http://localhost/callback")
+  @Schema(
+    description = "URI where to push data, can be s3 or http",
+    required = false,
+    example = "http://localhost/callback"
+  )
   val pushUri: String? = null,
-  @Schema(description = "CSV List of required fields to enrich the event with", required = true, example = "firstName,lastName")
+  @Schema(
+    description = "CSV List of required fields to enrich the event with",
+    required = true,
+    example = "firstName,lastName"
+  )
   val enrichmentFields: String,
   @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
   val ninoRequired: Boolean = false,

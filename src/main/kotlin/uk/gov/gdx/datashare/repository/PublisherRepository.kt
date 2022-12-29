@@ -5,4 +5,4 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface EventPublisherRepository : CoroutineCrudRepository<EventPublisher, UUID>
+interface PublisherRepository : CoroutineCrudRepository<Publisher, UUID>

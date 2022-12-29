@@ -8,7 +8,7 @@ Declare
 Begin
   SELECT id
   INTO publisher_id
-  FROM event_publisher WHERE publisher_name = publisher_name_check;
+  FROM publisher WHERE name = publisher_name_check;
   RETURN publisher_id;
 End;  
 $$;
@@ -23,7 +23,7 @@ Declare
 Begin
     SELECT id
     INTO consumer_id
-    FROM event_consumer WHERE consumer_name = consumer_name_check;
+    FROM consumer WHERE name = consumer_name_check;
     RETURN consumer_id;
 End;
 $$;
@@ -43,7 +43,7 @@ Begin
 End;
 $$;
 
-INSERT INTO event_subscription
+INSERT INTO publisher_subscription
     (client_id, publisher_id, event_type_id, dataset_id)
 VALUES
     ('len', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION', 'DEATH_LEV'),

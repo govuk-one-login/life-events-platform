@@ -12,13 +12,13 @@ import java.time.LocalDateTime
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class EventPublisher(
+data class Publisher(
   @Id
   @Column("id")
   @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
   val publisherId: UUID = UUID.randomUUID(),
   @Schema(description = "Publisher Name", required = true, example = "HMPO")
-  val publisherName: String,
+  val name: String,
   val whenCreated: LocalDateTime? = null,
 
   @Transient

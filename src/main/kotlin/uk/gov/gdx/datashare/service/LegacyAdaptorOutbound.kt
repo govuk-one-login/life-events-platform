@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EventConsumerRepository
+import uk.gov.gdx.datashare.repository.ConsumerRepository
 import uk.gov.gdx.datashare.resource.EventInformation
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -20,7 +20,7 @@ class LegacyAdaptorOutbound(
   private val eventDataRetrievalApiWebClient: WebClient,
   private val auditService: AuditService,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: EventConsumerRepository,
+  private val consumerRepository: ConsumerRepository,
 ) {
 
   companion object {
@@ -63,15 +63,15 @@ class LegacyAdaptorOutbound(
 
         val consumer = consumerRepository.findById(client.consumerId) ?: throw RuntimeException("Consumer ${client.consumerId} not found")
 
-        log.debug("Send to ${consumer.consumerName} to ${client.pushUri} with [$details]")
+        log.debug("Send to ${consumer.name} to ${client.pushUri} with [$details]")
 
         // Put code to send data here
 
         auditService.sendMessage(
           auditType = AuditType.PUSH_EVENT,
           id = event.id.toString(),
-          details = "Push Event to ${consumer.consumerName} : ${event.description}",
-          username = consumer.consumerName
+          details = "Push Event to ${consumer.name} : ${event.description}",
+          username = consumer.name
         )
       }
     }

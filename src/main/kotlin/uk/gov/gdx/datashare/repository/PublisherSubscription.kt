@@ -12,10 +12,10 @@ import java.time.LocalDateTime
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class EventSubscription(
+data class PublisherSubscription(
   @Id
   @Column("id")
-  val eventSubscriptionId: UUID,
+  val publisherSubscriptionId: UUID,
   @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
   val publisherId: UUID,
   @Schema(description = "Client ID", required = true, example = "a-client-id")
@@ -32,7 +32,7 @@ data class EventSubscription(
   val new: Boolean = true
 
 ) : Persistable<UUID> {
-  override fun getId(): UUID = eventSubscriptionId
+  override fun getId(): UUID = publisherSubscriptionId
 
   override fun isNew(): Boolean = new
 }

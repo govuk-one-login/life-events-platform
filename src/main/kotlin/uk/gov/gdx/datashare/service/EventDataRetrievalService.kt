@@ -22,7 +22,7 @@ class EventDataRetrievalService(
   private val levApiService: LevApiService,
   private val hmrcApiService: HmrcApiService,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: EventConsumerRepository
+  private val consumerRepository: ConsumerRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -47,7 +47,7 @@ class EventDataRetrievalService(
       auditType = AuditType.CLIENT_CONSUMED_EVENT,
       id = eventId.toString(),
       details = eventType.ingressEventType,
-      username = consumerRepository.findById(dataConsumer.consumerId)?.consumerName ?: throw RuntimeException("Consumer not found for ID ${dataConsumer.consumerId}")
+      username = consumerRepository.findById(dataConsumer.consumerId)?.name ?: throw RuntimeException("Consumer not found for ID ${dataConsumer.consumerId}")
     )
 
     return when (event.datasetId) {

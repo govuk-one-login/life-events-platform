@@ -17,7 +17,7 @@ import uk.gov.gdx.datashare.service.EventDataRetrievalService
 import java.util.*
 
 @RestController
-@RequestMapping("/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/v0/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
 class EventRehydrate(

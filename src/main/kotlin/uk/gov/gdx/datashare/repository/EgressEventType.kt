@@ -12,7 +12,7 @@ import java.util.*
 data class EgressEventType(
   @Id
   @Column("id")
-  val eventTypeId: UUID,
+  val eventTypeId: UUID = UUID.randomUUID(),
   @Schema(description = "Events Type of Ingress Notification", required = true, example = "DEATH_NOTIFICATION")
   val ingressEventType: String,
   @Schema(description = "Description", required = true, example = "Enriched Death Notification for DWP")

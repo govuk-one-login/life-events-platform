@@ -32,4 +32,9 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
     "JOIN egress_event_data eed ON eet.id = eed.type_id " +
     "WHERE eed.id = :id ")
   suspend fun findByEgressEventId(id: UUID): ConsumerSubscription?
+
+  @Query("SELECT cs.* FROM consumer_subscription cs " +
+    "JOIN event_consumer ec ON cs.consumer_id = ec.id " +
+    "AND ec.id = :id")
+  fun findAllByConsumerId(id: UUID): Flow<ConsumerSubscription>
 }

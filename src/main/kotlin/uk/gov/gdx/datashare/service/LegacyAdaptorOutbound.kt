@@ -11,7 +11,8 @@ import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EventConsumerRepository
 import uk.gov.gdx.datashare.resource.EventInformation
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Service
 class LegacyAdaptorOutbound(
@@ -19,7 +20,7 @@ class LegacyAdaptorOutbound(
   private val eventDataRetrievalApiWebClient: WebClient,
   private val auditService: AuditService,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: EventConsumerRepository
+  private val consumerRepository: EventConsumerRepository,
 ) {
 
   companion object {
@@ -44,6 +45,12 @@ class LegacyAdaptorOutbound(
   suspend fun processLifeEvent(event: EventMessage) {
     log.debug("processing {}", event)
 
+    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(event.id)
+    if (consumerSubscription?.isLegacy != true) {
+      log.debug("Event {} is not legacy", event.id)
+      return
+    }
+
     // Go and get data from Event Retrieval API
     val lifeEvent = getEventPayload(event.id)
 
@@ -62,7 +69,7 @@ class LegacyAdaptorOutbound(
 
         auditService.sendMessage(
           auditType = AuditType.PUSH_EVENT,
-          id = event.id,
+          id = event.id.toString(),
           details = "Push Event to ${consumer.consumerName} : ${event.description}",
           username = consumer.consumerName
         )
@@ -70,7 +77,7 @@ class LegacyAdaptorOutbound(
     }
   }
 
-  suspend fun getEventPayload(id: String): EventInformation =
+  suspend fun getEventPayload(id: UUID): EventInformation =
     eventDataRetrievalApiWebClient.get()
       .uri("/event-data-retrieval/$id")
       .retrieve()
@@ -85,7 +92,7 @@ data class EventTopicMessage(
 )
 
 data class EventMessage(
-  val id: String,
-  val occurredAt: LocalDateTime,
+  val id: UUID,
+  val occurredAt: OffsetDateTime,
   val description: String
 )

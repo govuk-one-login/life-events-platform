@@ -30,6 +30,8 @@ data class ConsumerSubscription(
   val pushUri: String?,
   @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
   val ninoRequired: Boolean = false,
+  @Schema(description = "Is consumer subscription a legacy subscription", required = false, example = "true", defaultValue = "false")
+  val isLegacy: Boolean = false,
   val whenCreated: LocalDateTime? = null,
 
   @Transient

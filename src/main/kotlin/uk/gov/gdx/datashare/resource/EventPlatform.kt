@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @RestController
-@RequestMapping("/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/old/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
 @Validated
 class EventPlatform(
@@ -29,7 +29,7 @@ class EventPlatform(
 ) {
   private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
 
-  @GetMapping()
+  @GetMapping
   @Operation(
     summary = "Returns all events for this client since the last call",
     description = "Need scope of events/poll",

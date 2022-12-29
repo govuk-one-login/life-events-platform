@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.flow.Flow
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType
@@ -20,9 +21,10 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v0/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/obsolete/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
 @Validated
+@Tag(name = "902. Event status")
 class EventPlatform(
   private val eventPollService: EventPollService,
   meterRegistry: MeterRegistry,

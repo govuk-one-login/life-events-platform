@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -17,9 +18,10 @@ import uk.gov.gdx.datashare.service.EventDataRetrievalService
 import java.util.*
 
 @RestController
-@RequestMapping("/v0/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/obsolete/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
+@Tag(name = "901. Event data retrieval")
 class EventRehydrate(
   private val eventDataRetrievalService: EventDataRetrievalService,
   meterRegistry: MeterRegistry

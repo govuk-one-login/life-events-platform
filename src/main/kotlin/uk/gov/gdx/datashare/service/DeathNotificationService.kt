@@ -9,16 +9,13 @@ import kotlinx.coroutines.flow.toList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.repository.EgressEventData
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.EgressEventTypeRepository
-import uk.gov.gdx.datashare.repository.IngressEventData
+import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDate
 import java.util.*
 
 @Service
 class DeathNotificationService(
-  private val egressEventTypeRepository: EgressEventTypeRepository,
+  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val egressEventDataRepository: EgressEventDataRepository,
   private val eventPublishingService: EventPublishingService,
   private val levApiService: LevApiService,
@@ -33,9 +30,9 @@ class DeathNotificationService(
     details: DataProcessor.DataDetail,
     dataProcessorMessage: DataProcessorMessage
   ) {
-    val egressTypes = egressEventTypeRepository.findAllByIngressEventType(eventData.eventTypeId)
+    val consumerSubscriptions = consumerSubscriptionRepository.findAllByIngressEventType(eventData.eventTypeId)
 
-    val egressEventData = egressTypes.map {
+    val egressEventData = consumerSubscriptions.map {
       val dataPayload =
         enrichData(
           it.enrichmentFields.split(",").toList(),
@@ -47,7 +44,7 @@ class DeathNotificationService(
       val egressEventId = UUID.randomUUID()
       EgressEventData(
         eventId = egressEventId,
-        typeId = it.id,
+        consumerSubscriptionId = it.id,
         ingressEventId = eventData.eventId,
         datasetId = dataProcessorMessage.datasetId,
         dataId = details.id,

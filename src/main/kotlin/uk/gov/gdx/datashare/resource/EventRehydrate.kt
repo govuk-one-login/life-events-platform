@@ -18,7 +18,7 @@ import uk.gov.gdx.datashare.service.EventDataRetrievalService
 import java.util.*
 
 @RestController
-@RequestMapping("/obsolete/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
 @Tag(name = "901. Event data retrieval")

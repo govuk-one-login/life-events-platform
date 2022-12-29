@@ -13,14 +13,14 @@ import java.util.*
 @Transactional
 class ConsumersService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val eventConsumerRepository: EventConsumerRepository,
+  private val consumerRepository: ConsumerRepository,
   private val egressEventTypeRepository: EgressEventTypeRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getConsumers() = eventConsumerRepository.findAll()
+  suspend fun getConsumers() = consumerRepository.findAll()
 
   suspend fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
 
@@ -31,11 +31,11 @@ class ConsumersService(
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
-      val consumer = eventConsumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
+      val consumer = consumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
 
       val egressEventType = EgressEventType(
         ingressEventType = ingressEventType,
-        description = "$ingressEventType for ${consumer.consumerName}",
+        description = "$ingressEventType for ${consumer.name}",
         enrichmentFields = enrichmentFields
       )
 
@@ -61,12 +61,12 @@ class ConsumersService(
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
-      val consumer = eventConsumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
+      val consumer = consumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
 
       val existingEgressEventType = egressEventTypeRepository.findByIngressEventTypeAndConsumerId(ingressEventType, consumerId)
       val egressEventType = existingEgressEventType ?: EgressEventType(
         ingressEventType = ingressEventType,
-        description = "$ingressEventType for ${consumer.consumerName}",
+        description = "$ingressEventType for ${consumer.name}",
         enrichmentFields = enrichmentFields
       )
       if (existingEgressEventType == null) {
@@ -88,11 +88,11 @@ class ConsumersService(
 
   suspend fun addConsumer(
     consumerRequest: ConsumerRequest
-  ): EventConsumer {
+  ): Consumer {
     with(consumerRequest) {
-      return eventConsumerRepository.save(
-        EventConsumer(
-          consumerName = name
+      return consumerRepository.save(
+        Consumer(
+          name = name
         )
       )
     }

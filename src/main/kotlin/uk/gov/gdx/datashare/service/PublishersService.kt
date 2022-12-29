@@ -6,40 +6,40 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.gdx.datashare.repository.EventPublisher
-import uk.gov.gdx.datashare.repository.EventPublisherRepository
-import uk.gov.gdx.datashare.repository.EventSubscription
-import uk.gov.gdx.datashare.repository.EventSubscriptionRepository
+import uk.gov.gdx.datashare.repository.Publisher
+import uk.gov.gdx.datashare.repository.PublisherRepository
+import uk.gov.gdx.datashare.repository.PublisherSubscription
+import uk.gov.gdx.datashare.repository.PublisherSubscriptionRepository
 import java.util.*
 
 @Service
 @Transactional
 class PublishersService(
-  private val eventSubscriptionRepository: EventSubscriptionRepository,
-  private val eventPublisherRepository: EventPublisherRepository,
+  private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
+  private val publisherRepository: PublisherRepository,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getPublishers() = eventPublisherRepository.findAll()
+  suspend fun getPublishers() = publisherRepository.findAll()
 
-  suspend fun getPublisherSubscriptions() = eventSubscriptionRepository.findAll()
+  suspend fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll()
 
-  suspend fun getSubscriptionsForPublisher(publisherId: UUID) = eventSubscriptionRepository.findAllByPublisherId(publisherId)
+  suspend fun getSubscriptionsForPublisher(publisherId: UUID) = publisherSubscriptionRepository.findAllByPublisherId(publisherId)
 
   suspend fun addPublisherSubscription(
     publisherId: UUID,
     publisherSubRequest: PublisherSubRequest
-  ): EventSubscription {
+  ): PublisherSubscription {
     with(publisherSubRequest) {
-      return eventSubscriptionRepository.save(
-        EventSubscription(
+      return publisherSubscriptionRepository.save(
+        PublisherSubscription(
           publisherId = publisherId,
           clientId = clientId,
           eventTypeId = eventTypeId,
           datasetId = datasetId,
-          eventSubscriptionId = UUID.randomUUID()
+          publisherSubscriptionId = UUID.randomUUID()
         )
       )
     }
@@ -49,10 +49,10 @@ class PublishersService(
     publisherId: UUID,
     subscriptionId: UUID,
     publisherSubRequest: PublisherSubRequest
-  ): EventSubscription {
+  ): PublisherSubscription {
     with(publisherSubRequest) {
-      return eventSubscriptionRepository.save(
-        eventSubscriptionRepository.findById(subscriptionId)?.copy(
+      return publisherSubscriptionRepository.save(
+        publisherSubscriptionRepository.findById(subscriptionId)?.copy(
           publisherId = publisherId,
           clientId = clientId,
           eventTypeId = eventTypeId,
@@ -64,11 +64,11 @@ class PublishersService(
 
   suspend fun addPublisher(
     publisherRequest: PublisherRequest
-  ): EventPublisher {
+  ): Publisher {
     with(publisherRequest) {
-      return eventPublisherRepository.save(
-        EventPublisher(
-          publisherName = name
+      return publisherRepository.save(
+        Publisher(
+          name = name
         )
       )
     }

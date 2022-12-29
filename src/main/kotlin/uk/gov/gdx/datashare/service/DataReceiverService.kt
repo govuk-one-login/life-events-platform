@@ -18,8 +18,8 @@ import java.util.*
 class DataReceiverService(
   private val hmppsQueueService: HmppsQueueService,
   private val authenticationFacade: AuthenticationFacade,
-  private val eventSubscriptionRepository: EventSubscriptionRepository,
-  private val eventPublisherRepository: EventPublisherRepository,
+  private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
+  private val publisherRepository: PublisherRepository,
   private val eventDatasetRepository: EventDatasetRepository,
   private val objectMapper: ObjectMapper,
 ) {
@@ -34,7 +34,7 @@ class DataReceiverService(
   suspend fun sendToDataProcessor(eventPayload: EventToPublish) {
 
     // check if client is allowed to send
-    val subscription = eventSubscriptionRepository.findByClientIdAndEventType(
+    val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
       authenticationFacade.getUsername(),
       eventPayload.eventType
     ) ?: throw RuntimeException("${authenticationFacade.getUsername()} does not have permission")
@@ -42,7 +42,7 @@ class DataReceiverService(
     val dataSet = eventDatasetRepository.findById(subscription.datasetId)
       ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known dataset")
 
-    val publisher = eventPublisherRepository.findById(subscription.publisherId)
+    val publisher = publisherRepository.findById(subscription.publisherId)
       ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known publisher")
 
     if (dataSet.storePayload && eventPayload.eventDetails == null) {
@@ -52,7 +52,7 @@ class DataReceiverService(
     val dataProcessorMessage = DataProcessorMessage(
       subscriptionId = subscription.id,
       datasetId = subscription.datasetId,
-      publisher = publisher.publisherName,
+      publisher = publisher.name,
       eventTypeId = eventPayload.eventType,
       eventTime = eventPayload.eventTime ?: LocalDateTime.now(),
       id = eventPayload.id,
@@ -63,7 +63,7 @@ class DataReceiverService(
     log.debug(
       "Notifying Data Processor of event type {} from {}",
       dataProcessorMessage.eventTypeId,
-      publisher.publisherName
+      publisher.name
     )
 
     dataReceiverSqsClient.sendMessage(

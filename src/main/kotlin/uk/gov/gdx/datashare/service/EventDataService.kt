@@ -43,7 +43,7 @@ class EventDataService(
     }
   }
 
-    suspend fun getEvents(
+  suspend fun getEvents(
     eventTypes: List<String>?,
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?
@@ -52,20 +52,21 @@ class EventDataService(
     val endTime = optionalEndTime ?: LocalDateTime.now()
     val clientId = authenticationFacade.getUsername()
 
-    val consumerSubscriptionIds = eventTypes?.let {
+    val consumerSubscriptions = eventTypes?.let {
       consumerSubscriptionRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
-        .map { it.id }
-        .toList()
-    }
+    } ?: consumerSubscriptionRepository.findAllByPollClientId(clientId)
 
-    val egressEvents = consumerSubscriptionIds?.let {
-      egressEventDataRepository.findAllByConsumerSubscriptions(consumerSubscriptionIds, startTime, endTime)
-    } ?: egressEventDataRepository.findAllByPollClientId(clientId, startTime, endTime)
+    val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({it.id},{it.ingressEventType})
+
+    val egressEvents = egressEventDataRepository.findAllByConsumerSubscriptions(
+      consumerSubscriptionIdMap.keys.toList(),
+      startTime,
+      endTime)
 
     return egressEvents.map {
       EventNotification(
         eventId = it.id,
-        eventType = "asd",
+        eventType = consumerSubscriptionIdMap[it.consumerSubscriptionId]!!,
         sourceId = it.dataId,
         eventData = it.dataPayload?.let { dataPayload ->
           deathNotificationService.mapDeathNotification(dataPayload)

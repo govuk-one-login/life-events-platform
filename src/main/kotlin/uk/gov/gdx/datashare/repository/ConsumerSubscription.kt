@@ -21,13 +21,13 @@ data class ConsumerSubscription(
   @Schema(description = "Egress Event Type ID", required = true, example = "00000000-0000-0001-0000-000000000000")
   val eventTypeId: UUID,
   @Schema(description = "Client ID used to poll event platform", required = false, example = "a-polling-client")
-  val pollClientId: String?,
+  val pollClientId: String? = null,
   @Schema(description = "Client ID used to callback to event platform", required = false, example = "a-callback-client")
-  val callbackClientId: String?,
+  val callbackClientId: String? = null,
   val lastPollEventTime: LocalDateTime? = null,
   @JsonIgnore
   @Schema(description = "URI where to push data, can be s3 or http", required = false, example = "http://localhost/callback")
-  val pushUri: String?,
+  val pushUri: String? = null,
   @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
   val ninoRequired: Boolean = false,
   @Schema(description = "Is consumer subscription a legacy subscription", required = false, example = "true", defaultValue = "false")

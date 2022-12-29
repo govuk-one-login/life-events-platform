@@ -34,13 +34,11 @@ class ConsumersService(
     with(consumerSubRequest) {
       val consumer = consumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
 
-      val egressEventType = EgressEventType(
+      val egressEventType = egressEventTypeRepository.save(EgressEventType(
         ingressEventType = ingressEventType,
         description = "$ingressEventType for ${consumer.name}",
         enrichmentFields = enrichmentFields
-      )
-
-      egressEventTypeRepository.save(egressEventType)
+      ))
 
       return consumerSubscriptionRepository.save(
         ConsumerSubscription(
@@ -49,8 +47,7 @@ class ConsumersService(
           eventTypeId = egressEventType.eventTypeId,
           callbackClientId = callbackClientId,
           pushUri = pushUri,
-          ninoRequired = ninoRequired,
-          consumerSubscriptionId = UUID.randomUUID()
+          ninoRequired = ninoRequired
         )
       )
     }
@@ -63,41 +60,29 @@ class ConsumersService(
   ): ConsumerSubscription {
     with(consumerSubRequest) {
       val consumer = consumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
+      val existingEgressEventType = egressEventTypeRepository.findByConsumerSubscriptionId(subscriptionId)
+        ?: throw RuntimeException("Egress event type not found for consumer subscription $subscriptionId")
+      val existingConsumerSubscription = consumerSubscriptionRepository.findById(subscriptionId)
+        ?: throw RuntimeException("Subscription $subscriptionId not found")
 
-      val existingEgressEventType =
-        egressEventTypeRepository.findByIngressEventTypeAndConsumerId(ingressEventType, consumerId)
-      val shouldUpdateEventType = existingEgressEventType == null
-        || existingEgressEventType.enrichmentFields != enrichmentFields
-      val egressEventType = if (shouldUpdateEventType) {
-        EgressEventType(
+      val egressEventType = egressEventTypeRepository.save(
+        existingEgressEventType.copy(
           ingressEventType = ingressEventType,
           description = "$ingressEventType for ${consumer.name}",
           enrichmentFields = enrichmentFields
         )
-      } else {
-        existingEgressEventType!!
-      }
+      )
 
-      if (shouldUpdateEventType) {
-        egressEventTypeRepository.save(egressEventType)
-      }
-
-      val consumerSubscription = consumerSubscriptionRepository.save(
-        consumerSubscriptionRepository.findById(subscriptionId)?.copy(
+      return consumerSubscriptionRepository.save(
+        existingConsumerSubscription.copy(
           consumerId = consumerId,
           pollClientId = pollClientId,
           eventTypeId = egressEventType.eventTypeId,
           callbackClientId = callbackClientId,
           pushUri = pushUri,
           ninoRequired = ninoRequired
-        ) ?: throw RuntimeException("Subscription not found")
+        )
       )
-
-      if (shouldUpdateEventType) {
-        egressEventTypeRepository.delete(existingEgressEventType!!)
-      }
-
-      return consumerSubscription
     }
   }
 

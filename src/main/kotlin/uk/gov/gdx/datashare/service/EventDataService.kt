@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.webjars.NotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.EgressEventTypeRepository
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 import java.time.LocalDateTime
 import java.util.*
@@ -20,8 +20,8 @@ import java.util.*
 @Transactional
 class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
+  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val egressEventDataRepository: EgressEventDataRepository,
-  private val egressEventTypeRepository: EgressEventTypeRepository,
   private val ingressEventDataRepository: IngressEventDataRepository,
   private val deathNotificationService: DeathNotificationService
 ) {
@@ -33,12 +33,12 @@ class EventDataService(
     val endTime = optionalEndTime ?: LocalDateTime.now()
     val clientId = authenticationFacade.getUsername()
 
-    val eventTypes = egressEventTypeRepository.findAllByPollClientId(clientId)
+    val consumerSubscriptions = consumerSubscriptionRepository.findAllByPollClientId(clientId)
 
-    return eventTypes.map {
+    return consumerSubscriptions.map {
       EventStatus(
         eventType = it.ingressEventType,
-        count = egressEventDataRepository.findAllByEventType(it.id, startTime, endTime).count()
+        count = egressEventDataRepository.findAllByConsumerSubscription(it.id, startTime, endTime).count()
       )
     }
   }
@@ -52,14 +52,14 @@ class EventDataService(
     val endTime = optionalEndTime ?: LocalDateTime.now()
     val clientId = authenticationFacade.getUsername()
 
-    val egressEventTypeIds = eventTypes?.let {
-      egressEventTypeRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
-        .map { it.eventTypeId }
+    val consumerSubscriptionIds = eventTypes?.let {
+      consumerSubscriptionRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
+        .map { it.id }
         .toList()
     }
 
-    val egressEvents = egressEventTypeIds?.let {
-      egressEventDataRepository.findAllByEventTypes(egressEventTypeIds, startTime, endTime)
+    val egressEvents = consumerSubscriptionIds?.let {
+      egressEventDataRepository.findAllByConsumerSubscriptions(consumerSubscriptionIds, startTime, endTime)
     } ?: egressEventDataRepository.findAllByPollClientId(clientId, startTime, endTime)
 
     return egressEvents.map {

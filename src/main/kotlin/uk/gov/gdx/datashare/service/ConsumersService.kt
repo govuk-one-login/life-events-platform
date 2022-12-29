@@ -13,8 +13,7 @@ import java.util.*
 @Transactional
 class ConsumersService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: ConsumerRepository,
-  private val egressEventTypeRepository: EgressEventTypeRepository
+  private val consumerRepository: ConsumerRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -32,22 +31,15 @@ class ConsumersService(
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
-      val consumer = consumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
-
-      val egressEventType = egressEventTypeRepository.save(EgressEventType(
-        ingressEventType = ingressEventType,
-        description = "$ingressEventType for ${consumer.name}",
-        enrichmentFields = enrichmentFields
-      ))
-
       return consumerSubscriptionRepository.save(
         ConsumerSubscription(
           consumerId = consumerId,
           pollClientId = pollClientId,
-          eventTypeId = egressEventType.eventTypeId,
           callbackClientId = callbackClientId,
           pushUri = pushUri,
-          ninoRequired = ninoRequired
+          ninoRequired = ninoRequired,
+          ingressEventType = ingressEventType,
+          enrichmentFields = enrichmentFields
         )
       )
     }
@@ -59,29 +51,16 @@ class ConsumersService(
     consumerSubRequest: ConsumerSubRequest
   ): ConsumerSubscription {
     with(consumerSubRequest) {
-      val consumer = consumerRepository.findById(consumerId) ?: throw RuntimeException("Consumer $consumerId not found")
-      val existingEgressEventType = egressEventTypeRepository.findByConsumerSubscriptionId(subscriptionId)
-        ?: throw RuntimeException("Egress event type not found for consumer subscription $subscriptionId")
-      val existingConsumerSubscription = consumerSubscriptionRepository.findById(subscriptionId)
-        ?: throw RuntimeException("Subscription $subscriptionId not found")
-
-      val egressEventType = egressEventTypeRepository.save(
-        existingEgressEventType.copy(
-          ingressEventType = ingressEventType,
-          description = "$ingressEventType for ${consumer.name}",
-          enrichmentFields = enrichmentFields
-        )
-      )
-
       return consumerSubscriptionRepository.save(
-        existingConsumerSubscription.copy(
+        consumerSubscriptionRepository.findById(subscriptionId)?.copy(
           consumerId = consumerId,
           pollClientId = pollClientId,
-          eventTypeId = egressEventType.eventTypeId,
           callbackClientId = callbackClientId,
           pushUri = pushUri,
-          ninoRequired = ninoRequired
-        )
+          ninoRequired = ninoRequired,
+          ingressEventType = ingressEventType,
+          enrichmentFields = enrichmentFields
+        ) ?: throw RuntimeException("Subscription $subscriptionId not found")
       )
     }
   }

@@ -14,24 +14,23 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
   @Query("SELECT ed.* FROM egress_event_data ed " +
     "WHERE ed.when_created > :fromTime " +
     "AND ed.when_created <= :toTime " +
-    "AND ed.type_id = :eventTypeId " +
+    "AND ed.consumer_subscription_id = :consumerSubscriptionId " +
     "ORDER BY ed.when_created")
-  fun findAllByEventType(eventTypeId: UUID, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
+  fun findAllByConsumerSubscription(consumerSubscriptionId: UUID, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
 
   @Query("SELECT ed.* FROM egress_event_data ed " +
     "WHERE ed.when_created > :fromTime " +
     "AND ed.when_created <= :toTime " +
-    "AND ed.type_id IN (:eventTypeIds) " +
+    "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
     "ORDER BY ed.when_created")
-  fun findAllByEventTypes(eventTypeIds: List<UUID>, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
+  fun findAllByConsumerSubscriptions(consumerSubscriptionIds: List<UUID>, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
 
   @Query("DELETE FROM egress_event_data where data_expiry_time < :expiredTime")
   @Modifying
   suspend fun deleteAllExpiredEvents(expiredTime: LocalDateTime)
 
   @Query("SELECT ed.* FROM egress_event_data ed " +
-    "JOIN egress_event_type eet on ed.type_id = eet.id " +
-    "JOIN consumer_subscription cs on eet.id = cs.event_type_id " +
+    "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
     "AND cs.poll_client_id = :pollerClientId " +
     "WHERE ed.when_created > :fromTime " +
     "AND ed.when_created <= :toTime " +
@@ -39,8 +38,7 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
   fun findAllByPollClientId(pollerClientId: String, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
 
   @Query("SELECT ed.* FROM egress_event_data ed " +
-    "JOIN egress_event_type eet on ed.type_id = eet.id " +
-    "JOIN consumer_subscription cs on eet.id = cs.event_type_id " +
+    "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
     "AND cs.poll_client_id = :pollerClientId " +
     "WHERE ed.id = :id")
   suspend fun findByPollClientIdAndId(pollerClientId: String, id: UUID): EgressEventData?

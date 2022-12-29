@@ -51,7 +51,6 @@ class EventPollService(
         if (sub.lastPollEventTime == null || lastPollEventTime.isAfter(sub.lastPollEventTime)) {
           consumerSubscriptionRepository.updateLastPollTime(
             lastPollEventTime = lastPollEventTime,
-            consumerId = sub.consumerId,
             sub.consumerSubscriptionId
           )
         }

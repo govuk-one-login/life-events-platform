@@ -12,7 +12,11 @@ import java.util.*
 interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubscription, UUID> {
   @Query("SELECT * FROM consumer_subscription cs WHERE cs.poll_client_id = :clientId")
   fun findAllByPollClientId(clientId: String): Flow<ConsumerSubscription>
-  
+
+  @Query("SELECT * FROM consumer_subscription cs " +
+    "WHERE cs.ingress_event_type = :ingressEventType")
+  fun findAllByIngressEventType(ingressEventType: String): Flow<ConsumerSubscription>
+
   @Query("SELECT * FROM consumer_subscription cs " +
     "WHERE cs.poll_client_id = :clientId " +
     "AND cs.ingress_event_type IN (:ingressEventTypes)")
@@ -23,9 +27,9 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
     "AND cs.push_uri IS NOT NULL ")
   fun findClientToSendDataTo(eventType: String): Flow<ConsumerSubscription>
 
-  @Query("UPDATE consumer_subscription set last_poll_event_time = :lastTime WHERE consumer_id = :consumerId and event_type_id = :eventType")
+  @Query("UPDATE consumer_subscription SET last_poll_event_time = :lastTime WHERE id = :id")
   @Modifying
-  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, consumerId: UUID, eventType: UUID)
+  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, id: UUID)
 
   @Query("SELECT cs.* FROM consumer_subscription cs " +
     "JOIN egress_event_data eed ON cs.id = eed.consumer_subscription_id " +

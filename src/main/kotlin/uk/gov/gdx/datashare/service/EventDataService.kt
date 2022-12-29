@@ -2,6 +2,8 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
@@ -15,6 +17,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Service
+@Transactional
 class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
   private val egressEventDataRepository: EgressEventDataRepository,
@@ -22,39 +25,42 @@ class EventDataService(
   private val ingressEventDataRepository: IngressEventDataRepository,
   private val deathNotificationService: DeathNotificationService
 ) {
-  @Transactional
-  suspend fun deleteEvent(id: UUID) {
-    val pollingClientId = authenticationFacade.getUsername()
-    val egressEvent = egressEventDataRepository.findByPollerClientIdAndId(pollingClientId, id)
-      ?: throw NotFoundException("Egress event $id not found for polling client $pollingClientId")
+  suspend fun getEventsStatus(
+    optionalStartTime: LocalDateTime?,
+    optionalEndTime: LocalDateTime?
+  ): Flow<EventStatus> {
+    val startTime = optionalStartTime ?: LocalDateTime.of(2000, 1, 1, 12, 0)
+    val endTime = optionalEndTime ?: LocalDateTime.now()
+    val clientId = authenticationFacade.getUsername()
 
-    egressEventDataRepository.deleteById(egressEvent.id)
+    val eventTypes = egressEventTypeRepository.findAllByPollClientId(clientId)
 
-    val remainingEvents = egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId).toList()
-    if (remainingEvents.isEmpty()) {
-      ingressEventDataRepository.deleteById(egressEvent.ingressEventId)
+    return eventTypes.map {
+      EventStatus(
+        eventType = it.ingressEventType,
+        count = egressEventDataRepository.findAllByEventType(it.id, startTime, endTime).count()
+      )
     }
   }
 
-  @Transactional
-  suspend fun getEvents(
+    suspend fun getEvents(
     eventTypes: List<String>?,
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?
-  ): List<EventNotification> {
+  ): Flow<EventNotification> {
     val startTime = optionalStartTime ?: LocalDateTime.of(2000, 1, 1, 12, 0)
     val endTime = optionalEndTime ?: LocalDateTime.now()
     val clientId = authenticationFacade.getUsername()
 
     val egressEventTypeIds = eventTypes?.let {
-      egressEventTypeRepository.findAllByIngressEventTypesAndClient(clientId, eventTypes)
+      egressEventTypeRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
         .map { it.eventTypeId }
         .toList()
     }
 
     val egressEvents = egressEventTypeIds?.let {
       egressEventDataRepository.findAllByEventTypes(egressEventTypeIds, startTime, endTime)
-    } ?: egressEventDataRepository.findAllByPollerClientId(clientId, startTime, endTime)
+    } ?: egressEventDataRepository.findAllByPollClientId(clientId, startTime, endTime)
 
     return egressEvents.map {
       EventNotification(
@@ -65,7 +71,20 @@ class EventDataService(
           deathNotificationService.mapDeathNotification(dataPayload)
         },
       )
-    }.toList()
+    }
+  }
+
+  suspend fun deleteEvent(id: UUID) {
+    val pollingClientId = authenticationFacade.getUsername()
+    val egressEvent = egressEventDataRepository.findByPollClientIdAndId(pollingClientId, id)
+      ?: throw NotFoundException("Egress event $id not found for polling client $pollingClientId")
+
+    egressEventDataRepository.deleteById(egressEvent.id)
+
+    val remainingEvents = egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId).toList()
+    if (remainingEvents.isEmpty()) {
+      ingressEventDataRepository.deleteById(egressEvent.ingressEventId)
+    }
   }
 }
 
@@ -85,4 +104,18 @@ data class EventNotification(
   val sourceId: String,
   @Schema(description = "Event Data", required = false)
   val eventData: Any?
+)
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Event type count")
+data class EventStatus(
+  @Schema(
+    description = "Event's Type",
+    required = true,
+    example = "DEATH_NOTIFICATION",
+    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+  )
+  val eventType: String,
+  @Schema(description = "Number of events for the type", required = true, example = "123")
+  val count: Number,
 )

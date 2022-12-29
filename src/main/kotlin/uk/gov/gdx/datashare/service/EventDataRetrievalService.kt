@@ -39,7 +39,7 @@ class EventDataRetrievalService(
     val eventType = egressEventTypeRepository.findById(event.typeId) ?: throw RuntimeException("Event type ${event.typeId} Not Found")
 
     // check if client is allowed to send
-    val dataConsumer = consumerSubscriptionRepository.findByClientIdAndEventType(oauthClient, event.typeId)
+    val dataConsumer = consumerSubscriptionRepository.findByCallbackClientIdAndEventType(oauthClient, event.typeId)
       ?: throw RuntimeException("Client $oauthClient is not allowed to consume ${eventType.ingressEventType} events")
 
 

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import kotlinx.coroutines.flow.toList
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.service.DataReceiverService
 import uk.gov.gdx.datashare.service.EventDataService
 import uk.gov.gdx.datashare.service.EventNotification
+import uk.gov.gdx.datashare.service.EventStatus
 import java.time.LocalDateTime
 import java.util.*
 
@@ -33,6 +35,35 @@ class EventsController(
   private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
   private val ingestedEventsCounter: Counter = meterRegistry.counter("API_CALLS.IngestedEvents")
 
+  @GetMapping("/status")
+  @Operation(
+    summary = "Event Get API - Get event status",
+    description = "Get count of all events for consumer, Need scope of data_retriever/read",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Count per type"
+      )
+    ]
+  )
+  suspend fun getEventsStatus(
+    @RequestParam(name = "eventType", required = false) eventTypes: List<String> = listOf(),
+    @Schema(
+      description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
+      type = "date-time",
+      required = false
+    )
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+    @RequestParam(name = "fromTime", required = false) startTime: LocalDateTime? = null,
+    @Schema(
+      description = "Events before this time, if not supplied it will be now",
+      type = "date-time",
+      required = false
+    )
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
+  ): List<EventStatus> = eventDataService.getEventsStatus(startTime, endTime).toList()
+
   @GetMapping
   @Operation(
     summary = "Event Get API - Get event data",
@@ -46,7 +77,7 @@ class EventsController(
   )
   suspend fun getEvents(
     @Schema(
-      description = "Event Types required, if none supplied it will be the allowed types for this client",
+      description = "Event Types, if none supplied it will be the allowed types for this client",
       required = false,
       allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
     )
@@ -67,7 +98,7 @@ class EventsController(
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventNotification> = run {
     callsToPollCounter.increment()
-    eventDataService.getEvents(eventTypes, startTime, endTime)
+    eventDataService.getEvents(eventTypes, startTime, endTime).toList()
   }
 
   @PreAuthorize("hasAnyAuthority('SCOPE_data_receiver/notify')")

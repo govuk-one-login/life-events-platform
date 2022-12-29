@@ -10,9 +10,14 @@ import java.util.*
 interface EgressEventTypeRepository : CoroutineCrudRepository<EgressEventType, UUID> {
   @Query("SELECT et.* FROM egress_event_type et " +
     "JOIN consumer_subscription cs ON cs.event_type_id = et.id " +
+    "AND cs.poll_client_id = :clientId ")
+  fun findAllByPollClientId(clientId: String): Flow<EgressEventType>
+
+  @Query("SELECT et.* FROM egress_event_type et " +
+    "JOIN consumer_subscription cs ON cs.event_type_id = et.id " +
     "AND cs.poll_client_id = :clientId " +
     "WHERE et.ingress_event_type IN (:ingressEventTypes) ")
-  fun findAllByIngressEventTypesAndClient(clientId: String, ingressEventTypes: List<String>): Flow<EgressEventType>
+  fun findAllByIngressEventTypesAndPollClientId(clientId: String, ingressEventTypes: List<String>): Flow<EgressEventType>
 
   @Query("SELECT et.* FROM egress_event_type et " +
     "JOIN consumer_subscription cs ON cs.event_type_id = et.id " +

@@ -12,10 +12,10 @@ import java.util.*
 interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubscription, UUID> {
 
   @Query("SELECT * FROM consumer_subscription cs where cs.callback_client_id = :clientId and cs.event_type_id = :eventType")
-  suspend fun findByClientIdAndEventType(clientId: String, eventType: UUID): ConsumerSubscription?
+  suspend fun findByCallbackClientIdAndEventType(clientId: String, eventType: UUID): ConsumerSubscription?
 
   @Query("SELECT * FROM consumer_subscription cs where cs.poll_client_id = :clientId")
-  fun findAllByPollerClientId(clientId: String): Flow<ConsumerSubscription>
+  fun findAllByPollClientId(clientId: String): Flow<ConsumerSubscription>
 
   @Query("SELECT * FROM consumer_subscription cs " +
     "JOIN egress_event_type eet ON cs.event_type_id = eet.id " +

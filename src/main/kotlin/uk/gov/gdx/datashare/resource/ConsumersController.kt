@@ -3,6 +3,7 @@ package uk.gov.gdx.datashare.resource
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -15,6 +16,7 @@ import java.util.*
 @RestController
 @RequestMapping("/consumers", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @Validated
+@Tag(name = "2. Consumers")
 class ConsumersController(
   private val consumersService: ConsumersService
 ) {

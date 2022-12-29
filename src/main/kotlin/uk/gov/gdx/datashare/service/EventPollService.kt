@@ -36,14 +36,14 @@ class EventPollService(
     val lastPollEventTime = toTime ?: now
     val clientId = authenticationFacade.getUsername()
     val egressEventTypes = eventTypes?.let {
-      egressEventTypeRepository.findAllByIngressEventTypesAndClient(clientId, eventTypes)
+      egressEventTypeRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
         .toList()
         .associateBy({ it.eventTypeId }, {it.ingressEventType})
     }
 
     log.debug("Egress event types {} polled", egressEventTypes?.keys?.joinToString())
 
-    return consumerSubscriptionRepository.findAllByPollerClientId(authenticationFacade.getUsername())
+    return consumerSubscriptionRepository.findAllByPollClientId(authenticationFacade.getUsername())
       .filter { egressEventTypes.isNullOrEmpty() || it.eventTypeId in egressEventTypes.keys }
       .flatMapMerge { sub ->
         val beginTime = fromTime ?: sub.lastPollEventTime ?: now.minusDays(1)

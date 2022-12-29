@@ -4,16 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.EventConsumerRepository
 import uk.gov.gdx.datashare.resource.EventInformation
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Service
@@ -23,7 +21,6 @@ class LegacyAdaptorOutbound(
   private val auditService: AuditService,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val consumerRepository: EventConsumerRepository,
-  private val egressEventDataRepository: EgressEventDataRepository,
 ) {
 
   companion object {
@@ -48,7 +45,8 @@ class LegacyAdaptorOutbound(
   suspend fun processLifeEvent(event: EventMessage) {
     log.debug("processing {}", event)
 
-    if (!egressEventDataRepository.isLegacyEvent(event.id)) {
+    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(event.id)
+    if (consumerSubscription?.isLegacy != true) {
       log.debug("Event {} is not legacy", event.id)
       return
     }
@@ -95,7 +93,6 @@ data class EventTopicMessage(
 
 data class EventMessage(
   val id: UUID,
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  val occurredAt: LocalDateTime,
+  val occurredAt: OffsetDateTime,
   val description: String
 )

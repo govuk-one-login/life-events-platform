@@ -48,9 +48,4 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
   @Query("SELECT ed.* FROM egress_event_data ed " +
     "WHERE ed.ingress_event_id = :ingressEventId")
   fun findAllByIngressEventId(ingressEventId: UUID): Flow<EgressEventData>
-
-  @Query("SELECT cs.is_legacy FROM egress_event_data ed " +
-    "JOIN egress_event_type eet on ed.type_id = eet.id " +
-    "JOIN consumer_subscription cs on eet.id = cs.event_type_id")
-  suspend fun isLegacyEvent(id: UUID): Boolean
 }

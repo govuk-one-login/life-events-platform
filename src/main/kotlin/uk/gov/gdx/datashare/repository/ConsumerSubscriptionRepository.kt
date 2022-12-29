@@ -26,4 +26,10 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
   @Query("UPDATE consumer_subscription set last_poll_event_time = :lastTime where consumer_id = :consumerId and event_type_id = :eventType")
   @Modifying
   suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, consumerId: UUID, eventType: UUID)
+
+  @Query("SELECT cs.* FROM consumer_subscription cs " +
+    "JOIN egress_event_type eet ON cs.event_type_id = eet.id " +
+    "JOIN egress_event_data eed ON eet.id = eed.type_id " +
+    "WHERE eed.id = :id ")
+  suspend fun findByEgressEventId(id: UUID): ConsumerSubscription?
 }

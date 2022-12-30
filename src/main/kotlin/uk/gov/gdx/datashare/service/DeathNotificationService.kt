@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.*
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -19,14 +20,14 @@ class DeathNotificationService(
   private val egressEventDataRepository: EgressEventDataRepository,
   private val eventPublishingService: EventPublishingService,
   private val levApiService: LevApiService,
-  private val mapper: ObjectMapper,
+  private val objectMapper: ObjectMapper,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
   fun mapDeathNotification(dataPayload: String): DeathNotificationDetails? =
-    mapper.readValue(dataPayload, DeathNotificationDetails::class.java)
+    objectMapper.readValue(dataPayload, DeathNotificationDetails::class.java)
 
   suspend fun saveDeathNotificationEvents(
     eventData: IngressEventData,
@@ -49,7 +50,7 @@ class DeathNotificationService(
         ingressEventId = eventData.eventId,
         datasetId = dataProcessorMessage.datasetId,
         dataId = details.id,
-        dataPayload = dataPayload?.let { mapper.writeValueAsString(dataPayload) },
+        dataPayload = dataPayload?.let { objectMapper.writeValueAsString(dataPayload) },
         whenCreated = dataProcessorMessage.eventTime,
         dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
       )
@@ -71,7 +72,7 @@ class DeathNotificationService(
     val allEnrichedData = getAllEnrichedData(dataset, dataId, dataPayload)
     log.debug("Data enriched with details $allEnrichedData")
     return EnrichmentService.getDataWithOnlyFields(
-      mapper,
+      objectMapper,
       allEnrichedData,
       enrichmentFields
     )

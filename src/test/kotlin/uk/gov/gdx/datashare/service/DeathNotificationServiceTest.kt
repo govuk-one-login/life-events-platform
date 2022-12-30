@@ -1,9 +1,9 @@
 package uk.gov.gdx.datashare.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDate
 
@@ -18,7 +18,7 @@ class DeathNotificationServiceTest {
     egressEventDataRepository,
     eventPublishingService,
     levApiService,
-    ObjectMapper()
+    JacksonConfiguration().objectMapper()
   )
 
   @Test

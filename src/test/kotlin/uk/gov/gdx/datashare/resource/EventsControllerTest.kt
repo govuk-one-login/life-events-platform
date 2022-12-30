@@ -8,9 +8,13 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
 import java.util.*
+import java.util.stream.Stream
 
 class EventsControllerTest {
   private val eventDataService = mockk<EventDataService>()
@@ -29,11 +33,10 @@ class EventsControllerTest {
     underTest = EventsController(eventDataService, dataReceiverService, meterRegistry)
   }
 
-  @Test
-  fun `getEventsStatus gets events status`() {
+  @ParameterizedTest
+  @MethodSource("provideLocalDateTimes")
+  fun `getEventsStatus gets events status`(startTime: LocalDateTime?, endTime: LocalDateTime?) {
     runBlocking {
-      val startTime = LocalDateTime.now().minusHours(1)
-      val endTime = LocalDateTime.now().plusHours(1)
       val eventStatuses = flowOf(
         EventStatus(
           eventType = "DEATH_NOTIFICATION",
@@ -54,12 +57,11 @@ class EventsControllerTest {
     }
   }
 
-  @Test
-  fun `getEvents gets events`() {
+  @ParameterizedTest
+  @MethodSource("provideLocalDateTimes")
+  fun `getEvents gets events`(startTime: LocalDateTime?, endTime: LocalDateTime?) {
     runBlocking {
       val eventTypes = listOf("DEATH_NOTIFICATION")
-      val startTime = LocalDateTime.now().minusHours(1)
-      val endTime = LocalDateTime.now().plusHours(1)
       val events = flowOf(
         EventNotification(
           eventId = UUID.randomUUID(),
@@ -119,6 +121,16 @@ class EventsControllerTest {
       underTest.deleteEvent(eventId)
 
       coVerify(exactly = 1) { eventDataService.deleteEvent(eventId) }
+    }
+  }
+
+  companion object {
+    @JvmStatic
+    private fun provideLocalDateTimes(): Stream<Arguments?>? {
+      return Stream.of(
+        Arguments.of(LocalDateTime.now().minusHours(1), LocalDateTime.now().plusHours(1)),
+        Arguments.of(null, null),
+      )
     }
   }
 }

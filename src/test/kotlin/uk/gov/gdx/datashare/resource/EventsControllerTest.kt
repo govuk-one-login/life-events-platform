@@ -75,7 +75,7 @@ class EventsControllerTest {
           sourceId = UUID.randomUUID().toString(),
           eventData = DeathNotificationDetails(
             firstName = "Bob",
-            lastName = "Bob"
+            lastName = "Smith"
           )
         ),
       )

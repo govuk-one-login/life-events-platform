@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.resource.SubscribedEvent
@@ -17,6 +18,7 @@ class EventPollService(
   private val authenticationFacade: AuthenticationFacade,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val egressEventDataRepository: EgressEventDataRepository,
+  private val dateTimeHandler: DateTimeHandler,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -30,7 +32,7 @@ class EventPollService(
     toTime: LocalDateTime?
   ): Flow<SubscribedEvent> {
 
-    val now = LocalDateTime.now()
+    val now = dateTimeHandler.now()
     val lastPollEventTime = toTime ?: now
     val clientId = authenticationFacade.getUsername()
     val consumerSubscriptions = eventTypes?.let {

@@ -41,6 +41,7 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.14")
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("io.opentelemetry:opentelemetry-api:1.19.0")
 
   implementation("org.apache.commons:commons-lang3")
@@ -65,7 +66,6 @@ dependencies {
   testImplementation("org.mockito:mockito-inline")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.9")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:localstack:1.17.6")
   testImplementation("org.testcontainers:postgresql:1.17.6")

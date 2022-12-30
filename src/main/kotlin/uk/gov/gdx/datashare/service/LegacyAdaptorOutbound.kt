@@ -16,7 +16,7 @@ import java.util.UUID
 
 @Service
 class LegacyAdaptorOutbound(
-  private val mapper: ObjectMapper,
+  private val objectMapper: ObjectMapper,
   private val eventDataRetrievalApiWebClient: WebClient,
   private val auditService: AuditService,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
@@ -29,11 +29,11 @@ class LegacyAdaptorOutbound(
 
   @JmsListener(destination = "adaptor", containerFactory = "hmppsQueueContainerFactoryProxy")
   fun onPublishedEvent(eventMessage: String) = runBlocking {
-    val (message, messageAttributes) = mapper.readValue(eventMessage, EventTopicMessage::class.java)
+    val (message, messageAttributes) = objectMapper.readValue(eventMessage, EventTopicMessage::class.java)
     val eventType = messageAttributes.eventType.Value
     log.info("Received message $message, type $eventType")
 
-    val event = mapper.readValue(message, EventMessage::class.java)
+    val event = objectMapper.readValue(message, EventMessage::class.java)
     when (eventType) {
       "DEATH_NOTIFICATION", "LIFE_EVENT" -> processLifeEvent(event)
       else -> {

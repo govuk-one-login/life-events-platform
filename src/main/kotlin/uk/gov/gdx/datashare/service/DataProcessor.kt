@@ -14,7 +14,7 @@ import java.util.*
 class DataProcessor(
   private val auditService: AuditService,
   private val ingressEventDataRepository: IngressEventDataRepository,
-  private val mapper: ObjectMapper,
+  private val objectMapper: ObjectMapper,
   private val deathNotificationService: DeathNotificationService
 ) {
   companion object {
@@ -25,7 +25,7 @@ class DataProcessor(
   fun onGovEvent(message: String) {
 
     runBlocking {
-      val dataProcessorMessage: DataProcessorMessage = mapper.readValue(message, DataProcessorMessage::class.java)
+      val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
       log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
 
       // audit the event
@@ -61,7 +61,7 @@ class DataProcessor(
     }
   }
 
-  fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage): DataDetail {
+  private fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage): DataDetail {
     val id = dataProcessorMessage.id ?: eventId.toString()
     val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 
@@ -77,10 +77,10 @@ class DataProcessor(
       }
     }
   }
-
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  data class DataDetail(
-    var id: String,
-    var data: Any? = null
-  )
 }
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+data class DataDetail(
+  var id: String,
+  var data: Any? = null
+)

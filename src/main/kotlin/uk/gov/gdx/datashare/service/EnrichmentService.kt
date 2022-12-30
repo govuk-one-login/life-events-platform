@@ -7,7 +7,7 @@ import kotlin.reflect.full.memberProperties
 class EnrichmentService {
   companion object {
     inline fun <reified T : Any> getDataWithOnlyFields(
-      mapper: ObjectMapper,
+      objectMapper: ObjectMapper,
       completeObject: T?,
       enrichmentFields: List<String>
     ): T? {
@@ -21,7 +21,7 @@ class EnrichmentService {
           hashMap[prop.name] = value
         }
       }
-      return mapper.convertValue(hashMap, T::class.java)
+      return objectMapper.convertValue(hashMap, T::class.java)
     }
   }
 }

@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.*
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -19,15 +20,18 @@ class DeathNotificationService(
   private val egressEventDataRepository: EgressEventDataRepository,
   private val eventPublishingService: EventPublishingService,
   private val levApiService: LevApiService,
-  private val mapper: ObjectMapper
+  private val objectMapper: ObjectMapper,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
+  fun mapDeathNotification(dataPayload: String): DeathNotificationDetails? =
+    objectMapper.readValue(dataPayload, DeathNotificationDetails::class.java)
+
   suspend fun saveDeathNotificationEvents(
     eventData: IngressEventData,
-    details: DataProcessor.DataDetail,
+    details: DataDetail,
     dataProcessorMessage: DataProcessorMessage
   ) {
     val consumerSubscriptions = consumerSubscriptionRepository.findAllByIngressEventType(eventData.eventTypeId)
@@ -46,7 +50,7 @@ class DeathNotificationService(
         ingressEventId = eventData.eventId,
         datasetId = dataProcessorMessage.datasetId,
         dataId = details.id,
-        dataPayload = dataPayload?.let { mapper.writeValueAsString(dataPayload) },
+        dataPayload = dataPayload?.let { objectMapper.writeValueAsString(dataPayload) },
         whenCreated = dataProcessorMessage.eventTime,
         dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
       )
@@ -59,29 +63,26 @@ class DeathNotificationService(
     }
   }
 
-  fun mapDeathNotification(dataPayload: String): DeathNotificationDetails? =
-    mapper.readValue(dataPayload, DeathNotificationDetails::class.java)
-
   private suspend fun enrichData(
     enrichmentFields: List<String>,
-    dataset: String,
+    datasetId: String,
     dataId: String,
     dataPayload: String?
   ): DeathNotificationDetails? {
-    val allEnrichedData = getAllEnrichedData(dataset, dataId, dataPayload)
+    val allEnrichedData = getAllEnrichedData(datasetId, dataId, dataPayload)
     log.debug("Data enriched with details $allEnrichedData")
     return EnrichmentService.getDataWithOnlyFields(
-      mapper,
+      objectMapper,
       allEnrichedData,
       enrichmentFields
     )
   }
 
   private suspend fun getAllEnrichedData(
-    dataset: String,
+    datasetId: String,
     dataId: String,
     dataPayload: String?
-  ): DeathNotificationDetails? = when (dataset) {
+  ): DeathNotificationDetails? = when (datasetId) {
     "DEATH_LEV" -> {
       // get the data from the LEV
       val citizenDeathId = dataId.toInt()
@@ -116,7 +117,7 @@ class DeathNotificationService(
     }
 
     else -> {
-      throw RuntimeException("Unknown DataSet $dataset")
+      throw RuntimeException("Unknown DataSet $datasetId")
     }
   }
 }

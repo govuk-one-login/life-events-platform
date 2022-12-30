@@ -160,6 +160,23 @@ class ConsumersServiceTest {
     }
   }
 
+  @Test
+  fun `addConsumer adds consumer`() {
+    runBlocking {
+      val consumerRequest = ConsumerRequest(
+        name = "Consumer"
+      )
+
+      coEvery { consumerRepository.save(any()) }.returns(consumer)
+
+      underTest.addConsumer(consumerRequest)
+
+      coVerify(exactly = 1) { consumerRepository.save(withArg {
+        assertThat(it.name).isEqualTo(consumerRequest.name)
+      }) }
+    }
+  }
+
   private val consumer = Consumer(name = "Base Consumer")
   private val consumerSubscription = ConsumerSubscription(
     consumerId = consumer.id,

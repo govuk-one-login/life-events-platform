@@ -6,7 +6,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.gdx.datashare.repository.Publisher
@@ -34,8 +34,8 @@ class PublishersServiceTest {
 
       val publishers = underTest.getPublishers().toList()
 
-      Assertions.assertThat(publishers).hasSize(3)
-      Assertions.assertThat(publishers).isEqualTo(savedPublishers.toList())
+      assertThat(publishers).hasSize(3)
+      assertThat(publishers).isEqualTo(savedPublishers.toList())
     }
   }
 
@@ -67,8 +67,8 @@ class PublishersServiceTest {
 
       val publisherSubscriptions = underTest.getPublisherSubscriptions().toList()
 
-      Assertions.assertThat(publisherSubscriptions).hasSize(3)
-      Assertions.assertThat(publisherSubscriptions).isEqualTo(savedPublisherSubscriptions.toList())
+      assertThat(publisherSubscriptions).hasSize(3)
+      assertThat(publisherSubscriptions).isEqualTo(savedPublisherSubscriptions.toList())
     }
   }
 
@@ -100,8 +100,8 @@ class PublishersServiceTest {
 
       val publisherSubscriptions = underTest.getSubscriptionsForPublisher(publisher.id).toList()
 
-      Assertions.assertThat(publisherSubscriptions).hasSize(3)
-      Assertions.assertThat(publisherSubscriptions).isEqualTo(savedPublisherSubscriptions.toList())
+      assertThat(publisherSubscriptions).hasSize(3)
+      assertThat(publisherSubscriptions).isEqualTo(savedPublisherSubscriptions.toList())
     }
   }
 
@@ -115,10 +115,10 @@ class PublishersServiceTest {
 
       coVerify(exactly = 1) {
         publisherSubscriptionRepository.save(withArg {
-          Assertions.assertThat(it.publisherId).isEqualTo(publisher.id)
-          Assertions.assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
-          Assertions.assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
-          Assertions.assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
+          assertThat(it.publisherId).isEqualTo(publisher.id)
+          assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
+          assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
+          assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
         })
       }
     }
@@ -136,10 +136,10 @@ class PublishersServiceTest {
 
       coVerify(exactly = 1) {
         publisherSubscriptionRepository.save(withArg {
-          Assertions.assertThat(it.publisherId).isEqualTo(publisher.id)
-          Assertions.assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
-          Assertions.assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
-          Assertions.assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
+          assertThat(it.publisherId).isEqualTo(publisher.id)
+          assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
+          assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
+          assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
         })
       }
     }
@@ -154,9 +154,26 @@ class PublishersServiceTest {
         underTest.updatePublisherSubscription(publisher.id, publisherSubscription.id, publisherSubRequest)
       }
 
-      Assertions.assertThat(exception.message).isEqualTo("Subscription ${publisherSubscription.id} not found")
+      assertThat(exception.message).isEqualTo("Subscription ${publisherSubscription.id} not found")
 
       coVerify(exactly = 0) { publisherSubscriptionRepository.save(any()) }
+    }
+  }
+
+  @Test
+  fun `addPublisher adds publisher`() {
+    runBlocking {
+      val publisherRequest = PublisherRequest(
+        name = "Publisher"
+      )
+
+      coEvery { publisherRepository.save(any()) }.returns(publisher)
+      
+      underTest.addPublisher(publisherRequest)
+      
+      coVerify(exactly = 1) { publisherRepository.save(withArg {
+        assertThat(it.name).isEqualTo(publisherRequest.name)
+      }) }
     }
   }
 

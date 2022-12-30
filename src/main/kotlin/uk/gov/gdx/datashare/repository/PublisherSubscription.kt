@@ -15,7 +15,7 @@ import java.util.*
 data class PublisherSubscription(
   @Id
   @Column("id")
-  val publisherSubscriptionId: UUID,
+  val publisherSubscriptionId: UUID = UUID.randomUUID(),
   @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
   val publisherId: UUID,
   @Schema(description = "Client ID", required = true, example = "a-client-id")

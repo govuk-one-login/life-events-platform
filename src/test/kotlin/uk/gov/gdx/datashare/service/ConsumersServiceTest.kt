@@ -15,6 +15,7 @@ import java.util.*
 class ConsumersServiceTest {
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()
   private val consumerRepository = mockk<ConsumerRepository>()
+
   private val underTest = ConsumersService(
     consumerSubscriptionRepository,
     consumerRepository,

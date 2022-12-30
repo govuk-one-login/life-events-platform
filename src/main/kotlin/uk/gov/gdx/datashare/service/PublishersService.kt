@@ -39,7 +39,6 @@ class PublishersService(
           clientId = clientId,
           eventTypeId = eventTypeId,
           datasetId = datasetId,
-          publisherSubscriptionId = UUID.randomUUID()
         )
       )
     }
@@ -57,7 +56,7 @@ class PublishersService(
           clientId = clientId,
           eventTypeId = eventTypeId,
           datasetId = datasetId
-        ) ?: throw RuntimeException("Subscription not found")
+        ) ?: throw RuntimeException("Subscription $subscriptionId not found")
       )
     }
   }

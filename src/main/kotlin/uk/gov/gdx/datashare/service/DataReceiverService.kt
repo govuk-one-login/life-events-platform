@@ -7,6 +7,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.resource.EventToPublish
 import uk.gov.justice.hmpps.sqs.HmppsQueue
@@ -22,6 +23,7 @@ class DataReceiverService(
   private val publisherRepository: PublisherRepository,
   private val eventDatasetRepository: EventDatasetRepository,
   private val objectMapper: ObjectMapper,
+  private val dateTimeHandler: DateTimeHandler,
 ) {
   private val dataReceiverQueue by lazy { hmppsQueueService.findByQueueId("dataprocessor") as HmppsQueue }
   private val dataReceiverSqsClient by lazy { dataReceiverQueue.sqsClient }
@@ -54,7 +56,7 @@ class DataReceiverService(
       datasetId = subscription.datasetId,
       publisher = publisher.name,
       eventTypeId = eventPayload.eventType,
-      eventTime = eventPayload.eventTime ?: LocalDateTime.now(),
+      eventTime = eventPayload.eventTime ?: dateTimeHandler.now(),
       id = eventPayload.id,
       storePayload = dataSet.storePayload,
       details = if (dataSet.storePayload) { eventPayload.eventDetails } else null

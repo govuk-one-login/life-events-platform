@@ -6,10 +6,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.webjars.NotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
@@ -23,14 +26,19 @@ class EventDataService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val egressEventDataRepository: EgressEventDataRepository,
   private val ingressEventDataRepository: IngressEventDataRepository,
-  private val deathNotificationService: DeathNotificationService
+  private val deathNotificationService: DeathNotificationService,
+  private val dateTimeHandler: DateTimeHandler,
 ) {
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
   suspend fun getEventsStatus(
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?
   ): Flow<EventStatus> {
-    val startTime = optionalStartTime ?: LocalDateTime.of(2000, 1, 1, 12, 0)
-    val endTime = optionalEndTime ?: LocalDateTime.now()
+    val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
+    val endTime = optionalEndTime ?: dateTimeHandler.now()
     val clientId = authenticationFacade.getUsername()
 
     val consumerSubscriptions = consumerSubscriptionRepository.findAllByPollClientId(clientId)
@@ -48,8 +56,8 @@ class EventDataService(
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?
   ): Flow<EventNotification> {
-    val startTime = optionalStartTime ?: LocalDateTime.of(2000, 1, 1, 12, 0)
-    val endTime = optionalEndTime ?: LocalDateTime.now()
+    val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
+    val endTime = optionalEndTime ?: dateTimeHandler.now()
     val clientId = authenticationFacade.getUsername()
 
     val consumerSubscriptions = eventTypes?.let {

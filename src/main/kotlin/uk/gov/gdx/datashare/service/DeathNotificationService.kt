@@ -31,7 +31,7 @@ class DeathNotificationService(
 
   suspend fun saveDeathNotificationEvents(
     eventData: IngressEventData,
-    details: DataProcessor.DataDetail,
+    details: DataDetail,
     dataProcessorMessage: DataProcessorMessage
   ) {
     val consumerSubscriptions = consumerSubscriptionRepository.findAllByIngressEventType(eventData.eventTypeId)
@@ -65,11 +65,11 @@ class DeathNotificationService(
 
   private suspend fun enrichData(
     enrichmentFields: List<String>,
-    dataset: String,
+    datasetId: String,
     dataId: String,
     dataPayload: String?
   ): DeathNotificationDetails? {
-    val allEnrichedData = getAllEnrichedData(dataset, dataId, dataPayload)
+    val allEnrichedData = getAllEnrichedData(datasetId, dataId, dataPayload)
     log.debug("Data enriched with details $allEnrichedData")
     return EnrichmentService.getDataWithOnlyFields(
       objectMapper,
@@ -79,10 +79,10 @@ class DeathNotificationService(
   }
 
   private suspend fun getAllEnrichedData(
-    dataset: String,
+    datasetId: String,
     dataId: String,
     dataPayload: String?
-  ): DeathNotificationDetails? = when (dataset) {
+  ): DeathNotificationDetails? = when (datasetId) {
     "DEATH_LEV" -> {
       // get the data from the LEV
       val citizenDeathId = dataId.toInt()
@@ -117,7 +117,7 @@ class DeathNotificationService(
     }
 
     else -> {
-      throw RuntimeException("Unknown DataSet $dataset")
+      throw RuntimeException("Unknown DataSet $datasetId")
     }
   }
 }

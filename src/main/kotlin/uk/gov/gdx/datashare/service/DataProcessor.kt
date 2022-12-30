@@ -61,7 +61,7 @@ class DataProcessor(
     }
   }
 
-  fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage): DataDetail {
+  private fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage): DataDetail {
     val id = dataProcessorMessage.id ?: eventId.toString()
     val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 
@@ -77,10 +77,10 @@ class DataProcessor(
       }
     }
   }
-
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  data class DataDetail(
-    var id: String,
-    var data: Any? = null
-  )
 }
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+data class DataDetail(
+  var id: String,
+  var data: Any? = null
+)

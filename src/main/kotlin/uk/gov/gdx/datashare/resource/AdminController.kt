@@ -15,7 +15,7 @@ import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 
 @RestController
 @RequestMapping("/admin", produces = [MediaType.APPLICATION_JSON_VALUE])
-//TODO-https://trello.com/c/VgQeakpA: Add admin controll
+//TODO-https://trello.com/c/VgQeakpA: Add admin control
 @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
 @Validated
 @Tag(name = "1. Admin")

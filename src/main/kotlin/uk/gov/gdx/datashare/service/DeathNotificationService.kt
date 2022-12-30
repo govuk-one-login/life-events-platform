@@ -41,9 +41,7 @@ class DeathNotificationService(
           details.data as String?
         )
 
-      val egressEventId = UUID.randomUUID()
       EgressEventData(
-        eventId = egressEventId,
         consumerSubscriptionId = it.id,
         ingressEventId = eventData.eventId,
         datasetId = dataProcessorMessage.datasetId,

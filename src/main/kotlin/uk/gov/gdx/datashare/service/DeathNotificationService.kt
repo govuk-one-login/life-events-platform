@@ -19,11 +19,14 @@ class DeathNotificationService(
   private val egressEventDataRepository: EgressEventDataRepository,
   private val eventPublishingService: EventPublishingService,
   private val levApiService: LevApiService,
-  private val mapper: ObjectMapper
+  private val mapper: ObjectMapper,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
+
+  fun mapDeathNotification(dataPayload: String): DeathNotificationDetails? =
+    mapper.readValue(dataPayload, DeathNotificationDetails::class.java)
 
   suspend fun saveDeathNotificationEvents(
     eventData: IngressEventData,
@@ -58,9 +61,6 @@ class DeathNotificationService(
       eventPublishingService.storeAndPublishEvent(it.eventId, dataProcessorMessage)
     }
   }
-
-  fun mapDeathNotification(dataPayload: String): DeathNotificationDetails? =
-    mapper.readValue(dataPayload, DeathNotificationDetails::class.java)
 
   private suspend fun enrichData(
     enrichmentFields: List<String>,

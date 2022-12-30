@@ -21,7 +21,7 @@ class ConsumersControllerTest {
   @Test
   fun `getConsumers gets consumers`(){
     runBlocking { 
-      val consumersInput = flowOf(
+      val consumers = flowOf(
         Consumer(
           name = "Consumer 1"
         ),
@@ -30,12 +30,12 @@ class ConsumersControllerTest {
         ),
       )
       
-      coEvery { consumersService.getConsumers() }.returns(consumersInput)
+      coEvery { consumersService.getConsumers() }.returns(consumers)
       
-      val consumers = underTest.getConsumers().toList()
+      val consumersOutput = underTest.getConsumers().toList()
       
-      assertThat(consumers).hasSize(2)
-      assertThat(consumers).isEqualTo(consumersInput.toList())
+      assertThat(consumersOutput).hasSize(2)
+      assertThat(consumersOutput).isEqualTo(consumers.toList())
     }
   }
 
@@ -45,20 +45,20 @@ class ConsumersControllerTest {
       val consumerRequest = ConsumerRequest(
         name = "Consumer"
       )
-      val consumerInput = Consumer(name = consumerRequest.name)
+      val consumer = Consumer(name = consumerRequest.name)
 
-      coEvery { consumersService.addConsumer(any()) }.returns(consumerInput)
+      coEvery { consumersService.addConsumer(any()) }.returns(consumer)
 
-      val consumer = underTest.addConsumer(consumerRequest)
+      val consumerOutput = underTest.addConsumer(consumerRequest)
 
-      assertThat(consumer).isEqualTo(consumerInput)
+      assertThat(consumerOutput).isEqualTo(consumer)
     }
   }
   
   @Test
   fun `getConsumerSubscriptions gets consumer subscriptions`(){
     runBlocking {
-      val consumerSubscriptionsInput = flowOf(
+      val consumerSubscriptions = flowOf(
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
           ingressEventType = "DEATH_NOTIFICATION",
@@ -76,12 +76,43 @@ class ConsumersControllerTest {
         ),
       )
 
-      coEvery { consumersService.getConsumerSubscriptions() }.returns(consumerSubscriptionsInput)
+      coEvery { consumersService.getConsumerSubscriptions() }.returns(consumerSubscriptions)
 
-      val consumerSubscriptions = underTest.getConsumerSubscriptions().toList()
+      val consumerSubscriptionsOutput = underTest.getConsumerSubscriptions().toList()
 
-      assertThat(consumerSubscriptions).hasSize(3)
-      assertThat(consumerSubscriptions).isEqualTo(consumerSubscriptionsInput.toList())
+      assertThat(consumerSubscriptionsOutput).hasSize(3)
+      assertThat(consumerSubscriptionsOutput).isEqualTo(consumerSubscriptions.toList())
+    }
+  }
+
+  @Test
+  fun `getSubscriptionsForConsumer gets consumer subscriptions`(){
+    runBlocking {
+      val consumerId = UUID.randomUUID()
+      val consumerSubscriptions = flowOf(
+        ConsumerSubscription(
+          consumerId = consumerId,
+          ingressEventType = "DEATH_NOTIFICATION",
+          enrichmentFields = "a,b,c"
+        ),
+        ConsumerSubscription(
+          consumerId = consumerId,
+          ingressEventType = "DEATH_NOTIFICATION",
+          enrichmentFields = "a,b,c"
+        ),
+        ConsumerSubscription(
+          consumerId = consumerId,
+          ingressEventType = "DEATH_NOTIFICATION",
+          enrichmentFields = "a,b,c"
+        ),
+      )
+
+      coEvery { consumersService.getSubscriptionsForConsumer(consumerId) }.returns(consumerSubscriptions)
+
+      val consumerSubscriptionsOutput = underTest.getSubscriptionsForConsumer(consumerId).toList()
+
+      assertThat(consumerSubscriptionsOutput).hasSize(3)
+      assertThat(consumerSubscriptionsOutput).isEqualTo(consumerSubscriptions.toList())
     }
   }
 
@@ -93,18 +124,18 @@ class ConsumersControllerTest {
         ingressEventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
-      val consumerSubscriptionInput = ConsumerSubscription(
+      val consumerSubscription = ConsumerSubscription(
         consumerId = consumerId,
         callbackClientId = "callbackClientId",
         ingressEventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
 
-      coEvery { consumersService.addConsumerSubscription(consumerId, any()) }.returns(consumerSubscriptionInput)
+      coEvery { consumersService.addConsumerSubscription(consumerId, any()) }.returns(consumerSubscription)
 
-      val consumerSubscription = underTest.addConsumerSubscription(consumerId, consumerSubscriptionRequest)
+      val consumerSubscriptionOutput = underTest.addConsumerSubscription(consumerId, consumerSubscriptionRequest)
 
-      assertThat(consumerSubscription).isEqualTo(consumerSubscriptionInput)
+      assertThat(consumerSubscriptionOutput).isEqualTo(consumerSubscription)
     }
   }
 
@@ -117,7 +148,7 @@ class ConsumersControllerTest {
         ingressEventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
-      val consumerSubscriptionInput = ConsumerSubscription(
+      val consumerSubscription = ConsumerSubscription(
         consumerId = consumerId,
         consumerSubscriptionId = subscriptionId,
         callbackClientId = "callbackClientId",
@@ -125,11 +156,11 @@ class ConsumersControllerTest {
         enrichmentFields = "a,b,c,New",
       )
 
-      coEvery { consumersService.updateConsumerSubscription(consumerId, subscriptionId, any()) }.returns(consumerSubscriptionInput)
+      coEvery { consumersService.updateConsumerSubscription(consumerId, subscriptionId, any()) }.returns(consumerSubscription)
 
-      val consumerSubscription = underTest.updateConsumerSubscription(consumerId, subscriptionId, consumerSubscriptionRequest)
+      val consumerSubscriptionOutput = underTest.updateConsumerSubscription(consumerId, subscriptionId, consumerSubscriptionRequest)
 
-      assertThat(consumerSubscription).isEqualTo(consumerSubscriptionInput)
+      assertThat(consumerSubscriptionOutput).isEqualTo(consumerSubscription)
     }
   }
 }

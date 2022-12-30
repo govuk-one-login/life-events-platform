@@ -21,7 +21,7 @@ class PublishersControllerTest {
   @Test
   fun `getPublishers gets publishers`(){
     runBlocking { 
-      val publishersInput = flowOf(
+      val publishers = flowOf(
         Publisher(
           name = "Publisher 1"
         ),
@@ -30,12 +30,12 @@ class PublishersControllerTest {
         ),
       )
       
-      coEvery { publishersService.getPublishers() }.returns(publishersInput)
+      coEvery { publishersService.getPublishers() }.returns(publishers)
       
-      val publishers = underTest.getPublishers().toList()
+      val publishersOutput = underTest.getPublishers().toList()
       
-      assertThat(publishers).hasSize(2)
-      assertThat(publishers).isEqualTo(publishersInput.toList())
+      assertThat(publishersOutput).hasSize(2)
+      assertThat(publishersOutput).isEqualTo(publishers.toList())
     }
   }
 
@@ -45,20 +45,20 @@ class PublishersControllerTest {
       val publisherRequest = PublisherRequest(
         name = "Publisher"
       )
-      val publisherInput = Publisher(name = publisherRequest.name)
+      val publisher = Publisher(name = publisherRequest.name)
 
-      coEvery { publishersService.addPublisher(any()) }.returns(publisherInput)
+      coEvery { publishersService.addPublisher(any()) }.returns(publisher)
 
-      val publisher = underTest.addPublisher(publisherRequest)
+      val publisherOutput = underTest.addPublisher(publisherRequest)
 
-      assertThat(publisher).isEqualTo(publisherInput)
+      assertThat(publisherOutput).isEqualTo(publisher)
     }
   }
   
   @Test
   fun `getPublisherSubscriptions gets publisher subscriptions`(){
     runBlocking {
-      val publisherSubscriptionsInput = flowOf(
+      val publisherSubscriptions = flowOf(
         PublisherSubscription(
           publisherId = UUID.randomUUID(),
           clientId = "Client-1",
@@ -79,12 +79,46 @@ class PublishersControllerTest {
         ),
       )
 
-      coEvery { publishersService.getPublisherSubscriptions() }.returns(publisherSubscriptionsInput)
+      coEvery { publishersService.getPublisherSubscriptions() }.returns(publisherSubscriptions)
 
-      val publisherSubscriptions = underTest.getPublisherSubscriptions().toList()
+      val publisherSubscriptionsOutput = underTest.getPublisherSubscriptions().toList()
 
-      assertThat(publisherSubscriptions).hasSize(3)
-      assertThat(publisherSubscriptions).isEqualTo(publisherSubscriptionsInput.toList())
+      assertThat(publisherSubscriptionsOutput).hasSize(3)
+      assertThat(publisherSubscriptionsOutput).isEqualTo(publisherSubscriptions.toList())
+    }
+  }
+
+  @Test
+  fun `getSubscriptionsForPublisher gets publisher subscriptions`(){
+    runBlocking {
+      val publisherId = UUID.randomUUID()
+      val publisherSubscriptions = flowOf(
+        PublisherSubscription(
+          publisherId = publisherId,
+          clientId = "Client-1",
+          eventTypeId = "DEATH_NOTIFICATION",
+          datasetId = "LEV"
+        ),
+        PublisherSubscription(
+          publisherId = publisherId,
+          clientId = "Client-2",
+          eventTypeId = "DEATH_NOTIFICATION",
+          datasetId = "LEV"
+        ),
+        PublisherSubscription(
+          publisherId = publisherId,
+          clientId = "Client-3",
+          eventTypeId = "DEATH_NOTIFICATION",
+          datasetId = "LEV"
+        ),
+      )
+
+      coEvery { publishersService.getSubscriptionsForPublisher(publisherId) }.returns(publisherSubscriptions)
+
+      val publisherSubscriptionsOutput = underTest.getSubscriptionsForPublisher(publisherId).toList()
+
+      assertThat(publisherSubscriptionsOutput).hasSize(3)
+      assertThat(publisherSubscriptionsOutput).isEqualTo(publisherSubscriptions.toList())
     }
   }
 
@@ -97,18 +131,18 @@ class PublishersControllerTest {
         eventTypeId = "DEATH_NOTIFICATION_NEW",
         datasetId = "LEV_NEW"
       )
-      val publisherSubscriptionInput = PublisherSubscription(
+      val publisherSubscription = PublisherSubscription(
         publisherId = publisherId,
         clientId = "Client-New",
         eventTypeId = "DEATH_NOTIFICATION_NEW",
         datasetId = "LEV_NEW"
       )
 
-      coEvery { publishersService.addPublisherSubscription(publisherId, any()) }.returns(publisherSubscriptionInput)
+      coEvery { publishersService.addPublisherSubscription(publisherId, any()) }.returns(publisherSubscription)
 
-      val publisherSubscription = underTest.addPublisherSubscription(publisherId, publisherSubscriptionRequest)
+      val publisherSubscriptionOutput = underTest.addPublisherSubscription(publisherId, publisherSubscriptionRequest)
 
-      assertThat(publisherSubscription).isEqualTo(publisherSubscriptionInput)
+      assertThat(publisherSubscriptionOutput).isEqualTo(publisherSubscription)
     }
   }
 
@@ -122,7 +156,7 @@ class PublishersControllerTest {
         eventTypeId = "DEATH_NOTIFICATION_NEW",
         datasetId = "LEV_NEW"
       )
-      val publisherSubscriptionInput = PublisherSubscription(
+      val publisherSubscription = PublisherSubscription(
         publisherId = publisherId,
         publisherSubscriptionId = subscriptionId,
         clientId = "Client-New",
@@ -130,11 +164,11 @@ class PublishersControllerTest {
         datasetId = "LEV_NEW"
       )
 
-      coEvery { publishersService.updatePublisherSubscription(publisherId, subscriptionId, any()) }.returns(publisherSubscriptionInput)
+      coEvery { publishersService.updatePublisherSubscription(publisherId, subscriptionId, any()) }.returns(publisherSubscription)
 
-      val publisherSubscription = underTest.updatePublisherSubscription(publisherId, subscriptionId, publisherSubscriptionRequest)
+      val publisherSubscriptionOutput = underTest.updatePublisherSubscription(publisherId, subscriptionId, publisherSubscriptionRequest)
 
-      assertThat(publisherSubscription).isEqualTo(publisherSubscriptionInput)
+      assertThat(publisherSubscriptionOutput).isEqualTo(publisherSubscription)
     }
   }
 }

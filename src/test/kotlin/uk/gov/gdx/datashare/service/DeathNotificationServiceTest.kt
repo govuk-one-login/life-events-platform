@@ -178,7 +178,7 @@ class DeathNotificationServiceTest {
   }
 
   @Test
-  fun `saveDeathNotificationEvents saves no death deatils for Pass Through`() {
+  fun `saveDeathNotificationEvents saves no death details for PASS_THROUGH`() {
     runBlocking {
       val dataProcessorMessage = DataProcessorMessage(
         datasetId = "PASS_THROUGH",
@@ -229,7 +229,7 @@ class DeathNotificationServiceTest {
   }
 
   @Test
-  fun `saveDeathNotificationEvents throws error for not valid ID`() {
+  fun `saveDeathNotificationEvents throws error for not valid dataset ID`() {
     runBlocking {
       val dataProcessorMessage = DataProcessorMessage(
         datasetId = "INVALID",

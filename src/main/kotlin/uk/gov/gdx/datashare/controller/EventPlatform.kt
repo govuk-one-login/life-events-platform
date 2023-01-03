@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.service.EventPollService
 import java.time.LocalDateTime
 import java.util.UUID
@@ -54,14 +55,14 @@ class EventPlatform(
       type = "date-time",
       required = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "fromTime", required = false) fromTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
       required = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) toTime: LocalDateTime? = null
   ): Flow<SubscribedEvent> = run {
     callsToPollCounter.increment()
@@ -81,7 +82,7 @@ data class SubscribedEvent(
     allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
   )
   val eventType: String,
-  @Schema(description = "Events Time", type = "date-time", required = true, example = "2021-12-31T12:34:56")
-  @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+  @Schema(description = "Events Time", type = "date-time", required = true, example = "2021-12-31T12:34:56.000Z")
+  @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
   val eventTime: LocalDateTime
 )

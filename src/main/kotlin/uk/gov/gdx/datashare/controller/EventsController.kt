@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.service.DataReceiverService
 import uk.gov.gdx.datashare.service.EventDataService
 import uk.gov.gdx.datashare.service.EventNotification
@@ -47,14 +48,14 @@ class EventsController(
     ]
   )
   suspend fun getEventsStatus(
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "fromTime", required = false) startTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
       required = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventStatus> = eventDataService.getEventsStatus(startTime, endTime).toList()
 
@@ -81,14 +82,14 @@ class EventsController(
       type = "date-time",
       required = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "fromTime", required = false) startTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
       required = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventNotification> = run {
     callsToPollCounter.increment()
@@ -155,7 +156,7 @@ data class EventToPublish(
     type = "date-time",
     example = "2021-12-31T12:34:56"
   )
-  @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+  @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
   val eventTime: LocalDateTime? = null,
   @Schema(description = "ID that references the event (optional)", required = false, example = "123456789")
   val id: String? = null,

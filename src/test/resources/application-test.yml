@@ -15,11 +15,11 @@ metrics:
 api:
   base:
     url:
-      issuer-uri: http://localhost:9090
-      oauth: http://localhost:9090
-      lev: http://localhost:8099
-      data-receiver: http://localhost:8080
-      event-data-retrieval: http://localhost:8080
+      issuer-uri: http://localhost:19090
+      oauth: http://localhost:19090
+      lev: http://localhost:18099
+      data-receiver: http://localhost:18080
+      event-data-retrieval: http://localhost:18080
     s3:
       ingress: ingress
       ingress-archive: ingress-archive

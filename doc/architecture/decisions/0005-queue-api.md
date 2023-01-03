@@ -25,12 +25,10 @@ sequenceDiagram
     participant DWP
 
     
-    DWP ->> GDX: Onboarding, certificate generation
+    DWP ->> GDX: Onboarding, client generation
     
     HMPO ->>+ GDX: Notification of death
     GDX ->>-DWP: Notification of death
-
-    DWP-->>GDX: (Optional, request enrichment of event)
 ```
 
 For this proof of concept, the key API calls will be
@@ -43,20 +41,21 @@ sequenceDiagram
 
     DWP ->> Auth: Generate OAuth tokens as appropriate
     
-    HMPO ->>+ GDX: Notification of death
+    HMPO ->> GDX: Notification of death
+    GDX-->>HMPO: Enrich event
+    HMPO-->>GDX: Return enriched event
 
     DWP->>GDX: Query polling API
-    DWP-->>+GDX: (Optional) request enriched event
-    GDX-->>HMPO: (Optional) enrich event
-    HMPO-->>GDX: (Optional) return enriched event
-    GDX-->>-DWP: (Optional) return full payload
+    
+    DWP->>+GDX: Request events
+    GDX->>-DWP: Return enriched Events
 
     DWP->>GDX: Mark event as consumed
 ```
 
 ## Baseline assumptions
-- Onboarding will be a manual process
-- Authentication will be through OAuth, all requets will be authenticated
+- On-boarding will be a manual process
+- Authentication will be through OAuth, all requests will be authenticated
 - The output notification stream will be a poll based stream
 - The specific features we want to test are
     - whether events fed out of the system are enriched, or more light weight
@@ -67,6 +66,7 @@ sequenceDiagram
 Areas we may want to consider in future
 - directly exposing SNS/SQS/similar to consumers
 - retrieving data from multiple data sources
+- thin client events
 
 ## Specific APIs
 
@@ -79,9 +79,12 @@ Authorization: Bearer {...}
 ```
 Returns
 ```json
-{
-  "unread": 100
-}
+[
+  {
+    "eventType": "DEATH_NOTIFICATION",
+    "count": 100
+  }
+]
 
 ```
 
@@ -93,26 +96,22 @@ Accept: application/json
 Authorization: Bearer {...}
 ```
 
-In the "full" event scenario, we return all the data,  in a minimal response, we return only limited Citizen details
 Returns
 ```json
-{
-  "notifications": [
+[
     {
       "eventId": "{guid}",
-      "eventType": "DEATH_NOTIFICATION"
+      "eventType": "DEATH_NOTIFICATION",
       "sourceId": "{death certificate number}",
-      "citizenDetail": {
-        "firstName": ""
+      "eventData": {
+        "firstName": "",
+        ...
       }
     }
-  ]
-}
+]
 ```
-QQ canonical form of citizen details?
 
-
-### Retrieve full details of a specific notification
+### Retrieve a specific notification
 
 ```
 GET /events/{guid}
@@ -120,15 +119,15 @@ Accept: application/json
 Authorization: Bearer {...}
 ```
 
-In the "full" event scenario, we return all the data,  in a minimal response, we return only limited Citizen Details
 Returns
 ```json
 {
   "eventId": "{guid}",
   "eventType": "DEATH_NOTIFICATION",
   "sourceId": "{death certificate number}",
-  "citizenDetail": {
-    "firstName": ""
+  "eventData": {
+    "firstName": "",
+    ...
   }
 }
 ```

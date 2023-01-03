@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.repository.*
-import uk.gov.gdx.datashare.resource.EventInformation
+import uk.gov.gdx.datashare.controller.EventInformation
 import java.time.LocalDate
 import java.util.UUID
 

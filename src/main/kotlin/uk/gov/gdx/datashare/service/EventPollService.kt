@@ -10,7 +10,7 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.resource.SubscribedEvent
+import uk.gov.gdx.datashare.controller.SubscribedEvent
 import java.time.LocalDateTime
 
 @Service

@@ -7,20 +7,21 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.repository.*
+import uk.gov.gdx.datashare.repository.Publisher
+import uk.gov.gdx.datashare.repository.PublisherSubscription
 import uk.gov.gdx.datashare.service.PublisherRequest
 import uk.gov.gdx.datashare.service.PublisherSubRequest
 import uk.gov.gdx.datashare.service.PublishersService
-import java.util.*
+import java.util.UUID
 
 class PublishersControllerTest {
   private val publishersService = mockk<PublishersService>()
-  
+
   private val underTest = PublishersController(publishersService)
-  
+
   @Test
-  fun `getPublishers gets publishers`(){
-    runBlocking { 
+  fun `getPublishers gets publishers`() {
+    runBlocking {
       val publishers = flowOf(
         Publisher(
           name = "Publisher 1"
@@ -29,18 +30,18 @@ class PublishersControllerTest {
           name = "Publisher 2"
         ),
       )
-      
+
       coEvery { publishersService.getPublishers() }.returns(publishers)
-      
+
       val publishersOutput = underTest.getPublishers().toList()
-      
+
       assertThat(publishersOutput).hasSize(2)
       assertThat(publishersOutput).isEqualTo(publishers.toList())
     }
   }
 
   @Test
-  fun `addPublisher adds publisher`(){
+  fun `addPublisher adds publisher`() {
     runBlocking {
       val publisherRequest = PublisherRequest(
         name = "Publisher"
@@ -54,9 +55,9 @@ class PublishersControllerTest {
       assertThat(publisherOutput).isEqualTo(publisher)
     }
   }
-  
+
   @Test
-  fun `getPublisherSubscriptions gets publisher subscriptions`(){
+  fun `getPublisherSubscriptions gets publisher subscriptions`() {
     runBlocking {
       val publisherSubscriptions = flowOf(
         PublisherSubscription(
@@ -89,7 +90,7 @@ class PublishersControllerTest {
   }
 
   @Test
-  fun `getSubscriptionsForPublisher gets publisher subscriptions`(){
+  fun `getSubscriptionsForPublisher gets publisher subscriptions`() {
     runBlocking {
       val publisherId = UUID.randomUUID()
       val publisherSubscriptions = flowOf(
@@ -123,7 +124,7 @@ class PublishersControllerTest {
   }
 
   @Test
-  fun `addPublisherSubscription adds publisher subscription`(){
+  fun `addPublisherSubscription adds publisher subscription`() {
     runBlocking {
       val publisherId = UUID.randomUUID()
       val publisherSubscriptionRequest = PublisherSubRequest(
@@ -147,7 +148,7 @@ class PublishersControllerTest {
   }
 
   @Test
-  fun `updatePublisherSubscription updates publisher subscription`(){
+  fun `updatePublisherSubscription updates publisher subscription`() {
     runBlocking {
       val publisherId = UUID.randomUUID()
       val subscriptionId = UUID.randomUUID()

@@ -88,7 +88,8 @@ class EventDataRetrievalService(
         val csvLine = event.dataPayload!!.split(",").toTypedArray()
         val (surname, forenames, dateOfBirth, dateOfDeath, sex) = csvLine
 
-        val nino = if (consumerSubscription.ninoRequired) getNino(surname, forenames, LocalDate.parse(dateOfBirth)) else null
+        val nino =
+          if (consumerSubscription.ninoRequired) getNino(surname, forenames, LocalDate.parse(dateOfBirth)) else null
 
         EventInformation(
           eventType = consumerSubscription.ingressEventType,

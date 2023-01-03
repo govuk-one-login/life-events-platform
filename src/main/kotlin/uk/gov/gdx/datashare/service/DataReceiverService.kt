@@ -59,7 +59,9 @@ class DataReceiverService(
       eventTime = eventPayload.eventTime ?: dateTimeHandler.now(),
       id = eventPayload.id,
       storePayload = dataSet.storePayload,
-      details = if (dataSet.storePayload) { eventPayload.eventDetails } else null
+      details = if (dataSet.storePayload) {
+        eventPayload.eventDetails
+      } else null
     )
 
     log.debug(

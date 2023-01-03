@@ -41,11 +41,13 @@ data class DeathRecord(
   val deceased: Deceased,
   val partner: Partner?,
 )
+
 data class Partner(
   val name: String?,
   val occupation: String?,
   val retired: String?
 )
+
 data class Deceased(
   val forenames: String,
   val surname: String,

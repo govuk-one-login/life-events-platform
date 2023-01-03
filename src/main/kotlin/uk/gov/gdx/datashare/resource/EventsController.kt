@@ -142,9 +142,19 @@ class EventsController(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Event Payload for GDX")
 data class EventToPublish(
-  @Schema(description = "Type of event", required = true, example = "DEATH_NOTIFICATION", allowableValues = [ "DEATH_NOTIFICATION", "LIFE_EVENT"])
+  @Schema(
+    description = "Type of event",
+    required = true,
+    example = "DEATH_NOTIFICATION",
+    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+  )
   val eventType: String,
-  @Schema(description = "Date and time when the event took place, default is now", required = false, type = "date-time", example = "2021-12-31T12:34:56")
+  @Schema(
+    description = "Date and time when the event took place, default is now",
+    required = false,
+    type = "date-time",
+    example = "2021-12-31T12:34:56"
+  )
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
   val eventTime: LocalDateTime? = null,
   @Schema(description = "ID that references the event (optional)", required = false, example = "123456789")

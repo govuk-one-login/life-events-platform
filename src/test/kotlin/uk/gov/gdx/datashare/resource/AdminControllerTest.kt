@@ -12,17 +12,17 @@ import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventData
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 class AdminControllerTest {
   private val egressEventDataRepository = mockk<EgressEventDataRepository>()
   private val ingressEventDataRepository = mockk<IngressEventDataRepository>()
-  
+
   private val underTest = AdminController(egressEventDataRepository, ingressEventDataRepository)
-  
+
   @Test
-  fun `getEgressEvents gets egress events`(){
-    runBlocking { 
+  fun `getEgressEvents gets egress events`() {
+    runBlocking {
       val egressEvents = flowOf(
         EgressEventData(
           consumerSubscriptionId = UUID.randomUUID(),
@@ -41,18 +41,18 @@ class AdminControllerTest {
           dataPayload = "{\"firstName\":\"Bob\"}"
         ),
       )
-      
+
       coEvery { egressEventDataRepository.findAll() }.returns(egressEvents)
-      
+
       val events = underTest.getEgressEvents()
-      
+
       assertThat(events).hasSize(2)
       assertThat(events).isEqualTo(egressEvents.toList())
     }
   }
-  
+
   @Test
-  fun `getIngressEvents gets ingress events`(){
+  fun `getIngressEvents gets ingress events`() {
     runBlocking {
       val ingressEvents = flowOf(
         IngressEventData(

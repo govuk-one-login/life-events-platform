@@ -1,7 +1,6 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.util.HashMap
 import kotlin.reflect.full.memberProperties
 
 class EnrichmentService {

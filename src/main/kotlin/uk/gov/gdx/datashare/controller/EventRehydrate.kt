@@ -21,7 +21,7 @@ import java.util.*
 @RequestMapping("/event-data-retrieval", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
-@Tag(name = "901. Event data retrieval")
+@Tag(name = "91. Event data retrieval")
 class EventRehydrate(
   private val eventDataRetrievalService: EventDataRetrievalService,
   meterRegistry: MeterRegistry

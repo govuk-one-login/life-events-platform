@@ -3,7 +3,7 @@ package uk.gov.gdx.datashare.service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.UUID
 
 @Service
 class EventPublishingService(
@@ -16,7 +16,13 @@ class EventPublishingService(
 
   suspend fun storeAndPublishEvent(eventId: UUID, dataProcessorMessage: DataProcessorMessage) {
     // publish the change
-    log.debug("Publishing new event {} {} {} from {}", eventId, dataProcessorMessage.eventTypeId, dataProcessorMessage.datasetId, dataProcessorMessage.publisher)
+    log.debug(
+      "Publishing new event {} {} {} from {}",
+      eventId,
+      dataProcessorMessage.eventTypeId,
+      dataProcessorMessage.datasetId,
+      dataProcessorMessage.publisher
+    )
 
     dataShareTopicService.sendGovEvent(
       eventId = eventId,

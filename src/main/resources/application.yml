@@ -13,7 +13,7 @@ spring:
 
   security:
     oauth2:
-      resourceserver:
+      resource-server:
         jwt:
           issuer-uri: ${api.base.url.issuer-uri}
       client:

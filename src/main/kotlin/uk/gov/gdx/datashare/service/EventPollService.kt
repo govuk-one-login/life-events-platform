@@ -38,7 +38,7 @@ class EventPollService(
     val consumerSubscriptions = eventTypes?.let {
       consumerSubscriptionRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
         .toList()
-        .associateBy({ it.consumerSubscriptionId }, {it.ingressEventType})
+        .associateBy({ it.consumerSubscriptionId }, { it.ingressEventType })
     }
 
     log.debug("Egress event types {} polled", consumerSubscriptions?.keys?.joinToString())
@@ -48,7 +48,11 @@ class EventPollService(
       .flatMapMerge { sub ->
         val beginTime = fromTime ?: sub.lastPollEventTime ?: now.minusDays(1)
         val events =
-          egressEventDataRepository.findAllByConsumerSubscription(sub.consumerSubscriptionId, beginTime, lastPollEventTime)
+          egressEventDataRepository.findAllByConsumerSubscription(
+            sub.consumerSubscriptionId,
+            beginTime,
+            lastPollEventTime
+          )
 
         if (sub.lastPollEventTime == null || lastPollEventTime.isAfter(sub.lastPollEventTime)) {
           consumerSubscriptionRepository.updateLastPollTime(

@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @RestController
-@RequestMapping("/obsolete/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/obsolete/events", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
 @Validated
 @Tag(name = "902. Event status")
@@ -43,12 +43,24 @@ class EventPlatform(
     ]
   )
   suspend fun getEvents(
-    @Schema(description = "Event Types required, if none supplied it will be the allowed types for this client", required = false, allowableValues = [ "DEATH_NOTIFICATION", "LIFE_EVENT"])
+    @Schema(
+      description = "Event Types required, if none supplied it will be the allowed types for this client",
+      required = false,
+      allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+    )
     @RequestParam(name = "eventType", required = false) eventTypes: List<String> = listOf(),
-    @Schema(description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client", type = "date-time", required = false)
+    @Schema(
+      description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
+      type = "date-time",
+      required = false
+    )
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
     @RequestParam(name = "fromTime", required = false) fromTime: LocalDateTime? = null,
-    @Schema(description = "Events before this time, if not supplied it will be now", type = "date-time", required = false)
+    @Schema(
+      description = "Events before this time, if not supplied it will be now",
+      type = "date-time",
+      required = false
+    )
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @RequestParam(name = "toTime", required = false) toTime: LocalDateTime? = null
   ): Flow<SubscribedEvent> = run {
@@ -62,7 +74,12 @@ class EventPlatform(
 data class SubscribedEvent(
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
   val eventId: UUID,
-  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION", allowableValues = [ "DEATH_NOTIFICATION", "LIFE_EVENT"])
+  @Schema(
+    description = "Events Type",
+    required = true,
+    example = "DEATH_NOTIFICATION",
+    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+  )
   val eventType: String,
   @Schema(description = "Events Time", type = "date-time", required = true, example = "2021-12-31T12:34:56")
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")

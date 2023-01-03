@@ -64,12 +64,13 @@ class EventDataService(
       consumerSubscriptionRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
     } ?: consumerSubscriptionRepository.findAllByPollClientId(clientId)
 
-    val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({it.id},{it.ingressEventType})
+    val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({ it.id }, { it.ingressEventType })
 
     val egressEvents = egressEventDataRepository.findAllByConsumerSubscriptions(
       consumerSubscriptionIdMap.keys.toList(),
       startTime,
-      endTime)
+      endTime
+    )
 
     return egressEvents.map {
       EventNotification(

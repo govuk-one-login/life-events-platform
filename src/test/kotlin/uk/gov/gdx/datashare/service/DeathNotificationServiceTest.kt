@@ -3,16 +3,20 @@ package uk.gov.gdx.datashare.service
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.gdx.datashare.config.JacksonConfiguration
-import uk.gov.gdx.datashare.repository.*
+import uk.gov.gdx.datashare.repository.ConsumerSubscription
+import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.repository.EgressEventData
+import uk.gov.gdx.datashare.repository.EgressEventDataRepository
+import uk.gov.gdx.datashare.repository.IngressEventData
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 class DeathNotificationServiceTest {
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()
@@ -95,27 +99,29 @@ class DeathNotificationServiceTest {
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
       coVerify(exactly = 1) {
-        egressEventDataRepository.saveAll(withArg<Iterable<EgressEventData>> {
-          assertThat(it).hasSize(2)
-          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
+        egressEventDataRepository.saveAll(
+          withArg<Iterable<EgressEventData>> {
+            assertThat(it).hasSize(2)
+            val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
+            val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
 
-          assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
-            .isEqualTo(ingressEventData.eventId)
-          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-            .isEqualTo(dataProcessorMessage.datasetId)
-          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-            .isEqualTo(dataDetail.id)
-          assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-            .isEqualTo(dataProcessorMessage.eventTime)
-          assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
-            .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
+            assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
+              .isEqualTo(ingressEventData.eventId)
+            assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
+              .isEqualTo(dataProcessorMessage.datasetId)
+            assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
+              .isEqualTo(dataDetail.id)
+            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+              .isEqualTo(dataProcessorMessage.eventTime)
+            assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
+              .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
 
-          assertThat(simpleEvent?.dataPayload)
-            .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
-          assertThat(complexEvent?.dataPayload)
-            .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
-        })
+            assertThat(simpleEvent?.dataPayload)
+              .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
+            assertThat(complexEvent?.dataPayload)
+              .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
+          }
+        )
       }
       fakeSavedEvents.collect {
         coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it.id, dataProcessorMessage) }
@@ -149,27 +155,29 @@ class DeathNotificationServiceTest {
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
       coVerify(exactly = 1) {
-        egressEventDataRepository.saveAll(withArg<Iterable<EgressEventData>> {
-          assertThat(it).hasSize(2)
-          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
+        egressEventDataRepository.saveAll(
+          withArg<Iterable<EgressEventData>> {
+            assertThat(it).hasSize(2)
+            val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
+            val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
 
-          assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
-            .isEqualTo(ingressEventData.eventId)
-          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-            .isEqualTo(dataProcessorMessage.datasetId)
-          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-            .isEqualTo(dataDetail.id)
-          assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-            .isEqualTo(dataProcessorMessage.eventTime)
-          assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
-            .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
+            assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
+              .isEqualTo(ingressEventData.eventId)
+            assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
+              .isEqualTo(dataProcessorMessage.datasetId)
+            assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
+              .isEqualTo(dataDetail.id)
+            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+              .isEqualTo(dataProcessorMessage.eventTime)
+            assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
+              .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
 
-          assertThat(simpleEvent?.dataPayload)
-            .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
-          assertThat(complexEvent?.dataPayload)
-            .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
-        })
+            assertThat(simpleEvent?.dataPayload)
+              .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
+            assertThat(complexEvent?.dataPayload)
+              .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
+          }
+        )
       }
       fakeSavedEvents.collect {
         coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it.id, dataProcessorMessage) }
@@ -200,27 +208,29 @@ class DeathNotificationServiceTest {
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
       coVerify(exactly = 1) {
-        egressEventDataRepository.saveAll(withArg<Iterable<EgressEventData>> {
-          assertThat(it).hasSize(2)
-          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
+        egressEventDataRepository.saveAll(
+          withArg<Iterable<EgressEventData>> {
+            assertThat(it).hasSize(2)
+            val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
+            val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
 
-          assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
-            .isEqualTo(ingressEventData.eventId)
-          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-            .isEqualTo(dataProcessorMessage.datasetId)
-          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-            .isEqualTo(dataDetail.id)
-          assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-            .isEqualTo(dataProcessorMessage.eventTime)
-          assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
-            .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
+            assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
+              .isEqualTo(ingressEventData.eventId)
+            assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
+              .isEqualTo(dataProcessorMessage.datasetId)
+            assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
+              .isEqualTo(dataDetail.id)
+            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+              .isEqualTo(dataProcessorMessage.eventTime)
+            assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
+              .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
 
-          assertThat(simpleEvent?.dataPayload)
-            .isEqualTo(null)
-          assertThat(complexEvent?.dataPayload)
-            .isEqualTo(null)
-        })
+            assertThat(simpleEvent?.dataPayload)
+              .isEqualTo(null)
+            assertThat(complexEvent?.dataPayload)
+              .isEqualTo(null)
+          }
+        )
       }
       fakeSavedEvents.collect {
         coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it.id, dataProcessorMessage) }

@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ConsumerSubscription(
@@ -24,15 +24,28 @@ data class ConsumerSubscription(
   val callbackClientId: String? = null,
   val lastPollEventTime: LocalDateTime? = null,
   @JsonIgnore
-  @Schema(description = "URI where to push data, can be s3 or http", required = false, example = "http://localhost/callback")
+  @Schema(
+    description = "URI where to push data, can be s3 or http",
+    required = false,
+    example = "http://localhost/callback"
+  )
   val pushUri: String? = null,
   @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
   val ninoRequired: Boolean = false,
-  @Schema(description = "Is consumer subscription a legacy subscription", required = false, example = "true", defaultValue = "false")
+  @Schema(
+    description = "Is consumer subscription a legacy subscription",
+    required = false,
+    example = "true",
+    defaultValue = "false"
+  )
   val isLegacy: Boolean = false,
   @Schema(description = "Events Type of Ingress Notification", required = true, example = "DEATH_NOTIFICATION")
   val ingressEventType: String,
-  @Schema(description = "CSV List of required fields to enrich the event with", required = true, example = "firstName,lastName")
+  @Schema(
+    description = "CSV List of required fields to enrich the event with",
+    required = true,
+    example = "firstName,lastName"
+  )
   val enrichmentFields: String,
   val whenCreated: LocalDateTime? = null,
 

@@ -55,7 +55,12 @@ class DataProcessor(
       ingressEventDataRepository.save(eventData)
 
       when (eventData.eventTypeId) {
-        "DEATH_NOTIFICATION" -> deathNotificationService.saveDeathNotificationEvents(eventData, details, dataProcessorMessage)
+        "DEATH_NOTIFICATION" -> deathNotificationService.saveDeathNotificationEvents(
+          eventData,
+          details,
+          dataProcessorMessage
+        )
+
         "LIFE_EVENT" -> print("x == 2")
       }
     }
@@ -69,9 +74,11 @@ class DataProcessor(
       "DEATH_CSV" -> {
         DataDetail(id = id, data = dataPayload)
       }
+
       "DEATH_LEV" -> {
         DataDetail(id = id)
       }
+
       else -> {
         DataDetail(id = id, data = dataPayload)
       }

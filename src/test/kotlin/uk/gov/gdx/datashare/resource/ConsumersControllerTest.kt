@@ -7,20 +7,21 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.repository.*
+import uk.gov.gdx.datashare.repository.Consumer
+import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.service.ConsumerRequest
 import uk.gov.gdx.datashare.service.ConsumerSubRequest
 import uk.gov.gdx.datashare.service.ConsumersService
-import java.util.*
+import java.util.UUID
 
 class ConsumersControllerTest {
   private val consumersService = mockk<ConsumersService>()
-  
+
   private val underTest = ConsumersController(consumersService)
-  
+
   @Test
-  fun `getConsumers gets consumers`(){
-    runBlocking { 
+  fun `getConsumers gets consumers`() {
+    runBlocking {
       val consumers = flowOf(
         Consumer(
           name = "Consumer 1"
@@ -29,18 +30,18 @@ class ConsumersControllerTest {
           name = "Consumer 2"
         ),
       )
-      
+
       coEvery { consumersService.getConsumers() }.returns(consumers)
-      
+
       val consumersOutput = underTest.getConsumers().toList()
-      
+
       assertThat(consumersOutput).hasSize(2)
       assertThat(consumersOutput).isEqualTo(consumers.toList())
     }
   }
 
   @Test
-  fun `addConsumer adds consumer`(){
+  fun `addConsumer adds consumer`() {
     runBlocking {
       val consumerRequest = ConsumerRequest(
         name = "Consumer"
@@ -54,9 +55,9 @@ class ConsumersControllerTest {
       assertThat(consumerOutput).isEqualTo(consumer)
     }
   }
-  
+
   @Test
-  fun `getConsumerSubscriptions gets consumer subscriptions`(){
+  fun `getConsumerSubscriptions gets consumer subscriptions`() {
     runBlocking {
       val consumerSubscriptions = flowOf(
         ConsumerSubscription(
@@ -86,7 +87,7 @@ class ConsumersControllerTest {
   }
 
   @Test
-  fun `getSubscriptionsForConsumer gets consumer subscriptions`(){
+  fun `getSubscriptionsForConsumer gets consumer subscriptions`() {
     runBlocking {
       val consumerId = UUID.randomUUID()
       val consumerSubscriptions = flowOf(
@@ -117,7 +118,7 @@ class ConsumersControllerTest {
   }
 
   @Test
-  fun `addConsumerSubscription adds consumer subscription`(){
+  fun `addConsumerSubscription adds consumer subscription`() {
     runBlocking {
       val consumerId = UUID.randomUUID()
       val consumerSubscriptionRequest = ConsumerSubRequest(
@@ -140,7 +141,7 @@ class ConsumersControllerTest {
   }
 
   @Test
-  fun `updateConsumerSubscription updates consumer subscription`(){
+  fun `updateConsumerSubscription updates consumer subscription`() {
     runBlocking {
       val consumerId = UUID.randomUUID()
       val subscriptionId = UUID.randomUUID()

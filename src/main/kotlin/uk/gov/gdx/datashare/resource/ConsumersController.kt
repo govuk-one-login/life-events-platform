@@ -7,14 +7,20 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import uk.gov.gdx.datashare.service.ConsumerRequest
 import uk.gov.gdx.datashare.service.ConsumerSubRequest
 import uk.gov.gdx.datashare.service.ConsumersService
-import java.util.*
+import java.util.UUID
 
 @RestController
-@RequestMapping("/consumers", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/consumers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Validated
 @Tag(name = "2. Consumers")
 class ConsumersController(

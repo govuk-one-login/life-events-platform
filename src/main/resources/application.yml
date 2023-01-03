@@ -39,11 +39,6 @@ spring:
             user-name-attribute: cognito:username
             jwk-set-uri: ${api.base.url.issuer-uri}/.well-known/openid-configuration
 
-  jackson:
-    date-format: "yyyy-MM-dd HH:mm:ss"
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
-
   devtools:
     add-properties: false
 

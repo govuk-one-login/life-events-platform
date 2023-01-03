@@ -18,7 +18,11 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
       "AND ed.consumer_subscription_id = :consumerSubscriptionId " +
       "ORDER BY ed.when_created"
   )
-  fun findAllByConsumerSubscription(consumerSubscriptionId: UUID, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
+  fun findAllByConsumerSubscription(
+    consumerSubscriptionId: UUID,
+    fromTime: LocalDateTime,
+    toTime: LocalDateTime
+  ): Flow<EgressEventData>
 
   @Query(
     "SELECT ed.* FROM egress_event_data ed " +
@@ -27,7 +31,11 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
       "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
       "ORDER BY ed.when_created"
   )
-  fun findAllByConsumerSubscriptions(consumerSubscriptionIds: List<UUID>, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
+  fun findAllByConsumerSubscriptions(
+    consumerSubscriptionIds: List<UUID>,
+    fromTime: LocalDateTime,
+    toTime: LocalDateTime
+  ): Flow<EgressEventData>
 
   @Query("DELETE FROM egress_event_data where data_expiry_time < :expiredTime")
   @Modifying
@@ -41,7 +49,11 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
       "AND ed.when_created <= :toTime " +
       "ORDER BY ed.when_created"
   )
-  fun findAllByPollClientId(pollerClientId: String, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<EgressEventData>
+  fun findAllByPollClientId(
+    pollerClientId: String,
+    fromTime: LocalDateTime,
+    toTime: LocalDateTime
+  ): Flow<EgressEventData>
 
   @Query(
     "SELECT ed.* FROM egress_event_data ed " +

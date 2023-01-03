@@ -26,7 +26,8 @@ class PublishersService(
 
   suspend fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll()
 
-  suspend fun getSubscriptionsForPublisher(publisherId: UUID) = publisherSubscriptionRepository.findAllByPublisherId(publisherId)
+  suspend fun getSubscriptionsForPublisher(publisherId: UUID) =
+    publisherSubscriptionRepository.findAllByPublisherId(publisherId)
 
   suspend fun addPublisherSubscription(
     publisherId: UUID,

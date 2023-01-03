@@ -54,6 +54,7 @@ data class AuditEvent(
   val service: String,
   val details: String? = null,
 )
+
 enum class AuditType {
   EVENT_OCCURRED,
   DATA_SHARE_EVENT_PUBLISHED,

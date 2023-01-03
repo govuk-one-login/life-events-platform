@@ -16,7 +16,13 @@ class EventPublishingService(
 
   suspend fun storeAndPublishEvent(eventId: UUID, dataProcessorMessage: DataProcessorMessage) {
     // publish the change
-    log.debug("Publishing new event {} {} {} from {}", eventId, dataProcessorMessage.eventTypeId, dataProcessorMessage.datasetId, dataProcessorMessage.publisher)
+    log.debug(
+      "Publishing new event {} {} {} from {}",
+      eventId,
+      dataProcessorMessage.eventTypeId,
+      dataProcessorMessage.datasetId,
+      dataProcessorMessage.publisher
+    )
 
     dataShareTopicService.sendGovEvent(
       eventId = eventId,

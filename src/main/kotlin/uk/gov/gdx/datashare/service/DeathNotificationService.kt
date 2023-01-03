@@ -108,7 +108,11 @@ class DeathNotificationService(
         dateOfBirth = LocalDate.parse(csvLine[2]),
         dateOfDeath = LocalDate.parse(csvLine[3]),
         sex = csvLine[4],
-        address = if (csvLine.count() > 5) { csvLine[5] } else { null }
+        address = if (csvLine.count() > 5) {
+          csvLine[5]
+        } else {
+          null
+        }
       )
     }
 

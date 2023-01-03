@@ -14,7 +14,7 @@ import uk.gov.gdx.datashare.service.PublishersService
 import java.util.*
 
 @RestController
-@RequestMapping("/publishers", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/publishers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Validated
 @Tag(name = "3. Publishers")
 class PublishersController(
@@ -124,7 +124,11 @@ class PublishersController(
   suspend fun updatePublisherSubscription(
     @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
     @PathVariable publisherId: UUID,
-    @Schema(description = "Publisher Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(
+      description = "Publisher Subscription ID",
+      required = true,
+      example = "00000000-0000-0001-0000-000000000000"
+    )
     @PathVariable subscriptionId: UUID,
     @Schema(
       description = "Publisher Subscription to update",

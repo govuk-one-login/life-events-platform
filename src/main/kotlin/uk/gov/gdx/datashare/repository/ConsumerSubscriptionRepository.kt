@@ -24,7 +24,10 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
       "WHERE cs.poll_client_id = :clientId " +
       "AND cs.ingress_event_type IN (:ingressEventTypes)"
   )
-  fun findAllByIngressEventTypesAndPollClientId(clientId: String, ingressEventTypes: List<String>): Flow<ConsumerSubscription>
+  fun findAllByIngressEventTypesAndPollClientId(
+    clientId: String,
+    ingressEventTypes: List<String>
+  ): Flow<ConsumerSubscription>
 
   @Query(
     "SELECT * FROM consumer_subscription cs " +

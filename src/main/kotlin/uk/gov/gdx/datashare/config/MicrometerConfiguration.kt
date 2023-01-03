@@ -38,6 +38,7 @@ class MicrometerConfiguration {
         "cloudwatch.namespace" to namespace,
         "cloudwatch.step" to Duration.ofMinutes(1).toString()
       )
+
       override fun get(key: String): String? {
         return configuration[key]
       }

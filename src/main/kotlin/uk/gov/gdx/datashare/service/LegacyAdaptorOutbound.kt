@@ -61,7 +61,8 @@ class LegacyAdaptorOutbound(
       val clients = consumerSubscriptionRepository.findClientToSendDataTo(lifeEvent.eventType)
       clients.collect { client ->
 
-        val consumer = consumerRepository.findById(client.consumerId) ?: throw RuntimeException("Consumer ${client.consumerId} not found")
+        val consumer = consumerRepository.findById(client.consumerId)
+          ?: throw RuntimeException("Consumer ${client.consumerId} not found")
 
         log.debug("Send to ${consumer.name} to ${client.pushUri} with [$details]")
 

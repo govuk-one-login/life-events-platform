@@ -19,7 +19,9 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  private val domainEventsTopic by lazy { hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist") }
+  private val domainEventsTopic by lazy {
+    hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist")
+  }
   private val domainEventsTopicClient by lazy { domainEventsTopic.snsClient }
 
   fun sendGovEvent(eventId: UUID, occurredAt: LocalDateTime, eventType: String) {
@@ -67,5 +69,6 @@ data class DataShareEvent(
     description
   )
 }
+
 fun Instant.toOffsetDateFormat(): String =
   atZone(ZoneId.of("Europe/London")).toOffsetDateTime().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)

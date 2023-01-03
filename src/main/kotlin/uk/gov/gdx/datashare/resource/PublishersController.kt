@@ -52,7 +52,7 @@ class PublishersController(
       required = true,
       implementation = PublisherRequest::class,
     )
-    @RequestBody  publisherRequest: PublisherRequest,
+    @RequestBody publisherRequest: PublisherRequest,
   ) = publishersService.addPublisher(publisherRequest)
 
   @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
@@ -83,7 +83,7 @@ class PublishersController(
   )
   suspend fun getSubscriptionsForPublisher(
     @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-    @PathVariable  publisherId: UUID
+    @PathVariable publisherId: UUID
   ) = publishersService.getSubscriptionsForPublisher(publisherId)
 
   @PreAuthorize("hasAnyAuthority('SCOPE_subscriptions/maintain')")
@@ -100,13 +100,13 @@ class PublishersController(
   )
   suspend fun addPublisherSubscription(
     @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-    @PathVariable  publisherId: UUID,
+    @PathVariable publisherId: UUID,
     @Schema(
       description = "Publisher Subscription",
       required = true,
       implementation = PublisherSubRequest::class,
     )
-    @RequestBody  publisherSubRequest: PublisherSubRequest,
+    @RequestBody publisherSubRequest: PublisherSubRequest,
   ) = publishersService.addPublisherSubscription(publisherId, publisherSubRequest)
 
   @PreAuthorize("hasAnyAuthority('SCOPE_subscriptions/maintain')")
@@ -131,6 +131,6 @@ class PublishersController(
       required = true,
       implementation = PublisherSubRequest::class,
     )
-    @RequestBody  publisherSubRequest: PublisherSubRequest,
+    @RequestBody publisherSubRequest: PublisherSubRequest,
   ) = publishersService.updatePublisherSubscription(publisherId, subscriptionId, publisherSubRequest)
 }

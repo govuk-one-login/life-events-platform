@@ -9,8 +9,11 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import uk.gov.gdx.datashare.repository.*
-import java.util.*
+import uk.gov.gdx.datashare.repository.Consumer
+import uk.gov.gdx.datashare.repository.ConsumerRepository
+import uk.gov.gdx.datashare.repository.ConsumerSubscription
+import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
+import java.util.UUID
 
 class ConsumersServiceTest {
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()
@@ -108,15 +111,17 @@ class ConsumersServiceTest {
       underTest.addConsumerSubscription(consumer.id, consumerSubRequest)
 
       coVerify(exactly = 1) {
-        consumerSubscriptionRepository.save(withArg {
-          assertThat(it.consumerId).isEqualTo(consumer.id)
-          assertThat(it.pollClientId).isEqualTo(consumerSubRequest.pollClientId)
-          assertThat(it.callbackClientId).isEqualTo(consumerSubRequest.callbackClientId)
-          assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
-          assertThat(it.ninoRequired).isEqualTo(consumerSubRequest.ninoRequired)
-          assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
-          assertThat(it.ingressEventType).isEqualTo(consumerSubRequest.ingressEventType)
-        })
+        consumerSubscriptionRepository.save(
+          withArg {
+            assertThat(it.consumerId).isEqualTo(consumer.id)
+            assertThat(it.pollClientId).isEqualTo(consumerSubRequest.pollClientId)
+            assertThat(it.callbackClientId).isEqualTo(consumerSubRequest.callbackClientId)
+            assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
+            assertThat(it.ninoRequired).isEqualTo(consumerSubRequest.ninoRequired)
+            assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
+            assertThat(it.ingressEventType).isEqualTo(consumerSubRequest.ingressEventType)
+          }
+        )
       }
     }
   }
@@ -132,15 +137,17 @@ class ConsumersServiceTest {
       underTest.updateConsumerSubscription(consumer.id, consumerSubscription.id, consumerSubRequest)
 
       coVerify(exactly = 1) {
-        consumerSubscriptionRepository.save(withArg {
-          assertThat(it.consumerId).isEqualTo(consumer.id)
-          assertThat(it.pollClientId).isEqualTo(consumerSubRequest.pollClientId)
-          assertThat(it.callbackClientId).isEqualTo(consumerSubRequest.callbackClientId)
-          assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
-          assertThat(it.ninoRequired).isEqualTo(consumerSubRequest.ninoRequired)
-          assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
-          assertThat(it.ingressEventType).isEqualTo(consumerSubRequest.ingressEventType)
-        })
+        consumerSubscriptionRepository.save(
+          withArg {
+            assertThat(it.consumerId).isEqualTo(consumer.id)
+            assertThat(it.pollClientId).isEqualTo(consumerSubRequest.pollClientId)
+            assertThat(it.callbackClientId).isEqualTo(consumerSubRequest.callbackClientId)
+            assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
+            assertThat(it.ninoRequired).isEqualTo(consumerSubRequest.ninoRequired)
+            assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
+            assertThat(it.ingressEventType).isEqualTo(consumerSubRequest.ingressEventType)
+          }
+        )
       }
     }
   }
@@ -171,9 +178,13 @@ class ConsumersServiceTest {
 
       underTest.addConsumer(consumerRequest)
 
-      coVerify(exactly = 1) { consumerRepository.save(withArg {
-        assertThat(it.name).isEqualTo(consumerRequest.name)
-      }) }
+      coVerify(exactly = 1) {
+        consumerRepository.save(
+          withArg {
+            assertThat(it.name).isEqualTo(consumerRequest.name)
+          }
+        )
+      }
     }
   }
 

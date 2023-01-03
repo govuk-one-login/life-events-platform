@@ -12,8 +12,10 @@ interface PublisherSubscriptionRepository : CoroutineCrudRepository<PublisherSub
   @Query("SELECT * FROM publisher_subscription ps where ps.client_id = :clientId and ps.event_type_id = :eventType")
   suspend fun findByClientIdAndEventType(clientId: String, eventType: String): PublisherSubscription?
 
-  @Query("SELECT ps.* FROM publisher_subscription ps " +
-    "JOIN publisher p ON ps.publisher_id = p.id " +
-    "AND p.id = :id")
+  @Query(
+    "SELECT ps.* FROM publisher_subscription ps " +
+      "JOIN publisher p ON ps.publisher_id = p.id " +
+      "AND p.id = :id"
+  )
   fun findAllByPublisherId(id: UUID): Flow<PublisherSubscription>
 }

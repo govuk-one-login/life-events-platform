@@ -11,7 +11,6 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient
 import java.time.Duration
 
-
 @Configuration
 class MicrometerConfiguration {
 
@@ -45,5 +44,4 @@ class MicrometerConfiguration {
     }
     return cloudWatchConfig
   }
-
 }

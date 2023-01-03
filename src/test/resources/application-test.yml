@@ -1,0 +1,86 @@
+server:
+  shutdown: immediate
+
+aws:
+  provider: localstack
+
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+
+metrics:
+  cloudwatch:
+    namespace: "local-gdx"
+
+api:
+  base:
+    url:
+      issuer-uri: http://localhost:9090
+      oauth: http://localhost:9090
+      lev: http://localhost:8099
+      data-receiver: http://localhost:8080
+      event-data-retrieval: http://localhost:8080
+    s3:
+      ingress: ingress
+      ingress-archive: ingress-archive
+
+legacy-inbound:
+  api:
+    client:
+      id: clientId
+      secret: clientSecret
+
+legacy-outbound:
+  api:
+    client:
+      id: clientId
+      secret: clientSecret
+
+spring:
+  flyway:
+    url: jdbc:postgresql://localhost:5432/datashare?sslmode=prefer
+    user: datashare
+    password: datashare
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/datashare
+    username: datashare
+    password: datashare
+    properties:
+      sslMode: DISABLE
+      sslRootCert:
+
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          jwk-set-uri: ${api.base.url.oauth}/.well-known/jwks.json
+
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: DEBUG # for queries
+    io.r2dbc.postgresql.PARAM: INFO # for parameters
+
+hmpps.sqs:
+  reactiveApi: true
+  provider: localstack
+  queues:
+    dataprocessor:
+      queueName: dataprocessor-queue
+      dlqName: dataprocessor-dlq
+    audit:
+      queueName: ${random.uuid}
+    adaptor:
+      queueName: legacy-adaptor-event-queue
+      dlqName: legacy-adaptor-event-dlq
+      subscribeTopicId: event
+      subscribeFilter: '{"eventType":[ "LIFE_EVENT", "DEATH_NOTIFICATION" ] }'
+    odg:
+      queueName: ogd-event-queue
+      dlqName: ogd-event-dlq
+      subscribeTopicId: event
+      subscribeFilter: '{"eventType":[ "DEATH_NOTIFICATION" ] }'
+  topics:
+    event:
+      arn: arn:aws:sns:eu-west-2:000000000000:${random.uuid}
+

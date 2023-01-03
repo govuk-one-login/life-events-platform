@@ -38,7 +38,7 @@ class EventPollService(
     val consumerSubscriptions = eventTypes?.let {
       consumerSubscriptionRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
         .toList()
-        .associateBy({ it.consumerSubscriptionId }, {it.ingressEventType})
+        .associateBy({ it.consumerSubscriptionId }, { it.ingressEventType })
     }
 
     log.debug("Egress event types {} polled", consumerSubscriptions?.keys?.joinToString())

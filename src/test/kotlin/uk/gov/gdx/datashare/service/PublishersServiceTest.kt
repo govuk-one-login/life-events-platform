@@ -10,14 +10,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.gdx.datashare.repository.Publisher
-import uk.gov.gdx.datashare.repository.PublisherSubscription
 import uk.gov.gdx.datashare.repository.PublisherRepository
+import uk.gov.gdx.datashare.repository.PublisherSubscription
 import uk.gov.gdx.datashare.repository.PublisherSubscriptionRepository
-import java.util.*
+import java.util.UUID
 
 class PublishersServiceTest {
   private val publisherSubscriptionRepository = mockk<PublisherSubscriptionRepository>()
-  private val publisherRepository = mockk<PublisherRepository>() 
+  private val publisherRepository = mockk<PublisherRepository>()
 
   private val underTest = PublishersService(publisherSubscriptionRepository, publisherRepository)
 
@@ -114,12 +114,14 @@ class PublishersServiceTest {
       underTest.addPublisherSubscription(publisher.id, publisherSubRequest)
 
       coVerify(exactly = 1) {
-        publisherSubscriptionRepository.save(withArg {
-          assertThat(it.publisherId).isEqualTo(publisher.id)
-          assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
-          assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
-          assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
-        })
+        publisherSubscriptionRepository.save(
+          withArg {
+            assertThat(it.publisherId).isEqualTo(publisher.id)
+            assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
+            assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
+            assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
+          }
+        )
       }
     }
   }
@@ -135,12 +137,14 @@ class PublishersServiceTest {
       underTest.updatePublisherSubscription(publisher.id, publisherSubscription.id, publisherSubRequest)
 
       coVerify(exactly = 1) {
-        publisherSubscriptionRepository.save(withArg {
-          assertThat(it.publisherId).isEqualTo(publisher.id)
-          assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
-          assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
-          assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
-        })
+        publisherSubscriptionRepository.save(
+          withArg {
+            assertThat(it.publisherId).isEqualTo(publisher.id)
+            assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
+            assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
+            assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
+          }
+        )
       }
     }
   }
@@ -168,12 +172,16 @@ class PublishersServiceTest {
       )
 
       coEvery { publisherRepository.save(any()) }.returns(publisher)
-      
+
       underTest.addPublisher(publisherRequest)
-      
-      coVerify(exactly = 1) { publisherRepository.save(withArg {
-        assertThat(it.name).isEqualTo(publisherRequest.name)
-      }) }
+
+      coVerify(exactly = 1) {
+        publisherRepository.save(
+          withArg {
+            assertThat(it.name).isEqualTo(publisherRequest.name)
+          }
+        )
+      }
     }
   }
 

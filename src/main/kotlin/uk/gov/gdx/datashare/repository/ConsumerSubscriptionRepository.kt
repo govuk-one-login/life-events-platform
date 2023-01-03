@@ -13,31 +13,41 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
   @Query("SELECT * FROM consumer_subscription cs WHERE cs.poll_client_id = :clientId")
   fun findAllByPollClientId(clientId: String): Flow<ConsumerSubscription>
 
-  @Query("SELECT * FROM consumer_subscription cs " +
-    "WHERE cs.ingress_event_type = :ingressEventType")
+  @Query(
+    "SELECT * FROM consumer_subscription cs " +
+      "WHERE cs.ingress_event_type = :ingressEventType"
+  )
   fun findAllByIngressEventType(ingressEventType: String): Flow<ConsumerSubscription>
 
-  @Query("SELECT * FROM consumer_subscription cs " +
-    "WHERE cs.poll_client_id = :clientId " +
-    "AND cs.ingress_event_type IN (:ingressEventTypes)")
+  @Query(
+    "SELECT * FROM consumer_subscription cs " +
+      "WHERE cs.poll_client_id = :clientId " +
+      "AND cs.ingress_event_type IN (:ingressEventTypes)"
+  )
   fun findAllByIngressEventTypesAndPollClientId(clientId: String, ingressEventTypes: List<String>): Flow<ConsumerSubscription>
 
-  @Query("SELECT * FROM consumer_subscription cs " +
-    "WHERE cs.ingress_event_type = :eventType " +
-    "AND cs.push_uri IS NOT NULL ")
+  @Query(
+    "SELECT * FROM consumer_subscription cs " +
+      "WHERE cs.ingress_event_type = :eventType " +
+      "AND cs.push_uri IS NOT NULL "
+  )
   fun findClientToSendDataTo(eventType: String): Flow<ConsumerSubscription>
 
   @Query("UPDATE consumer_subscription SET last_poll_event_time = :lastTime WHERE id = :id")
   @Modifying
   suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, id: UUID)
 
-  @Query("SELECT cs.* FROM consumer_subscription cs " +
-    "JOIN egress_event_data eed ON cs.id = eed.consumer_subscription_id " +
-    "WHERE eed.id = :id ")
+  @Query(
+    "SELECT cs.* FROM consumer_subscription cs " +
+      "JOIN egress_event_data eed ON cs.id = eed.consumer_subscription_id " +
+      "WHERE eed.id = :id "
+  )
   suspend fun findByEgressEventId(id: UUID): ConsumerSubscription?
 
-  @Query("SELECT cs.* FROM consumer_subscription cs " +
-    "JOIN consumer c ON cs.consumer_id = c.id " +
-    "AND c.id = :id")
+  @Query(
+    "SELECT cs.* FROM consumer_subscription cs " +
+      "JOIN consumer c ON cs.consumer_id = c.id " +
+      "AND c.id = :id"
+  )
   fun findAllByConsumerId(id: UUID): Flow<ConsumerSubscription>
 }

@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.repository.*
+import uk.gov.gdx.datashare.service.ConsumerSubRequest
 import java.util.*
 
 @RestController
@@ -259,4 +260,45 @@ class BaseDataController(
     @Schema(description = "Publisher Subscription ID", required = true)
     @PathVariable id: UUID,
   ) = publisherSubscriptionRepository.deleteById(id)
+
+  //The below endpoints don't exist through any other means, so have added them here
+  @PostMapping("/ingressType")
+  @Operation(
+    summary = "Add ingress type",
+    description = "Need scope of pubsub/maintain",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Ingress type added"
+      )
+    ]
+  )
+  suspend fun addIngressType(
+    @Schema(
+      description = "Ingress event type",
+      required = true,
+      implementation = IngressEventType::class,
+    )
+    @RequestBody ingressEventType: IngressEventType,
+  ) = ingressEventTypeRepository.save(ingressEventType)
+
+  @PostMapping("/eventDataset")
+  @Operation(
+    summary = "Add Event dataset",
+    description = "Need scope of pubsub/maintain",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Event dataset added"
+      )
+    ]
+  )
+  suspend fun addEventDataset(
+    @Schema(
+      description = "Event dataset type",
+      required = true,
+      implementation = EventDataset::class,
+    )
+    @RequestBody eventDataset: EventDataset,
+  ) = eventDatasetRepository.save(eventDataset)
 }

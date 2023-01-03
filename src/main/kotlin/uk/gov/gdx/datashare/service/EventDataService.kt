@@ -51,6 +51,27 @@ class EventDataService(
     }
   }
 
+  suspend fun getEvent(
+    id: UUID
+  ): EventNotification? {
+    val clientId = authenticationFacade.getUsername()
+    val event = egressEventDataRepository.findByPollClientIdAndId(clientId, id)
+      ?: throw NotFoundException("Egress event $id not found for polling client $clientId")
+    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
+      ?: throw NotFoundException("Consumer subscription not found for egress event $id")
+
+    return event.let {
+      EventNotification(
+        eventId = it.id,
+        eventType = consumerSubscription.ingressEventType,
+        sourceId = it.dataId,
+        eventData = it.dataPayload?.let { dataPayload ->
+          deathNotificationService.mapDeathNotification(dataPayload)
+        },
+      )
+    }
+  }
+
   suspend fun getEvents(
     eventTypes: List<String>?,
     optionalStartTime: LocalDateTime?,

@@ -116,6 +116,26 @@ class EventsControllerTest {
   }
 
   @Test
+  fun `getEvent gets event`() {
+    runBlocking {
+      val event = EventNotification(
+        eventId = UUID.randomUUID(),
+        eventType = "DEATH_NOTIFICATION",
+        sourceId = UUID.randomUUID().toString(),
+        eventData = DeathNotificationDetails(
+          firstName = "Bob"
+        )
+      )
+
+      coEvery { eventDataService.getEvent(event.eventId) }.returns(event)
+
+      val eventOutput = underTest.getEvent(event.eventId)
+
+      assertThat(eventOutput).isEqualTo(event)
+    }
+  }
+
+  @Test
   fun `deleteEvent deletes event`() {
     runBlocking {
       val eventId = UUID.randomUUID()

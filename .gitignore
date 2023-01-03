@@ -110,3 +110,7 @@ terraform.rc
 sonar-project.properties
 
 bin
+
+.env*
+
+oauth2-data/hsperfdata_root

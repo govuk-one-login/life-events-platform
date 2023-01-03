@@ -18,10 +18,20 @@ data "aws_iam_policy_document" "sqs_policy" {
       "sqs:SendMessage",
       "sqs:GetQueueUrl"
     ]
-
     resources = [
       aws_sqs_queue.queue.arn,
       aws_sqs_queue.dead_letter_queue.arn
+    ]
+  }
+
+  statement {
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    resources = [
+      aws_kms_key.sqs_key.arn,
+      aws_kms_key.dead_letter_queue_kms_key.arn,
     ]
   }
 }

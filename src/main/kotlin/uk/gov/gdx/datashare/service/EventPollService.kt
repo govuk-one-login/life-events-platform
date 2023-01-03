@@ -1,78 +1,77 @@
 package uk.gov.gdx.datashare.service
 
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AuthenticationFacade
-import uk.gov.gdx.datashare.repository.DataConsumerRepository
-import uk.gov.gdx.datashare.repository.EventDataRepository
-import uk.gov.gdx.datashare.resource.EventType
+import uk.gov.gdx.datashare.config.DateTimeHandler
+import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.resource.SubscribedEvent
 import java.time.LocalDateTime
 
 @Service
 class EventPollService(
-  private val eventDataRepository: EventDataRepository,
   private val authenticationFacade: AuthenticationFacade,
-  private val dataConsumerRepository: DataConsumerRepository,
+  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
+  private val egressEventDataRepository: EgressEventDataRepository,
+  private val dateTimeHandler: DateTimeHandler,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
+  @OptIn(FlowPreview::class)
+  @Transactional
   suspend fun getEvents(
-    eventTypes: List<EventType>?,
+    eventTypes: List<String>?,
     fromTime: LocalDateTime?,
     toTime: LocalDateTime?
   ): Flow<SubscribedEvent> {
-    val oauthClient = authenticationFacade.getUsername()
 
-    // check if client is allowed to poll
-    val dataConsumer = dataConsumerRepository.findById(oauthClient)
-      ?: throw RuntimeException("Client $oauthClient is not a known data consumer")
-
-    val allowedTypes = dataConsumer.allowedEventTypes.split(",").map {
-      EventType.valueOf(it)
+    val now = dateTimeHandler.now()
+    val lastPollEventTime = toTime ?: now
+    val clientId = authenticationFacade.getUsername()
+    val consumerSubscriptions = eventTypes?.let {
+      consumerSubscriptionRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
+        .toList()
+        .associateBy({ it.consumerSubscriptionId }, { it.ingressEventType })
     }
 
-    // checks types requested are allowed
-    val eventTypesToPoll = getTypeToPoll(eventTypes, allowedTypes, dataConsumer.clientName)
+    log.debug("Egress event types {} polled", consumerSubscriptions?.keys?.joinToString())
 
-    // Retrieve events from event stream
-    val now = LocalDateTime.now()
-    val beginTime = fromTime ?: dataConsumer.lastPollEventTime ?: now.minusDays(1)
-    val lastTime = toTime ?: now
-    val events = eventDataRepository.findAllByEventTypes(
-      eventTypesToPoll.map { it.toString() },
-      beginTime,
-      lastTime
-    ).map {
-      SubscribedEvent(
-        eventType = EventType.valueOf(it.eventType),
-        eventId = it.eventId,
-        eventTime = it.whenCreated!!
-      )
-    }
+    return consumerSubscriptionRepository.findAllByPollClientId(authenticationFacade.getUsername())
+      .filter { consumerSubscriptions.isNullOrEmpty() || it.consumerSubscriptionId in consumerSubscriptions.keys }
+      .flatMapMerge { sub ->
+        val beginTime = fromTime ?: sub.lastPollEventTime ?: now.minusDays(1)
+        val events =
+          egressEventDataRepository.findAllByConsumerSubscription(
+            sub.consumerSubscriptionId,
+            beginTime,
+            lastPollEventTime
+          )
 
-    // save the time of the last record
-    val lastPollEventTime = events.lastOrNull()?.eventTime ?: lastTime
-    if (dataConsumer.lastPollEventTime == null || lastPollEventTime.isAfter(dataConsumer.lastPollEventTime)) {
-      dataConsumerRepository.save(dataConsumer.copy(lastPollEventTime = lastPollEventTime))
-    }
+        if (sub.lastPollEventTime == null || lastPollEventTime.isAfter(sub.lastPollEventTime)) {
+          consumerSubscriptionRepository.updateLastPollTime(
+            lastPollEventTime = lastPollEventTime,
+            sub.consumerSubscriptionId
+          )
+        }
+        events
+      }.map { event ->
+        val eventType = consumerSubscriptions?.let {
+          consumerSubscriptions[event.consumerSubscriptionId]
+        } ?: consumerSubscriptionRepository.findById(event.consumerSubscriptionId)?.ingressEventType
+          ?: throw RuntimeException("Consumer subscription ${event.consumerSubscriptionId} not found")
 
-    log.info("Client: {}: Retrieved {} events between {} and {} for event types {}", dataConsumer.clientName, events.count(), beginTime, lastTime, eventTypesToPoll)
-    return events
+        SubscribedEvent(
+          eventType = eventType,
+          eventId = event.eventId,
+          eventTime = event.whenCreated!!
+        )
+      }
   }
-
-  private fun getTypeToPoll(
-    eventTypes: List<EventType>?,
-    allowedTypes: List<EventType>,
-    clientName: String
-  ) = eventTypes?.map {
-    if (it !in allowedTypes) {
-      throw RuntimeException("Client $clientName is not allowed to consume $it events")
-    }
-    it
-  } ?: allowedTypes
 }

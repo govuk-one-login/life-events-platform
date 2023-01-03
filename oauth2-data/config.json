@@ -52,7 +52,7 @@
           "claims": {
             "sub": "hmrc-client",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": "data_retriever/read events/poll",
+            "scope": ["data_retriever/read", "events/poll"],
             "client_id": "hmrc-client"
           }
         },
@@ -64,6 +64,26 @@
             "iss": "http://oauth2:8080/issuer1",
             "scope": "data_retriever/read",
             "client_id": "internal-outbound"
+          }
+        },
+        {
+          "requestParam": "scope",
+          "match": "maintainer",
+          "claims": {
+            "sub": "maintainer",
+            "iss": "http://oauth2:8080/issuer1",
+            "scope": ["subscriptions/maintain","pubsub/maintain"],
+            "client_id": "maintainer"
+          }
+        },
+        {
+          "requestParam": "scope",
+          "match": "everything",
+          "claims": {
+            "sub": "everything",
+            "iss": "http://oauth2:8080/issuer1",
+            "scope": ["subscriptions/maintain", "pubsub/maintain", "data_retriever/read", "events/poll", "data_receiver/notify"],
+            "client_id": "everything"
           }
         }
       ]

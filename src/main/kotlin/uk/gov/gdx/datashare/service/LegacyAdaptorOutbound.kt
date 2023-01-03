@@ -1,32 +1,26 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import org.apache.commons.net.ftp.FTP
-import org.apache.commons.net.ftp.FTPClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import uk.gov.gdx.datashare.repository.DataConsumerRepository
+import uk.gov.gdx.datashare.repository.ConsumerRepository
+import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.resource.EventInformation
-import uk.gov.gdx.datashare.resource.EventType
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.OutputStream
-import java.net.ConnectException
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Service
 class LegacyAdaptorOutbound(
-  private val mapper: ObjectMapper,
+  private val objectMapper: ObjectMapper,
   private val eventDataRetrievalApiWebClient: WebClient,
   private val auditService: AuditService,
-  private val dataConsumerRepository: DataConsumerRepository
+  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
+  private val consumerRepository: ConsumerRepository,
 ) {
 
   companion object {
@@ -34,111 +28,57 @@ class LegacyAdaptorOutbound(
   }
 
   @JmsListener(destination = "adaptor", containerFactory = "hmppsQueueContainerFactoryProxy")
-  fun onPublishedEvent(message: String) = runBlocking {
-    val (message, messageAttributes) = mapper.readValue(message, EventTopicMessage::class.java)
+  fun onPublishedEvent(eventMessage: String) = runBlocking {
+    val (message, messageAttributes) = objectMapper.readValue(eventMessage, EventTopicMessage::class.java)
     val eventType = messageAttributes.eventType.Value
     log.info("Received message $message, type $eventType")
 
-    val event = mapper.readValue(message, EventMessage::class.java)
+    val event = objectMapper.readValue(message, EventMessage::class.java)
     when (eventType) {
-      EventType.DEATH_NOTIFICATION.toString() -> processDeathEvent(event)
-      EventType.LIFE_EVENT.toString() -> processLifeEvent(event)
+      "DEATH_NOTIFICATION", "LIFE_EVENT" -> processLifeEvent(event)
       else -> {
         log.debug("Ignoring message with type $eventType")
       }
     }
   }
 
-  suspend fun processDeathEvent(event: EventMessage) {
-    log.debug("processing {}", event)
-
-    try {
-      // Go and get data from Event Retrieval API
-      val deathData = getEventPayload(event.id)
-
-      // turn into file and send to FTP
-      val details = deathData.details
-      if (details != null) {
-
-        // who needs it?
-        val findAllByLegacyFtp = dataConsumerRepository.findAllByLegacyFtp(true)
-        findAllByLegacyFtp.collect {
-
-          log.debug("Sending event via FTP to ${it.clientName}")
-          val testFtpClient = FTPClient()
-          val host = "localhost"
-          val port = 31000
-          try {
-            testFtpClient.connect(host, port)
-            testFtpClient.login("user", "password")
-
-            val filename = "${event.id}.csv"
-            withContext(Dispatchers.IO) {
-              FileOutputStream(filename).apply { writeCsv(details as DeathNotification) }
-              testFtpClient.setFileType(FTP.ASCII_FILE_TYPE)
-              testFtpClient.storeFile("/outbound/$filename", FileInputStream(filename))
-
-              log.debug("File $filename sent to FTP Server")
-            }
-            testFtpClient.logout()
-
-            auditService.sendMessage(
-              auditType = AuditType.FTP_OUTBOUND,
-              id = event.id,
-              details = "FTP to ${it.clientName} : ${event.description}",
-              username = it.clientId
-            )
-          } catch (e: ConnectException) {
-            log.warn("Failed to connect to FTP server")
-          }
-        }
-
-      }
-    } catch (e: Exception) {
-      log.warn("Unable to retrieve event data")
-    }
-  }
-
   suspend fun processLifeEvent(event: EventMessage) {
     log.debug("processing {}", event)
 
-    try {
-      // Go and get data from Event Retrieval API
-      val lifeEvent = getEventPayload(event.id)
+    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(event.id)
+    if (consumerSubscription?.isLegacy != true) {
+      log.debug("Event {} is not legacy", event.id)
+      return
+    }
 
-      // turn into file and send to FTP
-      val details = lifeEvent.details
-      if (details != null) {
+    // Go and get data from Event Retrieval API
+    val lifeEvent = getEventPayload(event.id)
 
-        // who needs it?
-        val findAllByLegacyFtp = dataConsumerRepository.findAllByLegacyFtp(true)
-        findAllByLegacyFtp.collect {
+    // turn into file
+    val details = lifeEvent.details
+    if (details != null) {
+      // who needs it?
+      val clients = consumerSubscriptionRepository.findClientToSendDataTo(lifeEvent.eventType)
+      clients.collect { client ->
 
-          auditService.sendMessage(
-            auditType = AuditType.WEBHOOK,
-            id = event.id,
-            details = "Webhook to ${it.clientName} : ${event.description}",
-            username = it.clientId
-          )
-        }
+        val consumer = consumerRepository.findById(client.consumerId)
+          ?: throw RuntimeException("Consumer ${client.consumerId} not found")
+
+        log.debug("Send to ${consumer.name} to ${client.pushUri} with [$details]")
+
+        // Put code to send data here
+
+        auditService.sendMessage(
+          auditType = AuditType.PUSH_EVENT,
+          id = event.id.toString(),
+          details = "Push Event to ${consumer.name} : ${event.description}",
+          username = consumer.name
+        )
       }
-
-    } catch (e: Exception) {
-      log.warn("Unable to retrieve event data")
     }
   }
 
-
-  fun OutputStream.writeCsv(deathData: DeathNotification) {
-    val writer = bufferedWriter()
-    writer.write(""""Surname", "Firstnames", "Date of Birth", "Date of Birth", "Date of Death", "NINO"""")
-    writer.newLine()
-    writer.write("${deathData.deathDetails.surname}, ${deathData.deathDetails.forenames}, \"${deathData.deathDetails.dateOfBirth}\",\"${deathData.deathDetails.dateOfBirth}\",\"${deathData.deathDetails.dateOfDeath}\",\"${deathData.additionalInformation?.nino}\"")
-    writer.newLine()
-    writer.flush()
-  }
-
-  suspend fun getEventPayload(id: String): EventInformation =
+  suspend fun getEventPayload(id: UUID): EventInformation =
     eventDataRetrievalApiWebClient.get()
       .uri("/event-data-retrieval/$id")
       .retrieve()
@@ -153,7 +93,7 @@ data class EventTopicMessage(
 )
 
 data class EventMessage(
-  val id: String,
-  val occurredAt: LocalDateTime,
+  val id: UUID,
+  val occurredAt: OffsetDateTime,
   val description: String
 )

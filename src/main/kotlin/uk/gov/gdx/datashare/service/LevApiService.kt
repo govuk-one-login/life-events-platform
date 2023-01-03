@@ -1,5 +1,7 @@
 package uk.gov.gdx.datashare.service
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -11,15 +13,21 @@ import java.time.LocalDate
 
 @Service
 class LevApiService(
-  private val levApiWebClient: WebClient
+  private val levApiWebClient: WebClient,
+  meterRegistry: MeterRegistry
 ) {
+  private val callsToLevCounter: Counter = meterRegistry.counter("API_CALLS.CallsToLev")
+  private val responsesFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromLev")
 
   suspend fun findDeathById(id: Int): Flow<DeathRecord> {
     try {
-      return levApiWebClient.get()
+      callsToLevCounter.increment()
+      val deathRecord = levApiWebClient.get()
         .uri("/v1/registration/death/$id")
         .retrieve()
-        .bodyToFlow()
+        .bodyToFlow<DeathRecord>()
+      responsesFromLevCounter.increment()
+      return deathRecord
     } catch (e: WebClientResponseException) {
       throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) NoDataFoundException(id.toString())
       else e
@@ -28,16 +36,18 @@ class LevApiService(
 }
 
 data class DeathRecord(
-  val id: Long,
+  val id: String,
   val date: LocalDate,
   val deceased: Deceased,
   val partner: Partner?,
 )
+
 data class Partner(
   val name: String?,
   val occupation: String?,
   val retired: String?
 )
+
 data class Deceased(
   val forenames: String,
   val surname: String,

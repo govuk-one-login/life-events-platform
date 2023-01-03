@@ -4,7 +4,7 @@
   "tokenCallbacks": [
     {
       "issuerId": "issuer1",
-      "tokenExpiry": 300,
+      "tokenExpiry": 1200,
       "requestMappings": [
         {
           "requestParam": "scope",
@@ -58,6 +58,15 @@
             "sub": "internal-outbound",
             "scope": "data_retriever/read",
             "client_id": "internal-outbound"
+          }
+        },
+        {
+          "requestParam": "scope",
+          "match": "maintainer",
+          "claims": {
+            "sub": "maintainer",
+            "scope": ["subscriptions/maintain","pubsub/maintain"],
+            "client_id": "maintainer"
           }
         }
       ]

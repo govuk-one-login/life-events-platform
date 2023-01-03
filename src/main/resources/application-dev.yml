@@ -5,6 +5,10 @@ management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
 
+metrics:
+  cloudwatch:
+    namespace: "local-gdx"
+
 spring:
   devtools:
     add-properties: true
@@ -13,6 +17,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/datashare?sslmode=prefer
     user: datashare
     password: datashare
+    locations: classpath:db/migration, classpath:db/devonly
 
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/datashare?sslmode=prefer
@@ -21,6 +26,10 @@ spring:
     properties:
       sslMode: DISABLE
       sslRootCert:
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: DEBUG # for queries
+    io.r2dbc.postgresql.PARAM: INFO # for parameters
 
 api:
   base:
@@ -28,9 +37,11 @@ api:
       issuer-uri: http://localhost:9090/issuer1
       oauth: http://localhost:9090/issuer1
       lev: http://localhost:8099
-      hmrc: https://a0519c3b-e75b-41aa-b79d-7bb41871ec62.mock.pstmn.io
       data-receiver: http://localhost:8080
       event-data-retrieval: http://localhost:8080
+    s3:
+      ingress: ingress
+      ingress-archive: ingress-archive
 
 legacy-inbound:
   api:

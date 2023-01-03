@@ -1,9 +1,12 @@
 package uk.gov.gdx.datashare.resource
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.flow.Flow
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType
@@ -15,16 +18,20 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.gdx.datashare.service.EventPollService
 import java.time.LocalDateTime
+import java.util.UUID
 
 @RestController
-@RequestMapping("/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/obsolete/events", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
 @Validated
+@Tag(name = "902. Event status")
 class EventPlatform(
-  private val eventPollService: EventPollService
+  private val eventPollService: EventPollService,
+  meterRegistry: MeterRegistry,
 ) {
+  private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
 
-  @GetMapping()
+  @GetMapping
   @Operation(
     summary = "Returns all events for this client since the last call",
     description = "Need scope of events/poll",
@@ -36,24 +43,44 @@ class EventPlatform(
     ]
   )
   suspend fun getEvents(
-    @Schema(description = "Event Types required, if none supplied it will be the allowed types for this client", required = false)
-    @RequestParam(name = "eventType") eventTypes: List<EventType> = listOf(),
-    @Schema(description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client", type = "date-time", required = false)
+    @Schema(
+      description = "Event Types required, if none supplied it will be the allowed types for this client",
+      required = false,
+      allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+    )
+    @RequestParam(name = "eventType", required = false) eventTypes: List<String> = listOf(),
+    @Schema(
+      description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
+      type = "date-time",
+      required = false
+    )
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
-    @RequestParam fromTime: LocalDateTime? = null,
-    @Schema(description = "Events before this time, if not supplied it will be now", type = "date-time", required = false)
+    @RequestParam(name = "fromTime", required = false) fromTime: LocalDateTime? = null,
+    @Schema(
+      description = "Events before this time, if not supplied it will be now",
+      type = "date-time",
+      required = false
+    )
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @RequestParam toTime: LocalDateTime? = null
-  ): Flow<SubscribedEvent> = eventPollService.getEvents(eventTypes, fromTime, toTime)
+    @RequestParam(name = "toTime", required = false) toTime: LocalDateTime? = null
+  ): Flow<SubscribedEvent> = run {
+    callsToPollCounter.increment()
+    eventPollService.getEvents(eventTypes, fromTime, toTime)
+  }
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Subscribed event notification")
 data class SubscribedEvent(
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
-  val eventId: String,
-  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
-  val eventType: EventType,
+  val eventId: UUID,
+  @Schema(
+    description = "Events Type",
+    required = true,
+    example = "DEATH_NOTIFICATION",
+    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+  )
+  val eventType: String,
   @Schema(description = "Events Time", type = "date-time", required = true, example = "2021-12-31T12:34:56")
   @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
   val eventTime: LocalDateTime

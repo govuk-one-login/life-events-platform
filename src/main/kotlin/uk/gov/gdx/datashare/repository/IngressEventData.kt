@@ -4,27 +4,29 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
+import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
+import java.util.*
 
-data class EventData(
+data class IngressEventData(
   @Id
-  val eventId: String,
-  val eventType: String,
-  val dataProvider: String,
-  val datasetType: String,
+  @Column("id")
+  val eventId: UUID = UUID.randomUUID(),
+  val eventTypeId: String,
+  val datasetId: String,
+  val subscriptionId: UUID,
   val dataId: String,
   val dataPayload: String?,
   val dataExpiryTime: LocalDateTime,
-
   val whenCreated: LocalDateTime? = null,
 
   @Transient
   @Value("false")
   val new: Boolean = true
 
-) : Persistable<String> {
+) : Persistable<UUID> {
 
-  override fun getId(): String = eventId
+  override fun getId() = eventId
 
   override fun isNew(): Boolean = new
 }

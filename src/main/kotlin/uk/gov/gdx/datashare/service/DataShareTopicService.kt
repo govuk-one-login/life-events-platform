@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.resource.EventType
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Service
 class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val objectMapper: ObjectMapper) {
@@ -19,13 +19,15 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  private val domaineventsTopic by lazy { hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist") }
-  private val domaineventsTopicClient by lazy { domaineventsTopic.snsClient }
+  private val domainEventsTopic by lazy {
+    hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist")
+  }
+  private val domainEventsTopicClient by lazy { domainEventsTopic.snsClient }
 
-  fun sendGovEvent(eventId: String, occurredAt: LocalDateTime, eventType: EventType) {
+  fun sendGovEvent(eventId: UUID, occurredAt: LocalDateTime, eventType: String) {
     publishToDomainEventsTopic(
       DataShareEvent(
-        eventType.toString(),
+        eventType,
         eventId,
         occurredAt.atZone(ZoneId.systemDefault()).toInstant(),
         "Gov Event: $eventType"
@@ -35,8 +37,8 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
 
   private fun publishToDomainEventsTopic(payload: DataShareEvent) {
     log.debug("Event {} for id {}", payload.eventType, payload.id)
-    domaineventsTopicClient.publish(
-      PublishRequest(domaineventsTopic.arn, objectMapper.writeValueAsString(payload))
+    domainEventsTopicClient.publish(
+      PublishRequest(domainEventsTopic.arn, objectMapper.writeValueAsString(payload))
         .withMessageAttributes(
           mapOf(
             "eventType" to MessageAttributeValue().withDataType("String").withStringValue(payload.eventType)
@@ -49,14 +51,14 @@ class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val ob
 
 data class DataShareEvent(
   val eventType: String? = null,
-  val id: String,
+  val id: UUID,
   val version: String,
   val occurredAt: String,
   val description: String
 ) {
   constructor(
     eventType: String,
-    id: String,
+    id: UUID,
     occurredAt: Instant,
     description: String,
   ) : this(
@@ -67,5 +69,6 @@ data class DataShareEvent(
     description
   )
 }
+
 fun Instant.toOffsetDateFormat(): String =
   atZone(ZoneId.of("Europe/London")).toOffsetDateTime().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)

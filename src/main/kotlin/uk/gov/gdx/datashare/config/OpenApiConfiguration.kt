@@ -9,7 +9,6 @@ import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.StringSchema
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
-import io.swagger.v3.oas.models.servers.Server
 import org.springdoc.core.customizers.OpenApiCustomiser
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
@@ -25,12 +24,6 @@ class OpenApiConfiguration(
 
   @Bean
   fun customOpenAPI(): OpenAPI = OpenAPI()
-    .servers(
-      listOf(
-        Server().url("http://localhost:8080").description("Local"),
-        Server().url("https://d33v84mi0vopmk.cloudfront.net").description("Dev")
-      )
-    )
     .info(
       Info().title("GDX Data Share API")
         .version(version)
@@ -45,14 +38,15 @@ class OpenApiConfiguration(
           .scheme("bearer")
           .bearerFormat("JWT")
           .`in`(SecurityScheme.In.HEADER)
-          .name("Authorization"))
+          .name("Authorization")
+      )
         .addSecuritySchemes(
           "cognito",
           SecurityScheme()
             .type(SecurityScheme.Type.OPENIDCONNECT)
             .openIdConnectUrl("$issuerUri/.well-known/openid-configuration")
         )
-      )
+    )
     .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
     .addSecurityItem(SecurityRequirement().addList("cognito"))
 

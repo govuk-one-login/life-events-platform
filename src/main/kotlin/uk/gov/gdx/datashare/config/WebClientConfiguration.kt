@@ -18,8 +18,6 @@ import java.time.Duration
 
 @Configuration
 class WebClientConfiguration(
-  @Value("\${api.base.url.oauth}") val auth0BaseUri: String,
-  @Value("\${api.base.url.hmrc}") val hmrcApiRootUri: String,
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
   @Value("\${api.base.url.data-receiver}") private val dataReceiverUri: String,
   @Value("\${api.base.url.event-data-retrieval}") private val eventDataRetrievalUri: String
@@ -63,15 +61,6 @@ class WebClientConfiguration(
       .baseUrl(eventDataRetrievalUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
-      .build()
-  }
-
-  @Bean
-  fun hmrcApiWebClient(): WebClient {
-    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
-    return WebClient.builder()
-      .baseUrl(hmrcApiRootUri)
-      .clientConnector(ReactorClientHttpConnector(httpClient))
       .build()
   }
 

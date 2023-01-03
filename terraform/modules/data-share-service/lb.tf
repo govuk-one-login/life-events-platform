@@ -26,6 +26,10 @@ resource "aws_lb_listener" "listener-http" {
     target_group_arn = aws_lb_target_group.green.arn
   }
 
+  lifecycle {
+    ignore_changes = [default_action]
+  }
+
   depends_on = [aws_lb_target_group.green]
 }
 

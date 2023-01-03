@@ -39,6 +39,14 @@ data "aws_iam_policy_document" "ecs_task" {
     resources = ["*"]
     effect    = "Allow"
   }
+
+  statement {
+    actions = [
+      "cloudwatch:PutMetricData"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
 }
 
 resource "aws_iam_policy" "ecs_task" {

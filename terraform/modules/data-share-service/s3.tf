@@ -66,3 +66,16 @@ resource "aws_s3_bucket_acl" "cloudfront_logs_bucket_grants" {
     }
   }
 }
+
+//TODO-https://github.com/alphagov/gdx-data-share-poc/issues/97: Check S3 buckets work for legacy inbound S3 client
+module "ingress" {
+  source      = "../s3"
+  environment = var.environment
+  name        = "ingress"
+}
+
+module "ingress_archive" {
+  source      = "../s3"
+  environment = var.environment
+  name        = "ingress-archive"
+}

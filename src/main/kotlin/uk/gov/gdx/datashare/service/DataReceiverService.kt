@@ -7,9 +7,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
-import uk.gov.gdx.datashare.repository.DataProviderRepository
+import uk.gov.gdx.datashare.config.DateTimeHandler
+import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.resource.EventToPublish
-import uk.gov.gdx.datashare.resource.EventType
 import uk.gov.justice.hmpps.sqs.HmppsQueue
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import java.time.LocalDateTime
@@ -19,8 +19,11 @@ import java.util.*
 class DataReceiverService(
   private val hmppsQueueService: HmppsQueueService,
   private val authenticationFacade: AuthenticationFacade,
-  private val dataProviderRepository: DataProviderRepository,
+  private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
+  private val publisherRepository: PublisherRepository,
+  private val eventDatasetRepository: EventDatasetRepository,
   private val objectMapper: ObjectMapper,
+  private val dateTimeHandler: DateTimeHandler,
 ) {
   private val dataReceiverQueue by lazy { hmppsQueueService.findByQueueId("dataprocessor") as HmppsQueue }
   private val dataReceiverSqsClient by lazy { dataReceiverQueue.sqsClient }
@@ -33,25 +36,39 @@ class DataReceiverService(
   suspend fun sendToDataProcessor(eventPayload: EventToPublish) {
 
     // check if client is allowed to send
-    val dataProvider = dataProviderRepository.findById(authenticationFacade.getUsername())
-      ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known client")
+    val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
+      authenticationFacade.getUsername(),
+      eventPayload.eventType
+    ) ?: throw RuntimeException("${authenticationFacade.getUsername()} does not have permission")
 
-    // check if client is allowed to send this type of event
-    if (dataProvider.eventType != eventPayload.eventType.toString()) {
-      throw RuntimeException("Client ${dataProvider.clientName} is not allowed to provide ${eventPayload.eventType} events")
+    val dataSet = eventDatasetRepository.findById(subscription.datasetId)
+      ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known dataset")
+
+    val publisher = publisherRepository.findById(subscription.publisherId)
+      ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known publisher")
+
+    if (dataSet.storePayload && eventPayload.eventDetails == null) {
+      throw RuntimeException("Client ${authenticationFacade.getUsername()} must publish dataset for this event in format ${subscription.datasetId}")
     }
 
     val dataProcessorMessage = DataProcessorMessage(
-      dataSetType = dataProvider.datasetType,
-      eventType = eventPayload.eventType,
-      eventTime = eventPayload.eventTime ?: LocalDateTime.now(),
-      provider = dataProvider.clientName,
-      storePayload = dataProvider.storePayload,
+      subscriptionId = subscription.id,
+      datasetId = subscription.datasetId,
+      publisher = publisher.name,
+      eventTypeId = eventPayload.eventType,
+      eventTime = eventPayload.eventTime ?: dateTimeHandler.now(),
       id = eventPayload.id,
-      details = eventPayload.eventDetails,
+      storePayload = dataSet.storePayload,
+      details = if (dataSet.storePayload) {
+        eventPayload.eventDetails
+      } else null
     )
 
-    log.debug("Notifying Data Processor of event type {} from {}", dataProcessorMessage.eventType, dataProcessorMessage.provider)
+    log.debug(
+      "Notifying Data Processor of event type {} from {}",
+      dataProcessorMessage.eventTypeId,
+      publisher.name
+    )
 
     dataReceiverSqsClient.sendMessage(
       SendMessageRequest(
@@ -66,11 +83,12 @@ class DataReceiverService(
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class DataProcessorMessage(
-  val dataSetType: String,
-  val provider: String,
-  val storePayload: Boolean = false,
-  val eventType: EventType,
+  val datasetId: String,
+  val eventTypeId: String,
   val eventTime: LocalDateTime,
+  val publisher: String,
+  val storePayload: Boolean = false,
+  val subscriptionId: UUID,
   val id: String?,
   val details: String?,
 )

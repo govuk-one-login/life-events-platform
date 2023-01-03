@@ -1,26 +1,34 @@
 package uk.gov.gdx.datashare.service
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
-import reactor.core.publisher.Mono
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Service
-class HmrcApiService(
-  private val hmrcApiWebClient: WebClient
-) {
+class HmrcApiService(meterRegistry: MeterRegistry) {
+  private val callsToHmrcCounter: Counter = meterRegistry.counter("API_CALLS.CallsToHmrc")
+  private val responsesFromHmrcCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromHmrc")
 
-  suspend fun findNiNoByNameAndDob(surname: String, firstname: String, dob: LocalDate): Mono<NinoRecord> {
-    return hmrcApiWebClient.get()
-      .uri("/hmrc/surname/$surname/firstname/$firstname/dob/$dob")
-      .retrieve()
-      .bodyToMono<NinoRecord>()
-      .onErrorResume { Mono.empty() }
+  fun getNiNo(surname: String, firstname: String, dob: LocalDate): NinoRecord {
+    callsToHmrcCounter.increment()
+    val nino = generateNiNoFromNameAndDob(surname, firstname, dob)
+    responsesFromHmrcCounter.increment()
+    return nino
+  }
+
+  private fun generateNiNoFromNameAndDob(surname: String, firstname: String, dob: LocalDate): NinoRecord {
+    val uniqueIdentifier = (firstname + surname + dob.toString()).hashCode().toLong()
+    val id = UUID(uniqueIdentifier, 0)
+    val niNumber = surname.substring(0, 1) + firstname.substring(0, 1) + dob.format(DateTimeFormatter.BASIC_ISO_DATE)
+      .substring(2) + surname.substring(surname.length - 1)
+    return NinoRecord(id = id, ni_number = niNumber)
   }
 }
 
 data class NinoRecord(
-  val id: Long,
+  val id: UUID,
   val ni_number: String,
 )

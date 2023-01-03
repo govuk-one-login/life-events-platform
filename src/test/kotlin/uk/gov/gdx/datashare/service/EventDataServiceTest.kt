@@ -4,10 +4,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -126,6 +123,60 @@ class EventDataServiceTest {
   }
 
   @Test
+  fun `getEvent gets Event for client`() {
+    runBlocking {
+      val event = deathEvents.first()
+      val deathNotificationDetails = DeathNotificationDetails(
+        firstName = "Alice",
+        lastName = "Smith",
+        address = deathNotificationSubscription.id.toString()
+      )
+
+      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, event.id) }.returns(event)
+      coEvery { consumerSubscriptionRepository.findByEgressEventId(event.id) }.returns(deathNotificationSubscription)
+      every { deathNotificationService.mapDeathNotification(event.dataPayload!!) }.returns(deathNotificationDetails)
+
+      val eventOutput = underTest.getEvent(event.id)
+
+      assertThat(eventOutput).isEqualTo(
+          EventNotification(
+            eventId = event.id,
+            eventType = "DEATH_NOTIFICATION",
+            sourceId = event.dataId,
+            eventData = deathNotificationDetails,
+          )
+      )
+    }
+  }
+
+  @Test
+  fun `getEvent for event that does not exist for client, throws`() {
+    runBlocking {
+      val event = deathEvents.first()
+
+      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, event.id) }.returns(null)
+
+      val exception = assertThrows<NotFoundException> { underTest.getEvent(event.id) }
+
+      assertThat(exception.message).isEqualTo("Egress event ${event.id} not found for polling client $clientId")
+    }
+  }
+
+  @Test
+  fun `getEvent for subscription that does not exist for client, throws`() {
+    runBlocking {
+      val event = deathEvents.first()
+
+      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, event.id) }.returns(event)
+      coEvery { consumerSubscriptionRepository.findByEgressEventId(event.id) }.returns(null)
+
+      val exception = assertThrows<NotFoundException> { underTest.getEvent(event.id) }
+
+      assertThat(exception.message).isEqualTo("Consumer subscription not found for egress event ${event.id}")
+    }
+  }
+
+  @Test
   fun `getEvents gets Events for client`() {
     runBlocking {
       val eventTypes = listOf("DEATH_NOTIFICATION")
@@ -149,9 +200,9 @@ class EventDataServiceTest {
       val dataPayload = deathEvents.toList()[0].dataPayload!!
       every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
 
-      val eventStatusOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
+      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
 
-      assertThat(eventStatusOutput).isEqualTo(
+      assertThat(eventsOutput).isEqualTo(
         deathEvents.map {
           EventNotification(
             eventId = it.id,

@@ -120,6 +120,22 @@ class EventsController(
     ingestedEventsCounter.increment()
   }
 
+  @GetMapping("/{id}")
+  @Operation(
+    summary = "Get Specific Event API - Get event data",
+    description = "The event ID is the UUID received off the queue, Need scope of data_retriever/read",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Event"
+      )
+    ]
+  )
+  suspend fun getEvent(
+    @Schema(description = "Event ID", required = true)
+    @PathVariable id: UUID,
+  ) = eventDataService.getEvent(id)
+
   @DeleteMapping("/{id}")
   @Operation(
     summary = "Event Delete API - Delete event data",

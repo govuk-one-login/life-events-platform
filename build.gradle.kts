@@ -27,7 +27,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.1.12")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
@@ -42,7 +42,7 @@ dependencies {
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-  implementation("io.opentelemetry:opentelemetry-api:1.19.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.21.0")
 
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.10.0")
@@ -54,7 +54,7 @@ dependencies {
 
   implementation("org.mockftpserver:MockFtpServer:3.1.0")
 
-  implementation("aws.sdk.kotlin:s3:0.19.0-beta")
+  implementation("aws.sdk.kotlin:s3:0.19.2-beta")
 
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")

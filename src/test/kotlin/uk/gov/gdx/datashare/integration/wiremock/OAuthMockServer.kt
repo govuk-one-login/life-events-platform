@@ -10,7 +10,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders
 
 class OAuthMockServer : WireMockServer(WIREMOCK_PORT) {
   companion object {
-    private const val WIREMOCK_PORT = 9090
+    private const val WIREMOCK_PORT = 19090
   }
 
   fun stubGrantToken() {
@@ -39,13 +39,13 @@ class OAuthMockServer : WireMockServer(WIREMOCK_PORT) {
             .withBody(
               """
                                 {
-                                  "issuer": "http://localhost:9090",
-                                  "authorization_endpoint": "http://localhost:9090/authorize",
-                                  "end_session_endpoint": "http://localhost:9090/endsession",
-                                  "token_endpoint": "http://localhost:9090/token",
-                                  "userinfo_endpoint": "http://localhost:9090/userinfo",
-                                  "jwks_uri": "http://localhost:9090/jwks",
-                                  "introspection_endpoint": "http://localhost:9090/introspect",
+                                  "issuer": "http://localhost:19090",
+                                  "authorization_endpoint": "http://localhost:19090/authorize",
+                                  "end_session_endpoint": "http://localhost:19090/endsession",
+                                  "token_endpoint": "http://localhost:19090/token",
+                                  "userinfo_endpoint": "http://localhost:19090/userinfo",
+                                  "jwks_uri": "http://localhost:19090/jwks",
+                                  "introspection_endpoint": "http://localhost:19090/introspect",
                                   "response_types_supported": [
                                     "query",
                                     "fragment",

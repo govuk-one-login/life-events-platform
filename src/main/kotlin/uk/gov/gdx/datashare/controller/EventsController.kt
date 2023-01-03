@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.resource
+package uk.gov.gdx.datashare.controller
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.micrometer.core.instrument.Counter
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.service.DataReceiverService
 import uk.gov.gdx.datashare.service.EventDataService
 import uk.gov.gdx.datashare.service.EventNotification
@@ -26,7 +27,7 @@ import java.util.*
 @RequestMapping("/events", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
-@Tag(name = "4. Events")
+@Tag(name = "04. Events")
 class EventsController(
   private val eventDataService: EventDataService,
   private val dataReceiverService: DataReceiverService,
@@ -47,14 +48,14 @@ class EventsController(
     ]
   )
   suspend fun getEventsStatus(
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "fromTime", required = false) startTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
       required = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventStatus> = eventDataService.getEventsStatus(startTime, endTime).toList()
 
@@ -81,14 +82,14 @@ class EventsController(
       type = "date-time",
       required = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "fromTime", required = false) startTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
       required = false
     )
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventNotification> = run {
     callsToPollCounter.increment()
@@ -118,6 +119,22 @@ class EventsController(
     dataReceiverService.sendToDataProcessor(eventPayload)
     ingestedEventsCounter.increment()
   }
+
+  @GetMapping("/{id}")
+  @Operation(
+    summary = "Get Specific Event API - Get event data",
+    description = "The event ID is the UUID received off the queue, Need scope of data_retriever/read",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Event"
+      )
+    ]
+  )
+  suspend fun getEvent(
+    @Schema(description = "Event ID", required = true)
+    @PathVariable id: UUID,
+  ) = eventDataService.getEvent(id)
 
   @DeleteMapping("/{id}")
   @Operation(
@@ -155,7 +172,7 @@ data class EventToPublish(
     type = "date-time",
     example = "2021-12-31T12:34:56"
   )
-  @DateTimeFormat(pattern = "yyyy-MM-dd'T'H:mm:ss")
+  @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
   val eventTime: LocalDateTime? = null,
   @Schema(description = "ID that references the event (optional)", required = false, example = "123456789")
   val id: String? = null,

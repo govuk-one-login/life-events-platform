@@ -54,7 +54,7 @@ dependencies {
 
   implementation("org.mockftpserver:MockFtpServer:3.1.0")
 
-  implementation("aws.sdk.kotlin:s3:0.19.0-beta")
+  implementation("aws.sdk.kotlin:s3:0.19.2-beta")
 
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")

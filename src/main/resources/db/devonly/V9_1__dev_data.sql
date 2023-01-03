@@ -1,65 +1,66 @@
-insert into event_subscription (client_id, publisher_id, event_type_id, dataset_id)
-select 'len', id, 'DEATH_NOTIFICATION', 'DEATH_LEV'
-from event_publisher
-WHERE publisher_name = 'HMPO';
+CREATE OR REPLACE FUNCTION getIdFromPublisherName(publisher_name_check varchar(80))
+RETURNS UUID
+    LANGUAGE plpgsql
+    AS
+$$  
+Declare  
+ publisher_id UUID;
+Begin
+  SELECT id
+  INTO publisher_id
+  FROM publisher WHERE name = publisher_name_check;
+  RETURN publisher_id;
+End;  
+$$;
 
-insert into event_subscription (client_id, publisher_id, event_type_id, dataset_id)
-values ('internal-inbound', (select id from event_publisher WHERE publisher_name = 'HMPO'),
-        'LIFE_EVENT',
-        'PASS_THROUGH');
+CREATE OR REPLACE FUNCTION getIdFromConsumerName(consumer_name_check varchar(80))
+    RETURNS UUID
+    LANGUAGE plpgsql
+AS
+$$
+Declare
+    consumer_id UUID;
+Begin
+    SELECT id
+    INTO consumer_id
+    FROM consumer WHERE name = consumer_name_check;
+    RETURN consumer_id;
+End;
+$$;
 
-insert into event_subscription (client_id, publisher_id, event_type_id, dataset_id)
-values ('internal-inbound', (select id from event_publisher WHERE publisher_name = 'HMPO'),
-        'DEATH_NOTIFICATION',
-        'DEATH_CSV');
+INSERT INTO publisher_subscription
+    (client_id, publisher_id, event_type_id, dataset_id)
+VALUES
+    ('len', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION', 'DEATH_LEV'),
+    ('internal-inbound', getIdFromPublisherName('HMPO'), 'LIFE_EVENT','PASS_THROUGH'),
+    ('internal-inbound', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION','DEATH_CSV');
 
-insert into egress_event_type (ingress_event_type, description, active)
-values ('DEATH_NOTIFICATION', 'Death notification event for DWP', true),
-       ('LIFE_EVENT', 'Life event for DWP', true),
-       ('DEATH_NOTIFICATION', 'Death notification event for HMRC', true),
-       ('LIFE_EVENT', 'Life event for HMRC', true),
-       ('DEATH_NOTIFICATION', 'Death notification event for Internal Adaptor', true),
-       ('LIFE_EVENT', 'Life event for Internal Adaptor', true),
-       ('DEATH_NOTIFICATION', 'Death notification event for S3 Consumer', true),
-       ('LIFE_EVENT', 'Life event for S3 Consumer', true),
-       ('DEATH_NOTIFICATION', 'Death notification event for Webhook Consumer', true),
-       ('LIFE_EVENT', 'Life event for Webhook Consumer', true);
+INSERT INTO consumer_subscription
+(poll_client_id, callback_client_id, consumer_id, nino_required, enrichment_fields, ingress_event_type)
+VALUES
+    ('dwp-event-receiver', 'dwp-event-receiver', getIdFromConsumerName('DWP Poller'), true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
+    ('dwp-event-receiver', 'dwp-event-receiver', getIdFromConsumerName('DWP Poller'), false, '', 'LIFE_EVENT');
 
-insert into consumer_subscription (poll_client_id, callback_client_id, consumer_id, event_type_id, nino_required)
-values ('dwp-event-receiver', 'dwp-event-receiver', (select id from event_consumer WHERE consumer_name = 'DWP Poller'),
-        (select id from egress_event_type WHERE description = 'Death notification event for DWP'), true);
-insert into consumer_subscription (poll_client_id, callback_client_id, consumer_id, event_type_id)
-values ('dwp-event-receiver', 'dwp-event-receiver', (select id from event_consumer WHERE consumer_name = 'DWP Poller'),
-        (select id from egress_event_type WHERE description = 'Life event for DWP'));
+INSERT INTO consumer_subscription
+    (callback_client_id, consumer_id, nino_required, enrichment_fields, ingress_event_type)
+VALUES
+    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
+    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), false, '', 'LIFE_EVENT');
 
-insert into consumer_subscription (callback_client_id, consumer_id, event_type_id, nino_required)
-values ('hmrc-client', (select id from event_consumer WHERE consumer_name = 'Pub/Sub Consumer'),
-        (select id from egress_event_type WHERE description = 'Death notification event for HMRC'), true);
-insert into consumer_subscription (callback_client_id, consumer_id, event_type_id)
-values ('hmrc-client', (select id from event_consumer WHERE consumer_name = 'Pub/Sub Consumer'),
-        (select id from egress_event_type WHERE description = 'Life event for HMRC'));
+INSERT INTO consumer_subscription
+    (callback_client_id, consumer_id, nino_required, is_legacy, enrichment_fields, ingress_event_type)
+VALUES
+    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), true, true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
+    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), false, true, '', 'LIFE_EVENT');
 
-insert into consumer_subscription (callback_client_id, consumer_id, event_type_id, nino_required)
-values ('internal-outbound', (select id from event_consumer WHERE consumer_name = 'Internal Adaptor'),
-        (select id from egress_event_type WHERE description = 'Death notification event for Internal Adaptor'), true);
-insert into consumer_subscription (callback_client_id, consumer_id, event_type_id)
-values ('internal-outbound', (select id from event_consumer WHERE consumer_name = 'Internal Adaptor'),
-        (select id from egress_event_type WHERE description = 'Life event for Internal Adaptor'));
+INSERT INTO consumer_subscription
+    (consumer_id, push_uri, nino_required, enrichment_fields, ingress_event_type)
+VALUES
+    (getIdFromConsumerName('S3 Consumer'), 's3://user:password@localhost', true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
+    (getIdFromConsumerName('S3 Consumer'), 's3://user:password@localhost', false, '', 'LIFE_EVENT'),
+    (getIdFromConsumerName('Webhook Consumer'), 'http://localhost:8181/callback', true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
+    (getIdFromConsumerName('Webhook Consumer'), 'http://localhost:8181/callback', false, '', 'LIFE_EVENT');
 
-insert into consumer_subscription (consumer_id, event_type_id, push_uri, nino_required)
-values ((select id from event_consumer WHERE consumer_name = 'S3 Consumer'),
-        (select id from egress_event_type WHERE description = 'Death notification event for S3 Consumer'),
-        's3://user:password@localhost', true);
-insert into consumer_subscription (consumer_id, event_type_id, push_uri)
-values ((select id from event_consumer WHERE consumer_name = 'S3 Consumer'),
-        (select id from egress_event_type WHERE description = 'Life event for S3 Consumer'),
-        's3://user:password@localhost');
 
-insert into consumer_subscription (consumer_id, event_type_id, push_uri, nino_required)
-values ((select id from event_consumer WHERE consumer_name = 'Webhook Consumer'),
-        (select id from egress_event_type WHERE description = 'Death notification event for Webhook Consumer'),
-        'http://localhost:8181/callback', true);
-insert into consumer_subscription (consumer_id, event_type_id, push_uri)
-values ((select id from event_consumer WHERE consumer_name = 'Webhook Consumer'),
-        (select id from egress_event_type WHERE description = 'Life event for Webhook Consumer'),
-        'http://localhost:8181/callback');
+DROP FUNCTION IF EXISTS getIdFromPublisherName;
+DROP FUNCTION IF EXISTS getIdFromConsumerName;

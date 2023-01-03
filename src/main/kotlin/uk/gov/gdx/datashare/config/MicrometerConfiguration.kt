@@ -11,7 +11,6 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.cloudwatch.CloudWatchAsyncClient
 import java.time.Duration
 
-
 @Configuration
 class MicrometerConfiguration {
 
@@ -39,11 +38,11 @@ class MicrometerConfiguration {
         "cloudwatch.namespace" to namespace,
         "cloudwatch.step" to Duration.ofMinutes(1).toString()
       )
+
       override fun get(key: String): String? {
         return configuration[key]
       }
     }
     return cloudWatchConfig
   }
-
 }

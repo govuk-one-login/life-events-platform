@@ -16,13 +16,12 @@ import java.util.UUID
 @Service
 class EventDataRetrievalService(
   private val egressEventDataRepository: EgressEventDataRepository,
-  private val egressEventTypeRepository: EgressEventTypeRepository,
   private val auditService: AuditService,
   private val authenticationFacade: AuthenticationFacade,
   private val levApiService: LevApiService,
   private val hmrcApiService: HmrcApiService,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: EventConsumerRepository
+  private val consumerRepository: ConsumerRepository
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -36,18 +35,20 @@ class EventDataRetrievalService(
     val oauthClient = authenticationFacade.getUsername()
     log.info("Looking up event Id {} for client request {}", eventId, oauthClient)
 
-    val eventType = egressEventTypeRepository.findById(event.typeId) ?: throw RuntimeException("Event type $event.typeId Not Found")
+    val consumerSubscription = consumerSubscriptionRepository.findById(event.consumerSubscriptionId)
+      ?: throw RuntimeException("Consumer subscription ${event.consumerSubscriptionId} not found")
 
     // check if client is allowed to send
-    val dataConsumer = consumerSubscriptionRepository.findByClientIdAndEventType(oauthClient, event.typeId)
-      ?: throw RuntimeException("Client $oauthClient is not allowed to consume ${eventType.ingressEventType} events")
-
+    if (consumerSubscription.callbackClientId != oauthClient) {
+      throw RuntimeException("Client $oauthClient is not allowed to consume ${consumerSubscription.ingressEventType} events")
+    }
 
     auditService.sendMessage(
       auditType = AuditType.CLIENT_CONSUMED_EVENT,
       id = eventId.toString(),
-      details = eventType.ingressEventType,
-      username = consumerRepository.findById(dataConsumer.consumerId)?.consumerName ?: throw RuntimeException("Consumer not found for ID ${dataConsumer.consumerId}")
+      details = consumerSubscription.ingressEventType,
+      username = consumerRepository.findById(consumerSubscription.consumerId)?.name
+        ?: throw RuntimeException("Consumer not found for ID ${consumerSubscription.consumerId}")
     )
 
     return when (event.datasetId) {
@@ -56,14 +57,14 @@ class EventDataRetrievalService(
         val citizenDeathId = event.dataId.toInt()
         levApiService.findDeathById(citizenDeathId)
           .map {
-            val nino = if (dataConsumer.ninoRequired) getNino(
+            val nino = if (consumerSubscription.ninoRequired) getNino(
               it.deceased.surname,
               it.deceased.forenames,
               it.deceased.dateOfDeath
             ) else null
 
             EventInformation(
-              eventType = eventType.ingressEventType,
+              eventType = consumerSubscription.ingressEventType,
               eventId = eventId,
               details = DeathNotification(
                 deathDetails = DeathDetails(
@@ -87,10 +88,11 @@ class EventDataRetrievalService(
         val csvLine = event.dataPayload!!.split(",").toTypedArray()
         val (surname, forenames, dateOfBirth, dateOfDeath, sex) = csvLine
 
-        val nino = if (dataConsumer.ninoRequired) getNino(surname, forenames, LocalDate.parse(dateOfBirth)) else null
+        val nino =
+          if (consumerSubscription.ninoRequired) getNino(surname, forenames, LocalDate.parse(dateOfBirth)) else null
 
         EventInformation(
-          eventType = eventType.ingressEventType,
+          eventType = consumerSubscription.ingressEventType,
           eventId = eventId,
           details = DeathNotification(
             deathDetails = DeathDetails(
@@ -109,7 +111,7 @@ class EventDataRetrievalService(
 
       "PASS_THROUGH" -> {
         EventInformation(
-          eventType = eventType.ingressEventType,
+          eventType = consumerSubscription.ingressEventType,
           eventId = eventId,
           details = event.dataPayload,
         )

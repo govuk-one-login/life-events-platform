@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -17,9 +18,10 @@ import uk.gov.gdx.datashare.service.EventDataRetrievalService
 import java.util.*
 
 @RestController
-@RequestMapping("/event-data-retrieval", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/event-data-retrieval", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
+@Tag(name = "901. Event data retrieval")
 class EventRehydrate(
   private val eventDataRetrievalService: EventDataRetrievalService,
   meterRegistry: MeterRegistry
@@ -48,7 +50,12 @@ class EventRehydrate(
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class EventInformation(
-  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION", allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"])
+  @Schema(
+    description = "Events Type",
+    required = true,
+    example = "DEATH_NOTIFICATION",
+    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+  )
   val eventType: String,
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
   val eventId: UUID,

@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.resource
+package uk.gov.gdx.datashare.controller
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.micrometer.core.instrument.Counter

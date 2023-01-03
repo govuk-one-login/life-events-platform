@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
-import uk.gov.gdx.datashare.resource.EventToPublish
+import uk.gov.gdx.datashare.controller.EventToPublish
 import java.io.File
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets

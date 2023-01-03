@@ -16,7 +16,7 @@ import java.util.*
 @RestController
 @RequestMapping("/publishers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Validated
-@Tag(name = "3. Publishers")
+@Tag(name = "03. Publishers")
 class PublishersController(
   private val publishersService: PublishersService
 ) {

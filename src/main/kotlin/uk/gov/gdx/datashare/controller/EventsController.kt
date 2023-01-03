@@ -27,7 +27,7 @@ import java.util.*
 @RequestMapping("/events", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
-@Tag(name = "4. Events")
+@Tag(name = "04. Events")
 class EventsController(
   private val eventDataService: EventDataService,
   private val dataReceiverService: DataReceiverService,

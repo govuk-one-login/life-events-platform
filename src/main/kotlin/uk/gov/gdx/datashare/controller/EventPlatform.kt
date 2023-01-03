@@ -25,7 +25,7 @@ import java.util.UUID
 @RequestMapping("/obsolete/events", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
 @Validated
-@Tag(name = "902. Event status")
+@Tag(name = "92. Event status")
 class EventPlatform(
   private val eventPollService: EventPollService,
   meterRegistry: MeterRegistry,

@@ -22,7 +22,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/consumers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Validated
-@Tag(name = "2. Consumers")
+@Tag(name = "02. Consumers")
 class ConsumersController(
   private val consumersService: ConsumersService
 ) {

@@ -7,6 +7,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.resource.EventToPublish
 import uk.gov.justice.hmpps.sqs.HmppsQueue
@@ -18,10 +19,11 @@ import java.util.*
 class DataReceiverService(
   private val hmppsQueueService: HmppsQueueService,
   private val authenticationFacade: AuthenticationFacade,
-  private val eventSubscriptionRepository: EventSubscriptionRepository,
-  private val eventPublisherRepository: EventPublisherRepository,
+  private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
+  private val publisherRepository: PublisherRepository,
   private val eventDatasetRepository: EventDatasetRepository,
   private val objectMapper: ObjectMapper,
+  private val dateTimeHandler: DateTimeHandler,
 ) {
   private val dataReceiverQueue by lazy { hmppsQueueService.findByQueueId("dataprocessor") as HmppsQueue }
   private val dataReceiverSqsClient by lazy { dataReceiverQueue.sqsClient }
@@ -34,7 +36,7 @@ class DataReceiverService(
   suspend fun sendToDataProcessor(eventPayload: EventToPublish) {
 
     // check if client is allowed to send
-    val subscription = eventSubscriptionRepository.findByClientIdAndEventType(
+    val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
       authenticationFacade.getUsername(),
       eventPayload.eventType
     ) ?: throw RuntimeException("${authenticationFacade.getUsername()} does not have permission")
@@ -42,7 +44,7 @@ class DataReceiverService(
     val dataSet = eventDatasetRepository.findById(subscription.datasetId)
       ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known dataset")
 
-    val publisher = eventPublisherRepository.findById(subscription.publisherId)
+    val publisher = publisherRepository.findById(subscription.publisherId)
       ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known publisher")
 
     if (dataSet.storePayload && eventPayload.eventDetails == null) {
@@ -52,9 +54,9 @@ class DataReceiverService(
     val dataProcessorMessage = DataProcessorMessage(
       subscriptionId = subscription.id,
       datasetId = subscription.datasetId,
-      publisher = publisher.publisherName,
+      publisher = publisher.name,
       eventTypeId = eventPayload.eventType,
-      eventTime = eventPayload.eventTime ?: LocalDateTime.now(),
+      eventTime = eventPayload.eventTime ?: dateTimeHandler.now(),
       id = eventPayload.id,
       storePayload = dataSet.storePayload,
       details = if (dataSet.storePayload) { eventPayload.eventDetails } else null
@@ -63,7 +65,7 @@ class DataReceiverService(
     log.debug(
       "Notifying Data Processor of event type {} from {}",
       dataProcessorMessage.eventTypeId,
-      publisher.publisherName
+      publisher.name
     )
 
     dataReceiverSqsClient.sendMessage(

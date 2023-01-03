@@ -5,6 +5,10 @@ management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
 
+metrics:
+  cloudwatch:
+    namespace: "local-gdx"
+
 spring:
   devtools:
     add-properties: true

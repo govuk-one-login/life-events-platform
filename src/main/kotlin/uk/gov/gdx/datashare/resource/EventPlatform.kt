@@ -1,9 +1,12 @@
 package uk.gov.gdx.datashare.resource
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.flow.Flow
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType
@@ -18,14 +21,17 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @RestController
-@RequestMapping("/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/obsolete/events", produces = [ MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
 @Validated
+@Tag(name = "902. Event status")
 class EventPlatform(
-  private val eventPollService: EventPollService
+  private val eventPollService: EventPollService,
+  meterRegistry: MeterRegistry,
 ) {
+  private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
 
-  @GetMapping()
+  @GetMapping
   @Operation(
     summary = "Returns all events for this client since the last call",
     description = "Need scope of events/poll",
@@ -45,7 +51,10 @@ class EventPlatform(
     @Schema(description = "Events before this time, if not supplied it will be now", type = "date-time", required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @RequestParam(name = "toTime", required = false) toTime: LocalDateTime? = null
-  ): Flow<SubscribedEvent> = eventPollService.getEvents(eventTypes, fromTime, toTime)
+  ): Flow<SubscribedEvent> = run {
+    callsToPollCounter.increment()
+    eventPollService.getEvents(eventTypes, fromTime, toTime)
+  }
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

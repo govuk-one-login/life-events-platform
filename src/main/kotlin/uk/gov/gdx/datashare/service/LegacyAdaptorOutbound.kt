@@ -9,17 +9,18 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EventConsumerRepository
+import uk.gov.gdx.datashare.repository.ConsumerRepository
 import uk.gov.gdx.datashare.resource.EventInformation
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Service
 class LegacyAdaptorOutbound(
-  private val mapper: ObjectMapper,
+  private val objectMapper: ObjectMapper,
   private val eventDataRetrievalApiWebClient: WebClient,
   private val auditService: AuditService,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: EventConsumerRepository
+  private val consumerRepository: ConsumerRepository,
 ) {
 
   companion object {
@@ -28,11 +29,11 @@ class LegacyAdaptorOutbound(
 
   @JmsListener(destination = "adaptor", containerFactory = "hmppsQueueContainerFactoryProxy")
   fun onPublishedEvent(eventMessage: String) = runBlocking {
-    val (message, messageAttributes) = mapper.readValue(eventMessage, EventTopicMessage::class.java)
+    val (message, messageAttributes) = objectMapper.readValue(eventMessage, EventTopicMessage::class.java)
     val eventType = messageAttributes.eventType.Value
     log.info("Received message $message, type $eventType")
 
-    val event = mapper.readValue(message, EventMessage::class.java)
+    val event = objectMapper.readValue(message, EventMessage::class.java)
     when (eventType) {
       "DEATH_NOTIFICATION", "LIFE_EVENT" -> processLifeEvent(event)
       else -> {
@@ -43,6 +44,12 @@ class LegacyAdaptorOutbound(
 
   suspend fun processLifeEvent(event: EventMessage) {
     log.debug("processing {}", event)
+
+    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(event.id)
+    if (consumerSubscription?.isLegacy != true) {
+      log.debug("Event {} is not legacy", event.id)
+      return
+    }
 
     // Go and get data from Event Retrieval API
     val lifeEvent = getEventPayload(event.id)
@@ -56,21 +63,21 @@ class LegacyAdaptorOutbound(
 
         val consumer = consumerRepository.findById(client.consumerId) ?: throw RuntimeException("Consumer ${client.consumerId} not found")
 
-        log.debug("Send to ${consumer.consumerName} to ${client.pushUri} with [$details]")
+        log.debug("Send to ${consumer.name} to ${client.pushUri} with [$details]")
 
         // Put code to send data here
 
         auditService.sendMessage(
           auditType = AuditType.PUSH_EVENT,
-          id = event.id,
-          details = "Push Event to ${consumer.consumerName} : ${event.description}",
-          username = consumer.consumerName
+          id = event.id.toString(),
+          details = "Push Event to ${consumer.name} : ${event.description}",
+          username = consumer.name
         )
       }
     }
   }
 
-  suspend fun getEventPayload(id: String): EventInformation =
+  suspend fun getEventPayload(id: UUID): EventInformation =
     eventDataRetrievalApiWebClient.get()
       .uri("/event-data-retrieval/$id")
       .retrieve()
@@ -85,7 +92,7 @@ data class EventTopicMessage(
 )
 
 data class EventMessage(
-  val id: String,
-  val occurredAt: LocalDateTime,
+  val id: UUID,
+  val occurredAt: OffsetDateTime,
   val description: String
 )

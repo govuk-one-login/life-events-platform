@@ -11,7 +11,7 @@ import java.util.*
 data class IngressEventData(
   @Id
   @Column("id")
-  val eventId: UUID,
+  val eventId: UUID = UUID.randomUUID(),
   val eventTypeId: String,
   val datasetId: String,
   val subscriptionId: UUID,

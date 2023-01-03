@@ -97,7 +97,7 @@ jobs:
           task-definition: ${{ steps.update-task-def.outputs.task-definition }}
           service: ${{ steps.vars.outputs.ecs_service }}
           cluster: ${{ steps.vars.outputs.ecs_cluster }}
-          wait-for-service-stability: false
+          wait-for-service-stability: true
           codedeploy-appspec: .aws/appspec.json
           codedeploy-application: ${{ steps.vars.outputs.codedeploy_application }}
           codedeploy-deployment-group: ${{ steps.vars.outputs.codedeploy_deployment_group }}

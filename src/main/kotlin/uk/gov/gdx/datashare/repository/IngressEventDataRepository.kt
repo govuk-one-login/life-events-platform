@@ -14,7 +14,7 @@ interface IngressEventDataRepository : CoroutineCrudRepository<IngressEventData,
   @Query("SELECT ed.* FROM ingress_event_data ed where ed.event_type_id = :eventType and ed.when_created > :fromTime and ed.when_created <= :toTime order by when_created")
   fun findAllByEventType(eventType: String, fromTime: LocalDateTime, toTime: LocalDateTime): Flow<IngressEventData>
 
-  @Query("DELETE FROM ingress_event_data where data_expiry_time < :expiredTime")
+  @Query("DELETE FROM ingress_event_data WHERE id NOT IN (SELECT ingress_event_id FROM egress_event_data)")
   @Modifying
-  suspend fun deleteAllExpiredEvents(expiredTime: LocalDateTime)
+  suspend fun deleteAllOrphanedEvents()
 }

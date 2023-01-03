@@ -12,9 +12,9 @@ import java.util.*
 data class EgressEventData(
   @Id
   @Column("id")
-  val eventId: UUID,
-  @Schema(description = "Egress event type ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-  val typeId: UUID,
+  val eventId: UUID = UUID.randomUUID(),
+  @Schema(description = "Consumer subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val consumerSubscriptionId: UUID,
   @Schema(description = "Ingress event ID for event that created this egress event", required = true, example = "00000000-0000-0001-0000-000000000000")
   val ingressEventId: UUID,
   @Schema(description = "Dataset ID", required = true, example = "00000000-0000-0001-0000-000000000000")

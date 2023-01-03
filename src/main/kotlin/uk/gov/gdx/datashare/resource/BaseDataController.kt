@@ -4,13 +4,11 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import kotlinx.coroutines.flow.toList
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.repository.*
-import uk.gov.gdx.datashare.service.ConsumerSubRequest
 import java.util.*
 
 @RestController
@@ -40,7 +38,7 @@ class BaseDataController(
       )
     ]
   )
-  suspend fun getConsumers() = consumerRepository.findAll().toList()
+  suspend fun getConsumers() = consumerRepository.findAll()
 
   @DeleteMapping("/consumers/{id}")
   @Operation(
@@ -69,7 +67,7 @@ class BaseDataController(
       )
     ]
   )
-  suspend fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll().toList()
+  suspend fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
 
   @DeleteMapping("/consumerSubscriptions/{id}")
   @Operation(
@@ -98,7 +96,7 @@ class BaseDataController(
       )
     ]
   )
-  suspend fun getEgressEvents() = egressEventDataRepository.findAll().toList()
+  suspend fun getEgressEvents() = egressEventDataRepository.findAll()
   
   @DeleteMapping("/egressEvents/{id}")
   @Operation(
@@ -127,7 +125,7 @@ class BaseDataController(
       )
     ]
   )
-  suspend fun getEgressDatasets() = eventDatasetRepository.findAll().toList()
+  suspend fun getEgressDatasets() = eventDatasetRepository.findAll()
 
   @DeleteMapping("/eventDataset/{id}")
   @Operation(
@@ -156,7 +154,7 @@ class BaseDataController(
       )
     ]
   )
-  suspend fun getIngressEvents() = ingressEventDataRepository.findAll().toList()
+  suspend fun getIngressEvents() = ingressEventDataRepository.findAll()
 
   @DeleteMapping("/ingressEvent/{id}")
   @Operation(
@@ -185,7 +183,7 @@ class BaseDataController(
       )
     ]
   )
-  suspend fun getIngressEventTypes() = ingressEventTypeRepository.findAll().toList()
+  suspend fun getIngressEventTypes() = ingressEventTypeRepository.findAll()
 
   @DeleteMapping("/ingressType/{id}")
   @Operation(
@@ -214,7 +212,7 @@ class BaseDataController(
       )
     ]
   )
-  suspend fun getPublishers() = publisherRepository.findAll().toList()
+  suspend fun getPublishers() = publisherRepository.findAll()
 
   @DeleteMapping("/publishers/{id}")
   @Operation(
@@ -243,7 +241,7 @@ class BaseDataController(
       )
     ]
   )
-  suspend fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll().toList()
+  suspend fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll()
 
   @DeleteMapping("/publisherSubscriptions/{id}")
   @Operation(

@@ -20,7 +20,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Execute Gradle build
-        run: ./gradlew clean test
+        run: ./gradlew clean check
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3

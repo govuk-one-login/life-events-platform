@@ -71,7 +71,7 @@ dependencies {
   testImplementation("org.testcontainers:postgresql:1.17.6")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("io.mockk:mockk:1.13.2")
+  testImplementation("io.mockk:mockk:1.13.3")
 }
 
 java {

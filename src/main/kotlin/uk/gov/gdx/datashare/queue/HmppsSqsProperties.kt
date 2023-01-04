@@ -11,7 +11,6 @@ data class HmppsSqsProperties(
   val localstackUrl: String = "http://localhost:4566",
   val queues: Map<String, QueueConfig> = mapOf(),
   val topics: Map<String, TopicConfig> = mapOf(),
-  val reactiveApi: Boolean = false,
 ) {
   data class QueueConfig(
     val queueName: String,

@@ -1,5 +1,4 @@
 hmpps.sqs:
-  reactiveApi: true
   provider: localstack
   queues:
     dataprocessor:

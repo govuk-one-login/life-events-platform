@@ -1,8 +1,8 @@
 locals {
-  identifier = "events"
+  identifier    = "events"
   scope_publish = "publish"
   scope_consume = "consume"
-  scope_admin = "admin"
+  scope_admin   = "admin"
 }
 
 resource "aws_cognito_user_pool" "pool" {

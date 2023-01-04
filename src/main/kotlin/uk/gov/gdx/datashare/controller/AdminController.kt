@@ -38,7 +38,7 @@ class AdminController(
   @GetMapping("/events/ingress")
   @Operation(
     summary = "Get Ingress Events",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

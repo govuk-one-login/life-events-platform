@@ -38,11 +38,11 @@ class EventsController(
   private val getEventsStatusCounter: Counter = meterRegistry.counter("API_CALLS.GetEventsStatus")
   private val deleteEventCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent")
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_admin/consume')")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping("/status")
   @Operation(
     summary = "Event Get API - Get event status",
-    description = "Get count of all events for consumer, Need scope of admin/consume",
+    description = "Get count of all events for consumer, Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -65,11 +65,11 @@ class EventsController(
     eventDataService.getEventsStatus(startTime, endTime).toList()
   }
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_admin/consume')")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping
   @Operation(
     summary = "Event Get API - Get event data",
-    description = "Get all events for consumer, Need scope of admin/consume",
+    description = "Get all events for consumer, Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -103,11 +103,11 @@ class EventsController(
     eventDataService.getEvents(eventTypes, startTime, endTime).toList()
   }
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_admin/publish')")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/publish')")
   @PostMapping
   @Operation(
     summary = "Send ingress events to GDS - The 'Source' of the event - this could be HMPO or DWP for example",
-    description = "Scope is admin/publish",
+    description = "Scope is events/publish",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -127,11 +127,11 @@ class EventsController(
     publishEventCounter.increment()
   }
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_admin/consume')")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping("/{id}")
   @Operation(
     summary = "Get Specific Event API - Get event data",
-    description = "The event ID is the UUID received off the queue, Need scope of admin/consume",
+    description = "The event ID is the UUID received off the queue, Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -147,11 +147,11 @@ class EventsController(
     eventDataService.getEvent(id)
   }
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_admin/consume')")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @DeleteMapping("/{id}")
   @Operation(
     summary = "Event Delete API - Delete event data",
-    description = "The event ID is the UUID received off the queue, Need scope of admin/consume",
+    description = "The event ID is the UUID received off the queue, Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "204",

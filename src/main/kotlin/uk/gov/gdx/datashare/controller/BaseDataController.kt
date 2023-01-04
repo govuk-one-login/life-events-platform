@@ -13,7 +13,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/data", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_admin/admin')")
+@PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
 @Tag(name = "10. Data")
 class BaseDataController(
@@ -29,7 +29,7 @@ class BaseDataController(
   @GetMapping("/consumers")
   @Operation(
     summary = "Get Consumers",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -42,7 +42,7 @@ class BaseDataController(
   @DeleteMapping("/consumers/{id}")
   @Operation(
     summary = "Delete Consumer",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -58,7 +58,7 @@ class BaseDataController(
   @GetMapping("/consumerSubscriptions")
   @Operation(
     summary = "Get Consumer Subscriptions",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -71,7 +71,7 @@ class BaseDataController(
   @DeleteMapping("/consumerSubscriptions/{id}")
   @Operation(
     summary = "Delete Consumer Subscription",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -87,7 +87,7 @@ class BaseDataController(
   @GetMapping("/egressEvents")
   @Operation(
     summary = "Get Egress Events",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -100,7 +100,7 @@ class BaseDataController(
   @DeleteMapping("/egressEvents/{id}")
   @Operation(
     summary = "Delete Egress Event",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -116,7 +116,7 @@ class BaseDataController(
   @GetMapping("/eventDataset")
   @Operation(
     summary = "Get Egress Datasets",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -129,7 +129,7 @@ class BaseDataController(
   @DeleteMapping("/eventDataset/{id}")
   @Operation(
     summary = "Delete Egress Event",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -145,7 +145,7 @@ class BaseDataController(
   @GetMapping("/ingressEvent")
   @Operation(
     summary = "Get Ingress Events",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -158,7 +158,7 @@ class BaseDataController(
   @DeleteMapping("/ingressEvent/{id}")
   @Operation(
     summary = "Delete Ingress Event",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -174,7 +174,7 @@ class BaseDataController(
   @GetMapping("/ingressType")
   @Operation(
     summary = "Get Ingress Event Types",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -187,7 +187,7 @@ class BaseDataController(
   @DeleteMapping("/ingressType/{id}")
   @Operation(
     summary = "Delete Ingress Type",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -203,7 +203,7 @@ class BaseDataController(
   @GetMapping("/publishers")
   @Operation(
     summary = "Get Publishers",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -216,7 +216,7 @@ class BaseDataController(
   @DeleteMapping("/publishers/{id}")
   @Operation(
     summary = "Delete Publisher",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -232,7 +232,7 @@ class BaseDataController(
   @GetMapping("/publisherSubscriptions")
   @Operation(
     summary = "Get Publisher Subscriptions",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -245,7 +245,7 @@ class BaseDataController(
   @DeleteMapping("/publisherSubscriptions/{id}")
   @Operation(
     summary = "Delete Publisher Subscription",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -262,7 +262,7 @@ class BaseDataController(
   @PostMapping("/ingressType")
   @Operation(
     summary = "Add ingress type",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -282,7 +282,7 @@ class BaseDataController(
   @PostMapping("/eventDataset")
   @Operation(
     summary = "Add Event dataset",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

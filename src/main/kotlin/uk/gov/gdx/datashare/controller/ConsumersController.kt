@@ -21,7 +21,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/consumers", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_admin/admin')")
+@PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
 @Tag(name = "02. Consumers")
 class ConsumersController(
@@ -30,7 +30,7 @@ class ConsumersController(
   @GetMapping
   @Operation(
     summary = "Get Consumers",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -43,7 +43,7 @@ class ConsumersController(
   @PostMapping
   @Operation(
     summary = "Add Consumer",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -63,7 +63,7 @@ class ConsumersController(
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Consumer Subscriptions",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -76,7 +76,7 @@ class ConsumersController(
   @GetMapping("/{consumerId}/subscriptions")
   @Operation(
     summary = "Get Consumer Subscriptions for Consumer",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -92,7 +92,7 @@ class ConsumersController(
   @PostMapping("/{consumerId}/subscriptions")
   @Operation(
     summary = "Add Consumer Subscription",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -114,7 +114,7 @@ class ConsumersController(
   @PutMapping("/{consumerId}/subscriptions/{subscriptionId}")
   @Operation(
     summary = "Update Consumer",
-    description = "Need scope of admin/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

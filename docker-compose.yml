@@ -26,8 +26,6 @@ services:
       - SPRING_R2DBC_URL=r2dbc:postgresql://datashare-db:5432/datashare?sslmode=prefer
       - API_BASE_S3_INGRESS=dev-ingress-gdx-data-share-poc
       - API_BASE_S3_INGRESS_ARCHIVE=dev-ingress-archive-gdx-data-share-poc
-    env_file:
-      - .env-aws
 
   localstack:
     image: localstack/localstack:1.3.1

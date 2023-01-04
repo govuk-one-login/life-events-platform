@@ -36,13 +36,18 @@ class DeathNotificationService(
   ) {
     val consumerSubscriptions = consumerSubscriptionRepository.findAllByIngressEventType(eventData.eventTypeId)
 
+    val fullyEnrichedData = getAllEnrichedData(
+      dataProcessorMessage.datasetId,
+      details.id,
+      details.data as String?
+    )
+    log.debug("Data enriched with details $fullyEnrichedData")
+
     val egressEventData = consumerSubscriptions.map {
       val dataPayload =
-        enrichData(
+        enrichEventPayload(
           it.enrichmentFields.split(",").toList(),
-          dataProcessorMessage.datasetId,
-          details.id,
-          details.data as String?
+          fullyEnrichedData
         )
 
       EgressEventData(
@@ -63,17 +68,13 @@ class DeathNotificationService(
     }
   }
 
-  private suspend fun enrichData(
+  private suspend fun enrichEventPayload(
     enrichmentFields: List<String>,
-    datasetId: String,
-    dataId: String,
-    dataPayload: String?
+    fullyEnrichedData: DeathNotificationDetails?
   ): DeathNotificationDetails? {
-    val allEnrichedData = getAllEnrichedData(datasetId, dataId, dataPayload)
-    log.debug("Data enriched with details $allEnrichedData")
     return EnrichmentService.getDataWithOnlyFields(
       objectMapper,
-      allEnrichedData,
+      fullyEnrichedData,
       enrichmentFields
     )
   }

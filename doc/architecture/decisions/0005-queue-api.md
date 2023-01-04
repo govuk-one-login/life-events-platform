@@ -1,6 +1,6 @@
 # 5. Queue API
 
-[Next >>](9999-end.md)
+[Next >>](0006-scopes-and-auth.md)
 
 
 Date: 2023-01-03
@@ -142,4 +142,4 @@ Authorization: Bearer {...}
 
 ## Decision
 
-[Next >>](9999-end.md)
+[Next >>](0006-scopes-and-auth.md)

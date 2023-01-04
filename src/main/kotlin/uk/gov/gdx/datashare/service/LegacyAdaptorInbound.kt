@@ -36,6 +36,7 @@ class LegacyAdaptorInbound(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   @SchedulerLock(name = "pollS3Bucket", lockAtMostFor = "50s", lockAtLeastFor = "50s")
   fun pollS3Bucket() {
     try {

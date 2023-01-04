@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.resource
+package uk.gov.gdx.datashare.controller
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.micrometer.core.instrument.Counter
@@ -21,7 +21,7 @@ import java.util.*
 @RequestMapping("/event-data-retrieval", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
-@Tag(name = "901. Event data retrieval")
+@Tag(name = "91. Event data retrieval")
 class EventRehydrate(
   private val eventDataRetrievalService: EventDataRetrievalService,
   meterRegistry: MeterRegistry

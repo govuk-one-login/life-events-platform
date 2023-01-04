@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.resource
+package uk.gov.gdx.datashare.controller
 
 import io.mockk.coEvery
 import io.mockk.mockk

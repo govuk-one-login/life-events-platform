@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.resource
+package uk.gov.gdx.datashare.controller
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
@@ -112,6 +112,26 @@ class EventsControllerTest {
 
       verify(exactly = 1) { ingestedEventsCounter.increment() }
       coVerify(exactly = 1) { dataReceiverService.sendToDataProcessor(event) }
+    }
+  }
+
+  @Test
+  fun `getEvent gets event`() {
+    runBlocking {
+      val event = EventNotification(
+        eventId = UUID.randomUUID(),
+        eventType = "DEATH_NOTIFICATION",
+        sourceId = UUID.randomUUID().toString(),
+        eventData = DeathNotificationDetails(
+          firstName = "Bob"
+        )
+      )
+
+      coEvery { eventDataService.getEvent(event.eventId) }.returns(event)
+
+      val eventOutput = underTest.getEvent(event.eventId)
+
+      assertThat(eventOutput).isEqualTo(event)
     }
   }
 

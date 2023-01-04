@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.repository.ConsumerRepository
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.resource.EventInformation
+import uk.gov.gdx.datashare.controller.EventInformation
 import java.time.OffsetDateTime
 import java.util.UUID
 

@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.resource
+package uk.gov.gdx.datashare.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -18,7 +18,7 @@ import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 // TODO-https://trello.com/c/VgQeakpA: Add admin control
 @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
 @Validated
-@Tag(name = "1. Admin")
+@Tag(name = "01. Admin")
 class AdminController(
   private val egressEventDataRepository: EgressEventDataRepository,
   private val ingressEventDataRepository: IngressEventDataRepository

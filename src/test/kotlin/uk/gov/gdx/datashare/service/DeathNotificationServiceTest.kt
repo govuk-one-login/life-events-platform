@@ -9,14 +9,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.gdx.datashare.config.JacksonConfiguration
-import uk.gov.gdx.datashare.repository.ConsumerSubscription
-import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EgressEventData
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.IngressEventData
+import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class DeathNotificationServiceTest {
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()

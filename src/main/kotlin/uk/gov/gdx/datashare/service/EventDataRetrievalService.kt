@@ -8,10 +8,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
-import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.controller.EventInformation
+import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 @Service
 class EventDataRetrievalService(

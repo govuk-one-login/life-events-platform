@@ -11,13 +11,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import uk.gov.gdx.datashare.service.DataReceiverService
-import uk.gov.gdx.datashare.service.DeathNotificationDetails
-import uk.gov.gdx.datashare.service.EventDataService
-import uk.gov.gdx.datashare.service.EventNotification
-import uk.gov.gdx.datashare.service.EventStatus
+import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import java.util.stream.Stream
 
 class EventsControllerTest {

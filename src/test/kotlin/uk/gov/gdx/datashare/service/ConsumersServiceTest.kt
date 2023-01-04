@@ -13,7 +13,7 @@ import uk.gov.gdx.datashare.repository.Consumer
 import uk.gov.gdx.datashare.repository.ConsumerRepository
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import java.util.UUID
+import java.util.*
 
 class ConsumersServiceTest {
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()

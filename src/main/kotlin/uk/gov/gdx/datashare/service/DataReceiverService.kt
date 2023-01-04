@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
-import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.controller.EventToPublish
+import uk.gov.gdx.datashare.repository.*
 import uk.gov.justice.hmpps.sqs.HmppsQueue
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import java.time.LocalDateTime

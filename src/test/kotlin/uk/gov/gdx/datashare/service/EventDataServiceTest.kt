@@ -13,13 +13,9 @@ import org.junit.jupiter.api.assertThrows
 import org.webjars.NotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
-import uk.gov.gdx.datashare.repository.ConsumerSubscription
-import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EgressEventData
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.IngressEventDataRepository
+import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class EventDataServiceTest {
   private val authenticationFacade = mockk<AuthenticationFacade>()

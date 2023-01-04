@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.service.EventPollService
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/obsolete/events", produces = [MediaType.APPLICATION_JSON_VALUE])

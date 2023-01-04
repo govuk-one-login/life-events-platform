@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Component
-import java.util.Arrays
+import java.util.*
 import java.util.stream.Collectors
 
 @Component

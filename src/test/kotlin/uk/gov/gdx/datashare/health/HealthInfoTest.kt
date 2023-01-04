@@ -3,7 +3,7 @@ package uk.gov.gdx.datashare.health
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.info.BuildProperties
-import java.util.Properties
+import java.util.*
 
 class HealthInfoTest {
   @Test

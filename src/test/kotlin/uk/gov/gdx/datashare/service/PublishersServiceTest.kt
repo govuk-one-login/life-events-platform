@@ -13,7 +13,7 @@ import uk.gov.gdx.datashare.repository.Publisher
 import uk.gov.gdx.datashare.repository.PublisherRepository
 import uk.gov.gdx.datashare.repository.PublisherSubscription
 import uk.gov.gdx.datashare.repository.PublisherSubscriptionRepository
-import java.util.UUID
+import java.util.*
 
 class PublishersServiceTest {
   private val publisherSubscriptionRepository = mockk<PublisherSubscriptionRepository>()

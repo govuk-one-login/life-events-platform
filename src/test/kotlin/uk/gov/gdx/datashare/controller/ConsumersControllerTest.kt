@@ -12,7 +12,7 @@ import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.service.ConsumerRequest
 import uk.gov.gdx.datashare.service.ConsumerSubRequest
 import uk.gov.gdx.datashare.service.ConsumersService
-import java.util.UUID
+import java.util.*
 
 class ConsumersControllerTest {
   private val consumersService = mockk<ConsumersService>()

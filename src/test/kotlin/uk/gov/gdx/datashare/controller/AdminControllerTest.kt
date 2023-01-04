@@ -12,7 +12,7 @@ import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventData
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class AdminControllerTest {
   private val egressEventDataRepository = mockk<EgressEventDataRepository>()

@@ -139,12 +139,12 @@ class EventDataServiceTest {
       val eventOutput = underTest.getEvent(event.id)
 
       assertThat(eventOutput).isEqualTo(
-          EventNotification(
-            eventId = event.id,
-            eventType = "DEATH_NOTIFICATION",
-            sourceId = event.dataId,
-            eventData = deathNotificationDetails,
-          )
+        EventNotification(
+          eventId = event.id,
+          eventType = "DEATH_NOTIFICATION",
+          sourceId = event.dataId,
+          eventData = deathNotificationDetails,
+        )
       )
     }
   }

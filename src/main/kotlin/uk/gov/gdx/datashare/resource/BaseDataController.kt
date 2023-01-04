@@ -13,7 +13,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/data", produces = [MediaType.APPLICATION_JSON_VALUE])
-//TODO-https://trello.com/c/VgQeakpA: Add admin control
+// TODO-https://trello.com/c/VgQeakpA: Add admin control
 @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
 @Validated
 @Tag(name = "10. Data")
@@ -55,7 +55,7 @@ class BaseDataController(
     @Schema(description = "Consumer ID", required = true)
     @PathVariable id: UUID,
   ) = consumerRepository.deleteById(id)
-  
+
   @GetMapping("/consumerSubscriptions")
   @Operation(
     summary = "Get Consumer Subscriptions",
@@ -84,7 +84,7 @@ class BaseDataController(
     @Schema(description = "Consumer Subscription ID", required = true)
     @PathVariable id: UUID,
   ) = consumerSubscriptionRepository.deleteById(id)
-  
+
   @GetMapping("/egressEvents")
   @Operation(
     summary = "Get Egress Events",
@@ -97,7 +97,7 @@ class BaseDataController(
     ]
   )
   suspend fun getEgressEvents() = egressEventDataRepository.findAll()
-  
+
   @DeleteMapping("/egressEvents/{id}")
   @Operation(
     summary = "Delete Egress Event",
@@ -111,7 +111,7 @@ class BaseDataController(
   )
   suspend fun deleteEgressEvent(
     @Schema(description = "Event ID", required = true)
-  @PathVariable id: UUID,
+    @PathVariable id: UUID,
   ) = egressEventDataRepository.deleteById(id)
 
   @GetMapping("/eventDataset")
@@ -259,7 +259,7 @@ class BaseDataController(
     @PathVariable id: UUID,
   ) = publisherSubscriptionRepository.deleteById(id)
 
-  //The below endpoints don't exist through any other means, so have added them here
+  // The below endpoints don't exist through any other means, so have added them here
   @PostMapping("/ingressType")
   @Operation(
     summary = "Add ingress type",

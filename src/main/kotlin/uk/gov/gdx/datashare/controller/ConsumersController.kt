@@ -21,16 +21,16 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/consumers", produces = [MediaType.APPLICATION_JSON_VALUE])
+@PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
 @Tag(name = "02. Consumers")
 class ConsumersController(
   private val consumersService: ConsumersService
 ) {
-  @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
   @GetMapping
   @Operation(
     summary = "Get Consumers",
-    description = "Need scope of pubsub/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -40,11 +40,10 @@ class ConsumersController(
   )
   suspend fun getConsumers() = consumersService.getConsumers()
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
   @PostMapping
   @Operation(
     summary = "Add Consumer",
-    description = "Need scope of pubsub/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -61,11 +60,10 @@ class ConsumersController(
     @RequestBody consumerRequest: ConsumerRequest,
   ) = consumersService.addConsumer(consumerRequest)
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Consumer Subscriptions",
-    description = "Need scope of subscriptions/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -75,11 +73,10 @@ class ConsumersController(
   )
   suspend fun getConsumerSubscriptions() = consumersService.getConsumerSubscriptions()
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_subscriptions/maintain')")
   @GetMapping("/{consumerId}/subscriptions")
   @Operation(
     summary = "Get Consumer Subscriptions for Consumer",
-    description = "Need scope of subscriptions/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -92,11 +89,10 @@ class ConsumersController(
     @PathVariable consumerId: UUID
   ) = consumersService.getSubscriptionsForConsumer(consumerId)
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_subscriptions/maintain')")
   @PostMapping("/{consumerId}/subscriptions")
   @Operation(
     summary = "Add Consumer Subscription",
-    description = "Need scope of pubsub/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -115,11 +111,10 @@ class ConsumersController(
     @RequestBody consumerSubRequest: ConsumerSubRequest,
   ) = consumersService.addConsumerSubscription(consumerId, consumerSubRequest)
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_subscriptions/maintain')")
   @PutMapping("/{consumerId}/subscriptions/{subscriptionId}")
   @Operation(
     summary = "Update Consumer",
-    description = "Need scope of subscriptions/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

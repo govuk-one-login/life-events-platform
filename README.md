@@ -115,12 +115,12 @@ This will return a token:
 }
 ```
 
-This access token has the required scope of `data_receiver/notify` to access the endpoint :
+This access token has the required scope of `events/publish` to access the endpoint :
 ```json
 {
   "sub": "len",
   "nbf": 1669826698,
-  "scope": "data_receiver/notify",
+  "scope": "events/publish",
   "iss": "http://oauth2:8080/issuer1",
   "exp": 1669826998,
   "iat": 1669826698,
@@ -161,12 +161,12 @@ curl --location --request POST 'http://localhost:9090/issuer1/token' \
 --data-urlencode 'scope=dwp'
 ```
 
-The returning token contains the correct scope of `events/poll`
+The returning token contains the correct scope of `events/consumer`
 ```json
 {
   "sub": "dwp-event-receiver",
   "nbf": 1669826596,
-  "scope": "data_retriever/read events/poll",
+  "scope": "events/consume",
   "iss": "http://oauth2:8080/issuer1",
   "exp": 1669826896,
   "iat": 1669826596,
@@ -231,7 +231,7 @@ curl --location --request POST 'http://localhost:9090/issuer1/token' \
 --data-urlencode 'scope=dwp'
 ```
 
-Scope needed is `data_retriever/read` which this token provides
+Scope needed is `events/consume` which this token provides
 
 then call with token and the event ID
 ```shell
@@ -272,7 +272,7 @@ curl --location --request POST 'http://localhost:9090/issuer1/token' \
 --data-urlencode 'scope=hmrc'
 ```
 
-Scope needed is `data_retriever/read` which this `hmrc-client` token provides
+Scope needed is `events/consume` which this `hmrc-client` token provides
 
 then call with token and the event ID
 ```shell

@@ -22,8 +22,10 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew clean test
 
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v3
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
         if: always()
         with:
-          report_paths: "**/build/test-results/test/TEST-*.xml"
+          name: junit-test-results
+          path: '**/build/test-results/test/TEST-*.xml'
+          retention-days: 1

@@ -33,8 +33,11 @@ class EventsController(
   private val dataReceiverService: DataReceiverService,
   meterRegistry: MeterRegistry,
 ) {
-  private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
-  private val ingestedEventsCounter: Counter = meterRegistry.counter("API_CALLS.IngestedEvents")
+  private val publishEventCounter: Counter = meterRegistry.counter("API_CALLS.PublishEvent")
+  private val getEventCounter: Counter = meterRegistry.counter("API_CALLS.GetEvent")
+  private val getEventsCounter: Counter = meterRegistry.counter("API_CALLS.GetEvents")
+  private val getEventsStatusCounter: Counter = meterRegistry.counter("API_CALLS.GetEventsStatus")
+  private val deleteEventCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent")
 
   @GetMapping("/status")
   @Operation(
@@ -57,7 +60,10 @@ class EventsController(
     )
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
-  ): List<EventStatus> = eventDataService.getEventsStatus(startTime, endTime).toList()
+  ): List<EventStatus> = run {
+    getEventsStatusCounter.increment()
+    eventDataService.getEventsStatus(startTime, endTime).toList()
+  }
 
   @GetMapping
   @Operation(
@@ -92,7 +98,7 @@ class EventsController(
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventNotification> = run {
-    callsToPollCounter.increment()
+    getEventsCounter.increment()
     eventDataService.getEvents(eventTypes, startTime, endTime).toList()
   }
 
@@ -117,7 +123,7 @@ class EventsController(
     @RequestBody eventPayload: EventToPublish,
   ) = run {
     dataReceiverService.sendToDataProcessor(eventPayload)
-    ingestedEventsCounter.increment()
+    publishEventCounter.increment()
   }
 
   @GetMapping("/{id}")
@@ -134,7 +140,10 @@ class EventsController(
   suspend fun getEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable id: UUID,
-  ) = eventDataService.getEvent(id)
+  ) = run {
+    getEventCounter.increment()
+    eventDataService.getEvent(id)
+  }
 
   @DeleteMapping("/{id}")
   @Operation(
@@ -151,6 +160,7 @@ class EventsController(
     @Schema(description = "Event ID", required = true)
     @PathVariable id: UUID,
   ): ResponseEntity<Void> {
+    deleteEventCounter.increment()
     eventDataService.deleteEvent(id)
     return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
   }

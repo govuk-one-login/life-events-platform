@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.AmazonS3Exception
 import com.amazonaws.services.s3.model.DeleteObjectRequest
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import net.javacrumbs.shedlock.core.LockAssert
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.apache.commons.csv.CSVFormat
@@ -37,7 +36,6 @@ class LegacyAdaptorInbound(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   @SchedulerLock(name = "pollS3Bucket", lockAtMostFor = "50s", lockAtLeastFor = "50s")
   fun pollS3Bucket() {
     try {

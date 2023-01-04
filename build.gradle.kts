@@ -52,9 +52,7 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("org.mockftpserver:MockFtpServer:3.1.0")
-
-  implementation("com.amazonaws:aws-java-sdk-s3:1.12.364")
+  implementation("com.amazonaws:aws-java-sdk-s3:1.12.376")
 
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")

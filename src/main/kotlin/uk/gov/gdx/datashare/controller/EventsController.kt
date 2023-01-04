@@ -25,7 +25,6 @@ import java.util.*
 
 @RestController
 @RequestMapping("/events", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_data_retriever/read')")
 @Validated
 @Tag(name = "04. Events")
 class EventsController(
@@ -33,13 +32,17 @@ class EventsController(
   private val dataReceiverService: DataReceiverService,
   meterRegistry: MeterRegistry,
 ) {
-  private val callsToPollCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPoll")
-  private val ingestedEventsCounter: Counter = meterRegistry.counter("API_CALLS.IngestedEvents")
+  private val publishEventCounter: Counter = meterRegistry.counter("API_CALLS.PublishEvent")
+  private val getEventCounter: Counter = meterRegistry.counter("API_CALLS.GetEvent")
+  private val getEventsCounter: Counter = meterRegistry.counter("API_CALLS.GetEvents")
+  private val getEventsStatusCounter: Counter = meterRegistry.counter("API_CALLS.GetEventsStatus")
+  private val deleteEventCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent")
 
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping("/status")
   @Operation(
     summary = "Event Get API - Get event status",
-    description = "Get count of all events for consumer, Need scope of data_retriever/read",
+    description = "Get count of all events for consumer, Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -57,12 +60,16 @@ class EventsController(
     )
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
-  ): List<EventStatus> = eventDataService.getEventsStatus(startTime, endTime).toList()
+  ): List<EventStatus> = run {
+    getEventsStatusCounter.increment()
+    eventDataService.getEventsStatus(startTime, endTime).toList()
+  }
 
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping
   @Operation(
     summary = "Event Get API - Get event data",
-    description = "Get all events for consumer, Need scope of data_retriever/read",
+    description = "Get all events for consumer, Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -92,15 +99,15 @@ class EventsController(
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventNotification> = run {
-    callsToPollCounter.increment()
+    getEventsCounter.increment()
     eventDataService.getEvents(eventTypes, startTime, endTime).toList()
   }
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_data_receiver/notify')")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/publish')")
   @PostMapping
   @Operation(
     summary = "Send ingress events to GDS - The 'Source' of the event - this could be HMPO or DWP for example",
-    description = "Scope is data_receiver/notify",
+    description = "Scope is events/publish",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -117,13 +124,14 @@ class EventsController(
     @RequestBody eventPayload: EventToPublish,
   ) = run {
     dataReceiverService.sendToDataProcessor(eventPayload)
-    ingestedEventsCounter.increment()
+    publishEventCounter.increment()
   }
 
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping("/{id}")
   @Operation(
     summary = "Get Specific Event API - Get event data",
-    description = "The event ID is the UUID received off the queue, Need scope of data_retriever/read",
+    description = "The event ID is the UUID received off the queue, Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -134,12 +142,16 @@ class EventsController(
   suspend fun getEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable id: UUID,
-  ) = eventDataService.getEvent(id)
+  ) = run {
+    getEventCounter.increment()
+    eventDataService.getEvent(id)
+  }
 
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @DeleteMapping("/{id}")
   @Operation(
     summary = "Event Delete API - Delete event data",
-    description = "The event ID is the UUID received off the queue, Need scope of data_retriever/read",
+    description = "The event ID is the UUID received off the queue, Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "204",
@@ -151,6 +163,7 @@ class EventsController(
     @Schema(description = "Event ID", required = true)
     @PathVariable id: UUID,
   ): ResponseEntity<Void> {
+    deleteEventCounter.increment()
     eventDataService.deleteEvent(id)
     return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
   }

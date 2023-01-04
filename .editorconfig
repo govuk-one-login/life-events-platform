@@ -1,0 +1,31 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.kt]
+indent_size = 2
+ij_java_class_count_to_use_import_on_demand = 99
+ij_java_names_count_to_use_import_on_demand = 99
+ij_java_use_single_class_imports = true
+ij_java_insert_inner_class_imports = true
+
+[*.kts]
+indent_size = 2
+
+[*.java]
+ij_java_class_count_to_use_import_on_demand = 99
+ij_java_names_count_to_use_import_on_demand = 99
+ij_java_use_single_class_imports = true
+ij_java_insert_inner_class_imports = true
+indent_size = 4
+
+[*.html]
+indent_size = 2
+
+[*.tf]
+indent_size = 2

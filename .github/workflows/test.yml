@@ -24,7 +24,7 @@ jobs:
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v3
-        if: always() # always run even if the previous step fails
+        if: always()
         with:
           name: junit-test-results
           path: '**/build/test-results/test/TEST-*.xml'

@@ -15,7 +15,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/publishers", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_data/admin')")
+@PreAuthorize("hasAnyAuthority('SCOPE_admin/admin')")
 @Validated
 @Tag(name = "03. Publishers")
 class PublishersController(
@@ -24,7 +24,7 @@ class PublishersController(
   @GetMapping
   @Operation(
     summary = "Get Publishers",
-    description = "Need scope of data/admin",
+    description = "Need scope of admin/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -37,7 +37,7 @@ class PublishersController(
   @PostMapping
   @Operation(
     summary = "Add Publisher",
-    description = "Need scope of data/admin",
+    description = "Need scope of admin/admin",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -57,7 +57,7 @@ class PublishersController(
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Publisher Subscriptions",
-    description = "Need scope of data/admin",
+    description = "Need scope of admin/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -70,7 +70,7 @@ class PublishersController(
   @GetMapping("/{publisherId}/subscriptions")
   @Operation(
     summary = "Get Publisher Subscriptions for Publisher",
-    description = "Need scope of data/admin",
+    description = "Need scope of admin/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -86,7 +86,7 @@ class PublishersController(
   @PostMapping("/{publisherId}/subscriptions")
   @Operation(
     summary = "Add Publisher Subscription",
-    description = "Need scope of data/admin",
+    description = "Need scope of admin/admin",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -108,7 +108,7 @@ class PublishersController(
   @PutMapping("/{publisherId}/subscriptions/{subscriptionId}")
   @Operation(
     summary = "Update Publisher",
-    description = "Need scope of data/admin",
+    description = "Need scope of admin/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

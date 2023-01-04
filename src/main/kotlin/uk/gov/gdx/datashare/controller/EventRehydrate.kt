@@ -19,7 +19,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/event-data-retrieval", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_data/consume')")
+@PreAuthorize("hasAnyAuthority('SCOPE_admin/consume')")
 @Validated
 @Tag(name = "91. Event data retrieval")
 class EventRehydrate(
@@ -31,7 +31,7 @@ class EventRehydrate(
   @GetMapping("/{id}")
   @Operation(
     summary = "Event Rehydrate API - Lookup event data",
-    description = "The event ID is the UUID received off the queue, Need scope of data/consume",
+    description = "The event ID is the UUID received off the queue, Need scope of admin/consume",
     responses = [
       ApiResponse(
         responseCode = "200",

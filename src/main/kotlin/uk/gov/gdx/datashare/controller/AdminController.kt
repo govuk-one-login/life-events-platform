@@ -15,7 +15,7 @@ import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 
 @RestController
 @RequestMapping("/admin", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_data/admin')")
+@PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
 @Tag(name = "01. Admin")
 class AdminController(
@@ -25,7 +25,7 @@ class AdminController(
   @GetMapping("/events/egress")
   @Operation(
     summary = "Get Egress Events",
-    description = "Need scope of data/admin",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -38,7 +38,7 @@ class AdminController(
   @GetMapping("/events/ingress")
   @Operation(
     summary = "Get Ingress Events",
-    description = "Need scope of data/admin",
+    description = "Need scope of admin/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

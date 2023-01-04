@@ -10,15 +10,21 @@ Draft
 
 ## Context
 
-There are several routes we have explored for the moment in regard to Authentication and Authorisation.
+At the moment we have authentication and authorisation with Cognito, using 5 scopes, as well as authorisation using our
+internal database to narrow things down. These are relatively confused scopes, and the authentication and authorisation 
+of Cognito is currently relatively tricky to understand and manage, as a result there are some changes we would like to
+make now and later in the future.
+
+There are several routes we have explored in regard to Authentication and Authorisation.
 
 1. Have all auth exist in Cognito and authorise with scopes
 2. Have all auth exist locally
-3. Have authentication exist in Cognito, with very basic scopes, and then use our own database to narrow down
-   subscription privileges
+3. Have authentication exist in Cognito, with very basic scopes (trim the current number down to 3), and then use our
+   own database to narrow down subscription privileges
 
-Option 3 is what is being suggested for the moment, as this means we can use Cognito to provide all the hard parts of
-auth, but use our database for enrichment and subscription privileges as this is easier to work with at high speed.
+Option 3 is what is being suggested for the immediate moment, as this means we can use Cognito to provide all the hard 
+parts of auth, but use our database for enrichment and subscription privileges as this is easier to work with at high 
+speed, as well as being only a small change and some tidying to our current solution.
 
 ## Current plan
 

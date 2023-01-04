@@ -1,6 +1,8 @@
 package uk.gov.gdx.datashare.service
 
 import kotlinx.coroutines.runBlocking
+import net.javacrumbs.shedlock.core.LockAssert
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -21,8 +23,10 @@ class EventCleanup(
   }
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+  @SchedulerLock(name = "removeExpireEvents", lockAtMostFor = "3m", lockAtLeastFor = "3m")
   fun removeExpiredEvents() {
     runBlocking {
+      LockAssert.assertLocked()
       val expiredTime = dateTimeHandler.now()
       log.debug("Looking for events older than {}", expiredTime)
       egressEventDataRepository.deleteAllExpiredEvents(expiredTime)

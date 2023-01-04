@@ -7,17 +7,15 @@ resource "aws_cognito_user_pool_domain" "domain" {
   user_pool_id = aws_cognito_user_pool.pool.id
 }
 
-resource "aws_cognito_user_pool_client" "management_client" {
-  name                                 = "${var.environment}-management-client"
+resource "aws_cognito_user_pool_client" "admin" {
+  name                                 = "${var.environment}-admin"
   user_pool_id                         = aws_cognito_user_pool.pool.id
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["implicit"]
   allowed_oauth_scopes = concat(
-    aws_cognito_resource_server.data_receiver.scope_identifiers,
-    aws_cognito_resource_server.data_retriever.scope_identifiers,
-    aws_cognito_resource_server.subscriptions.scope_identifiers,
-    aws_cognito_resource_server.pubsub.scope_identifiers,
-    aws_cognito_resource_server.events.scope_identifiers
+    aws_cognito_resource_server.events_consume.scope_identifiers,
+    aws_cognito_resource_server.events_publish.scope_identifiers,
+    aws_cognito_resource_server.admin.scope_identifiers,
   )
   generate_secret              = true
   explicit_auth_flows          = ["ADMIN_NO_SRP_AUTH"]
@@ -25,20 +23,35 @@ resource "aws_cognito_user_pool_client" "management_client" {
   supported_identity_providers = ["COGNITO"]
 }
 
-resource "aws_cognito_user_pool_client" "dept_publisher" {
-  name                 = "${var.environment}-dept-publisher"
-  user_pool_id         = aws_cognito_user_pool.pool.id
-  allowed_oauth_flows  = ["client_credentials"]
-  allowed_oauth_scopes = aws_cognito_resource_server.data_receiver.scope_identifiers
-  generate_secret      = true
+resource "aws_cognito_user_pool_client" "events_consume" {
+  name                                 = "${var.environment}-events-consume"
+  user_pool_id                         = aws_cognito_user_pool.pool.id
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = ["implicit"]
+  allowed_oauth_scopes                 = aws_cognito_resource_server.events_consume.scope_identifiers
+  generate_secret                      = true
+  explicit_auth_flows                  = ["ADMIN_NO_SRP_AUTH"]
+  callback_urls                        = [var.callback_url]
+  supported_identity_providers         = ["COGNITO"]
 }
 
+resource "aws_cognito_user_pool_client" "events_publish" {
+  name                                 = "${var.environment}-events-publish"
+  user_pool_id                         = aws_cognito_user_pool.pool.id
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = ["implicit"]
+  allowed_oauth_scopes                 = aws_cognito_resource_server.events_publish.scope_identifiers
+  generate_secret                      = true
+  explicit_auth_flows                  = ["ADMIN_NO_SRP_AUTH"]
+  callback_urls                        = [var.callback_url]
+  supported_identity_providers         = ["COGNITO"]
+}
 
 resource "aws_cognito_user_pool_client" "legacy_inbound_adapter" {
   name                 = "${var.environment}-legacy-inbound-adapter"
   user_pool_id         = aws_cognito_user_pool.pool.id
   allowed_oauth_flows  = ["client_credentials"]
-  allowed_oauth_scopes = aws_cognito_resource_server.data_receiver.scope_identifiers
+  allowed_oauth_scopes = aws_cognito_resource_server.events_publish.scope_identifiers
   generate_secret      = true
 }
 
@@ -46,82 +59,42 @@ resource "aws_cognito_user_pool_client" "legacy_outbound_adapter" {
   name                 = "${var.environment}-legacy-outbound-adapter"
   user_pool_id         = aws_cognito_user_pool.pool.id
   allowed_oauth_flows  = ["client_credentials"]
-  allowed_oauth_scopes = aws_cognito_resource_server.data_retriever.scope_identifiers
+  allowed_oauth_scopes = aws_cognito_resource_server.events_consume.scope_identifiers
   generate_secret      = true
 }
 
-resource "aws_cognito_user_pool_client" "gov_dept_poller" {
-  name                 = "${var.environment}-gov-dept-poller"
-  user_pool_id         = aws_cognito_user_pool.pool.id
-  allowed_oauth_flows  = ["client_credentials"]
-  allowed_oauth_scopes = concat(aws_cognito_resource_server.events.scope_identifiers, aws_cognito_resource_server.data_retriever.scope_identifiers)
-  generate_secret      = true
-}
-
-resource "aws_cognito_user_pool_client" "data_maintainer" {
-  name                 = "${var.environment}-data-maintainer"
-  user_pool_id         = aws_cognito_user_pool.pool.id
-  allowed_oauth_flows  = ["client_credentials"]
-  allowed_oauth_scopes = concat(aws_cognito_resource_server.subscriptions.scope_identifiers, aws_cognito_resource_server.pubsub.scope_identifiers)
-  generate_secret      = true
-}
-
-resource "aws_cognito_resource_server" "data_receiver" {
-  identifier = "data_receiver"
-  name       = "GDX Data Receiver"
-
-  user_pool_id = aws_cognito_user_pool.pool.id
-
-  scope {
-    scope_name        = "notify"
-    scope_description = "Can notify GDX of events"
-  }
-}
-
-resource "aws_cognito_resource_server" "data_retriever" {
-  identifier = "data_retriever"
-  name       = "GDX Data Retriever"
-
-  user_pool_id = aws_cognito_user_pool.pool.id
-
-  scope {
-    scope_name        = "read"
-    scope_description = "Can call back to Data Retriever API to obtain information about event"
-  }
-}
-
-resource "aws_cognito_resource_server" "events" {
+resource "aws_cognito_resource_server" "events_publish" {
   identifier = "events"
-  name       = "Events Poller"
+  name       = "GDX Events Publish"
 
   user_pool_id = aws_cognito_user_pool.pool.id
 
   scope {
-    scope_name        = "poll"
-    scope_description = "Can Poll"
+    scope_name        = "publish"
+    scope_description = "Can publish events with GDX"
   }
 }
 
-resource "aws_cognito_resource_server" "subscriptions" {
-  identifier = "subscriptions"
-  name       = "Subscriptions Management"
+resource "aws_cognito_resource_server" "events_consume" {
+  identifier = "events"
+  name       = "GDX Events Consume"
 
   user_pool_id = aws_cognito_user_pool.pool.id
 
   scope {
-    scope_name        = "maintain"
-    scope_description = "Can Maintain"
+    scope_name        = "consume"
+    scope_description = "Can consumer events from GDX"
   }
 }
 
-resource "aws_cognito_resource_server" "pubsub" {
-  identifier = "pubsub"
-  name       = "Publisher Consumer management"
+resource "aws_cognito_resource_server" "admin" {
+  identifier = "events"
+  name       = "GDX Admin"
 
   user_pool_id = aws_cognito_user_pool.pool.id
 
   scope {
-    scope_name        = "maintain"
-    scope_description = "Can Maintain"
+    scope_name        = "admin"
+    scope_description = "Can manage events and users of GDX"
   }
 }

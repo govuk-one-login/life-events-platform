@@ -15,8 +15,7 @@ import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 
 @RestController
 @RequestMapping("/admin", produces = [MediaType.APPLICATION_JSON_VALUE])
-// TODO-https://trello.com/c/VgQeakpA: Add admin control
-@PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
+@PreAuthorize("hasAnyAuthority('SCOPE_data/admin')")
 @Validated
 @Tag(name = "01. Admin")
 class AdminController(
@@ -26,7 +25,7 @@ class AdminController(
   @GetMapping("/events/egress")
   @Operation(
     summary = "Get Egress Events",
-    description = "Need scope of pubsub/maintain",
+    description = "Need scope of data/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -39,7 +38,7 @@ class AdminController(
   @GetMapping("/events/ingress")
   @Operation(
     summary = "Get Ingress Events",
-    description = "Need scope of pubsub/maintain",
+    description = "Need scope of data/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

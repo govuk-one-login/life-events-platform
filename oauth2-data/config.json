@@ -12,7 +12,7 @@
           "claims": {
             "sub": "len",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": "data_receiver/notify",
+            "scope": "data/publish",
             "client_id": "len"
           }
         },
@@ -22,7 +22,7 @@
           "claims": {
             "sub": "internal-inbound",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": "data_receiver/notify",
+            "scope": "data/publish",
             "client_id": "internal-inbound"
           }
         },
@@ -32,7 +32,7 @@
           "claims": {
             "sub": "passthru",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": "data_receiver/notify",
+            "scope": "data/publish",
             "client_id": "passthru"
           }
         },
@@ -42,7 +42,7 @@
           "claims": {
             "sub": "dwp-event-receiver",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": ["data_retriever/read", "events/poll"],
+            "scope": "data/consume",
             "client_id": "dwp-event-receiver"
           }
         },
@@ -52,7 +52,7 @@
           "claims": {
             "sub": "hmrc-client",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": ["data_retriever/read", "events/poll"],
+            "scope": "data/consume",
             "client_id": "hmrc-client"
           }
         },
@@ -62,7 +62,7 @@
           "claims": {
             "sub": "internal-outbound",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": "data_retriever/read",
+            "scope": "data/consume",
             "client_id": "internal-outbound"
           }
         },
@@ -72,7 +72,7 @@
           "claims": {
             "sub": "maintainer",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": ["subscriptions/maintain","pubsub/maintain"],
+            "scope": "data/admin",
             "client_id": "maintainer"
           }
         },
@@ -82,7 +82,7 @@
           "claims": {
             "sub": "everything",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": ["subscriptions/maintain", "pubsub/maintain", "data_retriever/read", "events/poll", "data_receiver/notify"],
+            "scope": ["data/admin", "data/consume", "data/publish"],
             "client_id": "everything"
           }
         }

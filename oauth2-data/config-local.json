@@ -11,7 +11,7 @@
           "match": "len",
           "claims": {
             "sub": "len",
-            "scope": "data_receiver/notify",
+            "scope": "data/publish",
             "client_id": "len"
           }
         },
@@ -20,7 +20,7 @@
           "match": "internal-inbound",
           "claims": {
             "sub": "internal-inbound",
-            "scope": "data_receiver/notify",
+            "scope": "data/publish",
             "client_id": "internal-inbound"
           }
         },
@@ -29,7 +29,7 @@
           "match": "passthru",
           "claims": {
             "sub": "passthru",
-            "scope": "data_receiver/notify",
+            "scope": "data/publish",
             "client_id": "passthru"
           }
         },
@@ -38,7 +38,7 @@
           "match": "dwp",
           "claims": {
             "sub": "dwp-event-receiver",
-            "scope": ["data_retriever/read", "events/poll"],
+            "scope": "data/consume",
             "client_id": "dwp-event-receiver"
           }
         },
@@ -47,7 +47,7 @@
           "match": "hmrc",
           "claims": {
             "sub": "hmrc-client",
-            "scope": ["data_retriever/read", "events/poll"],
+            "scope": "data/consume",
             "client_id": "hmrc-client"
           }
         },
@@ -56,7 +56,7 @@
           "match": "internal-outbound",
           "claims": {
             "sub": "internal-outbound",
-            "scope": "data_retriever/read",
+            "scope": "data/consume",
             "client_id": "internal-outbound"
           }
         },
@@ -65,7 +65,7 @@
           "match": "maintainer",
           "claims": {
             "sub": "maintainer",
-            "scope": ["subscriptions/maintain","pubsub/maintain"],
+            "scope": ["data/admin"],
             "client_id": "maintainer"
           }
         },

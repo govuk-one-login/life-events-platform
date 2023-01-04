@@ -58,6 +58,8 @@ resource "aws_cognito_user_pool_client" "events_publish" {
   explicit_auth_flows                  = ["ADMIN_NO_SRP_AUTH"]
   callback_urls                        = [var.callback_url]
   supported_identity_providers         = ["COGNITO"]
+
+  depends_on = [aws_cognito_resource_server.events]
 }
 
 resource "aws_cognito_user_pool_client" "events_consume" {
@@ -70,6 +72,8 @@ resource "aws_cognito_user_pool_client" "events_consume" {
   explicit_auth_flows                  = ["ADMIN_NO_SRP_AUTH"]
   callback_urls                        = [var.callback_url]
   supported_identity_providers         = ["COGNITO"]
+
+  depends_on = [aws_cognito_resource_server.events]
 }
 
 resource "aws_cognito_user_pool_client" "legacy_inbound_adapter" {
@@ -78,6 +82,8 @@ resource "aws_cognito_user_pool_client" "legacy_inbound_adapter" {
   allowed_oauth_flows  = ["client_credentials"]
   allowed_oauth_scopes = ["${local.identifier}/${local.scope_publish}"]
   generate_secret      = true
+
+  depends_on = [aws_cognito_resource_server.events]
 }
 
 resource "aws_cognito_user_pool_client" "legacy_outbound_adapter" {
@@ -86,4 +92,6 @@ resource "aws_cognito_user_pool_client" "legacy_outbound_adapter" {
   allowed_oauth_flows  = ["client_credentials"]
   allowed_oauth_scopes = ["${local.identifier}/${local.scope_consume}"]
   generate_secret      = true
+
+  depends_on = [aws_cognito_resource_server.events]
 }

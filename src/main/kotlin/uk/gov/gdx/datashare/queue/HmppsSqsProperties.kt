@@ -17,13 +17,11 @@ data class HmppsSqsProperties(
     val queueName: String,
     val queueAccessKeyId: String = "",
     val queueSecretAccessKey: String = "",
-    val asyncQueueClient: Boolean = false,
     val subscribeTopicId: String = "",
     val subscribeFilter: String = "",
     val dlqName: String = "",
     val dlqAccessKeyId: String = "",
     val dlqSecretAccessKey: String = "",
-    val asyncDlqClient: Boolean = false,
     val dlqMaxReceiveCount: Int = 5,
   )
 
@@ -31,7 +29,6 @@ data class HmppsSqsProperties(
     val arn: String = "",
     val accessKeyId: String = "",
     val secretAccessKey: String = "",
-    val asyncClient: Boolean = false,
   ) {
     private val arnRegex = Regex("arn:aws:sns:.*:.*:(.*)$")
 

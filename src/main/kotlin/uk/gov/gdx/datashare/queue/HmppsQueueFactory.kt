@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory
-import java.lang.RuntimeException
 import javax.jms.Session
 
 class HmppsQueueFactory(
@@ -66,10 +65,11 @@ class HmppsQueueFactory(
     with(hmppsSqsProperties) {
       if (queueConfig.dlqName.isEmpty()) throw MissingDlqNameException()
       when (provider) {
-        "aws" -> amazonSqsFactory.awsSqsDlqClient(queueId, queueConfig.dlqName, queueConfig.dlqAccessKeyId, queueConfig.dlqSecretAccessKey, region, queueConfig.asyncDlqClient)
+        "aws" -> amazonSqsFactory.awsSqsDlqClient(queueId, queueConfig.dlqName, queueConfig.dlqAccessKeyId, queueConfig.dlqSecretAccessKey, region)
         "localstack" ->
-          amazonSqsFactory.localStackSqsDlqClient(queueId, queueConfig.dlqName, localstackUrl, region, queueConfig.asyncDlqClient)
+          amazonSqsFactory.localStackSqsDlqClient(queueId, queueConfig.dlqName, localstackUrl, region)
             .also { sqsDlqClient -> sqsDlqClient.createQueue(queueConfig.dlqName) }
+
         else -> throw IllegalStateException("Unrecognised HMPPS SQS provider $provider")
       }
     }
@@ -77,10 +77,11 @@ class HmppsQueueFactory(
   fun createSqsClient(queueId: String, queueConfig: HmppsSqsProperties.QueueConfig, hmppsSqsProperties: HmppsSqsProperties, sqsDlqClient: AmazonSQS?) =
     with(hmppsSqsProperties) {
       when (provider) {
-        "aws" -> amazonSqsFactory.awsSqsClient(queueId, queueConfig.queueName, queueConfig.queueAccessKeyId, queueConfig.queueSecretAccessKey, region, queueConfig.asyncQueueClient)
+        "aws" -> amazonSqsFactory.awsSqsClient(queueId, queueConfig.queueName, queueConfig.queueAccessKeyId, queueConfig.queueSecretAccessKey, region)
         "localstack" ->
-          amazonSqsFactory.localStackSqsClient(queueId, queueConfig.queueName, localstackUrl, region, queueConfig.asyncQueueClient)
+          amazonSqsFactory.localStackSqsClient(queueId, queueConfig.queueName, localstackUrl, region)
             .also { sqsClient -> createLocalStackQueue(sqsClient, sqsDlqClient, queueConfig.queueName, queueConfig.dlqName, queueConfig.dlqMaxReceiveCount) }
+
         else -> throw IllegalStateException("Unrecognised HMPPS SQS provider $provider")
       }
     }
@@ -92,7 +93,7 @@ class HmppsQueueFactory(
     dlqName: String,
     maxReceiveCount: Int,
   ) {
-    if (dlqName.isEmpty() || sqsDlqClient == null) {
+    if (dlqName.isEmpty() || sqsDlqClient==null) {
       sqsClient.createQueue(CreateQueueRequest(queueName))
     } else {
       sqsDlqClient.getQueueUrl(dlqName).queueUrl
@@ -111,8 +112,8 @@ class HmppsQueueFactory(
   }
 
   private fun subscribeToLocalStackTopic(hmppsSqsProperties: HmppsSqsProperties, queueConfig: HmppsSqsProperties.QueueConfig, hmppsTopics: List<HmppsTopic>) {
-    if (hmppsSqsProperties.provider == "localstack")
-      hmppsTopics.firstOrNull { topic -> topic.id == queueConfig.subscribeTopicId }
+    if (hmppsSqsProperties.provider=="localstack")
+      hmppsTopics.firstOrNull { topic -> topic.id==queueConfig.subscribeTopicId }
         ?.also { topic ->
           val subscribeAttribute = if (queueConfig.subscribeFilter.isNullOrEmpty()) mapOf() else mapOf("FilterPolicy" to queueConfig.subscribeFilter)
           topic.snsClient.subscribe(

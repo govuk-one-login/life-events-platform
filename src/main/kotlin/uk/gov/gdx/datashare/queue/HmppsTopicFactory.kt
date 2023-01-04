@@ -43,10 +43,11 @@ class HmppsTopicFactory(
   fun createSnsClient(topicId: String, topicConfig: HmppsSqsProperties.TopicConfig, hmppsSqsProperties: HmppsSqsProperties) =
     with(hmppsSqsProperties) {
       when (provider) {
-        "aws" -> amazonSnsFactory.awsSnsClient(topicId, topicConfig.accessKeyId, topicConfig.secretAccessKey, region, topicConfig.asyncClient)
-        "localstack" -> amazonSnsFactory.localstackSnsClient(topicId, localstackUrl, region, topicConfig.asyncClient)
+        "aws" -> amazonSnsFactory.awsSnsClient(topicId, topicConfig.accessKeyId, topicConfig.secretAccessKey, region)
+        "localstack" -> amazonSnsFactory.localstackSnsClient(topicId, localstackUrl, region)
           .also { it.createTopic(topicConfig.name) }
           .also { log.info("Created a LocalStack SNS topic for topicId $topicId with ARN ${topicConfig.arn}") }
+
         else -> throw IllegalStateException("Unrecognised HMPPS SQS provider $provider")
       }
     }

@@ -13,11 +13,6 @@ spring:
   devtools:
     add-properties: true
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/datashare?sslmode=prefer
-    username: datashare
-    password: datashare
-
   flyway:
     url: jdbc:postgresql://localhost:5432/datashare?sslmode=prefer
     user: datashare

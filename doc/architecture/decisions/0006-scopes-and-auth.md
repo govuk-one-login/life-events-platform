@@ -23,9 +23,9 @@ our database for enrichment and subscription privileges as this is easier to wor
 
 ### Scopes in cognito
 
-1. data/publish - Allows the user to publish events to the system 
-2. data/consume - Allows the user to consume events from the system
-3. admin - Allows the user to use the admin and subscription features
+1. events/publish - Allows the user to publish events to the system 
+2. events/consume - Allows the user to consume events from the system
+3. events/admin - Allows the user to use the admin and subscription features
 
 ### Fields in our DB
 

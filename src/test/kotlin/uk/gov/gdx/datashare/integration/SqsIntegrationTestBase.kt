@@ -10,11 +10,12 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import uk.gov.gdx.datashare.integration.LocalStackContainer.setLocalStackProperties
-import uk.gov.justice.hmpps.sqs.HmppsQueue
-import uk.gov.justice.hmpps.sqs.HmppsQueueService
-import uk.gov.justice.hmpps.sqs.HmppsSqsProperties
-import uk.gov.justice.hmpps.sqs.MissingQueueException
-import uk.gov.justice.hmpps.sqs.MissingTopicException
+import uk.gov.gdx.datashare.queue.HmppsQueue
+import uk.gov.gdx.datashare.queue.HmppsQueueService
+import uk.gov.gdx.datashare.queue.HmppsSqsProperties
+import uk.gov.gdx.datashare.queue.MissingQueueException
+import uk.gov.gdx.datashare.queue.MissingTopicException
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")

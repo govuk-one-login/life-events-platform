@@ -38,7 +38,7 @@
           "match": "dwp",
           "claims": {
             "sub": "dwp-event-receiver",
-            "scope": "data_retriever/read events/poll",
+            "scope": ["data_retriever/read", "events/poll"],
             "client_id": "dwp-event-receiver"
           }
         },
@@ -47,7 +47,7 @@
           "match": "hmrc",
           "claims": {
             "sub": "hmrc-client",
-            "scope": "data_retriever/read events/poll",
+            "scope": ["data_retriever/read", "events/poll"],
             "client_id": "hmrc-client"
           }
         },
@@ -67,6 +67,15 @@
             "sub": "maintainer",
             "scope": ["subscriptions/maintain","pubsub/maintain"],
             "client_id": "maintainer"
+          }
+        },
+        {
+          "requestParam": "scope",
+          "match": "everything",
+          "claims": {
+            "sub": "everything",
+            "scope": ["subscriptions/maintain", "pubsub/maintain", "data_retriever/read", "events/poll", "data_receiver/notify"],
+            "client_id": "everything"
           }
         }
       ]

@@ -30,7 +30,7 @@ services:
       - .env-aws
 
   localstack:
-    image: localstack/localstack:0.14.0
+    image: localstack/localstack:1.3.1
     networks:
       - gds
     container_name: localstack
@@ -38,20 +38,12 @@ services:
       - "4566:4566"
       - "8999:8080"
     environment:
-      - SERVICES=sns,sqs
+      - SERVICES=sns,sqs,s3
       - DEBUG=${DEBUG- }
-      - DATA_DIR=${DATA_DIR- }
-      - PORT_WEB_UI=${PORT_WEB_UI- }
       - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
       - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
       - DOCKER_HOST=unix:///var/run/docker.sock
       - AWS_EXECUTION_ENV=True
-      - DEFAULT_REGION=eu-west-2
-      - HOSTNAME=localstack
-      - HOSTNAME_EXTERNAL=localstack
-    volumes:
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
 
   datashare-db:
     image: postgres

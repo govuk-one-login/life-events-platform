@@ -42,7 +42,7 @@
           "claims": {
             "sub": "dwp-event-receiver",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": "data_retriever/read events/poll",
+            "scope": ["data_retriever/read", "events/poll"],
             "client_id": "dwp-event-receiver"
           }
         },

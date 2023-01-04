@@ -48,5 +48,15 @@ module "metrics_dashboard" {
         "API_CALLS.DeleteEvent",
       ]
     },
+    {
+      title  = "Data ingest calls",
+      period = local.metric_period,
+      stat   = "Sum",
+      metrics = [
+        "API_CALLS.PublishEvent",
+        "API_CALLS.CallsToLev",
+        "API_RESPONSES.ResponsesFromLev",
+      ]
+    },
   ]
 }

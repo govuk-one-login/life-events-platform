@@ -1,23 +1,19 @@
-plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.5.4"
-  kotlin("plugin.spring") version "1.7.10"
-}
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-dependencyCheck {
-  suppressionFiles.add("reactive-suppressions.xml")
-  // Please remove the below suppressions once it has been suppressed in the DependencyCheck plugin (see this issue: https://github.com/jeremylong/DependencyCheck/issues/4616)
-  suppressionFiles.add("postgres-suppressions.xml")
+plugins {
+  id("org.owasp.dependencycheck") version "6.1.1"
+  id("org.springframework.boot") version "2.7.4"
+  id("io.spring.dependency-management") version "1.1.0"
+  kotlin("jvm") version "1.7.10"
+  kotlin("plugin.spring") version "1.7.10"
 }
 
 group = "uk.gov.gds"
 
 configurations {
-  implementation { exclude(module = "applicationinsights-spring-boot-starter") }
-  implementation { exclude(module = "applicationinsights-logging-logback") }
-
   implementation { exclude(module = "spring-boot-starter-web") }
   implementation { exclude(module = "spring-boot-starter-tomcat") }
-  testImplementation { exclude(group = "org.junit.vintage") }
 }
 
 dependencies {
@@ -26,6 +22,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+  implementation("org.springframework.boot:spring-boot-starter-actuator")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
 
@@ -59,8 +56,13 @@ dependencies {
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")
 
+  implementation("net.javacrumbs.shedlock:shedlock-spring:5.0.1")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.0.1")
+
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.assertj:assertj-core:3.23.1")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("org.mockito:mockito-inline")
@@ -87,4 +89,17 @@ tasks {
       jvmTarget = "18"
     }
   }
+  withType<Test> {
+    useJUnitPlatform()
+  }
+}
+
+springBoot {
+  buildInfo()
+}
+version = getVersion()
+
+fun getVersion(): String {
+  return if (System.getenv().contains("BUILD_NUMBER")) System.getenv("BUILD_NUMBER")
+  else LocalDate.now().format(DateTimeFormatter.ISO_DATE)
 }

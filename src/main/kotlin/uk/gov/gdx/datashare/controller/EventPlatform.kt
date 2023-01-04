@@ -23,7 +23,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/obsolete/events", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_events/poll')")
+@PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
 @Validated
 @Tag(name = "92. Event status")
 class EventPlatform(
@@ -35,7 +35,7 @@ class EventPlatform(
   @GetMapping
   @Operation(
     summary = "Returns all events for this client since the last call",
-    description = "Need scope of events/poll",
+    description = "Need scope of events/consume",
     responses = [
       ApiResponse(
         responseCode = "200",

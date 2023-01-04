@@ -24,16 +24,25 @@ class EventsControllerTest {
   private val eventDataService = mockk<EventDataService>()
   private val dataReceiverService = mockk<DataReceiverService>()
   private val meterRegistry = mockk<MeterRegistry>()
-  private val callsToPollCounter = mockk<Counter>()
-  private val ingestedEventsCounter = mockk<Counter>()
+  private val publishEventCounter = mockk<Counter>()
+  private val getEventCounter = mockk<Counter>()
+  private val getEventsCounter = mockk<Counter>()
+  private val getEventsStatusCounter = mockk<Counter>()
+  private val deleteEventCounter = mockk<Counter>()
 
   private val underTest: EventsController
 
   init {
-    every { meterRegistry.counter("API_CALLS.CallsToPoll", *anyVararg()) }.returns(callsToPollCounter)
-    every { meterRegistry.counter("API_CALLS.IngestedEvents", *anyVararg()) }.returns(ingestedEventsCounter)
-    every { callsToPollCounter.increment() }.returns(Unit)
-    every { ingestedEventsCounter.increment() }.returns(Unit)
+    every { meterRegistry.counter("API_CALLS.PublishEvent", *anyVararg()) }.returns(publishEventCounter)
+    every { meterRegistry.counter("API_CALLS.GetEvent", *anyVararg()) }.returns(getEventCounter)
+    every { meterRegistry.counter("API_CALLS.GetEvents", *anyVararg()) }.returns(getEventsCounter)
+    every { meterRegistry.counter("API_CALLS.GetEventsStatus", *anyVararg()) }.returns(getEventsStatusCounter)
+    every { meterRegistry.counter("API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventCounter)
+    every { publishEventCounter.increment() }.returns(Unit)
+    every { getEventCounter.increment() }.returns(Unit)
+    every { getEventsCounter.increment() }.returns(Unit)
+    every { getEventsStatusCounter.increment() }.returns(Unit)
+    every { deleteEventCounter.increment() }.returns(Unit)
     underTest = EventsController(eventDataService, dataReceiverService, meterRegistry)
   }
 
@@ -58,6 +67,7 @@ class EventsControllerTest {
 
       assertThat(eventStatusesOutput).hasSize(2)
       assertThat(eventStatusesOutput).isEqualTo(eventStatuses.toList())
+      verify(exactly = 1) { getEventsStatusCounter.increment() }
     }
   }
 
@@ -92,7 +102,7 @@ class EventsControllerTest {
 
       assertThat(eventsOutput).hasSize(2)
       assertThat(eventsOutput).isEqualTo(events.toList())
-      verify(exactly = 1) { callsToPollCounter.increment() }
+      verify(exactly = 1) { getEventsCounter.increment() }
     }
   }
 
@@ -110,7 +120,7 @@ class EventsControllerTest {
 
       underTest.publishEvent(event)
 
-      verify(exactly = 1) { ingestedEventsCounter.increment() }
+      verify(exactly = 1) { publishEventCounter.increment() }
       coVerify(exactly = 1) { dataReceiverService.sendToDataProcessor(event) }
     }
   }
@@ -132,6 +142,7 @@ class EventsControllerTest {
       val eventOutput = underTest.getEvent(event.eventId)
 
       assertThat(eventOutput).isEqualTo(event)
+      verify(exactly = 1) { getEventCounter.increment() }
     }
   }
 
@@ -145,6 +156,7 @@ class EventsControllerTest {
       underTest.deleteEvent(eventId)
 
       coVerify(exactly = 1) { eventDataService.deleteEvent(eventId) }
+      verify(exactly = 1) { deleteEventCounter.increment() }
     }
   }
 

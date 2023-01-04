@@ -1,5 +1,5 @@
 locals {
-  metric_namespace = "${var.environment}-gdx"
+  metric_period = 300
 }
 
 resource "aws_cloudwatch_log_group" "ecs_logs" {
@@ -16,50 +16,47 @@ resource "aws_cloudwatch_log_group" "lb_sg_update" {
   kms_key_id = aws_kms_key.log_key.arn
 }
 
-resource "aws_cloudwatch_dashboard" "metrics_dashboard" {
-  dashboard_name = "${var.environment}-metrics-dashboard"
-  dashboard_body = jsonencode({
-    "widgets" : [
-      {
-        "type" : "metric",
-        "properties" : {
-          "metrics" : [
-            [
-              local.metric_namespace,
-              "API_CALLS.IngestedEvents.count"
-            ],
-            [
-              local.metric_namespace,
-              "API_CALLS.CallsToLev.count"
-            ],
-            [
-              local.metric_namespace,
-              "API_CALLS.ResponsesFromLev.count"
-            ],
-            [
-              local.metric_namespace,
-              "API_CALLS.CallsToHmrc.count"
-            ],
-            [
-              local.metric_namespace,
-              "API_CALLS.ResponsesFromHmrc.count"
-            ],
-            [
-              local.metric_namespace,
-              "API_CALLS.CallsToPoll.count"
-            ],
-            [
-              local.metric_namespace,
-              "API_CALLS.CallsToEnrich.count"
-            ]
-          ],
-          "period" : 300,
-          "region" : var.region,
-          "title" : "API calls",
-          "stat" : "Sum"
-        }
-      }
-    ]
-  })
-
+module "metrics_dashboard" {
+  source           = "../cloudwatch_dashboard"
+  region           = var.region
+  dashboard_name   = "${var.environment}-metrics-dashboard"
+  metric_namespace = "${var.environment}-gdx"
+  widgets = [
+    {
+      title  = "Old API calls",
+      period = local.metric_period,
+      stat   = "Sum",
+      metrics = [
+        "API_CALLS.IngestedEvents.count",
+        "API_CALLS.CallsToLev.count",
+        "API_CALLS.ResponsesFromLev.count",
+        "API_CALLS.CallsToHmrc.count",
+        "API_CALLS.ResponsesFromHmrc.count",
+        "API_CALLS.CallsToPoll.count",
+        "API_CALLS.CallsToEnrich.count",
+      ]
+    },
+    {
+      title  = "Event API calls",
+      period = local.metric_period,
+      stat   = "Sum",
+      metrics = [
+        "API_CALLS.PublishEvent",
+        "API_CALLS.GetEvent",
+        "API_CALLS.GetEvents",
+        "API_CALLS.GetEventsStatus",
+        "API_CALLS.DeleteEvent",
+      ]
+    },
+    {
+      title  = "Data ingest calls",
+      period = local.metric_period,
+      stat   = "Sum",
+      metrics = [
+        "API_CALLS.PublishEvent",
+        "API_CALLS.CallsToLev",
+        "API_RESPONSES.ResponsesFromLev",
+      ]
+    },
+  ]
 }

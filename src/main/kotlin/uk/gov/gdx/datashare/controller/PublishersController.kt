@@ -15,16 +15,16 @@ import java.util.*
 
 @RestController
 @RequestMapping("/publishers", produces = [MediaType.APPLICATION_JSON_VALUE])
+@PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
 @Tag(name = "03. Publishers")
 class PublishersController(
   private val publishersService: PublishersService
 ) {
-  @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
   @GetMapping
   @Operation(
     summary = "Get Publishers",
-    description = "Need scope of pubsub/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -34,11 +34,10 @@ class PublishersController(
   )
   suspend fun getPublishers() = publishersService.getPublishers()
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
   @PostMapping
   @Operation(
     summary = "Add Publisher",
-    description = "Need scope of pubsub/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -55,11 +54,10 @@ class PublishersController(
     @RequestBody publisherRequest: PublisherRequest,
   ) = publishersService.addPublisher(publisherRequest)
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_pubsub/maintain')")
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Publisher Subscriptions",
-    description = "Need scope of subscriptions/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -69,11 +67,10 @@ class PublishersController(
   )
   suspend fun getPublisherSubscriptions() = publishersService.getPublisherSubscriptions()
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_subscriptions/maintain')")
   @GetMapping("/{publisherId}/subscriptions")
   @Operation(
     summary = "Get Publisher Subscriptions for Publisher",
-    description = "Need scope of subscriptions/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -86,11 +83,10 @@ class PublishersController(
     @PathVariable publisherId: UUID
   ) = publishersService.getSubscriptionsForPublisher(publisherId)
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_subscriptions/maintain')")
   @PostMapping("/{publisherId}/subscriptions")
   @Operation(
     summary = "Add Publisher Subscription",
-    description = "Need scope of pubsub/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -109,11 +105,10 @@ class PublishersController(
     @RequestBody publisherSubRequest: PublisherSubRequest,
   ) = publishersService.addPublisherSubscription(publisherId, publisherSubRequest)
 
-  @PreAuthorize("hasAnyAuthority('SCOPE_subscriptions/maintain')")
   @PutMapping("/{publisherId}/subscriptions/{subscriptionId}")
   @Operation(
     summary = "Update Publisher",
-    description = "Need scope of subscriptions/maintain",
+    description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

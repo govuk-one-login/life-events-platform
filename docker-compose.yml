@@ -23,6 +23,7 @@ services:
       - API_BASE_URL_LEV=http://lev-api:8080
       - API_BASE_URL_DATA_RECEIVER=http://gdx-data-share-poc:8080
       - SPRING_FLYWAY_URL=jdbc:postgresql://datashare-db:5432/datashare?sslmode=prefer
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://datashare-db:5432/datashare?sslmode=prefer
       - SPRING_R2DBC_URL=r2dbc:postgresql://datashare-db:5432/datashare?sslmode=prefer
       - API_BASE_S3_INGRESS=dev-ingress-gdx-data-share-poc
       - API_BASE_S3_INGRESS_ARCHIVE=dev-ingress-archive-gdx-data-share-poc

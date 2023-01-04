@@ -9,6 +9,8 @@ import aws.smithy.kotlin.runtime.content.writeToFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import net.javacrumbs.shedlock.core.LockAssert
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -34,9 +36,11 @@ class LegacyAdaptorInbound(
   }
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
+  @SchedulerLock(name = "pollS3Bucket", lockAtMostFor = "50s", lockAtLeastFor = "50s")
   fun pollS3Bucket() {
     try {
       runBlocking {
+        LockAssert.assertLocked()
         S3Client {
           region = "eu-west-2"
         }.use { s3 ->

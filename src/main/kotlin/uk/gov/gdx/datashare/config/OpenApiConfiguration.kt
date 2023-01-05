@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.StringSchema
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.servers.Server
 import org.springdoc.core.customizers.OpenApiCustomiser
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
@@ -24,6 +25,11 @@ class OpenApiConfiguration(
 
   @Bean
   fun customOpenAPI(): OpenAPI = OpenAPI()
+    .servers(
+      listOf(
+        Server().url("/").description("Current url")
+      )
+    )
     .info(
       Info().title("GDX Data Share API")
         .version(version)

@@ -1,9 +1,10 @@
 # GDX Death Notification POC
 
 ## API Contracts
-API documentation can be found  [here](https://d33v84mi0vopmk.cloudfront.net/webjars/swagger-ui/index.html)
+API documentation can be found [here](https://d33v84mi0vopmk.cloudfront.net/webjars/swagger-ui/index.html)
 
-## Running locally
+## Running the service
+### Running locally
 
 For running locally against docker instances of the following services:
 
@@ -11,73 +12,17 @@ For running locally against docker instances of the following services:
 
 `docker-compose -f docker-compose-local.yml up`
 
-## Running all services including this service
+### Running all services including this service
 
 `docker-compose up`
 
-or from a published image:
+### Running remotely
+The service is deployed to AWS, accessible through
 
-`docker-compose -f docker-compose-full.yml up`
-
-## Running remotely
-
-### Environment Variables - Queues and Topics
-
-#### Event Topic (Pub/Sub)
-```env
-SQS_TOPICS_EVENT_ACCESS_KEY_ID: "access_key_id"
-SQS_TOPICS_EVENT_SECRET_ACCESS_KEY: "secret_access_key"
-SQS_TOPICS_EVENT_ARN: "arn:aws:sns:eu-west-2:000000000000:48ff4ceb-1f02-4da9-a0f3-4394024bcefe"
-```
-
-#### Data Processor Queue
-```env
-SQS_QUEUES_DATAPROCESSOR_QUEUE_ACCESS_KEY_ID: "access_key_id"
-SQS_QUEUES_DATAPROCESSOR_QUEUE_SECRET_ACCESS_KEY: "secret_access_key"
-SQS_QUEUES_DATAPROCESSOR_QUEUE_NAME: "dataprocessor-queue"
-```
-
-#### Data Processor DLQ
-```env
-SQS_QUEUES_DATAPROCESSOR_DLQ_ACCESS_KEY_ID: "access_key_id"
-SQS_QUEUES_DATAPROCESSOR_DLQ_SECRET_ACCESS_KEY: "secret_access_key"
-SQS_QUEUES_DATAPROCESSOR_DLQ_NAME: "dataprocessor-dlq"
-```
-
-#### Audit Queue
-```env
-SQS_QUEUES_AUDIT_QUEUE_ACCESS_KEY_ID: "access_key_id"
-SQS_QUEUES_AUDIT_QUEUE_SECRET_ACCESS_KEY: "secret_access_key"
-SQS_QUEUES_AUDIT_QUEUE_NAME: "61a253ac-7987-4373-8bc1-7f83a87b3d82"
-```
-
-#### Outbound Adaptor Queue
-```env
-SQS_QUEUES_ADAPTOR_QUEUE_ACCESS_KEY_ID: "access_key_id"
-SQS_QUEUES_ADAPTOR_QUEUE_SECRET_ACCESS_KEY: "secret_access_key"
-SQS_QUEUES_IADAPTOR_QUEUE_NAME: "legacy-adaptor-event-queue"
-```
-
-#### Outbound Adaptor DLQ
-```env
-SQS_QUEUES_ADAPTOR_DLQ_ACCESS_KEY_ID: "access_key_id"
-SQS_QUEUES_ADAPTOR_DLQ_SECRET_ACCESS_KEY: "secret_access_key"
-SQS_QUEUES_ADAPTOR_DLQ_NAME: "legacy-adaptor-event-dlq"
-```
-
-#### Another Gov Agency Queue
-```env
-SQS_QUEUES_ODG_QUEUE_ACCESS_KEY_ID: "access_key_id"
-SQS_QUEUES_ODG_QUEUE_SECRET_ACCESS_KEY: "secret_access_key"
-SQS_QUEUES_ODG_QUEUE_NAME: "ogd-event-queue"
-```
-
-#### Another Gov Agency DLQ
-```env
-SQS_QUEUES_ODG_DLQ_ACCESS_KEY_ID: "access_key_id"
-SQS_QUEUES_ODG_DLQ_SECRET_ACCESS_KEY: "secret_access_key"
-SQS_QUEUES_ODG_DLQ_NAME: "ogd-event-dlq"
-```
+| environment | url                                                   |
+|-------------|-------------------------------------------------------|
+| dev         | https://d2w5ifs4ir0pe.cloudfront.net/swagger-ui.html  |
+| demo        | https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html |
 
 ## Using the application to simulate events
 

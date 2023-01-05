@@ -41,11 +41,11 @@ module "metrics_dashboard" {
       period = local.metric_period,
       stat   = "Sum",
       metrics = [
-        "API_CALLS.PublishEvent",
-        "API_CALLS.GetEvent",
-        "API_CALLS.GetEvents",
-        "API_CALLS.GetEventsStatus",
-        "API_CALLS.DeleteEvent",
+        "API_CALLS.PublishEvent.count",
+        "API_CALLS.GetEvent.count",
+        "API_CALLS.GetEvents.count",
+        "API_CALLS.GetEventsStatus.count",
+        "API_CALLS.DeleteEvent.count",
       ]
     },
     {
@@ -53,9 +53,9 @@ module "metrics_dashboard" {
       period = local.metric_period,
       stat   = "Sum",
       metrics = [
-        "API_CALLS.PublishEvent",
-        "API_CALLS.CallsToLev",
-        "API_RESPONSES.ResponsesFromLev",
+        "API_CALLS.PublishEvent.count",
+        "API_CALLS.CallsToLev.count",
+        "API_RESPONSES.ResponsesFromLev.count",
       ]
     },
   ]

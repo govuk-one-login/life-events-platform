@@ -2,7 +2,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-  id("org.owasp.dependencycheck") version "6.1.1"
+  id("org.owasp.dependencycheck") version "7.4.3"
   id("org.springframework.boot") version "2.7.4"
   id("io.spring.dependency-management") version "1.1.0"
   kotlin("jvm") version "1.7.10"

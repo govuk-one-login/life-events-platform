@@ -5,8 +5,8 @@ plugins {
   id("org.owasp.dependencycheck") version "7.4.3"
   id("org.springframework.boot") version "2.7.4"
   id("io.spring.dependency-management") version "1.1.0"
-  kotlin("jvm") version "1.7.10"
-  kotlin("plugin.spring") version "1.7.10"
+  kotlin("jvm") version "1.8.0"
+  kotlin("plugin.spring") version "1.8.0"
 }
 
 group = "uk.gov.gds"

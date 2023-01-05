@@ -5,12 +5,12 @@ import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.Health.Builder
 import org.springframework.boot.actuate.health.HealthIndicator
 
-class HmppsTopicHealth(private val hmppsTopic: HmppsTopic) : HealthIndicator {
+class AwsTopicHealth(private val awsTopic: AwsTopic) : HealthIndicator {
 
   override fun health(): Health {
     val healthBuilder = Builder().up()
 
-    healthBuilder.withDetail("topicArn", hmppsTopic.arn)
+    healthBuilder.withDetail("topicArn", awsTopic.arn)
 
     getTopicAttributes()
       .onSuccess { result ->
@@ -26,7 +26,7 @@ class HmppsTopicHealth(private val hmppsTopic: HmppsTopic) : HealthIndicator {
 
   private fun getTopicAttributes(): Result<GetTopicAttributesResult> {
     return runCatching {
-      hmppsTopic.snsClient.getTopicAttributes(hmppsTopic.arn)
+      awsTopic.snsClient.getTopicAttributes(awsTopic.arn)
     }
   }
 }

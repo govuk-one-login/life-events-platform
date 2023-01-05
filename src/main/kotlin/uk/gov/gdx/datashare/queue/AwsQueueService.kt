@@ -8,17 +8,16 @@ import com.amazonaws.services.sqs.model.SendMessageRequest
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
 import org.slf4j.LoggerFactory
-import uk.gov.gdx.datashare.queue.HmppsQueue
 import kotlin.math.min
 import com.amazonaws.services.sqs.model.PurgeQueueRequest as AwsPurgeQueueRequest
 
 class MissingQueueException(message: String) : RuntimeException(message)
 class MissingTopicException(message: String) : RuntimeException(message)
 
-open class HmppsQueueService(
-  hmppsTopicFactory: HmppsTopicFactory,
-  hmppsQueueFactory: HmppsQueueFactory,
-  hmppsSqsProperties: HmppsSqsProperties,
+open class AwsQueueService(
+  awsTopicFactory: AwsTopicFactory,
+  awsQueueFactory: AwsQueueFactory,
+  sqsProperties: SqsProperties,
 ) {
 
   private companion object {
@@ -26,27 +25,27 @@ open class HmppsQueueService(
     private val gson = GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
   }
 
-  private val hmppsTopics: List<HmppsTopic> = hmppsTopicFactory.createHmppsTopics(hmppsSqsProperties)
-  private val hmppsQueues: List<HmppsQueue> = hmppsQueueFactory.createHmppsQueues(hmppsSqsProperties, hmppsTopics)
+  private val awsTopics: List<AwsTopic> = awsTopicFactory.createAwsTopics(sqsProperties)
+  private val awsQueues: List<AwsQueue> = awsQueueFactory.createAwsQueues(sqsProperties, awsTopics)
 
-  open fun findByQueueId(queueId: String) = hmppsQueues.associateBy { it.id }.getOrDefault(queueId, null)
-  open fun findByQueueName(queueName: String) = hmppsQueues.associateBy { it.queueName }.getOrDefault(queueName, null)
-  open fun findByDlqName(dlqName: String) = hmppsQueues.associateBy { it.dlqName }.getOrDefault(dlqName, null)
+  open fun findByQueueId(queueId: String) = awsQueues.associateBy { it.id }.getOrDefault(queueId, null)
+  open fun findByQueueName(queueName: String) = awsQueues.associateBy { it.queueName }.getOrDefault(queueName, null)
+  open fun findByDlqName(dlqName: String) = awsQueues.associateBy { it.dlqName }.getOrDefault(dlqName, null)
 
-  open fun findByTopicId(topicId: String) = hmppsTopics.associateBy { it.id }.getOrDefault(topicId, null)
+  open fun findByTopicId(topicId: String) = awsTopics.associateBy { it.id }.getOrDefault(topicId, null)
 
   open fun retryDlqMessages(request: RetryDlqRequest): RetryDlqResult =
-    request.hmppsQueue.retryDlqMessages()
+    request.awsQueue.retryDlqMessages()
 
   open fun getDlqMessages(request: GetDlqRequest): GetDlqResult =
-    request.hmppsQueue.getDlqMessages(request.maxMessages)
+    request.awsQueue.getDlqMessages(request.maxMessages)
 
   open fun retryAllDlqs() =
-    hmppsQueues
-      .map { hmppsQueue -> RetryDlqRequest(hmppsQueue) }
+    awsQueues
+      .map { awsQueue -> RetryDlqRequest(awsQueue) }
       .map { retryDlqRequest -> retryDlqMessages(retryDlqRequest) }
 
-  private fun HmppsQueue.retryDlqMessages(): RetryDlqResult {
+  private fun AwsQueue.retryDlqMessages(): RetryDlqResult {
     if (sqsDlqClient == null || dlqUrl == null) return RetryDlqResult(0, mutableListOf())
     val messageCount = sqsDlqClient.countMessagesOnQueue(dlqUrl!!)
     val messages = mutableListOf<Message>()
@@ -63,7 +62,7 @@ open class HmppsQueueService(
     return RetryDlqResult(messageCount, messages.toList())
   }
 
-  private fun HmppsQueue.getDlqMessages(maxMessages: Int): GetDlqResult {
+  private fun AwsQueue.getDlqMessages(maxMessages: Int): GetDlqResult {
     if (sqsDlqClient == null || dlqUrl == null) return GetDlqResult(0, 0, mutableListOf())
 
     val messages = mutableListOf<DlqMessage>()
@@ -93,15 +92,15 @@ open class HmppsQueueService(
 
   open fun findQueueToPurge(queueName: String): PurgeQueueRequest? =
     findByQueueName(queueName)
-      ?.let { hmppsQueue -> PurgeQueueRequest(hmppsQueue.queueName, hmppsQueue.sqsClient, hmppsQueue.queueUrl) }
+      ?.let { awsQueue -> PurgeQueueRequest(awsQueue.queueName, awsQueue.sqsClient, awsQueue.queueUrl) }
       ?: findByDlqName(queueName)
-        ?.let { hmppsQueue -> PurgeQueueRequest(hmppsQueue.dlqName!!, hmppsQueue.sqsDlqClient!!, hmppsQueue.dlqUrl!!) }
+        ?.let { awsQueue -> PurgeQueueRequest(awsQueue.dlqName!!, awsQueue.sqsDlqClient!!, awsQueue.dlqUrl!!) }
 }
 
-data class RetryDlqRequest(val hmppsQueue: HmppsQueue)
+data class RetryDlqRequest(val awsQueue: AwsQueue)
 data class RetryDlqResult(val messagesFoundCount: Int, val messages: List<Message>)
 
-data class GetDlqRequest(val hmppsQueue: HmppsQueue, val maxMessages: Int)
+data class GetDlqRequest(val awsQueue: AwsQueue, val maxMessages: Int)
 data class GetDlqResult(val messagesFoundCount: Int, val messagesReturnedCount: Int, val messages: List<DlqMessage>)
 data class DlqMessage(val body: Map<String, Any>, val messageId: String)
 

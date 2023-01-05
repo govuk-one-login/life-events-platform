@@ -6,8 +6,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.queue.HmppsQueue
-import uk.gov.gdx.datashare.queue.HmppsQueueService
+import uk.gov.gdx.datashare.queue.AwsQueue
+import uk.gov.gdx.datashare.queue.AwsQueueService
 import java.time.Instant
 import java.util.*
 
@@ -15,10 +15,10 @@ import java.util.*
 class AuditService(
   @Value("\${spring.application.name}")
   private val serviceName: String,
-  private val hmppsQueueService: HmppsQueueService,
+  private val awsQueueService: AwsQueueService,
   private val objectMapper: ObjectMapper,
 ) {
-  private val auditQueue by lazy { hmppsQueueService.findByQueueId("audit") as HmppsQueue }
+  private val auditQueue by lazy { awsQueueService.findByQueueId("audit") as AwsQueue }
   private val auditSqsClient by lazy { auditQueue.sqsClient }
   private val auditQueueUrl by lazy { auditQueue.queueUrl }
 

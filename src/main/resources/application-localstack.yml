@@ -1,4 +1,4 @@
-hmpps.sqs:
+sqs:
   provider: localstack
   queues:
     dataprocessor:

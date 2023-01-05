@@ -2,7 +2,7 @@ package uk.gov.gdx.datashare.queue
 
 import com.amazonaws.services.sqs.AmazonSQS
 
-class HmppsQueue(
+class AwsQueue(
   val id: String,
   val sqsClient: AmazonSQS,
   val queueName: String,

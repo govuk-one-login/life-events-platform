@@ -14,7 +14,7 @@ import org.springframework.boot.actuate.health.HealthIndicator
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
 
-class HmppsQueueHealth(private val hmppsQueue: HmppsQueue) : HealthIndicator {
+class AwsQueueHealth(private val awsQueue: AwsQueue) : HealthIndicator {
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -30,14 +30,14 @@ class HmppsQueueHealth(private val hmppsQueue: HmppsQueue) : HealthIndicator {
 
   private fun checkQueueHealth(): List<Result<HealthDetail>> {
     val results = mutableListOf<Result<HealthDetail>>()
-    results += success(HealthDetail("queueName" to hmppsQueue.queueName))
+    results += success(HealthDetail("queueName" to awsQueue.queueName))
 
     getQueueAttributes().map { attributesResult ->
       results += success(HealthDetail("messagesOnQueue" to """${attributesResult.attributes[ApproximateNumberOfMessages.toString()]}"""))
       results += success(HealthDetail("messagesInFlight" to """${attributesResult.attributes[ApproximateNumberOfMessagesNotVisible.toString()]}"""))
 
-      hmppsQueue.dlqName?.let {
-        attributesResult.attributes["$RedrivePolicy"] ?: run { results += failure(MissingRedrivePolicyException(hmppsQueue.id)) }
+      awsQueue.dlqName?.let {
+        attributesResult.attributes["$RedrivePolicy"] ?: run { results += failure(MissingRedrivePolicyException(awsQueue.id)) }
       }
     }.onFailure { throwable -> results += failure(throwable) }
 
@@ -45,10 +45,10 @@ class HmppsQueueHealth(private val hmppsQueue: HmppsQueue) : HealthIndicator {
   }
   private fun checkDlqHealth(): List<Result<HealthDetail>> {
     val results = mutableListOf<Result<HealthDetail>>()
-    hmppsQueue.dlqName?.run {
-      results += success(HealthDetail("dlqName" to hmppsQueue.dlqName))
+    awsQueue.dlqName?.run {
+      results += success(HealthDetail("dlqName" to awsQueue.dlqName))
 
-      hmppsQueue.sqsDlqClient?.run {
+      awsQueue.sqsDlqClient?.run {
         getDlqAttributes().map { attributesResult ->
           results += success(
             HealthDetail(
@@ -87,19 +87,19 @@ class HmppsQueueHealth(private val hmppsQueue: HmppsQueue) : HealthIndicator {
       .onSuccess { healthDetail -> withDetail(healthDetail.key(), healthDetail.value()) }
       .onFailure { throwable ->
         withException(throwable)
-          .also { log.error("Queue health for queueId ${hmppsQueue.id} failed due to exception", throwable) }
+          .also { log.error("Queue health for queueId ${awsQueue.id} failed due to exception", throwable) }
       }
 
   private fun getQueueAttributes(): Result<GetQueueAttributesResult> {
     return runCatching {
-      hmppsQueue.sqsClient.getQueueAttributes(GetQueueAttributesRequest(hmppsQueue.queueUrl).withAttributeNames(All))
+      awsQueue.sqsClient.getQueueAttributes(GetQueueAttributesRequest(awsQueue.queueUrl).withAttributeNames(All))
     }
   }
 
   private fun getDlqAttributes(): Result<GetQueueAttributesResult> =
     runCatching {
-      hmppsQueue.sqsDlqClient?.getQueueAttributes(GetQueueAttributesRequest(hmppsQueue.dlqUrl).withAttributeNames(All))
-        ?: throw MissingDlqClientException(hmppsQueue.dlqName)
+      awsQueue.sqsDlqClient?.getQueueAttributes(GetQueueAttributesRequest(awsQueue.dlqUrl).withAttributeNames(All))
+        ?: throw MissingDlqClientException(awsQueue.dlqName)
     }
 }
 

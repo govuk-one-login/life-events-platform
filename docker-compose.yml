@@ -15,7 +15,7 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
     environment:
-      - HMPPS_SQS_LOCALSTACK_URL=http://localstack:4566
+      - SQS_LOCALSTACK_URL=http://localstack:4566
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev,localstack
       - API_BASE_URL_ISSUER_URI=http://oauth2:8080/issuer1

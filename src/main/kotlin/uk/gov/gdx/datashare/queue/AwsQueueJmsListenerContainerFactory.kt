@@ -7,12 +7,12 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer
 
 class JmsListenerContainerFactoryMissingException(message: String) : RuntimeException(message)
 
-data class HmppsQueueDestinationContainerFactory(
+data class AwsQueueDestinationContainerFactory(
   val destination: String,
   val factory: DefaultJmsListenerContainerFactory
 )
 
-class HmppsQueueJmsListenerContainerFactory(private val factories: List<HmppsQueueDestinationContainerFactory>) : DefaultJmsListenerContainerFactory() {
+class AwsQueueJmsListenerContainerFactory(private val factories: List<AwsQueueDestinationContainerFactory>) : DefaultJmsListenerContainerFactory() {
   override fun createListenerContainer(endpoint: JmsListenerEndpoint): DefaultMessageListenerContainer {
     return factories
       .firstOrNull { it.destination == (endpoint as MethodJmsListenerEndpoint).destination }

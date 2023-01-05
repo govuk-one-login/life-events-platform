@@ -10,8 +10,8 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.controller.EventToPublish
 import uk.gov.gdx.datashare.repository.*
-import uk.gov.justice.hmpps.sqs.HmppsQueue
-import uk.gov.justice.hmpps.sqs.HmppsQueueService
+import uk.gov.gdx.datashare.queue.HmppsQueue
+import uk.gov.gdx.datashare.queue.HmppsQueueService
 import java.time.LocalDateTime
 import java.util.*
 

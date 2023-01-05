@@ -10,11 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import uk.gov.gdx.datashare.integration.LocalStackContainer.setLocalStackProperties
-import uk.gov.justice.hmpps.sqs.HmppsQueue
-import uk.gov.justice.hmpps.sqs.HmppsQueueService
-import uk.gov.justice.hmpps.sqs.HmppsSqsProperties
-import uk.gov.justice.hmpps.sqs.MissingQueueException
-import uk.gov.justice.hmpps.sqs.MissingTopicException
+import uk.gov.gdx.datashare.queue.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -29,7 +25,9 @@ class SqsIntegrationTestBase : IntegrationTestBase() {
   @Autowired
   protected lateinit var objectMapper: ObjectMapper
 
-  private val eventTopic by lazy { hmppsQueueService.findByTopicId("event") ?: throw MissingQueueException("Topic event not found") }
+  private val eventTopic by lazy {
+    hmppsQueueService.findByTopicId("event") ?: throw MissingQueueException("Topic event not found")
+  }
   protected val eventTopicSnsClient by lazy { eventTopic.snsClient }
   protected val eventTopicArn by lazy { eventTopic.arn }
 
@@ -63,7 +61,8 @@ class SqsIntegrationTestBase : IntegrationTestBase() {
   protected fun jsonString(any: Any) = objectMapper.writeValueAsString(any) as String
 
   fun getNumberOfMessagesCurrentlyOnAdaptorQueue(): Int? {
-    val queueAttributes = adaptorQueue.sqsClient.getQueueAttributes(adaptorQueue.queueUrl, listOf("ApproximateNumberOfMessages"))
+    val queueAttributes =
+      adaptorQueue.sqsClient.getQueueAttributes(adaptorQueue.queueUrl, listOf("ApproximateNumberOfMessages"))
     return queueAttributes.attributes["ApproximateNumberOfMessages"]?.toInt()
   }
 }

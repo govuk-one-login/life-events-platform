@@ -26,7 +26,10 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
+  implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.337"))
+  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
+  implementation("com.amazonaws:aws-java-sdk-sns")
+  implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -76,6 +79,9 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.3")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.8.1")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+  testImplementation("org.mockito:mockito-inline:4.8.1")
 }
 
 java {

@@ -63,7 +63,6 @@ logging:
     io.r2dbc.postgresql.PARAM: INFO # for parameters
 
 hmpps.sqs:
-  reactiveApi: true
   provider: localstack
   queues:
     dataprocessor:

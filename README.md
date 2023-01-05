@@ -1,10 +1,7 @@
 # GDX Death Notification POC
 
-**Data Sharing POC Microservice**
-
 ## API Contracts
-API documentation can be found  [here](doc/apicontracts/api-contract.md)
-
+API documentation can be found  [here](https://d33v84mi0vopmk.cloudfront.net/webjars/swagger-ui/index.html)
 
 ## Running locally
 
@@ -25,7 +22,6 @@ or from a published image:
 ## Running remotely
 
 ### Environment Variables - Queues and Topics
-
 
 #### Event Topic (Pub/Sub)
 ```env

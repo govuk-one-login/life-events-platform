@@ -38,24 +38,20 @@ legacy-outbound:
       secret: clientSecret
 
 spring:
-  flyway:
-    url: jdbc:postgresql://localhost:5432/datashare?sslmode=prefer
-    user: datashare
-    password: datashare
-
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/datashare
-    username: datashare
-    password: datashare
-    properties:
-      sslMode: DISABLE
-      sslRootCert:
-
   security:
     oauth2:
       resource-server:
         jwt:
           jwk-set-uri: ${api.base.url.oauth}/.well-known/jwks.json
+
+db:
+  provider: local
+  uri: postgresql://localhost:5432/datashare?sslmode=disable
+  hostname: localhost
+  port: 5432
+  ssl-required: false
+  username: datashare
+  password: datashare
 
 logging:
   level:

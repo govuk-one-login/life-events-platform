@@ -79,6 +79,9 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.3")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.8.1")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+  testImplementation("org.mockito:mockito-inline:4.8.1")
 }
 
 java {

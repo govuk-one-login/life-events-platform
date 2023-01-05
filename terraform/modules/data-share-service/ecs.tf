@@ -36,6 +36,14 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_S3_INGRESS_BUCKET", "value" : module.ingress.name },
         { "name" : "API_BASE_S3_INGRESS_ARCHIVE_BUCKET", "value" : module.ingress_archive.name },
 
+        { "name" : "DB_PROVIDER", "value" : "rds" },
+        { "name" : "DB_URI", "value" : local.rds_db_url },
+        { "name" : "DB_HOSTNAME", "value" : aws_rds_cluster.rds_postgres_cluster.endpoint },
+        { "name" : "DB_SSL_REQUIRED", "value" : "true" },
+        { "name" : "DB_PORT", "value" : tostring(aws_rds_cluster.rds_postgres_cluster.port) },
+        { "name" : "DB_RDS_REGION", "value" : var.region },
+        { "name" : "DB_USERNAME", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },
+
         { "name" : "METRICS_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },
 
         { "name" : "SQS_TOPICS_EVENT_ACCESSKEYID", "value" : module.sns.access_key_id },
@@ -69,13 +77,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SQS_QUEUES_ODG_DLQACCESSKEYID", "value" : module.other_department_queue.dead_letter_queue_access_key_id },
         { "name" : "SQS_QUEUES_ODG_DLQSECRETACCESSKEY", "value" : module.other_department_queue.dead_letter_queue_access_key_secret },
         { "name" : "SQS_QUEUES_ODG_DLQNAME", "value" : module.other_department_queue.dead_letter_queue_name },
-
-        { "name" : "SPRING_FLYWAY_URL", "value" : "jdbc:${local.rds_db_url}" },
-        { "name" : "SPRING_FLYWAY_USER", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },
-        { "name" : "SPRING_FLYWAY_PASSWORD", "value" : random_password.rds_password.result },
-        { "name" : "SPRING_R2DBC_URL", "value" : "r2dbc:${local.rds_db_url}" },
-        { "name" : "SPRING_R2DBC_USERNAME", "value" : aws_rds_cluster.rds_postgres_cluster.master_username },
-        { "name" : "SPRING_R2DBC_PASSWORD", "value" : random_password.rds_password.result },
 
         { "name" : "LEGACY_INBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_inbound_client_id },
         { "name" : "LEGACY_INBOUND_API_CLIENT_SECRET", "value" : module.cognito.legacy_inbound_client_secret },

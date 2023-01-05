@@ -33,8 +33,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },
         { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://gdx-data-share-poc:8080" },
         { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },
-        { "name" : "API_BASE_S3_INGRESS", "value" : module.ingress.name },
-        { "name" : "API_BASE_S3_INGRESS_ARCHIVE", "value" : module.ingress_archive.name },
+        { "name" : "API_BASE_S3_INGRESS_BUCKET", "value" : module.ingress.name },
+        { "name" : "API_BASE_S3_INGRESS_ARCHIVE_BUCKET", "value" : module.ingress_archive.name },
 
         { "name" : "METRICS_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },
 

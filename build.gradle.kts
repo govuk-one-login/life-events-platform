@@ -17,6 +17,8 @@ configurations {
 }
 
 dependencies {
+  annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -25,9 +27,11 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
+  implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+  implementation("org.apache.commons:commons-csv:1.9.0")
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("org.postgresql:r2dbc-postgresql")
@@ -49,9 +53,7 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("org.mockftpserver:MockFtpServer:3.1.0")
-
-  implementation("aws.sdk.kotlin:s3:0.19.2-beta")
+  implementation("com.amazonaws:aws-java-sdk-s3:1.12.376")
 
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")

@@ -94,3 +94,8 @@ springdoc:
   swagger-ui:
     oauth2RedirectUrl: http://localhost:8080/webjars/swagger-ui/oauth2-redirect.html
     tags-sorter: alpha
+
+api:
+  base:
+    s3:
+      region: eu-west-2

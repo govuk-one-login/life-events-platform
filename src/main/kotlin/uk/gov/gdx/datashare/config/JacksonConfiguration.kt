@@ -13,7 +13,7 @@ class JacksonConfiguration {
   companion object {
     const val dateTimeFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
   }
-  
+
   @Bean
   @Primary
   fun objectMapper(): ObjectMapper {

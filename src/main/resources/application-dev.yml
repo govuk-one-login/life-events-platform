@@ -40,8 +40,9 @@ api:
       data-receiver: http://localhost:8080
       event-data-retrieval: http://localhost:8080
     s3:
-      ingress: ingress
-      ingress-archive: ingress-archive
+      localstack-url: http://127.0.0.1:4566
+      ingress-bucket: ingress
+      ingress-archive-bucket: ingress-archive
 
 legacy-inbound:
   api:

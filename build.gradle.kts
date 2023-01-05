@@ -81,7 +81,7 @@ dependencies {
   testImplementation("io.mockk:mockk:1.13.3")
   testImplementation("org.mockito:mockito-junit-jupiter:4.8.1")
   testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-  testImplementation("org.mockito:mockito-inline:4.8.1")
+  testImplementation("org.mockito:mockito-inline:4.11.0")
 }
 
 java {

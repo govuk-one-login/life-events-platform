@@ -6,6 +6,8 @@ API documentation can be found [here](https://d33v84mi0vopmk.cloudfront.net/webj
 ## Running the service
 ### Running locally
 
+See [contributing](CONTRIBUTING.md) for more info on running the service locally for development.
+
 For running locally against docker instances of the following services:
 
 - run this application independently e.g. in IntelliJ

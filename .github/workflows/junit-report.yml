@@ -1,7 +1,7 @@
 name: JUnit report
 on:
   workflow_run:
-    workflows: ["Run tests"]
+    workflows: ["Run tests", "Application"]
     types: [completed]
     
 permissions:

@@ -249,7 +249,21 @@ Notice how the NINO is not returned. This is because the client is not setup to 
 | dwp-event-receiver | DWP | DEATH\_NOTIFICATION,BIRTH\_NOTIFICATION | 2022-11-30 16:41:31.908146 +00:00 | true |
 
 
-### Architecture
+## Architecture
 
 Architecture decision records start [here](doc/architecture/decisions/0001-use-adr.md)
+
+## Glossary
+
+There are numerous terms and acronyms used in this codebase that aren't immediately obvious, including
+
+|Term| Definition                                                                                          |
+|---|-----------------------------------------------------------------------------------------------------|
+|GDS| Government Digital Service - https://www.gov.uk/government/organisations/government-digital-service |
+|GDX| Government Data Exchange - This project and the wider                                               |
+|DWP| Department for Work and Pensions                                                                    |
+|LEN| Life Event Notification (a service from HMPO)                                                       |
+|HMPO| HM Passport Office                                                                                  |
+|GRO| General Registry Office                                                                             |
+|OGD| Other Government Department                                                                         |
 

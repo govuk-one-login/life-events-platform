@@ -35,7 +35,7 @@ class HmppsSqsConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  fun hmppsQueueResourceAsync(hmppsQueueService: HmppsQueueService) = HmppsQueueResourceAsync(hmppsQueueService)
+  fun hmppsQueueControllerAsync(hmppsQueueService: HmppsQueueService) = HmppsQueueControllerAsync(hmppsQueueService)
 
   @Bean
   @ConditionalOnMissingBean

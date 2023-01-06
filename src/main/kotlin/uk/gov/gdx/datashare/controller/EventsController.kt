@@ -33,10 +33,12 @@ class EventsController(
   meterRegistry: MeterRegistry,
 ) {
   private val publishEventCounter: Counter = meterRegistry.counter("API_CALLS.PublishEvent")
+  private val publishEventSuccessCounter: Counter = meterRegistry.counter("SUCCESSFUL_API_CALLS.PublishEvent")
   private val getEventCounter: Counter = meterRegistry.counter("API_CALLS.GetEvent")
   private val getEventsCounter: Counter = meterRegistry.counter("API_CALLS.GetEvents")
   private val getEventsStatusCounter: Counter = meterRegistry.counter("API_CALLS.GetEventsStatus")
   private val deleteEventCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent")
+  private val deleteEventSuccessCounter: Counter = meterRegistry.counter("SUCCESSFUL_API_CALLS.DeleteEvent")
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping("/status")
@@ -123,8 +125,9 @@ class EventsController(
     )
     @RequestBody eventPayload: EventToPublish,
   ) = run {
-    dataReceiverService.sendToDataProcessor(eventPayload)
     publishEventCounter.increment()
+    dataReceiverService.sendToDataProcessor(eventPayload)
+    publishEventSuccessCounter.increment()
   }
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
@@ -165,6 +168,7 @@ class EventsController(
   ): ResponseEntity<Void> {
     deleteEventCounter.increment()
     eventDataService.deleteEvent(id)
+    deleteEventSuccessCounter.increment()
     return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
   }
 }

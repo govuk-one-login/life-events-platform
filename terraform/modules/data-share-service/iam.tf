@@ -126,7 +126,7 @@ data "aws_iam_policy_document" "ecs_task_s3_key" {
 }
 
 resource "aws_iam_policy" "ecs_task_s3_key" {
-  name   = "${var.environment}-ecs-task-s3-access"
+  name   = "${var.environment}-ecs-task-s3-key"
   policy = data.aws_iam_policy_document.ecs_task_s3_access.json
 }
 

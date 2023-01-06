@@ -17,26 +17,26 @@ import uk.gov.gdx.datashare.queue.*
 class SqsIntegrationTestBase : IntegrationTestBase() {
 
   @Autowired
-  private lateinit var hmppsQueueService: HmppsQueueService
+  private lateinit var awsQueueService: AwsQueueService
 
   @SpyBean
-  protected lateinit var hmppsSqsPropertiesSpy: HmppsSqsProperties
+  protected lateinit var sqsPropertiesSpy: SqsProperties
 
   @Autowired
   protected lateinit var objectMapper: ObjectMapper
 
   private val eventTopic by lazy {
-    hmppsQueueService.findByTopicId("event") ?: throw MissingQueueException("Topic event not found")
+    awsQueueService.findByTopicId("event") ?: throw MissingQueueException("Topic event not found")
   }
   protected val eventTopicSnsClient by lazy { eventTopic.snsClient }
   protected val eventTopicArn by lazy { eventTopic.arn }
 
-  protected val auditQueue by lazy { hmppsQueueService.findByQueueId("audit") as HmppsQueue }
-  protected val dataProcessorQueue by lazy { hmppsQueueService.findByQueueId("dataprocessor") as HmppsQueue }
-  protected val adaptorQueue by lazy { hmppsQueueService.findByQueueId("adaptor") as HmppsQueue }
-  protected val odgQueue by lazy { hmppsQueueService.findByQueueId("odg") as HmppsQueue }
+  protected val auditQueue by lazy { awsQueueService.findByQueueId("audit") as AwsQueue }
+  protected val dataProcessorQueue by lazy { awsQueueService.findByQueueId("dataprocessor") as AwsQueue }
+  protected val adaptorQueue by lazy { awsQueueService.findByQueueId("adaptor") as AwsQueue }
+  protected val odgQueue by lazy { awsQueueService.findByQueueId("odg") as AwsQueue }
 
-  fun HmppsSqsProperties.eventTopicConfig() =
+  fun SqsProperties.eventTopicConfig() =
     topics["event"] ?: throw MissingTopicException("event has not been loaded from configuration properties")
 
   @BeforeEach

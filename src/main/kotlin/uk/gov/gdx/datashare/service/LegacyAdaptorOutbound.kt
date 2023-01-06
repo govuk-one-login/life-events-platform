@@ -27,7 +27,7 @@ class LegacyAdaptorOutbound(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @JmsListener(destination = "adaptor", containerFactory = "hmppsQueueContainerFactoryProxy")
+  @JmsListener(destination = "adaptor", containerFactory = "awsQueueContainerFactoryProxy")
   fun onPublishedEvent(eventMessage: String) = runBlocking {
     val (message, messageAttributes) = objectMapper.readValue(eventMessage, EventTopicMessage::class.java)
     val eventType = messageAttributes.eventType.Value

@@ -4,8 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
-@ConfigurationProperties(prefix = "hmpps.sqs")
-data class HmppsSqsProperties(
+@ConfigurationProperties(prefix = "sqs")
+data class SqsProperties(
   val provider: String = "aws",
   val region: String = "eu-west-2",
   val localstackUrl: String = "http://localhost:4566",
@@ -32,7 +32,7 @@ data class HmppsSqsProperties(
     private val arnRegex = Regex("arn:aws:sns:.*:.*:(.*)$")
 
     val name: String
-      get() = if (arn.matches(arnRegex)) arnRegex.find(arn)!!.destructured.component1() else throw InvalidHmppsSqsPropertiesException("Topic ARN $arn has an invalid format")
+      get() = if (arn.matches(arnRegex)) arnRegex.find(arn)!!.destructured.component1() else throw InvalidAwsSqsPropertiesException("Topic ARN $arn has an invalid format")
   }
 
   init {
@@ -52,20 +52,20 @@ data class HmppsSqsProperties(
   }
 
   private fun queueIdMustBeLowerCase(queueId: String) {
-    if (queueId != queueId.lowercase()) throw InvalidHmppsSqsPropertiesException("queueId $queueId is not lowercase")
+    if (queueId != queueId.lowercase()) throw InvalidAwsSqsPropertiesException("queueId $queueId is not lowercase")
   }
 
   private fun queueNamesMustExist(queueId: String, queueConfig: QueueConfig) {
-    if (queueConfig.queueName.isEmpty()) throw InvalidHmppsSqsPropertiesException("queueId $queueId does not have a queue name")
+    if (queueConfig.queueName.isEmpty()) throw InvalidAwsSqsPropertiesException("queueId $queueId does not have a queue name")
   }
 
   private fun awsQueueSecretsMustExist(queueId: String, queueConfig: QueueConfig) {
     if (provider == "aws") {
-      if (queueConfig.queueAccessKeyId.isEmpty()) throw InvalidHmppsSqsPropertiesException("queueId $queueId does not have a queue access key id")
-      if (queueConfig.queueSecretAccessKey.isEmpty()) throw InvalidHmppsSqsPropertiesException("queueId $queueId does not have a queue secret access key")
+      if (queueConfig.queueAccessKeyId.isEmpty()) throw InvalidAwsSqsPropertiesException("queueId $queueId does not have a queue access key id")
+      if (queueConfig.queueSecretAccessKey.isEmpty()) throw InvalidAwsSqsPropertiesException("queueId $queueId does not have a queue secret access key")
       if (queueConfig.dlqName.isNotEmpty()) {
-        if (queueConfig.dlqAccessKeyId.isEmpty()) throw InvalidHmppsSqsPropertiesException("queueId $queueId does not have a DLQ access key id")
-        if (queueConfig.dlqSecretAccessKey.isEmpty()) throw InvalidHmppsSqsPropertiesException("queueId $queueId does not have a DLQ secret access key")
+        if (queueConfig.dlqAccessKeyId.isEmpty()) throw InvalidAwsSqsPropertiesException("queueId $queueId does not have a DLQ access key id")
+        if (queueConfig.dlqSecretAccessKey.isEmpty()) throw InvalidAwsSqsPropertiesException("queueId $queueId does not have a DLQ secret access key")
       }
     }
   }
@@ -76,25 +76,25 @@ data class HmppsSqsProperties(
   ) {
     if (provider == "localstack") {
       if (queueConfig.subscribeTopicId.isNotEmpty().and(topics.containsKey(queueConfig.subscribeTopicId).not()))
-        throw InvalidHmppsSqsPropertiesException("queueId $queueId wants to subscribe to ${queueConfig.subscribeTopicId} but it does not exist")
+        throw InvalidAwsSqsPropertiesException("queueId $queueId wants to subscribe to ${queueConfig.subscribeTopicId} but it does not exist")
     }
   }
 
   private fun topicIdMustBeLowerCase(topicId: String) {
-    if (topicId != topicId.lowercase()) throw InvalidHmppsSqsPropertiesException("topicId $topicId is not lowercase")
+    if (topicId != topicId.lowercase()) throw InvalidAwsSqsPropertiesException("topicId $topicId is not lowercase")
   }
 
   private fun localstackTopicNameMustExist(topicId: String, topicConfig: TopicConfig) {
     if (provider == "localstack") {
-      if (topicConfig.name.isEmpty()) throw InvalidHmppsSqsPropertiesException("topicId $topicId does not have a name")
+      if (topicConfig.name.isEmpty()) throw InvalidAwsSqsPropertiesException("topicId $topicId does not have a name")
     }
   }
 
   private fun awsTopicSecretsMustExist(topicId: String, topicConfig: TopicConfig) {
     if (provider == "aws") {
-      if (topicConfig.arn.isEmpty()) throw InvalidHmppsSqsPropertiesException("topicId $topicId does not have an arn")
-      if (topicConfig.accessKeyId.isEmpty()) throw InvalidHmppsSqsPropertiesException("topicId $topicId does not have an access key id")
-      if (topicConfig.secretAccessKey.isEmpty()) throw InvalidHmppsSqsPropertiesException("topicId $topicId does not have a secret access key")
+      if (topicConfig.arn.isEmpty()) throw InvalidAwsSqsPropertiesException("topicId $topicId does not have an arn")
+      if (topicConfig.accessKeyId.isEmpty()) throw InvalidAwsSqsPropertiesException("topicId $topicId does not have an access key id")
+      if (topicConfig.secretAccessKey.isEmpty()) throw InvalidAwsSqsPropertiesException("topicId $topicId does not have a secret access key")
     }
   }
 
@@ -126,9 +126,9 @@ data class HmppsSqsProperties(
     val duplicateValues = source.mapValues(valueFinder).values.filter { it.isNotEmpty() }.groupingBy { it }.eachCount().filterValues { it > 1 }
     if (duplicateValues.isNotEmpty()) {
       val outputValues = if (secret.not()) duplicateValues.keys else duplicateValues.keys.map { "${it.subSequence(0, 4)}******" }.toList()
-      throw InvalidHmppsSqsPropertiesException("Found duplicated $description: $outputValues")
+      throw InvalidAwsSqsPropertiesException("Found duplicated $description: $outputValues")
     }
   }
 }
 
-class InvalidHmppsSqsPropertiesException(message: String) : IllegalStateException(message)
+class InvalidAwsSqsPropertiesException(message: String) : IllegalStateException(message)

@@ -13,7 +13,7 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory
 import javax.jms.Session
 
-class HmppsQueueFactory(
+class AwsQueueFactory(
   private val context: ConfigurableApplicationContext,
   private val amazonSqsFactory: AmazonSqsFactory,
 ) {
@@ -21,37 +21,37 @@ class HmppsQueueFactory(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun createHmppsQueues(hmppsSqsProperties: HmppsSqsProperties, hmppsTopics: List<HmppsTopic> = listOf()) =
-    hmppsSqsProperties.queues
+  fun createAwsQueues(sqsProperties: SqsProperties, awsTopics: List<AwsTopic> = listOf()) =
+    sqsProperties.queues
       .map { (queueId, queueConfig) ->
-        val sqsDlqClient = getOrDefaultSqsDlqClient(queueId, queueConfig, hmppsSqsProperties)
-        val sqsClient = getOrDefaultSqsClient(queueId, queueConfig, hmppsSqsProperties, sqsDlqClient)
-          .also { subscribeToLocalStackTopic(hmppsSqsProperties, queueConfig, hmppsTopics) }
-        HmppsQueue(queueId, sqsClient, queueConfig.queueName, sqsDlqClient, queueConfig.dlqName.ifEmpty { null })
+        val sqsDlqClient = getOrDefaultSqsDlqClient(queueId, queueConfig, sqsProperties)
+        val sqsClient = getOrDefaultSqsClient(queueId, queueConfig, sqsProperties, sqsDlqClient)
+          .also { subscribeToLocalStackTopic(sqsProperties, queueConfig, awsTopics) }
+        AwsQueue(queueId, sqsClient, queueConfig.queueName, sqsDlqClient, queueConfig.dlqName.ifEmpty { null })
           .also { getOrDefaultHealthIndicator(it) }
-          .also { createJmsListenerContainerFactory(it, hmppsSqsProperties) }
+          .also { createJmsListenerContainerFactory(it, sqsProperties) }
       }.toList()
 
-  private fun getOrDefaultSqsDlqClient(queueId: String, queueConfig: HmppsSqsProperties.QueueConfig, hmppsSqsProperties: HmppsSqsProperties): AmazonSQS? =
+  private fun getOrDefaultSqsDlqClient(queueId: String, queueConfig: SqsProperties.QueueConfig, sqsProperties: SqsProperties): AmazonSQS? =
     if (queueConfig.dlqName.isNotEmpty()) {
       getOrDefaultBean("$queueId-sqs-dlq-client") {
-        createSqsDlqClient(queueId, queueConfig, hmppsSqsProperties)
+        createSqsDlqClient(queueId, queueConfig, sqsProperties)
       }
     } else null
 
-  private fun getOrDefaultSqsClient(queueId: String, queueConfig: HmppsSqsProperties.QueueConfig, hmppsSqsProperties: HmppsSqsProperties, sqsDlqClient: AmazonSQS?): AmazonSQS =
+  private fun getOrDefaultSqsClient(queueId: String, queueConfig: SqsProperties.QueueConfig, sqsProperties: SqsProperties, sqsDlqClient: AmazonSQS?): AmazonSQS =
     getOrDefaultBean("$queueId-sqs-client") {
-      createSqsClient(queueId, queueConfig, hmppsSqsProperties, sqsDlqClient)
+      createSqsClient(queueId, queueConfig, sqsProperties, sqsDlqClient)
     }
 
-  private fun getOrDefaultHealthIndicator(hmppsQueue: HmppsQueue): HealthIndicator =
-    getOrDefaultBean("${hmppsQueue.id}-health") {
-      HmppsQueueHealth(hmppsQueue)
+  private fun getOrDefaultHealthIndicator(awsQueue: AwsQueue): HealthIndicator =
+    getOrDefaultBean("${awsQueue.id}-health") {
+      AwsQueueHealth(awsQueue)
     }
 
-  private fun createJmsListenerContainerFactory(hmppsQueue: HmppsQueue, hmppsSqsProperties: HmppsSqsProperties): HmppsQueueDestinationContainerFactory =
-    getOrDefaultBean("${hmppsQueue.id}-jms-listener-factory") {
-      HmppsQueueDestinationContainerFactory(hmppsQueue.id, createJmsListenerContainerFactory(hmppsQueue.sqsClient, hmppsSqsProperties))
+  private fun createJmsListenerContainerFactory(awsQueue: AwsQueue, sqsProperties: SqsProperties): AwsQueueDestinationContainerFactory =
+    getOrDefaultBean("${awsQueue.id}-jms-listener-factory") {
+      AwsQueueDestinationContainerFactory(awsQueue.id, createJmsListenerContainerFactory(awsQueue.sqsClient, sqsProperties))
     }
 
   @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -61,8 +61,8 @@ class HmppsQueueFactory(
         createDefaultBean().also { bean -> context.beanFactory.registerSingleton(beanName, bean) }
       }
 
-  fun createSqsDlqClient(queueId: String, queueConfig: HmppsSqsProperties.QueueConfig, hmppsSqsProperties: HmppsSqsProperties): AmazonSQS =
-    with(hmppsSqsProperties) {
+  fun createSqsDlqClient(queueId: String, queueConfig: SqsProperties.QueueConfig, sqsProperties: SqsProperties): AmazonSQS =
+    with(sqsProperties) {
       if (queueConfig.dlqName.isEmpty()) throw MissingDlqNameException()
       when (provider) {
         "aws" -> amazonSqsFactory.awsSqsDlqClient(queueId, queueConfig.dlqName, queueConfig.dlqAccessKeyId, queueConfig.dlqSecretAccessKey, region)
@@ -70,19 +70,19 @@ class HmppsQueueFactory(
           amazonSqsFactory.localStackSqsDlqClient(queueId, queueConfig.dlqName, localstackUrl, region)
             .also { sqsDlqClient -> sqsDlqClient.createQueue(queueConfig.dlqName) }
 
-        else -> throw IllegalStateException("Unrecognised HMPPS SQS provider $provider")
+        else -> throw IllegalStateException("Unrecognised SQS provider $provider")
       }
     }
 
-  fun createSqsClient(queueId: String, queueConfig: HmppsSqsProperties.QueueConfig, hmppsSqsProperties: HmppsSqsProperties, sqsDlqClient: AmazonSQS?) =
-    with(hmppsSqsProperties) {
+  fun createSqsClient(queueId: String, queueConfig: SqsProperties.QueueConfig, sqsProperties: SqsProperties, sqsDlqClient: AmazonSQS?) =
+    with(sqsProperties) {
       when (provider) {
         "aws" -> amazonSqsFactory.awsSqsClient(queueId, queueConfig.queueName, queueConfig.queueAccessKeyId, queueConfig.queueSecretAccessKey, region)
         "localstack" ->
           amazonSqsFactory.localStackSqsClient(queueId, queueConfig.queueName, localstackUrl, region)
             .also { sqsClient -> createLocalStackQueue(sqsClient, sqsDlqClient, queueConfig.queueName, queueConfig.dlqName, queueConfig.dlqMaxReceiveCount) }
 
-        else -> throw IllegalStateException("Unrecognised HMPPS SQS provider $provider")
+        else -> throw IllegalStateException("Unrecognised SQS provider $provider")
       }
     }
 
@@ -111,26 +111,26 @@ class HmppsQueueFactory(
     }
   }
 
-  private fun subscribeToLocalStackTopic(hmppsSqsProperties: HmppsSqsProperties, queueConfig: HmppsSqsProperties.QueueConfig, hmppsTopics: List<HmppsTopic>) {
-    if (hmppsSqsProperties.provider=="localstack")
-      hmppsTopics.firstOrNull { topic -> topic.id==queueConfig.subscribeTopicId }
+  private fun subscribeToLocalStackTopic(sqsProperties: SqsProperties, queueConfig: SqsProperties.QueueConfig, awsTopics: List<AwsTopic>) {
+    if (sqsProperties.provider=="localstack")
+      awsTopics.firstOrNull { topic -> topic.id==queueConfig.subscribeTopicId }
         ?.also { topic ->
           val subscribeAttribute = if (queueConfig.subscribeFilter.isNullOrEmpty()) mapOf() else mapOf("FilterPolicy" to queueConfig.subscribeFilter)
           topic.snsClient.subscribe(
             SubscribeRequest()
               .withTopicArn(topic.arn)
               .withProtocol("sqs")
-              .withEndpoint("${hmppsSqsProperties.localstackUrl}/queue/${queueConfig.queueName}")
+              .withEndpoint("${sqsProperties.localstackUrl}/queue/${queueConfig.queueName}")
               .withAttributes(subscribeAttribute)
           )
             .also { log.info("Queue ${queueConfig.queueName} has subscribed to topic with arn ${topic.arn}") }
         }
   }
 
-  fun createJmsListenerContainerFactory(awsSqsClient: AmazonSQS, hmppsSqsProperties: HmppsSqsProperties): DefaultJmsListenerContainerFactory =
+  fun createJmsListenerContainerFactory(awsSqsClient: AmazonSQS, sqsProperties: SqsProperties): DefaultJmsListenerContainerFactory =
     DefaultJmsListenerContainerFactory().apply {
       setConnectionFactory(SQSConnectionFactory(ProviderConfiguration(), awsSqsClient))
-      setDestinationResolver(HmppsQueueDestinationResolver(hmppsSqsProperties))
+      setDestinationResolver(AwsQueueDestinationResolver(sqsProperties))
       setConcurrency("1-1")
       setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE)
       setErrorHandler { t: Throwable? -> log.error("Error caught in jms listener", t) }

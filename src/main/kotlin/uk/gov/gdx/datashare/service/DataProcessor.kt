@@ -21,7 +21,7 @@ class DataProcessor(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @JmsListener(destination = "dataprocessor", containerFactory = "hmppsQueueContainerFactoryProxy")
+  @JmsListener(destination = "dataprocessor", containerFactory = "awsQueueContainerFactoryProxy")
   fun onGovEvent(message: String) {
 
     runBlocking {

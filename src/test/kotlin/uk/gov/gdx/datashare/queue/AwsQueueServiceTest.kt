@@ -11,15 +11,15 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import com.amazonaws.services.sqs.model.PurgeQueueRequest as AwsPurgeQueueRequest
 
-class HmppsQueueServiceTest {
+class AwsQueueServiceTest {
 
-  private val hmppsTopicFactory = mock<HmppsTopicFactory>()
-  private val hmppsQueueFactory = mock<HmppsQueueFactory>()
-  private val hmppsSqsProperties = mock<HmppsSqsProperties>()
-  private lateinit var hmppsQueueService: HmppsQueueService
+  private val awsTopicFactory = mock<AwsTopicFactory>()
+  private val awsQueueFactory = mock<AwsQueueFactory>()
+  private val sqsProperties = mock<SqsProperties>()
+  private lateinit var awsQueueService: AwsQueueService
 
   @Nested
-  inner class HmppsQueues {
+  inner class AwsQueues {
 
     private val sqsClient = mock<AmazonSQS>()
     private val sqsDlqClient = mock<AmazonSQS>()
@@ -28,45 +28,45 @@ class HmppsQueueServiceTest {
     fun `add test data`() {
       whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
       whenever(sqsDlqClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
-      whenever(hmppsQueueFactory.createHmppsQueues(any(), any()))
+      whenever(awsQueueFactory.createAwsQueues(any(), any()))
         .thenReturn(
           listOf(
-            HmppsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
-            HmppsQueue("another queue id", mock(), "another queue name", mock(), "another dlq name"),
+            AwsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
+            AwsQueue("another queue id", mock(), "another queue name", mock(), "another dlq name"),
           )
         )
 
-      hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
     }
 
     @Test
-    fun `finds an hmpps queue by queue id`() {
-      assertThat(hmppsQueueService.findByQueueId("some queue id")?.queueUrl).isEqualTo("some queue url")
+    fun `finds an aws queue by queue id`() {
+      assertThat(awsQueueService.findByQueueId("some queue id")?.queueUrl).isEqualTo("some queue url")
     }
 
     @Test
-    fun `finds an hmpps queue by queue name`() {
-      assertThat(hmppsQueueService.findByQueueName("some queue name")?.queueUrl).isEqualTo("some queue url")
+    fun `finds an aws queue by queue name`() {
+      assertThat(awsQueueService.findByQueueName("some queue name")?.queueUrl).isEqualTo("some queue url")
     }
 
     @Test
-    fun `finds an hmpps queue by dlq name`() {
-      assertThat(hmppsQueueService.findByDlqName("some dlq name")?.dlqUrl).isEqualTo("some dlq url")
+    fun `finds an aws queue by dlq name`() {
+      assertThat(awsQueueService.findByDlqName("some dlq name")?.dlqUrl).isEqualTo("some dlq url")
     }
 
     @Test
     fun `returns null if queue id not found`() {
-      assertThat(hmppsQueueService.findByQueueId("unknown")).isNull()
+      assertThat(awsQueueService.findByQueueId("unknown")).isNull()
     }
 
     @Test
     fun `returns null if queue not found`() {
-      assertThat(hmppsQueueService.findByQueueName("unknown")).isNull()
+      assertThat(awsQueueService.findByQueueName("unknown")).isNull()
     }
 
     @Test
     fun `returns null if dlq not found`() {
-      assertThat(hmppsQueueService.findByDlqName("unknown")).isNull()
+      assertThat(awsQueueService.findByDlqName("unknown")).isNull()
     }
   }
 
@@ -81,7 +81,7 @@ class HmppsQueueServiceTest {
       whenever(queueSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("queueUrl"))
       whenever(dlqSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("dlqUrl"))
 
-      hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
     }
 
     @Nested
@@ -95,9 +95,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should not attempt any transfer`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -114,9 +114,9 @@ class HmppsQueueServiceTest {
       @Test
       fun `should return empty result`() {
         val result =
-          hmppsQueueService.retryDlqMessages(
+          awsQueueService.retryDlqMessages(
             RetryDlqRequest(
-              HmppsQueue(
+              AwsQueue(
                 "some queue id",
                 queueSqs,
                 "some queue name",
@@ -148,14 +148,14 @@ class HmppsQueueServiceTest {
             )
           )
 
-        hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
       }
 
       @Test
       fun `should receive message from the dlq`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -175,9 +175,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should delete message from the dlq`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -197,9 +197,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should send message to the main queue`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -216,9 +216,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should return the message`() {
-        val result = hmppsQueueService.retryDlqMessages(
+        val result = awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -260,14 +260,14 @@ class HmppsQueueServiceTest {
             )
           )
 
-        hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
       }
 
       @Test
       fun `should receive message from the dlq`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -287,9 +287,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should delete message from the dlq`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -308,9 +308,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should send message to the main queue`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -332,9 +332,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should return the message`() {
-        val result = hmppsQueueService.retryDlqMessages(
+        val result = awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -370,14 +370,14 @@ class HmppsQueueServiceTest {
           )
           .thenReturn(ReceiveMessageResult())
 
-        hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
       }
 
       @Test
       fun `should receive message from the dlq`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -397,9 +397,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should delete message from the dlq`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -419,9 +419,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should send message to the main queue`() {
-        hmppsQueueService.retryDlqMessages(
+        awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -439,9 +439,9 @@ class HmppsQueueServiceTest {
 
       @Test
       fun `should return the message`() {
-        val result = hmppsQueueService.retryDlqMessages(
+        val result = awsQueueService.retryDlqMessages(
           RetryDlqRequest(
-            HmppsQueue(
+            AwsQueue(
               "some queue id",
               queueSqs,
               "some queue name",
@@ -469,7 +469,7 @@ class HmppsQueueServiceTest {
       whenever(queueSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("queueUrl"))
       whenever(dlqSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("dlqUrl"))
 
-      hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
     }
 
     @BeforeEach
@@ -494,14 +494,14 @@ class HmppsQueueServiceTest {
           )
         )
 
-      hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
     }
 
     @Test
     fun `should get messages from the dlq`() {
-      val dlqResult = hmppsQueueService.getDlqMessages(
+      val dlqResult = awsQueueService.getDlqMessages(
         GetDlqRequest(
-          HmppsQueue(
+          AwsQueue(
             "some queue id",
             queueSqs,
             "some queue name",
@@ -534,34 +534,34 @@ class HmppsQueueServiceTest {
     fun `add test data`() {
       whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
       whenever(sqsDlqClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
-      whenever(hmppsQueueFactory.createHmppsQueues(any(), any()))
+      whenever(awsQueueFactory.createAwsQueues(any(), any()))
         .thenReturn(
           listOf(
-            HmppsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
-            HmppsQueue("another queue id", mock(), "another queue name", mock(), "another dlq name"),
+            AwsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
+            AwsQueue("another queue id", mock(), "another queue name", mock(), "another dlq name"),
           )
         )
 
-      hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
     }
 
     @Test
     fun `should find the main queue`() {
-      val request = hmppsQueueService.findQueueToPurge("some queue name")
+      val request = awsQueueService.findQueueToPurge("some queue name")
 
       assertThat(request?.queueName).isEqualTo("some queue name")
     }
 
     @Test
     fun `should find the dlq`() {
-      val request = hmppsQueueService.findQueueToPurge("some dlq name")
+      val request = awsQueueService.findQueueToPurge("some dlq name")
 
       assertThat(request?.queueName).isEqualTo("some dlq name")
     }
 
     @Test
     fun `should return null if not queue or dlq`() {
-      val request = hmppsQueueService.findQueueToPurge("unknown queue name")
+      val request = awsQueueService.findQueueToPurge("unknown queue name")
 
       assertThat(request).isNull()
     }
@@ -571,13 +571,13 @@ class HmppsQueueServiceTest {
   inner class PurgeQueue {
 
     private val sqsClient = mock<AmazonSQS>()
-    private val hmppsQueueService = HmppsQueueService(hmppsTopicFactory, hmppsQueueFactory, hmppsSqsProperties)
+    private val awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
 
     @Test
     fun `no messages found, should not attempt to purge queue`() {
       stubMessagesOnQueue(0)
 
-      hmppsQueueService.purgeQueue(PurgeQueueRequest("some queue", sqsClient, "some queue url"))
+      awsQueueService.purgeQueue(PurgeQueueRequest("some queue", sqsClient, "some queue url"))
 
       verify(sqsClient, times(0)).purgeQueue(any())
     }
@@ -586,7 +586,7 @@ class HmppsQueueServiceTest {
     fun `messages found, should attempt to purge queue`() {
       stubMessagesOnQueue(1)
 
-      hmppsQueueService.purgeQueue(PurgeQueueRequest("some queue", sqsClient, "some queue url"))
+      awsQueueService.purgeQueue(PurgeQueueRequest("some queue", sqsClient, "some queue url"))
 
       verify(sqsClient).purgeQueue(AwsPurgeQueueRequest("some queue url"))
     }
@@ -595,7 +595,7 @@ class HmppsQueueServiceTest {
     fun `should return number of messages found to purge`() {
       stubMessagesOnQueue(5)
 
-      val result = hmppsQueueService.purgeQueue(PurgeQueueRequest("some queue", sqsClient, "some queue url"))
+      val result = awsQueueService.purgeQueue(PurgeQueueRequest("some queue", sqsClient, "some queue url"))
 
       assertThat(result.messagesFoundCount).isEqualTo(5)
     }

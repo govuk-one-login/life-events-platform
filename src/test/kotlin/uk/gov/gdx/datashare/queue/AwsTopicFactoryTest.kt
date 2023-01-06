@@ -12,38 +12,38 @@ import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.context.ConfigurableApplicationContext
 
 @Suppress("ClassName")
-class HmppsTopicFactoryTest {
+class AwsTopicFactoryTest {
 
   private val localstackArnPrefix = "arn:aws:sns:eu-west-2:000000000000:"
 
   private val context = mock<ConfigurableApplicationContext>()
   private val beanFactory = mock<ConfigurableListableBeanFactory>()
   private val snsFactory = mock<AmazonSnsFactory>()
-  private val hmppsTopicFactory = HmppsTopicFactory(context, snsFactory)
+  private val awsTopicFactory = AwsTopicFactory(context, snsFactory)
 
   init {
     whenever(context.beanFactory).thenReturn(beanFactory)
   }
 
   @Nested
-  inner class `Create AWS HmppsTopic` {
+  inner class `Create AWS AwsTopic` {
     private val someTopicConfig =
-      HmppsSqsProperties.TopicConfig(
+      SqsProperties.TopicConfig(
         arn = "some arn",
         accessKeyId = "some access key id",
         secretAccessKey = "some secret access key"
       )
-    private val hmppsSqsProperties =
-      HmppsSqsProperties(queues = mock(), topics = mapOf("sometopicid" to someTopicConfig))
+    private val sqsProperties =
+      SqsProperties(queues = mock(), topics = mapOf("sometopicid" to someTopicConfig))
     private val snsClient = mock<AmazonSNS>()
-    private lateinit var hmppsTopics: List<HmppsTopic>
+    private lateinit var awsTopics: List<AwsTopic>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
       whenever(snsFactory.awsSnsClient(anyString(), anyString(), anyString(), anyString()))
         .thenReturn(snsClient)
 
-      hmppsTopics = hmppsTopicFactory.createHmppsTopics(hmppsSqsProperties)
+      awsTopics = awsTopicFactory.createAwsTopics(sqsProperties)
     }
 
     @Test
@@ -53,12 +53,12 @@ class HmppsTopicFactoryTest {
 
     @Test
     fun `should return the topic details`() {
-      assertThat(hmppsTopics[0].id).isEqualTo("sometopicid")
+      assertThat(awsTopics[0].id).isEqualTo("sometopicid")
     }
 
     @Test
     fun `should return the AmazonSNS client`() {
-      assertThat(hmppsTopics[0].snsClient).isEqualTo(snsClient)
+      assertThat(awsTopics[0].snsClient).isEqualTo(snsClient)
     }
 
     @Test
@@ -73,23 +73,23 @@ class HmppsTopicFactoryTest {
   }
 
   @Nested
-  inner class `Create LocalStack HmppsTopic` {
-    private val someTopicConfig = HmppsSqsProperties.TopicConfig(
+  inner class `Create LocalStack AwsTopic` {
+    private val someTopicConfig = SqsProperties.TopicConfig(
       arn = "${localstackArnPrefix}some-topic-name",
       accessKeyId = "some access key id",
       secretAccessKey = "some secret access key"
     )
-    private val hmppsSqsProperties =
-      HmppsSqsProperties(provider = "localstack", queues = mock(), topics = mapOf("sometopicid" to someTopicConfig))
+    private val sqsProperties =
+      SqsProperties(provider = "localstack", queues = mock(), topics = mapOf("sometopicid" to someTopicConfig))
     private val snsClient = mock<AmazonSNS>()
-    private lateinit var hmppsTopics: List<HmppsTopic>
+    private lateinit var AwsTopics: List<AwsTopic>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
       whenever(snsFactory.localstackSnsClient(anyString(), anyString(), anyString()))
         .thenReturn(snsClient)
 
-      hmppsTopics = hmppsTopicFactory.createHmppsTopics(hmppsSqsProperties)
+      AwsTopics = awsTopicFactory.createAwsTopics(sqsProperties)
     }
 
     @Test
@@ -99,12 +99,12 @@ class HmppsTopicFactoryTest {
 
     @Test
     fun `should return the topic details`() {
-      assertThat(hmppsTopics[0].id).isEqualTo("sometopicid")
+      assertThat(AwsTopics[0].id).isEqualTo("sometopicid")
     }
 
     @Test
     fun `should return the AmazonSNS client`() {
-      assertThat(hmppsTopics[0].snsClient).isEqualTo(snsClient)
+      assertThat(AwsTopics[0].snsClient).isEqualTo(snsClient)
     }
 
     @Test
@@ -124,24 +124,24 @@ class HmppsTopicFactoryTest {
   }
 
   @Nested
-  inner class `Create multiple AWS HmppsTopics` {
+  inner class `Create multiple AWS AwsTopics` {
     private val someTopicConfig =
-      HmppsSqsProperties.TopicConfig(
+      SqsProperties.TopicConfig(
         arn = "some arn",
         accessKeyId = "some access key id",
         secretAccessKey = "some secret access key"
       )
-    private val anotherTopicConfig = HmppsSqsProperties.TopicConfig(
+    private val anotherTopicConfig = SqsProperties.TopicConfig(
       arn = "another arn",
       accessKeyId = "another access key id",
       secretAccessKey = "another secret access key"
     )
-    private val hmppsSqsProperties = HmppsSqsProperties(
+    private val sqsProperties = SqsProperties(
       queues = mock(),
       topics = mapOf("sometopicid" to someTopicConfig, "anothertopicid" to anotherTopicConfig)
     )
     private val snsClient = mock<AmazonSNS>()
-    private lateinit var hmppsTopics: List<HmppsTopic>
+    private lateinit var AwsTopics: List<AwsTopic>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
@@ -149,7 +149,7 @@ class HmppsTopicFactoryTest {
         .thenReturn(snsClient)
         .thenReturn(snsClient)
 
-      hmppsTopics = hmppsTopicFactory.createHmppsTopics(hmppsSqsProperties)
+      AwsTopics = awsTopicFactory.createAwsTopics(sqsProperties)
     }
 
     @Test
@@ -165,14 +165,14 @@ class HmppsTopicFactoryTest {
 
     @Test
     fun `should return the topic details`() {
-      assertThat(hmppsTopics[0].id).isEqualTo("sometopicid")
-      assertThat(hmppsTopics[1].id).isEqualTo("anothertopicid")
+      assertThat(AwsTopics[0].id).isEqualTo("sometopicid")
+      assertThat(AwsTopics[1].id).isEqualTo("anothertopicid")
     }
 
     @Test
     fun `should return 2 AmazonSNS client`() {
-      assertThat(hmppsTopics[0].snsClient).isEqualTo(snsClient)
-      assertThat(hmppsTopics[1].snsClient).isEqualTo(snsClient)
+      assertThat(AwsTopics[0].snsClient).isEqualTo(snsClient)
+      assertThat(AwsTopics[1].snsClient).isEqualTo(snsClient)
     }
 
     @Test
@@ -189,24 +189,24 @@ class HmppsTopicFactoryTest {
   }
 
   @Nested
-  inner class `Create multiple LocalStack HmppsTopics` {
-    private val someTopicConfig = HmppsSqsProperties.TopicConfig(
+  inner class `Create multiple LocalStack AwsTopics` {
+    private val someTopicConfig = SqsProperties.TopicConfig(
       arn = "${localstackArnPrefix}some arn",
       accessKeyId = "some access key id",
       secretAccessKey = "some secret access key"
     )
-    private val anotherTopicConfig = HmppsSqsProperties.TopicConfig(
+    private val anotherTopicConfig = SqsProperties.TopicConfig(
       arn = "${localstackArnPrefix}another arn",
       accessKeyId = "another access key id",
       secretAccessKey = "another secret access key"
     )
-    private val hmppsSqsProperties = HmppsSqsProperties(
+    private val sqsProperties = SqsProperties(
       provider = "localstack",
       queues = mock(),
       topics = mapOf("sometopicid" to someTopicConfig, "anothertopicid" to anotherTopicConfig)
     )
     private val snsClient = mock<AmazonSNS>()
-    private lateinit var hmppsTopics: List<HmppsTopic>
+    private lateinit var AwsTopics: List<AwsTopic>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
@@ -214,7 +214,7 @@ class HmppsTopicFactoryTest {
         .thenReturn(snsClient)
         .thenReturn(snsClient)
 
-      hmppsTopics = hmppsTopicFactory.createHmppsTopics(hmppsSqsProperties)
+      AwsTopics = awsTopicFactory.createAwsTopics(sqsProperties)
     }
 
     @Test
@@ -225,14 +225,14 @@ class HmppsTopicFactoryTest {
 
     @Test
     fun `should return the topic details`() {
-      assertThat(hmppsTopics[0].id).isEqualTo("sometopicid")
-      assertThat(hmppsTopics[1].id).isEqualTo("anothertopicid")
+      assertThat(AwsTopics[0].id).isEqualTo("sometopicid")
+      assertThat(AwsTopics[1].id).isEqualTo("anothertopicid")
     }
 
     @Test
     fun `should return 2 AmazonSNS client`() {
-      assertThat(hmppsTopics[0].snsClient).isEqualTo(snsClient)
-      assertThat(hmppsTopics[1].snsClient).isEqualTo(snsClient)
+      assertThat(AwsTopics[0].snsClient).isEqualTo(snsClient)
+      assertThat(AwsTopics[1].snsClient).isEqualTo(snsClient)
     }
 
     @Test

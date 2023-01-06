@@ -9,12 +9,12 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.boot.actuate.health.Status
 
-class HmppsTopicHealthTest {
+class AwsTopicHealthTest {
 
   private val topicId = "some-topic-id"
   private val topicArn = "some-topic-arn"
   private val snsClient = mock<AmazonSNS>()
-  private val topicHealth = HmppsTopicHealth(HmppsTopic(topicId, topicArn, snsClient))
+  private val topicHealth = AwsTopicHealth(AwsTopic(topicId, topicArn, snsClient))
 
   @Test
   fun `should show status UP`() {

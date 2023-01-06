@@ -127,10 +127,10 @@ data "aws_iam_policy_document" "ecs_task_s3_key" {
 
 resource "aws_iam_policy" "ecs_task_s3_key" {
   name   = "${var.environment}-ecs-task-s3-key"
-  policy = data.aws_iam_policy_document.ecs_task_s3_access.json
+  policy = data.aws_iam_policy_document.ecs_task_s3_key.json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_s3_key" {
   role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.ecs_task_s3_access.arn
+  policy_arn = aws_iam_policy.ecs_task_s3_key.arn
 }

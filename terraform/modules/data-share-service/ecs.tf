@@ -46,36 +46,18 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
 
         { "name" : "METRICS_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },
 
-        { "name" : "SQS_TOPICS_EVENT_ACCESSKEYID", "value" : module.sns.access_key_id },
-        { "name" : "SQS_TOPICS_EVENT_SECRETACCESSKEY", "value" : module.sns.access_key_secret },
         { "name" : "SQS_TOPICS_EVENT_ARN", "value" : module.sns.sns_topic_arn },
 
-        { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUEACCESSKEYID", "value" : module.data_processor_queue.queue_access_key_id },
-        { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUESECRETACCESSKEY", "value" : module.data_processor_queue.queue_access_key_secret },
         { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUENAME", "value" : module.data_processor_queue.queue_name },
-        { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQACCESSKEYID", "value" : module.data_processor_queue.dead_letter_queue_access_key_id },
-        { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQSECRETACCESSKEY", "value" : module.data_processor_queue.dead_letter_queue_access_key_secret },
         { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQNAME", "value" : module.data_processor_queue.dead_letter_queue_name },
 
-        { "name" : "SQS_QUEUES_AUDIT_QUEUEACCESSKEYID", "value" : module.audit_queue.queue_access_key_id },
-        { "name" : "SQS_QUEUES_AUDIT_QUEUESECRETACCESSKEY", "value" : module.audit_queue.queue_access_key_secret },
         { "name" : "SQS_QUEUES_AUDIT_QUEUENAME", "value" : module.audit_queue.queue_name },
-        { "name" : "SQS_QUEUES_AUDIT_DLQACCESSKEYID", "value" : module.audit_queue.dead_letter_queue_access_key_id },
-        { "name" : "SQS_QUEUES_AUDIT_DLQSECRETACCESSKEY", "value" : module.audit_queue.dead_letter_queue_access_key_secret },
         { "name" : "SQS_QUEUES_AUDIT_DLQNAME", "value" : module.audit_queue.dead_letter_queue_name },
 
-        { "name" : "SQS_QUEUES_ADAPTOR_QUEUEACCESSKEYID", "value" : module.outbound_adaptor_queue.queue_access_key_id },
-        { "name" : "SQS_QUEUES_ADAPTOR_QUEUESECRETACCESSKEY", "value" : module.outbound_adaptor_queue.queue_access_key_secret },
         { "name" : "SQS_QUEUES_ADAPTOR_QUEUENAME", "value" : module.outbound_adaptor_queue.queue_name },
-        { "name" : "SQS_QUEUES_ADAPTOR_DLQACCESSKEYID", "value" : module.outbound_adaptor_queue.dead_letter_queue_access_key_id },
-        { "name" : "SQS_QUEUES_ADAPTOR_DLQSECRETACCESSKEY", "value" : module.outbound_adaptor_queue.dead_letter_queue_access_key_secret },
         { "name" : "SQS_QUEUES_ADAPTOR_DLQNAME", "value" : module.outbound_adaptor_queue.dead_letter_queue_name },
 
-        { "name" : "SQS_QUEUES_ODG_QUEUEACCESSKEYID", "value" : module.other_department_queue.queue_access_key_id },
-        { "name" : "SQS_QUEUES_ODG_QUEUESECRETACCESSKEY", "value" : module.other_department_queue.queue_access_key_secret },
         { "name" : "SQS_QUEUES_ODG_QUEUENAME", "value" : module.other_department_queue.queue_name },
-        { "name" : "SQS_QUEUES_ODG_DLQACCESSKEYID", "value" : module.other_department_queue.dead_letter_queue_access_key_id },
-        { "name" : "SQS_QUEUES_ODG_DLQSECRETACCESSKEY", "value" : module.other_department_queue.dead_letter_queue_access_key_secret },
         { "name" : "SQS_QUEUES_ODG_DLQNAME", "value" : module.other_department_queue.dead_letter_queue_name },
 
         { "name" : "LEGACY_INBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_inbound_client_id },

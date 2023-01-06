@@ -1,47 +1,5 @@
 data "aws_caller_identity" "current" {}
 
-# rework as part of #46
-#tfsec:ignore:aws-iam-no-user-attached-policies 
-resource "aws_iam_user" "sqs_user" {
-  name = "${var.queue_name}-sqs-queue"
-}
-
-resource "aws_iam_access_key" "sqs_user" {
-  user = aws_iam_user.sqs_user.name
-}
-
-data "aws_iam_policy_document" "sqs_policy" {
-  statement {
-    actions = [
-      "sqs:DeleteMessage",
-      "sqs:ReceiveMessage",
-      "sqs:SendMessage",
-      "sqs:GetQueueUrl"
-    ]
-    resources = [
-      aws_sqs_queue.queue.arn,
-      aws_sqs_queue.dead_letter_queue.arn
-    ]
-  }
-
-  statement {
-    actions = [
-      "kms:GenerateDataKey",
-      "kms:Decrypt"
-    ]
-    resources = [
-      aws_kms_key.sqs_key.arn,
-      aws_kms_key.dead_letter_queue_kms_key.arn,
-    ]
-  }
-}
-
-resource "aws_iam_user_policy" "sqs_policy" {
-  name   = "${var.queue_name}-sqs-queue"
-  policy = data.aws_iam_policy_document.sqs_policy.json
-  user   = aws_iam_user.sqs_user.name
-}
-
 resource "aws_kms_key" "sqs_key" {
   enable_key_rotation = true
   description         = "Key used to encrypt sqs queue for ${var.queue_name}"

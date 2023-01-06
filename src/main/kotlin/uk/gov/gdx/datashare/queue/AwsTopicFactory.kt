@@ -40,10 +40,10 @@ class AwsTopicFactory(
         }
     }
 
-  fun createSnsClient(topicId: String, topicConfig: SqsProperties.TopicConfig, sqsProperties: SqsProperties) =
+  private fun createSnsClient(topicId: String, topicConfig: SqsProperties.TopicConfig, sqsProperties: SqsProperties) =
     with(sqsProperties) {
       when (provider) {
-        "aws" -> amazonSnsFactory.awsSnsClient(topicId, topicConfig.accessKeyId, topicConfig.secretAccessKey, region)
+        "aws" -> amazonSnsFactory.awsSnsClient(topicId, region)
         "localstack" -> amazonSnsFactory.localstackSnsClient(topicId, localstackUrl, region)
           .also { it.createTopic(topicConfig.name) }
           .also { log.info("Created a LocalStack SNS topic for topicId $topicId with ARN ${topicConfig.arn}") }

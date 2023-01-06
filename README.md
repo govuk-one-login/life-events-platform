@@ -30,7 +30,7 @@ The service is deployed to AWS, accessible through
 
 The API schema is shown at `http://localhost:8080/swagger-ui.html`
 
-First you need tell the GDX data receiver about the event.  This is done by calling the `event-data-receiver` with a POST payload:
+First you need tell the GDX data receiver about the event.  This is done by calling the `/events` endpoint (04. Events) with a POST payload:
 
 ```json
 {
@@ -53,7 +53,7 @@ This will return a token:
 {
   "token_type" : "Bearer",
   "access_token" : "eyJraWQiOiJpc3N1ZXIxIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJsZW4iLCJuYmYiOjE2Njk4MjY0MzcsInNjb3BlIjoiZGF0YV9yZWNlaXZlci9ub3RpZnkiLCJpc3MiOiJodHRwOi8vb2F1dGgyOjgwODAvaXNzdWVyMSIsImV4cCI6MTY2OTgyNjczNywiaWF0IjoxNjY5ODI2NDM3LCJqdGkiOiJkYjE4NWMwZC1jMzFkLTQyYzMtOWM0Ni04Y2Q1ZTk1YzlkMmEiLCJjbGllbnRfaWQiOiJsZW4ifQ.dTu86j5jgIFbUBVi6yqCGg1qg_7oBycZvVXrwLSsxDBf1WqovS5MQcY5o3XrfXNVveCqTphVLwSJ3KkDk9VOFzrwAakaHDbT8V6jbFs2uzTGMzz4sX82Ls5Bs9es1xwkkNpQoDtBwz3JP614v-0G2iCcFcNLTvhE-b3M_o3CyYKPR_RifLKiAQqALouKbZPIv_8RPBrNn5kW50xj4RkjNm-yUXTuZi1F9Fxs_BcrdvY-slxLOJiWTCaNOnai2P_hQUVDMXVMD0caPDdkgD6dLsdKPyJ2cmU6L5kgQOYUCzDP4N1Qt1c_sjgBeyFiaTmLnDPsP5uTXwRp2JNfsHEgIw",
-  "expires_in" : 299,
+  "expires_in" : 3598,
   "scope" : "len"
 }
 ```
@@ -72,9 +72,9 @@ This access token has the required scope of `events/publish` to access the endpo
 }
 ```
 
-The token can then be used to call the event receiver
+The token can then be used to call the events endpoint
 ```shell
-curl --location --request POST 'http://localhost:8080/event-data-receiver' \
+curl --location --request POST 'http://localhost:8080/events' \
 --header "Authorization: Bearer $TOKEN" \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -93,7 +93,7 @@ If this client is allowed to provide data there will be a mapping in the databas
 
 This places an event on the event topic can be either be read from a **queue** or **polled**
 
-### To Poll event
+### Getting events
 Get a token for a valid client, in this instance we'll use `dwp`
 
 ```shell
@@ -104,7 +104,7 @@ curl --location --request POST 'http://localhost:9090/issuer1/token' \
 --data-urlencode 'scope=dwp'
 ```
 
-The returning token contains the correct scope of `events/consumer`
+The returning token contains the correct scope of `events/consume`
 ```json
 {
   "sub": "dwp-event-receiver",
@@ -118,21 +118,27 @@ The returning token contains the correct scope of `events/consumer`
 }
 ```
 
-We can now poll for events:
+We can now get a list of events:
 
 ```shell
 curl --location --request GET 'http://localhost:8080/events' \
 --header "Authorization: Bearer $TOKEN"
 ```
 
-This returns a list of events that have occurred since the last poll.
+This returns a list of events that have occurred and have not been deleted.
 
 ```json
 [
     {
-        "eventId": "4c1f7599-f7b4-43c8-9c0e-cd59be7e717a",
+        "eventId": "d8a6f3ba-e915-4e79-8479-f5f5830f4622",
         "eventType": "DEATH_NOTIFICATION",
-        "eventTime": "2022-11-30T16:41:31.908146"
+        "sourceId": "999999901",
+        "eventData": {
+            "firstName": "Joan Narcissus Ouroboros",
+            "lastName": "SMITH",
+            "dateOfDeath": "2008-08-08",
+            "address": "888 Death House, 8 Death lane, Deadington, Deadshire"
+        }
     }
 ]
 ```
@@ -158,12 +164,11 @@ This returns the event id in the message payload:
 }
 ```
 
-### Getting the data
-Using the retrieved event ID you can now get the full event data.  Depending on which client you use will return different data:
-- The `dwp-event-receiver` client also gets NINO data by generating a programmatic NI number
-- The `hmrc-client` client only gets the death core data
+### Getting a specific event
+Using the retrieved event ID you can also get the full event data for a single event.  Depending on which client you use will return different data:
+- The `dwp-event-receiver` client and the `hmrc-client` are examples that work here
 
-#### Examples for : `dwp-event-receiver`
+#### Example for : `dwp-event-receiver`
 
 Get the token:
 ```shell
@@ -178,7 +183,7 @@ Scope needed is `events/consume` which this token provides
 
 then call with token and the event ID
 ```shell
-curl --location --request GET 'http://localhost:8080/event-data-retrieval/4c1f7599-f7b4-43c8-9c0e-cd59be7e717a' \
+curl --location --request GET 'http://localhost:8080/events/4c1f7599-f7b4-43c8-9c0e-cd59be7e717a' \
 --header "Authorization: Bearer $TOKEN"
 ```
 
@@ -186,70 +191,53 @@ returns
 
 ```json
 {
-    "eventType": "DEATH_NOTIFICATION",
     "eventId": "4c1f7599-f7b4-43c8-9c0e-cd59be7e717a",
-    "details": {
-        "deathDetails": {
-            "forenames": "Joan Narcissus Ouroboros",
-            "surname": "SMITH",
-            "dateOfBirth": "2008-08-08",
-            "dateOfDeath": "2008-08-08",
-            "sex": "Indeterminate",
-            "address": "888 Death House, 8 Death lane, Deadington, Deadshire"
-        },
-        "additionalInformation": {
-            "nino": "NS327601F"
-        }
+    "eventType": "DEATH_NOTIFICATION",
+    "sourceId": "999999901",
+    "eventData": {
+        "firstName": "Joan Narcissus Ouroboros",
+        "lastName": "SMITH",
+        "dateOfDeath": "2008-08-08",
+        "address": "888 Death House, 8 Death lane, Deadington, Deadshire"
     }
 }
 ```
 
-#### Examples for : `hmrc-client`
+### Deleting events
+Once you have received an event as a consumer, the event should be marked as consumed and removed from GDX, in our case by deleting the message.
 
-Get the token:
+Get a token for a valid client, in this instance we'll use `dwp` again
+
 ```shell
 curl --location --request POST 'http://localhost:9090/issuer1/token' \
 --header 'Authorization: Basic Y2xpZW50OnNlY3JldA==' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --data-urlencode 'grant_type=client_credentials' \
---data-urlencode 'scope=hmrc'
+--data-urlencode 'scope=dwp'
 ```
 
-Scope needed is `events/consume` which this `hmrc-client` token provides
-
-then call with token and the event ID
-```shell
-curl --location --request GET 'http://localhost:8080/event-data-retrieval/4c1f7599-f7b4-43c8-9c0e-cd59be7e717a' \
---header 'Authorization: Bearer eyJraWQiOiJpc3N1ZXIxIiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJobXJjLWNsaWVudCIsIm5iZiI6MTY2OTgyNzU1Niwic2NvcGUiOiJkYXRhX3JldHJpZXZlci9yZWFkIGV2ZW50cy9wb2xsIiwiaXNzIjoiaHR0cDovL29hdXRoMjo4MDgwL2lzc3VlcjEiLCJleHAiOjE2Njk4Mjc4NTYsImlhdCI6MTY2OTgyNzU1NiwianRpIjoiNWE3MWJkODItOTg4Yi00YWEzLThiZTktOTQ5ZWVlYzk0NDYzIiwiY2xpZW50X2lkIjoiaG1yYy1jbGllbnQifQ.A6RAkjQImTlpkHiT0H423yALfSwJM2yHRwRaK7YPu1EXO_4WEcUsjHN4OMHFkItkN6ABc9oQhcFZTTUa2vXfFXktC4gI66kCpq8ttw52LxR1uTxC6YZxidSFZCxlUt_1gelIuTLwCCAOjiydT-EjvGeuYS6w6tRX1kbALKmWBJqfwpqQ3mR5Pzrgrpn9Yqqp2AeaH1YQa3Jl5zFexK8CezPF4CgGQzI-ctoeEtUfjn8ojn9TGLGGLVV7KpHCptRNgXSc_JCZM-ZymTVoBU4Y_M6RK_6zUZ6ja-PBBhm7RZewgl9mJDWVlV26QUpXA-Rzmz-NW6jd7fY_quvHkYla5w'
-```
-
-returns
-
+The returning token contains the correct scope of `events/consume`
 ```json
 {
-   "eventType": "DEATH_NOTIFICATION",
-   "eventId": "4c1f7599-f7b4-43c8-9c0e-cd59be7e717a",
-   "details": {
-      "deathDetails": {
-         "forenames": "Joan Narcissus Ouroboros",
-         "surname": "SMITH",
-         "dateOfBirth": "2008-08-08",
-         "dateOfDeath": "2008-08-08",
-         "sex": "Indeterminate",
-         "address": "888 Death House, 8 Death lane, Deadington, Deadshire"
-      }
-   }
+  "sub": "dwp-event-receiver",
+  "nbf": 1669826596,
+  "scope": "events/consume",
+  "iss": "http://oauth2:8080/issuer1",
+  "exp": 1669826896,
+  "iat": 1669826596,
+  "jti": "90a9a1fb-4c03-43d3-839a-bf0162940078",
+  "client_id": "dwp-event-receiver"
 }
 ```
 
-Notice how the NINO is not returned. This is because the client is not setup to need this:
+We can now delete a specific event:
 
-| client\_id | client\_name | allowed\_event\_types | last\_poll\_event\_time | nino\_required |
-| :--- | :--- | :--- | :--- | :--- |
-| hmrc-client | HMRC | DEATH\_NOTIFICATION | null | false |
-| internal-outbound | Internal Outbound Adaptor | DEATH\_NOTIFICATION | null | true |
-| dwp-event-receiver | DWP | DEATH\_NOTIFICATION,BIRTH\_NOTIFICATION | 2022-11-30 16:41:31.908146 +00:00 | true |
+```shell
+curl --location --request DELETE 'http://localhost:8080/events/4c1f7599-f7b4-43c8-9c0e-cd59be7e717a' \
+--header "Authorization: Bearer $TOKEN"
+```
 
+This returns a 204 when the event is successfully deleted.
 
 ## Architecture
 

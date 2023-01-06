@@ -35,7 +35,7 @@ class EventDataService(
   meterRegistry: MeterRegistry,
 ) {
   private val dataCreationToDeletionTimer: Timer =
-    meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion.timer")
+    meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)

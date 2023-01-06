@@ -247,13 +247,13 @@ Architecture decision records start [here](doc/architecture/decisions/0001-use-a
 
 There are numerous terms and acronyms used in this codebase that aren't immediately obvious, including
 
-|Term| Definition                                                                                          |
+|Term| Definition                                                                                         |
 |---|-----------------------------------------------------------------------------------------------------|
 |GDS| Government Digital Service - https://www.gov.uk/government/organisations/government-digital-service |
-|GDX| Government Data Exchange - This project and the wider                                               |
+|GDX| Government Data Exchange - This project and the wider programme of work                             |
 |DWP| Department for Work and Pensions                                                                    |
 |LEN| Life Event Notification (a service from HMPO)                                                       |
-|HMPO| HM Passport Office                                                                                  |
+|HMPO| HM Passport Office                                                                                 |
 |GRO| General Registry Office                                                                             |
 |OGD| Other Government Department                                                                         |
 

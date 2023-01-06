@@ -30,8 +30,6 @@ class AwsTopicFactoryTest {
     private val someTopicConfig =
       SqsProperties.TopicConfig(
         arn = "some arn",
-        accessKeyId = "some access key id",
-        secretAccessKey = "some secret access key"
       )
     private val sqsProperties =
       SqsProperties(queues = mock(), topics = mapOf("sometopicid" to someTopicConfig))
@@ -40,7 +38,7 @@ class AwsTopicFactoryTest {
 
     @BeforeEach
     fun `configure mocks and register queues`() {
-      whenever(snsFactory.awsSnsClient(anyString(), anyString(), anyString(), anyString()))
+      whenever(snsFactory.awsSnsClient(anyString(), anyString()))
         .thenReturn(snsClient)
 
       awsTopics = awsTopicFactory.createAwsTopics(sqsProperties)
@@ -48,7 +46,7 @@ class AwsTopicFactoryTest {
 
     @Test
     fun `should create aws sns client`() {
-      verify(snsFactory).awsSnsClient("sometopicid", "some access key id", "some secret access key", "eu-west-2")
+      verify(snsFactory).awsSnsClient("sometopicid", "eu-west-2")
     }
 
     @Test
@@ -75,9 +73,7 @@ class AwsTopicFactoryTest {
   @Nested
   inner class `Create LocalStack AwsTopic` {
     private val someTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}some-topic-name",
-      accessKeyId = "some access key id",
-      secretAccessKey = "some secret access key"
+      arn = "${localstackArnPrefix}some-topic-name"
     )
     private val sqsProperties =
       SqsProperties(provider = "localstack", queues = mock(), topics = mapOf("sometopicid" to someTopicConfig))
@@ -127,14 +123,10 @@ class AwsTopicFactoryTest {
   inner class `Create multiple AWS AwsTopics` {
     private val someTopicConfig =
       SqsProperties.TopicConfig(
-        arn = "some arn",
-        accessKeyId = "some access key id",
-        secretAccessKey = "some secret access key"
+        arn = "some arn"
       )
     private val anotherTopicConfig = SqsProperties.TopicConfig(
-      arn = "another arn",
-      accessKeyId = "another access key id",
-      secretAccessKey = "another secret access key"
+      arn = "another arn"
     )
     private val sqsProperties = SqsProperties(
       queues = mock(),
@@ -145,7 +137,7 @@ class AwsTopicFactoryTest {
 
     @BeforeEach
     fun `configure mocks and register queues`() {
-      whenever(snsFactory.awsSnsClient(anyString(), anyString(), anyString(), anyString()))
+      whenever(snsFactory.awsSnsClient(anyString(), anyString()))
         .thenReturn(snsClient)
         .thenReturn(snsClient)
 
@@ -154,11 +146,9 @@ class AwsTopicFactoryTest {
 
     @Test
     fun `should create 2 aws sns clients`() {
-      verify(snsFactory).awsSnsClient("sometopicid", "some access key id", "some secret access key", "eu-west-2")
+      verify(snsFactory).awsSnsClient("sometopicid", "eu-west-2")
       verify(snsFactory).awsSnsClient(
         "anothertopicid",
-        "another access key id",
-        "another secret access key",
         "eu-west-2"
       )
     }
@@ -191,14 +181,10 @@ class AwsTopicFactoryTest {
   @Nested
   inner class `Create multiple LocalStack AwsTopics` {
     private val someTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}some arn",
-      accessKeyId = "some access key id",
-      secretAccessKey = "some secret access key"
+      arn = "${localstackArnPrefix}some arn"
     )
     private val anotherTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}another arn",
-      accessKeyId = "another access key id",
-      secretAccessKey = "another secret access key"
+      arn = "${localstackArnPrefix}another arn"
     )
     private val sqsProperties = SqsProperties(
       provider = "localstack",

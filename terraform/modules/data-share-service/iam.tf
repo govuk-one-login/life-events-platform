@@ -154,3 +154,88 @@ resource "aws_iam_role_policy_attachment" "ecs_task_rds_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_task_rds_access.arn
 }
+
+data "aws_iam_policy_document" "ecs_task_sqs_access" {
+  statement {
+    actions = [
+      "sqs:DeleteMessage",
+      "sqs:ReceiveMessage",
+      "sqs:SendMessage",
+      "sqs:GetQueueUrl"
+    ]
+    resources = [
+      module.data_processor_queue.queue_arn,
+      module.data_processor_queue.dead_letter_queue_arn,
+      module.audit_queue.queue_arn,
+      module.audit_queue.dead_letter_queue_arn,
+      module.other_department_queue.queue_arn,
+      module.other_department_queue.dead_letter_queue_arn,
+      module.outbound_adaptor_queue.queue_arn,
+      module.outbound_adaptor_queue.dead_letter_queue_arn
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    resources = [
+      module.data_processor_queue.queue_kms_key_arn,
+      module.data_processor_queue.dead_letter_queue_kms_key_arn,
+      module.audit_queue.queue_kms_key_arn,
+      module.audit_queue.dead_letter_queue_kms_key_arn,
+      module.other_department_queue.queue_kms_key_arn,
+      module.other_department_queue.dead_letter_queue_kms_key_arn,
+      module.outbound_adaptor_queue.queue_kms_key_arn,
+      module.outbound_adaptor_queue.dead_letter_queue_kms_key_arn
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_sqs_access" {
+  name   = "${var.environment}-ecs-task-sqs-access"
+  policy = data.aws_iam_policy_document.ecs_task_sqs_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_sqs_access.arn
+}
+
+data "aws_iam_policy_document" "ecs_task_sns_access" {
+  statement {
+    actions = [
+      "sns:Publish",
+      "sns:Subscribe",
+      "sns:Unsubscribe",
+    ]
+    resources = [
+      module.sns.sns_topic_arn
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    resources = [
+      module.sns.sns_kms_key_arn
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_sns_access" {
+  name   = "${var.environment}-ecs-task-sns-access"
+  policy = data.aws_iam_policy_document.ecs_task_sns_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_sns_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_sns_access.arn
+}

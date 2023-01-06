@@ -67,7 +67,7 @@ dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("org.assertj:assertj-core:3.23.1")
+  testImplementation("org.assertj:assertj-core:3.24.1")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("org.mockito:mockito-inline")

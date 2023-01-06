@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.service
 
+import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -28,6 +29,7 @@ class EventDataServiceTest {
   private val ingressEventDataRepository = mockk<IngressEventDataRepository>()
   private val deathNotificationService = mockk<DeathNotificationService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
+  private val meterRegistry = mockk<MeterRegistry>()
 
   private val underTest = EventDataService(
     authenticationFacade,
@@ -35,7 +37,8 @@ class EventDataServiceTest {
     egressEventDataRepository,
     ingressEventDataRepository,
     deathNotificationService,
-    dateTimeHandler
+    dateTimeHandler,
+    meterRegistry,
   )
 
   @BeforeEach

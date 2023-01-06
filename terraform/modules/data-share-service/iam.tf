@@ -97,7 +97,7 @@ data "aws_iam_policy_document" "ecs_task_s3_access" {
       module.ingress.arn,
       module.ingress_archive.arn
     ]
-    effect    = "Allow"
+    effect = "Allow"
   }
 }
 
@@ -121,7 +121,7 @@ data "aws_iam_policy_document" "ecs_task_s3_key" {
       module.ingress.kms_arn,
       module.ingress_archive.kms_arn
     ]
-    effect    = "Allow"
+    effect = "Allow"
   }
 }
 

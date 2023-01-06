@@ -82,6 +82,7 @@ resource "aws_cognito_user_pool_client" "legacy_inbound_adapter" {
   allowed_oauth_flows  = ["client_credentials"]
   allowed_oauth_scopes = ["${local.identifier}/${local.scope_publish}"]
   generate_secret      = true
+  explicit_auth_flows  = ["ALLOW_USER_PASSWORD_AUTH"]
 
   depends_on = [aws_cognito_resource_server.events]
 }
@@ -92,6 +93,7 @@ resource "aws_cognito_user_pool_client" "legacy_outbound_adapter" {
   allowed_oauth_flows  = ["client_credentials"]
   allowed_oauth_scopes = ["${local.identifier}/${local.scope_consume}"]
   generate_secret      = true
+  explicit_auth_flows  = ["ALLOW_USER_PASSWORD_AUTH"]
 
   depends_on = [aws_cognito_resource_server.events]
 }

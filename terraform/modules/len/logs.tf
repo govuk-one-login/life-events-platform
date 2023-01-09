@@ -60,7 +60,7 @@ data "aws_iam_policy_document" "len_log_policy" {
 }
 
 resource "aws_iam_policy" "len_log_policy" {
-  name   = "${var.environment}-len_log_policy"
+  name   = "${var.environment}-len-log-policy"
   policy = data.aws_iam_policy_document.len_log_policy.json
 }
 

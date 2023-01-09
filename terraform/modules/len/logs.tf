@@ -55,7 +55,7 @@ data "aws_iam_policy_document" "len_log_policy" {
       "logs:PutLogEvents",
       "logs:AssociateKmsKey"
     ]
-    resources = "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:*"
+    resources = ["arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:*"]
   }
 }
 

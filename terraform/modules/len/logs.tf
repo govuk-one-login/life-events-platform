@@ -55,12 +55,12 @@ data "aws_iam_policy_document" "len_log_policy" {
       "logs:PutLogEvents",
       "logs:AssociateKmsKey"
     ]
-    resources = [aws_cloudwatch_log_group.len_log.arn]
+    resources = ["arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:*"]
   }
 }
 
 resource "aws_iam_policy" "len_log_policy" {
-  name   = "${var.environment}-len_log_policy"
+  name   = "${var.environment}-len-log-policy"
   policy = data.aws_iam_policy_document.len_log_policy.json
 }
 

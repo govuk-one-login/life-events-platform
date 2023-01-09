@@ -78,3 +78,11 @@ module "data-share-service" {
   vpc_cidr                    = "10.158.0.0/20"
   lev_url                     = module.lev_api.service_url
 }
+
+module "len" {
+  source                      = "../modules/len"
+  environment                 = local.env
+  region                      = data.aws_region.current.name
+  schedule                    = "cron(* 9-18 ? * MON-FRI *)"
+  cloudwatch_retention_period = 30
+}

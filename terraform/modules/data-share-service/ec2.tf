@@ -37,7 +37,7 @@ resource "aws_instance" "rds_bastion_host" {
 }
 
 resource "aws_key_pair" "rds_bastion_key_pair" {
-  public_key = module.tls_private_key.public_key_pem
+  public_key = module.tls_private_key.public_key_openssh
   key_name   = "rds-bastion-key-pair-${var.environment}"
 }
 

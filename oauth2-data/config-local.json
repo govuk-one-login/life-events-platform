@@ -4,7 +4,7 @@
   "tokenCallbacks": [
     {
       "issuerId": "issuer1",
-      "tokenExpiry": 1200,
+      "tokenExpiry": 3599,
       "requestMappings": [
         {
           "requestParam": "scope",

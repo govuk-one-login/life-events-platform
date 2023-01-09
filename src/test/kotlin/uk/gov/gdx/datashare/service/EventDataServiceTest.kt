@@ -289,11 +289,11 @@ class EventDataServiceTest {
         ).asFlow()
       )
 
-      coEvery { egressEventDataRepository.deleteById(egressEvent.id) }.returns(Unit)
+      coEvery { egressEventDataRepository.delete(egressEvent) }.returns(Unit)
 
       underTest.deleteEvent(egressEvent.id)
 
-      coVerify(exactly = 1) { egressEventDataRepository.deleteById(egressEvent.id) }
+      coVerify(exactly = 1) { egressEventDataRepository.delete(egressEvent) }
       coVerify(exactly = 0) { ingressEventDataRepository.deleteById(any()) }
     }
   }
@@ -312,12 +312,12 @@ class EventDataServiceTest {
       coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
       coEvery { egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId) }.returns(emptyList<EgressEventData>().asFlow())
 
-      coEvery { egressEventDataRepository.deleteById(egressEvent.id) }.returns(Unit)
+      coEvery { egressEventDataRepository.delete(egressEvent) }.returns(Unit)
       coEvery { ingressEventDataRepository.deleteById(egressEvent.ingressEventId) }.returns(Unit)
 
       underTest.deleteEvent(egressEvent.id)
 
-      coVerify(exactly = 1) { egressEventDataRepository.deleteById(egressEvent.id) }
+      coVerify(exactly = 1) { egressEventDataRepository.delete(egressEvent) }
       coVerify(exactly = 1) { ingressEventDataRepository.deleteById(egressEvent.ingressEventId) }
     }
   }

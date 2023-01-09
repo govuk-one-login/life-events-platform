@@ -80,7 +80,7 @@ module "data-share-service" {
 }
 
 module "len" {
-  source                      = "../modules/scheduled_job"
+  source                      = "../modules/len"
   environment                 = local.env
   region                      = data.aws_region.current.name
   schedule                    = "cron(* 9-18 ? * MON-FRI *)"

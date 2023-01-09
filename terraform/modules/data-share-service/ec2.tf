@@ -25,7 +25,7 @@ resource "aws_network_interface" "rds_bastion_eni" {
 
 resource "aws_instance" "rds_bastion_host" {
   ami                         = data.aws_ami.ubuntu.id
-  instance_type               = "t4g.nano"
+  instance_type               = "t3a.nano"
   associate_public_ip_address = true
   key_name                    = aws_key_pair.rds_bastion_key_pair.key_name
   metadata_options {

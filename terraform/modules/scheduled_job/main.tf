@@ -1,3 +1,4 @@
+data "aws_caller_identity" "current" {}
 
 data "archive_file" "len_lambda" {
   type        = "zip"
@@ -25,6 +26,53 @@ resource "aws_lambda_function" "len" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "len_log" {
+  name              = "/aws/lambda/${aws_lambda_function.len.function_name}"
+  retention_in_days = var.cloudwatch_retention_period
+
+  kms_key_id = aws_kms_key.log_key.arn
+}
+
+resource "aws_kms_key" "log_key" {
+  description         = "Key used to encrypt cloudfront and cloudwatch logs for LEN"
+  enable_key_rotation = true
+
+  policy = data.aws_iam_policy_document.kms_log_key_policy.json
+}
+
+resource "aws_kms_alias" "log_key_alias" {
+  name          = "alias/${var.environment}/len-log-key"
+  target_key_id = aws_kms_key.log_key.arn
+}
+
+data "aws_iam_policy_document" "kms_log_key_policy" {
+  statement {
+    effect = "Allow"
+    sid    = "Enable IAM User Permissions"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${var.region}.amazonaws.com"]
+    }
+    actions = [
+      "kms:Encrypt*",
+      "kms:Decrypt*",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Describe*"
+    ]
+    resources = ["*"]
+  }
+}
+
 data "aws_iam_policy_document" "len_assume_policy" {
   statement {
     effect = "Allow"
@@ -41,27 +89,26 @@ resource "aws_iam_role" "len" {
   assume_role_policy = data.aws_iam_policy_document.len_assume_policy.json
 }
 
-data "aws_iam_policy_document" "len_policy" {
+data "aws_iam_policy_document" "len_log_policy" {
   statement {
     effect = "Allow"
     actions = [
-      "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
       "logs:AssociateKmsKey"
     ]
-    resources = ["*"]
+    resources = [aws_cloudwatch_log_group.len_log.arn]
   }
 }
 
-resource "aws_iam_policy" "len_policy" {
-  name   = "${var.environment}-len-policy"
-  policy = data.aws_iam_policy_document.len_policy.json
+resource "aws_iam_policy" "len_log_policy" {
+  name   = "${var.environment}-len_log_policy"
+  policy = data.aws_iam_policy_document.len_log_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "len" {
+resource "aws_iam_role_policy_attachment" "len_log" {
   role       = aws_iam_role.len.name
-  policy_arn = aws_iam_policy.len_policy.arn
+  policy_arn = aws_iam_policy.len_log_policy.arn
 }
 
 resource "aws_cloudwatch_event_rule" "schedule" {
@@ -81,4 +128,5 @@ resource "aws_lambda_permission" "allow_events_bridge_to_run_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.len.function_name
   principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.schedule.arn
 }

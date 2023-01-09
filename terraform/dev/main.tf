@@ -80,8 +80,9 @@ module "data-share-service" {
 }
 
 module "len" {
-  source      = "../modules/scheduled_job"
-  environment = local.env
-  region      = data.aws_region.current.name
-  schedule    = "cron(* 9-18 ? * MON-FRI *)"
+  source                      = "../modules/scheduled_job"
+  environment                 = local.env
+  region                      = data.aws_region.current.name
+  schedule                    = "cron(* 9-18 ? * MON-FRI *)"
+  cloudwatch_retention_period = 30
 }

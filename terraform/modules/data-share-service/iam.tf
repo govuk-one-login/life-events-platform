@@ -81,3 +81,58 @@ resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_task_cloudwatch_access.arn
 }
+
+data "aws_iam_policy_document" "ecs_task_s3_access" {
+  statement {
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "s3:GetObjectTagging",
+      "s3:PutObject",
+      "s3:PutObjectTagging",
+      "s3:ReplicateObject",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      module.ingress.arn,
+      module.ingress.objects_arn,
+      module.ingress_archive.arn,
+      module.ingress_archive.objects_arn
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_s3_access" {
+  name   = "${var.environment}-ecs-task-s3-access"
+  policy = data.aws_iam_policy_document.ecs_task_s3_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_s3_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_s3_access.arn
+}
+
+data "aws_iam_policy_document" "ecs_task_s3_key" {
+  statement {
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    resources = [
+      module.ingress.kms_arn,
+      module.ingress_archive.kms_arn
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_s3_key" {
+  name   = "${var.environment}-ecs-task-s3-key"
+  policy = data.aws_iam_policy_document.ecs_task_s3_key.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_s3_key" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_s3_key.arn
+}

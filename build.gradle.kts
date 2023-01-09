@@ -2,11 +2,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-  id("org.owasp.dependencycheck") version "6.1.1"
+  id("org.owasp.dependencycheck") version "7.4.3"
   id("org.springframework.boot") version "2.7.4"
   id("io.spring.dependency-management") version "1.1.0"
-  kotlin("jvm") version "1.7.10"
-  kotlin("plugin.spring") version "1.7.10"
+  kotlin("jvm") version "1.8.0"
+  kotlin("plugin.spring") version "1.8.0"
 }
 
 group = "uk.gov.gds"
@@ -17,6 +17,8 @@ configurations {
 }
 
 dependencies {
+  annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -24,10 +26,15 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:1.2.0")
+  implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.378"))
+  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
+  implementation("com.amazonaws:aws-java-sdk-sns")
+  implementation("org.springframework:spring-jms")
+  implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+  implementation("org.apache.commons:commons-csv:1.9.0")
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("org.postgresql:r2dbc-postgresql")
@@ -49,9 +56,7 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("org.mockftpserver:MockFtpServer:3.1.0")
-
-  implementation("aws.sdk.kotlin:s3:0.19.2-beta")
+  implementation("com.amazonaws:aws-java-sdk-s3:1.12.378")
 
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")
@@ -74,6 +79,9 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.3")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.11.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+  testImplementation("org.mockito:mockito-inline:4.11.0")
 }
 
 java {
@@ -86,7 +94,7 @@ repositories {
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-      jvmTarget = "18"
+      jvmTarget = "19"
     }
   }
   withType<Test> {

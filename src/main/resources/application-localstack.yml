@@ -1,5 +1,4 @@
-hmpps.sqs:
-  reactiveApi: true
+sqs:
   provider: localstack
   queues:
     dataprocessor:

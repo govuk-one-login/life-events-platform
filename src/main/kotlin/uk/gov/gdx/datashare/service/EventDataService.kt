@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import org.slf4j.Logger
@@ -84,6 +85,10 @@ class EventDataService(
     val consumerSubscriptions = eventTypes?.let {
       consumerSubscriptionRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
     } ?: consumerSubscriptionRepository.findAllByPollClientId(clientId)
+
+    if (consumerSubscriptions.count() == 0) {
+      return emptyFlow()
+    }
 
     val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({ it.id }, { it.ingressEventType })
 

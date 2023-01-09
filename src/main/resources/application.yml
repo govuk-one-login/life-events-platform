@@ -24,14 +24,12 @@ spring:
             client-secret: ${legacy-outbound.api.client.secret}
             authorization-grant-type: client_credentials
             clientName: Internal Outbound Adaptor
-            scope: internal-outbound
           data-receiver:
             provider: cognito
             client-id: ${legacy-inbound.api.client.id}
             client-secret: ${legacy-inbound.api.client.secret}
             authorization-grant-type: client_credentials
             clientName: Internal Inbound Adaptor
-            scope: internal-inbound
         provider:
           cognito:
             issuer-uri: ${api.base.url.issuer-uri}
@@ -94,3 +92,8 @@ springdoc:
   swagger-ui:
     oauth2RedirectUrl: http://localhost:8080/webjars/swagger-ui/oauth2-redirect.html
     tags-sorter: alpha
+
+api:
+  base:
+    s3:
+      region: eu-west-2

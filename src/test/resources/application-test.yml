@@ -21,8 +21,9 @@ api:
       data-receiver: http://localhost:18080
       event-data-retrieval: http://localhost:18080
     s3:
-      ingress: ingress
-      ingress-archive: ingress-archive
+      localstack-url: http://127.0.0.1:4566
+      ingress-bucket: ${random.uuid}
+      ingress-archive-bucket: ${random.uuid}-archive
 
 legacy-inbound:
   api:
@@ -61,8 +62,7 @@ logging:
     io.r2dbc.postgresql.QUERY: DEBUG # for queries
     io.r2dbc.postgresql.PARAM: INFO # for parameters
 
-hmpps.sqs:
-  reactiveApi: true
+sqs:
   provider: localstack
   queues:
     dataprocessor:

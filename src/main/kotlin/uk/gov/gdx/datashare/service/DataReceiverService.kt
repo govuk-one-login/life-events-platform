@@ -8,16 +8,16 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
-import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.controller.EventToPublish
-import uk.gov.justice.hmpps.sqs.HmppsQueue
-import uk.gov.justice.hmpps.sqs.HmppsQueueService
+import uk.gov.gdx.datashare.repository.*
+import uk.gov.gdx.datashare.queue.AwsQueue
+import uk.gov.gdx.datashare.queue.AwsQueueService
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class DataReceiverService(
-  private val hmppsQueueService: HmppsQueueService,
+  private val awsQueueService: AwsQueueService,
   private val authenticationFacade: AuthenticationFacade,
   private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
   private val publisherRepository: PublisherRepository,
@@ -25,7 +25,7 @@ class DataReceiverService(
   private val objectMapper: ObjectMapper,
   private val dateTimeHandler: DateTimeHandler,
 ) {
-  private val dataReceiverQueue by lazy { hmppsQueueService.findByQueueId("dataprocessor") as HmppsQueue }
+  private val dataReceiverQueue by lazy { awsQueueService.findByQueueId("dataprocessor") as AwsQueue }
   private val dataReceiverSqsClient by lazy { dataReceiverQueue.sqsClient }
   private val dataReceiverQueueUrl by lazy { dataReceiverQueue.queueUrl }
 

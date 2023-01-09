@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.justice.hmpps.sqs.HmppsQueueService
+import uk.gov.gdx.datashare.queue.AwsQueueService
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -14,13 +14,13 @@ import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
-class DataShareTopicService(hmppsQueueService: HmppsQueueService, private val objectMapper: ObjectMapper) {
+class DataShareTopicService(awsQueueService: AwsQueueService, private val objectMapper: ObjectMapper) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
   private val domainEventsTopic by lazy {
-    hmppsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist")
+    awsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist")
   }
   private val domainEventsTopicClient by lazy { domainEventsTopic.snsClient }
 

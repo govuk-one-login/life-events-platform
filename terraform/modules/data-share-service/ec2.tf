@@ -18,7 +18,7 @@ resource "aws_network_interface" "rds_bastion_eni" {
   subnet_id       = module.vpc.public_subnet_ids[0]
   security_groups = [aws_security_group.rds_bastion_host_sg.id]
   attachment {
-    device_index = 0
+    device_index = 1
     instance     = aws_instance.rds_bastion_host.id
   }
 }
@@ -28,11 +28,17 @@ resource "aws_instance" "rds_bastion_host" {
   instance_type               = "t3a.nano"
   associate_public_ip_address = true
   key_name                    = aws_key_pair.rds_bastion_key_pair.key_name
+  availability_zone           = "eu-west-2a"
+  subnet_id                   = module.vpc.public_subnet_ids[0]
+
   metadata_options {
     http_endpoint = "disabled"
   }
   root_block_device {
     encrypted = true
+  }
+  tags = {
+    Name = "${var.environment}-rds-bastion"
   }
 }
 

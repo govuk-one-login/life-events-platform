@@ -34,10 +34,8 @@ class ConsumersService(
       return consumerSubscriptionRepository.save(
         ConsumerSubscription(
           consumerId = consumerId,
-          pollClientId = pollClientId,
-          callbackClientId = callbackClientId,
+          oauthClientId = oauthClientId,
           pushUri = pushUri,
-          ninoRequired = ninoRequired,
           ingressEventType = ingressEventType,
           enrichmentFields = enrichmentFields
         )
@@ -54,10 +52,8 @@ class ConsumersService(
       return consumerSubscriptionRepository.save(
         consumerSubscriptionRepository.findById(subscriptionId)?.copy(
           consumerId = consumerId,
-          pollClientId = pollClientId,
-          callbackClientId = callbackClientId,
+          oauthClientId = oauthClientId,
           pushUri = pushUri,
-          ninoRequired = ninoRequired,
           ingressEventType = ingressEventType,
           enrichmentFields = enrichmentFields
         ) ?: throw RuntimeException("Subscription $subscriptionId not found")
@@ -83,10 +79,8 @@ class ConsumersService(
 data class ConsumerSubRequest(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val ingressEventType: String,
-  @Schema(description = "Client ID used to poll event platform", required = false, example = "a-polling-client")
-  val pollClientId: String? = null,
-  @Schema(description = "Client ID used to callback to event platform", required = false, example = "a-callback-client")
-  val callbackClientId: String? = null,
+  @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client")
+  val oauthClientId: String? = null,
   @Schema(
     description = "URI where to push data, can be s3 or http",
     required = false,
@@ -98,9 +92,7 @@ data class ConsumerSubRequest(
     required = true,
     example = "firstName,lastName"
   )
-  val enrichmentFields: String,
-  @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
-  val ninoRequired: Boolean = false,
+  val enrichmentFields: String
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -1,30 +1,37 @@
 package uk.gov.gdx.datashare.service
 
 import com.amazonaws.services.s3.AmazonS3
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.javacrumbs.shedlock.core.LockAssert
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.jms.annotation.JmsListener
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBodilessEntity
-import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.config.S3Config
-import java.time.OffsetDateTime
+import uk.gov.gdx.datashare.repository.EgressEventDataRepository
+import java.io.File
+import java.io.FileWriter
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+
 @Service
-class LegacyAdaptorOutbound(
+class LegacyAdaptorOutbound (
   private val amazonS3: AmazonS3,
   private val s3Config: S3Config,
   private val objectMapper: ObjectMapper,
-  private val eventDataRetrievalApiWebClient: WebClient,
+  private val egressEventDataRepository: EgressEventDataRepository,
 ) {
 
   companion object {
@@ -37,60 +44,49 @@ class LegacyAdaptorOutbound(
     try {
       runBlocking {
         LockAssert.assertLocked()
+        LegacyAdaptorInbound.log.debug("Looking for events to publish to S3 bucket: ${s3Config.egressBucket}")
+
+
+        // find outbound events
+        egressEventDataRepository.findAllByConsumerName("Internal Adaptor")
+          .filter { it.dataPayload != null }
+          .toList()
+          .groupBy { it.consumerSubscriptionId }
+          .map { eventMap ->
+
+            // use first entry to build the header
+            val events = eventMap.value
+
+            val csvSchemaBuilder = CsvSchema.builder()
+            val firstObject = objectMapper.readValue(events[0].dataPayload, JsonNode::class.java)
+            firstObject.fieldNames().forEachRemaining { fieldName ->
+              csvSchemaBuilder.addColumn(fieldName)
+            }
+            val csvSchema = csvSchemaBuilder.build().withHeader()
+
+            val fileName = """${eventMap.key}-${DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now())}.csv"""
+            val csvFile = File(fileName)
+
+            val jsonTree = objectMapper.readTree(objectMapper.writeValueAsString(
+              events.map {
+               objectMapper.readValue(it.dataPayload, JsonNode::class.java)
+              }.toList()))
+
+            CsvMapper().writerFor(JsonNode::class.java)
+              .with(csvSchema)
+              .writeValue(csvFile, jsonTree)
+
+            amazonS3.putObject(s3Config.egressBucket, fileName, csvFile)
+
+            events.forEach { event -> egressEventDataRepository.deleteById(event.id) }
+          }
       }
     } catch (e: Exception) {
       log.error("Exception", e)
     }
   }
 
-  @JmsListener(destination = "adaptor", containerFactory = "awsQueueContainerFactoryProxy")
-  fun onPublishedEvent(eventMessage: String) = runBlocking {
-    val (message, messageAttributes) = objectMapper.readValue(eventMessage, EventTopicMessage::class.java)
-    val eventType = messageAttributes.eventType.Value
-    log.info("Received message $message, type $eventType")
 
-    val event = objectMapper.readValue(message, EventMessage::class.java)
-    processEvent(event.id)
-  }
 
-  private suspend fun processEvent(
-      id: UUID
-  ) {
-    // Go and get data from Event Retrieval API
-    val lifeEvent = getEventPayload(id)
-    log.debug("Obtained event: ${lifeEvent.eventId}")
-
-    // turn into file
-    lifeEvent.eventData?.let {
-      log.debug("Writing to S3 bucket")
-      amazonS3.putObject(s3Config.egressBucket, "${lifeEvent.eventId}.json", objectMapper.writeValueAsString(it))
-      removeEvent(lifeEvent.eventId)
-    }
-
-  }
-
-  suspend fun getEventPayload(id: UUID): EventNotification =
-    eventDataRetrievalApiWebClient.get()
-      .uri("/events/$id")
-      .retrieve()
-      .awaitBody()
-
-  suspend fun removeEvent(id: UUID) =
-    eventDataRetrievalApiWebClient.delete()
-      .uri("/events/$id")
-      .retrieve()
-      .awaitBodilessEntity()
 }
 
-data class AttributeType(val Value: String, val Type: String)
-data class MessageAttributes(val eventType: AttributeType, val consumer: AttributeType)
-data class EventTopicMessage(
-  val Message: String,
-  val MessageAttributes: MessageAttributes
-)
-
-data class EventMessage(
-  val id: UUID,
-  val occurredAt: OffsetDateTime,
-  val description: String
-)

@@ -114,10 +114,8 @@ class ConsumersServiceTest {
         consumerSubscriptionRepository.save(
           withArg {
             assertThat(it.consumerId).isEqualTo(consumer.id)
-            assertThat(it.pollClientId).isEqualTo(consumerSubRequest.pollClientId)
-            assertThat(it.callbackClientId).isEqualTo(consumerSubRequest.callbackClientId)
+            assertThat(it.oauthClientId).isEqualTo(consumerSubRequest.oauthClientId)
             assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
-            assertThat(it.ninoRequired).isEqualTo(consumerSubRequest.ninoRequired)
             assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
             assertThat(it.ingressEventType).isEqualTo(consumerSubRequest.ingressEventType)
           }
@@ -140,10 +138,8 @@ class ConsumersServiceTest {
         consumerSubscriptionRepository.save(
           withArg {
             assertThat(it.consumerId).isEqualTo(consumer.id)
-            assertThat(it.pollClientId).isEqualTo(consumerSubRequest.pollClientId)
-            assertThat(it.callbackClientId).isEqualTo(consumerSubRequest.callbackClientId)
+            assertThat(it.oauthClientId).isEqualTo(consumerSubRequest.oauthClientId)
             assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
-            assertThat(it.ninoRequired).isEqualTo(consumerSubRequest.ninoRequired)
             assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
             assertThat(it.ingressEventType).isEqualTo(consumerSubRequest.ingressEventType)
           }
@@ -191,19 +187,15 @@ class ConsumersServiceTest {
   private val consumer = Consumer(name = "Base Consumer")
   private val consumerSubscription = ConsumerSubscription(
     consumerId = consumer.id,
-    callbackClientId = "callbackClientId",
-    pollClientId = "pollClientId",
+    oauthClientId = "pollClientId",
     pushUri = "pushUri",
-    ninoRequired = false,
     ingressEventType = "DEATH_NOTIFICATION",
     enrichmentFields = "a,b,c"
   )
   private val consumerSubRequest = ConsumerSubRequest(
     ingressEventType = "DEATH_NOTIFICATIONNew",
     enrichmentFields = "a,b,c,New",
-    callbackClientId = "callbackClientIdNew",
-    pollClientId = "pollClientIdNew",
+    oauthClientId = "callbackClientIdNew",
     pushUri = "pushUriNew",
-    ninoRequired = true
   )
 }

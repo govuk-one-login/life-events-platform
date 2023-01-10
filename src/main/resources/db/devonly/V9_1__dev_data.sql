@@ -2,15 +2,15 @@ CREATE OR REPLACE FUNCTION getIdFromPublisherName(publisher_name_check varchar(8
 RETURNS UUID
     LANGUAGE plpgsql
     AS
-$$  
-Declare  
+$$
+Declare
  publisher_id UUID;
 Begin
   SELECT id
   INTO publisher_id
   FROM publisher WHERE name = publisher_name_check;
   RETURN publisher_id;
-End;  
+End;
 $$;
 
 CREATE OR REPLACE FUNCTION getIdFromConsumerName(consumer_name_check varchar(80))
@@ -36,31 +36,22 @@ VALUES
     ('internal-inbound', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION','DEATH_CSV');
 
 INSERT INTO consumer_subscription
-(poll_client_id, callback_client_id, consumer_id, nino_required, enrichment_fields, ingress_event_type)
+(oauth_client_id, consumer_id, enrichment_fields, ingress_event_type)
 VALUES
-    ('dwp-event-receiver', 'dwp-event-receiver', getIdFromConsumerName('DWP Poller'), true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
-    ('dwp-event-receiver', 'dwp-event-receiver', getIdFromConsumerName('DWP Poller'), false, '', 'LIFE_EVENT');
+    ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
+    ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), '', 'LIFE_EVENT');
 
 INSERT INTO consumer_subscription
-    (callback_client_id, consumer_id, nino_required, enrichment_fields, ingress_event_type)
+    (oauth_client_id, consumer_id, enrichment_fields, ingress_event_type)
 VALUES
-    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
-    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), false, '', 'LIFE_EVENT');
+    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
+    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), '', 'LIFE_EVENT');
 
 INSERT INTO consumer_subscription
-    (callback_client_id, consumer_id, nino_required, is_legacy, enrichment_fields, ingress_event_type)
+    (oauth_client_id, consumer_id, enrichment_fields, ingress_event_type)
 VALUES
-    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), true, true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
-    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), false, true, '', 'LIFE_EVENT');
-
-INSERT INTO consumer_subscription
-    (consumer_id, push_uri, nino_required, enrichment_fields, ingress_event_type)
-VALUES
-    (getIdFromConsumerName('S3 Consumer'), 's3://user:password@localhost', true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
-    (getIdFromConsumerName('S3 Consumer'), 's3://user:password@localhost', false, '', 'LIFE_EVENT'),
-    (getIdFromConsumerName('Webhook Consumer'), 'http://localhost:8181/callback', true, 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
-    (getIdFromConsumerName('Webhook Consumer'), 'http://localhost:8181/callback', false, '', 'LIFE_EVENT');
-
+    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), 'firstName,lastName,age', 'DEATH_NOTIFICATION'),
+    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), '', 'LIFE_EVENT');
 
 DROP FUNCTION IF EXISTS getIdFromPublisherName;
 DROP FUNCTION IF EXISTS getIdFromConsumerName;

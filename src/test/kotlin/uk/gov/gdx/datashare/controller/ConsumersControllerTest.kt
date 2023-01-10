@@ -127,8 +127,7 @@ class ConsumersControllerTest {
       )
       val consumerSubscription = ConsumerSubscription(
         consumerId = consumerId,
-        callbackClientId = "callbackClientId",
-        ingressEventType = "DEATH_NOTIFICATIONNew",
+          ingressEventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
 
@@ -152,7 +151,7 @@ class ConsumersControllerTest {
       val consumerSubscription = ConsumerSubscription(
         consumerId = consumerId,
         consumerSubscriptionId = subscriptionId,
-        callbackClientId = "callbackClientId",
+        oauthClientId = "callbackClientId",
         ingressEventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )

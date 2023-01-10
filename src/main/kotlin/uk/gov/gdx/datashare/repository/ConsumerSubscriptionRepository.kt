@@ -10,8 +10,8 @@ import java.util.*
 
 @Repository
 interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubscription, UUID> {
-  @Query("SELECT * FROM consumer_subscription cs WHERE cs.poll_client_id = :clientId")
-  fun findAllByPollClientId(clientId: String): Flow<ConsumerSubscription>
+  @Query("SELECT * FROM consumer_subscription cs WHERE cs.oauth_client_id = :clientId")
+  fun findAllByClientId(clientId: String): Flow<ConsumerSubscription>
 
   @Query(
     "SELECT * FROM consumer_subscription cs " +
@@ -21,10 +21,10 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
 
   @Query(
     "SELECT * FROM consumer_subscription cs " +
-      "WHERE cs.poll_client_id = :clientId " +
+      "WHERE cs.oauth_client_id = :clientId " +
       "AND cs.ingress_event_type IN (:ingressEventTypes)"
   )
-  fun findAllByIngressEventTypesAndPollClientId(
+  fun findAllByIngressEventTypesAndClientId(
     clientId: String,
     ingressEventTypes: List<String>
   ): Flow<ConsumerSubscription>
@@ -35,10 +35,6 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
       "AND cs.push_uri IS NOT NULL "
   )
   fun findClientToSendDataTo(eventType: String): Flow<ConsumerSubscription>
-
-  @Query("UPDATE consumer_subscription SET last_poll_event_time = :lastTime WHERE id = :id")
-  @Modifying
-  suspend fun updateLastPollTime(lastPollEventTime: LocalDateTime, id: UUID)
 
   @Query(
     "SELECT cs.* FROM consumer_subscription cs " +
@@ -53,4 +49,5 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
       "AND c.id = :id"
   )
   fun findAllByConsumerId(id: UUID): Flow<ConsumerSubscription>
+
 }

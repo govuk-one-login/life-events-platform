@@ -22,8 +22,9 @@ api:
       event-data-retrieval: http://localhost:18080
     s3:
       localstack-url: http://127.0.0.1:4566
-      ingress-bucket: ${random.uuid}
+      ingress-bucket: ${random.uuid}-ingress
       ingress-archive-bucket: ${random.uuid}-archive
+      egress-bucket: ${random.uuid}-egress
 
 legacy-inbound:
   api:

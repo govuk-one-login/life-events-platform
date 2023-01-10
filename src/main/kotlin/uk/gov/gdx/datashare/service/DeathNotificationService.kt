@@ -63,7 +63,7 @@ class DeathNotificationService(
     val savedEgressEvents = egressEventDataRepository.saveAll(egressEventData).toList()
 
     savedEgressEvents.forEach {
-      eventPublishingService.storeAndPublishEvent(it.eventId, dataProcessorMessage)
+      eventPublishingService.storeAndPublishEvent(it)
     }
   }
 

@@ -38,11 +38,7 @@ class AwsQueueFactoryTest {
   inner class `Create single AWS AwsQueue` {
     private val someQueueConfig = SqsProperties.QueueConfig(
       queueName = "some queue name",
-      queueAccessKeyId = "some access key id",
-      queueSecretAccessKey = "some secret access key",
-      dlqName = "some dlq name",
-      dlqAccessKeyId = "dlq access key id",
-      dlqSecretAccessKey = "dlq secret access key"
+      dlqName = "some dlq name"
     )
     private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig))
     private val sqsClient = mock<AmazonSQS>()
@@ -51,9 +47,9 @@ class AwsQueueFactoryTest {
 
     @BeforeEach
     fun `configure mocks and register queues`() {
-      whenever(sqsFactory.awsSqsDlqClient(anyString(), anyString(), anyString(), anyString(), anyString()))
+      whenever(sqsFactory.awsSqsDlqClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsDlqClient)
-      whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString(), anyString(), anyString()))
+      whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsClient)
       whenever(sqsDlqClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
       whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
@@ -63,12 +59,12 @@ class AwsQueueFactoryTest {
 
     @Test
     fun `creates aws sqs dlq client from sqs factory`() {
-      verify(sqsFactory).awsSqsDlqClient("somequeueid", "some dlq name", "dlq access key id", "dlq secret access key", "eu-west-2")
+      verify(sqsFactory).awsSqsDlqClient("somequeueid", "some dlq name", "eu-west-2")
     }
 
     @Test
     fun `creates aws sqs client from sqs factory`() {
-      verify(sqsFactory).awsSqsClient("somequeueid", "some queue name", "some access key id", "some secret access key", "eu-west-2")
+      verify(sqsFactory).awsSqsClient("somequeueid", "some queue name", "eu-west-2")
     }
 
     @Test
@@ -241,13 +237,9 @@ class AwsQueueFactoryTest {
   inner class `Create multiple AWS AwsQueues` {
     private val someQueueConfig = SqsProperties.QueueConfig(
       queueName = "some queue name",
-      queueAccessKeyId = "some access key id",
-      queueSecretAccessKey = "some secret access key",
-      dlqName = "some dlq name",
-      dlqAccessKeyId = "dlq access key id",
-      dlqSecretAccessKey = "dlq secret access key"
+      dlqName = "some dlq name"
     )
-    private val anotherQueueConfig = SqsProperties.QueueConfig(queueName = "another queue name", queueAccessKeyId = "another access key id", queueSecretAccessKey = "another secret access key", dlqName = "another dlq name", dlqAccessKeyId = "another dlq access key id", dlqSecretAccessKey = "another dlq secret access key")
+    private val anotherQueueConfig = SqsProperties.QueueConfig(queueName = "another queue name", dlqName = "another dlq name")
     private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig, "anotherqueueid" to anotherQueueConfig))
     private val sqsClient = mock<AmazonSQS>()
     private val sqsDlqClient = mock<AmazonSQS>()
@@ -255,9 +247,9 @@ class AwsQueueFactoryTest {
 
     @BeforeEach
     fun `configure mocks and register queues`() {
-      whenever(sqsFactory.awsSqsDlqClient(anyString(), anyString(), anyString(), anyString(), anyString()))
+      whenever(sqsFactory.awsSqsDlqClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsDlqClient)
-      whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString(), anyString(), anyString()))
+      whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsClient)
       whenever(sqsClient.getQueueUrl("some queue name")).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
       whenever(sqsDlqClient.getQueueUrl("some dlq name")).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
@@ -269,14 +261,14 @@ class AwsQueueFactoryTest {
 
     @Test
     fun `should create multiple dlq clients from sqs factory`() {
-      verify(sqsFactory).awsSqsDlqClient("somequeueid", "some dlq name", "dlq access key id", "dlq secret access key", "eu-west-2")
-      verify(sqsFactory).awsSqsDlqClient("anotherqueueid", "another dlq name", "another dlq access key id", "another dlq secret access key", "eu-west-2")
+      verify(sqsFactory).awsSqsDlqClient("somequeueid", "some dlq name", "eu-west-2")
+      verify(sqsFactory).awsSqsDlqClient("anotherqueueid", "another dlq name", "eu-west-2")
     }
 
     @Test
     fun `should create multiple sqs clients from sqs factory`() {
-      verify(sqsFactory).awsSqsClient("somequeueid", "some queue name", "some access key id", "some secret access key", "eu-west-2")
-      verify(sqsFactory).awsSqsClient("anotherqueueid", "another queue name", "another access key id", "another secret access key", "eu-west-2")
+      verify(sqsFactory).awsSqsClient("somequeueid", "some queue name", "eu-west-2")
+      verify(sqsFactory).awsSqsClient("anotherqueueid", "another queue name", "eu-west-2")
     }
 
     @Test
@@ -298,16 +290,10 @@ class AwsQueueFactoryTest {
       subscribeTopicId = "sometopicid",
       subscribeFilter = "some topic filter",
       queueName = "some-queue-name",
-      queueAccessKeyId = "some access key id",
-      queueSecretAccessKey = "some secret access key",
-      dlqName = "some dlq name",
-      dlqAccessKeyId = "dlq access key id",
-      dlqSecretAccessKey = "dlq secret access key"
+      dlqName = "some dlq name"
     )
     private val someTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}some-topic-name",
-      accessKeyId = "topic access key",
-      secretAccessKey = "topic secret"
+      arn = "${localstackArnPrefix}some-topic-name"
     )
     private val sqsProperties = SqsProperties(provider = "localstack", queues = mapOf("somequeueid" to someQueueConfig), topics = mapOf("sometopicid" to someTopicConfig))
     private val sqsClient = mock<AmazonSQS>()
@@ -349,8 +335,8 @@ class AwsQueueFactoryTest {
 
   @Nested
   inner class `Create AWS AwsQueue with topic subscription` {
-    private val someQueueConfig = SqsProperties.QueueConfig(subscribeTopicId = "sometopicid", subscribeFilter = "some topic filter", queueName = "some queue name", queueAccessKeyId = "some access key id", queueSecretAccessKey = "some secret access key", dlqName = "some dlq name", dlqAccessKeyId = "dlq access key id", dlqSecretAccessKey = "dlq secret access key")
-    private val someTopicConfig = SqsProperties.TopicConfig(arn = "some topic arn", accessKeyId = "topic access key", secretAccessKey = "topic secret")
+    private val someQueueConfig = SqsProperties.QueueConfig(subscribeTopicId = "sometopicid", subscribeFilter = "some topic filter", queueName = "some queue name", dlqName = "some dlq name")
+    private val someTopicConfig = SqsProperties.TopicConfig(arn = "some topic arn")
     private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig), topics = mapOf("sometopicid" to someTopicConfig))
     private val sqsClient = mock<AmazonSQS>()
     private val sqsDlqClient = mock<AmazonSQS>()
@@ -360,9 +346,9 @@ class AwsQueueFactoryTest {
 
     @BeforeEach
     fun `configure mocks and register queues`() {
-      whenever(sqsFactory.awsSqsDlqClient(anyString(), anyString(), anyString(), anyString(), anyString()))
+      whenever(sqsFactory.awsSqsDlqClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsDlqClient)
-      whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString(), anyString(), anyString()))
+      whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsClient)
       whenever(sqsDlqClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
       whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))

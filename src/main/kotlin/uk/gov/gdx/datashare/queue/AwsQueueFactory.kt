@@ -65,7 +65,7 @@ class AwsQueueFactory(
     with(sqsProperties) {
       if (queueConfig.dlqName.isEmpty()) throw MissingDlqNameException()
       when (provider) {
-        "aws" -> amazonSqsFactory.awsSqsDlqClient(queueId, queueConfig.dlqName, queueConfig.dlqAccessKeyId, queueConfig.dlqSecretAccessKey, region)
+        "aws" -> amazonSqsFactory.awsSqsDlqClient(queueId, queueConfig.dlqName, region)
         "localstack" ->
           amazonSqsFactory.localStackSqsDlqClient(queueId, queueConfig.dlqName, localstackUrl, region)
             .also { sqsDlqClient -> sqsDlqClient.createQueue(queueConfig.dlqName) }
@@ -77,7 +77,7 @@ class AwsQueueFactory(
   fun createSqsClient(queueId: String, queueConfig: SqsProperties.QueueConfig, sqsProperties: SqsProperties, sqsDlqClient: AmazonSQS?) =
     with(sqsProperties) {
       when (provider) {
-        "aws" -> amazonSqsFactory.awsSqsClient(queueId, queueConfig.queueName, queueConfig.queueAccessKeyId, queueConfig.queueSecretAccessKey, region)
+        "aws" -> amazonSqsFactory.awsSqsClient(queueId, queueConfig.queueName, region)
         "localstack" ->
           amazonSqsFactory.localStackSqsClient(queueId, queueConfig.queueName, localstackUrl, region)
             .also { sqsClient -> createLocalStackQueue(sqsClient, sqsDlqClient, queueConfig.queueName, queueConfig.dlqName, queueConfig.dlqMaxReceiveCount) }

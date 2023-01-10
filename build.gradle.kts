@@ -2,7 +2,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-  id("org.owasp.dependencycheck") version "7.4.3"
+  id("org.owasp.dependencycheck") version "7.4.4"
   id("org.springframework.boot") version "2.7.4"
   id("io.spring.dependency-management") version "1.1.0"
   kotlin("jvm") version "1.8.0"
@@ -50,7 +50,7 @@ dependencies {
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-  implementation("io.opentelemetry:opentelemetry-api:1.21.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.22.0")
 
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.10.0")
@@ -60,7 +60,7 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("com.amazonaws:aws-java-sdk-s3:1.12.378")
+  implementation("com.amazonaws:aws-java-sdk-s3:1.12.380")
 
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")
@@ -71,11 +71,11 @@ dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("org.assertj:assertj-core:3.23.1")
+  testImplementation("org.assertj:assertj-core:3.24.1")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("org.mockito:mockito-inline")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.9")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.10")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:localstack:1.17.6")

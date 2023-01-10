@@ -114,7 +114,7 @@ class DeathNotificationServiceTest {
             assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
               .isEqualTo(dataProcessorMessage.eventTime)
             assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-              .isEqualTo(null)
+              .isNull()
 
             assertThat(simpleEvent?.dataPayload)
               .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
@@ -170,7 +170,7 @@ class DeathNotificationServiceTest {
             assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
               .isEqualTo(dataProcessorMessage.eventTime)
             assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-              .isEqualTo(null)
+              .isNull()
 
             assertThat(simpleEvent?.dataPayload)
               .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
@@ -223,12 +223,12 @@ class DeathNotificationServiceTest {
             assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
               .isEqualTo(dataProcessorMessage.eventTime)
             assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-              .isEqualTo(null)
+              .isNull()
 
             assertThat(simpleEvent?.dataPayload)
-              .isEqualTo(null)
+              .isNull()
             assertThat(complexEvent?.dataPayload)
-              .isEqualTo(null)
+              .isNull()
           }
         )
       }

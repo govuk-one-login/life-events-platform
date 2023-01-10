@@ -239,6 +239,37 @@ curl --location --request DELETE 'http://localhost:8080/events/4c1f7599-f7b4-43c
 
 This returns a 204 when the event is successfully deleted.
 
+### Sending event data via file in S3 bucket
+It is possible to send event data to the system by placing a CSV file in an S3 bucket
+
+#### Local running
+Buckets are automatically created in the dev profile
+- ingress
+- ingress-archive
+- egress
+
+To send a file create a CSV in this format:
+
+| "Certificate ID" | "Last Name" | "First Names" | "DOB" | "Date of Death" | "Gender" | "Address" |
+|------------------|------------|---------------|-------|-----------------|----------|-----------|
+
+e.g. [filename].csv
+
+```csv
+"123456789","Smith","Joan Narcissus Ouroboros","2008-08-08","2022-12-08","male","888 Death House, 8 Death lane, Deadington, Deadshire"
+"999999901","Jones","Simon","1972-01-08","2023-01-03","female","Address1 Address2"
+"999999902","Taylor","Paul","1974-08-16","2023-01-08","male","Rose Cottage"
+```
+
+The file can be uploaded thus:
+```bash
+aws --endpoint-url=http://localhost:4566 s3 cp [filename].csv s3://ingress/
+```
+
+as buckets are created on the dev profile
+A Sample CSV is
+
+
 ## Architecture
 
 Architecture decision records start [here](doc/architecture/decisions/0001-use-adr.md)

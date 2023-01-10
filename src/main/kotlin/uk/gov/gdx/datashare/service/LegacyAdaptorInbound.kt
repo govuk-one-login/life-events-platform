@@ -12,7 +12,6 @@ import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.ResponseEntity
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -24,7 +23,6 @@ import java.io.InputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
-import kotlin.jvm.Throws
 
 @Service
 class LegacyAdaptorInbound(
@@ -52,6 +50,8 @@ class LegacyAdaptorInbound(
       }
     } catch (e: AmazonClientException) {
       log.error("Failed to connect to S3", e)
+    } catch (e: Exception) {
+      log.error("Exception", e)
     }
   }
 
@@ -112,10 +112,11 @@ class LegacyAdaptorInbound(
     log.info("Deleted the existing $fileToArchive")
   }
 
-  suspend fun postDataToReceiver(payload: EventToPublish): ResponseEntity<Void> =
+  suspend fun postDataToReceiver(payload: EventToPublish) {
     dataReceiverApiWebClient.post()
       .uri("/events")
       .bodyValue(payload)
       .retrieve()
       .awaitBodilessEntity()
+  }
 }

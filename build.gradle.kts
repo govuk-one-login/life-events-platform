@@ -75,7 +75,7 @@ dependencies {
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("org.mockito:mockito-inline")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.9")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.10")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:localstack:1.17.6")

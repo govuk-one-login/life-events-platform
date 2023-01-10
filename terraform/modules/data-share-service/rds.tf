@@ -9,13 +9,13 @@ resource "random_password" "rds_password" {
 }
 
 resource "aws_rds_cluster" "rds_postgres_cluster" {
-  cluster_identifier                  = "${var.environment}-rds-db"
-  engine                              = "aurora-postgresql"
-  availability_zones                  = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
-  database_name                       = "${var.environment}rdsdb"
-  master_username                     = random_string.rds_username.result
-  master_password                     = random_password.rds_password.result
-  iam_database_authentication_enabled = true
+  cluster_identifier = "${var.environment}-rds-db"
+  engine             = "aurora-postgresql"
+  availability_zones = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+  database_name      = "${var.environment}rdsdb"
+  master_username    = random_string.rds_username.result
+  master_password    = random_password.rds_password.result
+  apply_immediately  = true # TODO ethmil: remove once applied
 
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"

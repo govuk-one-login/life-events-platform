@@ -27,8 +27,6 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
 
   implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.378"))
-  implementation(platform("software.amazon.awssdk:bom:2.19.10"))
-
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("org.springframework:spring-jms")
@@ -38,11 +36,9 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("org.apache.commons:commons-csv:1.9.0")
 
-  implementation("software.amazon.awssdk:rds")
-
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("org.postgresql:r2dbc-postgresql")
-  implementation("org.springframework.boot:spring-boot-starter-jdbc")
+  runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
   runtimeOnly("org.postgresql:postgresql:42.5.1")
 
   implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.14")

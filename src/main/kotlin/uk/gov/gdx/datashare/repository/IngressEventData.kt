@@ -17,8 +17,8 @@ data class IngressEventData(
   val subscriptionId: UUID,
   val dataId: String,
   val dataPayload: String?,
-  val dataExpiryTime: LocalDateTime,
   val whenCreated: LocalDateTime? = null,
+  val eventTime: LocalDateTime? = null,
 
   @Transient
   @Value("false")

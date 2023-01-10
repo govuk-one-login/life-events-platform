@@ -8,22 +8,24 @@ management.endpoint:
 metrics:
   cloudwatch:
     namespace: "local-gdx"
-db:
-  provider: local
-  uri: postgresql://localhost:5432/datashare?sslmode=disable
-  hostname: localhost
-  port: 5432
-  ssl-required: false
-  username: datashare
-  password: datashare
 
 spring:
   devtools:
     add-properties: true
 
   flyway:
+    url: jdbc:postgresql://localhost:5432/datashare?sslmode=prefer
+    user: datashare
+    password: datashare
     locations: classpath:db/migration, classpath:db/devonly
 
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/datashare?sslmode=prefer
+    username: datashare
+    password: datashare
+    properties:
+      sslMode: DISABLE
+      sslRootCert:
 logging:
   level:
     io.r2dbc.postgresql.QUERY: DEBUG # for queries

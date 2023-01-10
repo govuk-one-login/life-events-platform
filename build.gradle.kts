@@ -60,7 +60,7 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("com.amazonaws:aws-java-sdk-s3:1.12.378")
+  implementation("com.amazonaws:aws-java-sdk-s3:1.12.380")
 
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")

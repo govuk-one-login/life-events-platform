@@ -48,8 +48,7 @@ class DataProcessor(
         datasetId = dataProcessorMessage.datasetId,
         dataId = details.id,
         dataPayload = details.data as String?,
-        whenCreated = dataProcessorMessage.eventTime,
-        dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
+        eventTime = dataProcessorMessage.eventTime,
       )
 
       ingressEventDataRepository.save(eventData)

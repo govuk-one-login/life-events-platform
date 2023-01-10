@@ -132,7 +132,7 @@ class EventDataServiceTest {
         address = deathNotificationSubscription.id.toString()
       )
 
-      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, event.id) }.returns(event)
+      coEvery { egressEventDataRepository.findByCallbackClientIdAndId(clientId, event.id) }.returns(event)
       coEvery { consumerSubscriptionRepository.findByEgressEventId(event.id) }.returns(deathNotificationSubscription)
       every { deathNotificationService.mapDeathNotification(event.dataPayload!!) }.returns(deathNotificationDetails)
 
@@ -154,7 +154,7 @@ class EventDataServiceTest {
     runBlocking {
       val event = deathEvents.first()
 
-      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, event.id) }.returns(null)
+      coEvery { egressEventDataRepository.findByCallbackClientIdAndId(clientId, event.id) }.returns(null)
 
       val exception = assertThrows<NotFoundException> { underTest.getEvent(event.id) }
 
@@ -167,7 +167,7 @@ class EventDataServiceTest {
     runBlocking {
       val event = deathEvents.first()
 
-      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, event.id) }.returns(event)
+      coEvery { egressEventDataRepository.findByCallbackClientIdAndId(clientId, event.id) }.returns(event)
       coEvery { consumerSubscriptionRepository.findByEgressEventId(event.id) }.returns(null)
 
       val exception = assertThrows<NotFoundException> { underTest.getEvent(event.id) }
@@ -267,7 +267,7 @@ class EventDataServiceTest {
         dataId = "HMPO",
         dataPayload = null
       )
-      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
+      coEvery { egressEventDataRepository.findByCallbackClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
       coEvery { egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId) }.returns(
         getEgressEvents(
           10
@@ -293,7 +293,7 @@ class EventDataServiceTest {
         dataId = "HMPO",
         dataPayload = null
       )
-      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
+      coEvery { egressEventDataRepository.findByCallbackClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
       coEvery { egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId) }.returns(emptyList<EgressEventData>().asFlow())
 
       coEvery { egressEventDataRepository.deleteById(egressEvent.id) }.returns(Unit)
@@ -310,13 +310,13 @@ class EventDataServiceTest {
   fun `deleteEvent throws if egress event not found for client`() {
     runBlocking {
       val egressEventId = UUID.randomUUID()
-      coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, egressEventId) }.returns(null)
+      coEvery { egressEventDataRepository.findByCallbackClientIdAndId(clientId, egressEventId) }.returns(null)
 
       val exception = assertThrows<NotFoundException> {
         underTest.deleteEvent(egressEventId)
       }
 
-      assertThat(exception.message).isEqualTo("Egress event $egressEventId not found for polling client $clientId")
+      assertThat(exception.message).isEqualTo("Egress event $egressEventId not found for callback client $clientId")
 
       coVerify(exactly = 0) { egressEventDataRepository.deleteById(any()) }
       coVerify(exactly = 0) { ingressEventDataRepository.deleteById(any()) }

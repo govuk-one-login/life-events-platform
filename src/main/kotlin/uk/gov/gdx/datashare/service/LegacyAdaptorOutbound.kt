@@ -4,9 +4,12 @@ import com.amazonaws.services.s3.AmazonS3
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
+import net.javacrumbs.shedlock.core.LockAssert
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
@@ -14,6 +17,7 @@ import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.config.S3Config
 import java.time.OffsetDateTime
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Service
 class LegacyAdaptorOutbound(
@@ -25,6 +29,18 @@ class LegacyAdaptorOutbound(
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
+  @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
+  @SchedulerLock(name = "publishToS3Bucket", lockAtMostFor = "50s", lockAtLeastFor = "50s")
+  fun publishToS3Bucket() {
+    try {
+      runBlocking {
+        LockAssert.assertLocked()
+      }
+    } catch (e: Exception) {
+      log.error("Exception", e)
+    }
   }
 
   @JmsListener(destination = "adaptor", containerFactory = "awsQueueContainerFactoryProxy")

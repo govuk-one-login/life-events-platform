@@ -26,6 +26,16 @@ spring:
     properties:
       sslMode: DISABLE
       sslRootCert:
+
+  security:
+    oauth2:
+      client:
+        registration:
+          event-data-retrieval:
+            scope: internal-outbound
+          data-receiver:
+            scope: internal-inbound
+
 logging:
   level:
     io.r2dbc.postgresql.QUERY: DEBUG # for queries
@@ -43,6 +53,7 @@ api:
       localstack-url: http://127.0.0.1:4566
       ingress-bucket: ingress
       ingress-archive-bucket: ingress-archive
+      egress-bucket: egress
 
 legacy-inbound:
   api:

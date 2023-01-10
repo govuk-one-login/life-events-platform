@@ -24,11 +24,12 @@ class DataShareTopicService(awsQueueService: AwsQueueService, private val object
   }
   private val domainEventsTopicClient by lazy { domainEventsTopic.snsClient }
 
-  fun sendGovEvent(eventId: UUID, occurredAt: LocalDateTime, eventType: String) {
+  fun sendGovEvent(eventId: UUID, consumer: String, occurredAt: LocalDateTime, eventType: String) {
     publishToDomainEventsTopic(
       DataShareEvent(
         eventType,
         eventId,
+        consumer,
         occurredAt.atZone(ZoneId.systemDefault()).toInstant(),
         "Gov Event: $eventType"
       )
@@ -41,7 +42,8 @@ class DataShareTopicService(awsQueueService: AwsQueueService, private val object
       PublishRequest(domainEventsTopic.arn, objectMapper.writeValueAsString(payload))
         .withMessageAttributes(
           mapOf(
-            "eventType" to MessageAttributeValue().withDataType("String").withStringValue(payload.eventType)
+            "eventType" to MessageAttributeValue().withDataType("String").withStringValue(payload.eventType),
+            "consumer" to MessageAttributeValue().withDataType("String").withStringValue(payload.consumer.toString())
           )
         )
         .also { log.info("Published event $payload to outbound topic") }
@@ -52,6 +54,7 @@ class DataShareTopicService(awsQueueService: AwsQueueService, private val object
 data class DataShareEvent(
   val eventType: String? = null,
   val id: UUID,
+  val consumer: String,
   val version: String,
   val occurredAt: String,
   val description: String
@@ -59,11 +62,13 @@ data class DataShareEvent(
   constructor(
     eventType: String,
     id: UUID,
+    consumer: String,
     occurredAt: Instant,
     description: String,
   ) : this(
     eventType,
     id,
+    consumer,
     "1.0",
     occurredAt.toOffsetDateFormat(),
     description

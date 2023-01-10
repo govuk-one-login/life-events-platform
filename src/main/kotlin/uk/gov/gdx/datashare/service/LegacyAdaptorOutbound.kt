@@ -1,30 +1,46 @@
 package uk.gov.gdx.datashare.service
 
+import com.amazonaws.services.s3.AmazonS3
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
+import net.javacrumbs.shedlock.core.LockAssert
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBodilessEntity
 import org.springframework.web.reactive.function.client.awaitBody
-import uk.gov.gdx.datashare.controller.EventInformation
-import uk.gov.gdx.datashare.repository.ConsumerRepository
-import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.config.S3Config
 import java.time.OffsetDateTime
-import java.util.UUID
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Service
 class LegacyAdaptorOutbound(
+  private val amazonS3: AmazonS3,
+  private val s3Config: S3Config,
   private val objectMapper: ObjectMapper,
   private val eventDataRetrievalApiWebClient: WebClient,
-  private val auditService: AuditService,
-  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: ConsumerRepository,
 ) {
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
+  @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
+  @SchedulerLock(name = "publishToS3Bucket", lockAtMostFor = "50s", lockAtLeastFor = "50s")
+  fun publishToS3Bucket() {
+    try {
+      runBlocking {
+        LockAssert.assertLocked()
+      }
+    } catch (e: Exception) {
+      log.error("Exception", e)
+    }
   }
 
   @JmsListener(destination = "adaptor", containerFactory = "awsQueueContainerFactoryProxy")
@@ -34,59 +50,40 @@ class LegacyAdaptorOutbound(
     log.info("Received message $message, type $eventType")
 
     val event = objectMapper.readValue(message, EventMessage::class.java)
-    when (eventType) {
-      "DEATH_NOTIFICATION", "LIFE_EVENT" -> processLifeEvent(event)
-      else -> {
-        log.debug("Ignoring message with type $eventType")
-      }
-    }
+    processEvent(event.id)
   }
 
-  suspend fun processLifeEvent(event: EventMessage) {
-    log.debug("processing {}", event)
-
-    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(event.id)
-    if (consumerSubscription?.isLegacy != true) {
-      log.debug("Event {} is not legacy", event.id)
-      return
-    }
-
+  private suspend fun processEvent(
+      id: UUID
+  ) {
     // Go and get data from Event Retrieval API
-    val lifeEvent = getEventPayload(event.id)
+    val lifeEvent = getEventPayload(id)
+    log.debug("Obtained event: ${lifeEvent.eventId}")
 
     // turn into file
-    val details = lifeEvent.details
-    if (details != null) {
-      // who needs it?
-      val clients = consumerSubscriptionRepository.findClientToSendDataTo(lifeEvent.eventType)
-      clients.collect { client ->
-
-        val consumer = consumerRepository.findById(client.consumerId)
-          ?: throw RuntimeException("Consumer ${client.consumerId} not found")
-
-        log.debug("Send to ${consumer.name} to ${client.pushUri} with [$details]")
-
-        // Put code to send data here
-
-        auditService.sendMessage(
-          auditType = AuditType.PUSH_EVENT,
-          id = event.id.toString(),
-          details = "Push Event to ${consumer.name} : ${event.description}",
-          username = consumer.name
-        )
-      }
+    lifeEvent.eventData?.let {
+      log.debug("Writing to S3 bucket")
+      amazonS3.putObject(s3Config.egressBucket, "${lifeEvent.eventId}.json", objectMapper.writeValueAsString(it))
+      removeEvent(lifeEvent.eventId)
     }
+
   }
 
-  suspend fun getEventPayload(id: UUID): EventInformation =
+  suspend fun getEventPayload(id: UUID): EventNotification =
     eventDataRetrievalApiWebClient.get()
-      .uri("/event-data-retrieval/$id")
+      .uri("/events/$id")
       .retrieve()
       .awaitBody()
+
+  suspend fun removeEvent(id: UUID) =
+    eventDataRetrievalApiWebClient.delete()
+      .uri("/events/$id")
+      .retrieve()
+      .awaitBodilessEntity()
 }
 
-data class GovEventType(val Value: String, val Type: String)
-data class MessageAttributes(val eventType: GovEventType)
+data class AttributeType(val Value: String, val Type: String)
+data class MessageAttributes(val eventType: AttributeType, val consumer: AttributeType)
 data class EventTopicMessage(
   val Message: String,
   val MessageAttributes: MessageAttributes

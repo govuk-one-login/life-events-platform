@@ -94,7 +94,7 @@ class DeathNotificationServiceTest {
         .returns(consumerSubscriptions)
       coEvery { levApiService.findDeathById(dataDetail.id.toInt()) }.returns(flowOf(deathRecord))
       coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
-      coEvery { eventPublishingService.storeAndPublishEvent(any(), any()) }.returns(Unit)
+      coEvery { eventPublishingService.storeAndPublishEvent(any()) }.returns(Unit)
 
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
@@ -124,7 +124,7 @@ class DeathNotificationServiceTest {
         )
       }
       fakeSavedEvents.collect {
-        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it.id, dataProcessorMessage) }
+        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it) }
       }
     }
   }
@@ -150,7 +150,7 @@ class DeathNotificationServiceTest {
       coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
         .returns(consumerSubscriptions)
       coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
-      coEvery { eventPublishingService.storeAndPublishEvent(any(), any()) }.returns(Unit)
+      coEvery { eventPublishingService.storeAndPublishEvent(any()) }.returns(Unit)
 
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
@@ -180,7 +180,7 @@ class DeathNotificationServiceTest {
         )
       }
       fakeSavedEvents.collect {
-        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it.id, dataProcessorMessage) }
+        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it) }
       }
     }
   }
@@ -203,7 +203,7 @@ class DeathNotificationServiceTest {
       coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
         .returns(consumerSubscriptions)
       coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
-      coEvery { eventPublishingService.storeAndPublishEvent(any(), any()) }.returns(Unit)
+      coEvery { eventPublishingService.storeAndPublishEvent(any()) }.returns(Unit)
 
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
@@ -233,7 +233,7 @@ class DeathNotificationServiceTest {
         )
       }
       fakeSavedEvents.collect {
-        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it.id, dataProcessorMessage) }
+        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it) }
       }
     }
   }
@@ -263,7 +263,7 @@ class DeathNotificationServiceTest {
       assertThat(exception.message).isEqualTo("Unknown DataSet ${dataProcessorMessage.datasetId}")
 
       coVerify(exactly = 0) { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }
-      coVerify(exactly = 0) { eventPublishingService.storeAndPublishEvent(any(), any()) }
+      coVerify(exactly = 0) { eventPublishingService.storeAndPublishEvent(any()) }
     }
   }
 

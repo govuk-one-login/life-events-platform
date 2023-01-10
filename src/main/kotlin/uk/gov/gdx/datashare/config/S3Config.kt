@@ -12,4 +12,5 @@ data class S3Config(
   val region: String = "",
   val ingressBucket: String,
   val ingressArchiveBucket: String,
+  val egressBucket: String,
 )

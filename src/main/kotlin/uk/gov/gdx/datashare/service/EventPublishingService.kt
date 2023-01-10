@@ -3,39 +3,41 @@ package uk.gov.gdx.datashare.service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.gdx.datashare.repository.ConsumerRepository
+import uk.gov.gdx.datashare.repository.ConsumerSubscription
+import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.repository.EgressEventData
+import uk.gov.gdx.datashare.repository.IngressEventTypeRepository
 import java.util.UUID
 
 @Service
 class EventPublishingService(
   private val dataShareTopicService: DataShareTopicService,
-  private val auditService: AuditService
+  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
+  private val consumerRepository: ConsumerRepository,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun storeAndPublishEvent(eventId: UUID, dataProcessorMessage: DataProcessorMessage) {
-    // publish the change
-    log.debug(
-      "Publishing new event {} {} {} from {}",
-      eventId,
-      dataProcessorMessage.eventTypeId,
-      dataProcessorMessage.datasetId,
-      dataProcessorMessage.publisher
-    )
+  suspend fun storeAndPublishEvent(egressEventData: EgressEventData) {
 
-    dataShareTopicService.sendGovEvent(
-      eventId = eventId,
-      eventType = dataProcessorMessage.eventTypeId,
-      occurredAt = dataProcessorMessage.eventTime
-    )
+    consumerSubscriptionRepository.findById(egressEventData.consumerSubscriptionId)?.let { sub ->
+      consumerRepository.findById(sub.consumerId)?.let {
+        log.debug(
+          "Publishing new event {} {} for {}",
+          sub.ingressEventType,
+          egressEventData.eventId,
+          it.name
+        )
 
-    // audit the event
-    auditService.sendMessage(
-      auditType = AuditType.DATA_SHARE_EVENT_PUBLISHED,
-      id = eventId.toString(),
-      details = dataProcessorMessage.eventTypeId,
-      username = dataProcessorMessage.publisher
-    )
+        dataShareTopicService.sendGovEvent(
+          eventId = egressEventData.eventId,
+          consumer = it.name,
+          eventType = sub.ingressEventType,
+          occurredAt = egressEventData.eventTime!!
+        )
+      }
+    }
   }
 }

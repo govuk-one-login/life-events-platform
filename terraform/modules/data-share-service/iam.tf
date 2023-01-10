@@ -97,7 +97,9 @@ data "aws_iam_policy_document" "ecs_task_s3_access" {
       module.ingress.arn,
       module.ingress.objects_arn,
       module.ingress_archive.arn,
-      module.ingress_archive.objects_arn
+      module.ingress_archive.objects_arn,
+      module.egress.arn,
+      module.egress.objects_arn,
     ]
     effect = "Allow"
   }
@@ -121,7 +123,8 @@ data "aws_iam_policy_document" "ecs_task_s3_key" {
     ]
     resources = [
       module.ingress.kms_arn,
-      module.ingress_archive.kms_arn
+      module.ingress_archive.kms_arn,
+      module.egress.kms_arn,
     ]
     effect = "Allow"
   }

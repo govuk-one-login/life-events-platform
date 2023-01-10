@@ -45,4 +45,10 @@ class S3ClientsConfig(private val s3Config: S3Config) {
           it.createBucket(request)
         }.onFailure { log.info("Failed to create S3 bucket ${s3Config.ingressArchiveBucket} due to error ${it.message}") }
       }
+      .also {
+        val request = CreateBucketRequest(s3Config.egressBucket, s3Config.region)
+        runCatching {
+          it.createBucket(request)
+        }.onFailure { log.info("Failed to create S3 bucket ${s3Config.egressBucket} due to error ${it.message}") }
+      }
 }

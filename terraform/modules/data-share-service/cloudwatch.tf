@@ -21,41 +21,41 @@ module "metrics_dashboard" {
   region           = var.region
   dashboard_name   = "${var.environment}-metrics-dashboard"
   metric_namespace = "${var.environment}-gdx"
-  widgets = [
+  widgets          = [
     {
-      title  = "Old API calls",
-      period = local.metric_period,
-      stat   = "Sum",
+      title   = "Old API calls",
+      period  = local.metric_period,
+      stat    = "Sum",
       metrics = [
-        "API_CALLS.IngestedEvents.count",
-        "API_CALLS.CallsToLev.count",
-        "API_CALLS.ResponsesFromLev.count",
-        "API_CALLS.CallsToHmrc.count",
-        "API_CALLS.ResponsesFromHmrc.count",
-        "API_CALLS.CallsToPoll.count",
-        "API_CALLS.CallsToEnrich.count",
+        { name = "API_CALLS.IngestedEvents.count" },
+        { name = "API_CALLS.CallsToLev.count" },
+        { name = "API_CALLS.ResponsesFromLev.count" },
+        { name = "API_CALLS.CallsToHmrc.count" },
+        { name = "API_CALLS.ResponsesFromHmrc.count" },
+        { name = "API_CALLS.CallsToPoll.count" },
+        { name = "API_CALLS.CallsToEnrich.count" },
       ]
     },
     {
-      title  = "Event API calls",
-      period = local.metric_period,
-      stat   = "Sum",
+      title   = "Event API calls",
+      period  = local.metric_period,
+      stat    = "Sum",
       metrics = [
-        "API_CALLS.PublishEvent.count",
-        "API_CALLS.GetEvent.count",
-        "API_CALLS.GetEvents.count",
-        "API_CALLS.GetEventsStatus.count",
-        "API_CALLS.DeleteEvent.count",
+        { name = "API_CALLS.PublishEvent.count" },
+        { name = "API_CALLS.GetEvent.count" },
+        { name = "API_CALLS.GetEvents.count" },
+        { name = "API_CALLS.GetEventsStatus.count" },
+        { name = "API_CALLS.DeleteEvent.count" },
       ]
     },
     {
-      title  = "Data ingest calls",
-      period = local.metric_period,
-      stat   = "Sum",
+      title   = "Data ingest calls",
+      period  = local.metric_period,
+      stat    = "Sum",
       metrics = [
-        "API_CALLS.PublishEvent.count",
-        "API_CALLS.CallsToLev.count",
-        "API_RESPONSES.ResponsesFromLev.count",
+        { name = "API_CALLS.PublishEvent.count" },
+        { name = "API_CALLS.CallsToLev.count" },
+        { name = "API_RESPONSES.ResponsesFromLev.count" },
       ]
     },
   ]

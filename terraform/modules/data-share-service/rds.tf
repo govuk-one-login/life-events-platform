@@ -15,6 +15,7 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   database_name      = "${var.environment}rdsdb"
   master_username    = random_string.rds_username.result
   master_password    = random_password.rds_password.result
+  apply_immediately  = true # TODO ethmil: remove once applied
 
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"

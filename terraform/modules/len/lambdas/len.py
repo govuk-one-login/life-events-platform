@@ -32,7 +32,7 @@ def lambda_handler(event, context):
 
     auth_token = json.loads(request.urlopen(auth_request).read())["access_token"]
 
-    if event["detail-type"] == "Scheduled Event":
+    if "detail-type" in event and event["detail-type"] == "Scheduled Event":
         run_scheduled_job(auth_token)
     else:
         run_manual_job(auth_token)
@@ -53,16 +53,19 @@ def run_manual_job(auth_token: str):
 
 def post_event(auth_token: str):
     death_certificate = 999999900 + randint(1, 72)
+    event_request_data = json.dumps({
+        "eventType": "DEATH_NOTIFICATION",
+        "id": death_certificate
+    }).encode("utf-8")
     event_request = request.Request(
         events_url,
-        data={
-            "eventType": "DEATH_NOTIFICATION",
-            "id": death_certificate
-        },
+        data=event_request_data,
         headers={
-            "Authorization": "Bearer " + auth_token
+            "Authorization": "Bearer " + auth_token,
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": len(event_request_data)
         }
     )
-    logger.info(f"## Posting event {death_certificate}")
-    response = json.loads(request.urlopen(event_request).read())
-    logger.info(f"## Event for {death_certificate} complete, response: {response}")
+    logger.info(f"## Posting death certificate {death_certificate}")
+    request.urlopen(event_request).read()
+    logger.info(f"## Successfully posted death certificate {death_certificate}")

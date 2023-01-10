@@ -7,11 +7,13 @@ resource "aws_cloudwatch_dashboard" "dashboard" {
       type : "metric",
       properties : {
         metrics : [
-        for metric in widget.metrics : [
-          var.metric_namespace,
-          metric.name,
-          [for dimension_name, dimension_value in metric.dimensions : [dimension_name, dimension_value]]
-        ].flatten
+          flatten([
+          for metric in widget.metrics : [
+            var.metric_namespace,
+            metric.name,
+            [for dimension_name, dimension_value in metric.dimensions : [dimension_name, dimension_value]]
+          ]
+          ])
         ],
         period : widget.period,
         region : var.region,

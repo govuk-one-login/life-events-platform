@@ -35,7 +35,7 @@ class EventPublishingService(
           eventId = egressEventData.eventId,
           consumer = it.name,
           eventType = sub.ingressEventType,
-          occurredAt = egressEventData.whenCreated!!
+          occurredAt = egressEventData.eventTime!!
         )
       }
     }

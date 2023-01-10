@@ -37,7 +37,7 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
     toTime: LocalDateTime
   ): Flow<EgressEventData>
 
-  @Query("DELETE FROM egress_event_data where data_expiry_time < :expiredTime")
+  @Query("DELETE FROM egress_event_data where when_created < :expiredTime")
   @Modifying
   suspend fun deleteAllExpiredEvents(expiredTime: LocalDateTime)
 

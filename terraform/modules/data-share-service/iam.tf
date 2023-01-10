@@ -137,24 +137,6 @@ resource "aws_iam_role_policy_attachment" "ecs_task_s3_key" {
   policy_arn = aws_iam_policy.ecs_task_s3_key.arn
 }
 
-data "aws_iam_policy_document" "ecs_task_rds_access" {
-  statement {
-    actions   = ["rds-db:connect"]
-    resources = [aws_rds_cluster.rds_postgres_cluster.arn]
-    effect    = "Allow"
-  }
-}
-
-resource "aws_iam_policy" "ecs_task_rds_access" {
-  name   = "${var.environment}-ecs-task-rds-access-policy"
-  policy = data.aws_iam_policy_document.ecs_task_rds_access.json
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_rds_access" {
-  role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.ecs_task_rds_access.arn
-}
-
 data "aws_iam_policy_document" "ecs_task_sqs_access" {
   statement {
     actions = [

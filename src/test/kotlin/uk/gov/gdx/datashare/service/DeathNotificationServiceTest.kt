@@ -111,10 +111,10 @@ class DeathNotificationServiceTest {
               .isEqualTo(dataProcessorMessage.datasetId)
             assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
               .isEqualTo(dataDetail.id)
-            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+            assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
               .isEqualTo(dataProcessorMessage.eventTime)
-            assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
-              .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
+            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+              .isNull()
 
             assertThat(simpleEvent?.dataPayload)
               .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
@@ -167,10 +167,10 @@ class DeathNotificationServiceTest {
               .isEqualTo(dataProcessorMessage.datasetId)
             assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
               .isEqualTo(dataDetail.id)
-            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+            assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
               .isEqualTo(dataProcessorMessage.eventTime)
-            assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
-              .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
+            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+              .isNull()
 
             assertThat(simpleEvent?.dataPayload)
               .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
@@ -220,15 +220,15 @@ class DeathNotificationServiceTest {
               .isEqualTo(dataProcessorMessage.datasetId)
             assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
               .isEqualTo(dataDetail.id)
-            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+            assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
               .isEqualTo(dataProcessorMessage.eventTime)
-            assertThat(simpleEvent?.dataExpiryTime).isEqualTo(complexEvent?.dataExpiryTime)
-              .isEqualTo(dataProcessorMessage.eventTime.plusHours(1))
+            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+              .isNull()
 
             assertThat(simpleEvent?.dataPayload)
-              .isEqualTo(null)
+              .isNull()
             assertThat(complexEvent?.dataPayload)
-              .isEqualTo(null)
+              .isNull()
           }
         )
       }
@@ -272,7 +272,6 @@ class DeathNotificationServiceTest {
     subscriptionId = UUID.randomUUID(),
     datasetId = UUID.randomUUID().toString(),
     dataId = "HMPO",
-    dataExpiryTime = LocalDateTime.now(),
     dataPayload = null
   )
   private val simpleSubscription = ConsumerSubscription(
@@ -299,7 +298,6 @@ class DeathNotificationServiceTest {
       ingressEventId = UUID.randomUUID(),
       datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
-      dataExpiryTime = LocalDateTime.now(),
       dataPayload = null
     ),
     EgressEventData(
@@ -307,7 +305,6 @@ class DeathNotificationServiceTest {
       ingressEventId = UUID.randomUUID(),
       datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
-      dataExpiryTime = LocalDateTime.now(),
       dataPayload = null
     )
   )

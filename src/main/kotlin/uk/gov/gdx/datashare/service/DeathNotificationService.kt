@@ -56,8 +56,7 @@ class DeathNotificationService(
         datasetId = dataProcessorMessage.datasetId,
         dataId = details.id,
         dataPayload = dataPayload?.let { objectMapper.writeValueAsString(dataPayload) },
-        whenCreated = dataProcessorMessage.eventTime,
-        dataExpiryTime = dataProcessorMessage.eventTime.plusHours(1)
+        eventTime = dataProcessorMessage.eventTime,
       )
     }.toList()
 

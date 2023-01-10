@@ -78,3 +78,9 @@ module "ingress_archive" {
   environment = var.environment
   name        = "ingress-archive"
 }
+
+module "egress" {
+  source      = "../s3"
+  environment = var.environment
+  name        = "egress"
+}

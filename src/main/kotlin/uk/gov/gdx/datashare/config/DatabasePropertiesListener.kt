@@ -26,6 +26,7 @@ class DatabasePropertiesListener : ApplicationListener<ApplicationEnvironmentPre
     )
 
     Properties().also { it.setProperty("spring.flyway.password", dbCredentialsService.password()) }
+      .also { it.setProperty("spring.flyway.user", dbCredentialsService.username()) }
       .also { environment.propertySources.addFirst(PropertiesPropertySource("databaseProps", it)) }
   }
 }

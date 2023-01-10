@@ -11,10 +11,6 @@ spring:
     async:
       request-timeout: 1m
 
-  datasource:
-    hikari:
-      max-lifetime: 840000 # 14 minutes. RDS IAM token is valid for 15 minutes
-
   security:
     oauth2:
       resource-server:
@@ -73,12 +69,6 @@ server:
   shutdown: graceful
   error:
     include-message: always
-
-db:
-  jdbc:
-    uri: jdbc:${db.uri}
-  r2dbc:
-    uri: r2dbc:${db.uri}
 
 management:
   endpoints:

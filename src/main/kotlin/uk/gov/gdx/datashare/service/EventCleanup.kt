@@ -27,7 +27,7 @@ class EventCleanup(
   fun removeExpiredEvents() {
     runBlocking {
       LockAssert.assertLocked()
-      val expiredTime = dateTimeHandler.now()
+      val expiredTime = dateTimeHandler.now().minusHours(1)
       log.debug("Looking for events older than {}", expiredTime)
       egressEventDataRepository.deleteAllExpiredEvents(expiredTime)
       ingressEventDataRepository.deleteAllOrphanedEvents()

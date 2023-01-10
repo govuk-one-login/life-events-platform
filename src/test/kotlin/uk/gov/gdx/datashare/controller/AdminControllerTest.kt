@@ -29,7 +29,6 @@ class AdminControllerTest {
           ingressEventId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
-          dataExpiryTime = LocalDateTime.now(),
           dataPayload = null
         ),
         EgressEventData(
@@ -37,7 +36,6 @@ class AdminControllerTest {
           ingressEventId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
-          dataExpiryTime = LocalDateTime.now(),
           dataPayload = "{\"firstName\":\"Bob\"}"
         ),
       )
@@ -60,7 +58,6 @@ class AdminControllerTest {
           subscriptionId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
-          dataExpiryTime = LocalDateTime.now(),
           dataPayload = null
         ),
         IngressEventData(
@@ -68,7 +65,6 @@ class AdminControllerTest {
           subscriptionId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
-          dataExpiryTime = LocalDateTime.now(),
           dataPayload = "{\"firstName\":\"Bob\"}"
         ),
       )

@@ -265,7 +265,6 @@ class EventDataServiceTest {
         ingressEventId = UUID.randomUUID(),
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataExpiryTime = LocalDateTime.now(),
         dataPayload = null
       )
       coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
@@ -292,7 +291,6 @@ class EventDataServiceTest {
         ingressEventId = UUID.randomUUID(),
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataExpiryTime = LocalDateTime.now(),
         dataPayload = null
       )
       coEvery { egressEventDataRepository.findByPollClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
@@ -354,7 +352,6 @@ class EventDataServiceTest {
         ingressEventId = UUID.randomUUID(),
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataExpiryTime = LocalDateTime.now(),
         dataPayload = "{\"firstName\":\"$firstName\",\"lastName\":\"Smith\",\"age\":12,\"address\":\"$subscriptionId\"}"
       )
     }

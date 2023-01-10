@@ -27,8 +27,8 @@ data class EgressEventData(
   val dataId: String,
   @Schema(description = "Event data", required = false, example = "{\"firstName\": \"Bob\",...}}")
   val dataPayload: String?,
-  val dataExpiryTime: LocalDateTime,
   val whenCreated: LocalDateTime? = null,
+  val eventTime: LocalDateTime? = null,
 
   @Transient
   @Value("false")

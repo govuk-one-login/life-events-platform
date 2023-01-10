@@ -15,8 +15,10 @@ resource "aws_lambda_function" "len" {
 
   environment {
     variables = {
-      environment = var.environment
-      region      = var.region
+      gdx_url           = var.gdx_url
+      auth_url          = var.auth_url
+      len_client_id     = var.len_client_id
+      len_client_secret = var.len_client_secret
     }
   }
   tracing_config {

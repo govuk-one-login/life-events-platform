@@ -76,28 +76,33 @@ resource "aws_cognito_user_pool_client" "events_consume" {
   depends_on = [aws_cognito_resource_server.events]
 }
 
-resource "aws_cognito_user_pool_client" "legacy_inbound_adapter" {
-  name                          = "${var.environment}-legacy-inbound-adapter"
-  user_pool_id                  = aws_cognito_user_pool.pool.id
-  allowed_oauth_flows           = ["client_credentials"]
-  allowed_oauth_scopes          = ["${local.identifier}/${local.scope_publish}"]
-  generate_secret               = true
-  explicit_auth_flows           = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
-  prevent_user_existence_errors = "ENABLED"
-  enable_token_revocation       = false
+module "legacy_inbound_adaptor" {
+  source       = "../simple_user_pool_client"
+  environment  = var.environment
+  scope        = "${local.identifier}/${local.scope_publish}"
+  name         = "legacy-inbound-adapter"
+  user_pool_id = aws_cognito_user_pool.pool.id
 
   depends_on = [aws_cognito_resource_server.events]
 }
 
-resource "aws_cognito_user_pool_client" "legacy_outbound_adapter" {
-  name                          = "${var.environment}-legacy-outbound-adapter"
-  user_pool_id                  = aws_cognito_user_pool.pool.id
-  allowed_oauth_flows           = ["client_credentials"]
-  allowed_oauth_scopes          = ["${local.identifier}/${local.scope_consume}"]
-  generate_secret               = true
-  explicit_auth_flows           = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
-  prevent_user_existence_errors = "ENABLED"
-  enable_token_revocation       = false
+module "legacy_outbound_adaptor" {
+  source       = "../simple_user_pool_client"
+  environment  = var.environment
+  scope        = "${local.identifier}/${local.scope_consume}"
+  name         = "legacy-outbound-adapter"
+  user_pool_id = aws_cognito_user_pool.pool.id
+
+  depends_on = [aws_cognito_resource_server.events]
+}
+
+
+module "len_mock" {
+  source       = "../simple_user_pool_client"
+  environment  = var.environment
+  scope        = "${local.identifier}/${local.scope_publish}"
+  name         = "len-mock"
+  user_pool_id = aws_cognito_user_pool.pool.id
 
   depends_on = [aws_cognito_resource_server.events]
 }

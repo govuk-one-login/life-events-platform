@@ -15,7 +15,7 @@ sqs:
       queueName: ogd-event-queue
       dlqName: ogd-event-dlq
       subscribeTopicId: event
-      subscribeFilter: '{"consumer":[ "DEATH_NOTIFICATION" ] }'
+      subscribeFilter: '{"consumer":[ "Pub/Sub Consumer" ] }'
   topics:
     event:
       arn: arn:aws:sns:eu-west-2:000000000000:${random.uuid}

@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBodilessEntity
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.config.S3Config
-import uk.gov.gdx.datashare.controller.EventInformation
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -35,7 +35,6 @@ class LegacyAdaptorOutbound(
 
     val event = objectMapper.readValue(message, EventMessage::class.java)
     processEvent(event.id)
-
   }
 
   private suspend fun processEvent(
@@ -43,23 +42,32 @@ class LegacyAdaptorOutbound(
   ) {
     // Go and get data from Event Retrieval API
     val lifeEvent = getEventPayload(id)
+    log.debug("Obtained event: ${lifeEvent.eventId}")
 
     // turn into file
-    lifeEvent.details?.let {
-      amazonS3.putObject(s3Config.egressBucket, "${lifeEvent.eventId}.csv", it as String)
+    lifeEvent.eventData?.let {
+      log.debug("Writing to S3 bucket")
+      amazonS3.putObject(s3Config.egressBucket, "${lifeEvent.eventId}.json", objectMapper.writeValueAsString(it))
+      removeEvent(lifeEvent.eventId)
     }
 
   }
 
-  suspend fun getEventPayload(id: UUID): EventInformation =
+  suspend fun getEventPayload(id: UUID): EventNotification =
     eventDataRetrievalApiWebClient.get()
       .uri("/events/$id")
       .retrieve()
       .awaitBody()
+
+  suspend fun removeEvent(id: UUID) =
+    eventDataRetrievalApiWebClient.delete()
+      .uri("/events/$id")
+      .retrieve()
+      .awaitBodilessEntity()
 }
 
 data class AttributeType(val Value: String, val Type: String)
-data class MessageAttributes(val eventType: AttributeType, val publisher: AttributeType)
+data class MessageAttributes(val eventType: AttributeType, val consumer: AttributeType)
 data class EventTopicMessage(
   val Message: String,
   val MessageAttributes: MessageAttributes

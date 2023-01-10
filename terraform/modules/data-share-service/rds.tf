@@ -16,7 +16,6 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   master_username                     = random_string.rds_username.result
   master_password                     = random_password.rds_password.result
   iam_database_authentication_enabled = true
-  apply_immediately                   = true # TODO ethmil: remove once applied
 
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"
@@ -48,23 +47,23 @@ resource "aws_rds_cluster_instance" "db_aurora" {
 
 resource "aws_security_group" "rds_postgres_cluster" {
   name_prefix = "${var.environment}-rds-postgres-cluster-"
-  description = "For RDS cluster, inbound access from ECS only"
+  description = "For RDS cluster, inbound access from ECS or bastion host only"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
     protocol        = "tcp"
     from_port       = 5432
     to_port         = 5432
-    security_groups = [aws_security_group.ecs_tasks.id]
-    description     = "ECS task ingress rule, allow access from ECS tasks only"
+    security_groups = [aws_security_group.ecs_tasks.id, aws_security_group.rds_bastion_host_sg.id]
+    description     = "ECS task ingress rule, allow access from ECS tasks or bastion host only"
   }
 
   egress {
     protocol        = "tcp"
     from_port       = 5432
     to_port         = 5432
-    security_groups = [aws_security_group.ecs_tasks.id]
-    description     = "ECS task egress rule, allow access to ECS tasks only"
+    security_groups = [aws_security_group.ecs_tasks.id, aws_security_group.rds_bastion_host_sg.id]
+    description     = "ECS task egress rule, allow access to ECS tasks or bastion host only"
   }
 
   lifecycle {

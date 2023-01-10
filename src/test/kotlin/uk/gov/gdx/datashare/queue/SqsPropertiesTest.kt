@@ -47,56 +47,6 @@ class SqsPropertiesTest {
   @Nested
   inner class AwsMandatoryProperties {
     @Test
-    fun `should require a queue access key ID`() {
-      assertThatThrownBy {
-        SqsProperties(queues = mapOf("queueid" to validAwsQueueConfig().copy(queueAccessKeyId = "")))
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("queueid")
-        .hasMessageContaining("queue access key id")
-    }
-
-    @Test
-    fun `should require a queue secret access key`() {
-      assertThatThrownBy {
-        SqsProperties(queues = mapOf("queueid" to validAwsQueueConfig().copy(queueSecretAccessKey = "")))
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("queueid")
-        .hasMessageContaining("queue secret access key")
-    }
-
-    @Test
-    fun `should require a dlq access key ID`() {
-      assertThatThrownBy {
-        SqsProperties(queues = mapOf("queueid" to validAwsQueueConfig().copy(dlqAccessKeyId = "")))
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("queueid")
-        .hasMessageContaining("DLQ access key id")
-    }
-
-    @Test
-    fun `should not require a dlq access key ID if no dlq exists`() {
-      assertThatNoException().isThrownBy {
-        SqsProperties(queues = mapOf("queueid" to validAwsQueueNoDlqConfig().copy(dlqAccessKeyId = "")))
-      }
-    }
-
-    @Test
-    fun `should require a dlq secret access key`() {
-      assertThatThrownBy {
-        SqsProperties(queues = mapOf("queueid" to validAwsQueueConfig().copy(dlqSecretAccessKey = "")))
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("queueid")
-        .hasMessageContaining("DLQ secret access key")
-    }
-
-    @Test
-    fun `should not require a dlq secret access key if no dlq exists`() {
-      assertThatNoException().isThrownBy {
-        SqsProperties(queues = mapOf("queueid" to validAwsQueueNoDlqConfig().copy(dlqSecretAccessKey = "")))
-      }
-    }
-
-    @Test
     fun `topics should have an arn`() {
       assertThatThrownBy {
         SqsProperties(
@@ -106,30 +56,6 @@ class SqsPropertiesTest {
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("topicid")
         .hasMessageContaining("arn")
-    }
-
-    @Test
-    fun `topics should have an access key id`() {
-      assertThatThrownBy {
-        SqsProperties(
-          queues = mapOf("queueid" to validAwsQueueConfig()),
-          topics = mapOf("topicid" to validAwsTopicConfig().copy(accessKeyId = ""))
-        )
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("topicid")
-        .hasMessageContaining("access key id")
-    }
-
-    @Test
-    fun `topics should have a secret access key`() {
-      assertThatThrownBy {
-        SqsProperties(
-          queues = mapOf("queueid" to validAwsQueueConfig()),
-          topics = mapOf("topicid" to validAwsTopicConfig().copy(secretAccessKey = ""))
-        )
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("topicid")
-        .hasMessageContaining("secret access key")
     }
   }
 
@@ -184,43 +110,6 @@ class SqsPropertiesTest {
     }
 
     @Test
-    fun `access key ids should be unique`() {
-      assertThatThrownBy {
-        SqsProperties(
-          queues = mapOf(
-            "queueid1" to validAwsQueueConfig(1).copy(queueAccessKeyId = "1stAccessKey"),
-            "queueid2" to validAwsQueueConfig(2).copy(queueAccessKeyId = "2ndAccessKey"),
-            "queueid3" to validAwsQueueConfig(3).copy(queueAccessKeyId = "1stAccessKey"),
-            "queueid4" to validAwsQueueConfig(4).copy(queueAccessKeyId = "2ndAccessKey"),
-            "queueid5" to validAwsQueueConfig(5).copy(queueAccessKeyId = "3rdAccessKey")
-          ),
-          topics = mapOf()
-        )
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("Found duplicated queue access key id")
-        .hasMessageContaining("1stA******")
-        .hasMessageContaining("2ndA******")
-        .hasMessageNotContaining("3rdA******")
-    }
-
-    @Test
-    fun `queue secret access keys should be unique`() {
-      assertThatThrownBy {
-        SqsProperties(
-          queues = mapOf(
-            "queueid1" to validAwsQueueConfig(1).copy(queueSecretAccessKey = "1stSecretKey"),
-            "queueid2" to validAwsQueueConfig(2).copy(queueSecretAccessKey = "1stSecretKey"),
-            "queueid3" to validAwsQueueConfig(3).copy(queueSecretAccessKey = "2ndSecretKey")
-          ),
-          topics = mapOf()
-        )
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("Found duplicated queue secret access keys")
-        .hasMessageContaining("1stS******")
-        .hasMessageNotContaining("2ndS******")
-    }
-
-    @Test
     fun `dlq names should be unique`() {
       assertThatThrownBy {
         SqsProperties(
@@ -238,40 +127,6 @@ class SqsPropertiesTest {
     }
 
     @Test
-    fun `dlq access key ids should be unique`() {
-      assertThatThrownBy {
-        SqsProperties(
-          queues = mapOf(
-            "queueid1" to validAwsQueueConfig(1).copy(dlqAccessKeyId = "1stAccessKey"),
-            "queueid2" to validAwsQueueConfig(2).copy(dlqAccessKeyId = "2ndAccessKey"),
-            "queueid3" to validAwsQueueConfig(3).copy(dlqAccessKeyId = "1stAccessKey"),
-          ),
-          topics = mapOf()
-        )
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("Found duplicated dlq access key id")
-        .hasMessageContaining("1stA******")
-        .hasMessageNotContaining("2ndA******")
-    }
-
-    @Test
-    fun `dlq secret access keys should be unique`() {
-      assertThatThrownBy {
-        SqsProperties(
-          queues = mapOf(
-            "queueid1" to validAwsQueueConfig(1).copy(dlqSecretAccessKey = "1stSecretKey"),
-            "queueid2" to validAwsQueueConfig(2).copy(dlqSecretAccessKey = "1stSecretKey"),
-            "queueid3" to validAwsQueueConfig(3).copy(dlqSecretAccessKey = "2ndSecretKey")
-          ),
-          topics = mapOf()
-        )
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("Found duplicated dlq secret access keys")
-        .hasMessageContaining("1stS******")
-        .hasMessageNotContaining("2ndS******")
-    }
-
-    @Test
     fun `topic arns should be unique`() {
       assertThatThrownBy {
         SqsProperties(
@@ -286,40 +141,6 @@ class SqsPropertiesTest {
         .hasMessageContaining("Found duplicated topic arns")
         .hasMessageContaining("1stArn")
         .hasMessageNotContaining("2ndArn")
-    }
-
-    @Test
-    fun `topic access key ids should be unique`() {
-      assertThatThrownBy {
-        SqsProperties(
-          queues = mapOf(),
-          topics = mapOf(
-            "topic1" to validAwsTopicConfig(1).copy(accessKeyId = "1stAccessKey"),
-            "topic2" to validAwsTopicConfig(2).copy(accessKeyId = "2ndAccessKey"),
-            "topic3" to validAwsTopicConfig(3).copy(accessKeyId = "1stAccessKey")
-          )
-        )
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("Found duplicated topic access key ids")
-        .hasMessageContaining("1stA******")
-        .hasMessageNotContaining("2ndA******")
-    }
-
-    @Test
-    fun `topic secret access keys should be unique`() {
-      assertThatThrownBy {
-        SqsProperties(
-          queues = mapOf(),
-          topics = mapOf(
-            "topic1" to validAwsTopicConfig(1).copy(secretAccessKey = "1stSecretKey"),
-            "topic2" to validAwsTopicConfig(2).copy(secretAccessKey = "2ndSecretKey"),
-            "topic3" to validAwsTopicConfig(3).copy(secretAccessKey = "1stSecretKey")
-          )
-        )
-      }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
-        .hasMessageContaining("Found duplicated topic secret access keys")
-        .hasMessageContaining("1stS******")
-        .hasMessageNotContaining("2ndS******")
     }
   }
 
@@ -421,21 +242,10 @@ class SqsPropertiesTest {
 
   private fun validAwsQueueConfig(index: Int = 1) = SqsProperties.QueueConfig(
     queueName = "name$index",
-    queueAccessKeyId = "key$index",
-    queueSecretAccessKey = "secret$index",
     dlqName = "dlqName$index",
-    dlqAccessKeyId = "dlqKey$index",
-    dlqSecretAccessKey = "dlqSecret$index"
   )
-
-  private fun validAwsQueueNoDlqConfig(index: Int = 1) = SqsProperties.QueueConfig(
-    queueName = "name$index",
-    queueAccessKeyId = "key$index",
-    queueSecretAccessKey = "secret$index"
-  )
-
   private fun validAwsTopicConfig(index: Int = 1) =
-    SqsProperties.TopicConfig(arn = "arn$index", accessKeyId = "key$index", secretAccessKey = "secret$index")
+    SqsProperties.TopicConfig(arn = "arn$index")
 
   private fun validLocalstackQueueConfig(index: Int = 1) =
     SqsProperties.QueueConfig(queueName = "name$index", dlqName = "dlqName$index")

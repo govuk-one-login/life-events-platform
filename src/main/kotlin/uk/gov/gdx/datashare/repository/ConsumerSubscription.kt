@@ -18,11 +18,8 @@ data class ConsumerSubscription(
   val consumerSubscriptionId: UUID = UUID.randomUUID(),
   @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
   val consumerId: UUID,
-  @Schema(description = "Client ID used to poll event platform", required = false, example = "a-polling-client")
-  val pollClientId: String? = null,
-  @Schema(description = "Client ID used to callback to event platform", required = false, example = "a-callback-client")
-  val callbackClientId: String? = null,
-  val lastPollEventTime: LocalDateTime? = null,
+  @Schema(description = "Client ID used to access the event platform", required = false, example = "an-oauth-client")
+  val oauthClientId: String? = null,
   @JsonIgnore
   @Schema(
     description = "URI where to push data, can be s3 or http",
@@ -30,15 +27,6 @@ data class ConsumerSubscription(
     example = "http://localhost/callback"
   )
   val pushUri: String? = null,
-  @Schema(description = "NI number required in response", required = false, example = "true", defaultValue = "false")
-  val ninoRequired: Boolean = false,
-  @Schema(
-    description = "Is consumer subscription a legacy subscription",
-    required = false,
-    example = "true",
-    defaultValue = "false"
-  )
-  val isLegacy: Boolean = false,
   @Schema(description = "Events Type of Ingress Notification", required = true, example = "DEATH_NOTIFICATION")
   val ingressEventType: String,
   @Schema(

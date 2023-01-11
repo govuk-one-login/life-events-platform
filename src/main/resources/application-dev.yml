@@ -43,6 +43,7 @@ logging:
 
 api:
   base:
+    consume-outbound-by-queue: false
     url:
       issuer-uri: http://localhost:9090/issuer1
       oauth: http://localhost:9090/issuer1

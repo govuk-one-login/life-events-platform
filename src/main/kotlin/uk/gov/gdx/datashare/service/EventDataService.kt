@@ -49,7 +49,7 @@ class EventDataService(
     val endTime = optionalEndTime ?: dateTimeHandler.now()
     val clientId = authenticationFacade.getUsername()
 
-    val consumerSubscriptions = consumerSubscriptionRepository.findAllByPollClientId(clientId)
+    val consumerSubscriptions = consumerSubscriptionRepository.findAllByClientId(clientId)
 
     return consumerSubscriptions.map {
       EventStatus(
@@ -63,7 +63,7 @@ class EventDataService(
     id: UUID
   ): EventNotification? {
     val clientId = authenticationFacade.getUsername()
-    val event = egressEventDataRepository.findByCallbackClientIdAndId(clientId, id)
+    val event = egressEventDataRepository.findByClientIdAndId(clientId, id)
       ?: throw NotFoundException("Egress event $id not found for polling client $clientId")
     val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
       ?: throw NotFoundException("Consumer subscription not found for egress event $id")
@@ -90,8 +90,8 @@ class EventDataService(
     val clientId = authenticationFacade.getUsername()
 
     val consumerSubscriptions = eventTypes?.let {
-      consumerSubscriptionRepository.findAllByIngressEventTypesAndPollClientId(clientId, eventTypes)
-    } ?: consumerSubscriptionRepository.findAllByPollClientId(clientId)
+      consumerSubscriptionRepository.findAllByIngressEventTypesAndClientId(clientId, eventTypes)
+    } ?: consumerSubscriptionRepository.findAllByClientId(clientId)
 
     if (consumerSubscriptions.count() == 0) {
       return emptyFlow()
@@ -119,7 +119,7 @@ class EventDataService(
 
   suspend fun deleteEvent(id: UUID) {
     val callbackClientId = authenticationFacade.getUsername()
-    val egressEvent = egressEventDataRepository.findByCallbackClientIdAndId(callbackClientId, id)
+    val egressEvent = egressEventDataRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw NotFoundException("Egress event $id not found for callback client $callbackClientId")
 
     egressEventDataRepository.delete(egressEvent)

@@ -127,7 +127,7 @@ class ConsumersControllerTest {
       )
       val consumerSubscription = ConsumerSubscription(
         consumerId = consumerId,
-          ingressEventType = "DEATH_NOTIFICATIONNew",
+        ingressEventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
 

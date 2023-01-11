@@ -36,9 +36,9 @@ class LevApiService(
 }
 
 data class DeathRecord(
-  val id: String,
-  val date: LocalDate,
-  val deceased: Deceased,
+  val id: String?,
+  val date: LocalDate?,
+  val deceased: Deceased?,
   val partner: Partner?,
 )
 

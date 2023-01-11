@@ -89,12 +89,12 @@ class DeathNotificationService(
       levApiService.findDeathById(citizenDeathId)
         .map {
           DeathNotificationDetails(
-            firstName = it.deceased.forenames,
-            lastName = it.deceased.surname,
-            dateOfBirth = it.deceased.dateOfBirth,
-            dateOfDeath = it.deceased.dateOfDeath,
-            sex = it.deceased.sex,
-            address = it.deceased.address
+            firstName = it.deceased?.forenames,
+            lastName = it.deceased?.surname,
+            dateOfBirth = it.deceased?.dateOfBirth,
+            dateOfDeath = it.deceased?.dateOfDeath,
+            sex = it.deceased?.sex,
+            address = it.deceased?.address
           )
         }.first()
     }

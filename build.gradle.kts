@@ -26,9 +26,12 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
 
+  //  AWS dependencies for SNS, SQS, S3 etc
   implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.381"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
   implementation("com.amazonaws:aws-java-sdk-sns")
+  implementation("com.amazonaws:aws-java-sdk-s3")
+
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 
@@ -46,7 +49,6 @@ dependencies {
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-  implementation("io.opentelemetry:opentelemetry-api:1.22.0")
 
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.10.0")
@@ -55,10 +57,9 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("com.amazonaws:aws-java-sdk-s3:1.12.381")
-
   implementation("io.micrometer:micrometer-core:1.10.2")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")
+  implementation("io.opentelemetry:opentelemetry-api:1.22.0")
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.0.1")
@@ -66,18 +67,18 @@ dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.assertj:assertj-core:3.24.1")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
-  testImplementation("org.mockito:mockito-inline")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.10")
-  testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:localstack:1.17.6")
   testImplementation("org.testcontainers:postgresql:1.17.6")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.3")
+  testImplementation("org.mockito:mockito-inline")
   testImplementation("org.mockito:mockito-junit-jupiter:4.11.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
   testImplementation("org.mockito:mockito-inline:4.11.0")

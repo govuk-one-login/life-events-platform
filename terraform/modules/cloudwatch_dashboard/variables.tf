@@ -13,7 +13,7 @@ variable "widgets" {
     title = string,
     metrics = list(object({
       name       = string,
-      dimensions = map(string),
+      dimensions = optional(map(string)),
     })),
     period = number,
     stat   = string,

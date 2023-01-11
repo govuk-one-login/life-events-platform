@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.queue
 
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.*
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.groups.Tuple.tuple
 import org.junit.jupiter.api.BeforeEach
@@ -16,6 +17,7 @@ class AwsQueueServiceTest {
   private val awsTopicFactory = mock<AwsTopicFactory>()
   private val awsQueueFactory = mock<AwsQueueFactory>()
   private val sqsProperties = mock<SqsProperties>()
+  private val objectMapper = ObjectMapper();
   private lateinit var awsQueueService: AwsQueueService
 
   @Nested
@@ -36,7 +38,7 @@ class AwsQueueServiceTest {
           )
         )
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @Test
@@ -81,7 +83,7 @@ class AwsQueueServiceTest {
       whenever(queueSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("queueUrl"))
       whenever(dlqSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("dlqUrl"))
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @Nested
@@ -148,7 +150,7 @@ class AwsQueueServiceTest {
             )
           )
 
-        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
       }
 
       @Test
@@ -260,7 +262,7 @@ class AwsQueueServiceTest {
             )
           )
 
-        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
       }
 
       @Test
@@ -370,7 +372,7 @@ class AwsQueueServiceTest {
           )
           .thenReturn(ReceiveMessageResult())
 
-        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
       }
 
       @Test
@@ -469,7 +471,7 @@ class AwsQueueServiceTest {
       whenever(queueSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("queueUrl"))
       whenever(dlqSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("dlqUrl"))
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @BeforeEach
@@ -485,7 +487,7 @@ class AwsQueueServiceTest {
                                             "Message":{
                                                 "id":"event-id",
                                                 "contents":"event-contents",
-                                                "longProperty":12345678
+                                                "longProperty":7076632681529943151
                                             },
                                             "MessageId":"message-id-1"
                                           }"""
@@ -494,7 +496,7 @@ class AwsQueueServiceTest {
           )
         )
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @Test
@@ -515,7 +517,7 @@ class AwsQueueServiceTest {
       assertThat(dlqResult.messages).hasSize(1)
       assertThat(dlqResult.messages[0].messageId).isEqualTo("external-message-id-1")
       val messageMap = dlqResult.messages[0].body["Message"] as Map<*, *>
-      assertThat(messageMap["longProperty"]).isEqualTo(12345678L)
+      assertThat(messageMap["longProperty"]).isEqualTo(7076632681529943151L)
       verify(dlqSqs).receiveMessage(
         check<ReceiveMessageRequest> {
           assertThat(it.queueUrl).isEqualTo("dlqUrl")
@@ -542,7 +544,7 @@ class AwsQueueServiceTest {
           )
         )
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @Test
@@ -571,7 +573,7 @@ class AwsQueueServiceTest {
   inner class PurgeQueue {
 
     private val sqsClient = mock<AmazonSQS>()
-    private val awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+    private val awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
 
     @Test
     fun `no messages found, should not attempt to purge queue`() {

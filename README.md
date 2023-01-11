@@ -23,8 +23,8 @@ The service is deployed to AWS, accessible through
 
 | environment | url                                                   |
 |-------------|-------------------------------------------------------|
-| dev         | https://d2w5ifs4ir0pe.cloudfront.net/swagger-ui.html  |
-| demo        | https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html |
+| dev         | https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html |
+| demo        | https://d2w5ifs4ir0pe.cloudfront.net/swagger-ui.html  |
 
 ## Using the application to simulate events
 

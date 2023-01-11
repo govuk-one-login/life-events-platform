@@ -85,4 +85,8 @@ module "len" {
   region                      = data.aws_region.current.name
   schedule                    = "cron(* 9-18 ? * MON-FRI *)"
   cloudwatch_retention_period = 30
+  gdx_url                     = module.data-share-service.gdx_url
+  auth_url                    = module.data-share-service.token_auth_url
+  len_client_id               = module.data-share-service.len_client_id
+  len_client_secret           = module.data-share-service.len_client_secret
 }

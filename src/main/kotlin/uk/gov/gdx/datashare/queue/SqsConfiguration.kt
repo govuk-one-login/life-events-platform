@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.queue
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -18,11 +19,13 @@ class SqsConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  fun awsTopicFactory(applicationContext: ConfigurableApplicationContext) = AwsTopicFactory(applicationContext, AmazonSnsFactory())
+  fun awsTopicFactory(applicationContext: ConfigurableApplicationContext) =
+    AwsTopicFactory(applicationContext, AmazonSnsFactory())
 
   @Bean
   @ConditionalOnMissingBean
-  fun awsQueueFactory(applicationContext: ConfigurableApplicationContext) = AwsQueueFactory(applicationContext, AmazonSqsFactory())
+  fun awsQueueFactory(applicationContext: ConfigurableApplicationContext) =
+    AwsQueueFactory(applicationContext, AmazonSqsFactory())
 
   @Bean
   @ConditionalOnMissingBean
@@ -30,7 +33,8 @@ class SqsConfiguration {
     awsTopicFactory: AwsTopicFactory,
     awsQueueFactory: AwsQueueFactory,
     sqsProperties: SqsProperties,
-  ) = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties)
+    objectMapper: ObjectMapper
+  ) = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
 
   @Bean
   @ConditionalOnMissingBean
@@ -39,5 +43,6 @@ class SqsConfiguration {
   @Bean
   @ConditionalOnMissingBean
   @DependsOn("awsQueueService")
-  fun awsQueueContainerFactoryProxy(factories: List<AwsQueueDestinationContainerFactory>) = AwsQueueJmsListenerContainerFactory(factories)
+  fun awsQueueContainerFactoryProxy(factories: List<AwsQueueDestinationContainerFactory>) =
+    AwsQueueJmsListenerContainerFactory(factories)
 }

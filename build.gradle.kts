@@ -52,7 +52,6 @@ dependencies {
   implementation("org.apache.commons:commons-text:1.10.0")
   implementation("commons-codec:commons-codec")
   implementation("commons-net:commons-net:3.9.0")
-  implementation("com.google.code.gson:gson")
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 

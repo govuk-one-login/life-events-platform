@@ -5,8 +5,7 @@ import com.amazonaws.services.sqs.model.DeleteMessageRequest
 import com.amazonaws.services.sqs.model.Message
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest
 import com.amazonaws.services.sqs.model.SendMessageRequest
-import com.google.gson.GsonBuilder
-import com.google.gson.ToNumberPolicy
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import kotlin.math.min
 import com.amazonaws.services.sqs.model.PurgeQueueRequest as AwsPurgeQueueRequest
@@ -18,11 +17,11 @@ open class AwsQueueService(
   awsTopicFactory: AwsTopicFactory,
   awsQueueFactory: AwsQueueFactory,
   sqsProperties: SqsProperties,
+  private val objectMapper: ObjectMapper,
 ) {
 
   private companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-    private val gson = GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
   }
 
   private val awsTopics: List<AwsTopic> = awsTopicFactory.createAwsTopics(sqsProperties)
@@ -50,9 +49,14 @@ open class AwsQueueService(
     val messageCount = sqsDlqClient.countMessagesOnQueue(dlqUrl!!)
     val messages = mutableListOf<Message>()
     repeat(messageCount) {
-      sqsDlqClient.receiveMessage(ReceiveMessageRequest(dlqUrl).withMaxNumberOfMessages(1).withMessageAttributeNames("All")).messages.firstOrNull()
+      sqsDlqClient.receiveMessage(
+        ReceiveMessageRequest(dlqUrl).withMaxNumberOfMessages(1).withMessageAttributeNames("All")
+      ).messages.firstOrNull()
         ?.also { msg ->
-          sqsClient.sendMessage(SendMessageRequest().withQueueUrl(queueUrl).withMessageBody(msg.body).withMessageAttributes(msg.messageAttributes))
+          sqsClient.sendMessage(
+            SendMessageRequest().withQueueUrl(queueUrl).withMessageBody(msg.body)
+              .withMessageAttributes(msg.messageAttributes)
+          )
           sqsDlqClient.deleteMessage(DeleteMessageRequest(dlqUrl, msg.receiptHandle))
           messages += msg
         }
@@ -73,7 +77,7 @@ open class AwsQueueService(
       sqsDlqClient.receiveMessage(ReceiveMessageRequest(dlqUrl).withMaxNumberOfMessages(1)).messages.firstOrNull()
         ?.also { msg ->
           val map: Map<String, Any> = HashMap()
-          messages += DlqMessage(messageId = msg.messageId, body = gson.fromJson(msg.body, map.javaClass))
+          messages += DlqMessage(messageId = msg.messageId, body = objectMapper.readValue(msg.body, map.javaClass))
         }
     }
 

@@ -146,7 +146,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
       "sqs:DeleteMessage",
       "sqs:ReceiveMessage",
       "sqs:SendMessage",
-      "sqs:GetQueueUrl"
+      "sqs:GetQueueUrl",
+      "sqs:ChangeMessageVisibility"
     ]
     resources = [
       module.data_processor_queue.queue_arn,

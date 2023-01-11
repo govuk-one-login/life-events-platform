@@ -14,6 +14,33 @@ auth_url = os.environ["auth_url"]
 client_id = os.environ["len_client_id"]
 client_secret = os.environ["len_client_secret"]
 
+# Found at https://github.com/UKHomeOffice/lev-api/blob/master/mock/death_registration_v1.json
+validDeathCertificates = [
+    123456789,
+    999999901,
+    999999902,
+    999999903,
+    999999910,
+    999999920,
+    999999930,
+    999999931,
+    999999932,
+    999999933,
+    999999934,
+    999999935,
+    999999940,
+    999999941,
+    999999942,
+    999999950,
+    999999960,
+    999999961,
+    999999962,
+    999999963,
+    999999970,
+    999999971,
+    999999972
+]
+
 
 def lambda_handler(event, context):
     logger.info(f"## EVENT: {event}")
@@ -52,7 +79,7 @@ def run_manual_job(auth_token: str):
 
 
 def post_event(auth_token: str):
-    death_certificate = 999999900 + randint(1, 72)
+    death_certificate = validDeathCertificates[randint(0, len(validDeathCertificates) - 1)]
     event_request_data = json.dumps({
         "eventType": "DEATH_NOTIFICATION",
         "id": death_certificate

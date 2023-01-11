@@ -49,11 +49,11 @@ data class Partner(
 )
 
 data class Deceased(
-  val forenames: String,
-  val surname: String,
-  val dateOfBirth: LocalDate,
-  val dateOfDeath: LocalDate,
+  val forenames: String?,
+  val surname: String?,
+  val dateOfBirth: LocalDate?,
+  val dateOfDeath: LocalDate?,
   val dateOfDeathQualifier: String?,
-  val sex: String,
+  val sex: String?,
   val address: String?,
 )

@@ -23,12 +23,15 @@ sequenceDiagram
     participant GDX
     participant HMPO
     participant DWP
+    participant Other department
 
     
     DWP ->> GDX: Onboarding, client generation
     
     HMPO ->>+ GDX: Notification of death
-    GDX ->>-DWP: Notification of death
+    GDX ->> DWP: Notification of death
+    GDX ->>- Other department: Notification of death
+
 ```
 
 For this proof of concept, the key API calls will be

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit
 
 
 @Service
+@ConditionalOnProperty(name = ["api.base.consume-outbound-by-queue"], havingValue = "false")
 class LegacyAdaptorOutbound (
   private val amazonS3: AmazonS3,
   private val s3Config: S3Config,
@@ -35,7 +36,6 @@ class LegacyAdaptorOutbound (
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @ConditionalOnProperty(name = ["consume-outbound-by-queue"], havingValue = "false")
   @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
   @SchedulerLock(name = "publishToS3Bucket", lockAtMostFor = "50s", lockAtLeastFor = "50s")
   fun publishToS3Bucket() {

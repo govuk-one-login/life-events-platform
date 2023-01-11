@@ -20,6 +20,7 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @Service
+@ConditionalOnProperty(name = ["api.base.consume-outbound-by-queue"], havingValue = "true")
 class SubscriptionBasedLegacyAdaptorOutbound(
   private val amazonS3: AmazonS3,
   private val s3Config: S3Config,
@@ -31,7 +32,6 @@ class SubscriptionBasedLegacyAdaptorOutbound(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @ConditionalOnProperty(name = ["consume-outbound-by-queue"], havingValue = "true")
   @JmsListener(destination = "adaptor", containerFactory = "awsQueueContainerFactoryProxy")
   fun onPublishedEvent(eventMessage: String) = runBlocking {
     val (message, messageAttributes) = objectMapper.readValue(eventMessage, EventTopicMessage::class.java)

@@ -14,7 +14,8 @@ resource "aws_cloudwatch_dashboard" "dashboard" {
                 for dimension_name, dimension_value in metric.dimensions : [
                   dimension_name, dimension_value
                 ]
-              ]
+              ],
+              metric.attributes == null ? { region : var.region } : merge(metric.attributes, { region : var.region })
               ]
             )
           ],

@@ -41,11 +41,11 @@ module "metrics_dashboard" {
       period = local.metric_period,
       stat   = "Sum",
       metrics = [
-        { name = "API_CALLS.PublishEvent.count" },
-        { name = "API_CALLS.GetEvent.count" },
-        { name = "API_CALLS.GetEvents.count" },
-        { name = "API_CALLS.GetEventsStatus.count" },
-        { name = "API_CALLS.DeleteEvent.count" },
+        { name = "API_CALLS.PublishEvent.count", dimensions = { success = true }, attributes = { label = "PublishEvent" } },
+        { name = "API_CALLS.GetEvent.count", dimensions = { success = true }, attributes = { label = "GetEvent" } },
+        { name = "API_CALLS.GetEvents.count", dimensions = { success = true }, attributes = { label = "GetEvents" } },
+        { name = "API_CALLS.GetEventsStatus.count", dimensions = { success = true }, attributes = { label = "GetEventsStatus" } },
+        { name = "API_CALLS.DeleteEvent.count", dimensions = { success = true }, attributes = { label = "DeleteEvent" } },
       ]
     },
     {
@@ -53,9 +53,9 @@ module "metrics_dashboard" {
       period = local.metric_period,
       stat   = "Sum",
       metrics = [
-        { name = "API_CALLS.PublishEvent.count" },
-        { name = "API_CALLS.CallsToLev.count" },
-        { name = "API_RESPONSES.ResponsesFromLev.count" },
+        { name = "API_CALLS.PublishEvent.count", dimensions = { success = true }, attributes = { label = "PublishEvent" } },
+        { name = "API_CALLS.CallsToLev.count", attributes = { label = "CallsToLev" } },
+        { name = "API_RESPONSES.ResponsesFromLev.count", attributes = { label = "ResponsesFromLev" } },
       ]
     },
   ]

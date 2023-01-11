@@ -10,7 +10,7 @@ variable "dashboard_name" {
 
 variable "widgets" {
   type = list(object({
-    title   = string,
+    title = string,
     metrics = list(object({
       name       = string,
       dimensions = map(string),

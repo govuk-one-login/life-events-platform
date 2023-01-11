@@ -21,11 +21,11 @@ module "metrics_dashboard" {
   region           = var.region
   dashboard_name   = "${var.environment}-metrics-dashboard"
   metric_namespace = "${var.environment}-gdx"
-  widgets          = [
+  widgets = [
     {
-      title   = "Old API calls",
-      period  = local.metric_period,
-      stat    = "Sum",
+      title  = "Old API calls",
+      period = local.metric_period,
+      stat   = "Sum",
       metrics = [
         { name = "API_CALLS.IngestedEvents.count" },
         { name = "API_CALLS.CallsToLev.count" },
@@ -37,9 +37,9 @@ module "metrics_dashboard" {
       ]
     },
     {
-      title   = "Event API calls",
-      period  = local.metric_period,
-      stat    = "Sum",
+      title  = "Event API calls",
+      period = local.metric_period,
+      stat   = "Sum",
       metrics = [
         { name = "API_CALLS.PublishEvent.count" },
         { name = "API_CALLS.GetEvent.count" },
@@ -49,9 +49,9 @@ module "metrics_dashboard" {
       ]
     },
     {
-      title   = "Data ingest calls",
-      period  = local.metric_period,
-      stat    = "Sum",
+      title  = "Data ingest calls",
+      period = local.metric_period,
+      stat   = "Sum",
       metrics = [
         { name = "API_CALLS.PublishEvent.count" },
         { name = "API_CALLS.CallsToLev.count" },

@@ -29,6 +29,8 @@ class EventsControllerTest {
   private val getEventsCounter = mockk<Counter>()
   private val getEventsStatusCounter = mockk<Counter>()
   private val deleteEventCounter = mockk<Counter>()
+  private val deleteEventSuccessCounter = mockk<Counter>()
+  private val publishEventSuccessCounter = mockk<Counter>()
 
   private val underTest: EventsController
 
@@ -38,11 +40,17 @@ class EventsControllerTest {
     every { meterRegistry.counter("API_CALLS.GetEvents", *anyVararg()) }.returns(getEventsCounter)
     every { meterRegistry.counter("API_CALLS.GetEventsStatus", *anyVararg()) }.returns(getEventsStatusCounter)
     every { meterRegistry.counter("API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventCounter)
+    every { meterRegistry.counter("SUCCESSFUL_API_CALLS.PublishEvent", *anyVararg()) }.returns(
+      publishEventSuccessCounter
+    )
+    every { meterRegistry.counter("SUCCESSFUL_API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventSuccessCounter)
     every { publishEventCounter.increment() }.returns(Unit)
     every { getEventCounter.increment() }.returns(Unit)
     every { getEventsCounter.increment() }.returns(Unit)
     every { getEventsStatusCounter.increment() }.returns(Unit)
     every { deleteEventCounter.increment() }.returns(Unit)
+    every { deleteEventSuccessCounter.increment() }.returns(Unit)
+    every { publishEventSuccessCounter.increment() }.returns(Unit)
     underTest = EventsController(eventDataService, dataReceiverService, meterRegistry)
   }
 

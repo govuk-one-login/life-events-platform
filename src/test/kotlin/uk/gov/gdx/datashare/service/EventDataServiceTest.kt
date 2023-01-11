@@ -1,5 +1,7 @@
 package uk.gov.gdx.datashare.service
 
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Timer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -18,6 +20,7 @@ import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventData
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -28,15 +31,26 @@ class EventDataServiceTest {
   private val ingressEventDataRepository = mockk<IngressEventDataRepository>()
   private val deathNotificationService = mockk<DeathNotificationService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
+  private val meterRegistry = mockk<MeterRegistry>()
+  private val dataCreationToDeletionTimer = mockk<Timer>()
 
-  private val underTest = EventDataService(
-    authenticationFacade,
-    consumerSubscriptionRepository,
-    egressEventDataRepository,
-    ingressEventDataRepository,
-    deathNotificationService,
-    dateTimeHandler
-  )
+  private val underTest: EventDataService
+
+  init {
+    every { meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion", *anyVararg()) }.returns(
+      dataCreationToDeletionTimer
+    )
+    every { dataCreationToDeletionTimer.record(any<Duration>()) }.returns(Unit)
+    underTest = EventDataService(
+      authenticationFacade,
+      consumerSubscriptionRepository,
+      egressEventDataRepository,
+      ingressEventDataRepository,
+      deathNotificationService,
+      dateTimeHandler,
+      meterRegistry,
+    )
+  }
 
   @BeforeEach
   fun setup() {
@@ -274,11 +288,11 @@ class EventDataServiceTest {
         ).asFlow()
       )
 
-      coEvery { egressEventDataRepository.deleteById(egressEvent.id) }.returns(Unit)
+      coEvery { egressEventDataRepository.delete(egressEvent) }.returns(Unit)
 
       underTest.deleteEvent(egressEvent.id)
 
-      coVerify(exactly = 1) { egressEventDataRepository.deleteById(egressEvent.id) }
+      coVerify(exactly = 1) { egressEventDataRepository.delete(egressEvent) }
       coVerify(exactly = 0) { ingressEventDataRepository.deleteById(any()) }
     }
   }
@@ -296,12 +310,12 @@ class EventDataServiceTest {
       coEvery { egressEventDataRepository.findByCallbackClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
       coEvery { egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId) }.returns(emptyList<EgressEventData>().asFlow())
 
-      coEvery { egressEventDataRepository.deleteById(egressEvent.id) }.returns(Unit)
+      coEvery { egressEventDataRepository.delete(egressEvent) }.returns(Unit)
       coEvery { ingressEventDataRepository.deleteById(egressEvent.ingressEventId) }.returns(Unit)
 
       underTest.deleteEvent(egressEvent.id)
 
-      coVerify(exactly = 1) { egressEventDataRepository.deleteById(egressEvent.id) }
+      coVerify(exactly = 1) { egressEventDataRepository.delete(egressEvent) }
       coVerify(exactly = 1) { ingressEventDataRepository.deleteById(egressEvent.ingressEventId) }
     }
   }

@@ -10,9 +10,12 @@ variable "dashboard_name" {
 
 variable "widgets" {
   type = list(object({
-    title   = string,
-    metrics = list(string),
-    period  = number,
-    stat    = string,
+    title = string,
+    metrics = list(object({
+      name       = string,
+      dimensions = optional(map(string)),
+    })),
+    period = number,
+    stat   = string,
   }))
 }

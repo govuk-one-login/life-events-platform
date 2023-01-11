@@ -62,7 +62,7 @@ dependencies {
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.2")
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.0.1")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.1.0")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 

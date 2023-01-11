@@ -1,8 +1,10 @@
 import logging
+import math
 import os
 from random import randint
 from urllib import request, parse
 import json
+from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -44,6 +46,7 @@ validDeathCertificates = [
 
 def lambda_handler(event, context):
     logger.info(f"## EVENT: {event}")
+    logger.info(f"## TIME: {datetime.now()}")
 
     auth_request_data = parse.urlencode({
         "grant_type": "client_credentials",
@@ -70,7 +73,11 @@ def lambda_handler(event, context):
 
 
 def run_scheduled_job(auth_token: str):
-    for i in range(randint(0, 8)):
+    now = datetime.now()
+    minutes_into_day = (now - now.replace(hour=9, minute=0, second=0)).total_seconds() / 60
+    number_of_events = math.floor((100 / (3 * math.pi)) * math.exp(-0.5 * (((minutes_into_day / 60) - 4.5) / 1.5) ** 2))
+
+    for i in range(number_of_events):
         post_event(auth_token)
 
 

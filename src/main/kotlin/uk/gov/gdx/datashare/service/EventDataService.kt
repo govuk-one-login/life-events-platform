@@ -1,6 +1,8 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Timer
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
@@ -17,6 +19,7 @@ import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 
@@ -29,7 +32,11 @@ class EventDataService(
   private val ingressEventDataRepository: IngressEventDataRepository,
   private val deathNotificationService: DeathNotificationService,
   private val dateTimeHandler: DateTimeHandler,
+  meterRegistry: MeterRegistry,
 ) {
+  private val dataCreationToDeletionTimer: Timer =
+    meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
+
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
@@ -115,7 +122,10 @@ class EventDataService(
     val egressEvent = egressEventDataRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw NotFoundException("Egress event $id not found for callback client $callbackClientId")
 
-    egressEventDataRepository.deleteById(egressEvent.id)
+    egressEventDataRepository.delete(egressEvent)
+    if (egressEvent.whenCreated != null) {
+      dataCreationToDeletionTimer.record(Duration.between(dateTimeHandler.now(), egressEvent.whenCreated))
+    }
 
     val remainingEvents = egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId).toList()
     if (remainingEvents.isEmpty()) {

@@ -32,11 +32,18 @@ class EventsController(
   private val dataReceiverService: DataReceiverService,
   meterRegistry: MeterRegistry,
 ) {
-  private val publishEventCounter: Counter = meterRegistry.counter("API_CALLS.PublishEvent")
-  private val getEventCounter: Counter = meterRegistry.counter("API_CALLS.GetEvent")
-  private val getEventsCounter: Counter = meterRegistry.counter("API_CALLS.GetEvents")
-  private val getEventsStatusCounter: Counter = meterRegistry.counter("API_CALLS.GetEventsStatus")
-  private val deleteEventCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent")
+  private val publishEventSuccessCounter: Counter = meterRegistry.counter("API_CALLS.PublishEvent", "success", "true")
+  private val publishEventFailureCounter: Counter = meterRegistry.counter("API_CALLS.PublishEvent", "success", "false")
+  private val getEventSuccessCounter: Counter = meterRegistry.counter("API_CALLS.GetEvent", "success", "true")
+  private val getEventFailureCounter: Counter = meterRegistry.counter("API_CALLS.GetEvent", "success", "false")
+  private val getEventsSuccessCounter: Counter = meterRegistry.counter("API_CALLS.GetEvents", "success", "true")
+  private val getEventsFailureCounter: Counter = meterRegistry.counter("API_CALLS.GetEvents", "success", "false")
+  private val getEventsStatusSuccessCounter: Counter =
+    meterRegistry.counter("API_CALLS.GetEventsStatus", "success", "true")
+  private val getEventsStatusFailureCounter: Counter =
+    meterRegistry.counter("API_CALLS.GetEventsStatus", "success", "false")
+  private val deleteEventSuccessCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent", "success", "true")
+  private val deleteEventFailureCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent", "success", "false")
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping("/status")
@@ -61,8 +68,11 @@ class EventsController(
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventStatus> = run {
-    getEventsStatusCounter.increment()
-    eventDataService.getEventsStatus(startTime, endTime).toList()
+    tryCallAndUpdateMetric(
+      { eventDataService.getEventsStatus(startTime, endTime).toList() },
+      getEventsStatusSuccessCounter,
+      getEventsStatusFailureCounter
+    )
   }
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
@@ -99,8 +109,11 @@ class EventsController(
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
   ): List<EventNotification> = run {
-    getEventsCounter.increment()
-    eventDataService.getEvents(eventTypes, startTime, endTime).toList()
+    tryCallAndUpdateMetric(
+      { eventDataService.getEvents(eventTypes, startTime, endTime).toList() },
+      getEventsSuccessCounter,
+      getEventsFailureCounter
+    )
   }
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/publish')")
@@ -123,8 +136,11 @@ class EventsController(
     )
     @RequestBody eventPayload: EventToPublish,
   ) = run {
-    dataReceiverService.sendToDataProcessor(eventPayload)
-    publishEventCounter.increment()
+    tryCallAndUpdateMetric(
+      { dataReceiverService.sendToDataProcessor(eventPayload) },
+      publishEventSuccessCounter,
+      publishEventFailureCounter
+    )
   }
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
@@ -143,8 +159,7 @@ class EventsController(
     @Schema(description = "Event ID", required = true)
     @PathVariable id: UUID,
   ) = run {
-    getEventCounter.increment()
-    eventDataService.getEvent(id)
+    tryCallAndUpdateMetric({ eventDataService.getEvent(id) }, getEventSuccessCounter, getEventFailureCounter)
   }
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
@@ -163,9 +178,29 @@ class EventsController(
     @Schema(description = "Event ID", required = true)
     @PathVariable id: UUID,
   ): ResponseEntity<Void> {
-    deleteEventCounter.increment()
-    eventDataService.deleteEvent(id)
-    return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
+    try {
+      eventDataService.deleteEvent(id)
+      deleteEventSuccessCounter.increment()
+      return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
+    } catch (e: Exception) {
+      deleteEventFailureCounter.increment()
+      throw e
+    }
+  }
+
+  private suspend fun <T> tryCallAndUpdateMetric(
+    call: suspend () -> T,
+    successCounter: Counter,
+    failureCounter: Counter
+  ): T {
+    try {
+      val result = call()
+      successCounter.increment()
+      return result
+    } catch (e: Exception) {
+      failureCounter.increment()
+      throw e
+    }
   }
 }
 

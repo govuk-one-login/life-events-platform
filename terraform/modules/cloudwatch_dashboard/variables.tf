@@ -14,6 +14,7 @@ variable "widgets" {
     metrics = list(object({
       name       = string,
       dimensions = optional(map(string)),
+      attributes = optional(map(string)),
     })),
     period = number,
     stat   = string,

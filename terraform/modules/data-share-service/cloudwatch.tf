@@ -89,12 +89,12 @@ module "metrics_dashboard" {
       ]
     },
     {
-      title  = "Data processing times (p99)",
+      title  = "Average data processing times",
       period = local.metric_period,
-      stat   = "p99",
+      stat   = "Average",
       metrics = [
         {
-          name       = "DATA_PROCESSING.TimeFromCreationToDeletion",
+          name       = "DATA_PROCESSING.TimeFromCreationToDeletion.avg",
           attributes = { label = "Data creation to deletion time" }
         },
       ]

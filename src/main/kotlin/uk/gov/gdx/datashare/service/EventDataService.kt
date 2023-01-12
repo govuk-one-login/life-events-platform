@@ -124,7 +124,7 @@ class EventDataService(
 
     egressEventDataRepository.delete(egressEvent)
     if (egressEvent.whenCreated != null) {
-      dataCreationToDeletionTimer.record(Duration.between(dateTimeHandler.now(), egressEvent.whenCreated))
+      dataCreationToDeletionTimer.record(Duration.between(egressEvent.whenCreated, dateTimeHandler.now()).abs())
     }
 
     val remainingEvents = egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId).toList()

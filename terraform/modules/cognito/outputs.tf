@@ -29,3 +29,11 @@ output "len_client_id" {
 output "len_client_secret" {
   value = module.len_mock.client_secret
 }
+
+output "consumer_client_id" {
+  value = module.example_consumer.client_id
+}
+
+output "consumer_client_secret" {
+  value = module.example_consumer.client_secret
+}

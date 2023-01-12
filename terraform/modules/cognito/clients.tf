@@ -37,3 +37,13 @@ module "dwp" {
 
   depends_on = [aws_cognito_resource_server.events]
 }
+
+module "example_consumer" {
+  source       = "../simple_user_pool_client"
+  environment  = var.environment
+  scope        = "${local.identifier}/${local.scope_consume}"
+  name         = "example-consumer"
+  user_pool_id = aws_cognito_user_pool.pool.id
+
+  depends_on = [aws_cognito_resource_server.events]
+}

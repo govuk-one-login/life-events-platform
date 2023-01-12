@@ -59,7 +59,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "lev_api" {
-  source = "../modules/lev_api"
+  source    = "../modules/lev_api"
   providers = {
     aws = aws.eu-west-1
   }
@@ -68,7 +68,7 @@ module "lev_api" {
 }
 
 module "data-share-service" {
-  source = "../modules/data-share-service"
+  source    = "../modules/data-share-service"
   providers = {
     aws           = aws
     aws.us-east-1 = aws.us-east-1
@@ -91,4 +91,15 @@ module "len" {
   auth_url                    = module.data-share-service.token_auth_url
   len_client_id               = module.data-share-service.len_client_id
   len_client_secret           = module.data-share-service.len_client_secret
+}
+
+module "consumer" {
+  source                      = "../modules/consumer"
+  environment                 = local.env
+  region                      = data.aws_region.current.name
+  cloudwatch_retention_period = 30
+  gdx_url                     = module.data-share-service.gdx_url
+  auth_url                    = module.data-share-service.token_auth_url
+  consumer_client_id          = module.data-share-service.consumer_client_id
+  consumer_client_secret      = module.data-share-service.consumer_client_secret
 }

@@ -10,3 +10,9 @@ output "len_client_id" {
 output "len_client_secret" {
   value = module.cognito.len_client_secret
 }
+output "consumer_client_id" {
+  value = module.cognito.consumer_client_id
+}
+output "consumer_client_secret" {
+  value = module.cognito.consumer_client_secret
+}

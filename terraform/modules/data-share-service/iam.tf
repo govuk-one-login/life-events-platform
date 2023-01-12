@@ -147,7 +147,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
       "sqs:ReceiveMessage",
       "sqs:SendMessage",
       "sqs:GetQueueUrl",
-      "sqs:ChangeMessageVisibility"
+      "sqs:ChangeMessageVisibility",
+      "sqs:GetQueueAttributes",
     ]
     resources = [
       module.data_processor_queue.queue_arn,
@@ -197,6 +198,7 @@ data "aws_iam_policy_document" "ecs_task_sns_access" {
       "sns:Publish",
       "sns:Subscribe",
       "sns:Unsubscribe",
+      "sns:GetTopicAttributes",
     ]
     resources = [
       module.sns.sns_topic_arn

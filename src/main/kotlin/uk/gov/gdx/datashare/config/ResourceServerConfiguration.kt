@@ -23,7 +23,7 @@ class ResourceServerConfiguration {
           "/webjars/**", "/favicon.ico", "/csrf",
           "/health/**", "/info", "/h2-console/**",
           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
-          "/queue-admin/retry-all-dlqs"
+          "/queue-admin/retry-all-dlqs", "/metrics/**"
         ).permitAll()
           .anyExchange().authenticated()
       }

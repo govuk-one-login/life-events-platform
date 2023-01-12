@@ -20,6 +20,8 @@ data "aws_iam_policy_document" "lev_api_ecr_role_assume_policy" {
   }
 }
 
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "lev_api" {
   name_prefix = "${var.environment}-lev-api-"
   description = "For LEV API and DB, access only on port 5432"

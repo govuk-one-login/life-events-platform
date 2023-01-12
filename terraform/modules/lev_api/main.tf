@@ -76,7 +76,7 @@ resource "aws_apprunner_service" "lev_api" {
           POSTGRES_PASSWORD = random_password.rds_password.result
           POSTGRES_HOST     = aws_rds_cluster.lev_rds_postgres_cluster.endpoint
           POSTGRES_DB       = aws_rds_cluster.lev_rds_postgres_cluster.database_name
-          POSTGRES_SSL      = "false"
+          POSTGRES_SSL      = "true"
         }
       }
       image_identifier      = "${var.ecr_url}/quay/ukhomeofficedigital/lev-api:latest"

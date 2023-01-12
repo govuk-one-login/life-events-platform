@@ -8,7 +8,6 @@ resource "random_password" "rds_password" {
   special = false
 }
 
-#tfsec:ignore:aws-rds-no-public-db-access
 resource "aws_rds_cluster" "lev_rds_postgres_cluster" {
   cluster_identifier = "${var.environment}-lev-rds-db"
   engine             = "aurora-postgresql"
@@ -32,6 +31,7 @@ resource "aws_rds_cluster" "lev_rds_postgres_cluster" {
   }
 }
 
+#tfsec:ignore:aws-rds-no-public-db-access
 resource "aws_rds_cluster_instance" "db_aurora" {
   identifier         = "${var.environment}-lev-rds-db"
   cluster_identifier = aws_rds_cluster.lev_rds_postgres_cluster.id

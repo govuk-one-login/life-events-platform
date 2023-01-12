@@ -42,9 +42,14 @@ resource "aws_iam_role" "len" {
   assume_role_policy = data.aws_iam_policy_document.len_assume_policy.json
 }
 
+resource "aws_iam_role_policy_attachment" "len_xray_access" {
+  role       = aws_iam_role.len.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
 resource "aws_cloudwatch_event_rule" "schedule" {
-  name                = "schedule"
-  description         = "Schedule for Lambda Function"
+  name                = "${var.environment}LENLambdaSchedule"
+  description         = "Schedule for Lambda Function to send LEN events"
   schedule_expression = var.schedule
 }
 

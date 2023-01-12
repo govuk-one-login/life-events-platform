@@ -1,44 +1,31 @@
-data "aws_ami" "ubuntu" {
+data "aws_ami" "amazon_linux" {
   most_recent = true
-
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["amzn2-ami-kernel-*-x86_64-gp2"]
   }
-
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-
-  owners = ["099720109477"] # Canonical
-}
-
-resource "aws_network_interface" "rds_bastion_eni" {
-  subnet_id       = module.vpc.public_subnet_ids[0]
-  security_groups = [aws_security_group.rds_bastion_host_sg.id]
-  attachment {
-    device_index = 1
-    instance     = aws_instance.rds_bastion_host.id
-  }
+  owners = ["amazon"]
 }
 
 resource "aws_instance" "rds_bastion_host" {
-  ami                         = data.aws_ami.ubuntu.id
-  instance_type               = "t3a.nano"
-  associate_public_ip_address = true
-  key_name                    = aws_key_pair.rds_bastion_key_pair.key_name
-  availability_zone           = "eu-west-2a"
-  subnet_id                   = module.vpc.public_subnet_ids[0]
-
+  ami                    = data.aws_ami.amazon_linux.id
+  instance_type          = "t3a.nano"
+  key_name               = aws_key_pair.rds_bastion_key_pair.key_name
+  subnet_id              = module.vpc.public_subnet_ids[0]
+  vpc_security_group_ids = [aws_security_group.rds_bastion_host_sg.id]
   metadata_options {
-    http_endpoint = "disabled"
+    http_endpoint = "enabled"
+    http_tokens   = "required"
   }
   root_block_device {
     encrypted = true
   }
   tags = {
-    Name = "${var.environment}-rds-bastion"
+    Name = "${var.environment}-rds-bastion-host"
   }
 }
 
@@ -78,4 +65,8 @@ resource "aws_security_group" "rds_bastion_host_sg" {
 module "tls_private_key" {
   name   = "rds-bastion-key-${var.environment}"
   source = "github.com/hashicorp-modules/tls-private-key?ref=5918adb7efe39d7b36f0185569684b1b73f18126"
+}
+
+resource "aws_eip" "rds_bastion_ip" {
+  instance = aws_instance.rds_bastion_host.id
 }

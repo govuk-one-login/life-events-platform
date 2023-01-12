@@ -41,11 +41,31 @@ module "metrics_dashboard" {
       period = local.metric_period,
       stat   = "Sum",
       metrics = [
-        { name = "API_CALLS.PublishEvent.count", dimensions = { success = true }, attributes = { label = "PublishEvent" } },
-        { name = "API_CALLS.GetEvent.count", dimensions = { success = true }, attributes = { label = "GetEvent" } },
-        { name = "API_CALLS.GetEvents.count", dimensions = { success = true }, attributes = { label = "GetEvents" } },
-        { name = "API_CALLS.GetEventsStatus.count", dimensions = { success = true }, attributes = { label = "GetEventsStatus" } },
-        { name = "API_CALLS.DeleteEvent.count", dimensions = { success = true }, attributes = { label = "DeleteEvent" } },
+        {
+          name       = "API_CALLS.PublishEvent.count",
+          dimensions = { success = true },
+          attributes = { label = "PublishEvent" }
+        },
+        {
+          name       = "API_CALLS.GetEvent.count",
+          dimensions = { success = true },
+          attributes = { label = "GetEvent" }
+        },
+        {
+          name       = "API_CALLS.GetEvents.count",
+          dimensions = { success = true },
+          attributes = { label = "GetEvents" }
+        },
+        {
+          name       = "API_CALLS.GetEventsStatus.count",
+          dimensions = { success = true },
+          attributes = { label = "GetEventsStatus" }
+        },
+        {
+          name       = "API_CALLS.DeleteEvent.count",
+          dimensions = { success = true },
+          attributes = { label = "DeleteEvent" }
+        },
       ]
     },
     {
@@ -53,10 +73,31 @@ module "metrics_dashboard" {
       period = local.metric_period,
       stat   = "Sum",
       metrics = [
-        { name = "API_CALLS.PublishEvent.count", dimensions = { success = true }, attributes = { label = "PublishEvent" } },
-        { name = "API_CALLS.CallsToLev.count", attributes = { label = "CallsToLev" } },
-        { name = "API_RESPONSES.ResponsesFromLev.count", attributes = { label = "ResponsesFromLev" } },
+        {
+          name       = "API_CALLS.PublishEvent.count",
+          dimensions = { success = true },
+          attributes = { label = "PublishEvent" }
+        },
+        {
+          name       = "API_CALLS.CallsToLev.count",
+          attributes = { label = "CallsToLev" }
+        },
+        {
+          name       = "API_RESPONSES.ResponsesFromLev.count",
+          attributes = { label = "ResponsesFromLev" }
+        },
       ]
     },
+    {
+      title  = "Average data processing times",
+      period = local.metric_period,
+      stat   = "Average",
+      metrics = [
+        {
+          name       = "DATA_PROCESSING.TimeFromCreationToDeletion.avg",
+          attributes = { label = "Data creation to deletion time" }
+        },
+      ]
+    }
   ]
 }

@@ -80,7 +80,8 @@ module "ingress_archive" {
 }
 
 module "egress" {
-  source      = "../s3"
-  environment = var.environment
-  name        = "egress"
+  source          = "../s3"
+  environment     = var.environment
+  name            = "egress"
+  expiration_days = 7
 }

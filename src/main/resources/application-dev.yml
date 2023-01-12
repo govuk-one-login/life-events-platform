@@ -4,6 +4,12 @@ server:
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: 'info, health, metrics'
 
 metrics:
   cloudwatch:

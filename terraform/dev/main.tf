@@ -102,4 +102,5 @@ module "consumer" {
   auth_url                    = module.data-share-service.token_auth_url
   consumer_client_id          = module.data-share-service.consumer_client_id
   consumer_client_secret      = module.data-share-service.consumer_client_secret
+  lev_api_url                 = "https://${module.lev_api.service_url}"
 }

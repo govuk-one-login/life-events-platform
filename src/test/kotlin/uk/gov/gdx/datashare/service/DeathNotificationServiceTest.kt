@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.service
 
+import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -24,6 +25,7 @@ class DeathNotificationServiceTest {
   private val eventPublishingService = mockk<EventPublishingService>()
   private val levApiService = mockk<LevApiService>()
   private val objectMapper = JacksonConfiguration().objectMapper()
+  private val meterRegistry = mockk<MeterRegistry>()
 
   private val underTest = DeathNotificationService(
     consumerSubscriptionRepository,
@@ -31,6 +33,7 @@ class DeathNotificationServiceTest {
     eventPublishingService,
     levApiService,
     objectMapper,
+    meterRegistry,
   )
 
   @Test

@@ -2,7 +2,6 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Timer
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
@@ -32,10 +31,8 @@ class EventDataService(
   private val ingressEventDataRepository: IngressEventDataRepository,
   private val deathNotificationService: DeathNotificationService,
   private val dateTimeHandler: DateTimeHandler,
-  meterRegistry: MeterRegistry,
+  private val meterRegistry: MeterRegistry,
 ) {
-  private val dataCreationToDeletionTimer: Timer =
-    meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -121,10 +118,20 @@ class EventDataService(
     val callbackClientId = authenticationFacade.getUsername()
     val egressEvent = egressEventDataRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw NotFoundException("Egress event $id not found for callback client $callbackClientId")
+    val consumerSubscription = consumerSubscriptionRepository.findById(egressEvent.consumerSubscriptionId)
+      ?: throw NotFoundException("Consumer subscription ${egressEvent.consumerSubscriptionId} not found for egress event $id")
 
     egressEventDataRepository.delete(egressEvent)
+    meterRegistry.counter(
+      "EVENT_ACTION.EgressEventDeleted",
+      "eventType",
+      consumerSubscription.ingressEventType,
+      "consumerSubscription",
+      egressEvent.consumerSubscriptionId.toString()
+    )
     if (egressEvent.whenCreated != null) {
-      dataCreationToDeletionTimer.record(Duration.between(egressEvent.whenCreated, dateTimeHandler.now()).abs())
+      meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
+        .record(Duration.between(egressEvent.whenCreated, dateTimeHandler.now()).abs())
     }
 
     val remainingEvents = egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId).toList()

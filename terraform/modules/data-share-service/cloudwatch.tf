@@ -98,6 +98,17 @@ module "metrics_dashboard" {
           attributes = { label = "Data creation to deletion time" }
         },
       ]
+    },
+    {
+      title  = "Event actions",
+      period = local.metric_period,
+      stat   = "Sum",
+      metrics = [
+        {
+          name       = "EVENT_ACTION.IngressEventPublished.count",
+          attributes = { eventType = "DEATH_NOTIFICATIONS" }
+        }
+      ]
     }
   ]
 }

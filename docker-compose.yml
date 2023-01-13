@@ -27,6 +27,10 @@ services:
       - API_BASE_S3_LOCALSTACK_URL=http://localstack:4566
       - API_BASE_S3_INGRESS_BUCKET=dev-ingress-gdx-data-share-poc
       - API_BASE_S3_INGRESS_ARCHIVE_BUCKET=dev-ingress-archive-gdx-data-share-poc
+    links:
+      - localstack:egress.localstack
+      - localstack:dev-ingress-archive-gdx-data-share-poc.localstack
+      - localstack:dev-ingress-gdx-data-share-poc.localstack
 
   localstack:
     image: localstack/localstack:0.14.0
@@ -43,8 +47,8 @@ services:
       - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
       - DOCKER_HOST=unix:///var/run/docker.sock
       - AWS_EXECUTION_ENV=True
-      - HOSTNAME=${LOCALSTACK_DOCKER_NAME- }
-      - HOSTNAME_EXTERNAL=${LOCALSTACK_DOCKER_NAME- }
+      - HOSTNAME=${LOCALSTACK_DOCKER_NAME-localstack}
+      - HOSTNAME_EXTERNAL=${LOCALSTACK_DOCKER_NAME-localstack}
       - DEFAULT_REGION=eu-west-2
     volumes:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"

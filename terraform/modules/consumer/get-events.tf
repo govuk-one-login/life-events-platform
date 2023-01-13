@@ -1,7 +1,7 @@
 data "archive_file" "get_events_lambda" {
-  type        = "zip"
+  type = "zip"
   source {
-    content = file("${path.module}/lambdas/get_events.py")
+    content  = file("${path.module}/lambdas/get_events.py")
     filename = "get_events.py"
   }
   source {
@@ -33,20 +33,9 @@ resource "aws_lambda_function" "get_events" {
   }
 }
 
-data "aws_iam_policy_document" "get_events_assume_policy" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
-  }
-}
-
 resource "aws_iam_role" "get_events" {
   name               = "${var.environment}-get-events"
-  assume_role_policy = data.aws_iam_policy_document.get_events_assume_policy.json
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "get_events_xray_access" {

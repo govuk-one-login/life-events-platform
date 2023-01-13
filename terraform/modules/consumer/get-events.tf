@@ -1,6 +1,13 @@
 data "archive_file" "get_events_lambda" {
   type        = "zip"
-  source_file = "${path.module}/lambdas/get_events.py"
+  source {
+    content = file("${path.module}/lambdas/get_events.py")
+    filename = "get_events.py"
+  }
+  source {
+    content  = file("${path.module}/../lambdas/common.py")
+    filename = "common.py"
+  }
   output_path = "${path.module}/zip/getEvents.zip"
 }
 

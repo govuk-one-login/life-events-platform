@@ -1,10 +1,7 @@
 name: Terraform automatically fix linting
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - "main"
+  pull_request:
     paths:
       - "terraform/**"
 
@@ -12,6 +9,8 @@ jobs:
   tf-fmt:
     name: Validate and fix formatting
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: terraform
@@ -27,8 +26,7 @@ jobs:
       - name: Check formatting of all Terraform files
         run: terraform fmt -recursive
 
-      - name: Create pull request if required
-        uses: peter-evans/create-pull-request@v4
+      - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          title: "housekeeping: Automatically reformat terraform files"
-          commit-message: "housekeeping: Automatically reformat terraform files"
+          commit_message: "housekeeping: Automatically reformat terraform files"
+          file_pattern: '*.tf'

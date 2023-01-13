@@ -1,6 +1,13 @@
 data "archive_file" "len_lambda" {
   type        = "zip"
-  source_file = "${path.module}/lambdas/len.py"
+  source {
+    content  = file("${path.module}/lambdas/len.py")
+    filename = "len.py"
+  }
+  source {
+    content = file("${path.module}/../lambdas/common.py")
+    filename = "common.py"
+  }
   output_path = "${path.module}/zip/len.zip"
 }
 

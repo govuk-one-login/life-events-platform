@@ -16,12 +16,11 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
 
   blue_green_deployment_config {
     deployment_ready_option {
-      action_on_timeout    = "CONTINUE_DEPLOYMENT"
-      wait_time_in_minutes = 2
+      action_on_timeout = "CONTINUE_DEPLOYMENT"
     }
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 2
+      termination_wait_time_in_minutes = 0
     }
   }
 

@@ -73,7 +73,7 @@ class AwsTopicFactoryTest {
   @Nested
   inner class `Create LocalStack AwsTopic` {
     private val someTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}some-topic-name"
+      arn = "${localstackArnPrefix}some-topic-name",
     )
     private val sqsProperties =
       SqsProperties(provider = "localstack", queues = mock(), topics = mapOf("sometopicid" to someTopicConfig))
@@ -123,14 +123,14 @@ class AwsTopicFactoryTest {
   inner class `Create multiple AWS AwsTopics` {
     private val someTopicConfig =
       SqsProperties.TopicConfig(
-        arn = "some arn"
+        arn = "some arn",
       )
     private val anotherTopicConfig = SqsProperties.TopicConfig(
-      arn = "another arn"
+      arn = "another arn",
     )
     private val sqsProperties = SqsProperties(
       queues = mock(),
-      topics = mapOf("sometopicid" to someTopicConfig, "anothertopicid" to anotherTopicConfig)
+      topics = mapOf("sometopicid" to someTopicConfig, "anothertopicid" to anotherTopicConfig),
     )
     private val snsClient = mock<AmazonSNS>()
     private lateinit var AwsTopics: List<AwsTopic>
@@ -149,7 +149,7 @@ class AwsTopicFactoryTest {
       verify(snsFactory).awsSnsClient("sometopicid", "eu-west-2")
       verify(snsFactory).awsSnsClient(
         "anothertopicid",
-        "eu-west-2"
+        "eu-west-2",
       )
     }
 
@@ -181,15 +181,15 @@ class AwsTopicFactoryTest {
   @Nested
   inner class `Create multiple LocalStack AwsTopics` {
     private val someTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}some arn"
+      arn = "${localstackArnPrefix}some arn",
     )
     private val anotherTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}another arn"
+      arn = "${localstackArnPrefix}another arn",
     )
     private val sqsProperties = SqsProperties(
       provider = "localstack",
       queues = mock(),
-      topics = mapOf("sometopicid" to someTopicConfig, "anothertopicid" to anotherTopicConfig)
+      topics = mapOf("sometopicid" to someTopicConfig, "anothertopicid" to anotherTopicConfig),
     )
     private val snsClient = mock<AmazonSNS>()
     private lateinit var AwsTopics: List<AwsTopic>

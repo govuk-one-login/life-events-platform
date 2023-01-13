@@ -16,12 +16,12 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
       "AND ed.consumer_subscription_id = :consumerSubscriptionId " +
-      "ORDER BY ed.when_created"
+      "ORDER BY ed.when_created",
   )
   fun findAllByConsumerSubscription(
     consumerSubscriptionId: UUID,
     fromTime: LocalDateTime,
-    toTime: LocalDateTime
+    toTime: LocalDateTime,
   ): Flow<EgressEventData>
 
   @Query(
@@ -29,12 +29,12 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
       "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
-      "ORDER BY ed.when_created"
+      "ORDER BY ed.when_created",
   )
   fun findAllByConsumerSubscriptions(
     consumerSubscriptionIds: List<UUID>,
     fromTime: LocalDateTime,
-    toTime: LocalDateTime
+    toTime: LocalDateTime,
   ): Flow<EgressEventData>
 
   @Query("DELETE FROM egress_event_data where when_created < :expiredTime")
@@ -47,25 +47,25 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
       "AND cs.oauth_client_id = :clientId " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
-      "ORDER BY ed.when_created"
+      "ORDER BY ed.when_created",
   )
   fun findAllByClientId(
     clientId: String,
     fromTime: LocalDateTime,
-    toTime: LocalDateTime
+    toTime: LocalDateTime,
   ): Flow<EgressEventData>
 
   @Query(
     "SELECT ed.* FROM egress_event_data ed " +
       "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
       "AND cs.oauth_client_id = :clientId " +
-      "WHERE ed.id = :id"
+      "WHERE ed.id = :id",
   )
   suspend fun findByClientIdAndId(clientId: String, id: UUID): EgressEventData?
 
   @Query(
     "SELECT ed.* FROM egress_event_data ed " +
-      "WHERE ed.ingress_event_id = :ingressEventId"
+      "WHERE ed.ingress_event_id = :ingressEventId",
   )
   fun findAllByIngressEventId(ingressEventId: UUID): Flow<EgressEventData>
 
@@ -73,7 +73,7 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
     "SELECT ed.* FROM egress_event_data ed " +
       "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
       "JOIN consumer c ON cs.consumer_id = c.id " +
-      "AND c.name = :name"
+      "AND c.name = :name",
   )
   fun findAllByConsumerName(name: String): Flow<EgressEventData>
 }

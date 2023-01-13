@@ -50,12 +50,12 @@ open class AwsQueueService(
     val messages = mutableListOf<Message>()
     repeat(messageCount) {
       sqsDlqClient.receiveMessage(
-        ReceiveMessageRequest(dlqUrl).withMaxNumberOfMessages(1).withMessageAttributeNames("All")
+        ReceiveMessageRequest(dlqUrl).withMaxNumberOfMessages(1).withMessageAttributeNames("All"),
       ).messages.firstOrNull()
         ?.also { msg ->
           sqsClient.sendMessage(
             SendMessageRequest().withQueueUrl(queueUrl).withMessageBody(msg.body)
-              .withMessageAttributes(msg.messageAttributes)
+              .withMessageAttributes(msg.messageAttributes),
           )
           sqsDlqClient.deleteMessage(DeleteMessageRequest(dlqUrl, msg.receiptHandle))
           messages += msg

@@ -25,7 +25,7 @@ class SqsPropertiesTest {
       assertThatThrownBy {
         SqsProperties(
           queues = mapOf("queueid" to validAwsQueueConfig()),
-          topics = mapOf("notLowerCaseTopicId" to validAwsTopicConfig())
+          topics = mapOf("notLowerCaseTopicId" to validAwsTopicConfig()),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("notLowerCaseTopicId")
@@ -37,7 +37,7 @@ class SqsPropertiesTest {
       val properties = SqsProperties(
         provider = "localstack",
         queues = mapOf("queueid" to validLocalstackQueueConfig()),
-        topics = mapOf("topicid" to validLocalstackTopicConfig().copy(arn = "${localstackArnPrefix}topic-name"))
+        topics = mapOf("topicid" to validLocalstackTopicConfig().copy(arn = "${localstackArnPrefix}topic-name")),
       )
 
       assertThat(properties.topics["topicid"]?.name).isEqualTo("topic-name")
@@ -51,7 +51,7 @@ class SqsPropertiesTest {
       assertThatThrownBy {
         SqsProperties(
           queues = mapOf("queueid" to validAwsQueueConfig()),
-          topics = mapOf("topicid" to validAwsTopicConfig().copy(arn = ""))
+          topics = mapOf("topicid" to validAwsTopicConfig().copy(arn = "")),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("topicid")
@@ -68,7 +68,7 @@ class SqsPropertiesTest {
         SqsProperties(
           provider = "localstack",
           queues = mapOf("queueid" to validLocalstackQueueConfig()),
-          topics = mapOf("topicid" to validLocalstackTopicConfig().copy(arn = localstackArnPrefix))
+          topics = mapOf("topicid" to validLocalstackTopicConfig().copy(arn = localstackArnPrefix)),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("topicid")
@@ -80,7 +80,7 @@ class SqsPropertiesTest {
       assertThatThrownBy {
         SqsProperties(
           provider = "localstack",
-          queues = mapOf("queueid" to validLocalstackQueueConfig().copy(subscribeTopicId = "topicid"))
+          queues = mapOf("queueid" to validLocalstackQueueConfig().copy(subscribeTopicId = "topicid")),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("queueid")
@@ -99,9 +99,9 @@ class SqsPropertiesTest {
           queues = mapOf(
             "queueid1" to validAwsQueueConfig(1).copy(queueName = "1stQueueName"),
             "queueid2" to validAwsQueueConfig(2).copy(queueName = "2ndQueueName"),
-            "queueid3" to validAwsQueueConfig(3).copy(queueName = "1stQueueName")
+            "queueid3" to validAwsQueueConfig(3).copy(queueName = "1stQueueName"),
           ),
-          topics = mapOf()
+          topics = mapOf(),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("Found duplicated queue name")
@@ -116,9 +116,9 @@ class SqsPropertiesTest {
           queues = mapOf(
             "queueid1" to validAwsQueueConfig(1).copy(dlqName = "1stDlqName"),
             "queueid2" to validAwsQueueConfig(2).copy(dlqName = "2ndDlqName"),
-            "queueid3" to validAwsQueueConfig(3).copy(dlqName = "2ndDlqName")
+            "queueid3" to validAwsQueueConfig(3).copy(dlqName = "2ndDlqName"),
           ),
-          topics = mapOf()
+          topics = mapOf(),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("Found duplicated dlq name")
@@ -134,8 +134,8 @@ class SqsPropertiesTest {
           topics = mapOf(
             "topic1" to validAwsTopicConfig(1).copy(arn = "1stArn"),
             "topic2" to validAwsTopicConfig(2).copy(arn = "2ndArn"),
-            "topic3" to validAwsTopicConfig(3).copy(arn = "1stArn")
-          )
+            "topic3" to validAwsTopicConfig(3).copy(arn = "1stArn"),
+          ),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("Found duplicated topic arns")
@@ -155,9 +155,9 @@ class SqsPropertiesTest {
           queues = mapOf(
             "queueid1" to validLocalstackQueueConfig(1).copy(queueName = "1stQueueName"),
             "queueid2" to validLocalstackQueueConfig(2).copy(queueName = "2ndQueueName"),
-            "queueid3" to validLocalstackQueueConfig(3).copy(queueName = "1stQueueName")
+            "queueid3" to validLocalstackQueueConfig(3).copy(queueName = "1stQueueName"),
           ),
-          topics = mapOf()
+          topics = mapOf(),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("Found duplicated queue name")
@@ -173,9 +173,9 @@ class SqsPropertiesTest {
           queues = mapOf(
             "queueid1" to validLocalstackQueueConfig(1).copy(dlqName = "1stDlqName"),
             "queueid2" to validLocalstackQueueConfig(2).copy(dlqName = "2ndDlqName"),
-            "queueid3" to validLocalstackQueueConfig(3).copy(dlqName = "2ndDlqName")
+            "queueid3" to validLocalstackQueueConfig(3).copy(dlqName = "2ndDlqName"),
           ),
-          topics = mapOf()
+          topics = mapOf(),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("Found duplicated dlq name")
@@ -191,9 +191,9 @@ class SqsPropertiesTest {
           queues = mapOf(
             "queueid1" to validLocalstackQueueNoDlqConfig(1),
             "queueid2" to validLocalstackQueueNoDlqConfig(2),
-            "queueid3" to validLocalstackQueueNoDlqConfig(3)
+            "queueid3" to validLocalstackQueueNoDlqConfig(3),
           ),
-          topics = mapOf()
+          topics = mapOf(),
         )
       }
     }
@@ -207,8 +207,8 @@ class SqsPropertiesTest {
           topics = mapOf(
             "topic1" to validLocalstackTopicConfig(1).copy(arn = "${localstackArnPrefix}1stName"),
             "topic2" to validLocalstackTopicConfig(2).copy(arn = "${localstackArnPrefix}2ndName"),
-            "topic3" to validLocalstackTopicConfig(3).copy(arn = "${localstackArnPrefix}1stName")
-          )
+            "topic3" to validLocalstackTopicConfig(3).copy(arn = "${localstackArnPrefix}1stName"),
+          ),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
         .hasMessageContaining("Found duplicated topic names")

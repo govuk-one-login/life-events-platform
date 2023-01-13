@@ -33,9 +33,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Consumers"
-      )
-    ]
+        description = "Consumers",
+      ),
+    ],
   )
   suspend fun getConsumers() = consumerRepository.findAll()
 
@@ -46,13 +46,14 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Consumer deleted"
-      )
-    ]
+        description = "Consumer deleted",
+      ),
+    ],
   )
   suspend fun deleteConsumer(
     @Schema(description = "Consumer ID", required = true)
-    @PathVariable id: UUID,
+    @PathVariable
+    id: UUID,
   ) = consumerRepository.deleteById(id)
 
   @GetMapping("/consumerSubscriptions")
@@ -62,9 +63,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Consumer Subscriptions"
-      )
-    ]
+        description = "Consumer Subscriptions",
+      ),
+    ],
   )
   suspend fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
 
@@ -75,13 +76,14 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Consumer Subscription deleted"
-      )
-    ]
+        description = "Consumer Subscription deleted",
+      ),
+    ],
   )
   suspend fun deleteConsumerSubscription(
     @Schema(description = "Consumer Subscription ID", required = true)
-    @PathVariable id: UUID,
+    @PathVariable
+    id: UUID,
   ) = consumerSubscriptionRepository.deleteById(id)
 
   @GetMapping("/egressEvents")
@@ -91,9 +93,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Egress Event"
-      )
-    ]
+        description = "Egress Event",
+      ),
+    ],
   )
   suspend fun getEgressEvents() = egressEventDataRepository.findAll()
 
@@ -104,13 +106,14 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Event deleted"
-      )
-    ]
+        description = "Event deleted",
+      ),
+    ],
   )
   suspend fun deleteEgressEvent(
     @Schema(description = "Event ID", required = true)
-    @PathVariable id: UUID,
+    @PathVariable
+    id: UUID,
   ) = egressEventDataRepository.deleteById(id)
 
   @GetMapping("/eventDataset")
@@ -120,9 +123,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Egress Dataset"
-      )
-    ]
+        description = "Egress Dataset",
+      ),
+    ],
   )
   suspend fun getEgressDatasets() = eventDatasetRepository.findAll()
 
@@ -133,13 +136,14 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Event deleted"
-      )
-    ]
+        description = "Event deleted",
+      ),
+    ],
   )
   suspend fun deleteEventDataset(
     @Schema(description = "Event Dataset ID", required = true)
-    @PathVariable id: String,
+    @PathVariable
+    id: String,
   ) = eventDatasetRepository.deleteById(id)
 
   @GetMapping("/ingressEvent")
@@ -149,9 +153,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Ingress Event"
-      )
-    ]
+        description = "Ingress Event",
+      ),
+    ],
   )
   suspend fun getIngressEvents() = ingressEventDataRepository.findAll()
 
@@ -162,13 +166,14 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Event deleted"
-      )
-    ]
+        description = "Event deleted",
+      ),
+    ],
   )
   suspend fun deleteIngressEvent(
     @Schema(description = "Event ID", required = true)
-    @PathVariable id: UUID,
+    @PathVariable
+    id: UUID,
   ) = ingressEventDataRepository.deleteById(id)
 
   @GetMapping("/ingressType")
@@ -178,9 +183,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Ingress Event Type"
-      )
-    ]
+        description = "Ingress Event Type",
+      ),
+    ],
   )
   suspend fun getIngressEventTypes() = ingressEventTypeRepository.findAll()
 
@@ -191,13 +196,14 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Type deleted"
-      )
-    ]
+        description = "Type deleted",
+      ),
+    ],
   )
   suspend fun deleteIngressEventType(
     @Schema(description = "Type ID", required = true)
-    @PathVariable id: String,
+    @PathVariable
+    id: String,
   ) = ingressEventTypeRepository.deleteById(id)
 
   @GetMapping("/publishers")
@@ -207,9 +213,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Publishers"
-      )
-    ]
+        description = "Publishers",
+      ),
+    ],
   )
   suspend fun getPublishers() = publisherRepository.findAll()
 
@@ -220,13 +226,14 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Publisher deleted"
-      )
-    ]
+        description = "Publisher deleted",
+      ),
+    ],
   )
   suspend fun deletePublisher(
     @Schema(description = "Publisher ID", required = true)
-    @PathVariable id: UUID,
+    @PathVariable
+    id: UUID,
   ) = publisherRepository.deleteById(id)
 
   @GetMapping("/publisherSubscriptions")
@@ -236,9 +243,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Publisher Subscriptions"
-      )
-    ]
+        description = "Publisher Subscriptions",
+      ),
+    ],
   )
   suspend fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll()
 
@@ -249,13 +256,14 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Publisher Subscription deleted"
-      )
-    ]
+        description = "Publisher Subscription deleted",
+      ),
+    ],
   )
   suspend fun deletePublisherSubscription(
     @Schema(description = "Publisher Subscription ID", required = true)
-    @PathVariable id: UUID,
+    @PathVariable
+    id: UUID,
   ) = publisherSubscriptionRepository.deleteById(id)
 
   // The below endpoints don't exist through any other means, so have added them here
@@ -266,9 +274,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Ingress type added"
-      )
-    ]
+        description = "Ingress type added",
+      ),
+    ],
   )
   suspend fun addIngressType(
     @Schema(
@@ -276,7 +284,8 @@ class BaseDataController(
       required = true,
       implementation = IngressEventType::class,
     )
-    @RequestBody ingressEventType: IngressEventType,
+    @RequestBody
+    ingressEventType: IngressEventType,
   ) = ingressEventTypeRepository.save(ingressEventType)
 
   @PostMapping("/eventDataset")
@@ -286,9 +295,9 @@ class BaseDataController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Event dataset added"
-      )
-    ]
+        description = "Event dataset added",
+      ),
+    ],
   )
   suspend fun addEventDataset(
     @Schema(
@@ -296,6 +305,7 @@ class BaseDataController(
       required = true,
       implementation = EventDataset::class,
     )
-    @RequestBody eventDataset: EventDataset,
+    @RequestBody
+    eventDataset: EventDataset,
   ) = eventDatasetRepository.save(eventDataset)
 }

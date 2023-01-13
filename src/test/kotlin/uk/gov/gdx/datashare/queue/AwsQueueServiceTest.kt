@@ -17,7 +17,7 @@ class AwsQueueServiceTest {
   private val awsTopicFactory = mock<AwsTopicFactory>()
   private val awsQueueFactory = mock<AwsQueueFactory>()
   private val sqsProperties = mock<SqsProperties>()
-  private val objectMapper = ObjectMapper();
+  private val objectMapper = ObjectMapper()
   private lateinit var awsQueueService: AwsQueueService
 
   @Nested
@@ -35,7 +35,7 @@ class AwsQueueServiceTest {
           listOf(
             AwsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
             AwsQueue("another queue id", mock(), "another queue name", mock(), "another dlq name"),
-          )
+          ),
         )
 
       awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
@@ -91,7 +91,7 @@ class AwsQueueServiceTest {
       @BeforeEach
       fun `finds zero messages on dlq`() {
         whenever(dlqSqs.getQueueAttributes(anyString(), eq(listOf("ApproximateNumberOfMessages")))).thenReturn(
-          GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "0"))
+          GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "0")),
         )
       }
 
@@ -104,9 +104,9 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         verify(dlqSqs).getQueueAttributes("dlqUrl", listOf("ApproximateNumberOfMessages"))
@@ -123,9 +123,9 @@ class AwsQueueServiceTest {
                 queueSqs,
                 "some queue name",
                 dlqSqs,
-                "some dlq name"
-              )
-            )
+                "some dlq name",
+              ),
+            ),
           )
 
         assertThat(result.messagesFoundCount).isEqualTo(0)
@@ -138,7 +138,7 @@ class AwsQueueServiceTest {
       @BeforeEach
       fun `finds a single message on the dlq`() {
         whenever(dlqSqs.getQueueAttributes(anyString(), eq(listOf("ApproximateNumberOfMessages")))).thenReturn(
-          GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "1"))
+          GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "1")),
         )
         whenever(dlqSqs.receiveMessage(any<ReceiveMessageRequest>()))
           .thenReturn(
@@ -146,8 +146,8 @@ class AwsQueueServiceTest {
               Message()
                 .withBody("message-body")
                 .withReceiptHandle("message-receipt-handle")
-                .withMessageAttributes(mutableMapOf("some" to stringAttributeOf("attribute")))
-            )
+                .withMessageAttributes(mutableMapOf("some" to stringAttributeOf("attribute"))),
+            ),
           )
 
         awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
@@ -162,16 +162,16 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         verify(dlqSqs).receiveMessage(
           check<ReceiveMessageRequest> {
             assertThat(it.queueUrl).isEqualTo("dlqUrl")
             assertThat(it.maxNumberOfMessages).isEqualTo(1)
-          }
+          },
         )
       }
 
@@ -184,16 +184,16 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         verify(dlqSqs).deleteMessage(
           check {
             assertThat(it.queueUrl).isEqualTo("dlqUrl")
             assertThat(it.receiptHandle).isEqualTo("message-receipt-handle")
-          }
+          },
         )
       }
 
@@ -206,13 +206,13 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
         verify(queueSqs).sendMessage(
           SendMessageRequest().withQueueUrl("queueUrl").withMessageBody("message-body")
-            .withMessageAttributes(mutableMapOf("some" to stringAttributeOf("attribute")))
+            .withMessageAttributes(mutableMapOf("some" to stringAttributeOf("attribute"))),
         )
       }
 
@@ -225,9 +225,9 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         assertThat(result.messagesFoundCount).isEqualTo(1)
@@ -242,7 +242,7 @@ class AwsQueueServiceTest {
       @BeforeEach
       fun `finds two message on the dlq`() {
         whenever(dlqSqs.getQueueAttributes(anyString(), eq(listOf("ApproximateNumberOfMessages")))).thenReturn(
-          GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "2"))
+          GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "2")),
         )
         whenever(dlqSqs.receiveMessage(any<ReceiveMessageRequest>()))
           .thenReturn(
@@ -250,16 +250,16 @@ class AwsQueueServiceTest {
               Message()
                 .withBody("message-1-body")
                 .withReceiptHandle("message-1-receipt-handle")
-                .withMessageAttributes((mutableMapOf("attribute-key-1" to stringAttributeOf("attribute-value-1"))))
-            )
+                .withMessageAttributes((mutableMapOf("attribute-key-1" to stringAttributeOf("attribute-value-1")))),
+            ),
           )
           .thenReturn(
             ReceiveMessageResult().withMessages(
               Message()
                 .withBody("message-2-body")
                 .withReceiptHandle("message-2-receipt-handle")
-                .withMessageAttributes((mutableMapOf("attribute-key-2" to stringAttributeOf("attribute-value-2"))))
-            )
+                .withMessageAttributes((mutableMapOf("attribute-key-2" to stringAttributeOf("attribute-value-2")))),
+            ),
           )
 
         awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
@@ -274,16 +274,16 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         verify(dlqSqs, times(2)).receiveMessage(
           check<ReceiveMessageRequest> {
             assertThat(it.queueUrl).isEqualTo("dlqUrl")
             assertThat(it.maxNumberOfMessages).isEqualTo(1)
-          }
+          },
         )
       }
 
@@ -296,9 +296,9 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         val captor = argumentCaptor<DeleteMessageRequest>()
@@ -317,18 +317,18 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         verify(queueSqs).sendMessage(
           SendMessageRequest().withQueueUrl("queueUrl").withMessageBody("message-1-body")
-            .withMessageAttributes((mutableMapOf("attribute-key-1" to stringAttributeOf("attribute-value-1"))))
+            .withMessageAttributes((mutableMapOf("attribute-key-1" to stringAttributeOf("attribute-value-1")))),
         )
         verify(queueSqs).sendMessage(
           SendMessageRequest().withQueueUrl("queueUrl").withMessageBody("message-2-body")
-            .withMessageAttributes((mutableMapOf("attribute-key-2" to stringAttributeOf("attribute-value-2"))))
+            .withMessageAttributes((mutableMapOf("attribute-key-2" to stringAttributeOf("attribute-value-2")))),
         )
       }
 
@@ -341,9 +341,9 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         assertThat(result.messagesFoundCount).isEqualTo(2)
@@ -351,7 +351,7 @@ class AwsQueueServiceTest {
           .extracting(Message::getBody, Message::getReceiptHandle)
           .containsExactly(
             tuple("message-1-body", "message-1-receipt-handle"),
-            tuple("message-2-body", "message-2-receipt-handle")
+            tuple("message-2-body", "message-2-receipt-handle"),
           )
       }
     }
@@ -361,14 +361,14 @@ class AwsQueueServiceTest {
       @BeforeEach
       fun `finds only one of two message on the dlq`() {
         whenever(dlqSqs.getQueueAttributes(anyString(), eq(listOf("ApproximateNumberOfMessages")))).thenReturn(
-          GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "2"))
+          GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "2")),
         )
         whenever(dlqSqs.receiveMessage(any<ReceiveMessageRequest>()))
           .thenReturn(
             ReceiveMessageResult().withMessages(
               Message().withBody("message-1-body").withReceiptHandle("message-1-receipt-handle")
-                .withMessageAttributes(mutableMapOf("some" to stringAttributeOf("attribute")))
-            )
+                .withMessageAttributes(mutableMapOf("some" to stringAttributeOf("attribute"))),
+            ),
           )
           .thenReturn(ReceiveMessageResult())
 
@@ -384,16 +384,16 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         verify(dlqSqs, times(2)).receiveMessage(
           check<ReceiveMessageRequest> {
             assertThat(it.queueUrl).isEqualTo("dlqUrl")
             assertThat(it.maxNumberOfMessages).isEqualTo(1)
-          }
+          },
         )
       }
 
@@ -406,16 +406,16 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         verify(dlqSqs).deleteMessage(
           check {
             assertThat(it.queueUrl).isEqualTo("dlqUrl")
             assertThat(it.receiptHandle).isEqualTo("message-1-receipt-handle")
-          }
+          },
         )
       }
 
@@ -428,14 +428,14 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         verify(queueSqs).sendMessage(
           SendMessageRequest().withQueueUrl("queueUrl").withMessageBody("message-1-body")
-            .withMessageAttributes(mutableMapOf("some" to stringAttributeOf("attribute")))
+            .withMessageAttributes(mutableMapOf("some" to stringAttributeOf("attribute"))),
         )
       }
 
@@ -448,9 +448,9 @@ class AwsQueueServiceTest {
               queueSqs,
               "some queue name",
               dlqSqs,
-              "some dlq name"
-            )
-          )
+              "some dlq name",
+            ),
+          ),
         )
 
         assertThat(result.messagesFoundCount).isEqualTo(2)
@@ -477,7 +477,7 @@ class AwsQueueServiceTest {
     @BeforeEach
     fun `gets a message on the dlq`() {
       whenever(dlqSqs.getQueueAttributes(anyString(), eq(listOf("ApproximateNumberOfMessages")))).thenReturn(
-        GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "1"))
+        GetQueueAttributesResult().withAttributes(mapOf("ApproximateNumberOfMessages" to "1")),
       )
       whenever(dlqSqs.receiveMessage(any<ReceiveMessageRequest>()))
         .thenReturn(
@@ -490,10 +490,10 @@ class AwsQueueServiceTest {
                                                 "longProperty":7076632681529943151
                                             },
                                             "MessageId":"message-id-1"
-                                          }"""
+                                          }""",
             )
-              .withReceiptHandle("message-1-receipt-handle").withMessageId("external-message-id-1")
-          )
+              .withReceiptHandle("message-1-receipt-handle").withMessageId("external-message-id-1"),
+          ),
         )
 
       awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
@@ -508,9 +508,10 @@ class AwsQueueServiceTest {
             queueSqs,
             "some queue name",
             dlqSqs,
-            "some dlq name"
-          ), 10
-        )
+            "some dlq name",
+          ),
+          10,
+        ),
       )
       assertThat(dlqResult.messagesFoundCount).isEqualTo(1)
       assertThat(dlqResult.messagesReturnedCount).isEqualTo(1)
@@ -521,7 +522,7 @@ class AwsQueueServiceTest {
       verify(dlqSqs).receiveMessage(
         check<ReceiveMessageRequest> {
           assertThat(it.queueUrl).isEqualTo("dlqUrl")
-        }
+        },
       )
     }
   }
@@ -541,7 +542,7 @@ class AwsQueueServiceTest {
           listOf(
             AwsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
             AwsQueue("another queue id", mock(), "another queue name", mock(), "another dlq name"),
-          )
+          ),
         )
 
       awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)

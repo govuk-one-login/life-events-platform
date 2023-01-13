@@ -54,11 +54,12 @@ data class SqsProperties(
 
   private fun localstackTopicSubscriptionsMustExist(
     queueConfig: QueueConfig,
-    queueId: String
+    queueId: String,
   ) {
     if (provider == "localstack") {
-      if (queueConfig.subscribeTopicId.isNotEmpty().and(topics.containsKey(queueConfig.subscribeTopicId).not()))
+      if (queueConfig.subscribeTopicId.isNotEmpty().and(topics.containsKey(queueConfig.subscribeTopicId).not())) {
         throw InvalidAwsSqsPropertiesException("queueId $queueId wants to subscribe to ${queueConfig.subscribeTopicId} but it does not exist")
+      }
     }
   }
 

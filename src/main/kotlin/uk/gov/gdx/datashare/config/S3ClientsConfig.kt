@@ -19,6 +19,7 @@ class S3ClientsConfig(private val s3Config: S3Config) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
+
   @Bean
   @ConditionalOnExpression("T(org.springframework.util.StringUtils).isEmpty('\${api.base.s3.localstack-url:}')")
   fun amazonS3(): AmazonS3 =

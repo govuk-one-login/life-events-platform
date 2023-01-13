@@ -13,7 +13,7 @@ import java.util.*
 @Transactional
 class ConsumersService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val consumerRepository: ConsumerRepository
+  private val consumerRepository: ConsumerRepository,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -28,7 +28,7 @@ class ConsumersService(
 
   suspend fun addConsumerSubscription(
     consumerId: UUID,
-    consumerSubRequest: ConsumerSubRequest
+    consumerSubRequest: ConsumerSubRequest,
   ): ConsumerSubscription {
     with(consumerSubRequest) {
       return consumerSubscriptionRepository.save(
@@ -37,8 +37,8 @@ class ConsumersService(
           oauthClientId = oauthClientId,
           pushUri = pushUri,
           ingressEventType = ingressEventType,
-          enrichmentFields = enrichmentFields
-        )
+          enrichmentFields = enrichmentFields,
+        ),
       )
     }
   }
@@ -46,7 +46,7 @@ class ConsumersService(
   suspend fun updateConsumerSubscription(
     consumerId: UUID,
     subscriptionId: UUID,
-    consumerSubRequest: ConsumerSubRequest
+    consumerSubRequest: ConsumerSubRequest,
   ): ConsumerSubscription {
     with(consumerSubRequest) {
       return consumerSubscriptionRepository.save(
@@ -55,20 +55,20 @@ class ConsumersService(
           oauthClientId = oauthClientId,
           pushUri = pushUri,
           ingressEventType = ingressEventType,
-          enrichmentFields = enrichmentFields
-        ) ?: throw RuntimeException("Subscription $subscriptionId not found")
+          enrichmentFields = enrichmentFields,
+        ) ?: throw RuntimeException("Subscription $subscriptionId not found"),
       )
     }
   }
 
   suspend fun addConsumer(
-    consumerRequest: ConsumerRequest
+    consumerRequest: ConsumerRequest,
   ): Consumer {
     with(consumerRequest) {
       return consumerRepository.save(
         Consumer(
-          name = name
-        )
+          name = name,
+        ),
       )
     }
   }
@@ -84,15 +84,15 @@ data class ConsumerSubRequest(
   @Schema(
     description = "URI where to push data, can be s3 or http",
     required = false,
-    example = "http://localhost/callback"
+    example = "http://localhost/callback",
   )
   val pushUri: String? = null,
   @Schema(
     description = "CSV List of required fields to enrich the event with",
     required = true,
-    example = "firstName,lastName"
+    example = "firstName,lastName",
   )
-  val enrichmentFields: String
+  val enrichmentFields: String,
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

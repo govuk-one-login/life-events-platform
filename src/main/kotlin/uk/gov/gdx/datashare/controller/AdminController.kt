@@ -20,7 +20,7 @@ import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 @Tag(name = "01. Admin")
 class AdminController(
   private val egressEventDataRepository: EgressEventDataRepository,
-  private val ingressEventDataRepository: IngressEventDataRepository
+  private val ingressEventDataRepository: IngressEventDataRepository,
 ) {
   @GetMapping("/events/egress")
   @Operation(
@@ -29,9 +29,9 @@ class AdminController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Egress Event"
-      )
-    ]
+        description = "Egress Event",
+      ),
+    ],
   )
   suspend fun getEgressEvents() = egressEventDataRepository.findAll().toList()
 
@@ -42,9 +42,9 @@ class AdminController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Ingress Event"
-      )
-    ]
+        description = "Ingress Event",
+      ),
+    ],
   )
   suspend fun getIngressEvents() = ingressEventDataRepository.findAll().toList()
 }

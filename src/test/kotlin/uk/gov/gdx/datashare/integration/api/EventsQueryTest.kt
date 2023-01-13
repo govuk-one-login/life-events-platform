@@ -1,7 +1,6 @@
 package uk.gov.gdx.datashare.integration.api
 
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.integration.IntegrationTestBase
 import uk.gov.gdx.datashare.integration.SqsIntegrationTestBase
 
 class EventsQueryTest : SqsIntegrationTestBase() {

@@ -22,7 +22,7 @@ data class IngressEventData(
 
   @Transient
   @Value("false")
-  val new: Boolean = true
+  val new: Boolean = true,
 
 ) : Persistable<UUID> {
 

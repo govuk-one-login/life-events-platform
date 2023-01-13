@@ -41,7 +41,7 @@ class EventsControllerTest {
     every { meterRegistry.counter("API_CALLS.GetEventsStatus", *anyVararg()) }.returns(getEventsStatusCounter)
     every { meterRegistry.counter("API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventCounter)
     every { meterRegistry.counter("SUCCESSFUL_API_CALLS.PublishEvent", *anyVararg()) }.returns(
-      publishEventSuccessCounter
+      publishEventSuccessCounter,
     )
     every { meterRegistry.counter("SUCCESSFUL_API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventSuccessCounter)
     every { publishEventCounter.increment() }.returns(Unit)
@@ -61,12 +61,12 @@ class EventsControllerTest {
       val eventStatuses = flowOf(
         EventStatus(
           eventType = "DEATH_NOTIFICATION",
-          count = 123
+          count = 123,
         ),
         EventStatus(
           eventType = "LIFE_EVENT",
-          count = 456
-        )
+          count = 456,
+        ),
       )
 
       coEvery { eventDataService.getEventsStatus(startTime, endTime) }.returns(eventStatuses)
@@ -90,8 +90,8 @@ class EventsControllerTest {
           eventType = "DEATH_NOTIFICATION",
           sourceId = UUID.randomUUID().toString(),
           eventData = DeathNotificationDetails(
-            firstName = "Bob"
-          )
+            firstName = "Bob",
+          ),
         ),
         EventNotification(
           eventId = UUID.randomUUID(),
@@ -99,8 +99,8 @@ class EventsControllerTest {
           sourceId = UUID.randomUUID().toString(),
           eventData = DeathNotificationDetails(
             firstName = "Bob",
-            lastName = "Smith"
-          )
+            lastName = "Smith",
+          ),
         ),
       )
 
@@ -121,7 +121,7 @@ class EventsControllerTest {
         eventType = "DEATH_NOTIFICATION",
         eventTime = LocalDateTime.now(),
         id = "123456789",
-        eventDetails = "{\"firstName\":\"Bob\"}"
+        eventDetails = "{\"firstName\":\"Bob\"}",
       )
 
       coEvery { dataReceiverService.sendToDataProcessor(any()) }.returns(Unit)
@@ -141,8 +141,8 @@ class EventsControllerTest {
         eventType = "DEATH_NOTIFICATION",
         sourceId = UUID.randomUUID().toString(),
         eventData = DeathNotificationDetails(
-          firstName = "Bob"
-        )
+          firstName = "Bob",
+        ),
       )
 
       coEvery { eventDataService.getEvent(event.eventId) }.returns(event)

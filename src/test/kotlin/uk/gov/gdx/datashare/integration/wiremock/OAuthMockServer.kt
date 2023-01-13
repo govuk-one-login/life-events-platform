@@ -24,9 +24,9 @@ class OAuthMockServer : WireMockServer(WIREMOCK_PORT) {
                     "token_type": "bearer",
                     "access_token": "ABCDE"
                 }
-              """.trimIndent()
-            )
-        )
+              """.trimIndent(),
+            ),
+        ),
     )
   }
 
@@ -65,9 +65,9 @@ class OAuthMockServer : WireMockServer(WIREMOCK_PORT) {
                                     "PS512"
                                   ]
                                 }                                
-              """.trimIndent()
-            )
-        )
+              """.trimIndent(),
+            ),
+        ),
 
     )
   }

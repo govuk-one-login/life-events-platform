@@ -30,7 +30,7 @@ class ConsumersServiceTest {
       val savedConsumers = flowOf(
         Consumer(name = "Consumer1"),
         Consumer(name = "Consumer2"),
-        Consumer(name = "Consumer3")
+        Consumer(name = "Consumer3"),
       )
 
       coEvery { consumerRepository.findAll() }.returns(savedConsumers)
@@ -49,17 +49,17 @@ class ConsumersServiceTest {
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
       )
 
@@ -79,17 +79,17 @@ class ConsumersServiceTest {
         ConsumerSubscription(
           consumerId = consumer.id,
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = consumer.id,
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = consumer.id,
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
       )
 
@@ -118,7 +118,7 @@ class ConsumersServiceTest {
             assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
             assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
             assertThat(it.ingressEventType).isEqualTo(consumerSubRequest.ingressEventType)
-          }
+          },
         )
       }
     }
@@ -142,7 +142,7 @@ class ConsumersServiceTest {
             assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
             assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
             assertThat(it.ingressEventType).isEqualTo(consumerSubRequest.ingressEventType)
-          }
+          },
         )
       }
     }
@@ -167,7 +167,7 @@ class ConsumersServiceTest {
   fun `addConsumer adds consumer`() {
     runBlocking {
       val consumerRequest = ConsumerRequest(
-        name = "Consumer"
+        name = "Consumer",
       )
 
       coEvery { consumerRepository.save(any()) }.returns(consumer)
@@ -178,7 +178,7 @@ class ConsumersServiceTest {
         consumerRepository.save(
           withArg {
             assertThat(it.name).isEqualTo(consumerRequest.name)
-          }
+          },
         )
       }
     }
@@ -190,7 +190,7 @@ class ConsumersServiceTest {
     oauthClientId = "pollClientId",
     pushUri = "pushUri",
     ingressEventType = "DEATH_NOTIFICATION",
-    enrichmentFields = "a,b,c"
+    enrichmentFields = "a,b,c",
   )
   private val consumerSubRequest = ConsumerSubRequest(
     ingressEventType = "DEATH_NOTIFICATIONNew",

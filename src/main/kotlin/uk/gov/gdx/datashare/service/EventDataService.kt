@@ -43,7 +43,7 @@ class EventDataService(
 
   suspend fun getEventsStatus(
     optionalStartTime: LocalDateTime?,
-    optionalEndTime: LocalDateTime?
+    optionalEndTime: LocalDateTime?,
   ): Flow<EventStatus> {
     val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
     val endTime = optionalEndTime ?: dateTimeHandler.now()
@@ -54,13 +54,13 @@ class EventDataService(
     return consumerSubscriptions.map {
       EventStatus(
         eventType = it.ingressEventType,
-        count = egressEventDataRepository.findAllByConsumerSubscription(it.id, startTime, endTime).count()
+        count = egressEventDataRepository.findAllByConsumerSubscription(it.id, startTime, endTime).count(),
       )
     }
   }
 
   suspend fun getEvent(
-    id: UUID
+    id: UUID,
   ): EventNotification? {
     val clientId = authenticationFacade.getUsername()
     val event = egressEventDataRepository.findByClientIdAndId(clientId, id)
@@ -83,7 +83,7 @@ class EventDataService(
   suspend fun getEvents(
     eventTypes: List<String>?,
     optionalStartTime: LocalDateTime?,
-    optionalEndTime: LocalDateTime?
+    optionalEndTime: LocalDateTime?,
   ): Flow<EventNotification> {
     val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
     val endTime = optionalEndTime ?: dateTimeHandler.now()
@@ -102,7 +102,7 @@ class EventDataService(
     val egressEvents = egressEventDataRepository.findAllByConsumerSubscriptions(
       consumerSubscriptionIdMap.keys.toList(),
       startTime,
-      endTime
+      endTime,
     )
 
     return egressEvents.map {
@@ -143,13 +143,13 @@ data class EventNotification(
     description = "Event's Type",
     required = true,
     example = "DEATH_NOTIFICATION",
-    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
   val eventType: String,
   @Schema(description = "ID from the source of the notification", required = true, example = "999999901")
   val sourceId: String,
   @Schema(description = "Event Data", required = false)
-  val eventData: Any?
+  val eventData: Any?,
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -159,7 +159,7 @@ data class EventStatus(
     description = "Event's Type",
     required = true,
     example = "DEATH_NOTIFICATION",
-    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
   val eventType: String,
   @Schema(description = "Number of events for the type", required = true, example = "123")

@@ -15,7 +15,7 @@ interface PublisherSubscriptionRepository : CoroutineCrudRepository<PublisherSub
   @Query(
     "SELECT ps.* FROM publisher_subscription ps " +
       "JOIN publisher p ON ps.publisher_id = p.id " +
-      "AND p.id = :id"
+      "AND p.id = :id",
   )
   fun findAllByPublisherId(id: UUID): Flow<PublisherSubscription>
 }

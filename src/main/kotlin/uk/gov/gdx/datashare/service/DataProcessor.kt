@@ -15,7 +15,7 @@ class DataProcessor(
   private val auditService: AuditService,
   private val ingressEventDataRepository: IngressEventDataRepository,
   private val objectMapper: ObjectMapper,
-  private val deathNotificationService: DeathNotificationService
+  private val deathNotificationService: DeathNotificationService,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -23,7 +23,6 @@ class DataProcessor(
 
   @JmsListener(destination = "dataprocessor", containerFactory = "awsQueueContainerFactoryProxy")
   fun onGovEvent(message: String) {
-
     runBlocking {
       val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
       log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
@@ -33,7 +32,7 @@ class DataProcessor(
         auditType = AuditType.EVENT_OCCURRED,
         id = dataProcessorMessage.eventTypeId,
         details = dataProcessorMessage.details ?: "NONE",
-        username = dataProcessorMessage.publisher
+        username = dataProcessorMessage.publisher,
       )
 
       val ingressEventId = UUID.randomUUID()
@@ -57,7 +56,7 @@ class DataProcessor(
         "DEATH_NOTIFICATION" -> deathNotificationService.saveDeathNotificationEvents(
           eventData,
           details,
-          dataProcessorMessage
+          dataProcessorMessage,
         )
 
         "LIFE_EVENT" -> print("x == 2")
@@ -88,5 +87,5 @@ class DataProcessor(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class DataDetail(
   var id: String,
-  var data: Any? = null
+  var data: Any? = null,
 )

@@ -30,13 +30,13 @@ class JwtAuthHelper {
   fun setAuthorisation(
     user: String = "a-client",
     roles: List<String> = listOf(),
-    scopes: List<String> = listOf()
+    scopes: List<String> = listOf(),
   ): (HttpHeaders) -> Unit {
     val token = createJwt(
       subject = user,
       scope = scopes,
       expiryTime = Duration.ofHours(1L),
-      roles = roles
+      roles = roles,
     )
     return { it.set(HttpHeaders.AUTHORIZATION, "Bearer $token") }
   }
@@ -46,7 +46,7 @@ class JwtAuthHelper {
     scope: List<String>? = listOf(),
     roles: List<String>? = listOf(),
     expiryTime: Duration = Duration.ofHours(1),
-    jwtId: String = UUID.randomUUID().toString()
+    jwtId: String = UUID.randomUUID().toString(),
   ): String =
     mutableMapOf<String, Any>()
       .also { subject?.let { subject -> it["user_name"] = subject } }

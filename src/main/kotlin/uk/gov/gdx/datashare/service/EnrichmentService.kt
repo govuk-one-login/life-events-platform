@@ -8,7 +8,7 @@ class EnrichmentService {
     inline fun <reified T : Any> getDataWithOnlyFields(
       objectMapper: ObjectMapper,
       completeObject: T?,
-      enrichmentFields: List<String>
+      enrichmentFields: List<String>,
     ): T? {
       if (completeObject == null) {
         return null

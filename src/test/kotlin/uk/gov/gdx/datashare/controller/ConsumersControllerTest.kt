@@ -24,10 +24,10 @@ class ConsumersControllerTest {
     runBlocking {
       val consumers = flowOf(
         Consumer(
-          name = "Consumer 1"
+          name = "Consumer 1",
         ),
         Consumer(
-          name = "Consumer 2"
+          name = "Consumer 2",
         ),
       )
 
@@ -44,7 +44,7 @@ class ConsumersControllerTest {
   fun `addConsumer adds consumer`() {
     runBlocking {
       val consumerRequest = ConsumerRequest(
-        name = "Consumer"
+        name = "Consumer",
       )
       val consumer = Consumer(name = consumerRequest.name)
 
@@ -63,17 +63,17 @@ class ConsumersControllerTest {
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
       )
 
@@ -94,17 +94,17 @@ class ConsumersControllerTest {
         ConsumerSubscription(
           consumerId = consumerId,
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = consumerId,
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = consumerId,
           ingressEventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c"
+          enrichmentFields = "a,b,c",
         ),
       )
 

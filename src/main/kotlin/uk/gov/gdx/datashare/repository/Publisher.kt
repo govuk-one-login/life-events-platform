@@ -24,7 +24,7 @@ data class Publisher(
   @Transient
   @Value("false")
   @JsonIgnore
-  val new: Boolean = true
+  val new: Boolean = true,
 
 ) : Persistable<UUID> {
   override fun getId(): UUID = publisherId

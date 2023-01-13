@@ -24,10 +24,10 @@ class PublishersControllerTest {
     runBlocking {
       val publishers = flowOf(
         Publisher(
-          name = "Publisher 1"
+          name = "Publisher 1",
         ),
         Publisher(
-          name = "Publisher 2"
+          name = "Publisher 2",
         ),
       )
 
@@ -44,7 +44,7 @@ class PublishersControllerTest {
   fun `addPublisher adds publisher`() {
     runBlocking {
       val publisherRequest = PublisherRequest(
-        name = "Publisher"
+        name = "Publisher",
       )
       val publisher = Publisher(name = publisherRequest.name)
 
@@ -64,19 +64,19 @@ class PublishersControllerTest {
           publisherId = UUID.randomUUID(),
           clientId = "Client-1",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
         PublisherSubscription(
           publisherId = UUID.randomUUID(),
           clientId = "Client-2",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
         PublisherSubscription(
           publisherId = UUID.randomUUID(),
           clientId = "Client-3",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
       )
 
@@ -98,19 +98,19 @@ class PublishersControllerTest {
           publisherId = publisherId,
           clientId = "Client-1",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
         PublisherSubscription(
           publisherId = publisherId,
           clientId = "Client-2",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
         PublisherSubscription(
           publisherId = publisherId,
           clientId = "Client-3",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
       )
 
@@ -130,13 +130,13 @@ class PublishersControllerTest {
       val publisherSubscriptionRequest = PublisherSubRequest(
         clientId = "Client-New",
         eventTypeId = "DEATH_NOTIFICATION_NEW",
-        datasetId = "LEV_NEW"
+        datasetId = "LEV_NEW",
       )
       val publisherSubscription = PublisherSubscription(
         publisherId = publisherId,
         clientId = "Client-New",
         eventTypeId = "DEATH_NOTIFICATION_NEW",
-        datasetId = "LEV_NEW"
+        datasetId = "LEV_NEW",
       )
 
       coEvery { publishersService.addPublisherSubscription(publisherId, any()) }.returns(publisherSubscription)
@@ -155,14 +155,14 @@ class PublishersControllerTest {
       val publisherSubscriptionRequest = PublisherSubRequest(
         clientId = "Client-New",
         eventTypeId = "DEATH_NOTIFICATION_NEW",
-        datasetId = "LEV_NEW"
+        datasetId = "LEV_NEW",
       )
       val publisherSubscription = PublisherSubscription(
         publisherId = publisherId,
         publisherSubscriptionId = subscriptionId,
         clientId = "Client-New",
         eventTypeId = "DEATH_NOTIFICATION_NEW",
-        datasetId = "LEV_NEW"
+        datasetId = "LEV_NEW",
       )
 
       coEvery { publishersService.updatePublisherSubscription(publisherId, subscriptionId, any()) }.returns(publisherSubscription)

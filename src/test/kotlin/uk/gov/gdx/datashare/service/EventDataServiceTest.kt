@@ -38,7 +38,7 @@ class EventDataServiceTest {
 
   init {
     every { meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion", *anyVararg()) }.returns(
-      dataCreationToDeletionTimer
+      dataCreationToDeletionTimer,
     )
     every { dataCreationToDeletionTimer.record(any<Duration>()) }.returns(Unit)
     underTest = EventDataService(
@@ -68,21 +68,21 @@ class EventDataServiceTest {
         egressEventDataRepository.findAllByConsumerSubscription(
           deathNotificationSubscription.id,
           startTime,
-          endTime
+          endTime,
         )
       }.returns(deathEvents)
       coEvery {
         egressEventDataRepository.findAllByConsumerSubscription(
           lifeEventSubscription.id,
           startTime,
-          endTime
+          endTime,
         )
       }.returns(lifeEvents)
       coEvery {
         egressEventDataRepository.findAllByConsumerSubscription(
           UUID.randomUUID(),
           startTime,
-          endTime
+          endTime,
         )
       }.returns(extraDeathEvents)
 
@@ -91,8 +91,8 @@ class EventDataServiceTest {
       assertThat(eventStatusOutput).isEqualTo(
         listOf(
           EventStatus(eventType = deathNotificationSubscription.ingressEventType, count = 4),
-          EventStatus(eventType = lifeEventSubscription.ingressEventType, count = 7)
-        )
+          EventStatus(eventType = lifeEventSubscription.ingressEventType, count = 7),
+        ),
       )
     }
   }
@@ -108,14 +108,14 @@ class EventDataServiceTest {
 
       coEvery { consumerSubscriptionRepository.findAllByClientId(clientId) }.returns(
         flowOf(
-          deathNotificationSubscription
-        )
+          deathNotificationSubscription,
+        ),
       )
       coEvery {
         egressEventDataRepository.findAllByConsumerSubscription(
           deathNotificationSubscription.id,
           fallbackStartTime,
-          fallbackEndTime
+          fallbackEndTime,
         )
       }.returns(deathEvents)
 
@@ -123,14 +123,14 @@ class EventDataServiceTest {
 
       assertThat(eventStatusOutput).isEqualTo(
         listOf(
-          EventStatus(eventType = deathNotificationSubscription.ingressEventType, count = 4)
-        )
+          EventStatus(eventType = deathNotificationSubscription.ingressEventType, count = 4),
+        ),
       )
       coVerify(exactly = 1) {
         egressEventDataRepository.findAllByConsumerSubscription(
           deathNotificationSubscription.id,
           fallbackStartTime,
-          fallbackEndTime
+          fallbackEndTime,
         )
       }
     }
@@ -143,7 +143,7 @@ class EventDataServiceTest {
       val deathNotificationDetails = DeathNotificationDetails(
         firstName = "Alice",
         lastName = "Smith",
-        address = deathNotificationSubscription.id.toString()
+        address = deathNotificationSubscription.id.toString(),
       )
 
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
@@ -158,7 +158,7 @@ class EventDataServiceTest {
           eventType = "DEATH_NOTIFICATION",
           sourceId = event.dataId,
           eventData = deathNotificationDetails,
-        )
+        ),
       )
     }
   }
@@ -199,7 +199,7 @@ class EventDataServiceTest {
       val deathNotificationDetails = DeathNotificationDetails(
         firstName = "Alice",
         lastName = "Smith",
-        address = deathNotificationSubscription.id.toString()
+        address = deathNotificationSubscription.id.toString(),
       )
 
       coEvery { consumerSubscriptionRepository.findAllByIngressEventTypesAndClientId(clientId, eventTypes) }
@@ -208,7 +208,7 @@ class EventDataServiceTest {
         egressEventDataRepository.findAllByConsumerSubscriptions(
           listOf(deathNotificationSubscription.id),
           startTime,
-          endTime
+          endTime,
         )
       }.returns(deathEvents)
       val dataPayload = deathEvents.toList()[0].dataPayload!!
@@ -224,7 +224,7 @@ class EventDataServiceTest {
             sourceId = it.dataId,
             eventData = deathNotificationDetails,
           )
-        }.toList()
+        }.toList(),
       )
     }
   }
@@ -241,7 +241,7 @@ class EventDataServiceTest {
       val deathNotificationDetails = DeathNotificationDetails(
         firstName = "Bob",
         lastName = "Smith",
-        address = deathNotificationSubscription.id.toString()
+        address = deathNotificationSubscription.id.toString(),
       )
 
       coEvery { consumerSubscriptionRepository.findAllByClientId(clientId) }
@@ -250,7 +250,7 @@ class EventDataServiceTest {
         egressEventDataRepository.findAllByConsumerSubscriptions(
           listOf(deathNotificationSubscription.id),
           fallbackStartTime,
-          fallbackEndTime
+          fallbackEndTime,
         )
       }.returns(extraDeathEvents)
       val dataPayload = extraDeathEvents.toList()[0].dataPayload!!
@@ -266,7 +266,7 @@ class EventDataServiceTest {
             sourceId = it.dataId,
             eventData = deathNotificationDetails,
           )
-        }.toList()
+        }.toList(),
       )
     }
   }
@@ -279,13 +279,13 @@ class EventDataServiceTest {
         ingressEventId = UUID.randomUUID(),
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataPayload = null
+        dataPayload = null,
       )
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
       coEvery { egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId) }.returns(
         getEgressEvents(
-          10
-        ).asFlow()
+          10,
+        ).asFlow(),
       )
 
       coEvery { egressEventDataRepository.delete(egressEvent) }.returns(Unit)
@@ -305,7 +305,7 @@ class EventDataServiceTest {
         ingressEventId = UUID.randomUUID(),
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataPayload = null
+        dataPayload = null,
       )
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
       coEvery { egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId) }.returns(emptyList<EgressEventData>().asFlow())
@@ -358,7 +358,7 @@ class EventDataServiceTest {
   private fun getEgressEvents(
     count: Int,
     firstName: String = "Alice",
-    subscriptionId: UUID = UUID.randomUUID()
+    subscriptionId: UUID = UUID.randomUUID(),
   ): List<EgressEventData> =
     List(count) {
       EgressEventData(
@@ -366,7 +366,7 @@ class EventDataServiceTest {
         ingressEventId = UUID.randomUUID(),
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataPayload = "{\"firstName\":\"$firstName\",\"lastName\":\"Smith\",\"age\":12,\"address\":\"$subscriptionId\"}"
+        dataPayload = "{\"firstName\":\"$firstName\",\"lastName\":\"Smith\",\"age\":12,\"address\":\"$subscriptionId\"}",
       )
     }
 }

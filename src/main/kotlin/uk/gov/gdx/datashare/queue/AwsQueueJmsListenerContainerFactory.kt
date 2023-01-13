@@ -9,7 +9,7 @@ class JmsListenerContainerFactoryMissingException(message: String) : RuntimeExce
 
 data class AwsQueueDestinationContainerFactory(
   val destination: String,
-  val factory: DefaultJmsListenerContainerFactory
+  val factory: DefaultJmsListenerContainerFactory,
 )
 
 class AwsQueueJmsListenerContainerFactory(private val factories: List<AwsQueueDestinationContainerFactory>) : DefaultJmsListenerContainerFactory() {

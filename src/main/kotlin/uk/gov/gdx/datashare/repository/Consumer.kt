@@ -24,7 +24,7 @@ data class Consumer(
   @Transient
   @Value("false")
   @JsonIgnore
-  val new: Boolean = true
+  val new: Boolean = true,
 
 ) : Persistable<UUID> {
 

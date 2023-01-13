@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.controller.EventToPublish
-import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueService
+import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDateTime
 import java.util.*
 
@@ -34,11 +34,10 @@ class DataReceiverService(
   }
 
   suspend fun sendToDataProcessor(eventPayload: EventToPublish) {
-
     // check if client is allowed to send
     val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
       authenticationFacade.getUsername(),
-      eventPayload.eventType
+      eventPayload.eventType,
     ) ?: throw RuntimeException("${authenticationFacade.getUsername()} does not have permission")
 
     val dataSet = eventDatasetRepository.findById(subscription.datasetId)
@@ -61,20 +60,22 @@ class DataReceiverService(
       storePayload = dataSet.storePayload,
       details = if (dataSet.storePayload) {
         eventPayload.eventDetails
-      } else null
+      } else {
+        null
+      },
     )
 
     log.debug(
       "Notifying Data Processor of event type {} from {}",
       dataProcessorMessage.eventTypeId,
-      publisher.name
+      publisher.name,
     )
 
     dataReceiverSqsClient.sendMessage(
       SendMessageRequest(
         dataReceiverQueueUrl,
-        dataProcessorMessage.toJson()
-      )
+        dataProcessorMessage.toJson(),
+      ),
     )
   }
 

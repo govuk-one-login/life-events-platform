@@ -31,7 +31,7 @@ class PublishersService(
 
   suspend fun addPublisherSubscription(
     publisherId: UUID,
-    publisherSubRequest: PublisherSubRequest
+    publisherSubRequest: PublisherSubRequest,
   ): PublisherSubscription {
     with(publisherSubRequest) {
       return publisherSubscriptionRepository.save(
@@ -40,7 +40,7 @@ class PublishersService(
           clientId = clientId,
           eventTypeId = eventTypeId,
           datasetId = datasetId,
-        )
+        ),
       )
     }
   }
@@ -48,7 +48,7 @@ class PublishersService(
   suspend fun updatePublisherSubscription(
     publisherId: UUID,
     subscriptionId: UUID,
-    publisherSubRequest: PublisherSubRequest
+    publisherSubRequest: PublisherSubRequest,
   ): PublisherSubscription {
     with(publisherSubRequest) {
       return publisherSubscriptionRepository.save(
@@ -56,20 +56,20 @@ class PublishersService(
           publisherId = publisherId,
           clientId = clientId,
           eventTypeId = eventTypeId,
-          datasetId = datasetId
-        ) ?: throw RuntimeException("Subscription $subscriptionId not found")
+          datasetId = datasetId,
+        ) ?: throw RuntimeException("Subscription $subscriptionId not found"),
       )
     }
   }
 
   suspend fun addPublisher(
-    publisherRequest: PublisherRequest
+    publisherRequest: PublisherRequest,
   ): Publisher {
     with(publisherRequest) {
       return publisherRepository.save(
         Publisher(
-          name = name
-        )
+          name = name,
+        ),
       )
     }
   }
@@ -83,7 +83,7 @@ data class PublisherSubRequest(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventTypeId: String,
   @Schema(description = "Data Set", required = true, example = "DEATH_LEN")
-  val datasetId: String
+  val datasetId: String,
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

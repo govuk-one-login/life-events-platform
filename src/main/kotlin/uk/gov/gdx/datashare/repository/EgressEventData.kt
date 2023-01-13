@@ -18,7 +18,7 @@ data class EgressEventData(
   @Schema(
     description = "Ingress event ID for event that created this egress event",
     required = true,
-    example = "00000000-0000-0001-0000-000000000000"
+    example = "00000000-0000-0001-0000-000000000000",
   )
   val ingressEventId: UUID,
   @Schema(description = "Dataset ID", required = true, example = "00000000-0000-0001-0000-000000000000")
@@ -32,7 +32,7 @@ data class EgressEventData(
 
   @Transient
   @Value("false")
-  val new: Boolean = true
+  val new: Boolean = true,
 
 ) : Persistable<UUID> {
 

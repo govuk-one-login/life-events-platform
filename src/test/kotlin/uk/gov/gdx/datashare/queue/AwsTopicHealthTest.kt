@@ -71,7 +71,7 @@ class AwsTopicHealthTest {
   fun mockHealthyTopic() {
     whenever(snsClient.getTopicAttributes(anyString())).thenReturn(
       GetTopicAttributesResult()
-        .withAttributes(mapOf("SubscriptionsConfirmed" to "1", "SubscriptionsPending" to "2"))
+        .withAttributes(mapOf("SubscriptionsConfirmed" to "1", "SubscriptionsPending" to "2")),
     )
   }
 }

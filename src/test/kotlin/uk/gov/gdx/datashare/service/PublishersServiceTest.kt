@@ -27,7 +27,7 @@ class PublishersServiceTest {
       val savedPublishers = flowOf(
         Publisher(name = "Publisher1"),
         Publisher(name = "Publisher2"),
-        Publisher(name = "Publisher3")
+        Publisher(name = "Publisher3"),
       )
 
       coEvery { publisherRepository.findAll() }.returns(savedPublishers)
@@ -47,19 +47,19 @@ class PublishersServiceTest {
           publisherId = UUID.randomUUID(),
           clientId = "Client-1",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
         PublisherSubscription(
           publisherId = UUID.randomUUID(),
           clientId = "Client-2",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
         PublisherSubscription(
           publisherId = UUID.randomUUID(),
           clientId = "Client-3",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
       )
 
@@ -80,19 +80,19 @@ class PublishersServiceTest {
           publisherId = publisher.id,
           clientId = "Client-1",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
         PublisherSubscription(
           publisherId = publisher.id,
           clientId = "Client-2",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
         PublisherSubscription(
           publisherId = publisher.id,
           clientId = "Client-3",
           eventTypeId = "DEATH_NOTIFICATION",
-          datasetId = "LEV"
+          datasetId = "LEV",
         ),
       )
 
@@ -120,7 +120,7 @@ class PublishersServiceTest {
             assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
             assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
             assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
-          }
+          },
         )
       }
     }
@@ -143,7 +143,7 @@ class PublishersServiceTest {
             assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
             assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
             assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
-          }
+          },
         )
       }
     }
@@ -168,7 +168,7 @@ class PublishersServiceTest {
   fun `addPublisher adds publisher`() {
     runBlocking {
       val publisherRequest = PublisherRequest(
-        name = "Publisher"
+        name = "Publisher",
       )
 
       coEvery { publisherRepository.save(any()) }.returns(publisher)
@@ -179,7 +179,7 @@ class PublishersServiceTest {
         publisherRepository.save(
           withArg {
             assertThat(it.name).isEqualTo(publisherRequest.name)
-          }
+          },
         )
       }
     }
@@ -190,11 +190,11 @@ class PublishersServiceTest {
     publisherId = publisher.id,
     clientId = "Client",
     eventTypeId = "DEATH_NOTIFICATION",
-    datasetId = "LEV"
+    datasetId = "LEV",
   )
   private val publisherSubRequest = PublisherSubRequest(
     clientId = "Client-New",
     eventTypeId = "DEATH_NOTIFICATION_NEW",
-    datasetId = "LEV_NEW"
+    datasetId = "LEV_NEW",
   )
 }

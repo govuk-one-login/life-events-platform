@@ -14,7 +14,7 @@ import java.time.LocalDate
 @Service
 class LevApiService(
   private val levApiWebClient: WebClient,
-  meterRegistry: MeterRegistry
+  meterRegistry: MeterRegistry,
 ) {
   private val callsToLevCounter: Counter = meterRegistry.counter("API_CALLS.CallsToLev")
   private val responsesFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromLev")
@@ -29,8 +29,11 @@ class LevApiService(
       responsesFromLevCounter.increment()
       return deathRecord
     } catch (e: WebClientResponseException) {
-      throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) NoDataFoundException(id.toString())
-      else e
+      throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) {
+        NoDataFoundException(id.toString())
+      } else {
+        e
+      }
     }
   }
 }
@@ -45,7 +48,7 @@ data class DeathRecord(
 data class Partner(
   val name: String?,
   val occupation: String?,
-  val retired: String?
+  val retired: String?,
 )
 
 data class Deceased(

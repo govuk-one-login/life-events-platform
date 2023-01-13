@@ -28,7 +28,7 @@ class MicrometerConfiguration {
     return CloudWatchMeterRegistry(
       cloudWatchConfig,
       Clock.SYSTEM,
-      cloudWatchAsyncClient()
+      cloudWatchAsyncClient(),
     )
   }
 
@@ -36,7 +36,7 @@ class MicrometerConfiguration {
     val cloudWatchConfig = object : CloudWatchConfig {
       private val configuration = mapOf(
         "cloudwatch.namespace" to namespace,
-        "cloudwatch.step" to Duration.ofMinutes(1).toString()
+        "cloudwatch.step" to Duration.ofMinutes(1).toString(),
       )
 
       override fun get(key: String): String? {

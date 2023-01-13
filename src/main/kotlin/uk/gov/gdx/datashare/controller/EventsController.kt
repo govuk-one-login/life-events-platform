@@ -53,25 +53,27 @@ class EventsController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Count per type"
-      )
-    ]
+        description = "Count per type",
+      ),
+    ],
   )
   suspend fun getEventsStatus(
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "fromTime", required = false) startTime: LocalDateTime? = null,
+    @RequestParam(name = "fromTime", required = false)
+    startTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
-      required = false
+      required = false,
     )
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
+    @RequestParam(name = "toTime", required = false)
+    endTime: LocalDateTime? = null,
   ): List<EventStatus> = run {
     tryCallAndUpdateMetric(
       { eventDataService.getEventsStatus(startTime, endTime).toList() },
       getEventsStatusSuccessCounter,
-      getEventsStatusFailureCounter
+      getEventsStatusFailureCounter,
     )
   }
 
@@ -83,36 +85,39 @@ class EventsController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Events"
-      )
-    ]
+        description = "Events",
+      ),
+    ],
   )
   suspend fun getEvents(
     @Schema(
       description = "Event Types, if none supplied it will be the allowed types for this client",
       required = false,
-      allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+      allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
     )
-    @RequestParam(name = "eventType", required = false) eventTypes: List<String> = listOf(),
+    @RequestParam(name = "eventType", required = false)
+    eventTypes: List<String> = listOf(),
     @Schema(
       description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
       type = "date-time",
-      required = false
+      required = false,
     )
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "fromTime", required = false) startTime: LocalDateTime? = null,
+    @RequestParam(name = "fromTime", required = false)
+    startTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
-      required = false
+      required = false,
     )
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "toTime", required = false) endTime: LocalDateTime? = null
+    @RequestParam(name = "toTime", required = false)
+    endTime: LocalDateTime? = null,
   ): List<EventNotification> = run {
     tryCallAndUpdateMetric(
       { eventDataService.getEvents(eventTypes, startTime, endTime).toList() },
       getEventsSuccessCounter,
-      getEventsFailureCounter
+      getEventsFailureCounter,
     )
   }
 
@@ -124,9 +129,9 @@ class EventsController(
     responses = [
       ApiResponse(
         responseCode = "201",
-        description = "Data Accepted"
-      )
-    ]
+        description = "Data Accepted",
+      ),
+    ],
   )
   suspend fun publishEvent(
     @Schema(
@@ -134,12 +139,13 @@ class EventsController(
       required = true,
       implementation = EventToPublish::class,
     )
-    @RequestBody eventPayload: EventToPublish,
+    @RequestBody
+    eventPayload: EventToPublish,
   ) = run {
     tryCallAndUpdateMetric(
       { dataReceiverService.sendToDataProcessor(eventPayload) },
       publishEventSuccessCounter,
-      publishEventFailureCounter
+      publishEventFailureCounter,
     )
   }
 
@@ -151,13 +157,14 @@ class EventsController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Event"
-      )
-    ]
+        description = "Event",
+      ),
+    ],
   )
   suspend fun getEvent(
     @Schema(description = "Event ID", required = true)
-    @PathVariable id: UUID,
+    @PathVariable
+    id: UUID,
   ) = run {
     tryCallAndUpdateMetric({ eventDataService.getEvent(id) }, getEventSuccessCounter, getEventFailureCounter)
   }
@@ -170,13 +177,14 @@ class EventsController(
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Event deleted"
-      )
-    ]
+        description = "Event deleted",
+      ),
+    ],
   )
   suspend fun deleteEvent(
     @Schema(description = "Event ID", required = true)
-    @PathVariable id: UUID,
+    @PathVariable
+    id: UUID,
   ): ResponseEntity<Void> {
     try {
       eventDataService.deleteEvent(id)
@@ -191,7 +199,7 @@ class EventsController(
   private suspend fun <T> tryCallAndUpdateMetric(
     call: suspend () -> T,
     successCounter: Counter,
-    failureCounter: Counter
+    failureCounter: Counter,
   ): T {
     try {
       val result = call()
@@ -211,14 +219,14 @@ data class EventToPublish(
     description = "Type of event",
     required = true,
     example = "DEATH_NOTIFICATION",
-    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"]
+    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
   val eventType: String,
   @Schema(
     description = "Date and time when the event took place, default is now",
     required = false,
     type = "date-time",
-    example = "2021-12-31T12:34:56"
+    example = "2021-12-31T12:34:56",
   )
   @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
   val eventTime: LocalDateTime? = null,

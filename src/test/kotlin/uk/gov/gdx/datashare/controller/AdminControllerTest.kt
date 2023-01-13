@@ -11,7 +11,6 @@ import uk.gov.gdx.datashare.repository.EgressEventData
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventData
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
-import java.time.LocalDateTime
 import java.util.UUID
 
 class AdminControllerTest {
@@ -29,14 +28,14 @@ class AdminControllerTest {
           ingressEventId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
-          dataPayload = null
+          dataPayload = null,
         ),
         EgressEventData(
           consumerSubscriptionId = UUID.randomUUID(),
           ingressEventId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
-          dataPayload = "{\"firstName\":\"Bob\"}"
+          dataPayload = "{\"firstName\":\"Bob\"}",
         ),
       )
 
@@ -58,14 +57,14 @@ class AdminControllerTest {
           subscriptionId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
-          dataPayload = null
+          dataPayload = null,
         ),
         IngressEventData(
           eventTypeId = "DEATH_NOTIFICATION",
           subscriptionId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
-          dataPayload = "{\"firstName\":\"Bob\"}"
+          dataPayload = "{\"firstName\":\"Bob\"}",
         ),
       )
 

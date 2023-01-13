@@ -22,10 +22,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
-
 @Service
 @ConditionalOnProperty(name = ["api.base.consume-outbound-by-queue"], havingValue = "false")
-class LegacyAdaptorOutbound (
+class LegacyAdaptorOutbound(
   private val amazonS3: AmazonS3,
   private val s3Config: S3Config,
   private val objectMapper: ObjectMapper,
@@ -70,11 +69,12 @@ class LegacyAdaptorOutbound (
   }
 
   private fun buildJsonTree(events: List<EgressEventData>): JsonNode? =
-    objectMapper.readTree(objectMapper.writeValueAsString(
-      events.map {
-        objectMapper.readValue(it.dataPayload, JsonNode::class.java)
-      }.toList()
-    )
+    objectMapper.readTree(
+      objectMapper.writeValueAsString(
+        events.map {
+          objectMapper.readValue(it.dataPayload, JsonNode::class.java)
+        }.toList(),
+      ),
     )
 
   private fun buildCsvSchema(firstEvent: String): CsvSchema? {
@@ -85,7 +85,4 @@ class LegacyAdaptorOutbound (
     }
     return csvSchemaBuilder.build().withHeader()
   }
-
-
 }
-

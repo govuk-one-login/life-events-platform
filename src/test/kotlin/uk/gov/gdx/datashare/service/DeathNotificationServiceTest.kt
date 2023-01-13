@@ -30,7 +30,7 @@ class DeathNotificationServiceTest {
     egressEventDataRepository,
     eventPublishingService,
     levApiService,
-    objectMapper
+    objectMapper,
   )
 
   @Test
@@ -47,8 +47,8 @@ class DeathNotificationServiceTest {
         dateOfBirth = LocalDate.of(1910, 1, 1),
         dateOfDeath = LocalDate.of(2010, 12, 12),
         address = "666 Inform House, 6 Inform street, Informington, Informshire",
-        sex = "female"
-      )
+        sex = "female",
+      ),
     )
   }
 
@@ -83,11 +83,11 @@ class DeathNotificationServiceTest {
           dateOfDeath = LocalDate.of(2010, 1, 1),
           sex = "female",
           address = "666 Inform House, 6 Inform street, Informington, Informshire",
-          dateOfDeathQualifier = null
+          dateOfDeathQualifier = null,
         ),
         id = dataDetail.id,
         date = LocalDate.now(),
-        partner = null
+        partner = null,
       )
 
       coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
@@ -120,7 +120,7 @@ class DeathNotificationServiceTest {
               .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
             assertThat(complexEvent?.dataPayload)
               .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
-          }
+          },
         )
       }
       fakeSavedEvents.collect {
@@ -144,7 +144,7 @@ class DeathNotificationServiceTest {
       )
       val dataDetail = DataDetail(
         id = dataProcessorMessage.id!!,
-        data = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\""
+        data = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\"",
       )
 
       coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
@@ -176,7 +176,7 @@ class DeathNotificationServiceTest {
               .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
             assertThat(complexEvent?.dataPayload)
               .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
-          }
+          },
         )
       }
       fakeSavedEvents.collect {
@@ -196,7 +196,7 @@ class DeathNotificationServiceTest {
         storePayload = true,
         subscriptionId = UUID.randomUUID(),
         id = "123456789",
-        details = null
+        details = null,
       )
       val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
 
@@ -229,7 +229,7 @@ class DeathNotificationServiceTest {
               .isNull()
             assertThat(complexEvent?.dataPayload)
               .isNull()
-          }
+          },
         )
       }
       fakeSavedEvents.collect {
@@ -249,7 +249,7 @@ class DeathNotificationServiceTest {
         storePayload = true,
         subscriptionId = UUID.randomUUID(),
         id = "123456789",
-        details = null
+        details = null,
       )
       val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
 
@@ -272,25 +272,25 @@ class DeathNotificationServiceTest {
     subscriptionId = UUID.randomUUID(),
     datasetId = UUID.randomUUID().toString(),
     dataId = "HMPO",
-    dataPayload = null
+    dataPayload = null,
   )
   private val simpleSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
     ingressEventType = "DEATH_NOTIFICATION",
-    enrichmentFields = "firstName,lastName"
+    enrichmentFields = "firstName,lastName",
   )
   private val complexSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
     ingressEventType = "DEATH_NOTIFICATION",
-    enrichmentFields = "firstName,lastName,sex"
+    enrichmentFields = "firstName,lastName,sex",
   )
   private val consumerSubscriptions = flowOf(simpleSubscription, complexSubscription)
   private val simpleDeathNotificationDetails = DeathNotificationDetails(
     firstName = "Alice",
-    lastName = "Smith"
+    lastName = "Smith",
   )
   private val complexDeathNotificationDetails = simpleDeathNotificationDetails.copy(
-    sex = "female"
+    sex = "female",
   )
   private val fakeSavedEvents = flowOf(
     EgressEventData(
@@ -298,14 +298,14 @@ class DeathNotificationServiceTest {
       ingressEventId = UUID.randomUUID(),
       datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
-      dataPayload = null
+      dataPayload = null,
     ),
     EgressEventData(
       consumerSubscriptionId = UUID.randomUUID(),
       ingressEventId = UUID.randomUUID(),
       datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
-      dataPayload = null
-    )
+      dataPayload = null,
+    ),
   )
 }

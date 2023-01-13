@@ -53,8 +53,8 @@ class AwsQueueHealth(private val awsQueue: AwsQueue) : HealthIndicator {
           results += success(
             HealthDetail(
               "messagesOnDlq" to
-                """${attributesResult.attributes[ApproximateNumberOfMessages.toString()]}"""
-            )
+                """${attributesResult.attributes[ApproximateNumberOfMessages.toString()]}""",
+            ),
           )
         }.onFailure { throwable -> results += failure(throwable) }
       }

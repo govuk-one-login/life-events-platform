@@ -30,7 +30,7 @@ abstract class IntegrationTestBase : TestBase() {
   protected fun setAuthorisation(
     user: String = "a-client",
     roles: List<String> = listOf(),
-    scopes: List<String> = listOf()
+    scopes: List<String> = listOf(),
   ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes)
 
   companion object {
@@ -48,7 +48,6 @@ abstract class IntegrationTestBase : TestBase() {
     @AfterAll
     @JvmStatic
     fun stopMocks() {
-
       OauthMockServer.stop()
     }
   }

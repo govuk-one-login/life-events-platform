@@ -15,7 +15,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.gdx.datashare.config.S3Config
-import uk.gov.gdx.datashare.repository.EgressEventData
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -43,7 +42,7 @@ class SubscriptionBasedLegacyAdaptorOutbound(
   }
 
   private suspend fun processEvent(
-      id: UUID
+    id: UUID,
   ) {
     // Go and get data from Event Retrieval API
     val lifeEvent = getEventPayload(id)
@@ -69,7 +68,6 @@ class SubscriptionBasedLegacyAdaptorOutbound(
     return csvSchemaBuilder.build().withHeader()
   }
 
-
   suspend fun getEventPayload(id: UUID): EventNotification =
     eventDataRetrievalApiWebClient.get()
       .uri("/events/$id")
@@ -87,11 +85,11 @@ data class AttributeType(val Value: String, val Type: String)
 data class MessageAttributes(val eventType: AttributeType, val consumer: AttributeType)
 data class EventTopicMessage(
   val Message: String,
-  val MessageAttributes: MessageAttributes
+  val MessageAttributes: MessageAttributes,
 )
 
 data class EventMessage(
   val id: UUID,
   val occurredAt: OffsetDateTime,
-  val description: String
+  val description: String,
 )

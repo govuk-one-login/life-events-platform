@@ -37,7 +37,9 @@ class AwsQueueFactory(
       getOrDefaultBean("$queueId-sqs-dlq-client") {
         createSqsDlqClient(queueId, queueConfig, sqsProperties)
       }
-    } else null
+    } else {
+      null
+    }
 
   private fun getOrDefaultSqsClient(queueId: String, queueConfig: SqsProperties.QueueConfig, sqsProperties: SqsProperties, sqsDlqClient: AmazonSQS?): AmazonSQS =
     getOrDefaultBean("$queueId-sqs-client") {
@@ -93,7 +95,7 @@ class AwsQueueFactory(
     dlqName: String,
     maxReceiveCount: Int,
   ) {
-    if (dlqName.isEmpty() || sqsDlqClient==null) {
+    if (dlqName.isEmpty() || sqsDlqClient == null) {
       sqsClient.createQueue(CreateQueueRequest(queueName))
     } else {
       sqsDlqClient.getQueueUrl(dlqName).queueUrl
@@ -103,17 +105,17 @@ class AwsQueueFactory(
             CreateQueueRequest(queueName).withAttributes(
               mapOf(
                 QueueAttributeName.RedrivePolicy.toString() to
-                  """{"deadLetterTargetArn":"$queueArn","maxReceiveCount":"$maxReceiveCount"}"""
-              )
-            )
+                  """{"deadLetterTargetArn":"$queueArn","maxReceiveCount":"$maxReceiveCount"}""",
+              ),
+            ),
           )
         }
     }
   }
 
   private fun subscribeToLocalStackTopic(sqsProperties: SqsProperties, queueConfig: SqsProperties.QueueConfig, awsTopics: List<AwsTopic>) {
-    if (sqsProperties.provider=="localstack")
-      awsTopics.firstOrNull { topic -> topic.id==queueConfig.subscribeTopicId }
+    if (sqsProperties.provider == "localstack") {
+      awsTopics.firstOrNull { topic -> topic.id == queueConfig.subscribeTopicId }
         ?.also { topic ->
           val subscribeAttribute = if (queueConfig.subscribeFilter.isNullOrEmpty()) mapOf() else mapOf("FilterPolicy" to queueConfig.subscribeFilter)
           topic.snsClient.subscribe(
@@ -121,10 +123,11 @@ class AwsQueueFactory(
               .withTopicArn(topic.arn)
               .withProtocol("sqs")
               .withEndpoint("${sqsProperties.localstackUrl}/queue/${queueConfig.queueName}")
-              .withAttributes(subscribeAttribute)
+              .withAttributes(subscribeAttribute),
           )
             .also { log.info("Queue ${queueConfig.queueName} has subscribed to topic with arn ${topic.arn}") }
         }
+    }
   }
 
   fun createJmsListenerContainerFactory(awsSqsClient: AmazonSQS, sqsProperties: SqsProperties): DefaultJmsListenerContainerFactory =

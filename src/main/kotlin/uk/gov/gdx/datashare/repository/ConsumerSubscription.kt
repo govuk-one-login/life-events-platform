@@ -24,7 +24,7 @@ data class ConsumerSubscription(
   @Schema(
     description = "URI where to push data, can be s3 or http",
     required = false,
-    example = "http://localhost/callback"
+    example = "http://localhost/callback",
   )
   val pushUri: String? = null,
   @Schema(description = "Events Type of Ingress Notification", required = true, example = "DEATH_NOTIFICATION")
@@ -32,7 +32,7 @@ data class ConsumerSubscription(
   @Schema(
     description = "CSV List of required fields to enrich the event with",
     required = true,
-    example = "firstName,lastName"
+    example = "firstName,lastName",
   )
   val enrichmentFields: String,
   val whenCreated: LocalDateTime? = null,
@@ -40,7 +40,7 @@ data class ConsumerSubscription(
   @Transient
   @Value("false")
   @JsonIgnore
-  val new: Boolean = true
+  val new: Boolean = true,
 
 ) : Persistable<UUID> {
 

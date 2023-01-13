@@ -38,7 +38,7 @@ class AwsQueueFactoryTest {
   inner class `Create single AWS AwsQueue` {
     private val someQueueConfig = SqsProperties.QueueConfig(
       queueName = "some queue name",
-      dlqName = "some dlq name"
+      dlqName = "some dlq name",
     )
     private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig))
     private val sqsClient = mock<AmazonSQS>()
@@ -214,7 +214,7 @@ class AwsQueueFactoryTest {
       verify(sqsClient).createQueue(
         check<CreateQueueRequest> {
           assertThat(it.attributes).containsEntry("RedrivePolicy", """{"deadLetterTargetArn":"some dlq arn","maxReceiveCount":"5"}""")
-        }
+        },
       )
     }
 
@@ -228,7 +228,7 @@ class AwsQueueFactoryTest {
       verify(sqsClient).createQueue(
         check<CreateQueueRequest> {
           assertThat(it.attributes).containsEntry("RedrivePolicy", """{"deadLetterTargetArn":"some dlq arn","maxReceiveCount":"2"}""")
-        }
+        },
       )
     }
   }
@@ -237,7 +237,7 @@ class AwsQueueFactoryTest {
   inner class `Create multiple AWS AwsQueues` {
     private val someQueueConfig = SqsProperties.QueueConfig(
       queueName = "some queue name",
-      dlqName = "some dlq name"
+      dlqName = "some dlq name",
     )
     private val anotherQueueConfig = SqsProperties.QueueConfig(queueName = "another queue name", dlqName = "another dlq name")
     private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig, "anotherqueueid" to anotherQueueConfig))
@@ -290,10 +290,10 @@ class AwsQueueFactoryTest {
       subscribeTopicId = "sometopicid",
       subscribeFilter = "some topic filter",
       queueName = "some-queue-name",
-      dlqName = "some dlq name"
+      dlqName = "some dlq name",
     )
     private val someTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}some-topic-name"
+      arn = "${localstackArnPrefix}some-topic-name",
     )
     private val sqsProperties = SqsProperties(provider = "localstack", queues = mapOf("somequeueid" to someQueueConfig), topics = mapOf("sometopicid" to someTopicConfig))
     private val sqsClient = mock<AmazonSQS>()
@@ -328,7 +328,7 @@ class AwsQueueFactoryTest {
           assertThat(subscribeRequest.protocol).isEqualTo("sqs")
           assertThat(subscribeRequest.endpoint).isEqualTo("http://localhost:4566/queue/some-queue-name")
           assertThat(subscribeRequest.attributes["FilterPolicy"]).isEqualTo("some topic filter")
-        }
+        },
       )
     }
   }

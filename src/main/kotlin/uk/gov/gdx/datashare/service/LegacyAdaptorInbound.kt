@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 class LegacyAdaptorInbound(
   private val amazonS3: AmazonS3,
   private val s3Config: S3Config,
-  private val dataReceiverApiWebClient: WebClient
+  private val dataReceiverApiWebClient: WebClient,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -56,7 +56,6 @@ class LegacyAdaptorInbound(
   }
 
   suspend fun processBucketObject(objectKey: String) {
-
     try {
       log.debug("Retrieving object from S3: $objectKey")
       amazonS3.getObject(s3Config.ingressBucket, objectKey)
@@ -70,8 +69,8 @@ class LegacyAdaptorInbound(
                 EventToPublish(
                   id = certificateId(),
                   eventType = "DEATH_NOTIFICATION",
-                  eventDetails = "${lastName()},${firstName()},${dateOfBirth()},${dateOfDeath()},${gender()},\"${address()}\"" // TODO: decide whether to format etc
-                )
+                  eventDetails = "${lastName()},${firstName()},${dateOfBirth()},${dateOfDeath()},${gender()},\"${address()}\"", // TODO: decide whether to format etc
+                ),
               )
             }
           }
@@ -105,7 +104,7 @@ class LegacyAdaptorInbound(
       s3Config.ingressBucket,
       fileToArchive,
       s3Config.ingressArchiveBucket,
-      archiveFileName
+      archiveFileName,
     )
     log.info("Copied the existing file $fileToArchive to $archiveFileName")
     amazonS3.deleteObject(DeleteObjectRequest(s3Config.ingressBucket, fileToArchive))

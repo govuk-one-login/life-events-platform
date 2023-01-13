@@ -110,7 +110,7 @@ class AwsNoDlqQueueHealthTest {
   fun `should not show DLQ name if no dlq exists`() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithoutDLQ()
+      someGetQueueAttributesResultWithoutDLQ(),
     )
 
     val health = queueHealth.health()
@@ -122,7 +122,7 @@ class AwsNoDlqQueueHealthTest {
   fun `should not show DLQ status if no dlq exists`() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithoutDLQ()
+      someGetQueueAttributesResultWithoutDLQ(),
     )
 
     val health = queueHealth.health()
@@ -133,7 +133,7 @@ class AwsNoDlqQueueHealthTest {
   private fun mockHealthyQueue() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithoutDLQ()
+      someGetQueueAttributesResultWithoutDLQ(),
     )
   }
 
@@ -144,7 +144,7 @@ class AwsNoDlqQueueHealthTest {
   private fun someGetQueueAttributesResultWithoutDLQ() = GetQueueAttributesResult().withAttributes(
     mapOf(
       "ApproximateNumberOfMessages" to "$messagesOnQueueCount",
-      "ApproximateNumberOfMessagesNotVisible" to "$messagesInFlightCount"
-    )
+      "ApproximateNumberOfMessagesNotVisible" to "$messagesInFlightCount",
+    ),
   )
 }

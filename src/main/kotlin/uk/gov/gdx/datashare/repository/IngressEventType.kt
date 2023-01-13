@@ -21,7 +21,7 @@ data class IngressEventType(
 
   @Transient
   @Value("false")
-  val new: Boolean = true
+  val new: Boolean = true,
 
 ) : Persistable<String> {
   override fun getId() = eventTypeId

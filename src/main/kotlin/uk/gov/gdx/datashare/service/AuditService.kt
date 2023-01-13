@@ -27,20 +27,19 @@ class AuditService(
   }
 
   suspend fun sendMessage(auditType: AuditType, id: String, details: Any, username: String = "annon") {
-
     val auditEvent = AuditEvent(
       what = auditType.name,
       who = username,
       service = serviceName,
-      details = objectMapper.writeValueAsString(details)
+      details = objectMapper.writeValueAsString(details),
     )
     log.debug("Audit {} ", auditEvent)
 
     auditSqsClient.sendMessage(
       SendMessageRequest(
         auditQueueUrl,
-        auditEvent.toJson()
-      )
+        auditEvent.toJson(),
+      ),
     )
   }
 
@@ -59,5 +58,5 @@ enum class AuditType {
   EVENT_OCCURRED,
   DATA_SHARE_EVENT_PUBLISHED,
   PUSH_EVENT,
-  CLIENT_CONSUMED_EVENT
+  CLIENT_CONSUMED_EVENT,
 }

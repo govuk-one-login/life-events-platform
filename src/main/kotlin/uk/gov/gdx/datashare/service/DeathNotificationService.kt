@@ -32,14 +32,14 @@ class DeathNotificationService(
   suspend fun saveDeathNotificationEvents(
     eventData: IngressEventData,
     details: DataDetail,
-    dataProcessorMessage: DataProcessorMessage
+    dataProcessorMessage: DataProcessorMessage,
   ) {
     val consumerSubscriptions = consumerSubscriptionRepository.findAllByIngressEventType(eventData.eventTypeId)
 
     val fullyEnrichedData = getAllEnrichedData(
       dataProcessorMessage.datasetId,
       details.id,
-      details.data as String?
+      details.data as String?,
     )
     log.debug("Data enriched with details $fullyEnrichedData")
 
@@ -47,7 +47,7 @@ class DeathNotificationService(
       val dataPayload =
         enrichEventPayload(
           it.enrichmentFields.split(",").toList(),
-          fullyEnrichedData
+          fullyEnrichedData,
         )
 
       EgressEventData(
@@ -69,19 +69,19 @@ class DeathNotificationService(
 
   private suspend fun enrichEventPayload(
     enrichmentFields: List<String>,
-    fullyEnrichedData: DeathNotificationDetails?
+    fullyEnrichedData: DeathNotificationDetails?,
   ): DeathNotificationDetails? {
     return EnrichmentService.getDataWithOnlyFields(
       objectMapper,
       fullyEnrichedData,
-      enrichmentFields
+      enrichmentFields,
     )
   }
 
   private suspend fun getAllEnrichedData(
     datasetId: String,
     dataId: String,
-    dataPayload: String?
+    dataPayload: String?,
   ): DeathNotificationDetails? = when (datasetId) {
     "DEATH_LEV" -> {
       // get the data from the LEV
@@ -94,7 +94,7 @@ class DeathNotificationService(
             dateOfBirth = it.deceased?.dateOfBirth,
             dateOfDeath = it.deceased?.dateOfDeath,
             sex = it.deceased?.sex,
-            address = it.deceased?.address
+            address = it.deceased?.address,
           )
         }.first()
     }
@@ -112,7 +112,7 @@ class DeathNotificationService(
           csvLine[5]
         } else {
           null
-        }
+        },
       )
     }
 

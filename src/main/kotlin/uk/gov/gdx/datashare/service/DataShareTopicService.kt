@@ -31,8 +31,8 @@ class DataShareTopicService(awsQueueService: AwsQueueService, private val object
         eventId,
         consumer,
         occurredAt.atZone(ZoneId.systemDefault()).toInstant(),
-        "Gov Event: $eventType"
-      )
+        "Gov Event: $eventType",
+      ),
     )
   }
 
@@ -43,10 +43,10 @@ class DataShareTopicService(awsQueueService: AwsQueueService, private val object
         .withMessageAttributes(
           mapOf(
             "eventType" to MessageAttributeValue().withDataType("String").withStringValue(payload.eventType),
-            "consumer" to MessageAttributeValue().withDataType("String").withStringValue(payload.consumer.toString())
-          )
+            "consumer" to MessageAttributeValue().withDataType("String").withStringValue(payload.consumer.toString()),
+          ),
         )
-        .also { log.info("Published event $payload to outbound topic") }
+        .also { log.info("Published event $payload to outbound topic") },
     )
   }
 }
@@ -57,7 +57,7 @@ data class DataShareEvent(
   val consumer: String,
   val version: String,
   val occurredAt: String,
-  val description: String
+  val description: String,
 ) {
   constructor(
     eventType: String,
@@ -71,7 +71,7 @@ data class DataShareEvent(
     consumer,
     "1.0",
     occurredAt.toOffsetDateFormat(),
-    description
+    description,
   )
 }
 

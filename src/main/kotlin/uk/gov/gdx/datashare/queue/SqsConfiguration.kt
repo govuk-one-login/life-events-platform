@@ -33,7 +33,7 @@ class SqsConfiguration {
     awsTopicFactory: AwsTopicFactory,
     awsQueueFactory: AwsQueueFactory,
     sqsProperties: SqsProperties,
-    objectMapper: ObjectMapper
+    objectMapper: ObjectMapper,
   ) = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
 
   @Bean

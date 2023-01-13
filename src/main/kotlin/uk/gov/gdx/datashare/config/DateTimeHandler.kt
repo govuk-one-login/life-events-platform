@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Service
 class DateTimeHandler(
-  private val clock: Clock
+  private val clock: Clock,
 ) {
   fun now(): LocalDateTime = LocalDateTime.now(clock)
 

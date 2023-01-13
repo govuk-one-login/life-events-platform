@@ -25,7 +25,7 @@ import java.util.UUID
 @Validated
 @Tag(name = "02. Consumers")
 class ConsumersController(
-  private val consumersService: ConsumersService
+  private val consumersService: ConsumersService,
 ) {
   @GetMapping
   @Operation(
@@ -34,9 +34,9 @@ class ConsumersController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Consumers"
-      )
-    ]
+        description = "Consumers",
+      ),
+    ],
   )
   suspend fun getConsumers() = consumersService.getConsumers()
 
@@ -47,9 +47,9 @@ class ConsumersController(
     responses = [
       ApiResponse(
         responseCode = "201",
-        description = "Consumer Added"
-      )
-    ]
+        description = "Consumer Added",
+      ),
+    ],
   )
   suspend fun addConsumer(
     @Schema(
@@ -57,7 +57,8 @@ class ConsumersController(
       required = true,
       implementation = ConsumerRequest::class,
     )
-    @RequestBody consumerRequest: ConsumerRequest,
+    @RequestBody
+    consumerRequest: ConsumerRequest,
   ) = consumersService.addConsumer(consumerRequest)
 
   @GetMapping("/subscriptions")
@@ -67,9 +68,9 @@ class ConsumersController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Consumer Subscriptions"
-      )
-    ]
+        description = "Consumer Subscriptions",
+      ),
+    ],
   )
   suspend fun getConsumerSubscriptions() = consumersService.getConsumerSubscriptions()
 
@@ -80,13 +81,14 @@ class ConsumersController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Consumer Subscriptions"
-      )
-    ]
+        description = "Consumer Subscriptions",
+      ),
+    ],
   )
   suspend fun getSubscriptionsForConsumer(
     @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-    @PathVariable consumerId: UUID
+    @PathVariable
+    consumerId: UUID,
   ) = consumersService.getSubscriptionsForConsumer(consumerId)
 
   @PostMapping("/{consumerId}/subscriptions")
@@ -96,19 +98,21 @@ class ConsumersController(
     responses = [
       ApiResponse(
         responseCode = "201",
-        description = "Consumer Subscription Added"
-      )
-    ]
+        description = "Consumer Subscription Added",
+      ),
+    ],
   )
   suspend fun addConsumerSubscription(
     @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-    @PathVariable consumerId: UUID,
+    @PathVariable
+    consumerId: UUID,
     @Schema(
       description = "Consumer Subscription",
       required = true,
       implementation = ConsumerSubRequest::class,
     )
-    @RequestBody consumerSubRequest: ConsumerSubRequest,
+    @RequestBody
+    consumerSubRequest: ConsumerSubRequest,
   ) = consumersService.addConsumerSubscription(consumerId, consumerSubRequest)
 
   @PutMapping("/{consumerId}/subscriptions/{subscriptionId}")
@@ -118,20 +122,23 @@ class ConsumersController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Consumer Subscription Updated"
-      )
-    ]
+        description = "Consumer Subscription Updated",
+      ),
+    ],
   )
   suspend fun updateConsumerSubscription(
     @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-    @PathVariable consumerId: UUID,
+    @PathVariable
+    consumerId: UUID,
     @Schema(description = "Consumer Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-    @PathVariable subscriptionId: UUID,
+    @PathVariable
+    subscriptionId: UUID,
     @Schema(
       description = "Consumer Subscription to update",
       required = true,
       implementation = ConsumerSubRequest::class,
     )
-    @RequestBody consumerSubRequest: ConsumerSubRequest,
+    @RequestBody
+    consumerSubRequest: ConsumerSubRequest,
   ) = consumersService.updateConsumerSubscription(consumerId, subscriptionId, consumerSubRequest)
 }

@@ -27,14 +27,14 @@ class OpenApiConfiguration(
   fun customOpenAPI(): OpenAPI = OpenAPI()
     .servers(
       listOf(
-        Server().url("/").description("Current url")
-      )
+        Server().url("/").description("Current url"),
+      ),
     )
     .info(
       Info().title("GDX Data Share API")
         .version(version)
         .description("API for obtaining data about citizen life events")
-        .contact(Contact().name("GDX Vision Team").email("mike.willis@digital.cabinet-office.gov.uk"))
+        .contact(Contact().name("GDX Vision Team").email("mike.willis@digital.cabinet-office.gov.uk")),
     )
     .components(
       Components().addSecuritySchemes(
@@ -44,14 +44,14 @@ class OpenApiConfiguration(
           .scheme("bearer")
           .bearerFormat("JWT")
           .`in`(SecurityScheme.In.HEADER)
-          .name("Authorization")
+          .name("Authorization"),
       )
         .addSecuritySchemes(
           "cognito",
           SecurityScheme()
             .type(SecurityScheme.Type.OPENIDCONNECT)
-            .openIdConnectUrl("$issuerUri/.well-known/openid-configuration")
-        )
+            .openIdConnectUrl("$issuerUri/.well-known/openid-configuration"),
+        ),
     )
     .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
     .addSecurityItem(SecurityRequirement().addList("cognito"))
@@ -69,7 +69,7 @@ class OpenApiConfiguration(
               .example("2021-07-05T10:35:17")
               .pattern("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$")
               .description(propertySchema.description)
-              .required(propertySchema.required)
+              .required(propertySchema.required),
           )
         }
       }

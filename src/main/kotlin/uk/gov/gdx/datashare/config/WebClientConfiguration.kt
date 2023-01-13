@@ -20,7 +20,7 @@ import java.time.Duration
 class WebClientConfiguration(
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
   @Value("\${api.base.url.data-receiver}") private val dataReceiverUri: String,
-  @Value("\${api.base.url.event-data-retrieval}") private val eventDataRetrievalUri: String
+  @Value("\${api.base.url.event-data-retrieval}") private val eventDataRetrievalUri: String,
 ) {
 
   companion object {
@@ -75,7 +75,7 @@ class WebClientConfiguration(
 
     val authorizedClientManager = AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
       clientRegistrationRepository,
-      oAuth2AuthorizedClientService
+      oAuth2AuthorizedClientService,
     )
     authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
     return authorizedClientManager

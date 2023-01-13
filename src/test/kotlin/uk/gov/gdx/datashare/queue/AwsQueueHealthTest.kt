@@ -123,7 +123,7 @@ class AwsQueueHealthTest {
   fun `should show status DOWN if DLQ status is down`() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithoutDLQ()
+      someGetQueueAttributesResultWithoutDLQ(),
     )
 
     val health = queueHealth.health()
@@ -136,7 +136,7 @@ class AwsQueueHealthTest {
   fun `should show DLQ name if DLQ status is down`() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithoutDLQ()
+      someGetQueueAttributesResultWithoutDLQ(),
     )
 
     val health = queueHealth.health()
@@ -148,7 +148,7 @@ class AwsQueueHealthTest {
   fun `should show DLQ status DOWN if no RedrivePolicy attribute on main queue`() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithoutDLQ()
+      someGetQueueAttributesResultWithoutDLQ(),
     )
 
     val health = queueHealth.health()
@@ -160,7 +160,7 @@ class AwsQueueHealthTest {
   fun `should show DLQ status DOWN if DLQ not found`() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithDLQ()
+      someGetQueueAttributesResultWithDLQ(),
     )
     whenever(sqsDlqClient.getQueueUrl(dlqName)).thenThrow(QueueDoesNotExistException::class.java)
 
@@ -173,7 +173,7 @@ class AwsQueueHealthTest {
   fun `should show exception causing DLQ status DOWN`() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithDLQ()
+      someGetQueueAttributesResultWithDLQ(),
     )
     whenever(sqsDlqClient.getQueueUrl(dlqName)).thenThrow(QueueDoesNotExistException::class.java)
 
@@ -186,7 +186,7 @@ class AwsQueueHealthTest {
   fun `should show DLQ status DOWN if unable to retrieve DLQ attributes`() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithDLQ()
+      someGetQueueAttributesResultWithDLQ(),
     )
     whenever(sqsDlqClient.getQueueUrl(dlqName)).thenReturn(someGetQueueUrlResultForDLQ())
     whenever(sqsDlqClient.getQueueAttributes(someGetQueueAttributesRequestForDLQ())).thenThrow(RuntimeException::class.java)
@@ -199,11 +199,11 @@ class AwsQueueHealthTest {
   private fun mockHealthyQueue() {
     whenever(sqsClient.getQueueUrl(queueName)).thenReturn(someGetQueueUrlResult())
     whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
-      someGetQueueAttributesResultWithDLQ()
+      someGetQueueAttributesResultWithDLQ(),
     )
     whenever(sqsDlqClient.getQueueUrl(dlqName)).thenReturn(someGetQueueUrlResultForDLQ())
     whenever(sqsDlqClient.getQueueAttributes(someGetQueueAttributesRequestForDLQ())).thenReturn(
-      someGetQueueAttributesResultForDLQ()
+      someGetQueueAttributesResultForDLQ(),
     )
   }
 
@@ -214,16 +214,16 @@ class AwsQueueHealthTest {
   private fun someGetQueueAttributesResultWithoutDLQ() = GetQueueAttributesResult().withAttributes(
     mapOf(
       "ApproximateNumberOfMessages" to "$messagesOnQueueCount",
-      "ApproximateNumberOfMessagesNotVisible" to "$messagesInFlightCount"
-    )
+      "ApproximateNumberOfMessagesNotVisible" to "$messagesInFlightCount",
+    ),
   )
 
   private fun someGetQueueAttributesResultWithDLQ() = GetQueueAttributesResult().withAttributes(
     mapOf(
       "ApproximateNumberOfMessages" to "$messagesOnQueueCount",
       "ApproximateNumberOfMessagesNotVisible" to "$messagesInFlightCount",
-      QueueAttributeName.RedrivePolicy.toString() to "any redrive policy"
-    )
+      QueueAttributeName.RedrivePolicy.toString() to "any redrive policy",
+    ),
   )
 
   private fun someGetQueueAttributesRequestForDLQ() =
@@ -231,6 +231,6 @@ class AwsQueueHealthTest {
 
   private fun someGetQueueUrlResultForDLQ(): GetQueueUrlResult = GetQueueUrlResult().withQueueUrl(dlqUrl)
   private fun someGetQueueAttributesResultForDLQ() = GetQueueAttributesResult().withAttributes(
-    mapOf("ApproximateNumberOfMessages" to messagesOnDLQCount.toString())
+    mapOf("ApproximateNumberOfMessages" to messagesOnDLQCount.toString()),
   )
 }

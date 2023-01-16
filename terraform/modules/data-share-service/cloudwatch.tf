@@ -1,5 +1,11 @@
 locals {
-  metric_period = 300
+  metric_period    = 300
+  metric_namespace = "${var.environment}-gdx"
+  metric_colours = {
+    blue  = "#1f77b4"
+    green = "#2ca02c"
+    red   = "#2ca02c"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "ecs_logs" {
@@ -20,7 +26,7 @@ module "metrics_dashboard" {
   source           = "../cloudwatch_dashboard"
   region           = var.region
   dashboard_name   = "${var.environment}-metrics-dashboard"
-  metric_namespace = "${var.environment}-gdx"
+  metric_namespace = local.metric_namespace
   widgets = [
     {
       title  = "Old API calls",
@@ -97,6 +103,34 @@ module "metrics_dashboard" {
           name       = "DATA_PROCESSING.TimeFromCreationToDeletion.avg",
           attributes = { label = "Data creation to deletion time" }
         },
+      ]
+    },
+    {
+      title  = "Event actions",
+      period = local.metric_period,
+      stat   = "Sum",
+      metrics = [
+        {
+          attributes = {
+            expression = "SUM(SEARCH('{${local.metric_namespace},consumerSubscription,eventType} MetricName=\"EVENT_ACTION.EgressEventPublished.count\"', 'Sum', 300))",
+            color      = local.metric_colours.blue,
+            label      = "Ingress events published"
+          }
+        },
+        {
+          attributes = {
+            expression = "SUM(SEARCH('{${local.metric_namespace},eventType} MetricName=\"EVENT_ACTION.IngressEventPublished.count\"', 'Sum', 300))"
+            color      = local.metric_colours.green
+            label      = "Egress events published"
+          }
+        },
+        {
+          attributes = {
+            expression = "SUM(SEARCH('{${local.metric_namespace},consumerSubscription,eventType} MetricName=\"EVENT_ACTION.EgressEventDeleted.count\"', 'Sum', 300))"
+            color      = local.metric_colours.red
+            label      = "Egress events deleted"
+          }
+        }
       ]
     }
   ]

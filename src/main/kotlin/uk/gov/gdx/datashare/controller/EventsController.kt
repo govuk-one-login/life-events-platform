@@ -30,21 +30,8 @@ import java.util.*
 class EventsController(
   private val eventDataService: EventDataService,
   private val dataReceiverService: DataReceiverService,
-  meterRegistry: MeterRegistry,
+  private val meterRegistry: MeterRegistry,
 ) {
-  private val publishEventSuccessCounter: Counter = meterRegistry.counter("API_CALLS.PublishEvent", "success", "true")
-  private val publishEventFailureCounter: Counter = meterRegistry.counter("API_CALLS.PublishEvent", "success", "false")
-  private val getEventSuccessCounter: Counter = meterRegistry.counter("API_CALLS.GetEvent", "success", "true")
-  private val getEventFailureCounter: Counter = meterRegistry.counter("API_CALLS.GetEvent", "success", "false")
-  private val getEventsSuccessCounter: Counter = meterRegistry.counter("API_CALLS.GetEvents", "success", "true")
-  private val getEventsFailureCounter: Counter = meterRegistry.counter("API_CALLS.GetEvents", "success", "false")
-  private val getEventsStatusSuccessCounter: Counter =
-    meterRegistry.counter("API_CALLS.GetEventsStatus", "success", "true")
-  private val getEventsStatusFailureCounter: Counter =
-    meterRegistry.counter("API_CALLS.GetEventsStatus", "success", "false")
-  private val deleteEventSuccessCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent", "success", "true")
-  private val deleteEventFailureCounter: Counter = meterRegistry.counter("API_CALLS.DeleteEvent", "success", "false")
-
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping("/status")
   @Operation(
@@ -72,8 +59,8 @@ class EventsController(
   ): List<EventStatus> = run {
     tryCallAndUpdateMetric(
       { eventDataService.getEventsStatus(startTime, endTime).toList() },
-      getEventsStatusSuccessCounter,
-      getEventsStatusFailureCounter,
+      meterRegistry.counter("API_CALLS.GetEventsStatus", "success", "true"),
+      meterRegistry.counter("API_CALLS.GetEventsStatus", "success", "false"),
     )
   }
 
@@ -116,8 +103,8 @@ class EventsController(
   ): List<EventNotification> = run {
     tryCallAndUpdateMetric(
       { eventDataService.getEvents(eventTypes, startTime, endTime).toList() },
-      getEventsSuccessCounter,
-      getEventsFailureCounter,
+      meterRegistry.counter("API_CALLS.GetEvents", "success", "true"),
+      meterRegistry.counter("API_CALLS.GetEvents", "success", "false"),
     )
   }
 
@@ -144,8 +131,8 @@ class EventsController(
   ) = run {
     tryCallAndUpdateMetric(
       { dataReceiverService.sendToDataProcessor(eventPayload) },
-      publishEventSuccessCounter,
-      publishEventFailureCounter,
+      meterRegistry.counter("API_CALLS.PublishEvent", "success", "true"),
+      meterRegistry.counter("API_CALLS.PublishEvent", "success", "false"),
     )
   }
 
@@ -166,7 +153,11 @@ class EventsController(
     @PathVariable
     id: UUID,
   ) = run {
-    tryCallAndUpdateMetric({ eventDataService.getEvent(id) }, getEventSuccessCounter, getEventFailureCounter)
+    tryCallAndUpdateMetric(
+      { eventDataService.getEvent(id) },
+      meterRegistry.counter("API_CALLS.GetEvent", "success", "true"),
+      meterRegistry.counter("API_CALLS.GetEvent", "success", "false"),
+    )
   }
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
@@ -188,10 +179,10 @@ class EventsController(
   ): ResponseEntity<Void> {
     try {
       eventDataService.deleteEvent(id)
-      deleteEventSuccessCounter.increment()
+      meterRegistry.counter("API_CALLS.DeleteEvent", "success", "true").increment()
       return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
     } catch (e: Exception) {
-      deleteEventFailureCounter.increment()
+      meterRegistry.counter("API_CALLS.DeleteEvent", "success", "false").increment()
       throw e
     }
   }

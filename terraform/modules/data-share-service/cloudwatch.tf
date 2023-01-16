@@ -4,7 +4,7 @@ locals {
   metric_colours = {
     blue  = "#1f77b4"
     green = "#2ca02c"
-    red   = "#2ca02c"
+    red   = "#d62728"
   }
 }
 

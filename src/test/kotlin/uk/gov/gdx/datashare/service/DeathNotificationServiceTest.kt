@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.gdx.datashare.config.JacksonConfiguration
+import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventData
@@ -273,7 +274,7 @@ class DeathNotificationServiceTest {
       coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
         .returns(consumerSubscriptions)
 
-      val exception = assertThrows<RuntimeException> {
+      val exception = assertThrows<NoDataFoundException> {
         underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
       }
 

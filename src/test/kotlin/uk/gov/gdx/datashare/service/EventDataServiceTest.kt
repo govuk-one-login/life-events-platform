@@ -13,9 +13,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.webjars.NotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
+import uk.gov.gdx.datashare.config.EventNotFoundException
+import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventData
@@ -179,7 +180,7 @@ class EventDataServiceTest {
 
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(null)
 
-      val exception = assertThrows<NotFoundException> { underTest.getEvent(event.id) }
+      val exception = assertThrows<EventNotFoundException> { underTest.getEvent(event.id) }
 
       assertThat(exception.message).isEqualTo("Egress event ${event.id} not found for polling client $clientId")
     }
@@ -193,7 +194,7 @@ class EventDataServiceTest {
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
       coEvery { consumerSubscriptionRepository.findByEgressEventId(event.id) }.returns(null)
 
-      val exception = assertThrows<NotFoundException> { underTest.getEvent(event.id) }
+      val exception = assertThrows<NoDataFoundException> { underTest.getEvent(event.id) }
 
       assertThat(exception.message).isEqualTo("Consumer subscription not found for egress event ${event.id}")
     }
@@ -343,7 +344,7 @@ class EventDataServiceTest {
       val egressEventId = UUID.randomUUID()
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, egressEventId) }.returns(null)
 
-      val exception = assertThrows<NotFoundException> {
+      val exception = assertThrows<EventNotFoundException> {
         underTest.deleteEvent(egressEventId)
       }
 

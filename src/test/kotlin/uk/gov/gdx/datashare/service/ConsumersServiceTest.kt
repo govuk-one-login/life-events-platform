@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repository.Consumer
 import uk.gov.gdx.datashare.repository.ConsumerRepository
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
@@ -153,7 +154,7 @@ class ConsumersServiceTest {
     runBlocking {
       coEvery { consumerSubscriptionRepository.findById(consumerSubscription.id) }.returns(null)
 
-      val exception = assertThrows<RuntimeException> {
+      val exception = assertThrows<NoDataFoundException> {
         underTest.updateConsumerSubscription(consumer.id, consumerSubscription.id, consumerSubRequest)
       }
 

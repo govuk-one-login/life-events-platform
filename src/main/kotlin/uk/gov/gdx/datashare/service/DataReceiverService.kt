@@ -25,7 +25,7 @@ class DataReceiverService(
   private val eventDatasetRepository: EventDatasetRepository,
   private val objectMapper: ObjectMapper,
   private val dateTimeHandler: DateTimeHandler,
-  private val meterRegistry: MeterRegistry
+  private val meterRegistry: MeterRegistry,
 ) {
   private val dataReceiverQueue by lazy { awsQueueService.findByQueueId("dataprocessor") as AwsQueue }
   private val dataReceiverSqsClient by lazy { dataReceiverQueue.sqsClient }

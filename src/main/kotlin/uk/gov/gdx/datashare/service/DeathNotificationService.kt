@@ -69,7 +69,7 @@ class DeathNotificationService(
         "eventType",
         eventData.eventTypeId,
         "consumerSubscription",
-        it.consumerSubscriptionId.toString()
+        it.consumerSubscriptionId.toString(),
       )
     }
   }

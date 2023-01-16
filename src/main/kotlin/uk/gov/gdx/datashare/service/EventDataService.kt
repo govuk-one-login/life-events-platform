@@ -127,7 +127,7 @@ class EventDataService(
       "eventType",
       consumerSubscription.ingressEventType,
       "consumerSubscription",
-      egressEvent.consumerSubscriptionId.toString()
+      egressEvent.consumerSubscriptionId.toString(),
     )
     if (egressEvent.whenCreated != null) {
       meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")

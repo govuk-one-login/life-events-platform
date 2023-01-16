@@ -103,4 +103,5 @@ module "consumer" {
   consumer_client_id          = module.data-share-service.consumer_client_id
   consumer_client_secret      = module.data-share-service.consumer_client_secret
   lev_api_url                 = "https://${module.lev_api.service_url}"
+  schedule                    = "cron(0,30 9-18 ? * MON-FRI *)"
 }

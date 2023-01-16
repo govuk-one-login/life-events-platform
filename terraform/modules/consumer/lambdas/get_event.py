@@ -32,7 +32,7 @@ def lambda_handler(event, _context):
     for datum in retrieved_event["eventData"].keys():
         assert_matches_lev(retrieved_event, lev_record, datum)
 
-    return retrieved_event
+    return {"event_id": retrieved_event["eventId"]}
 
 
 def get_event(auth_token: str, event_id: str):

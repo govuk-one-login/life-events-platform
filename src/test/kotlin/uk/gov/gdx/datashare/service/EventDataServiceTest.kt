@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.service
 
+import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
 import io.mockk.coEvery
@@ -33,6 +34,7 @@ class EventDataServiceTest {
   private val dateTimeHandler = mockk<DateTimeHandler>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val dataCreationToDeletionTimer = mockk<Timer>()
+  private val egressEventDeletedCounter = mockk<Counter>()
 
   private val underTest: EventDataService
 
@@ -41,6 +43,12 @@ class EventDataServiceTest {
       dataCreationToDeletionTimer,
     )
     every { dataCreationToDeletionTimer.record(any<Duration>()) }.returns(Unit)
+    every {
+      meterRegistry.counter(
+        "EVENT_ACTION.EgressEventDeleted", *anyVararg(),
+      )
+    }.returns(egressEventDeletedCounter)
+    every { egressEventDeletedCounter.increment() }.returns(Unit)
     underTest = EventDataService(
       authenticationFacade,
       consumerSubscriptionRepository,
@@ -282,6 +290,9 @@ class EventDataServiceTest {
         dataPayload = null,
       )
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
+      coEvery { consumerSubscriptionRepository.findByEgressEventId(egressEvent.id) }.returns(
+        deathNotificationSubscription,
+      )
       coEvery { egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId) }.returns(
         getEgressEvents(
           10,
@@ -294,6 +305,7 @@ class EventDataServiceTest {
 
       coVerify(exactly = 1) { egressEventDataRepository.delete(egressEvent) }
       coVerify(exactly = 0) { ingressEventDataRepository.deleteById(any()) }
+      coVerify(exactly = 1) { egressEventDeletedCounter.increment() }
     }
   }
 
@@ -308,6 +320,9 @@ class EventDataServiceTest {
         dataPayload = null,
       )
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, egressEvent.id) }.returns(egressEvent)
+      coEvery { consumerSubscriptionRepository.findByEgressEventId(egressEvent.id) }.returns(
+        deathNotificationSubscription,
+      )
       coEvery { egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId) }.returns(emptyList<EgressEventData>().asFlow())
 
       coEvery { egressEventDataRepository.delete(egressEvent) }.returns(Unit)
@@ -317,6 +332,7 @@ class EventDataServiceTest {
 
       coVerify(exactly = 1) { egressEventDataRepository.delete(egressEvent) }
       coVerify(exactly = 1) { ingressEventDataRepository.deleteById(egressEvent.ingressEventId) }
+      coVerify(exactly = 1) { egressEventDeletedCounter.increment() }
     }
   }
 
@@ -334,6 +350,7 @@ class EventDataServiceTest {
 
       coVerify(exactly = 0) { egressEventDataRepository.deleteById(any()) }
       coVerify(exactly = 0) { ingressEventDataRepository.deleteById(any()) }
+      coVerify(exactly = 0) { egressEventDeletedCounter.increment() }
     }
   }
 

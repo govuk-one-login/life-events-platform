@@ -15,12 +15,10 @@ abstract class TestBase {
     @DynamicPropertySource
     fun properties(registry: DynamicPropertyRegistry) {
       pgContainer?.run {
-        registry.add("spring.flyway.url", pgContainer::getJdbcUrl)
-        registry.add("spring.flyway.user", pgContainer::getUsername)
-        registry.add("spring.flyway.password", pgContainer::getPassword)
-        registry.add("spring.r2dbc.url") { pgContainer.jdbcUrl.replace("jdbc:", "r2dbc:") }
-        registry.add("spring.r2dbc.username", pgContainer::getUsername)
-        registry.add("spring.r2dbc.password", pgContainer::getPassword)
+        registry.add("db.jdbc.uri", pgContainer::getJdbcUrl)
+        registry.add("db.username", pgContainer::getUsername)
+        registry.add("db.password", pgContainer::getPassword)
+        registry.add("db.r2dbc.uri") { pgContainer.jdbcUrl.replace("jdbc:", "r2dbc:") }
       }
     }
   }

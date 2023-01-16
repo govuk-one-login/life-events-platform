@@ -8,8 +8,8 @@ resource "aws_cloudwatch_dashboard" "dashboard" {
         properties : {
           metrics : [
             for metric in widget.metrics : flatten([
-              var.metric_namespace,
-              metric.name,
+              metric.name == null ? [] : var.metric_namespace,
+              metric.name == null ? [] : metric.name,
               metric.dimensions == null ? [] : [
                 for dimension_name, dimension_value in metric.dimensions : [
                   dimension_name, dimension_value

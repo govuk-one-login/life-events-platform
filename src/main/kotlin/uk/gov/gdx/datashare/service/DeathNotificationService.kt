@@ -2,7 +2,7 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.*
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDate
-import java.util.*
 
 @Service
 class DeathNotificationService(
@@ -22,6 +21,7 @@ class DeathNotificationService(
   private val eventPublishingService: EventPublishingService,
   private val levApiService: LevApiService,
   private val objectMapper: ObjectMapper,
+  private val meterRegistry: MeterRegistry,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -65,6 +65,13 @@ class DeathNotificationService(
 
     savedEgressEvents.forEach {
       eventPublishingService.storeAndPublishEvent(it)
+      meterRegistry.counter(
+        "EVENT_ACTION.EgressEventPublished",
+        "eventType",
+        eventData.eventTypeId,
+        "consumerSubscription",
+        it.consumerSubscriptionId.toString(),
+      ).increment()
     }
   }
 

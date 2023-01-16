@@ -12,7 +12,7 @@ variable "widgets" {
   type = list(object({
     title = string,
     metrics = list(object({
-      name       = string,
+      name       = optional(string),
       dimensions = optional(map(string)),
       attributes = optional(map(string)),
     })),

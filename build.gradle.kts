@@ -28,7 +28,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
 
   //  AWS dependencies for SNS, SQS, S3 etc
-  implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.382"))
+  implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.384"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("com.amazonaws:aws-java-sdk-s3")
@@ -50,7 +50,7 @@ dependencies {
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.4")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.14.1")
 
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.10.0")

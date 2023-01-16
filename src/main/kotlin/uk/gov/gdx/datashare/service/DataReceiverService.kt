@@ -3,6 +3,7 @@ package uk.gov.gdx.datashare.service
 import com.amazonaws.services.sqs.model.SendMessageRequest
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -28,6 +29,7 @@ class DataReceiverService(
   private val eventDatasetRepository: EventDatasetRepository,
   private val objectMapper: ObjectMapper,
   private val dateTimeHandler: DateTimeHandler,
+  private val meterRegistry: MeterRegistry,
 ) {
   private val dataReceiverQueue by lazy { awsQueueService.findByQueueId("dataprocessor") as AwsQueue }
   private val dataReceiverSqsClient by lazy { dataReceiverQueue.sqsClient }
@@ -74,6 +76,8 @@ class DataReceiverService(
       dataProcessorMessage.eventTypeId,
       publisher.name,
     )
+
+    meterRegistry.counter("EVENT_ACTION.IngressEventPublished", "eventType", eventPayload.eventType).increment()
 
     dataReceiverSqsClient.sendMessage(
       SendMessageRequest(

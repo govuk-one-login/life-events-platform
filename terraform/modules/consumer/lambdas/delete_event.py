@@ -1,9 +1,12 @@
 import logging
 import os
+import time
 from datetime import datetime
 from urllib import request
 
-from common import get_auth_token
+import boto3
+
+from common import get_auth_token, record_metric
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -16,7 +19,8 @@ auth_url = os.environ["auth_url"]
 client_id = os.environ["client_id"]
 client_secret = os.environ["client_secret"]
 
-lev_api_url = os.environ["lev_api_url"]
+cloudwatch = boto3.client("cloudwatch")
+cloudwatch_namespace = os.environ["cloudwatch_metric_namespace"]
 
 
 def lambda_handler(event, _context):
@@ -33,5 +37,8 @@ def delete_event(auth_token: str, event_id: str):
         headers={"Authorization": "Bearer " + auth_token},
         method="DELETE"
     )
+    start = time.time()
     request.urlopen(event_request)
-
+    stop = time.time()
+    delta = stop - start
+    record_metric(cloudwatch, cloudwatch_namespace, "DELETE_EVENT.Duration", delta, unit="Seconds")

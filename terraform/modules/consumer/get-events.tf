@@ -22,10 +22,11 @@ resource "aws_lambda_function" "get_events" {
 
   environment {
     variables = {
-      gdx_url       = var.gdx_url
-      auth_url      = var.auth_url
-      client_id     = var.consumer_client_id
-      client_secret = var.consumer_client_secret
+      gdx_url                     = var.gdx_url
+      auth_url                    = var.auth_url
+      client_id                   = var.consumer_client_id
+      client_secret               = var.consumer_client_secret
+      cloudwatch_metric_namespace = "${var.environment}-example-consumer"
     }
   }
   tracing_config {
@@ -54,4 +55,9 @@ resource "aws_cloudwatch_log_group" "get_events_log" {
   retention_in_days = var.cloudwatch_retention_period
 
   kms_key_id = aws_kms_key.log_key.arn
+}
+
+resource "aws_iam_role_policy_attachment" "get_events_put_metrics" {
+  policy_arn = aws_iam_policy.allow_cloudwatch_metrics.arn
+  role       = aws_iam_role.get_events.name
 }

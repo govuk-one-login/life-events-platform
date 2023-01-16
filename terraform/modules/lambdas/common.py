@@ -16,3 +16,13 @@ def get_auth_token(auth_url, client_id, client_secret):
     )
     auth_token = json.loads(request.urlopen(auth_request).read())["access_token"]
     return auth_token
+
+
+def record_metric(client, namespace, metric_name, value, unit="Count"):
+    client.put_metric_data(Namespace=namespace, MetricData=[
+        {
+            "MetricName": metric_name,
+            "Value": value,
+            "Unit": unit
+        }
+    ])

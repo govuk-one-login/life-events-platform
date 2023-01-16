@@ -83,7 +83,7 @@ dependencies {
   testImplementation("org.mockito:mockito-inline")
   testImplementation("org.mockito:mockito-junit-jupiter:5.0.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-  testImplementation("org.mockito:mockito-inline:4.11.0")
+  testImplementation("org.mockito:mockito-inline:5.0.0")
 }
 
 java {

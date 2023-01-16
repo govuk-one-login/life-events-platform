@@ -45,7 +45,8 @@ class EventDataServiceTest {
     every { dataCreationToDeletionTimer.record(any<Duration>()) }.returns(Unit)
     every {
       meterRegistry.counter(
-        "EVENT_ACTION.EgressEventDeleted", *anyVararg(),
+        "EVENT_ACTION.EgressEventDeleted",
+        *anyVararg(),
       )
     }.returns(egressEventDeletedCounter)
     every { egressEventDeletedCounter.increment() }.returns(Unit)

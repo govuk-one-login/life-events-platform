@@ -70,7 +70,7 @@ class DeathNotificationService(
         eventData.eventTypeId,
         "consumerSubscription",
         it.consumerSubscriptionId.toString(),
-      )
+      ).increment()
     }
   }
 

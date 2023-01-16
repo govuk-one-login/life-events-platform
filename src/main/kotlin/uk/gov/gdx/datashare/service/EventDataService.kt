@@ -118,8 +118,8 @@ class EventDataService(
     val callbackClientId = authenticationFacade.getUsername()
     val egressEvent = egressEventDataRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw NotFoundException("Egress event $id not found for callback client $callbackClientId")
-    val consumerSubscription = consumerSubscriptionRepository.findById(egressEvent.consumerSubscriptionId)
-      ?: throw NotFoundException("Consumer subscription ${egressEvent.consumerSubscriptionId} not found for egress event $id")
+    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
+      ?: throw NotFoundException("Consumer subscription not found for egress event $id")
 
     egressEventDataRepository.delete(egressEvent)
     meterRegistry.counter(
@@ -128,7 +128,7 @@ class EventDataService(
       consumerSubscription.ingressEventType,
       "consumerSubscription",
       egressEvent.consumerSubscriptionId.toString(),
-    )
+    ).increment()
     if (egressEvent.whenCreated != null) {
       meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
         .record(Duration.between(egressEvent.whenCreated, dateTimeHandler.now()).abs())

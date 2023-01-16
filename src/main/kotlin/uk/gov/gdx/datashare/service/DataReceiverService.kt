@@ -73,7 +73,7 @@ class DataReceiverService(
       publisher.name,
     )
 
-    meterRegistry.counter("EVENT_ACTION.IngressEventPublished", "eventType", eventPayload.eventType)
+    meterRegistry.counter("EVENT_ACTION.IngressEventPublished", "eventType", eventPayload.eventType).increment()
 
     dataReceiverSqsClient.sendMessage(
       SendMessageRequest(

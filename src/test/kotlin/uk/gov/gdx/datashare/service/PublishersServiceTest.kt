@@ -9,11 +9,12 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
 import uk.gov.gdx.datashare.repository.Publisher
 import uk.gov.gdx.datashare.repository.PublisherRepository
 import uk.gov.gdx.datashare.repository.PublisherSubscription
 import uk.gov.gdx.datashare.repository.PublisherSubscriptionRepository
-import java.util.UUID
+import java.util.*
 
 class PublishersServiceTest {
   private val publisherSubscriptionRepository = mockk<PublisherSubscriptionRepository>()
@@ -154,7 +155,7 @@ class PublishersServiceTest {
     runBlocking {
       coEvery { publisherSubscriptionRepository.findById(publisherSubscription.id) }.returns(null)
 
-      val exception = assertThrows<RuntimeException> {
+      val exception = assertThrows<PublisherSubscriptionNotFoundException> {
         underTest.updatePublisherSubscription(publisher.id, publisherSubscription.id, publisherSubRequest)
       }
 

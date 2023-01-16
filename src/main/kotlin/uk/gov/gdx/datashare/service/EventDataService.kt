@@ -12,9 +12,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.webjars.NotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
+import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
@@ -61,9 +62,9 @@ class EventDataService(
   ): EventNotification? {
     val clientId = authenticationFacade.getUsername()
     val event = egressEventDataRepository.findByClientIdAndId(clientId, id)
-      ?: throw NotFoundException("Egress event $id not found for polling client $clientId")
+      ?: throw EventNotFoundException("Egress event $id not found for polling client $clientId")
     val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
-      ?: throw NotFoundException("Consumer subscription not found for egress event $id")
+      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for egress event $id")
 
     return event.let {
       EventNotification(
@@ -117,9 +118,9 @@ class EventDataService(
   suspend fun deleteEvent(id: UUID) {
     val callbackClientId = authenticationFacade.getUsername()
     val egressEvent = egressEventDataRepository.findByClientIdAndId(callbackClientId, id)
-      ?: throw NotFoundException("Egress event $id not found for callback client $callbackClientId")
+      ?: throw EventNotFoundException("Egress event $id not found for callback client $callbackClientId")
     val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
-      ?: throw NotFoundException("Consumer subscription not found for egress event $id")
+      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for egress event $id")
 
     egressEventDataRepository.delete(egressEvent)
     meterRegistry.counter(

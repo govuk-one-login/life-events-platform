@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.gdx.datashare.config.JacksonConfiguration
+import uk.gov.gdx.datashare.config.UnknownDatasetException
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventData
@@ -19,7 +20,7 @@ import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventData
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class DeathNotificationServiceTest {
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()
@@ -273,7 +274,7 @@ class DeathNotificationServiceTest {
       coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
         .returns(consumerSubscriptions)
 
-      val exception = assertThrows<RuntimeException> {
+      val exception = assertThrows<UnknownDatasetException> {
         underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
       }
 

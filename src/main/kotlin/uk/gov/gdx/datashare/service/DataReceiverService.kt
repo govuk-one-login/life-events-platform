@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
+import uk.gov.gdx.datashare.config.PublisherConfigException
+import uk.gov.gdx.datashare.config.PublisherPermissionException
+import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
+import uk.gov.gdx.datashare.config.UnknownDatasetException
 import uk.gov.gdx.datashare.controller.EventToPublish
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueService
@@ -40,16 +44,16 @@ class DataReceiverService(
     val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
       authenticationFacade.getUsername(),
       eventPayload.eventType,
-    ) ?: throw RuntimeException("${authenticationFacade.getUsername()} does not have permission")
+    ) ?: throw PublisherPermissionException("${authenticationFacade.getUsername()} does not have permission")
 
     val dataSet = eventDatasetRepository.findById(subscription.datasetId)
-      ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known dataset")
+      ?: throw UnknownDatasetException("Client ${authenticationFacade.getUsername()} is not a known dataset")
 
     val publisher = publisherRepository.findById(subscription.publisherId)
-      ?: throw RuntimeException("Client ${authenticationFacade.getUsername()} is not a known publisher")
+      ?: throw PublisherSubscriptionNotFoundException("Client ${authenticationFacade.getUsername()} is not a known publisher")
 
     if (dataSet.storePayload && eventPayload.eventDetails == null) {
-      throw RuntimeException("Client ${authenticationFacade.getUsername()} must publish dataset for this event in format ${subscription.datasetId}")
+      throw PublisherConfigException("Client ${authenticationFacade.getUsername()} must publish dataset for this event in format ${subscription.datasetId}")
     }
 
     val dataProcessorMessage = DataProcessorMessage(

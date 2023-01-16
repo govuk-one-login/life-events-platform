@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.service.DataReceiverService
 import uk.gov.gdx.datashare.service.DeathNotificationDetails
 import uk.gov.gdx.datashare.service.EventDataService
@@ -165,6 +166,21 @@ class EventsControllerTest {
 
       coVerify(exactly = 1) { eventDataService.deleteEvent(eventId) }
       verify(exactly = 1) { deleteEventCounter.increment() }
+    }
+  }
+
+  @Test
+  fun `getEvent returns exception when no event found`() {
+    runBlocking {
+      val eventId = UUID.randomUUID()
+
+      try {
+        coEvery { eventDataService.getEvent(any()) }.throws(EventNotFoundException("Event Not Found"))
+      } catch (e: EventNotFoundException) {
+        underTest.getEvent(eventId)
+
+        coVerify(exactly = 1) { eventDataService.getEvent(eventId) }
+      }
     }
   }
 

@@ -15,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.bind.support.WebExchangeBindException
-import org.springframework.web.reactive.function.client.WebClientResponseException.NotFound
 import org.springframework.web.server.ServerWebInputException
 import javax.validation.ValidationException
 
@@ -116,20 +115,6 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(NotFound::class)
-  fun handleNotFound(e: NotFound): ResponseEntity<ErrorResponse?>? {
-    log.debug("Not found exception caught: {}", e.message)
-    return ResponseEntity
-      .status(NOT_FOUND)
-      .body(
-        ErrorResponse(
-          status = NOT_FOUND,
-          userMessage = "Not Found: ${e.message}",
-          developerMessage = e.message,
-        ),
-      )
-  }
-
   @ExceptionHandler(NoDataFoundException::class)
   fun handleNoDataFoundException(e: NoDataFoundException): ResponseEntity<ErrorResponse?>? {
     log.debug("No data found exception caught: {}", e.message)
@@ -147,6 +132,34 @@ class ApiExceptionHandler {
   @ExceptionHandler(EventNotFoundException::class)
   fun handleEventNotFoundException(e: EventNotFoundException): ResponseEntity<ErrorResponse?>? {
     log.debug("Event not found exception caught: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "Event Not Found: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(PublisherSubscriptionNotFoundException::class)
+  fun handlePublisherSubscriptionNotFoundException(e: PublisherSubscriptionNotFoundException): ResponseEntity<ErrorResponse?>? {
+    log.debug("Publisher subscription not found exception caught: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "Event Not Found: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(ConsumerSubscriptionNotFoundException::class)
+  fun handleConsumerSubscriptionNotFoundException(e: ConsumerSubscriptionNotFoundException): ResponseEntity<ErrorResponse?>? {
+    log.debug("Consumer subscription not found exception caught: {}", e.message)
     return ResponseEntity
       .status(NOT_FOUND)
       .body(
@@ -255,7 +268,10 @@ class UnknownDatasetException(message: String) :
   Exception(message)
 class EventNotFoundException(message: String) :
   Exception(message)
-
+class ConsumerSubscriptionNotFoundException(message: String) :
+  Exception(message)
+class PublisherSubscriptionNotFoundException(message: String) :
+  Exception(message)
 class NoDataFoundException(message: String) :
   Exception(message)
 

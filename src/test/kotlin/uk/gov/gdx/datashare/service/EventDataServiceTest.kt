@@ -7,16 +7,20 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
-import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventData
@@ -24,7 +28,7 @@ import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 import java.time.Duration
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class EventDataServiceTest {
   private val authenticationFacade = mockk<AuthenticationFacade>()
@@ -194,7 +198,7 @@ class EventDataServiceTest {
       coEvery { egressEventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
       coEvery { consumerSubscriptionRepository.findByEgressEventId(event.id) }.returns(null)
 
-      val exception = assertThrows<NoDataFoundException> { underTest.getEvent(event.id) }
+      val exception = assertThrows<ConsumerSubscriptionNotFoundException> { underTest.getEvent(event.id) }
 
       assertThat(exception.message).isEqualTo("Consumer subscription not found for egress event ${event.id}")
     }

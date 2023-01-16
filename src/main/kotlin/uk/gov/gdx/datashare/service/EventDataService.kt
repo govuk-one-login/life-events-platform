@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
-import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EgressEventDataRepository
 import uk.gov.gdx.datashare.repository.IngressEventDataRepository
@@ -64,7 +64,7 @@ class EventDataService(
     val event = egressEventDataRepository.findByClientIdAndId(clientId, id)
       ?: throw EventNotFoundException("Egress event $id not found for polling client $clientId")
     val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
-      ?: throw NoDataFoundException("Consumer subscription not found for egress event $id")
+      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for egress event $id")
 
     return event.let {
       EventNotification(
@@ -120,7 +120,7 @@ class EventDataService(
     val egressEvent = egressEventDataRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw EventNotFoundException("Egress event $id not found for callback client $callbackClientId")
     val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
-      ?: throw EventNotFoundException("Consumer subscription not found for egress event $id")
+      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for egress event $id")
 
     egressEventDataRepository.delete(egressEvent)
     meterRegistry.counter(

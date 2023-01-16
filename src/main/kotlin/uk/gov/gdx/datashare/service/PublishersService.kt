@@ -6,7 +6,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.gdx.datashare.config.NoDataFoundException
+import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
 import uk.gov.gdx.datashare.repository.Publisher
 import uk.gov.gdx.datashare.repository.PublisherRepository
 import uk.gov.gdx.datashare.repository.PublisherSubscription
@@ -58,7 +58,7 @@ class PublishersService(
           clientId = clientId,
           eventTypeId = eventTypeId,
           datasetId = datasetId,
-        ) ?: throw NoDataFoundException("Subscription $subscriptionId not found"),
+        ) ?: throw PublisherSubscriptionNotFoundException("Subscription $subscriptionId not found"),
       )
     }
   }

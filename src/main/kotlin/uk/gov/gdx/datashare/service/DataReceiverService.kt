@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
-import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.config.PublisherConfigException
 import uk.gov.gdx.datashare.config.PublisherPermissionException
+import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.UnknownDatasetException
 import uk.gov.gdx.datashare.controller.EventToPublish
 import uk.gov.gdx.datashare.queue.AwsQueue
@@ -50,7 +50,7 @@ class DataReceiverService(
       ?: throw UnknownDatasetException("Client ${authenticationFacade.getUsername()} is not a known dataset")
 
     val publisher = publisherRepository.findById(subscription.publisherId)
-      ?: throw NoDataFoundException("Client ${authenticationFacade.getUsername()} is not a known publisher")
+      ?: throw PublisherSubscriptionNotFoundException("Client ${authenticationFacade.getUsername()} is not a known publisher")
 
     if (dataSet.storePayload && eventPayload.eventDetails == null) {
       throw PublisherConfigException("Client ${authenticationFacade.getUsername()} must publish dataset for this event in format ${subscription.datasetId}")

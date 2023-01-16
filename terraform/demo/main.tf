@@ -82,4 +82,5 @@ module "data-share-service" {
   cloudwatch_retention_period = 30
   vpc_cidr                    = "10.158.16.0/20"
   lev_url                     = module.lev_api.service_url
+  db_username                 = "ecs_demo_db"
 }

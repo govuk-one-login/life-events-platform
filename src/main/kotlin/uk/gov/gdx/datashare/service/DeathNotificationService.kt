@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.toList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDate
 import java.util.*
@@ -121,7 +122,7 @@ class DeathNotificationService(
     }
 
     else -> {
-      throw RuntimeException("Unknown DataSet $datasetId")
+      throw NoDataFoundException("Unknown DataSet $datasetId")
     }
   }
 }

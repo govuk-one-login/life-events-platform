@@ -55,6 +55,34 @@ class ApiExceptionHandler {
       )
   }
 
+  @ExceptionHandler(PublisherPermissionException::class)
+  fun handlePublisherPermissionException(e: PublisherPermissionException): ResponseEntity<ErrorResponse> {
+    log.debug("Forbidden (403) returned with message {}", e.message)
+    return ResponseEntity
+      .status(FORBIDDEN)
+      .body(
+        ErrorResponse(
+          status = FORBIDDEN,
+          userMessage = "Forbidden: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(PublisherConfigException::class)
+  fun handlePublisherConfigException(e: PublisherConfigException): ResponseEntity<ErrorResponse> {
+    log.info("Config exception: {}", e.message)
+    return ResponseEntity
+      .status(BAD_REQUEST)
+      .body(
+        ErrorResponse(
+          status = BAD_REQUEST,
+          userMessage = "Config failure: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: ValidationException): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.message)
@@ -111,6 +139,34 @@ class ApiExceptionHandler {
         ErrorResponse(
           status = NOT_FOUND,
           userMessage = "Not Found: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(EventNotFoundException::class)
+  fun handleEventNotFoundException(e: EventNotFoundException): ResponseEntity<ErrorResponse?>? {
+    log.debug("Event not found exception caught: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "Event Not Found: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(UnknownDatasetException::class)
+  fun handleEventNotFoundException(e: UnknownDatasetException): ResponseEntity<ErrorResponse?>? {
+    log.debug("Dataset not found: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "Dataset not found: ${e.message}",
           developerMessage = e.message,
         ),
       )
@@ -191,8 +247,17 @@ class ApiExceptionHandler {
   }
 }
 
-class NoDataFoundException(id: String) :
-  Exception("No Data found for ID $id")
+class PublisherConfigException(message: String) :
+  Exception(message)
+class PublisherPermissionException(message: String) :
+  Exception(message)
+class UnknownDatasetException(message: String) :
+  Exception(message)
+class EventNotFoundException(message: String) :
+  Exception(message)
+
+class NoDataFoundException(message: String) :
+  Exception(message)
 
 class ListOfDataNotFoundException(dataType: String, ids: Collection<Long>) :
   Exception("No $dataType found for ID(s) $ids")

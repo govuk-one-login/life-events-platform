@@ -6,6 +6,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repository.*
 import java.util.*
 
@@ -56,7 +57,7 @@ class ConsumersService(
           pushUri = pushUri,
           ingressEventType = ingressEventType,
           enrichmentFields = enrichmentFields,
-        ) ?: throw RuntimeException("Subscription $subscriptionId not found"),
+        ) ?: throw NoDataFoundException("Subscription $subscriptionId not found"),
       )
     }
   }

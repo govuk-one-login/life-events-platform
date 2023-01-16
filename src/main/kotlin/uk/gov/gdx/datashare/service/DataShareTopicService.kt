@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.queue.AwsQueueService
 import java.time.Instant
 import java.time.LocalDateTime
@@ -20,7 +21,7 @@ class DataShareTopicService(awsQueueService: AwsQueueService, private val object
   }
 
   private val domainEventsTopic by lazy {
-    awsQueueService.findByTopicId("event") ?: throw RuntimeException("Topic with name event doesn't exist")
+    awsQueueService.findByTopicId("event") ?: throw NoDataFoundException("Topic with name event doesn't exist")
   }
   private val domainEventsTopicClient by lazy { domainEventsTopic.snsClient }
 

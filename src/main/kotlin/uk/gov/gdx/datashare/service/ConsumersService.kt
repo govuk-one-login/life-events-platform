@@ -57,6 +57,7 @@ class ConsumersService(
           pushUri = pushUri,
           ingressEventType = ingressEventType,
           enrichmentFields = enrichmentFields,
+          enrichmentFieldsIncludedInPoll = enrichmentFieldsIncludedInPoll,
         ) ?: throw ConsumerSubscriptionNotFoundException("Subscription $subscriptionId not found"),
       )
     }
@@ -94,6 +95,13 @@ data class ConsumerSubRequest(
     example = "firstName,lastName",
   )
   val enrichmentFields: String,
+  @Schema(
+    description = "Indicates that the specified enrichment fields will be present when a poll of events occurs",
+    required = false,
+    defaultValue = "false",
+    example = "false",
+  )
+  val enrichmentFieldsIncludedInPoll: Boolean = false,
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

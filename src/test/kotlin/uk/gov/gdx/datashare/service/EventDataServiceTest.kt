@@ -244,6 +244,43 @@ class EventDataServiceTest {
   }
 
   @Test
+  fun `getEvents gets thin events for client`() {
+    runBlocking {
+      val eventTypes = listOf("DEATH_NOTIFICATION")
+      val startTime = LocalDateTime.now().minusHours(1)
+      val endTime = LocalDateTime.now().plusHours(1)
+      val deathNotificationDetails = DeathNotificationDetails(
+        firstName = "Alice",
+        lastName = "Smith",
+        address = thinDeathNotificationSubscription.id.toString(),
+      )
+
+      coEvery { consumerSubscriptionRepository.findAllByIngressEventTypesAndClientId(clientId, eventTypes) }
+        .returns(flowOf(thinDeathNotificationSubscription))
+      coEvery {
+        egressEventDataRepository.findAllByConsumerSubscriptions(
+          listOf(thinDeathNotificationSubscription.id),
+          startTime,
+          endTime,
+        )
+      }.returns(thinDeathEvents)
+
+      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
+
+      assertThat(eventsOutput).isEqualTo(
+        thinDeathEvents.map {
+          EventNotification(
+            eventId = it.id,
+            eventType = "DEATH_NOTIFICATION",
+            sourceId = it.dataId,
+            eventData = null,
+          )
+        }.toList(),
+      )
+    }
+  }
+
+  @Test
   fun `getEvents uses default start, end time, and eventTypes if null passed in`() {
     runBlocking {
       val fallbackStartTime = LocalDateTime.now().minusHours(1)
@@ -366,15 +403,25 @@ class EventDataServiceTest {
     oauthClientId = clientId,
     ingressEventType = "DEATH_NOTIFICATION",
     enrichmentFields = "a,b,c",
+    enrichmentFieldsIncludedInPoll = true,
+  )
+  private val thinDeathNotificationSubscription = ConsumerSubscription(
+    consumerId = UUID.randomUUID(),
+    oauthClientId = clientId,
+    ingressEventType = "DEATH_NOTIFICATION",
+    enrichmentFields = "a,b,c",
+    enrichmentFieldsIncludedInPoll = false,
   )
   private val lifeEventSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
     oauthClientId = clientId,
     ingressEventType = "LIFE_EVENT",
     enrichmentFields = "a,b,c",
+    enrichmentFieldsIncludedInPoll = true,
   )
   private val consumerSubscriptions = flowOf(deathNotificationSubscription, lifeEventSubscription)
   private val deathEvents = getEgressEvents(4, "Alice", deathNotificationSubscription.id).asFlow()
+  private val thinDeathEvents = getEgressEvents(4, "Alice", thinDeathNotificationSubscription.id).asFlow()
   private val extraDeathEvents = getEgressEvents(10, "Bob", deathNotificationSubscription.id).asFlow()
   private val lifeEvents = getEgressEvents(7, "Charlie", lifeEventSubscription.id).asFlow()
 

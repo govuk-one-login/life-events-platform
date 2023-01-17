@@ -43,6 +43,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/datashare?sslmode=prefer
     user: datashare
     password: datashare
+    locations: classpath:db/migration, classpath:db/devonly
 
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/datashare

@@ -151,7 +151,7 @@ class ApiExceptionHandler {
       .body(
         ErrorResponse(
           status = NOT_FOUND,
-          userMessage = "Event Not Found: ${e.message}",
+          userMessage = "Publisher Subscription Not Found: ${e.message}",
           developerMessage = e.message,
         ),
       )
@@ -165,7 +165,7 @@ class ApiExceptionHandler {
       .body(
         ErrorResponse(
           status = NOT_FOUND,
-          userMessage = "Event Not Found: ${e.message}",
+          userMessage = "Consumer subscription Not Found: ${e.message}",
           developerMessage = e.message,
         ),
       )

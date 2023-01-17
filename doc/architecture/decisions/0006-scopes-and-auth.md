@@ -11,7 +11,7 @@ Draft
 ## Context
 
 At the moment we have authentication and authorisation with Cognito, using 5 scopes, as well as authorisation using our
-internal database to narrow things down. These are relatively confused scopes, and the authentication and authorisation 
+internal database to narrow things down. These are relatively confused scopes, and the authentication and authorisation
 of Cognito is currently relatively tricky to understand and manage, as a result there are some changes we would like to
 make now and later in the future.
 
@@ -22,8 +22,8 @@ There are several routes we have explored in regard to Authentication and Author
 3. Have authentication exist in Cognito, with very basic scopes (trim the current number down to 3), and then use our
    own database to narrow down subscription privileges
 
-Option 3 is what is being suggested for the immediate moment, as this means we can use Cognito to provide all the hard 
-parts of auth, but use our database for enrichment and subscription privileges as this is easier to work with at high 
+Option 3 is what is being suggested for the immediate moment, as this means we can use Cognito to provide all the hard
+parts of auth, but use our database for enrichment and subscription privileges as this is easier to work with at high
 speed, as well as being only a small change and some tidying to our current solution.
 
 ## Current plan
@@ -65,4 +65,4 @@ attributes assigned to them, each of which will be mapped such that the value of
 enrich. This means that one user can only consume up to 50 enriched fields. Also, if one consumer consumes multiple types
 of event, they will have one user per event type consumed.
 
-[Next >>](9999-end.md)
+[Next >>](0007-use-stepfunction-for-example-consumer.md)

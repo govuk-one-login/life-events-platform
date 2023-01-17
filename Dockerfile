@@ -10,7 +10,6 @@ RUN ./gradlew assemble -Dorg.gradle.daemon=false
 # Grab AWS RDS Root cert
 RUN apt-get update && apt-get install -y curl
 RUN curl https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem  > root.crt
-RUN openssl x509 -outform der -in root.crt -out root.der
 
 FROM eclipse-temurin:19-jre-jammy
 LABEL maintainer="GDX Vison <info@gds.gov.uk>"
@@ -30,8 +29,7 @@ RUN addgroup --gid 2000 --system appgroup && \
 
 # Install AWS RDS Root cert into Java truststore
 RUN mkdir /home/appuser/.postgresql
-COPY --from=builder --chown=appuser:appgroup /app/root.der /home/appuser/.postgresql/root.der
-RUN keytool -import -alias rds-cert -keystore cacerts -noprompt -file /home/appuser/.postgresql/root.der -storepass changeit
+COPY --from=builder --chown=appuser:appgroup /app/root.crt /home/appuser/.postgresql/root.crt
 
 WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup /app/build/libs/gdx-data-share-poc*.jar /app/app.jar

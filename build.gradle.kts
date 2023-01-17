@@ -29,9 +29,11 @@ dependencies {
 
   //  AWS dependencies for SNS, SQS, S3 etc
   implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.385"))
+  implementation(platform("software.amazon.awssdk:bom:2.19.10"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
   implementation("com.amazonaws:aws-java-sdk-sns")
   implementation("com.amazonaws:aws-java-sdk-s3")
+  implementation("software.amazon.awssdk:rds")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")
@@ -42,7 +44,7 @@ dependencies {
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("org.postgresql:r2dbc-postgresql")
-  runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
+  implementation("org.springframework.boot:spring-boot-starter-jdbc")
   runtimeOnly("org.postgresql:postgresql:42.5.1")
 
   implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.14")

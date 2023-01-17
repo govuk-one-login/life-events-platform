@@ -227,3 +227,21 @@ resource "aws_iam_role_policy_attachment" "ecs_task_sns_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_task_sns_access.arn
 }
+
+data "aws_iam_policy_document" "ecs_task_rds_access" {
+  statement {
+    actions   = ["rds-db:connect"]
+    resources = ["arn:aws:rds-db:${var.region}:${data.aws_caller_identity.current.account_id}:dbuser:${aws_rds_cluster.rds_postgres_cluster.cluster_resource_id}/${var.db_username}"]
+    effect    = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_rds_access" {
+  name   = "${var.environment}-ecs-task-rds-access-policy"
+  policy = data.aws_iam_policy_document.ecs_task_rds_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_rds_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_rds_access.arn
+}

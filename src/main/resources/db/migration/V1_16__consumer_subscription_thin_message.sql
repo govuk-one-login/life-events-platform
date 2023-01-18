@@ -4,5 +4,4 @@ ALTER TABLE consumer_subscription
 UPDATE consumer_subscription set enrichment_fields_included_in_poll = true;
 
 UPDATE consumer_subscription set enrichment_fields_included_in_poll = false
-WHERE consumer_id = (SELECT id FROM consumer where name like 'DWP%');
-
+WHERE consumer_id IN (SELECT id FROM consumer where name like 'DWP%');

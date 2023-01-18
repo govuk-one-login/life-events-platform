@@ -6,6 +6,7 @@ import io.mockk.*
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import org.approvaltests.Approvals
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -184,6 +185,37 @@ class EventsControllerTest {
     }
   }
 
+  @Test
+  fun `getEvents gets events of expected shape`() {
+    runBlocking {
+      val eventTypes = listOf("DEATH_NOTIFICATION")
+      val events = flowOf(
+        EventNotification(
+          eventId = UUID.fromString("a5383689-1192-4078-a4a6-a611b0a34c6e"),
+          eventType = "DEATH_NOTIFICATION",
+          sourceId = "a5383689-1192-4078-a4a6-a611b0a34c6e",
+          eventData = DeathNotificationDetails(
+            firstName = "Bob",
+          ),
+        ),
+        EventNotification(
+          eventId = UUID.fromString("ec39aa80-2fa2-4d46-9211-c66fc94024d3"),
+          eventType = "DEATH_NOTIFICATION",
+          sourceId = "ec39aa80-2fa2-4d46-9211-c66fc94024d3",
+          eventData = DeathNotificationDetails(
+            firstName = "Bob",
+            lastName = "Smith",
+          ),
+        ),
+      )
+
+      coEvery { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
+
+      val eventsOutput = underTest.getEvents(eventTypes)
+
+      Approvals.verify(eventsOutput)
+    }
+  }
   companion object {
     @JvmStatic
     private fun provideLocalDateTimes(): Stream<Arguments?>? {

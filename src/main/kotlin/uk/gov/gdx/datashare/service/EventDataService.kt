@@ -161,7 +161,7 @@ data class EventNotification(
   val eventType: String,
   @Schema(description = "ID from the source of the notification", required = true, example = "999999901")
   val sourceId: String,
-  @Schema(description = "Event Data", required = false)
+  @Schema(description = "Event Data - only returned for thick events, otherwise this field will be empty.  Full dataset for the event can be obtained by calling /events/{id}", required = false)
   val eventData: Any?,
 )
 

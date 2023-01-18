@@ -42,7 +42,6 @@ class DeathNotificationService(
       details.id,
       details.data as String?,
     )
-    log.debug("Data enriched with details $fullyEnrichedData")
 
     val egressEventData = consumerSubscriptions.map {
       val dataPayload =

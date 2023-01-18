@@ -6,3 +6,7 @@ variable "gdx_url" {}
 variable "auth_url" {}
 variable "len_client_id" {}
 variable "len_client_secret" {}
+variable "lev_rds_db_username" {}
+variable "lev_rds_db_password" {}
+variable "lev_rds_db_name" {}
+variable "lev_rds_db_host" {}

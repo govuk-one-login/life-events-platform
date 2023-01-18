@@ -59,7 +59,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "lev_api" {
-  source    = "../modules/lev_api"
+  source = "../modules/lev_api"
   providers = {
     aws = aws.eu-west-1
   }
@@ -68,7 +68,7 @@ module "lev_api" {
 }
 
 module "data-share-service" {
-  source    = "../modules/data-share-service"
+  source = "../modules/data-share-service"
   providers = {
     aws           = aws
     aws.us-east-1 = aws.us-east-1

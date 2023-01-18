@@ -33,9 +33,6 @@ class SqsIntegrationTestBase : IntegrationTestBase() {
 
   protected val auditQueue by lazy { awsQueueService.findByQueueId("audit") as AwsQueue }
   protected val dataProcessorQueue by lazy { awsQueueService.findByQueueId("dataprocessor") as AwsQueue }
-  protected val adaptorQueue by lazy { awsQueueService.findByQueueId("adaptor") as AwsQueue }
-  protected val odgQueue by lazy { awsQueueService.findByQueueId("odg") as AwsQueue }
-
   fun SqsProperties.eventTopicConfig() =
     topics["event"] ?: throw MissingTopicException("event has not been loaded from configuration properties")
 
@@ -43,8 +40,6 @@ class SqsIntegrationTestBase : IntegrationTestBase() {
   fun cleanQueue() {
     auditQueue.sqsClient.purgeQueue(PurgeQueueRequest(auditQueue.queueUrl))
     dataProcessorQueue.sqsClient.purgeQueue(PurgeQueueRequest(dataProcessorQueue.queueUrl))
-    adaptorQueue.sqsClient.purgeQueue(PurgeQueueRequest(adaptorQueue.queueUrl))
-    odgQueue.sqsClient.purgeQueue(PurgeQueueRequest(odgQueue.queueUrl))
   }
 
   companion object {
@@ -56,13 +51,5 @@ class SqsIntegrationTestBase : IntegrationTestBase() {
     fun testcontainers(registry: DynamicPropertyRegistry) {
       localStackContainer?.also { setLocalStackProperties(it, registry) }
     }
-  }
-
-  protected fun jsonString(any: Any) = objectMapper.writeValueAsString(any) as String
-
-  fun getNumberOfMessagesCurrentlyOnAdaptorQueue(): Int? {
-    val queueAttributes =
-      adaptorQueue.sqsClient.getQueueAttributes(adaptorQueue.queueUrl, listOf("ApproximateNumberOfMessages"))
-    return queueAttributes.attributes["ApproximateNumberOfMessages"]?.toInt()
   }
 }

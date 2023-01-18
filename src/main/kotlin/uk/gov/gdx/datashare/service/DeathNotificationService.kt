@@ -18,7 +18,6 @@ import java.time.LocalDate
 class DeathNotificationService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val egressEventDataRepository: EgressEventDataRepository,
-  private val eventPublishingService: EventPublishingService,
   private val levApiService: LevApiService,
   private val objectMapper: ObjectMapper,
   private val meterRegistry: MeterRegistry,
@@ -61,18 +60,7 @@ class DeathNotificationService(
       )
     }.toList()
 
-    val savedEgressEvents = egressEventDataRepository.saveAll(egressEventData).toList()
-
-    savedEgressEvents.forEach {
-      eventPublishingService.storeAndPublishEvent(it)
-      meterRegistry.counter(
-        "EVENT_ACTION.EgressEventPublished",
-        "eventType",
-        eventData.eventTypeId,
-        "consumerSubscription",
-        it.consumerSubscriptionId.toString(),
-      ).increment()
-    }
+    egressEventDataRepository.saveAll(egressEventData).toList()
   }
 
   private suspend fun enrichEventPayload(

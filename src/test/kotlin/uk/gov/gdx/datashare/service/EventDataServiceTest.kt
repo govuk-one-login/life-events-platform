@@ -249,11 +249,6 @@ class EventDataServiceTest {
       val eventTypes = listOf("DEATH_NOTIFICATION")
       val startTime = LocalDateTime.now().minusHours(1)
       val endTime = LocalDateTime.now().plusHours(1)
-      val deathNotificationDetails = DeathNotificationDetails(
-        firstName = "Alice",
-        lastName = "Smith",
-        address = thinDeathNotificationSubscription.id.toString(),
-      )
 
       coEvery { consumerSubscriptionRepository.findAllByIngressEventTypesAndClientId(clientId, eventTypes) }
         .returns(flowOf(thinDeathNotificationSubscription))

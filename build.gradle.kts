@@ -28,7 +28,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
 
   //  AWS dependencies for SNS, SQS, S3 etc
-  implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.385"))
+  implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.386"))
   implementation(platform("software.amazon.awssdk:bom:2.19.18"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
   implementation("com.amazonaws:aws-java-sdk-sns")

@@ -47,6 +47,7 @@ curl --location --request POST 'http://localhost:9090/issuer1/token' \
 --data-urlencode 'grant_type=client_credentials' \
 --data-urlencode 'scope=len'
 ```
+As per the standard client_credentials flow, the Basic auth header needs to be constructed of  `$clientId:$clientSecret` base64 encoded.
 
 This will return a token:
 ```json

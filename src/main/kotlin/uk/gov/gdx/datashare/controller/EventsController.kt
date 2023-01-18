@@ -80,7 +80,7 @@ class EventsController(
         description = "Events",
         links = [
           Link(
-            name =  "Get event details",
+            name = "Get event details",
             operationId = "getEvent",
             parameters = [LinkParameter(name = "id", expression = "\$response.body#/0/eventId")],
             description = "Full details of the event",

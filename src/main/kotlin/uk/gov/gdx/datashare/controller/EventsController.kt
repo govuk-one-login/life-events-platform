@@ -70,7 +70,7 @@ class EventsController(
   @GetMapping
   @Operation(
     summary = "Event Get API - Get event data",
-    description = "Get all events for consumer, Need scope of events/consume",
+    description = "Get all events for consumer, Need scope of events/consume. Full data is only returned for thick events.  Full dataset for the event can be obtained by calling /events/{id}",
     responses = [
       ApiResponse(
         responseCode = "200",

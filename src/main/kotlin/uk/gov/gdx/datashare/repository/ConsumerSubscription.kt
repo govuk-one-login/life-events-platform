@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ConsumerSubscription(
@@ -30,9 +30,16 @@ data class ConsumerSubscription(
   @Schema(description = "Events Type of Ingress Notification", required = true, example = "DEATH_NOTIFICATION")
   val ingressEventType: String,
   @Schema(
-    description = "CSV List of required fields to enrich the event with",
+    description = "Indicates that the specified enrichment fields will be present when a poll of events occurs",
+    required = false,
+    defaultValue = "false",
+    example = "false",
+  )
+  val enrichmentFieldsIncludedInPoll: Boolean = false,
+  @Schema(
+    description = "CSV List of required fields to which enrich the event",
     required = true,
-    example = "firstName,lastName",
+    example = "firstName,lastName,dateOfBirth",
   )
   val enrichmentFields: String,
   val whenCreated: LocalDateTime? = null,

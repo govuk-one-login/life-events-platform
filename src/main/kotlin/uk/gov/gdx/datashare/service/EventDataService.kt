@@ -95,7 +95,7 @@ class EventDataService(
       return emptyFlow()
     }
 
-    val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({ it.id }, { it.ingressEventType })
+    val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({ it.id }, { it })
 
     val egressEvents = egressEventDataRepository.findAllByConsumerSubscriptions(
       consumerSubscriptionIdMap.keys.toList(),
@@ -103,13 +103,18 @@ class EventDataService(
       endTime,
     )
 
-    return egressEvents.map {
+    return egressEvents.map { event ->
+      val subscription = consumerSubscriptionIdMap[event.consumerSubscriptionId]!!
       EventNotification(
-        eventId = it.id,
-        eventType = consumerSubscriptionIdMap[it.consumerSubscriptionId]!!,
-        sourceId = it.dataId,
-        eventData = it.dataPayload?.let { dataPayload ->
-          deathNotificationService.mapDeathNotification(dataPayload)
+        eventId = event.id,
+        eventType = subscription.ingressEventType,
+        sourceId = event.dataId,
+        eventData = if (subscription.enrichmentFieldsIncludedInPoll) {
+          event.dataPayload?.let { dataPayload ->
+            deathNotificationService.mapDeathNotification(dataPayload)
+          }
+        } else {
+          null
         },
       )
     }

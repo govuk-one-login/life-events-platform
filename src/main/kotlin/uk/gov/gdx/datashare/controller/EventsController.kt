@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.links.Link
+import io.swagger.v3.oas.annotations.links.LinkParameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -69,12 +71,21 @@ class EventsController(
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping
   @Operation(
+    operationId = "getEvents",
     summary = "Event Get API - Get event data",
     description = "Get all events for consumer, Need scope of events/consume. Full data is only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled.  Full dataset for the event can be obtained by calling /events/{id}",
     responses = [
       ApiResponse(
         responseCode = "200",
         description = "Events",
+        links = [
+          Link(
+            name =  "Get event details",
+            operationId = "getEvent",
+            parameters = [LinkParameter(name = "id", expression = "\$response.body#/0/eventId")],
+            description = "Full details of the event",
+          ),
+        ],
       ),
     ],
   )

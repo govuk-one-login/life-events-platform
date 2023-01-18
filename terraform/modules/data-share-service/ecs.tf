@@ -77,6 +77,9 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
           awslogs-stream-prefix : "gdx-data-share-poc",
           awslogs-create-group : "true"
         }
+      },
+      healthCheck : {
+        command : ["CMD", "curl -f http://localhost:8080/health/ping"]
       }
     }
   ])

@@ -1,10 +1,8 @@
 package uk.gov.gdx.datashare.service
 
-import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -28,15 +26,10 @@ class DeathNotificationServiceTest {
   private val levApiService = mockk<LevApiService>()
   private val objectMapper = JacksonConfiguration().objectMapper()
   private val meterRegistry = mockk<MeterRegistry>()
-  private val savedEgressEventsCounter = mockk<Counter>()
 
   private val underTest: DeathNotificationService
 
   init {
-    every { meterRegistry.counter("EVENT_ACTION.EgressEventPublished", *anyVararg()) }.returns(
-      savedEgressEventsCounter,
-    )
-    every { savedEgressEventsCounter.increment() }.returns(Unit)
     underTest = DeathNotificationService(
       consumerSubscriptionRepository,
       egressEventDataRepository,
@@ -135,7 +128,6 @@ class DeathNotificationServiceTest {
           },
         )
       }
-      coVerify(exactly = 2) { savedEgressEventsCounter.increment() }
     }
   }
 
@@ -188,7 +180,6 @@ class DeathNotificationServiceTest {
           },
         )
       }
-      coVerify(exactly = 2) { savedEgressEventsCounter.increment() }
     }
   }
 
@@ -238,7 +229,6 @@ class DeathNotificationServiceTest {
           },
         )
       }
-      coVerify(exactly = 2) { savedEgressEventsCounter.increment() }
     }
   }
 
@@ -267,7 +257,6 @@ class DeathNotificationServiceTest {
       assertThat(exception.message).isEqualTo("Unknown DataSet ${dataProcessorMessage.datasetId}")
 
       coVerify(exactly = 0) { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }
-      coVerify(exactly = 0) { savedEgressEventsCounter.increment() }
     }
   }
 

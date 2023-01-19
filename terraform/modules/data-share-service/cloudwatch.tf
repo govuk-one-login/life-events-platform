@@ -112,16 +112,9 @@ module "metrics_dashboard" {
       metrics = [
         {
           attributes = {
-            expression = "SUM(SEARCH('{${local.metric_namespace},consumerSubscription,eventType} MetricName=\"EVENT_ACTION.EgressEventPublished.count\"', 'Sum', 300))",
-            color      = local.metric_colours.blue,
-            label      = "Ingress events published"
-          }
-        },
-        {
-          attributes = {
             expression = "SUM(SEARCH('{${local.metric_namespace},eventType} MetricName=\"EVENT_ACTION.IngressEventPublished.count\"', 'Sum', 300))"
             color      = local.metric_colours.green
-            label      = "Egress events published"
+            label      = "Ingress events published"
           }
         },
         {

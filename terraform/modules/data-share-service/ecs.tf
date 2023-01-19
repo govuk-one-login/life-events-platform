@@ -55,13 +55,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SQS_QUEUES_AUDIT_QUEUENAME", "value" : module.audit_queue.queue_name },
         { "name" : "SQS_QUEUES_AUDIT_DLQNAME", "value" : module.audit_queue.dead_letter_queue_name },
 
-        { "name" : "SQS_QUEUES_ADAPTOR_QUEUENAME", "value" : module.outbound_adaptor_queue.queue_name },
-        { "name" : "SQS_QUEUES_ADAPTOR_DLQNAME", "value" : module.outbound_adaptor_queue.dead_letter_queue_name },
-
-        { "name" : "SQS_QUEUES_ODG_QUEUENAME", "value" : module.other_department_queue.queue_name },
-        { "name" : "SQS_QUEUES_ODG_DLQNAME", "value" : module.other_department_queue.dead_letter_queue_name },
-        { "name" : "SQS_QUEUES_ODG_DLQNAME", "value" : module.other_department_queue.dead_letter_queue_name },
-
         { "name" : "LEGACY_INBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_inbound_client_id },
         { "name" : "LEGACY_INBOUND_API_CLIENT_SECRET", "value" : module.cognito.legacy_inbound_client_secret },
         { "name" : "LEGACY_OUTBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_outbound_client_id },

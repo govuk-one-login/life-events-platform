@@ -1,10 +1,8 @@
 package uk.gov.gdx.datashare.service
 
-import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -25,23 +23,16 @@ import java.util.*
 class DeathNotificationServiceTest {
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()
   private val egressEventDataRepository = mockk<EgressEventDataRepository>()
-  private val eventPublishingService = mockk<EventPublishingService>()
   private val levApiService = mockk<LevApiService>()
   private val objectMapper = JacksonConfiguration().objectMapper()
   private val meterRegistry = mockk<MeterRegistry>()
-  private val savedEgressEventsCounter = mockk<Counter>()
 
   private val underTest: DeathNotificationService
 
   init {
-    every { meterRegistry.counter("EVENT_ACTION.EgressEventPublished", *anyVararg()) }.returns(
-      savedEgressEventsCounter,
-    )
-    every { savedEgressEventsCounter.increment() }.returns(Unit)
     underTest = DeathNotificationService(
       consumerSubscriptionRepository,
       egressEventDataRepository,
-      eventPublishingService,
       levApiService,
       objectMapper,
       meterRegistry,
@@ -109,7 +100,6 @@ class DeathNotificationServiceTest {
         .returns(consumerSubscriptions)
       coEvery { levApiService.findDeathById(dataDetail.id.toInt()) }.returns(flowOf(deathRecord))
       coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
-      coEvery { eventPublishingService.storeAndPublishEvent(any()) }.returns(Unit)
 
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
@@ -138,10 +128,6 @@ class DeathNotificationServiceTest {
           },
         )
       }
-      fakeSavedEvents.collect {
-        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it) }
-      }
-      coVerify(exactly = 2) { savedEgressEventsCounter.increment() }
     }
   }
 
@@ -166,7 +152,6 @@ class DeathNotificationServiceTest {
       coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
         .returns(consumerSubscriptions)
       coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
-      coEvery { eventPublishingService.storeAndPublishEvent(any()) }.returns(Unit)
 
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
@@ -195,10 +180,6 @@ class DeathNotificationServiceTest {
           },
         )
       }
-      fakeSavedEvents.collect {
-        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it) }
-      }
-      coVerify(exactly = 2) { savedEgressEventsCounter.increment() }
     }
   }
 
@@ -220,7 +201,6 @@ class DeathNotificationServiceTest {
       coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
         .returns(consumerSubscriptions)
       coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
-      coEvery { eventPublishingService.storeAndPublishEvent(any()) }.returns(Unit)
 
       underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
 
@@ -249,10 +229,6 @@ class DeathNotificationServiceTest {
           },
         )
       }
-      fakeSavedEvents.collect {
-        coVerify(exactly = 1) { eventPublishingService.storeAndPublishEvent(it) }
-      }
-      coVerify(exactly = 2) { savedEgressEventsCounter.increment() }
     }
   }
 
@@ -281,8 +257,6 @@ class DeathNotificationServiceTest {
       assertThat(exception.message).isEqualTo("Unknown DataSet ${dataProcessorMessage.datasetId}")
 
       coVerify(exactly = 0) { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }
-      coVerify(exactly = 0) { eventPublishingService.storeAndPublishEvent(any()) }
-      coVerify(exactly = 0) { savedEgressEventsCounter.increment() }
     }
   }
 

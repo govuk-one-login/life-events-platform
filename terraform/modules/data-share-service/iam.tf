@@ -184,42 +184,6 @@ resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {
   policy_arn = aws_iam_policy.ecs_task_sqs_access.arn
 }
 
-data "aws_iam_policy_document" "ecs_task_sns_access" {
-  statement {
-    actions = [
-      "sns:Publish",
-      "sns:Subscribe",
-      "sns:Unsubscribe",
-      "sns:GetTopicAttributes",
-    ]
-    resources = [
-      module.sns.sns_topic_arn
-    ]
-    effect = "Allow"
-  }
-
-  statement {
-    actions = [
-      "kms:GenerateDataKey",
-      "kms:Decrypt"
-    ]
-    resources = [
-      module.sns.sns_kms_key_arn
-    ]
-    effect = "Allow"
-  }
-}
-
-resource "aws_iam_policy" "ecs_task_sns_access" {
-  name   = "${var.environment}-ecs-task-sns-access"
-  policy = data.aws_iam_policy_document.ecs_task_sns_access.json
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_sns_access" {
-  role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.ecs_task_sns_access.arn
-}
-
 data "aws_iam_policy_document" "ecs_task_rds_access" {
   statement {
     actions   = ["rds-db:connect"]

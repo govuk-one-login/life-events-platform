@@ -1,9 +1,10 @@
 """SQL composition utility module
 """
 
-# psycopg/sql.py - Implementation of the JSON adaptation objects
+# psycopg/sql.py - SQL composition utility module
 #
-# Copyright (C) 2016 Daniele Varrazzo  <daniele.varrazzo@gmail.com>
+# Copyright (C) 2016-2019 Daniele Varrazzo  <daniele.varrazzo@gmail.com>
+# Copyright (C) 2020-2021 The Psycopg Team
 #
 # psycopg2 is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published
@@ -23,7 +24,6 @@
 # FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 # License for more details.
 
-import sys
 import string
 
 from psycopg2 import extensions as ext
@@ -32,12 +32,13 @@ from psycopg2 import extensions as ext
 _formatter = string.Formatter()
 
 
-class Composable(object):
+class Composable:
     """
     Abstract base class for objects that can be used to compose an SQL string.
 
-    `!Composable` objects can be passed directly to `~cursor.execute()` and
-    `~cursor.executemany()` in place of the query string.
+    `!Composable` objects can be passed directly to `~cursor.execute()`,
+    `~cursor.executemany()`, `~cursor.copy_expert()` in place of the query
+    string.
 
     `!Composable` objects can be joined using the ``+`` operator: the result
     will be a `Composed` instance containing the objects joined. The operator
@@ -49,7 +50,7 @@ class Composable(object):
         self._wrapped = wrapped
 
     def __repr__(self):
-        return "%s(%r)" % (self.__class__.__name__, self._wrapped)
+        return f"{self.__class__.__name__}({self._wrapped!r})"
 
     def as_string(self, context):
         """
@@ -58,9 +59,9 @@ class Composable(object):
         :param context: the context to evaluate the string into.
         :type context: `connection` or `cursor`
 
-        The method is automatically invoked by `~cursor.execute()` and
-        `~cursor.executemany()` if a `!Composable` is passed instead of the
-        query string.
+        The method is automatically invoked by `~cursor.execute()`,
+        `~cursor.executemany()`, `~cursor.copy_expert()` if a `!Composable` is
+        passed instead of the query string.
         """
         raise NotImplementedError
 
@@ -84,11 +85,11 @@ class Composable(object):
 
 class Composed(Composable):
     """
-    A `Composable` object made of a sequence of `Composable`.
+    A `Composable` object made of a sequence of `!Composable`.
 
-    The object is usually created using `Composable` operators and methods.
+    The object is usually created using `!Composable` operators and methods.
     However it is possible to create a `!Composed` directly specifying a
-    sequence of `Composable` as arguments.
+    sequence of `!Composable` as arguments.
 
     Example::
 
@@ -105,10 +106,10 @@ class Composed(Composable):
         for i in seq:
             if not isinstance(i, Composable):
                 raise TypeError(
-                    "Composed elements must be Composable, got %r instead" % i)
+                    f"Composed elements must be Composable, got {i!r} instead")
             wrapped.append(i)
 
-        super(Composed, self).__init__(wrapped)
+        super().__init__(wrapped)
 
     @property
     def seq(self):
@@ -180,7 +181,7 @@ class SQL(Composable):
     def __init__(self, string):
         if not isinstance(string, str):
             raise TypeError("SQL values must be strings")
-        super(SQL, self).__init__(string)
+        super().__init__(string)
 
     @property
     def string(self):
@@ -202,12 +203,12 @@ class SQL(Composable):
         :rtype: `Composed`
 
         The method is similar to the Python `str.format()` method: the string
-        template supports auto-numbered (``{}``, only available from Python
-        2.7), numbered (``{0}``, ``{1}``...), and named placeholders
-        (``{name}``), with positional arguments replacing the numbered
-        placeholders and keywords replacing the named ones. However placeholder
-        modifiers (``{0!r}``, ``{0:<10}``) are not supported. Only
-        `!Composable` objects can be passed to the template.
+        template supports auto-numbered (``{}``), numbered (``{0}``,
+        ``{1}``...), and named placeholders (``{name}``), with positional
+        arguments replacing the numbered placeholders and keywords replacing
+        the named ones. However placeholder modifiers (``{0!r}``, ``{0:<10}``)
+        are not supported. Only `!Composable` objects can be passed to the
+        template.
 
         Example::
 
@@ -288,11 +289,11 @@ class SQL(Composable):
 
 class Identifier(Composable):
     """
-    A `Composable` representing an SQL identifer.
+    A `Composable` representing an SQL identifier or a dot-separated sequence.
 
-    Identifiers usually represent names of database objects, such as tables
-    or fields. They follow `different rules`__ than SQL string literals for
-    escaping (e.g. they use double quotes).
+    Identifiers usually represent names of database objects, such as tables or
+    fields. PostgreSQL identifiers follow `different rules`__ than SQL string
+    literals for escaping (e.g. they use double quotes instead of single).
 
     .. __: https://www.postgresql.org/docs/current/static/sql-syntax-lexical.html# \
         SQL-SYNTAX-IDENTIFIERS
@@ -305,20 +306,48 @@ class Identifier(Composable):
         >>> print(sql.SQL(', ').join([t1, t2, t3]).as_string(conn))
         "foo", "ba'r", "ba""z"
 
-    """
-    def __init__(self, string):
-        if not isinstance(string, str):
-            raise TypeError("SQL identifiers must be strings")
+    Multiple strings can be passed to the object to represent a qualified name,
+    i.e. a dot-separated sequence of identifiers.
 
-        super(Identifier, self).__init__(string)
+    Example::
+
+        >>> query = sql.SQL("select {} from {}").format(
+        ...     sql.Identifier("table", "field"),
+        ...     sql.Identifier("schema", "table"))
+        >>> print(query.as_string(conn))
+        select "table"."field" from "schema"."table"
+
+    """
+    def __init__(self, *strings):
+        if not strings:
+            raise TypeError("Identifier cannot be empty")
+
+        for s in strings:
+            if not isinstance(s, str):
+                raise TypeError("SQL identifier parts must be strings")
+
+        super().__init__(strings)
+
+    @property
+    def strings(self):
+        """A tuple with the strings wrapped by the `Identifier`."""
+        return self._wrapped
 
     @property
     def string(self):
-        """The string wrapped by the `Identifier`."""
-        return self._wrapped
+        """The string wrapped by the `Identifier`.
+        """
+        if len(self._wrapped) == 1:
+            return self._wrapped[0]
+        else:
+            raise AttributeError(
+                "the Identifier wraps more than one than one string")
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(map(repr, self._wrapped))})"
 
     def as_string(self, context):
-        return ext.quote_ident(self._wrapped, context)
+        return '.'.join(ext.quote_ident(s, context) for s in self._wrapped)
 
 
 class Literal(Composable):
@@ -360,7 +389,7 @@ class Literal(Composable):
             a.prepare(conn)
 
         rv = a.getquoted()
-        if sys.version_info[0] >= 3 and isinstance(rv, bytes):
+        if isinstance(rv, bytes):
             rv = rv.decode(ext.encodings[conn.encoding])
 
         return rv
@@ -396,12 +425,12 @@ class Placeholder(Composable):
     def __init__(self, name=None):
         if isinstance(name, str):
             if ')' in name:
-                raise ValueError("invalid name: %r" % name)
+                raise ValueError(f"invalid name: {name!r}")
 
         elif name is not None:
-            raise TypeError("expected string or None as name, got %r" % name)
+            raise TypeError(f"expected string or None as name, got {name!r}")
 
-        super(Placeholder, self).__init__(name)
+        super().__init__(name)
 
     @property
     def name(self):
@@ -409,12 +438,14 @@ class Placeholder(Composable):
         return self._wrapped
 
     def __repr__(self):
-        return "Placeholder(%r)" % (
-            self._wrapped if self._wrapped is not None else '',)
+        if self._wrapped is None:
+            return f"{self.__class__.__name__}()"
+        else:
+            return f"{self.__class__.__name__}({self._wrapped!r})"
 
     def as_string(self, context):
         if self._wrapped is not None:
-            return "%%(%s)s" % self._wrapped
+            return f"%({self._wrapped})s"
         else:
             return "%s"
 

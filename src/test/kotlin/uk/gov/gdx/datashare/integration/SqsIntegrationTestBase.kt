@@ -1,7 +1,6 @@
 package uk.gov.gdx.datashare.integration
 
 import com.amazonaws.services.sqs.model.PurgeQueueRequest
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,19 +21,8 @@ class SqsIntegrationTestBase : IntegrationTestBase() {
   @SpyBean
   protected lateinit var sqsPropertiesSpy: SqsProperties
 
-  @Autowired
-  protected lateinit var objectMapper: ObjectMapper
-
-  private val eventTopic by lazy {
-    awsQueueService.findByTopicId("event") ?: throw MissingQueueException("Topic event not found")
-  }
-  protected val eventTopicSnsClient by lazy { eventTopic.snsClient }
-  protected val eventTopicArn by lazy { eventTopic.arn }
-
   protected val auditQueue by lazy { awsQueueService.findByQueueId("audit") as AwsQueue }
   protected val dataProcessorQueue by lazy { awsQueueService.findByQueueId("dataprocessor") as AwsQueue }
-  fun SqsProperties.eventTopicConfig() =
-    topics["event"] ?: throw MissingTopicException("event has not been loaded from configuration properties")
 
   @BeforeEach
   fun cleanQueue() {

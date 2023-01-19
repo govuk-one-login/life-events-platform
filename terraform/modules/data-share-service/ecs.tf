@@ -47,8 +47,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
 
         { "name" : "METRICS_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },
 
-        { "name" : "SQS_TOPICS_EVENT_ARN", "value" : module.sns.sns_topic_arn },
-
         { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUENAME", "value" : module.data_processor_queue.queue_name },
         { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQNAME", "value" : module.data_processor_queue.dead_letter_queue_name },
 

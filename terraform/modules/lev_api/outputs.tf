@@ -7,7 +7,8 @@ output "lev_rds_db_username" {
 }
 
 output "lev_rds_db_password" {
-  value = aws_rds_cluster.lev_rds_postgres_cluster.master_password
+  value     = aws_rds_cluster.lev_rds_postgres_cluster.master_password
+  sensitive = true
 }
 
 output "lev_rds_db_name" {

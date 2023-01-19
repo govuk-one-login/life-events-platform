@@ -75,7 +75,7 @@ dependencies {
   testImplementation("org.assertj:assertj-core:3.24.2")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.10")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.11")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:localstack:1.17.6")
   testImplementation("org.testcontainers:postgresql:1.17.6")

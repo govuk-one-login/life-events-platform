@@ -87,11 +87,12 @@ def create_death_registration():
     cursor.execute("select nextval('death_registration_ids')")
     death_registration_id = cursor.fetchone()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         INSERT INTO death_registration_v1 (id, data, forenames, surname, date_of_birth, date_of_death)
         VALUES(%(id)s, %(data)s, %(forenames)s, %(surname)s, %(date_of_birth)s, %(date_of_death)s)
         """,
-                   generate_death_registration(death_registration_id))
+        generate_death_registration(death_registration_id))
 
     return death_registration_id
 
@@ -114,11 +115,11 @@ def generate_death_registration(death_registration_id: int):
                    "administrativeArea": "Reading"
                },
                "informant": {
-                   "forenames": "Informy",
-                   "surname": "McInformface",
-                   "address": "666 Inform House, 6 Inform street, Informington, Informshire",
-                   "qualification": "Life-long nemesis, Present at death",
-                   "signature": "I. McInformface"
+                   "forenames": "An",
+                   "surname": "Informant",
+                   "address": "1 Inform House",
+                   "qualification": "Doctor",
+                   "signature": "A. Informant"
                },
                "deceased": {
                    "forenames": forenames,

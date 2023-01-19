@@ -83,4 +83,7 @@ module "data-share-service" {
   vpc_cidr                    = "10.158.16.0/20"
   lev_url                     = module.lev_api.service_url
   db_username                 = "ecs_demo_db"
+  externally_allowed_cidrs = [
+    "82.163.115.96/27", "87.224.105.240/29", "87.224.105.248/29", "31.221.86.176/28", "167.98.33.80/28", # Softwire
+  ]
 }

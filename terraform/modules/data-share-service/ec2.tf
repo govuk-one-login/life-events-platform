@@ -45,7 +45,7 @@ resource "aws_security_group" "rds_bastion_host_sg" {
     protocol    = "tcp"
     from_port   = 22
     to_port     = 22
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.externally_allowed_cidrs
     description = "Allow SSH for RDS bastion"
   }
 

@@ -2,8 +2,6 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
@@ -16,10 +14,6 @@ class ConsumersService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val consumerRepository: ConsumerRepository,
 ) {
-  companion object {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
-  }
-
   suspend fun getConsumers() = consumerRepository.findAll()
 
   suspend fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()

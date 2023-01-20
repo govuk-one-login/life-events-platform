@@ -161,8 +161,11 @@ data class EventNotification(
   val eventType: String,
   @Schema(description = "ID from the source of the notification", required = true, example = "999999901")
   val sourceId: String,
-  @Schema(description = "Event Data - only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled, otherwise an empty object. " +
-    "Full dataset for the event can be obtained by calling /events/{id}", required = false)
+  @Schema(
+    description = "Event Data - only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled, otherwise an empty object. " +
+      "Full dataset for the event can be obtained by calling /events/{id}",
+    required = false,
+  )
   val eventData: Any?,
 )
 

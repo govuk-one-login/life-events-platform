@@ -85,7 +85,7 @@ def create_death_registration():
     connection = psycopg2.connect(user=lev_username, password=lev_password, database=lev_db_name, host=lev_host)
     cursor = connection.cursor()
     cursor.execute("select nextval('death_registration_ids')")
-    death_registration_id = cursor.fetchone()
+    death_registration_id = cursor.fetchone()[0]
 
     cursor.execute(
         """
@@ -93,7 +93,7 @@ def create_death_registration():
         VALUES(%(id)s, %(data)s, %(forenames)s, %(surname)s, %(date_of_birth)s, %(date_of_death)s)
         """,
         generate_death_registration(death_registration_id))
-
+    connection.commit()
     return death_registration_id
 
 
@@ -104,56 +104,56 @@ def generate_death_registration(death_registration_id: int):
     date_of_death = date_of_death_options[randint(0, len(date_of_death_options) - 1)]
 
     data = {
-               "id": death_registration_id,
-               "date": "2014-10-10",
-               "entryNumber": death_registration_id,
-               "registrar": {
-                   "signature": "A. Registrar",
-                   "designation": "Registrar",
-                   "subdistrict": "Test Subdistrict",
-                   "district": "Test District",
-                   "administrativeArea": "Reading"
-               },
-               "informant": {
-                   "forenames": "An",
-                   "surname": "Informant",
-                   "address": "1 Inform House",
-                   "qualification": "Doctor",
-                   "signature": "A. Informant"
-               },
-               "deceased": {
-                   "forenames": forenames,
-                   "surname": surname,
-                   "dateOfBirth": date_of_birth,
-                   "dateOfDeath": date_of_death,
-                   "ageAtDeath": "100 years",
-                   "birthplace": "Test address",
-                   "deathplace": "Test address",
-                   "sex": sex_options[randint(0, len(sex_options) - 1)],
-                   "address": address_options[randint(0, len(address_options) - 1)],
-                   "occupation": "Unemployed",
-                   "retired": False,
-                   "maidenSurname": "TESTER",
-                   "aliases": [],
-                   "causeOfDeath": "Old age",
-                   "certifiedBy": "A. Doctor MD",
-               },
-               "partner": {},
-               "mother": {},
-               "father": {},
-               "coroner": {},
-               "status": {
-                   "blocked": False,
-                   "correction": "None",
-                   "marginalNote": "None",
-                   "onAuthorityOfRegistrarGeneral": False
-               },
-           },
+        "id": death_registration_id,
+        "date": "2014-10-10",
+        "entryNumber": death_registration_id,
+        "registrar": {
+            "signature": "A. Registrar",
+            "designation": "Registrar",
+            "subdistrict": "Test Subdistrict",
+            "district": "Test District",
+            "administrativeArea": "Reading"
+        },
+        "informant": {
+            "forenames": "An",
+            "surname": "Informant",
+            "address": "1 Inform House",
+            "qualification": "Doctor",
+            "signature": "A. Informant"
+        },
+        "deceased": {
+            "forenames": forenames,
+            "surname": surname,
+            "dateOfBirth": date_of_birth,
+            "dateOfDeath": date_of_death,
+            "ageAtDeath": "100 years",
+            "birthplace": "Test address",
+            "deathplace": "Test address",
+            "sex": sex_options[randint(0, len(sex_options) - 1)],
+            "address": address_options[randint(0, len(address_options) - 1)],
+            "occupation": "Unemployed",
+            "retired": False,
+            "maidenSurname": "TESTER",
+            "aliases": [],
+            "causeOfDeath": "Old age",
+            "certifiedBy": "A. Doctor MD",
+        },
+        "partner": {},
+        "mother": {},
+        "father": {},
+        "coroner": {},
+        "status": {
+            "blocked": False,
+            "correction": "None",
+            "marginalNote": "None",
+            "onAuthorityOfRegistrarGeneral": False
+        },
+    }
     return {
         "id": death_registration_id,
-        "data": data,
+        "data": json.dumps(data),
         "forenames": forenames,
-        "surnames": surname,
+        "surname": surname,
         "date_of_birth": date_of_birth,
         "date_of_death": date_of_death,
     }

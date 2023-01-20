@@ -125,7 +125,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {
 
 data "aws_iam_policy_document" "ecs_task_rds_access" {
   statement {
-    actions   = ["rds-db:connect"]
+    actions = ["rds-db:connect"]
     resources = [
       "arn:aws:rds-db:${var.region}:${data.aws_caller_identity.current.account_id}:dbuser:${aws_rds_cluster.rds_postgres_cluster.cluster_resource_id}/${var.db_username}"
     ]

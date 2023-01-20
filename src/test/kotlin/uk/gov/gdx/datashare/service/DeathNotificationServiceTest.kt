@@ -116,6 +116,55 @@ class DeathNotificationServiceTest {
             .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
         },
       )
+<<<<<<< HEAD
+=======
+      val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
+      val deathRecord = DeathRecord(
+        deceased = Deceased(
+          forenames = "Alice",
+          surname = "Smith",
+          dateOfBirth = LocalDate.of(1920, 1, 1),
+          dateOfDeath = LocalDate.of(2010, 1, 1),
+          sex = "female",
+          address = "666 Inform House, 6 Inform street, Informington, Informshire",
+          dateOfDeathQualifier = null,
+        ),
+        id = dataDetail.id,
+        date = LocalDate.now(),
+        partner = null,
+      )
+
+      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
+        .returns(consumerSubscriptions)
+      coEvery { levApiService.findDeathById(dataDetail.id.toInt()) }.returns(flowOf(deathRecord))
+      coEvery { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
+
+      underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
+
+      coVerify(exactly = 1) {
+        eventDataRepository.saveAll(
+          withArg<Iterable<EventData>> {
+            assertThat(it).hasSize(2)
+            val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
+            val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
+
+            assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
+              .isEqualTo(dataProcessorMessage.datasetId)
+            assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
+              .isEqualTo(dataDetail.id)
+            assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
+              .isEqualTo(dataProcessorMessage.eventTime)
+            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
+              .isNull()
+
+            assertThat(simpleEvent?.dataPayload)
+              .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
+            assertThat(complexEvent?.dataPayload)
+              .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
+          },
+        )
+      }
+>>>>>>> eb1d669 (feat: Remove inbound and outbound adaptors)
     }
   }
 

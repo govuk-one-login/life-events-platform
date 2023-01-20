@@ -51,7 +51,6 @@ Once stored a notification via a queue will be sent to the Event Publisher conta
 - Will subscribe to the SNS event topic (like a high tech Dept) and then use that to assemble data for clients and send
   via FTP and Email.
 
-
 ## Decision
 
 This approach follows the agreed pattern of architecture for GDX

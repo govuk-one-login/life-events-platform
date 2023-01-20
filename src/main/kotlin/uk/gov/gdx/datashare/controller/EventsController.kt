@@ -73,7 +73,10 @@ class EventsController(
   @Operation(
     operationId = "getEvents",
     summary = "Event Get API - Get event data",
-    description = "Get all events for consumer, Need scope of events/consume. Full data is only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled.  Full dataset for the event can be obtained by calling /events/{id}",
+    description = "Get all events for consumer, Need scope of events/consume. " +
+      "Full data is only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled. " +
+      "When this flag is not enabled, the eventData will be an empty object. " +
+      "Full dataset for the event can be obtained by calling `/events/{id}`",
     responses = [
       ApiResponse(
         responseCode = "200",

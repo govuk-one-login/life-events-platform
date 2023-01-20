@@ -95,6 +95,10 @@ module "len" {
   auth_url                    = module.data-share-service.token_auth_url
   len_client_id               = module.data-share-service.len_client_id
   len_client_secret           = module.data-share-service.len_client_secret
+  lev_rds_db_username         = module.lev_api.lev_rds_db_username
+  lev_rds_db_password         = module.lev_api.lev_rds_db_password
+  lev_rds_db_name             = module.lev_api.lev_rds_db_name
+  lev_rds_db_host             = module.lev_api.lev_rds_db_host
 }
 
 module "consumer" {

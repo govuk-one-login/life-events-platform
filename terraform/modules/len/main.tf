@@ -1,13 +1,6 @@
 data "archive_file" "len_lambda" {
-  type = "zip"
-  source {
-    content  = file("${path.module}/lambdas/len.py")
-    filename = "len.py"
-  }
-  source {
-    content  = file("${path.module}/../lambdas/common.py")
-    filename = "common.py"
-  }
+  type        = "zip"
+  source_dir  = "${path.module}/lambdas"
   output_path = "${path.module}/zip/len.zip"
 }
 
@@ -22,10 +15,14 @@ resource "aws_lambda_function" "len" {
 
   environment {
     variables = {
-      gdx_url           = var.gdx_url
-      auth_url          = var.auth_url
-      len_client_id     = var.len_client_id
-      len_client_secret = var.len_client_secret
+      gdx_url             = var.gdx_url
+      auth_url            = var.auth_url
+      len_client_id       = var.len_client_id
+      len_client_secret   = var.len_client_secret
+      lev_rds_db_username = var.lev_rds_db_username
+      lev_rds_db_password = var.lev_rds_db_password
+      lev_rds_db_name     = var.lev_rds_db_name
+      lev_rds_db_host     = var.lev_rds_db_host
     }
   }
   tracing_config {

@@ -4,5 +4,3 @@ sqs:
     dataprocessor:
       queueName: dataprocessor-queue
       dlqName: dataprocessor-dlq
-    audit:
-      queueName: ${random.uuid}

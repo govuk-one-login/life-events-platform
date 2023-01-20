@@ -12,7 +12,6 @@ import java.util.*
 
 @Service
 class DataProcessor(
-  private val auditService: AuditService,
   private val ingressEventDataRepository: IngressEventDataRepository,
   private val objectMapper: ObjectMapper,
   private val deathNotificationService: DeathNotificationService,
@@ -26,14 +25,6 @@ class DataProcessor(
     runBlocking {
       val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
       log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
-
-      // audit the event
-      auditService.sendMessage(
-        auditType = AuditType.EVENT_OCCURRED,
-        id = dataProcessorMessage.eventTypeId,
-        details = dataProcessorMessage.details ?: "NONE",
-        username = dataProcessorMessage.publisher,
-      )
 
       val ingressEventId = UUID.randomUUID()
 

@@ -153,8 +153,6 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
     resources = [
       module.data_processor_queue.queue_arn,
       module.data_processor_queue.dead_letter_queue_arn,
-      module.audit_queue.queue_arn,
-      module.audit_queue.dead_letter_queue_arn,
     ]
     effect = "Allow"
   }
@@ -167,8 +165,6 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
     resources = [
       module.data_processor_queue.queue_kms_key_arn,
       module.data_processor_queue.dead_letter_queue_kms_key_arn,
-      module.audit_queue.queue_kms_key_arn,
-      module.audit_queue.dead_letter_queue_kms_key_arn,
     ]
     effect = "Allow"
   }

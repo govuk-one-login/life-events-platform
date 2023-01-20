@@ -30,15 +30,6 @@ spring:
   flyway:
     locations: classpath:db/migration, classpath:db/devonly
 
-  security:
-    oauth2:
-      client:
-        registration:
-          event-data-retrieval:
-            scope: internal-outbound
-          data-receiver:
-            scope: internal-inbound
-
 api:
   base:
     consume-outbound-by-queue: false
@@ -46,22 +37,5 @@ api:
       issuer-uri: http://localhost:9090/issuer1
       oauth: http://localhost:9090/issuer1
       lev: http://localhost:8099
-      data-receiver: http://localhost:8080
-      event-data-retrieval: http://localhost:8080
     s3:
       localstack-url: http://127.0.0.1:4566
-      ingress-bucket: ingress
-      ingress-archive-bucket: ingress-archive
-      egress-bucket: egress
-
-legacy-inbound:
-  api:
-    client:
-      id: clientId
-      secret: clientSecret
-
-legacy-outbound:
-  api:
-    client:
-      id: clientId
-      secret: clientSecret

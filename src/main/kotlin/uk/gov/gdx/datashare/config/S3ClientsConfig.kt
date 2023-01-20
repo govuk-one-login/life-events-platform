@@ -5,7 +5,6 @@ import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.amazonaws.services.s3.model.CreateBucketRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
@@ -34,22 +33,4 @@ class S3ClientsConfig(private val s3Config: S3Config) {
       .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(s3Config.localstackUrl, s3Config.region))
       .withCredentials(AWSStaticCredentialsProvider(BasicAWSCredentials("any", "any")))
       .build()
-      .also {
-        val request = CreateBucketRequest(s3Config.ingressBucket, s3Config.region)
-        runCatching {
-          it.createBucket(request)
-        }.onFailure { log.info("Failed to create S3 bucket ${s3Config.ingressBucket} due to error ${it.message}") }
-      }
-      .also {
-        val request = CreateBucketRequest(s3Config.ingressArchiveBucket, s3Config.region)
-        runCatching {
-          it.createBucket(request)
-        }.onFailure { log.info("Failed to create S3 bucket ${s3Config.ingressArchiveBucket} due to error ${it.message}") }
-      }
-      .also {
-        val request = CreateBucketRequest(s3Config.egressBucket, s3Config.region)
-        runCatching {
-          it.createBucket(request)
-        }.onFailure { log.info("Failed to create S3 bucket ${s3Config.egressBucket} due to error ${it.message}") }
-      }
 }

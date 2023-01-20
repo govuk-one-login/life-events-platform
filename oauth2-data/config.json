@@ -18,16 +18,6 @@
         },
         {
           "requestParam": "scope",
-          "match": "internal-inbound",
-          "claims": {
-            "sub": "internal-inbound",
-            "iss": "http://oauth2:8080/issuer1",
-            "scope": "events/publish",
-            "client_id": "internal-inbound"
-          }
-        },
-        {
-          "requestParam": "scope",
           "match": "passthru",
           "claims": {
             "sub": "passthru",
@@ -58,16 +48,6 @@
         },
         {
           "requestParam": "scope",
-          "match": "internal-outbound",
-          "claims": {
-            "sub": "internal-outbound",
-            "iss": "http://oauth2:8080/issuer1",
-            "scope": "events/consume",
-            "client_id": "internal-outbound"
-          }
-        },
-        {
-          "requestParam": "scope",
           "match": "maintainer",
           "claims": {
             "sub": "maintainer",
@@ -82,7 +62,11 @@
           "claims": {
             "sub": "everything",
             "iss": "http://oauth2:8080/issuer1",
-            "scope": ["events/admin", "events/consume", "events/publish"],
+            "scope": [
+              "events/admin",
+              "events/consume",
+              "events/publish"
+            ],
             "client_id": "everything"
           }
         }

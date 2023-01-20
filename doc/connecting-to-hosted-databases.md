@@ -4,6 +4,8 @@ This makes connecting to them for debugging purposes slightly tricky. To enable 
 per environment, which is in the same VPC as the database and therefore allowed to connect to it. You can connect to this
 EC2 instance via SSH.
 
+Access to the bastion host is IP allowlisted. The list of allowed IPs is defined in terraform as `externally_allowed_cidrs`.
+
 ## Getting SSH keys
 It may be easier to get these from another member of the team. If not, or for a new environment:
 

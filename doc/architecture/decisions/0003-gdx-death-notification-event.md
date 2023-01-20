@@ -7,10 +7,10 @@ Date: 2022-11-15
 
 ## Status
 
-Accepted
+Accepted - Partially superceded [Use queues to buffer events](0009-use-queue-to-buffer-input-events.md)
 
 ## Context
-New service to listen for death events from DWP and publish 
+New service to listen for death events from DWP and publish
 
 
 ## Architecture
@@ -35,7 +35,7 @@ Once stored a notification via a queue will be sent to the Event Publisher conta
 - Services the needs of consuming clients that have a simpler technology stack.
 - Will subscribe to the SNS event topic (like a high tech Dept) and then use that to assemble data for clients and send via FTP and Email.
 
- 
+
 ## Decision
 
 This approach follows the agreed pattern of architecture for GDX

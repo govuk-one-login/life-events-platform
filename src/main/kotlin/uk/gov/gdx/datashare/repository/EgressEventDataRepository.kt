@@ -1,7 +1,6 @@
 package uk.gov.gdx.datashare.repository
 
 import kotlinx.coroutines.flow.Flow
-import org.springframework.data.r2dbc.repository.Modifying
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
@@ -36,10 +35,6 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
   ): Flow<EgressEventData>
-
-  @Query("DELETE FROM egress_event_data where when_created < :expiredTime")
-  @Modifying
-  suspend fun deleteAllExpiredEvents(expiredTime: LocalDateTime)
 
   @Query(
     "SELECT ed.* FROM egress_event_data ed " +

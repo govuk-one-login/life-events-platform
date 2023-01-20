@@ -28,12 +28,16 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
       "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
-      "ORDER BY ed.when_created",
+      "ORDER BY ed.when_created " +
+      "LIMIT :pageSize " +
+      "OFFSET :offset",
   )
   fun findAllByConsumerSubscriptions(
     consumerSubscriptionIds: List<UUID>,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
+    pageSize: Int,
+    offset: Int,
   ): Flow<EgressEventData>
 
   @Query(

@@ -16,10 +16,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.util.UriComponentsBuilder
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.config.JacksonConfiguration
+import uk.gov.gdx.datashare.dto.Document
 import uk.gov.gdx.datashare.service.DataReceiverService
 import uk.gov.gdx.datashare.service.EventDataService
 import uk.gov.gdx.datashare.service.EventNotification
@@ -98,27 +101,54 @@ class EventsController(
       required = false,
       allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
     )
-    @RequestParam(name = "eventType", required = false)
-    eventTypes: List<String> = listOf(),
+    @RequestParam(name = "filter[eventType]", defaultValue = "")
+    eventTypes: List<String>,
     @Schema(
       description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
       type = "date-time",
       required = false,
     )
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "fromTime", required = false)
-    startTime: LocalDateTime? = null,
+    @RequestParam(name = "filter[fromTime]", required = false)
+    startTime: LocalDateTime?,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
       required = false,
     )
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "toTime", required = false)
-    endTime: LocalDateTime? = null,
-  ): List<EventNotification> = run {
+    @RequestParam(name = "filter[toTime]", required = false)
+    endTime: LocalDateTime?,
+    @Schema(description = "Number of results per page. Maximum 25.", defaultValue = "10", example = "25")
+    @RequestParam(name = "page[size]", defaultValue = "10")
+    pageSize: Int,
+    @Schema(description = "Page number. Zero indexed", defaultValue = "0", example = "1")
+    @RequestParam(name = "page[number]", defaultValue = "0")
+    pageNumber: Int,
+    componentsBuilder: UriComponentsBuilder,
+  ): Document<List<EventNotification>> = run {
+    val currentParams = LinkedMultiValueMap<String, String>()
+    currentParams.add("filter[eventType]", eventTypes.joinToString(","))
+    currentParams.add("filter[fromTime]", startTime?.toString() ?: "")
+    currentParams.add("filter[toTime]", endTime?.toString() ?: "")
+    currentParams.add("page[size]", pageSize.toString())
+    currentParams.add("page[number]", pageNumber.toString())
+    val self = linkWithRel(
+      componentsBuilder
+        .replacePath("/events")
+        .replaceQueryParams(currentParams)
+        .build()
+        .toUriString(),
+      "self",
+    )
     tryCallAndUpdateMetric(
-      { eventDataService.getEvents(eventTypes, startTime, endTime).toList() },
+      {
+        Document(
+          data = eventDataService.getEvents(eventTypes, startTime, endTime, pageSize, pageNumber).toList()
+            .onEach { setEventSelfLink(it, componentsBuilder) },
+          links = mapOf("self" to self),
+        )
+      },
       meterRegistry.counter("API_CALLS.GetEvents", "success", "true"),
       meterRegistry.counter("API_CALLS.GetEvents", "success", "false"),
     )
@@ -153,7 +183,7 @@ class EventsController(
   }
 
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
-  @GetMapping("/{id}")
+  @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get Specific Event API - Get event data",
     description = "The event ID is the UUID received off the queue, Need scope of events/consume",
@@ -165,7 +195,12 @@ class EventsController(
       ApiResponse(
         responseCode = "404",
         description = "Event with UUID cannot be found",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -173,9 +208,17 @@ class EventsController(
     @Schema(description = "Event ID", required = true)
     @PathVariable
     id: UUID,
-  ) = run {
+    componentsBuilder: UriComponentsBuilder,
+  ): Document<EventNotification?> = run {
+    val self = linkWithRel(getEventLink(id, componentsBuilder), "self")
+    val collection = linkWithRel(getEventsLink(componentsBuilder), "collection")
     tryCallAndUpdateMetric(
-      { eventDataService.getEvent(id) },
+      {
+        Document(
+          eventDataService.getEvent(id),
+          links = mapOf("self" to self, "collection" to collection),
+        )
+      },
       meterRegistry.counter("API_CALLS.GetEvent", "success", "true"),
       meterRegistry.counter("API_CALLS.GetEvent", "success", "false"),
     )
@@ -222,6 +265,21 @@ class EventsController(
       throw e
     }
   }
+
+  private suspend fun linkWithRel(link: String, rel: String) = org.springframework.hateoas.Link.of(link, rel)
+
+  private suspend fun setEventSelfLink(
+    it: EventNotification,
+    componentsBuilder: UriComponentsBuilder,
+  ) {
+    it.links = mapOf("self" to linkWithRel(getEventLink(it.eventId, componentsBuilder), "self"))
+  }
+
+  private suspend fun getEventsLink(componentsBuilder: UriComponentsBuilder) =
+    componentsBuilder.replacePath("/events").replaceQuery("").build().toUriString()
+
+  private suspend fun getEventLink(id: UUID, componentsBuilder: UriComponentsBuilder) =
+    componentsBuilder.replacePath("/events/$id").replaceQuery("").build().toUriString()
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

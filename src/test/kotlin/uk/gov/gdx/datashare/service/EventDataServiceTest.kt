@@ -7,11 +7,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -21,11 +17,7 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
-import uk.gov.gdx.datashare.repository.ConsumerSubscription
-import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EgressEventData
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.IngressEventDataRepository
+import uk.gov.gdx.datashare.repository.*
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
@@ -210,6 +202,8 @@ class EventDataServiceTest {
       val eventTypes = listOf("DEATH_NOTIFICATION")
       val startTime = LocalDateTime.now().minusHours(1)
       val endTime = LocalDateTime.now().plusHours(1)
+      val pageSize = 10
+      val pageNumber = 0
       val deathNotificationDetails = DeathNotificationDetails(
         firstName = "Alice",
         lastName = "Smith",
@@ -223,12 +217,14 @@ class EventDataServiceTest {
           listOf(deathNotificationSubscription.id),
           startTime,
           endTime,
+          pageSize,
+          pageNumber,
         )
       }.returns(deathEvents)
       val dataPayload = deathEvents.toList()[0].dataPayload!!
       every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
 
-      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
+      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, pageSize, pageNumber).toList()
 
       assertThat(eventsOutput).isEqualTo(
         deathEvents.map {
@@ -249,6 +245,8 @@ class EventDataServiceTest {
       val eventTypes = listOf("DEATH_NOTIFICATION")
       val startTime = LocalDateTime.now().minusHours(1)
       val endTime = LocalDateTime.now().plusHours(1)
+      val pageSize = 10
+      val pageNumber = 0
 
       coEvery { consumerSubscriptionRepository.findAllByIngressEventTypesAndClientId(clientId, eventTypes) }
         .returns(flowOf(thinDeathNotificationSubscription))
@@ -257,10 +255,12 @@ class EventDataServiceTest {
           listOf(thinDeathNotificationSubscription.id),
           startTime,
           endTime,
+          pageSize,
+          pageNumber,
         )
       }.returns(thinDeathEvents)
 
-      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
+      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, pageSize, pageNumber).toList()
 
       assertThat(eventsOutput).isEqualTo(
         thinDeathEvents.map {
@@ -280,6 +280,8 @@ class EventDataServiceTest {
     runBlocking {
       val fallbackStartTime = LocalDateTime.now().minusHours(1)
       val fallbackEndTime = LocalDateTime.now()
+      val pageSize = 10
+      val pageNumber = 0
 
       every { dateTimeHandler.defaultStartTime() }.returns(fallbackStartTime)
       every { dateTimeHandler.now() }.returns(fallbackEndTime)
@@ -297,12 +299,14 @@ class EventDataServiceTest {
           listOf(deathNotificationSubscription.id),
           fallbackStartTime,
           fallbackEndTime,
+          pageSize,
+          pageNumber,
         )
       }.returns(extraDeathEvents)
       val dataPayload = extraDeathEvents.toList()[0].dataPayload!!
       every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
 
-      val eventStatusOutput = underTest.getEvents(null, null, null).toList()
+      val eventStatusOutput = underTest.getEvents(listOf(), null, null, pageSize, pageNumber).toList()
 
       assertThat(eventStatusOutput).isEqualTo(
         extraDeathEvents.map {

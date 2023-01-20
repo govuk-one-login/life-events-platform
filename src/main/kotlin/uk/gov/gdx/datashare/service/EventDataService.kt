@@ -1,15 +1,13 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.media.Schema
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.hateoas.Link
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AuthenticationFacade
@@ -79,15 +77,17 @@ class EventDataService(
   }
 
   suspend fun getEvents(
-    eventTypes: List<String>?,
+    eventTypes: List<String>,
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?,
+    pageSize: Int,
+    pageNumber: Int,
   ): Flow<EventNotification> {
     val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
     val endTime = optionalEndTime ?: dateTimeHandler.now()
     val clientId = authenticationFacade.getUsername()
 
-    val consumerSubscriptions = eventTypes?.let {
+    val consumerSubscriptions = eventTypes.ifEmpty { null }?.let {
       consumerSubscriptionRepository.findAllByIngressEventTypesAndClientId(clientId, eventTypes)
     } ?: consumerSubscriptionRepository.findAllByClientId(clientId)
 
@@ -101,6 +101,8 @@ class EventDataService(
       consumerSubscriptionIdMap.keys.toList(),
       startTime,
       endTime,
+      pageSize,
+      (pageSize * pageNumber),
     )
 
     return egressEvents.map { event ->
@@ -151,7 +153,25 @@ class EventDataService(
 @Schema(description = "Subscribed event notification")
 data class EventNotification(
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
+  @JsonProperty("id")
   val eventId: UUID,
+  @Schema(description = "JSON:API type. This is always 'event'", required = true, example = "event")
+  val type: String = "event",
+  val attributes: EventNotificationAttributes,
+  var links: Map<String, Link>? = null,
+) {
+  constructor(eventId: UUID, eventType: String, sourceId: String, eventData: Any?) : this(
+    eventId,
+    "event",
+    EventNotificationAttributes(
+      eventType,
+      sourceId,
+      eventData,
+    ),
+  )
+}
+
+data class EventNotificationAttributes(
   @Schema(
     description = "Event's Type",
     required = true,
@@ -163,7 +183,7 @@ data class EventNotification(
   val sourceId: String,
   @Schema(
     description = "Event Data - only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled, otherwise an empty object. " +
-      "Full dataset for the event can be obtained by calling /events/{id}",
+      "  Full dataset for the event can be obtained by calling /events/{id}",
     required = false,
   )
   val eventData: Any?,

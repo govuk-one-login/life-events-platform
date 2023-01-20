@@ -26,6 +26,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
+  implementation("org.springframework.boot:spring-boot-starter-hateoas")
 
   //  AWS dependencies for SNS, SQS, S3 etc
   implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.388"))
@@ -41,6 +42,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("org.apache.commons:commons-csv:1.9.0")
+  implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.1")
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("org.postgresql:r2dbc-postgresql")

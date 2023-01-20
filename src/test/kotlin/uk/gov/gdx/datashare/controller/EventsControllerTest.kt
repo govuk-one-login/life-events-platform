@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.*
@@ -12,14 +13,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.springframework.web.util.UriComponentsBuilder
 import uk.gov.gdx.datashare.config.EventNotFoundException
-import uk.gov.gdx.datashare.service.DataReceiverService
-import uk.gov.gdx.datashare.service.DeathNotificationDetails
-import uk.gov.gdx.datashare.service.EventDataService
-import uk.gov.gdx.datashare.service.EventNotification
-import uk.gov.gdx.datashare.service.EventStatus
+import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import java.util.stream.Stream
 
 class EventsControllerTest {
@@ -105,13 +103,15 @@ class EventsControllerTest {
           ),
         ),
       )
+      val pageSize = 10
+      val pageNumber = 0
 
-      coEvery { eventDataService.getEvents(eventTypes, startTime, endTime) }.returns(events)
+      coEvery { eventDataService.getEvents(eventTypes, startTime, endTime, pageSize, pageNumber) }.returns(events)
 
-      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime)
+      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, pageSize, pageNumber, UriComponentsBuilder.newInstance())
 
-      assertThat(eventsOutput).hasSize(2)
-      assertThat(eventsOutput).isEqualTo(events.toList())
+      assertThat(eventsOutput.data).hasSize(2)
+      assertThat(eventsOutput.data).isEqualTo(events.toList())
       verify(exactly = 1) { getEventsCounter.increment() }
     }
   }
@@ -149,9 +149,9 @@ class EventsControllerTest {
 
       coEvery { eventDataService.getEvent(event.eventId) }.returns(event)
 
-      val eventOutput = underTest.getEvent(event.eventId)
+      val eventOutput = underTest.getEvent(event.eventId, UriComponentsBuilder.newInstance())
 
-      assertThat(eventOutput).isEqualTo(event)
+      assertThat(eventOutput.data).isEqualTo(event)
       verify(exactly = 1) { getEventCounter.increment() }
     }
   }
@@ -178,7 +178,7 @@ class EventsControllerTest {
       try {
         coEvery { eventDataService.getEvent(any()) }.throws(EventNotFoundException("Event Not Found"))
       } catch (e: EventNotFoundException) {
-        underTest.getEvent(eventId)
+        underTest.getEvent(eventId, UriComponentsBuilder.newInstance())
 
         coVerify(exactly = 1) { eventDataService.getEvent(eventId) }
       }
@@ -209,11 +209,18 @@ class EventsControllerTest {
         ),
       )
 
-      coEvery { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
+      coEvery { eventDataService.getEvents(eventTypes, any(), any(), any(), any()) }.returns(events)
 
-      val eventsOutput = underTest.getEvents(eventTypes)
+      val eventsOutput = underTest.getEvents(
+        eventTypes,
+        startTime = null,
+        endTime = null,
+        pageSize = 10,
+        pageNumber = 0,
+        componentsBuilder = UriComponentsBuilder.fromHttpUrl("https://www.example.com"),
+      )
 
-      Approvals.verify(eventsOutput)
+      Approvals.verify(ObjectMapper().writeValueAsString(eventsOutput))
     }
   }
   companion object {

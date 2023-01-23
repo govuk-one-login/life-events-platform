@@ -127,7 +127,7 @@ class EventsController(
   @PreAuthorize("hasAnyAuthority('SCOPE_events/publish')")
   @PostMapping
   @Operation(
-    summary = "Send ingress events to GDS - The 'Source' of the event - this could be HMPO or DWP for example",
+    summary = "Send events to GDS - The 'Source' of the event - this could be HMPO or DWP for example",
     description = "Scope is events/publish",
     responses = [
       ApiResponse(

@@ -19,10 +19,9 @@ import java.util.*
 class BaseDataController(
   private val consumerRepository: ConsumerRepository,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val egressEventDataRepository: EgressEventDataRepository,
+  private val eventDataRepository: EventDataRepository,
   private val eventDatasetRepository: EventDatasetRepository,
-  private val ingressEventDataRepository: IngressEventDataRepository,
-  private val ingressEventTypeRepository: IngressEventTypeRepository,
+  private val eventTypeRepository: EventTypeRepository,
   private val publisherRepository: PublisherRepository,
   private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
 ) {
@@ -86,22 +85,22 @@ class BaseDataController(
     id: UUID,
   ) = consumerSubscriptionRepository.deleteById(id)
 
-  @GetMapping("/egressEvents")
+  @GetMapping("/events")
   @Operation(
-    summary = "Get Egress Events",
+    summary = "Get Events",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Egress Event",
+        description = "Event",
       ),
     ],
   )
-  suspend fun getEgressEvents() = egressEventDataRepository.findAll()
+  suspend fun getEvents() = eventDataRepository.findAll()
 
-  @DeleteMapping("/egressEvents/{id}")
+  @DeleteMapping("/events/{id}")
   @Operation(
-    summary = "Delete Egress Event",
+    summary = "Delete Event",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
@@ -110,33 +109,33 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun deleteEgressEvent(
+  suspend fun deleteEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable
     id: UUID,
-  ) = egressEventDataRepository.deleteById(id)
+  ) = eventDataRepository.deleteById(id)
 
-  @GetMapping("/eventDataset")
+  @GetMapping("/eventDatasets")
   @Operation(
-    summary = "Get Egress Datasets",
+    summary = "Get Event Datasets",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Egress Dataset",
+        description = "Event Dataset",
       ),
     ],
   )
-  suspend fun getEgressDatasets() = eventDatasetRepository.findAll()
+  suspend fun getEventDatasets() = eventDatasetRepository.findAll()
 
-  @DeleteMapping("/eventDataset/{id}")
+  @DeleteMapping("/eventDatasets/{id}")
   @Operation(
-    summary = "Delete Egress Event",
+    summary = "Delete Event Dataset",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Event deleted",
+        description = "Event Dataset deleted",
       ),
     ],
   )
@@ -146,65 +145,35 @@ class BaseDataController(
     id: String,
   ) = eventDatasetRepository.deleteById(id)
 
-  @GetMapping("/ingressEvent")
+  @GetMapping("/eventTypes")
   @Operation(
-    summary = "Get Ingress Events",
+    summary = "Get Event Types",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Ingress Event",
+        description = "Event Type",
       ),
     ],
   )
-  suspend fun getIngressEvents() = ingressEventDataRepository.findAll()
+  suspend fun getEventTypes() = eventTypeRepository.findAll()
 
-  @DeleteMapping("/ingressEvent/{id}")
+  @DeleteMapping("/eventTypes/{id}")
   @Operation(
-    summary = "Delete Ingress Event",
+    summary = "Delete Event Type",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Event deleted",
+        description = "Event Type deleted",
       ),
     ],
   )
-  suspend fun deleteIngressEvent(
-    @Schema(description = "Event ID", required = true)
-    @PathVariable
-    id: UUID,
-  ) = ingressEventDataRepository.deleteById(id)
-
-  @GetMapping("/ingressType")
-  @Operation(
-    summary = "Get Ingress Event Types",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Ingress Event Type",
-      ),
-    ],
-  )
-  suspend fun getIngressEventTypes() = ingressEventTypeRepository.findAll()
-
-  @DeleteMapping("/ingressType/{id}")
-  @Operation(
-    summary = "Delete Ingress Type",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "204",
-        description = "Type deleted",
-      ),
-    ],
-  )
-  suspend fun deleteIngressEventType(
+  suspend fun deleteEventType(
     @Schema(description = "Type ID", required = true)
     @PathVariable
     id: String,
-  ) = ingressEventTypeRepository.deleteById(id)
+  ) = eventTypeRepository.deleteById(id)
 
   @GetMapping("/publishers")
   @Operation(
@@ -267,26 +236,26 @@ class BaseDataController(
   ) = publisherSubscriptionRepository.deleteById(id)
 
   // The below endpoints don't exist through any other means, so have added them here
-  @PostMapping("/ingressType")
+  @PostMapping("/eventTypes")
   @Operation(
-    summary = "Add ingress type",
+    summary = "Add Event type type",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Ingress type added",
+        description = "Event type added",
       ),
     ],
   )
-  suspend fun addIngressType(
+  suspend fun addEventType(
     @Schema(
-      description = "Ingress event type",
+      description = "Event type",
       required = true,
-      implementation = IngressEventType::class,
+      implementation = EventType::class,
     )
     @RequestBody
-    ingressEventType: IngressEventType,
-  ) = ingressEventTypeRepository.save(ingressEventType)
+    eventType: EventType,
+  ) = eventTypeRepository.save(eventType)
 
   @PostMapping("/eventDataset")
   @Operation(

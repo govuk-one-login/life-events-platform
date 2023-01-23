@@ -112,14 +112,14 @@ module "metrics_dashboard" {
       metrics = [
         {
           attributes = {
-            expression = "SUM(SEARCH('{${local.metric_namespace},eventType} MetricName=\"EVENT_ACTION.IngressEventPublished.count\"', 'Sum', 300))"
+            expression = "SUM(SEARCH('{${local.metric_namespace},eventType} MetricName=\"EVENT_ACTION.EventPublished.count\"', 'Sum', 300))"
             color      = local.metric_colours.green
             label      = "Ingress events published"
           }
         },
         {
           attributes = {
-            expression = "SUM(SEARCH('{${local.metric_namespace},consumerSubscription,eventType} MetricName=\"EVENT_ACTION.EgressEventDeleted.count\"', 'Sum', 300))"
+            expression = "SUM(SEARCH('{${local.metric_namespace},consumerSubscription,eventType} MetricName=\"EVENT_ACTION.EventDeleted.count\"', 'Sum', 300))"
             color      = local.metric_colours.red
             label      = "Egress events deleted"
           }

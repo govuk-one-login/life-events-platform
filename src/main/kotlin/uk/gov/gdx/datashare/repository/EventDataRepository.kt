@@ -8,10 +8,10 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Repository
-interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, UUID> {
+interface EventDataRepository : CoroutineCrudRepository<EventData, UUID> {
 
   @Query(
-    "SELECT ed.* FROM egress_event_data ed " +
+    "SELECT ed.* FROM event_data ed " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
       "AND ed.consumer_subscription_id = :consumerSubscriptionId " +
@@ -21,10 +21,10 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
     consumerSubscriptionId: UUID,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
-  ): Flow<EgressEventData>
+  ): Flow<EventData>
 
   @Query(
-    "SELECT ed.* FROM egress_event_data ed " +
+    "SELECT ed.* FROM event_data ed " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
       "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
@@ -34,41 +34,21 @@ interface EgressEventDataRepository : CoroutineCrudRepository<EgressEventData, U
     consumerSubscriptionIds: List<UUID>,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
-  ): Flow<EgressEventData>
+  ): Flow<EventData>
 
   @Query(
-    "SELECT ed.* FROM egress_event_data ed " +
-      "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
-      "AND cs.oauth_client_id = :clientId " +
-      "WHERE ed.when_created > :fromTime " +
-      "AND ed.when_created <= :toTime " +
-      "ORDER BY ed.when_created",
-  )
-  fun findAllByClientId(
-    clientId: String,
-    fromTime: LocalDateTime,
-    toTime: LocalDateTime,
-  ): Flow<EgressEventData>
-
-  @Query(
-    "SELECT ed.* FROM egress_event_data ed " +
+    "SELECT ed.* FROM event_data ed " +
       "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
       "AND cs.oauth_client_id = :clientId " +
       "WHERE ed.id = :id",
   )
-  suspend fun findByClientIdAndId(clientId: String, id: UUID): EgressEventData?
+  suspend fun findByClientIdAndId(clientId: String, id: UUID): EventData?
 
   @Query(
-    "SELECT ed.* FROM egress_event_data ed " +
-      "WHERE ed.ingress_event_id = :ingressEventId",
-  )
-  fun findAllByIngressEventId(ingressEventId: UUID): Flow<EgressEventData>
-
-  @Query(
-    "SELECT ed.* FROM egress_event_data ed " +
+    "SELECT ed.* FROM event_data ed " +
       "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
       "JOIN consumer c ON cs.consumer_id = c.id " +
       "AND c.name = :name",
   )
-  fun findAllByConsumerName(name: String): Flow<EgressEventData>
+  fun findAllByConsumerName(name: String): Flow<EventData>
 }

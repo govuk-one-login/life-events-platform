@@ -10,8 +10,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.IngressEventDataRepository
+import uk.gov.gdx.datashare.repository.EventDataRepository
 
 @RestController
 @RequestMapping("/admin", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -19,32 +18,18 @@ import uk.gov.gdx.datashare.repository.IngressEventDataRepository
 @Validated
 @Tag(name = "01. Admin")
 class AdminController(
-  private val egressEventDataRepository: EgressEventDataRepository,
-  private val ingressEventDataRepository: IngressEventDataRepository,
+  private val eventDataRepository: EventDataRepository,
 ) {
-  @GetMapping("/events/egress")
+  @GetMapping("/events")
   @Operation(
-    summary = "Get Egress Events",
+    summary = "Get Events",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Egress Event",
+        description = "Event",
       ),
     ],
   )
-  suspend fun getEgressEvents() = egressEventDataRepository.findAll().toList()
-
-  @GetMapping("/events/ingress")
-  @Operation(
-    summary = "Get Ingress Events",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Ingress Event",
-      ),
-    ],
-  )
-  suspend fun getIngressEvents() = ingressEventDataRepository.findAll().toList()
+  suspend fun getEvents() = eventDataRepository.findAll().toList()
 }

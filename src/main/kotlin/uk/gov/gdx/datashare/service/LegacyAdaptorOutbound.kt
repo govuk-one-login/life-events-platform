@@ -16,8 +16,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.S3Config
-import uk.gov.gdx.datashare.repository.EgressEventData
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
+import uk.gov.gdx.datashare.repository.EventData
+import uk.gov.gdx.datashare.repository.EventDataRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -28,7 +28,7 @@ class LegacyAdaptorOutbound(
   private val amazonS3: AmazonS3,
   private val s3Config: S3Config,
   private val objectMapper: ObjectMapper,
-  private val egressEventDataRepository: EgressEventDataRepository,
+  private val eventDataRepository: EventDataRepository,
 ) {
 
   companion object {
@@ -44,7 +44,7 @@ class LegacyAdaptorOutbound(
         log.debug("Looking for events to publish to S3 bucket: ${s3Config.egressBucket}")
 
         // find outbound events
-        egressEventDataRepository.findAllByConsumerName("Internal Adaptor")
+        eventDataRepository.findAllByConsumerName("Internal Adaptor")
           .filter { it.dataPayload != null }
           .toList()
           .groupBy { it.consumerSubscriptionId }
@@ -60,7 +60,7 @@ class LegacyAdaptorOutbound(
 
             amazonS3.putObject(s3Config.egressBucket, fileName, csvData)
 
-            events.forEach { event -> egressEventDataRepository.deleteById(event.id) }
+            events.forEach { event -> eventDataRepository.deleteById(event.id) }
           }
       }
     } catch (e: Exception) {
@@ -68,7 +68,7 @@ class LegacyAdaptorOutbound(
     }
   }
 
-  private fun buildJsonTree(events: List<EgressEventData>): JsonNode? =
+  private fun buildJsonTree(events: List<EventData>): JsonNode? =
     objectMapper.readTree(
       objectMapper.writeValueAsString(
         events.map {

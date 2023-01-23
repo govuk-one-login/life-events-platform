@@ -62,17 +62,17 @@ class ConsumersControllerTest {
       val consumerSubscriptions = flowOf(
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
-          ingressEventType = "DEATH_NOTIFICATION",
+          eventType = "DEATH_NOTIFICATION",
           enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
-          ingressEventType = "DEATH_NOTIFICATION",
+          eventType = "DEATH_NOTIFICATION",
           enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = UUID.randomUUID(),
-          ingressEventType = "DEATH_NOTIFICATION",
+          eventType = "DEATH_NOTIFICATION",
           enrichmentFields = "a,b,c",
         ),
       )
@@ -93,17 +93,17 @@ class ConsumersControllerTest {
       val consumerSubscriptions = flowOf(
         ConsumerSubscription(
           consumerId = consumerId,
-          ingressEventType = "DEATH_NOTIFICATION",
+          eventType = "DEATH_NOTIFICATION",
           enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = consumerId,
-          ingressEventType = "DEATH_NOTIFICATION",
+          eventType = "DEATH_NOTIFICATION",
           enrichmentFields = "a,b,c",
         ),
         ConsumerSubscription(
           consumerId = consumerId,
-          ingressEventType = "DEATH_NOTIFICATION",
+          eventType = "DEATH_NOTIFICATION",
           enrichmentFields = "a,b,c",
         ),
       )
@@ -122,12 +122,12 @@ class ConsumersControllerTest {
     runBlocking {
       val consumerId = UUID.randomUUID()
       val consumerSubscriptionRequest = ConsumerSubRequest(
-        ingressEventType = "DEATH_NOTIFICATIONNew",
+        eventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
       val consumerSubscription = ConsumerSubscription(
         consumerId = consumerId,
-        ingressEventType = "DEATH_NOTIFICATIONNew",
+        eventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
 
@@ -145,14 +145,14 @@ class ConsumersControllerTest {
       val consumerId = UUID.randomUUID()
       val subscriptionId = UUID.randomUUID()
       val consumerSubscriptionRequest = ConsumerSubRequest(
-        ingressEventType = "DEATH_NOTIFICATIONNew",
+        eventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
       val consumerSubscription = ConsumerSubscription(
         consumerId = consumerId,
         consumerSubscriptionId = subscriptionId,
         oauthClientId = "callbackClientId",
-        ingressEventType = "DEATH_NOTIFICATIONNew",
+        eventType = "DEATH_NOTIFICATIONNew",
         enrichmentFields = "a,b,c,New",
       )
 

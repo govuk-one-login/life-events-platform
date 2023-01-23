@@ -1,6 +1,5 @@
 package uk.gov.gdx.datashare.service
 
-import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -13,31 +12,24 @@ import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.config.UnknownDatasetException
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EgressEventData
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.IngressEventData
+import uk.gov.gdx.datashare.repository.EventData
+import uk.gov.gdx.datashare.repository.EventDataRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
 class DeathNotificationServiceTest {
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()
-  private val egressEventDataRepository = mockk<EgressEventDataRepository>()
+  private val eventDataRepository = mockk<EventDataRepository>()
   private val levApiService = mockk<LevApiService>()
   private val objectMapper = JacksonConfiguration().objectMapper()
-  private val meterRegistry = mockk<MeterRegistry>()
 
-  private val underTest: DeathNotificationService
-
-  init {
-    underTest = DeathNotificationService(
-      consumerSubscriptionRepository,
-      egressEventDataRepository,
-      levApiService,
-      objectMapper,
-      meterRegistry,
-    )
-  }
+  private val underTest: DeathNotificationService = DeathNotificationService(
+    consumerSubscriptionRepository,
+    eventDataRepository,
+    levApiService,
+    objectMapper,
+  )
 
   @Test
   fun `mapDeathNotification maps string to full DeathNotificationDetails`() {
@@ -96,22 +88,20 @@ class DeathNotificationServiceTest {
         partner = null,
       )
 
-      coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
+      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
         .returns(consumerSubscriptions)
       coEvery { levApiService.findDeathById(dataDetail.id.toInt()) }.returns(flowOf(deathRecord))
-      coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
+      coEvery { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
 
-      underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
+      underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
 
       coVerify(exactly = 1) {
-        egressEventDataRepository.saveAll(
-          withArg<Iterable<EgressEventData>> {
+        eventDataRepository.saveAll(
+          withArg<Iterable<EventData>> {
             assertThat(it).hasSize(2)
             val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
             val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
 
-            assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
-              .isEqualTo(ingressEventData.eventId)
             assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
               .isEqualTo(dataProcessorMessage.datasetId)
             assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
@@ -149,21 +139,19 @@ class DeathNotificationServiceTest {
         data = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\"",
       )
 
-      coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
+      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
         .returns(consumerSubscriptions)
-      coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
+      coEvery { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
 
-      underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
+      underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
 
       coVerify(exactly = 1) {
-        egressEventDataRepository.saveAll(
-          withArg<Iterable<EgressEventData>> {
+        eventDataRepository.saveAll(
+          withArg<Iterable<EventData>> {
             assertThat(it).hasSize(2)
             val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
             val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
 
-            assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
-              .isEqualTo(ingressEventData.eventId)
             assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
               .isEqualTo(dataProcessorMessage.datasetId)
             assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
@@ -198,21 +186,19 @@ class DeathNotificationServiceTest {
       )
       val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
 
-      coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
+      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
         .returns(consumerSubscriptions)
-      coEvery { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }.returns(fakeSavedEvents)
+      coEvery { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
 
-      underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
+      underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
 
       coVerify(exactly = 1) {
-        egressEventDataRepository.saveAll(
-          withArg<Iterable<EgressEventData>> {
+        eventDataRepository.saveAll(
+          withArg<Iterable<EventData>> {
             assertThat(it).hasSize(2)
             val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
             val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
 
-            assertThat(simpleEvent?.ingressEventId).isEqualTo(complexEvent?.ingressEventId)
-              .isEqualTo(ingressEventData.eventId)
             assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
               .isEqualTo(dataProcessorMessage.datasetId)
             assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
@@ -247,34 +233,27 @@ class DeathNotificationServiceTest {
       )
       val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
 
-      coEvery { consumerSubscriptionRepository.findAllByIngressEventType(ingressEventData.eventTypeId) }
+      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
         .returns(consumerSubscriptions)
 
       val exception = assertThrows<UnknownDatasetException> {
-        underTest.saveDeathNotificationEvents(ingressEventData, dataDetail, dataProcessorMessage)
+        underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
       }
 
       assertThat(exception.message).isEqualTo("Unknown DataSet ${dataProcessorMessage.datasetId}")
 
-      coVerify(exactly = 0) { egressEventDataRepository.saveAll(any<Iterable<EgressEventData>>()) }
+      coVerify(exactly = 0) { eventDataRepository.saveAll(any<Iterable<EventData>>()) }
     }
   }
 
-  private val ingressEventData = IngressEventData(
-    eventTypeId = "DEATH_NOTIFICATION",
-    subscriptionId = UUID.randomUUID(),
-    datasetId = UUID.randomUUID().toString(),
-    dataId = "HMPO",
-    dataPayload = null,
-  )
   private val simpleSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
-    ingressEventType = "DEATH_NOTIFICATION",
+    eventType = "DEATH_NOTIFICATION",
     enrichmentFields = "firstName,lastName",
   )
   private val complexSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
-    ingressEventType = "DEATH_NOTIFICATION",
+    eventType = "DEATH_NOTIFICATION",
     enrichmentFields = "firstName,lastName,sex",
   )
   private val consumerSubscriptions = flowOf(simpleSubscription, complexSubscription)
@@ -286,16 +265,14 @@ class DeathNotificationServiceTest {
     sex = "female",
   )
   private val fakeSavedEvents = flowOf(
-    EgressEventData(
+    EventData(
       consumerSubscriptionId = UUID.randomUUID(),
-      ingressEventId = UUID.randomUUID(),
       datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
       dataPayload = null,
     ),
-    EgressEventData(
+    EventData(
       consumerSubscriptionId = UUID.randomUUID(),
-      ingressEventId = UUID.randomUUID(),
       datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
       dataPayload = null,

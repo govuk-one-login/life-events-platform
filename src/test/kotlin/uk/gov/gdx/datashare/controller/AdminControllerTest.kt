@@ -7,73 +7,39 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.repository.EgressEventData
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.IngressEventData
-import uk.gov.gdx.datashare.repository.IngressEventDataRepository
+import uk.gov.gdx.datashare.repository.EventData
+import uk.gov.gdx.datashare.repository.EventDataRepository
 import java.util.UUID
 
 class AdminControllerTest {
-  private val egressEventDataRepository = mockk<EgressEventDataRepository>()
-  private val ingressEventDataRepository = mockk<IngressEventDataRepository>()
+  private val eventDataRepository = mockk<EventDataRepository>()
 
-  private val underTest = AdminController(egressEventDataRepository, ingressEventDataRepository)
+  private val underTest = AdminController(eventDataRepository)
 
   @Test
-  fun `getEgressEvents gets egress events`() {
+  fun `getEvents gets events`() {
     runBlocking {
-      val egressEvents = flowOf(
-        EgressEventData(
+      val events = flowOf(
+        EventData(
           consumerSubscriptionId = UUID.randomUUID(),
-          ingressEventId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
           dataPayload = null,
         ),
-        EgressEventData(
+        EventData(
           consumerSubscriptionId = UUID.randomUUID(),
-          ingressEventId = UUID.randomUUID(),
           datasetId = UUID.randomUUID().toString(),
           dataId = "HMPO",
           dataPayload = "{\"firstName\":\"Bob\"}",
         ),
       )
 
-      coEvery { egressEventDataRepository.findAll() }.returns(egressEvents)
+      coEvery { eventDataRepository.findAll() }.returns(events)
 
-      val events = underTest.getEgressEvents()
+      val eventsOutput = underTest.getEvents()
 
-      assertThat(events).hasSize(2)
-      assertThat(events).isEqualTo(egressEvents.toList())
-    }
-  }
-
-  @Test
-  fun `getIngressEvents gets ingress events`() {
-    runBlocking {
-      val ingressEvents = flowOf(
-        IngressEventData(
-          eventTypeId = "DEATH_NOTIFICATION",
-          subscriptionId = UUID.randomUUID(),
-          datasetId = UUID.randomUUID().toString(),
-          dataId = "HMPO",
-          dataPayload = null,
-        ),
-        IngressEventData(
-          eventTypeId = "DEATH_NOTIFICATION",
-          subscriptionId = UUID.randomUUID(),
-          datasetId = UUID.randomUUID().toString(),
-          dataId = "HMPO",
-          dataPayload = "{\"firstName\":\"Bob\"}",
-        ),
-      )
-
-      coEvery { ingressEventDataRepository.findAll() }.returns(ingressEvents)
-
-      val events = underTest.getIngressEvents()
-
-      assertThat(events).hasSize(2)
-      assertThat(events).isEqualTo(ingressEvents.toList())
+      assertThat(eventsOutput).hasSize(2)
+      assertThat(eventsOutput).isEqualTo(events.toList())
     }
   }
 }

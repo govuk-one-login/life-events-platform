@@ -13,33 +13,26 @@ interface ConsumerSubscriptionRepository : CoroutineCrudRepository<ConsumerSubsc
 
   @Query(
     "SELECT * FROM consumer_subscription cs " +
-      "WHERE cs.ingress_event_type = :ingressEventType",
+      "WHERE cs.event_type = :eventType",
   )
-  fun findAllByIngressEventType(ingressEventType: String): Flow<ConsumerSubscription>
+  fun findAllByEventType(eventType: String): Flow<ConsumerSubscription>
 
   @Query(
     "SELECT * FROM consumer_subscription cs " +
       "WHERE cs.oauth_client_id = :clientId " +
-      "AND cs.ingress_event_type IN (:ingressEventTypes)",
+      "AND cs.event_type IN (:eventTypes)",
   )
-  fun findAllByIngressEventTypesAndClientId(
+  fun findAllByEventTypesAndClientId(
     clientId: String,
-    ingressEventTypes: List<String>,
+    eventTypes: List<String>,
   ): Flow<ConsumerSubscription>
 
   @Query(
-    "SELECT * FROM consumer_subscription cs " +
-      "WHERE cs.ingress_event_type = :eventType " +
-      "AND cs.push_uri IS NOT NULL ",
-  )
-  fun findClientToSendDataTo(eventType: String): Flow<ConsumerSubscription>
-
-  @Query(
     "SELECT cs.* FROM consumer_subscription cs " +
-      "JOIN egress_event_data eed ON cs.id = eed.consumer_subscription_id " +
-      "WHERE eed.id = :id ",
+      "JOIN event_data ed ON cs.id = ed.consumer_subscription_id " +
+      "WHERE ed.id = :id ",
   )
-  suspend fun findByEgressEventId(id: UUID): ConsumerSubscription?
+  suspend fun findByEventId(id: UUID): ConsumerSubscription?
 
   @Query(
     "SELECT cs.* FROM consumer_subscription cs " +

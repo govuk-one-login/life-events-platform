@@ -21,7 +21,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
 
   datashare-db:
-    image: postgres
+    image: postgres:13.7
     networks:
       - gds
     container_name: datashare-db

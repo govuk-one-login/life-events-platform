@@ -48,19 +48,13 @@ spring:
         jwt:
           jwk-set-uri: ${api.base.url.oauth}/.well-known/jwks.json
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/datashare?sslmode=disable
+    username: datashare
+    password: datashare
+
 db:
   provider: local
-  uri: postgresql://localhost:5432/datashare?sslmode=disable
-  hostname: localhost
-  port: 5432
-  ssl-required: false
-  username: datashare
-  password: datashare
-
-logging:
-  level:
-    io.r2dbc.postgresql.QUERY: DEBUG # for queries
-    io.r2dbc.postgresql.PARAM: INFO # for parameters
 
 sqs:
   provider: localstack

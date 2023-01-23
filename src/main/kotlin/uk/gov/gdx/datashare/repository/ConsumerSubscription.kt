@@ -42,7 +42,7 @@ data class ConsumerSubscription(
     example = "firstName,lastName,dateOfBirth",
   )
   val enrichmentFields: String,
-  val whenCreated: LocalDateTime? = null,
+  val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient
   @Value("false")

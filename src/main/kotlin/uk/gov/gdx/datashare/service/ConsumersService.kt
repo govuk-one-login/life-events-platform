@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
@@ -14,14 +15,14 @@ class ConsumersService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val consumerRepository: ConsumerRepository,
 ) {
-  suspend fun getConsumers() = consumerRepository.findAll()
+  fun getConsumers() = consumerRepository.findAll()
 
-  suspend fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
+  fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
 
-  suspend fun getSubscriptionsForConsumer(consumerId: UUID) =
+  fun getSubscriptionsForConsumer(consumerId: UUID) =
     consumerSubscriptionRepository.findAllByConsumerId(consumerId)
 
-  suspend fun addConsumerSubscription(
+  fun addConsumerSubscription(
     consumerId: UUID,
     consumerSubRequest: ConsumerSubRequest,
   ): ConsumerSubscription {
@@ -38,14 +39,14 @@ class ConsumersService(
     }
   }
 
-  suspend fun updateConsumerSubscription(
+  fun updateConsumerSubscription(
     consumerId: UUID,
     subscriptionId: UUID,
     consumerSubRequest: ConsumerSubRequest,
   ): ConsumerSubscription {
     with(consumerSubRequest) {
       return consumerSubscriptionRepository.save(
-        consumerSubscriptionRepository.findById(subscriptionId)?.copy(
+        consumerSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
           consumerId = consumerId,
           oauthClientId = oauthClientId,
           pushUri = pushUri,
@@ -57,7 +58,7 @@ class ConsumersService(
     }
   }
 
-  suspend fun addConsumer(
+  fun addConsumer(
     consumerRequest: ConsumerRequest,
   ): Consumer {
     with(consumerRequest) {

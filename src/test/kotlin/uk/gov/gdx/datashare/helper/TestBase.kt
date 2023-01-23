@@ -15,10 +15,9 @@ abstract class TestBase {
     @DynamicPropertySource
     fun properties(registry: DynamicPropertyRegistry) {
       pgContainer?.run {
-        registry.add("db.jdbc.uri", pgContainer::getJdbcUrl)
-        registry.add("db.username", pgContainer::getUsername)
-        registry.add("db.password", pgContainer::getPassword)
-        registry.add("db.r2dbc.uri") { pgContainer.jdbcUrl.replace("jdbc:", "r2dbc:") }
+        registry.add("spring.datasource.url", pgContainer::getJdbcUrl)
+        registry.add("spring.datasource.username", pgContainer::getUsername)
+        registry.add("spring.datasource.password", pgContainer::getPassword)
       }
     }
   }

@@ -3,16 +3,9 @@ package uk.gov.gdx.datashare.service
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
-import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -65,293 +58,274 @@ class EventDataServiceTest {
 
   @BeforeEach
   fun setup() {
-    coEvery { authenticationFacade.getUsername() }.returns(clientId)
+    every { authenticationFacade.getUsername() }.returns(clientId)
   }
 
   @Test
   fun `getEventsStatus gets EventStatuses for client`() {
-    runBlocking {
-      val startTime = LocalDateTime.now().minusHours(1)
-      val endTime = LocalDateTime.now().plusHours(1)
+    val startTime = LocalDateTime.now().minusHours(1)
+    val endTime = LocalDateTime.now().plusHours(1)
 
-      coEvery { consumerSubscriptionRepository.findAllByClientId(clientId) }.returns(consumerSubscriptions)
-      coEvery {
-        eventDataRepository.findAllByConsumerSubscription(
-          deathNotificationSubscription.id,
-          startTime,
-          endTime,
-        )
-      }.returns(deathEvents)
-      coEvery {
-        eventDataRepository.findAllByConsumerSubscription(
-          lifeEventSubscription.id,
-          startTime,
-          endTime,
-        )
-      }.returns(lifeEvents)
-      coEvery {
-        eventDataRepository.findAllByConsumerSubscription(
-          UUID.randomUUID(),
-          startTime,
-          endTime,
-        )
-      }.returns(extraDeathEvents)
-
-      val eventStatusOutput = underTest.getEventsStatus(startTime, endTime).toList()
-
-      assertThat(eventStatusOutput).isEqualTo(
-        listOf(
-          EventStatus(eventType = deathNotificationSubscription.eventType, count = 4),
-          EventStatus(eventType = lifeEventSubscription.eventType, count = 7),
-        ),
+    every { consumerSubscriptionRepository.findAllByClientId(clientId) }.returns(consumerSubscriptions)
+    every {
+      eventDataRepository.findAllByConsumerSubscription(
+        deathNotificationSubscription.id,
+        startTime,
+        endTime,
       )
-    }
+    }.returns(deathEvents)
+    every {
+      eventDataRepository.findAllByConsumerSubscription(
+        lifeEventSubscription.id,
+        startTime,
+        endTime,
+      )
+    }.returns(lifeEvents)
+    every {
+      eventDataRepository.findAllByConsumerSubscription(
+        UUID.randomUUID(),
+        startTime,
+        endTime,
+      )
+    }.returns(extraDeathEvents)
+
+    val eventStatusOutput = underTest.getEventsStatus(startTime, endTime).toList()
+
+    assertThat(eventStatusOutput).isEqualTo(
+      listOf(
+        EventStatus(eventType = deathNotificationSubscription.eventType, count = 4),
+        EventStatus(eventType = lifeEventSubscription.eventType, count = 7),
+      ),
+    )
   }
 
   @Test
   fun `getEventsStatus uses default start and end time if null passed in`() {
-    runBlocking {
-      val fallbackStartTime = LocalDateTime.now().minusHours(1)
-      val fallbackEndTime = LocalDateTime.now()
+    val fallbackStartTime = LocalDateTime.now().minusHours(1)
+    val fallbackEndTime = LocalDateTime.now()
 
-      every { dateTimeHandler.defaultStartTime() }.returns(fallbackStartTime)
-      every { dateTimeHandler.now() }.returns(fallbackEndTime)
+    every { dateTimeHandler.defaultStartTime() }.returns(fallbackStartTime)
+    every { dateTimeHandler.now() }.returns(fallbackEndTime)
 
-      coEvery { consumerSubscriptionRepository.findAllByClientId(clientId) }.returns(
-        flowOf(
-          deathNotificationSubscription,
-        ),
+    every { consumerSubscriptionRepository.findAllByClientId(clientId) }.returns(
+      listOf(
+        deathNotificationSubscription,
+      ),
+    )
+    every {
+      eventDataRepository.findAllByConsumerSubscription(
+        deathNotificationSubscription.id,
+        fallbackStartTime,
+        fallbackEndTime,
       )
-      coEvery {
-        eventDataRepository.findAllByConsumerSubscription(
-          deathNotificationSubscription.id,
-          fallbackStartTime,
-          fallbackEndTime,
-        )
-      }.returns(deathEvents)
+    }.returns(deathEvents)
 
-      val eventStatusOutput = underTest.getEventsStatus(null, null).toList()
+    val eventStatusOutput = underTest.getEventsStatus(null, null).toList()
 
-      assertThat(eventStatusOutput).isEqualTo(
-        listOf(
-          EventStatus(eventType = deathNotificationSubscription.eventType, count = 4),
-        ),
+    assertThat(eventStatusOutput).isEqualTo(
+      listOf(
+        EventStatus(eventType = deathNotificationSubscription.eventType, count = 4),
+      ),
+    )
+    verify(exactly = 1) {
+      eventDataRepository.findAllByConsumerSubscription(
+        deathNotificationSubscription.id,
+        fallbackStartTime,
+        fallbackEndTime,
       )
-      coVerify(exactly = 1) {
-        eventDataRepository.findAllByConsumerSubscription(
-          deathNotificationSubscription.id,
-          fallbackStartTime,
-          fallbackEndTime,
-        )
-      }
     }
   }
 
   @Test
   fun `getEvent gets Event for client`() {
-    runBlocking {
-      val event = deathEvents.first()
-      val deathNotificationDetails = DeathNotificationDetails(
-        firstName = "Alice",
-        lastName = "Smith",
-        address = deathNotificationSubscription.id.toString(),
-      )
+    val event = deathEvents.first()
+    val deathNotificationDetails = DeathNotificationDetails(
+      firstName = "Alice",
+      lastName = "Smith",
+      address = deathNotificationSubscription.id.toString(),
+    )
 
-      coEvery { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
-      coEvery { consumerSubscriptionRepository.findByEventId(event.id) }.returns(deathNotificationSubscription)
-      every { deathNotificationService.mapDeathNotification(event.dataPayload!!) }.returns(deathNotificationDetails)
+    every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
+    every { consumerSubscriptionRepository.findByEventId(event.id) }.returns(deathNotificationSubscription)
+    every { deathNotificationService.mapDeathNotification(event.dataPayload!!) }.returns(deathNotificationDetails)
 
-      val eventOutput = underTest.getEvent(event.id)
+    val eventOutput = underTest.getEvent(event.id)
 
-      assertThat(eventOutput).isEqualTo(
-        EventNotification(
-          eventId = event.id,
-          eventType = "DEATH_NOTIFICATION",
-          sourceId = event.dataId,
-          eventData = deathNotificationDetails,
-        ),
-      )
-    }
+    assertThat(eventOutput).isEqualTo(
+      EventNotification(
+        eventId = event.id,
+        eventType = "DEATH_NOTIFICATION",
+        sourceId = event.dataId,
+        eventData = deathNotificationDetails,
+      ),
+    )
   }
 
   @Test
   fun `getEvent for event that does not exist for client, throws`() {
-    runBlocking {
-      val event = deathEvents.first()
+    val event = deathEvents.first()
 
-      coEvery { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(null)
+    every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(null)
 
-      val exception = assertThrows<EventNotFoundException> { underTest.getEvent(event.id) }
+    val exception = assertThrows<EventNotFoundException> { underTest.getEvent(event.id) }
 
-      assertThat(exception.message).isEqualTo("Event ${event.id} not found for polling client $clientId")
-    }
+    assertThat(exception.message).isEqualTo("Event ${event.id} not found for polling client $clientId")
   }
 
   @Test
   fun `getEvent for subscription that does not exist for client, throws`() {
-    runBlocking {
-      val event = deathEvents.first()
+    val event = deathEvents.first()
 
-      coEvery { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
-      coEvery { consumerSubscriptionRepository.findByEventId(event.id) }.returns(null)
+    every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
+    every { consumerSubscriptionRepository.findByEventId(event.id) }.returns(null)
 
-      val exception = assertThrows<ConsumerSubscriptionNotFoundException> { underTest.getEvent(event.id) }
+    val exception = assertThrows<ConsumerSubscriptionNotFoundException> { underTest.getEvent(event.id) }
 
-      assertThat(exception.message).isEqualTo("Consumer subscription not found for event ${event.id}")
-    }
+    assertThat(exception.message).isEqualTo("Consumer subscription not found for event ${event.id}")
   }
 
   @Test
   fun `getEvents gets Events for client`() {
-    runBlocking {
-      val eventTypes = listOf("DEATH_NOTIFICATION")
-      val startTime = LocalDateTime.now().minusHours(1)
-      val endTime = LocalDateTime.now().plusHours(1)
-      val deathNotificationDetails = DeathNotificationDetails(
-        firstName = "Alice",
-        lastName = "Smith",
-        address = deathNotificationSubscription.id.toString(),
-      )
+    val eventTypes = listOf("DEATH_NOTIFICATION")
+    val startTime = LocalDateTime.now().minusHours(1)
+    val endTime = LocalDateTime.now().plusHours(1)
+    val deathNotificationDetails = DeathNotificationDetails(
+      firstName = "Alice",
+      lastName = "Smith",
+      address = deathNotificationSubscription.id.toString(),
+    )
 
-      coEvery { consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes) }
-        .returns(flowOf(deathNotificationSubscription))
-      coEvery {
-        eventDataRepository.findAllByConsumerSubscriptions(
-          listOf(deathNotificationSubscription.id),
-          startTime,
-          endTime,
+    every { consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes) }
+      .returns(listOf(deathNotificationSubscription))
+    every {
+      eventDataRepository.findAllByConsumerSubscriptions(
+        listOf(deathNotificationSubscription.id),
+        startTime,
+        endTime,
+      )
+    }.returns(deathEvents)
+    val dataPayload = deathEvents.toList()[0].dataPayload!!
+    every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
+
+    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
+
+    assertThat(eventsOutput).isEqualTo(
+      deathEvents.map {
+        EventNotification(
+          eventId = it.id,
+          eventType = "DEATH_NOTIFICATION",
+          sourceId = it.dataId,
+          eventData = deathNotificationDetails,
         )
-      }.returns(deathEvents)
-      val dataPayload = deathEvents.toList()[0].dataPayload!!
-      every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
-
-      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
-
-      assertThat(eventsOutput).isEqualTo(
-        deathEvents.map {
-          EventNotification(
-            eventId = it.id,
-            eventType = "DEATH_NOTIFICATION",
-            sourceId = it.dataId,
-            eventData = deathNotificationDetails,
-          )
-        }.toList(),
-      )
-    }
+      }.toList(),
+    )
   }
 
   @Test
   fun `getEvents gets thin events for client`() {
-    runBlocking {
-      val eventTypes = listOf("DEATH_NOTIFICATION")
-      val startTime = LocalDateTime.now().minusHours(1)
-      val endTime = LocalDateTime.now().plusHours(1)
+    val eventTypes = listOf("DEATH_NOTIFICATION")
+    val startTime = LocalDateTime.now().minusHours(1)
+    val endTime = LocalDateTime.now().plusHours(1)
 
-      coEvery { consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes) }
-        .returns(flowOf(thinDeathNotificationSubscription))
-      coEvery {
-        eventDataRepository.findAllByConsumerSubscriptions(
-          listOf(thinDeathNotificationSubscription.id),
-          startTime,
-          endTime,
-        )
-      }.returns(thinDeathEvents)
-
-      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
-
-      assertThat(eventsOutput).isEqualTo(
-        thinDeathEvents.map {
-          EventNotification(
-            eventId = it.id,
-            eventType = "DEATH_NOTIFICATION",
-            sourceId = it.dataId,
-            eventData = null,
-          )
-        }.toList(),
+    every { consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes) }
+      .returns(listOf(thinDeathNotificationSubscription))
+    every {
+      eventDataRepository.findAllByConsumerSubscriptions(
+        listOf(thinDeathNotificationSubscription.id),
+        startTime,
+        endTime,
       )
-    }
+    }.returns(thinDeathEvents)
+
+    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
+
+    assertThat(eventsOutput).isEqualTo(
+      thinDeathEvents.map {
+        EventNotification(
+          eventId = it.id,
+          eventType = "DEATH_NOTIFICATION",
+          sourceId = it.dataId,
+          eventData = null,
+        )
+      }.toList(),
+    )
   }
 
   @Test
   fun `getEvents uses default start, end time, and eventTypes if null passed in`() {
-    runBlocking {
-      val fallbackStartTime = LocalDateTime.now().minusHours(1)
-      val fallbackEndTime = LocalDateTime.now()
+    val fallbackStartTime = LocalDateTime.now().minusHours(1)
+    val fallbackEndTime = LocalDateTime.now()
 
-      every { dateTimeHandler.defaultStartTime() }.returns(fallbackStartTime)
-      every { dateTimeHandler.now() }.returns(fallbackEndTime)
+    every { dateTimeHandler.defaultStartTime() }.returns(fallbackStartTime)
+    every { dateTimeHandler.now() }.returns(fallbackEndTime)
 
-      val deathNotificationDetails = DeathNotificationDetails(
-        firstName = "Bob",
-        lastName = "Smith",
-        address = deathNotificationSubscription.id.toString(),
+    val deathNotificationDetails = DeathNotificationDetails(
+      firstName = "Bob",
+      lastName = "Smith",
+      address = deathNotificationSubscription.id.toString(),
+    )
+
+    every { consumerSubscriptionRepository.findAllByClientId(clientId) }
+      .returns(listOf(deathNotificationSubscription))
+    every {
+      eventDataRepository.findAllByConsumerSubscriptions(
+        listOf(deathNotificationSubscription.id),
+        fallbackStartTime,
+        fallbackEndTime,
       )
+    }.returns(extraDeathEvents)
+    val dataPayload = extraDeathEvents.toList()[0].dataPayload!!
+    every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
 
-      coEvery { consumerSubscriptionRepository.findAllByClientId(clientId) }
-        .returns(flowOf(deathNotificationSubscription))
-      coEvery {
-        eventDataRepository.findAllByConsumerSubscriptions(
-          listOf(deathNotificationSubscription.id),
-          fallbackStartTime,
-          fallbackEndTime,
+    val eventStatusOutput = underTest.getEvents(null, null, null).toList()
+
+    assertThat(eventStatusOutput).isEqualTo(
+      extraDeathEvents.map {
+        EventNotification(
+          eventId = it.id,
+          eventType = "DEATH_NOTIFICATION",
+          sourceId = it.dataId,
+          eventData = deathNotificationDetails,
         )
-      }.returns(extraDeathEvents)
-      val dataPayload = extraDeathEvents.toList()[0].dataPayload!!
-      every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
-
-      val eventStatusOutput = underTest.getEvents(null, null, null).toList()
-
-      assertThat(eventStatusOutput).isEqualTo(
-        extraDeathEvents.map {
-          EventNotification(
-            eventId = it.id,
-            eventType = "DEATH_NOTIFICATION",
-            sourceId = it.dataId,
-            eventData = deathNotificationDetails,
-          )
-        }.toList(),
-      )
-    }
+      }.toList(),
+    )
   }
 
   @Test
   fun `deleteEvent deletes event`() {
-    runBlocking {
-      val event = EventData(
-        consumerSubscriptionId = UUID.randomUUID(),
-        datasetId = UUID.randomUUID().toString(),
-        dataId = "HMPO",
-        dataPayload = null,
-      )
-      coEvery { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
-      coEvery { consumerSubscriptionRepository.findByEventId(event.id) }.returns(
-        deathNotificationSubscription,
-      )
+    val event = EventData(
+      consumerSubscriptionId = UUID.randomUUID(),
+      datasetId = UUID.randomUUID().toString(),
+      dataId = "HMPO",
+      dataPayload = null,
+    )
+    every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
+    every { consumerSubscriptionRepository.findByEventId(event.id) }.returns(
+      deathNotificationSubscription,
+    )
 
-      coEvery { eventDataRepository.delete(event) }.returns(Unit)
+    every { eventDataRepository.delete(event) }.returns(Unit)
+    every { dateTimeHandler.now() }.returns(LocalDateTime.now())
 
-      underTest.deleteEvent(event.id)
+    underTest.deleteEvent(event.id)
 
-      coVerify(exactly = 1) { eventDataRepository.delete(event) }
-      coVerify(exactly = 1) { eventDeletedCounter.increment() }
-    }
+    verify(exactly = 1) { eventDataRepository.delete(event) }
+    verify(exactly = 1) { eventDeletedCounter.increment() }
   }
 
   @Test
   fun `deleteEvent throws if event not found for client`() {
-    runBlocking {
-      val eventId = UUID.randomUUID()
-      coEvery { eventDataRepository.findByClientIdAndId(clientId, eventId) }.returns(null)
+    val eventId = UUID.randomUUID()
+    every { eventDataRepository.findByClientIdAndId(clientId, eventId) }.returns(null)
 
-      val exception = assertThrows<EventNotFoundException> {
-        underTest.deleteEvent(eventId)
-      }
-
-      assertThat(exception.message).isEqualTo("Event $eventId not found for callback client $clientId")
-
-      coVerify(exactly = 0) { eventDataRepository.deleteById(any()) }
-      coVerify(exactly = 0) { eventDeletedCounter.increment() }
+    val exception = assertThrows<EventNotFoundException> {
+      underTest.deleteEvent(eventId)
     }
+
+    assertThat(exception.message).isEqualTo("Event $eventId not found for callback client $clientId")
+
+    verify(exactly = 0) { eventDataRepository.deleteById(any()) }
+    verify(exactly = 0) { eventDeletedCounter.increment() }
   }
 
   private val clientId = "ClientId"
@@ -376,11 +350,11 @@ class EventDataServiceTest {
     enrichmentFields = "a,b,c",
     enrichmentFieldsIncludedInPoll = true,
   )
-  private val consumerSubscriptions = flowOf(deathNotificationSubscription, lifeEventSubscription)
-  private val deathEvents = getEvents(4, "Alice", deathNotificationSubscription.id).asFlow()
-  private val thinDeathEvents = getEvents(4, "Alice", thinDeathNotificationSubscription.id).asFlow()
-  private val extraDeathEvents = getEvents(10, "Bob", deathNotificationSubscription.id).asFlow()
-  private val lifeEvents = getEvents(7, "Charlie", lifeEventSubscription.id).asFlow()
+  private val consumerSubscriptions = listOf(deathNotificationSubscription, lifeEventSubscription)
+  private val deathEvents = getEvents(4, "Alice", deathNotificationSubscription.id)
+  private val thinDeathEvents = getEvents(4, "Alice", thinDeathNotificationSubscription.id)
+  private val extraDeathEvents = getEvents(10, "Bob", deathNotificationSubscription.id)
+  private val lifeEvents = getEvents(7, "Charlie", lifeEventSubscription.id)
 
   private fun getEvents(
     count: Int,

@@ -1,15 +1,12 @@
 package uk.gov.gdx.datashare.controller
 
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.repository.EventData
 import uk.gov.gdx.datashare.repository.EventDataRepository
-import java.util.UUID
+import java.util.*
 
 class AdminControllerTest {
   private val eventDataRepository = mockk<EventDataRepository>()
@@ -18,28 +15,26 @@ class AdminControllerTest {
 
   @Test
   fun `getEvents gets events`() {
-    runBlocking {
-      val events = flowOf(
-        EventData(
-          consumerSubscriptionId = UUID.randomUUID(),
-          datasetId = UUID.randomUUID().toString(),
-          dataId = "HMPO",
-          dataPayload = null,
-        ),
-        EventData(
-          consumerSubscriptionId = UUID.randomUUID(),
-          datasetId = UUID.randomUUID().toString(),
-          dataId = "HMPO",
-          dataPayload = "{\"firstName\":\"Bob\"}",
-        ),
-      )
+    val events = listOf(
+      EventData(
+        consumerSubscriptionId = UUID.randomUUID(),
+        datasetId = UUID.randomUUID().toString(),
+        dataId = "HMPO",
+        dataPayload = null,
+      ),
+      EventData(
+        consumerSubscriptionId = UUID.randomUUID(),
+        datasetId = UUID.randomUUID().toString(),
+        dataId = "HMPO",
+        dataPayload = "{\"firstName\":\"Bob\"}",
+      ),
+    )
 
-      coEvery { eventDataRepository.findAll() }.returns(events)
+    every { eventDataRepository.findAll() }.returns(events)
 
-      val eventsOutput = underTest.getEvents()
+    val eventsOutput = underTest.getEvents()
 
-      assertThat(eventsOutput).hasSize(2)
-      assertThat(eventsOutput).isEqualTo(events.toList())
-    }
+    assertThat(eventsOutput).hasSize(2)
+    assertThat(eventsOutput).isEqualTo(events.toList())
   }
 }

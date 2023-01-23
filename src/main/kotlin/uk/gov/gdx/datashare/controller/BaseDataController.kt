@@ -36,7 +36,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun getConsumers() = consumerRepository.findAll()
+  fun getConsumers() = consumerRepository.findAll()
 
   @DeleteMapping("/consumers/{id}")
   @Operation(
@@ -49,7 +49,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun deleteConsumer(
+  fun deleteConsumer(
     @Schema(description = "Consumer ID", required = true)
     @PathVariable
     id: UUID,
@@ -66,7 +66,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
+  fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
 
   @DeleteMapping("/consumerSubscriptions/{id}")
   @Operation(
@@ -79,7 +79,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun deleteConsumerSubscription(
+  fun deleteConsumerSubscription(
     @Schema(description = "Consumer Subscription ID", required = true)
     @PathVariable
     id: UUID,
@@ -96,7 +96,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun getEvents() = eventDataRepository.findAll()
+  fun getEvents() = eventDataRepository.findAll()
 
   @DeleteMapping("/events/{id}")
   @Operation(
@@ -109,7 +109,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun deleteEvent(
+  fun deleteEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable
     id: UUID,
@@ -126,7 +126,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun getEventDatasets() = eventDatasetRepository.findAll()
+  fun getEventDatasets() = eventDatasetRepository.findAll()
 
   @DeleteMapping("/eventDatasets/{id}")
   @Operation(
@@ -139,7 +139,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun deleteEventDataset(
+  fun deleteEventDataset(
     @Schema(description = "Event Dataset ID", required = true)
     @PathVariable
     id: String,
@@ -156,7 +156,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun getEventTypes() = eventTypeRepository.findAll()
+  fun getEventTypes() = eventTypeRepository.findAll()
 
   @DeleteMapping("/eventTypes/{id}")
   @Operation(
@@ -169,7 +169,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun deleteEventType(
+  fun deleteEventType(
     @Schema(description = "Type ID", required = true)
     @PathVariable
     id: String,
@@ -186,7 +186,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun getPublishers() = publisherRepository.findAll()
+  fun getPublishers() = publisherRepository.findAll()
 
   @DeleteMapping("/publishers/{id}")
   @Operation(
@@ -199,7 +199,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun deletePublisher(
+  fun deletePublisher(
     @Schema(description = "Publisher ID", required = true)
     @PathVariable
     id: UUID,
@@ -216,7 +216,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll()
+  fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll()
 
   @DeleteMapping("/publisherSubscriptions/{id}")
   @Operation(
@@ -229,7 +229,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun deletePublisherSubscription(
+  fun deletePublisherSubscription(
     @Schema(description = "Publisher Subscription ID", required = true)
     @PathVariable
     id: UUID,
@@ -247,7 +247,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun addEventType(
+  fun addEventType(
     @Schema(
       description = "Event type",
       required = true,
@@ -268,7 +268,7 @@ class BaseDataController(
       ),
     ],
   )
-  suspend fun addEventDataset(
+  fun addEventDataset(
     @Schema(
       description = "Event dataset type",
       required = true,

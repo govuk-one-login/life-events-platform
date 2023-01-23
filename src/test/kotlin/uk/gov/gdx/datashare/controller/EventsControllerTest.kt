@@ -3,9 +3,6 @@ package uk.gov.gdx.datashare.controller
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.*
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
 import org.approvaltests.Approvals
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -13,13 +10,9 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.gdx.datashare.config.EventNotFoundException
-import uk.gov.gdx.datashare.service.DataReceiverService
-import uk.gov.gdx.datashare.service.DeathNotificationDetails
-import uk.gov.gdx.datashare.service.EventDataService
-import uk.gov.gdx.datashare.service.EventNotification
-import uk.gov.gdx.datashare.service.EventStatus
+import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import java.util.stream.Stream
 
 class EventsControllerTest {
@@ -59,163 +52,150 @@ class EventsControllerTest {
   @ParameterizedTest
   @MethodSource("provideLocalDateTimes")
   fun `getEventsStatus gets events status`(startTime: LocalDateTime?, endTime: LocalDateTime?) {
-    runBlocking {
-      val eventStatuses = flowOf(
-        EventStatus(
-          eventType = "DEATH_NOTIFICATION",
-          count = 123,
-        ),
-        EventStatus(
-          eventType = "LIFE_EVENT",
-          count = 456,
-        ),
-      )
+    val eventStatuses = listOf(
+      EventStatus(
+        eventType = "DEATH_NOTIFICATION",
+        count = 123,
+      ),
+      EventStatus(
+        eventType = "LIFE_EVENT",
+        count = 456,
+      ),
+    )
 
-      coEvery { eventDataService.getEventsStatus(startTime, endTime) }.returns(eventStatuses)
+    every { eventDataService.getEventsStatus(startTime, endTime) }.returns(eventStatuses)
 
-      val eventStatusesOutput = underTest.getEventsStatus(startTime, endTime)
+    val eventStatusesOutput = underTest.getEventsStatus(startTime, endTime)
 
-      assertThat(eventStatusesOutput).hasSize(2)
-      assertThat(eventStatusesOutput).isEqualTo(eventStatuses.toList())
-      verify(exactly = 1) { getEventsStatusCounter.increment() }
-    }
+    assertThat(eventStatusesOutput).hasSize(2)
+    assertThat(eventStatusesOutput).isEqualTo(eventStatuses.toList())
+    verify(exactly = 1) { getEventsStatusCounter.increment() }
   }
 
   @ParameterizedTest
   @MethodSource("provideLocalDateTimes")
   fun `getEvents gets events`(startTime: LocalDateTime?, endTime: LocalDateTime?) {
-    runBlocking {
-      val eventTypes = listOf("DEATH_NOTIFICATION")
-      val events = flowOf(
-        EventNotification(
-          eventId = UUID.randomUUID(),
-          eventType = "DEATH_NOTIFICATION",
-          sourceId = UUID.randomUUID().toString(),
-          eventData = DeathNotificationDetails(
-            firstName = "Bob",
-          ),
-        ),
-        EventNotification(
-          eventId = UUID.randomUUID(),
-          eventType = "DEATH_NOTIFICATION",
-          sourceId = UUID.randomUUID().toString(),
-          eventData = DeathNotificationDetails(
-            firstName = "Bob",
-            lastName = "Smith",
-          ),
-        ),
-      )
-
-      coEvery { eventDataService.getEvents(eventTypes, startTime, endTime) }.returns(events)
-
-      val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime)
-
-      assertThat(eventsOutput).hasSize(2)
-      assertThat(eventsOutput).isEqualTo(events.toList())
-      verify(exactly = 1) { getEventsCounter.increment() }
-    }
-  }
-
-  @Test
-  fun `publishEvent sends event to processor`() {
-    runBlocking {
-      val event = EventToPublish(
-        eventType = "DEATH_NOTIFICATION",
-        eventTime = LocalDateTime.now(),
-        id = "123456789",
-        eventDetails = "{\"firstName\":\"Bob\"}",
-      )
-
-      coEvery { dataReceiverService.sendToDataProcessor(any()) }.returns(Unit)
-
-      underTest.publishEvent(event)
-
-      verify(exactly = 1) { publishEventCounter.increment() }
-      coVerify(exactly = 1) { dataReceiverService.sendToDataProcessor(event) }
-    }
-  }
-
-  @Test
-  fun `getEvent gets event`() {
-    runBlocking {
-      val event = EventNotification(
+    val eventTypes = listOf("DEATH_NOTIFICATION")
+    val events = listOf(
+      EventNotification(
         eventId = UUID.randomUUID(),
         eventType = "DEATH_NOTIFICATION",
         sourceId = UUID.randomUUID().toString(),
         eventData = DeathNotificationDetails(
           firstName = "Bob",
         ),
-      )
+      ),
+      EventNotification(
+        eventId = UUID.randomUUID(),
+        eventType = "DEATH_NOTIFICATION",
+        sourceId = UUID.randomUUID().toString(),
+        eventData = DeathNotificationDetails(
+          firstName = "Bob",
+          lastName = "Smith",
+        ),
+      ),
+    )
 
-      coEvery { eventDataService.getEvent(event.eventId) }.returns(event)
+    every { eventDataService.getEvents(eventTypes, startTime, endTime) }.returns(events)
 
-      val eventOutput = underTest.getEvent(event.eventId)
+    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime)
 
-      assertThat(eventOutput).isEqualTo(event)
-      verify(exactly = 1) { getEventCounter.increment() }
-    }
+    assertThat(eventsOutput).hasSize(2)
+    assertThat(eventsOutput).isEqualTo(events.toList())
+    verify(exactly = 1) { getEventsCounter.increment() }
+  }
+
+  @Test
+  fun `publishEvent sends event to processor`() {
+    val event = EventToPublish(
+      eventType = "DEATH_NOTIFICATION",
+      eventTime = LocalDateTime.now(),
+      id = "123456789",
+      eventDetails = "{\"firstName\":\"Bob\"}",
+    )
+
+    every { dataReceiverService.sendToDataProcessor(any()) }.returns(Unit)
+
+    underTest.publishEvent(event)
+
+    verify(exactly = 1) { publishEventCounter.increment() }
+    verify(exactly = 1) { dataReceiverService.sendToDataProcessor(event) }
+  }
+
+  @Test
+  fun `getEvent gets event`() {
+    val event = EventNotification(
+      eventId = UUID.randomUUID(),
+      eventType = "DEATH_NOTIFICATION",
+      sourceId = UUID.randomUUID().toString(),
+      eventData = DeathNotificationDetails(
+        firstName = "Bob",
+      ),
+    )
+
+    every { eventDataService.getEvent(event.eventId) }.returns(event)
+
+    val eventOutput = underTest.getEvent(event.eventId)
+
+    assertThat(eventOutput).isEqualTo(event)
+    verify(exactly = 1) { getEventCounter.increment() }
   }
 
   @Test
   fun `deleteEvent deletes event`() {
-    runBlocking {
-      val eventId = UUID.randomUUID()
+    val eventId = UUID.randomUUID()
 
-      coEvery { eventDataService.deleteEvent(any()) }.returns(Unit)
+    every { eventDataService.deleteEvent(any()) }.returns(Unit)
 
-      underTest.deleteEvent(eventId)
+    underTest.deleteEvent(eventId)
 
-      coVerify(exactly = 1) { eventDataService.deleteEvent(eventId) }
-      verify(exactly = 1) { deleteEventCounter.increment() }
-    }
+    verify(exactly = 1) { eventDataService.deleteEvent(eventId) }
+    verify(exactly = 1) { deleteEventCounter.increment() }
   }
 
   @Test
   fun `getEvent returns exception when no event found`() {
-    runBlocking {
-      val eventId = UUID.randomUUID()
+    val eventId = UUID.randomUUID()
 
-      try {
-        coEvery { eventDataService.getEvent(any()) }.throws(EventNotFoundException("Event Not Found"))
-      } catch (e: EventNotFoundException) {
-        underTest.getEvent(eventId)
+    try {
+      every { eventDataService.getEvent(any()) }.throws(EventNotFoundException("Event Not Found"))
+    } catch (e: EventNotFoundException) {
+      underTest.getEvent(eventId)
 
-        coVerify(exactly = 1) { eventDataService.getEvent(eventId) }
-      }
+      verify(exactly = 1) { eventDataService.getEvent(eventId) }
     }
   }
 
   @Test
   fun `getEvents gets events of expected shape`() {
-    runBlocking {
-      val eventTypes = listOf("DEATH_NOTIFICATION")
-      val events = flowOf(
-        EventNotification(
-          eventId = UUID.fromString("a5383689-1192-4078-a4a6-a611b0a34c6e"),
-          eventType = "DEATH_NOTIFICATION",
-          sourceId = "a5383689-1192-4078-a4a6-a611b0a34c6e",
-          eventData = DeathNotificationDetails(
-            firstName = "Bob",
-          ),
+    val eventTypes = listOf("DEATH_NOTIFICATION")
+    val events = listOf(
+      EventNotification(
+        eventId = UUID.fromString("a5383689-1192-4078-a4a6-a611b0a34c6e"),
+        eventType = "DEATH_NOTIFICATION",
+        sourceId = "a5383689-1192-4078-a4a6-a611b0a34c6e",
+        eventData = DeathNotificationDetails(
+          firstName = "Bob",
         ),
-        EventNotification(
-          eventId = UUID.fromString("ec39aa80-2fa2-4d46-9211-c66fc94024d3"),
-          eventType = "DEATH_NOTIFICATION",
-          sourceId = "ec39aa80-2fa2-4d46-9211-c66fc94024d3",
-          eventData = DeathNotificationDetails(
-            firstName = "Bob",
-            lastName = "Smith",
-          ),
+      ),
+      EventNotification(
+        eventId = UUID.fromString("ec39aa80-2fa2-4d46-9211-c66fc94024d3"),
+        eventType = "DEATH_NOTIFICATION",
+        sourceId = "ec39aa80-2fa2-4d46-9211-c66fc94024d3",
+        eventData = DeathNotificationDetails(
+          firstName = "Bob",
+          lastName = "Smith",
         ),
-      )
+      ),
+    )
 
-      coEvery { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
+    every { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
 
-      val eventsOutput = underTest.getEvents(eventTypes)
+    val eventsOutput = underTest.getEvents(eventTypes)
 
-      Approvals.verify(eventsOutput)
-    }
+    Approvals.verify(eventsOutput)
   }
+
   companion object {
     @JvmStatic
     private fun provideLocalDateTimes(): Stream<Arguments?>? {

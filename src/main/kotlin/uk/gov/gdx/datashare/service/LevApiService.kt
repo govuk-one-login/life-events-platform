@@ -2,7 +2,8 @@ package uk.gov.gdx.datashare.service
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -19,15 +20,17 @@ class LevApiService(
   private val callsToLevCounter: Counter = meterRegistry.counter("API_CALLS.CallsToLev")
   private val responsesFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromLev")
 
-  suspend fun findDeathById(id: Int): Flow<DeathRecord> {
+  fun findDeathById(id: Int): List<DeathRecord> {
     try {
       callsToLevCounter.increment()
-      val deathRecord = levApiWebClient.get()
-        .uri("/v1/registration/death/$id")
-        .retrieve()
-        .bodyToFlow<DeathRecord>()
-      responsesFromLevCounter.increment()
-      return deathRecord
+      return runBlocking {
+        val deathRecord = levApiWebClient.get()
+          .uri("/v1/registration/death/$id")
+          .retrieve()
+          .bodyToFlow<DeathRecord>()
+        responsesFromLevCounter.increment()
+        deathRecord.toList()
+      }
     } catch (e: WebClientResponseException) {
       throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) {
         NoDataFoundException(id.toString())

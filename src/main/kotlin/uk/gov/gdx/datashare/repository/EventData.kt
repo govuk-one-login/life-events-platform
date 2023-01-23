@@ -21,8 +21,8 @@ data class EventData(
   val dataId: String,
   @Schema(description = "Event data", required = false, example = "{\"firstName\": \"Bob\",...}}")
   val dataPayload: String?,
-  val whenCreated: LocalDateTime? = null,
-  val eventTime: LocalDateTime? = null,
+  val whenCreated: LocalDateTime = LocalDateTime.now(),
+  val eventTime: LocalDateTime = LocalDateTime.now(),
 
   @Transient
   @Value("false")

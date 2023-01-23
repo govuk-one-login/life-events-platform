@@ -32,7 +32,7 @@ class PublishersController(
       ),
     ],
   )
-  suspend fun getPublishers() = publishersService.getPublishers()
+  fun getPublishers() = publishersService.getPublishers()
 
   @PostMapping
   @Operation(
@@ -45,7 +45,7 @@ class PublishersController(
       ),
     ],
   )
-  suspend fun addPublisher(
+  fun addPublisher(
     @Schema(
       description = "Publisher",
       required = true,
@@ -66,7 +66,7 @@ class PublishersController(
       ),
     ],
   )
-  suspend fun getPublisherSubscriptions() = publishersService.getPublisherSubscriptions()
+  fun getPublisherSubscriptions() = publishersService.getPublisherSubscriptions()
 
   @GetMapping("/{publisherId}/subscriptions")
   @Operation(
@@ -79,7 +79,7 @@ class PublishersController(
       ),
     ],
   )
-  suspend fun getSubscriptionsForPublisher(
+  fun getSubscriptionsForPublisher(
     @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
     @PathVariable
     publisherId: UUID,
@@ -96,7 +96,7 @@ class PublishersController(
       ),
     ],
   )
-  suspend fun addPublisherSubscription(
+  fun addPublisherSubscription(
     @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
     @PathVariable
     publisherId: UUID,
@@ -120,7 +120,7 @@ class PublishersController(
       ),
     ],
   )
-  suspend fun updatePublisherSubscription(
+  fun updatePublisherSubscription(
     @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
     @PathVariable
     publisherId: UUID,

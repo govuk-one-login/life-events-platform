@@ -5,9 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
 import net.javacrumbs.shedlock.core.LockAssert
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.Logger
@@ -39,30 +36,28 @@ class LegacyAdaptorOutbound(
   @SchedulerLock(name = "publishToS3Bucket", lockAtMostFor = "50s", lockAtLeastFor = "50s")
   fun publishToS3Bucket() {
     try {
-      runBlocking {
-        LockAssert.assertLocked()
-        log.debug("Looking for events to publish to S3 bucket: ${s3Config.egressBucket}")
+      LockAssert.assertLocked()
+      log.debug("Looking for events to publish to S3 bucket: ${s3Config.egressBucket}")
 
-        // find outbound events
-        eventDataRepository.findAllByConsumerName("Internal Adaptor")
-          .filter { it.dataPayload != null }
-          .toList()
-          .groupBy { it.consumerSubscriptionId }
-          .map { eventMap ->
+      // find outbound events
+      eventDataRepository.findAllByConsumerName("Internal Adaptor")
+        .filter { it.dataPayload != null }
+        .toList()
+        .groupBy { it.consumerSubscriptionId }
+        .map { eventMap ->
 
-            val events = eventMap.value
-            val csvData = CsvMapper().writerFor(JsonNode::class.java)
-              .with(buildCsvSchema(events[0].dataPayload!!))
-              .writeValueAsString(buildJsonTree(events))
+          val events = eventMap.value
+          val csvData = CsvMapper().writerFor(JsonNode::class.java)
+            .with(buildCsvSchema(events[0].dataPayload!!))
+            .writeValueAsString(buildJsonTree(events))
 
-            log.debug("Pushed event subscription ${eventMap.key} to ${s3Config.egressBucket}")
-            val fileName = """${eventMap.key}-${DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now())}.csv"""
+          log.debug("Pushed event subscription ${eventMap.key} to ${s3Config.egressBucket}")
+          val fileName = """${eventMap.key}-${DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now())}.csv"""
 
-            amazonS3.putObject(s3Config.egressBucket, fileName, csvData)
+          amazonS3.putObject(s3Config.egressBucket, fileName, csvData)
 
-            events.forEach { event -> eventDataRepository.deleteById(event.id) }
-          }
-      }
+          events.forEach { event -> eventDataRepository.deleteById(event.id) }
+        }
     } catch (e: Exception) {
       log.error("Exception", e)
     }

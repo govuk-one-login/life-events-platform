@@ -17,7 +17,7 @@ data class EventType(
   @Schema(description = "CSV List of fields that can be enriched", required = true, example = "firstName,lastName")
   val fields: String,
   val active: Boolean = true,
-  val whenCreated: LocalDateTime? = null,
+  val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient
   @Value("false")

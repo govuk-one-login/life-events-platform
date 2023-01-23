@@ -2,7 +2,6 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
@@ -21,40 +20,38 @@ class DataProcessor(
 
   @JmsListener(destination = "dataprocessor", containerFactory = "awsQueueContainerFactoryProxy")
   fun onGovEvent(message: String) {
-    runBlocking {
-      val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
-      log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
+    val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
+    log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
 
-      // lookup provider
-      val details = getDataFromProvider(dataProcessorMessage)
+    // lookup provider
+    val details = getDataFromProvider(dataProcessorMessage)
 
-      when (dataProcessorMessage.eventTypeId) {
-        "DEATH_NOTIFICATION" -> deathNotificationService.saveDeathNotificationEvents(
-          details,
-          dataProcessorMessage,
-        )
+    when (dataProcessorMessage.eventTypeId) {
+      "DEATH_NOTIFICATION" -> deathNotificationService.saveDeathNotificationEvents(
+        details,
+        dataProcessorMessage,
+      )
 
-        "LIFE_EVENT" -> print("x == 2")
-      }
+      "LIFE_EVENT" -> print("x == 2")
     }
   }
+}
 
-  private fun getDataFromProvider(dataProcessorMessage: DataProcessorMessage): DataDetail {
-    val id = dataProcessorMessage.id ?: UUID.randomUUID().toString()
-    val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
+private fun getDataFromProvider(dataProcessorMessage: DataProcessorMessage): DataDetail {
+  val id = dataProcessorMessage.id ?: UUID.randomUUID().toString()
+  val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 
-    return when (dataProcessorMessage.datasetId) {
-      "DEATH_CSV" -> {
-        DataDetail(id = id, data = dataPayload)
-      }
+  return when (dataProcessorMessage.datasetId) {
+    "DEATH_CSV" -> {
+      DataDetail(id = id, data = dataPayload)
+    }
 
-      "DEATH_LEV" -> {
-        DataDetail(id = id)
-      }
+    "DEATH_LEV" -> {
+      DataDetail(id = id)
+    }
 
-      else -> {
-        DataDetail(id = id, data = dataPayload)
-      }
+    else -> {
+      DataDetail(id = id, data = dataPayload)
     }
   }
 }

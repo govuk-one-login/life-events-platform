@@ -1,11 +1,7 @@
 package uk.gov.gdx.datashare.queue
 
 import com.amazonaws.services.sqs.AmazonSQS
-import com.amazonaws.services.sqs.model.GetQueueAttributesRequest
-import com.amazonaws.services.sqs.model.GetQueueAttributesResult
-import com.amazonaws.services.sqs.model.GetQueueUrlResult
-import com.amazonaws.services.sqs.model.QueueAttributeName
-import com.amazonaws.services.sqs.model.QueueDoesNotExistException
+import com.amazonaws.services.sqs.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString

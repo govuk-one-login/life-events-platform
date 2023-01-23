@@ -10,10 +10,10 @@ import software.amazon.awssdk.services.rds.model.GenerateAuthenticationTokenRequ
 @Service
 final class DbCredentialsService(
   @Value("\${db.provider}") val dbProvider: DbProvider,
-  @Value("\${db.hostname}") val dbHostname: String,
-  @Value("\${db.port}") val dbPort: Int,
-  @Value("\${db.username}") val dbUsername: String,
-  @Value("\${db.password:#{null}}") val dbPassword: String?,
+  @Value("\${spring.datasource.username}") val dbUsername: String,
+  @Value("\${db.port:#{null}}") val dbPort: Int?,
+  @Value("\${db.hostname:#{null}}") val dbHostname: String?,
+  @Value("\${spring.datasource.password:#{null}}") val dbPassword: String?,
   @Value("\${db.rds-region:#{null}}") val dbRdsRegion: String?,
 ) {
   enum class DbProvider {
@@ -43,8 +43,8 @@ final class DbCredentialsService(
   private fun getToken(): String {
     return rdsUtilities!!.generateAuthenticationToken(
       GenerateAuthenticationTokenRequest.builder()
-        .hostname(dbHostname)
-        .port(dbPort)
+        .hostname(dbHostname ?: throw IllegalStateException("No database hostname provided"))
+        .port(dbPort ?: throw IllegalStateException("No database port provided"))
         .username(dbUsername)
         .build(),
     )

@@ -17,14 +17,13 @@ metrics:
 
 db:
   provider: local
-  uri: postgresql://localhost:5432/datashare?sslmode=disable
-  hostname: localhost
-  port: 5432
-  ssl-required: false
-  username: datashare
-  password: datashare
 
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/datashare?sslmode=disable
+    username: datashare
+    password: datashare
+
   devtools:
     add-properties: true
 
@@ -39,11 +38,6 @@ spring:
             scope: internal-outbound
           data-receiver:
             scope: internal-inbound
-
-logging:
-  level:
-    io.r2dbc.postgresql.QUERY: DEBUG # for queries
-    io.r2dbc.postgresql.PARAM: INFO # for parameters
 
 api:
   base:

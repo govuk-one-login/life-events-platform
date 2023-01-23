@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import kotlinx.coroutines.flow.toList
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -48,7 +47,7 @@ class EventsController(
       ),
     ],
   )
-  suspend fun getEventsStatus(
+  fun getEventsStatus(
     @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
     @RequestParam(name = "fromTime", required = false)
     startTime: LocalDateTime? = null,
@@ -92,14 +91,14 @@ class EventsController(
       ),
     ],
   )
-  suspend fun getEvents(
+  fun getEvents(
     @Schema(
       description = "Event Types, if none supplied it will be the allowed types for this client",
       required = false,
       allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
     )
     @RequestParam(name = "eventType", required = false)
-    eventTypes: List<String> = listOf(),
+    eventTypes: List<String>?,
     @Schema(
       description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
       type = "date-time",
@@ -136,7 +135,7 @@ class EventsController(
       ),
     ],
   )
-  suspend fun publishEvent(
+  fun publishEvent(
     @Schema(
       description = "Event Payload",
       required = true,
@@ -169,7 +168,7 @@ class EventsController(
       ),
     ],
   )
-  suspend fun getEvent(
+  fun getEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable
     id: UUID,
@@ -193,7 +192,7 @@ class EventsController(
       ),
     ],
   )
-  suspend fun deleteEvent(
+  fun deleteEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable
     id: UUID,
@@ -208,8 +207,8 @@ class EventsController(
     }
   }
 
-  private suspend fun <T> tryCallAndUpdateMetric(
-    call: suspend () -> T,
+  private fun <T> tryCallAndUpdateMetric(
+    call: () -> T,
     successCounter: Counter,
     failureCounter: Counter,
   ): T {

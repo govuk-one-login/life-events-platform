@@ -28,6 +28,12 @@ Begin
 End;
 $$;
 
+DELETE FROM publisher_subscription WHERE client_id IN ('len','internal-inbound','internal-inbound');
+
+DELETE FROM consumer_subscription WHERE oauth_client_id IN ('dwp-event-receiver','hmrc-client','internal-outbound');
+
+DELETE FROM consumer_subscription WHERE push_uri IN ('s3://user:password@localhost','http://localhost:8181/callback');
+
 INSERT INTO publisher_subscription
     (client_id, publisher_id, event_type_id, dataset_id)
 VALUES

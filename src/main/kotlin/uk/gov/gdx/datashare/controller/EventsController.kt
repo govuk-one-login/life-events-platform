@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.service.DataReceiverService
+import uk.gov.gdx.datashare.service.EventApiAuditService
 import uk.gov.gdx.datashare.service.EventDataService
 import uk.gov.gdx.datashare.service.EventNotification
 import uk.gov.gdx.datashare.service.EventStatus
@@ -33,6 +34,7 @@ import java.util.*
 class EventsController(
   private val eventDataService: EventDataService,
   private val dataReceiverService: DataReceiverService,
+  private val eventApiAuditService: EventApiAuditService,
   private val meterRegistry: MeterRegistry,
 ) {
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
@@ -117,7 +119,11 @@ class EventsController(
     endTime: LocalDateTime? = null,
   ): List<EventNotification> = run {
     tryCallAndUpdateMetric(
-      { eventDataService.getEvents(eventTypes, startTime, endTime).toList() },
+      {
+        val eventNotifications = eventDataService.getEvents(eventTypes, startTime, endTime).toList()
+        eventApiAuditService.auditGetEvents(eventNotifications)
+        eventNotifications
+      },
       meterRegistry.counter("API_CALLS.GetEvents", "success", "true"),
       meterRegistry.counter("API_CALLS.GetEvents", "success", "false"),
     )

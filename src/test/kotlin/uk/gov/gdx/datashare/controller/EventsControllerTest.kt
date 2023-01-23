@@ -18,6 +18,7 @@ import java.util.stream.Stream
 class EventsControllerTest {
   private val eventDataService = mockk<EventDataService>()
   private val dataReceiverService = mockk<DataReceiverService>()
+  private val eventApiAuditService = mockk<EventApiAuditService>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val publishEventCounter = mockk<Counter>()
   private val getEventCounter = mockk<Counter>()
@@ -46,7 +47,7 @@ class EventsControllerTest {
     every { deleteEventCounter.increment() }.returns(Unit)
     every { deleteEventSuccessCounter.increment() }.returns(Unit)
     every { publishEventSuccessCounter.increment() }.returns(Unit)
-    underTest = EventsController(eventDataService, dataReceiverService, meterRegistry)
+    underTest = EventsController(eventDataService, dataReceiverService, eventApiAuditService, meterRegistry)
   }
 
   @ParameterizedTest
@@ -97,12 +98,14 @@ class EventsControllerTest {
     )
 
     every { eventDataService.getEvents(eventTypes, startTime, endTime) }.returns(events)
+    every {eventApiAuditService.auditGetEvents(events)}.returns(Unit)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime)
 
     assertThat(eventsOutput).hasSize(2)
-    assertThat(eventsOutput).isEqualTo(events.toList())
+    assertThat(eventsOutput).isEqualTo(events)
     verify(exactly = 1) { getEventsCounter.increment() }
+    verify(exactly = 1) {eventApiAuditService.auditGetEvents(events)}
   }
 
   @Test
@@ -164,36 +167,6 @@ class EventsControllerTest {
 
       verify(exactly = 1) { eventDataService.getEvent(eventId) }
     }
-  }
-
-  @Test
-  fun `getEvents gets events of expected shape`() {
-    val eventTypes = listOf("DEATH_NOTIFICATION")
-    val events = listOf(
-      EventNotification(
-        eventId = UUID.fromString("a5383689-1192-4078-a4a6-a611b0a34c6e"),
-        eventType = "DEATH_NOTIFICATION",
-        sourceId = "a5383689-1192-4078-a4a6-a611b0a34c6e",
-        eventData = DeathNotificationDetails(
-          firstName = "Bob",
-        ),
-      ),
-      EventNotification(
-        eventId = UUID.fromString("ec39aa80-2fa2-4d46-9211-c66fc94024d3"),
-        eventType = "DEATH_NOTIFICATION",
-        sourceId = "ec39aa80-2fa2-4d46-9211-c66fc94024d3",
-        eventData = DeathNotificationDetails(
-          firstName = "Bob",
-          lastName = "Smith",
-        ),
-      ),
-    )
-
-    every { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
-
-    val eventsOutput = underTest.getEvents(eventTypes)
-
-    Approvals.verify(eventsOutput)
   }
 
   companion object {

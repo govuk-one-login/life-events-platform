@@ -1,5 +1,7 @@
 # 7. Use stepfunctions for example consumer
 
+[Next >>](0008-use-database-for-audit.md)
+
 Date: 2023-01-17
 
 ## Status
@@ -21,4 +23,4 @@ We will use an AWS Stepfunction to orchestrate Lambda functions to consume the e
 - Increase in upfront complexity over e.g. just a lambda
 - Increased flexibility: ease of scaling, adding extra layers
 
-[Next >>](9999-end.md)
+[Next >>](0008-use-database-for-audit.md)

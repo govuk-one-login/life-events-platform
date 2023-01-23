@@ -1,6 +1,6 @@
 # 6. Scopes and auth
 
-[Next >>](9999-end.md)
+[Next >>](0007-use-stepfunction-for-example-consumer.md)
 
 Date: 2023-01-03
 

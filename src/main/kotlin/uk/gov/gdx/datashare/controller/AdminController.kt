@@ -18,7 +18,7 @@ import uk.gov.gdx.datashare.repository.EventDataRepository
 @Validated
 @Tag(name = "01. Admin")
 class AdminController(
-    private val eventDataRepository: EventDataRepository,
+  private val eventDataRepository: EventDataRepository,
 ) {
   @GetMapping("/events")
   @Operation(

@@ -49,7 +49,7 @@ data class ConsumerSubscription(
   @JsonIgnore
   val new: Boolean = true,
 
-  ) : Persistable<UUID> {
+) : Persistable<UUID> {
 
   override fun getId(): UUID = consumerSubscriptionId
 

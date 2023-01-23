@@ -1,1 +1,10 @@
 *.mp4
+
+.github
+.gradle
+.idea
+
+build
+ci
+doc
+terraform

@@ -1,14 +1,12 @@
 package uk.gov.gdx.datashare.service
 
-import io.mockk.coEvery
-import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.repository.Consumer
 import uk.gov.gdx.datashare.repository.ConsumerRepository
@@ -27,161 +25,147 @@ class ConsumersServiceTest {
 
   @Test
   fun `getConsumers gets all consumers`() {
-    runBlocking {
-      val savedConsumers = flowOf(
-        Consumer(name = "Consumer1"),
-        Consumer(name = "Consumer2"),
-        Consumer(name = "Consumer3"),
-      )
+    val savedConsumers = listOf(
+      Consumer(name = "Consumer1"),
+      Consumer(name = "Consumer2"),
+      Consumer(name = "Consumer3"),
+    )
 
-      coEvery { consumerRepository.findAll() }.returns(savedConsumers)
+    every { consumerRepository.findAll() }.returns(savedConsumers)
 
-      val consumers = underTest.getConsumers().toList()
+    val consumers = underTest.getConsumers().toList()
 
-      assertThat(consumers).hasSize(3)
-      assertThat(consumers).isEqualTo(savedConsumers.toList())
-    }
+    assertThat(consumers).hasSize(3)
+    assertThat(consumers).isEqualTo(savedConsumers.toList())
   }
 
   @Test
   fun `getConsumerSubscriptions gets all consumer subscriptions`() {
-    runBlocking {
-      val savedConsumerSubscriptions = flowOf(
-        ConsumerSubscription(
-          consumerId = UUID.randomUUID(),
-          eventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c",
-        ),
-        ConsumerSubscription(
-          consumerId = UUID.randomUUID(),
-          eventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c",
-        ),
-        ConsumerSubscription(
-          consumerId = UUID.randomUUID(),
-          eventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c",
-        ),
-      )
+    val savedConsumerSubscriptions = listOf(
+      ConsumerSubscription(
+        consumerId = UUID.randomUUID(),
+        eventType = "DEATH_NOTIFICATION",
+        enrichmentFields = "a,b,c",
+      ),
+      ConsumerSubscription(
+        consumerId = UUID.randomUUID(),
+        eventType = "DEATH_NOTIFICATION",
+        enrichmentFields = "a,b,c",
+      ),
+      ConsumerSubscription(
+        consumerId = UUID.randomUUID(),
+        eventType = "DEATH_NOTIFICATION",
+        enrichmentFields = "a,b,c",
+      ),
+    )
 
-      coEvery { consumerSubscriptionRepository.findAll() }.returns(savedConsumerSubscriptions)
+    every { consumerSubscriptionRepository.findAll() }.returns(savedConsumerSubscriptions)
 
-      val consumerSubscriptions = underTest.getConsumerSubscriptions().toList()
+    val consumerSubscriptions = underTest.getConsumerSubscriptions().toList()
 
-      assertThat(consumerSubscriptions).hasSize(3)
-      assertThat(consumerSubscriptions).isEqualTo(savedConsumerSubscriptions.toList())
-    }
+    assertThat(consumerSubscriptions).hasSize(3)
+    assertThat(consumerSubscriptions).isEqualTo(savedConsumerSubscriptions.toList())
   }
 
   @Test
   fun `getSubscriptionsForConsumer gets all consumer subscriptions for id`() {
-    runBlocking {
-      val savedConsumerSubscriptions = flowOf(
-        ConsumerSubscription(
-          consumerId = consumer.id,
-          eventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c",
-        ),
-        ConsumerSubscription(
-          consumerId = consumer.id,
-          eventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c",
-        ),
-        ConsumerSubscription(
-          consumerId = consumer.id,
-          eventType = "DEATH_NOTIFICATION",
-          enrichmentFields = "a,b,c",
-        ),
-      )
+    val savedConsumerSubscriptions = listOf(
+      ConsumerSubscription(
+        consumerId = consumer.id,
+        eventType = "DEATH_NOTIFICATION",
+        enrichmentFields = "a,b,c",
+      ),
+      ConsumerSubscription(
+        consumerId = consumer.id,
+        eventType = "DEATH_NOTIFICATION",
+        enrichmentFields = "a,b,c",
+      ),
+      ConsumerSubscription(
+        consumerId = consumer.id,
+        eventType = "DEATH_NOTIFICATION",
+        enrichmentFields = "a,b,c",
+      ),
+    )
 
-      coEvery { consumerSubscriptionRepository.findAllByConsumerId(consumer.id) }.returns(savedConsumerSubscriptions)
+    every { consumerSubscriptionRepository.findAllByConsumerId(consumer.id) }.returns(savedConsumerSubscriptions)
 
-      val consumerSubscriptions = underTest.getSubscriptionsForConsumer(consumer.id).toList()
+    val consumerSubscriptions = underTest.getSubscriptionsForConsumer(consumer.id).toList()
 
-      assertThat(consumerSubscriptions).hasSize(3)
-      assertThat(consumerSubscriptions).isEqualTo(savedConsumerSubscriptions.toList())
-    }
+    assertThat(consumerSubscriptions).hasSize(3)
+    assertThat(consumerSubscriptions).isEqualTo(savedConsumerSubscriptions.toList())
   }
 
   @Test
   fun `addConsumerSubscription adds new subscription if consumer exists`() {
-    runBlocking {
-      coEvery { consumerRepository.findById(consumer.id) }.returns(consumer)
-      coEvery { consumerSubscriptionRepository.save(any()) }.returns(consumerSubscription)
+    every { consumerRepository.findByIdOrNull(consumer.id) }.returns(consumer)
+    every { consumerSubscriptionRepository.save(any()) }.returns(consumerSubscription)
 
-      underTest.addConsumerSubscription(consumer.id, consumerSubRequest)
+    underTest.addConsumerSubscription(consumer.id, consumerSubRequest)
 
-      coVerify(exactly = 1) {
-        consumerSubscriptionRepository.save(
-          withArg {
-            assertThat(it.consumerId).isEqualTo(consumer.id)
-            assertThat(it.oauthClientId).isEqualTo(consumerSubRequest.oauthClientId)
-            assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
-            assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
-            assertThat(it.eventType).isEqualTo(consumerSubRequest.eventType)
-          },
-        )
-      }
+    verify(exactly = 1) {
+      consumerSubscriptionRepository.save(
+        withArg {
+          assertThat(it.consumerId).isEqualTo(consumer.id)
+          assertThat(it.oauthClientId).isEqualTo(consumerSubRequest.oauthClientId)
+          assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
+          assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
+          assertThat(it.eventType).isEqualTo(consumerSubRequest.eventType)
+        },
+      )
     }
   }
 
   @Test
   fun `updateConsumerSubscription updates subscription`() {
-    runBlocking {
-      coEvery { consumerRepository.findById(consumer.id) }.returns(consumer)
-      coEvery { consumerSubscriptionRepository.findById(consumerSubscription.id) }.returns(consumerSubscription)
+    every { consumerRepository.findByIdOrNull(consumer.id) }.returns(consumer)
+    every { consumerSubscriptionRepository.findByIdOrNull(consumerSubscription.id) }.returns(consumerSubscription)
 
-      coEvery { consumerSubscriptionRepository.save(any()) }.returns(consumerSubscription)
+    every { consumerSubscriptionRepository.save(any()) }.returns(consumerSubscription)
 
-      underTest.updateConsumerSubscription(consumer.id, consumerSubscription.id, consumerSubRequest)
+    underTest.updateConsumerSubscription(consumer.id, consumerSubscription.id, consumerSubRequest)
 
-      coVerify(exactly = 1) {
-        consumerSubscriptionRepository.save(
-          withArg {
-            assertThat(it.consumerId).isEqualTo(consumer.id)
-            assertThat(it.oauthClientId).isEqualTo(consumerSubRequest.oauthClientId)
-            assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
-            assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
-            assertThat(it.eventType).isEqualTo(consumerSubRequest.eventType)
-          },
-        )
-      }
+    verify(exactly = 1) {
+      consumerSubscriptionRepository.save(
+        withArg {
+          assertThat(it.consumerId).isEqualTo(consumer.id)
+          assertThat(it.oauthClientId).isEqualTo(consumerSubRequest.oauthClientId)
+          assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
+          assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
+          assertThat(it.eventType).isEqualTo(consumerSubRequest.eventType)
+        },
+      )
     }
   }
 
   @Test
   fun `updateConsumerSubscription does not update subscription if subscription does not exist`() {
-    runBlocking {
-      coEvery { consumerSubscriptionRepository.findById(consumerSubscription.id) }.returns(null)
+    every { consumerSubscriptionRepository.findByIdOrNull(consumerSubscription.id) }.returns(null)
 
-      val exception = assertThrows<ConsumerSubscriptionNotFoundException> {
-        underTest.updateConsumerSubscription(consumer.id, consumerSubscription.id, consumerSubRequest)
-      }
-
-      assertThat(exception.message).isEqualTo("Subscription ${consumerSubscription.id} not found")
-
-      coVerify(exactly = 0) { consumerSubscriptionRepository.save(any()) }
+    val exception = assertThrows<ConsumerSubscriptionNotFoundException> {
+      underTest.updateConsumerSubscription(consumer.id, consumerSubscription.id, consumerSubRequest)
     }
+
+    assertThat(exception.message).isEqualTo("Subscription ${consumerSubscription.id} not found")
+
+    verify(exactly = 0) { consumerSubscriptionRepository.save(any()) }
   }
 
   @Test
   fun `addConsumer adds consumer`() {
-    runBlocking {
-      val consumerRequest = ConsumerRequest(
-        name = "Consumer",
+    val consumerRequest = ConsumerRequest(
+      name = "Consumer",
+    )
+
+    every { consumerRepository.save(any()) }.returns(consumer)
+
+    underTest.addConsumer(consumerRequest)
+
+    verify(exactly = 1) {
+      consumerRepository.save(
+        withArg {
+          assertThat(it.name).isEqualTo(consumerRequest.name)
+        },
       )
-
-      coEvery { consumerRepository.save(any()) }.returns(consumer)
-
-      underTest.addConsumer(consumerRequest)
-
-      coVerify(exactly = 1) {
-        consumerRepository.save(
-          withArg {
-            assertThat(it.name).isEqualTo(consumerRequest.name)
-          },
-        )
-      }
     }
   }
 

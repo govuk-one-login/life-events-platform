@@ -3,11 +3,6 @@ package uk.gov.gdx.datashare.service
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.media.Schema
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -37,10 +32,10 @@ class EventDataService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getEventsStatus(
+  fun getEventsStatus(
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?,
-  ): Flow<EventStatus> {
+  ): List<EventStatus> {
     val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
     val endTime = optionalEndTime ?: dateTimeHandler.now()
     val clientId = authenticationFacade.getUsername()
@@ -55,7 +50,7 @@ class EventDataService(
     }
   }
 
-  suspend fun getEvent(
+  fun getEvent(
     id: UUID,
   ): EventNotification? {
     val clientId = authenticationFacade.getUsername()
@@ -76,11 +71,11 @@ class EventDataService(
     }
   }
 
-  suspend fun getEvents(
+  fun getEvents(
     eventTypes: List<String>?,
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?,
-  ): Flow<EventNotification> {
+  ): List<EventNotification> {
     val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
     val endTime = optionalEndTime ?: dateTimeHandler.now()
     val clientId = authenticationFacade.getUsername()
@@ -89,8 +84,8 @@ class EventDataService(
       consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes)
     } ?: consumerSubscriptionRepository.findAllByClientId(clientId)
 
-    if (consumerSubscriptions.count() == 0) {
-      return emptyFlow()
+    if (consumerSubscriptions.isEmpty()) {
+      return emptyList()
     }
 
     val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({ it.id }, { it })
@@ -118,7 +113,7 @@ class EventDataService(
     }
   }
 
-  suspend fun deleteEvent(id: UUID) {
+  fun deleteEvent(id: UUID) {
     val callbackClientId = authenticationFacade.getUsername()
     val event = eventDataRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw EventNotFoundException("Event $id not found for callback client $callbackClientId")
@@ -133,10 +128,8 @@ class EventDataService(
       "consumerSubscription",
       event.consumerSubscriptionId.toString(),
     ).increment()
-    if (event.whenCreated != null) {
-      meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
-        .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
-    }
+    meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
+      .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
   }
 }
 

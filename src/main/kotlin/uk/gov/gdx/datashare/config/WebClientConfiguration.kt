@@ -6,12 +6,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
-import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction
+import org.springframework.security.oauth2.client.*
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import java.time.Duration
@@ -39,8 +36,8 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun dataReceiverApiWebClient(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
-    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+  fun dataReceiverApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId("data-receiver")
 
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
@@ -52,8 +49,8 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun eventDataRetrievalApiWebClient(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
-    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+  fun eventDataRetrievalApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId("event-data-retrieval")
 
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
@@ -66,14 +63,14 @@ class WebClientConfiguration(
 
   @Bean
   fun authorizedClientManager(
-    clientRegistrationRepository: ReactiveClientRegistrationRepository,
-    oAuth2AuthorizedClientService: ReactiveOAuth2AuthorizedClientService,
-  ): ReactiveOAuth2AuthorizedClientManager {
-    val authorizedClientProvider = ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+    clientRegistrationRepository: ClientRegistrationRepository,
+    oAuth2AuthorizedClientService: OAuth2AuthorizedClientService,
+  ): OAuth2AuthorizedClientManager {
+    val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
       .clientCredentials()
       .build()
 
-    val authorizedClientManager = AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
+    val authorizedClientManager = AuthorizedClientServiceOAuth2AuthorizedClientManager(
       clientRegistrationRepository,
       oAuth2AuthorizedClientService,
     )

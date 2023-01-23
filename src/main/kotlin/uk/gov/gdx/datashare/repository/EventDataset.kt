@@ -14,7 +14,7 @@ data class EventDataset(
   val description: String,
   val storePayload: Boolean = false,
   val active: Boolean = true,
-  val whenCreated: LocalDateTime? = null,
+  val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient
   @Value("false")

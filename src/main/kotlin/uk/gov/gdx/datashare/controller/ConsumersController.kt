@@ -7,17 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.service.ConsumerRequest
 import uk.gov.gdx.datashare.service.ConsumerSubRequest
 import uk.gov.gdx.datashare.service.ConsumersService
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/consumers", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -38,7 +32,7 @@ class ConsumersController(
       ),
     ],
   )
-  suspend fun getConsumers() = consumersService.getConsumers()
+  fun getConsumers() = consumersService.getConsumers()
 
   @PostMapping
   @Operation(
@@ -51,7 +45,7 @@ class ConsumersController(
       ),
     ],
   )
-  suspend fun addConsumer(
+  fun addConsumer(
     @Schema(
       description = "Consumer",
       required = true,
@@ -72,7 +66,7 @@ class ConsumersController(
       ),
     ],
   )
-  suspend fun getConsumerSubscriptions() = consumersService.getConsumerSubscriptions()
+  fun getConsumerSubscriptions() = consumersService.getConsumerSubscriptions()
 
   @GetMapping("/{consumerId}/subscriptions")
   @Operation(
@@ -85,7 +79,7 @@ class ConsumersController(
       ),
     ],
   )
-  suspend fun getSubscriptionsForConsumer(
+  fun getSubscriptionsForConsumer(
     @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
     @PathVariable
     consumerId: UUID,
@@ -102,7 +96,7 @@ class ConsumersController(
       ),
     ],
   )
-  suspend fun addConsumerSubscription(
+  fun addConsumerSubscription(
     @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
     @PathVariable
     consumerId: UUID,
@@ -126,7 +120,7 @@ class ConsumersController(
       ),
     ],
   )
-  suspend fun updateConsumerSubscription(
+  fun updateConsumerSubscription(
     @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
     @PathVariable
     consumerId: UUID,

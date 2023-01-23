@@ -3,7 +3,6 @@ package uk.gov.gdx.datashare.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import kotlinx.coroutines.flow.toList
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -31,5 +30,5 @@ class AdminController(
       ),
     ],
   )
-  suspend fun getEvents() = eventDataRepository.findAll().toList()
+  fun getEvents() = eventDataRepository.findAll().toList()
 }

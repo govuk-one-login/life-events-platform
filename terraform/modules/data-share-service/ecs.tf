@@ -8,7 +8,7 @@ resource "aws_ecs_cluster" "main" {
 }
 
 locals {
-  rds_db_url = "postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?sslMode=require"
+  rds_db_url = "jdbc:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?sslMode=require"
 }
 
 resource "aws_ecs_task_definition" "gdx_data_share_poc" {
@@ -38,12 +38,11 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_S3_EGRESS_BUCKET", "value" : module.egress.name },
 
         { "name" : "DB_PROVIDER", "value" : "rds" },
-        { "name" : "DB_URI", "value" : local.rds_db_url },
+        { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
         { "name" : "DB_HOSTNAME", "value" : aws_rds_cluster.rds_postgres_cluster.endpoint },
-        { "name" : "DB_SSL_REQUIRED", "value" : "true" },
         { "name" : "DB_PORT", "value" : tostring(aws_rds_cluster.rds_postgres_cluster.port) },
         { "name" : "DB_RDS_REGION", "value" : var.region },
-        { "name" : "DB_USERNAME", "value" : var.db_username },
+        { "name" : "SPRING_DATASOURCE_USERNAME", "value" : var.db_username },
 
         { "name" : "METRICS_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },
 

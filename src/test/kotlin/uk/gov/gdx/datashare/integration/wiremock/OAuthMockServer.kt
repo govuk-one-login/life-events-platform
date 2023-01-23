@@ -1,10 +1,7 @@
 package uk.gov.gdx.datashare.integration.wiremock
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import com.github.tomakehurst.wiremock.client.WireMock.get
-import com.github.tomakehurst.wiremock.client.WireMock.post
-import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 
@@ -64,7 +61,7 @@ class OAuthMockServer : WireMockServer(WIREMOCK_PORT) {
                                     "PS384",
                                     "PS512"
                                   ]
-                                }                                
+                                }
               """.trimIndent(),
             ),
         ),

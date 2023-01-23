@@ -24,7 +24,7 @@ data class PublisherSubscription(
   val eventTypeId: String,
   @Schema(description = "Data Set", required = true, example = "DEATH_LEN")
   val datasetId: String,
-  val whenCreated: LocalDateTime? = null,
+  val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient
   @Value("false")

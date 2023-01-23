@@ -1,8 +1,8 @@
 package uk.gov.gdx.datashare.repository
 
-import org.springframework.data.repository.kotlin.CoroutineCrudRepository
+import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 @Repository
-interface PublisherRepository : CoroutineCrudRepository<Publisher, UUID>
+interface PublisherRepository : CrudRepository<Publisher, UUID>

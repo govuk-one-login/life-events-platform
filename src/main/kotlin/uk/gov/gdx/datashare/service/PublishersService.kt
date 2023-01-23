@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
@@ -23,14 +24,14 @@ class PublishersService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getPublishers() = publisherRepository.findAll()
+  fun getPublishers(): Iterable<Publisher> = publisherRepository.findAll()
 
-  suspend fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll()
+  fun getPublisherSubscriptions(): Iterable<PublisherSubscription> = publisherSubscriptionRepository.findAll()
 
-  suspend fun getSubscriptionsForPublisher(publisherId: UUID) =
+  fun getSubscriptionsForPublisher(publisherId: UUID) =
     publisherSubscriptionRepository.findAllByPublisherId(publisherId)
 
-  suspend fun addPublisherSubscription(
+  fun addPublisherSubscription(
     publisherId: UUID,
     publisherSubRequest: PublisherSubRequest,
   ): PublisherSubscription {
@@ -46,14 +47,14 @@ class PublishersService(
     }
   }
 
-  suspend fun updatePublisherSubscription(
+  fun updatePublisherSubscription(
     publisherId: UUID,
     subscriptionId: UUID,
     publisherSubRequest: PublisherSubRequest,
   ): PublisherSubscription {
     with(publisherSubRequest) {
       return publisherSubscriptionRepository.save(
-        publisherSubscriptionRepository.findById(subscriptionId)?.copy(
+        publisherSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
           publisherId = publisherId,
           clientId = clientId,
           eventTypeId = eventTypeId,
@@ -63,7 +64,7 @@ class PublishersService(
     }
   }
 
-  suspend fun addPublisher(
+  fun addPublisher(
     publisherRequest: PublisherRequest,
   ): Publisher {
     with(publisherRequest) {

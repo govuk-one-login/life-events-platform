@@ -14,17 +14,15 @@ class DatabasePropertiesListener : ApplicationListener<ApplicationEnvironmentPre
     val dbCredentialsService = DbCredentialsService(
       environment.getProperty<DbCredentialsService.DbProvider>("db.provider")
         ?: throw IllegalStateException("No db provider specified"),
-      environment.getProperty("db.hostname")
-        ?: throw IllegalStateException("No db host specified"),
-      environment.getProperty<Int>("db.port")
-        ?: throw IllegalStateException("No db port specified"),
-      environment.getProperty("db.username")
+      environment.getProperty("spring.datasource.username")
         ?: throw IllegalStateException("No db username specified"),
-      environment.getProperty("db.password"),
+      environment.getProperty<Int>("db.port"),
+      environment.getProperty("db.hostname"),
+      environment.getProperty("spring.datasource.password"),
       environment.getProperty("db.rds-region"),
     )
 
-    Properties().also { it.setProperty("spring.flyway.password", dbCredentialsService.password()) }
+    Properties().also { it.setProperty("spring.datasource.password", dbCredentialsService.password()) }
       .also { environment.propertySources.addFirst(PropertiesPropertySource("databaseProps", it)) }
   }
 }

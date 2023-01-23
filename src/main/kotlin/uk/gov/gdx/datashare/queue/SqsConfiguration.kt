@@ -38,7 +38,7 @@ class SqsConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  fun awsQueueControllerAsync(awsQueueService: AwsQueueService) = AwsQueueControllerAsync(awsQueueService)
+  fun awsQueueController(awsQueueService: AwsQueueService) = AwsQueueController(awsQueueService)
 
   @Bean
   @ConditionalOnMissingBean

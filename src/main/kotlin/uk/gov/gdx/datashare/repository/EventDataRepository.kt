@@ -1,14 +1,13 @@
 package uk.gov.gdx.datashare.repository
 
-import kotlinx.coroutines.flow.Flow
-import org.springframework.data.r2dbc.repository.Query
-import org.springframework.data.repository.kotlin.CoroutineCrudRepository
+import org.springframework.data.jdbc.repository.query.Query
+import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.*
 
 @Repository
-interface EventDataRepository : CoroutineCrudRepository<EventData, UUID> {
+interface EventDataRepository : CrudRepository<EventData, UUID> {
 
   @Query(
     "SELECT ed.* FROM event_data ed " +
@@ -21,7 +20,7 @@ interface EventDataRepository : CoroutineCrudRepository<EventData, UUID> {
     consumerSubscriptionId: UUID,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
-  ): Flow<EventData>
+  ): List<EventData>
 
   @Query(
     "SELECT ed.* FROM event_data ed " +
@@ -34,7 +33,7 @@ interface EventDataRepository : CoroutineCrudRepository<EventData, UUID> {
     consumerSubscriptionIds: List<UUID>,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
-  ): Flow<EventData>
+  ): List<EventData>
 
   @Query(
     "SELECT ed.* FROM event_data ed " +
@@ -42,7 +41,7 @@ interface EventDataRepository : CoroutineCrudRepository<EventData, UUID> {
       "AND cs.oauth_client_id = :clientId " +
       "WHERE ed.id = :id",
   )
-  suspend fun findByClientIdAndId(clientId: String, id: UUID): EventData?
+  fun findByClientIdAndId(clientId: String, id: UUID): EventData?
 
   @Query(
     "SELECT ed.* FROM event_data ed " +
@@ -50,5 +49,5 @@ interface EventDataRepository : CoroutineCrudRepository<EventData, UUID> {
       "JOIN consumer c ON cs.consumer_id = c.id " +
       "AND c.name = :name",
   )
-  fun findAllByConsumerName(name: String): Flow<EventData>
+  fun findAllByConsumerName(name: String): List<EventData>
 }

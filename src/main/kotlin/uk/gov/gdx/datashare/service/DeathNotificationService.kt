@@ -3,9 +3,6 @@ package uk.gov.gdx.datashare.service
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.media.Schema
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -27,7 +24,7 @@ class DeathNotificationService(
   fun mapDeathNotification(dataPayload: String): DeathNotificationDetails? =
     objectMapper.readValue(dataPayload, DeathNotificationDetails::class.java)
 
-  suspend fun saveDeathNotificationEvents(
+  fun saveDeathNotificationEvents(
     details: DataDetail,
     dataProcessorMessage: DataProcessorMessage,
   ) {
@@ -58,7 +55,7 @@ class DeathNotificationService(
     eventDataRepository.saveAll(eventData).toList()
   }
 
-  private suspend fun enrichEventPayload(
+  private fun enrichEventPayload(
     enrichmentFields: List<String>,
     fullyEnrichedData: DeathNotificationDetails?,
   ): DeathNotificationDetails? {
@@ -69,7 +66,7 @@ class DeathNotificationService(
     )
   }
 
-  private suspend fun getAllEnrichedData(
+  private fun getAllEnrichedData(
     datasetId: String,
     dataId: String,
     dataPayload: String?,

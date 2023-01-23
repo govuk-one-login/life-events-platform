@@ -19,7 +19,7 @@ data class Publisher(
   val publisherId: UUID = UUID.randomUUID(),
   @Schema(description = "Publisher Name", required = true, example = "HMPO")
   val name: String,
-  val whenCreated: LocalDateTime? = null,
+  val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient
   @Value("false")

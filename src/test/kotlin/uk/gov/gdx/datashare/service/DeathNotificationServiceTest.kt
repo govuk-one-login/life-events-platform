@@ -1,11 +1,10 @@
 package uk.gov.gdx.datashare.service
 
-import io.mockk.coEvery
-import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.TemporalUnitWithinOffset
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.gdx.datashare.config.JacksonConfiguration
@@ -16,6 +15,7 @@ import uk.gov.gdx.datashare.repository.EventData
 import uk.gov.gdx.datashare.repository.EventDataRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 class DeathNotificationServiceTest {
@@ -30,6 +30,8 @@ class DeathNotificationServiceTest {
     levApiService,
     objectMapper,
   )
+
+  private val ONE_SECOND_OFFSET = TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)
 
   @Test
   fun `mapDeathNotification maps string to full DeathNotificationDetails`() {
@@ -61,189 +63,181 @@ class DeathNotificationServiceTest {
 
   @Test
   fun `saveDeathNotificationEvents saves full death notifications for LEV`() {
-    runBlocking {
-      val dataProcessorMessage = DataProcessorMessage(
-        datasetId = "DEATH_LEV",
-        eventTypeId = "DEATH_NOTIFICATION",
-        eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
-        publisher = "HMPO",
-        storePayload = false,
-        subscriptionId = UUID.randomUUID(),
-        id = "123456789",
-        details = null,
+    val dataProcessorMessage = DataProcessorMessage(
+      datasetId = "DEATH_LEV",
+      eventTypeId = "DEATH_NOTIFICATION",
+      eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
+      publisher = "HMPO",
+      storePayload = false,
+      subscriptionId = UUID.randomUUID(),
+      id = "123456789",
+      details = null,
+    )
+    val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
+    val deathRecord = DeathRecord(
+      deceased = Deceased(
+        forenames = "Alice",
+        surname = "Smith",
+        dateOfBirth = LocalDate.of(1920, 1, 1),
+        dateOfDeath = LocalDate.of(2010, 1, 1),
+        sex = "female",
+        address = "666 Inform House, 6 Inform street, Informington, Informshire",
+        dateOfDeathQualifier = null,
+      ),
+      id = dataDetail.id,
+      date = LocalDate.now(),
+      partner = null,
+    )
+
+    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
+      .returns(consumerSubscriptions)
+    every { levApiService.findDeathById(dataDetail.id.toInt()) }.returns(listOf(deathRecord))
+    every { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
+
+    underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
+
+    verify(exactly = 1) {
+      eventDataRepository.saveAll(
+        withArg<Iterable<EventData>> {
+          assertThat(it).hasSize(2)
+          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
+          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
+
+          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
+            .isEqualTo(dataProcessorMessage.datasetId)
+          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
+            .isEqualTo(dataDetail.id)
+          assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
+            .isEqualTo(dataProcessorMessage.eventTime)
+          assertThat(simpleEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+          assertThat(complexEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+
+          assertThat(simpleEvent?.dataPayload)
+            .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
+          assertThat(complexEvent?.dataPayload)
+            .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
+        },
       )
-      val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
-      val deathRecord = DeathRecord(
-        deceased = Deceased(
-          forenames = "Alice",
-          surname = "Smith",
-          dateOfBirth = LocalDate.of(1920, 1, 1),
-          dateOfDeath = LocalDate.of(2010, 1, 1),
-          sex = "female",
-          address = "666 Inform House, 6 Inform street, Informington, Informshire",
-          dateOfDeathQualifier = null,
-        ),
-        id = dataDetail.id,
-        date = LocalDate.now(),
-        partner = null,
-      )
-
-      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
-        .returns(consumerSubscriptions)
-      coEvery { levApiService.findDeathById(dataDetail.id.toInt()) }.returns(flowOf(deathRecord))
-      coEvery { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
-
-      underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
-
-      coVerify(exactly = 1) {
-        eventDataRepository.saveAll(
-          withArg<Iterable<EventData>> {
-            assertThat(it).hasSize(2)
-            val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-            val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
-
-            assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-              .isEqualTo(dataProcessorMessage.datasetId)
-            assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-              .isEqualTo(dataDetail.id)
-            assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
-              .isEqualTo(dataProcessorMessage.eventTime)
-            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-              .isNull()
-
-            assertThat(simpleEvent?.dataPayload)
-              .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
-            assertThat(complexEvent?.dataPayload)
-              .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
-          },
-        )
-      }
     }
   }
 
   @Test
   fun `saveDeathNotificationEvents saves full death notifications for CSV`() {
-    runBlocking {
-      val dataProcessorMessage = DataProcessorMessage(
-        datasetId = "DEATH_CSV",
-        eventTypeId = "DEATH_NOTIFICATION",
-        eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
-        publisher = "HMPO",
-        storePayload = true,
-        subscriptionId = UUID.randomUUID(),
-        id = "123456789",
-        details = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\"",
+    val dataProcessorMessage = DataProcessorMessage(
+      datasetId = "DEATH_CSV",
+      eventTypeId = "DEATH_NOTIFICATION",
+      eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
+      publisher = "HMPO",
+      storePayload = true,
+      subscriptionId = UUID.randomUUID(),
+      id = "123456789",
+      details = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\"",
+    )
+    val dataDetail = DataDetail(
+      id = dataProcessorMessage.id!!,
+      data = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\"",
+    )
+
+    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
+      .returns(consumerSubscriptions)
+    every { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
+
+    underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
+
+    verify(exactly = 1) {
+      eventDataRepository.saveAll(
+        withArg<Iterable<EventData>> {
+          assertThat(it).hasSize(2)
+          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
+          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
+
+          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
+            .isEqualTo(dataProcessorMessage.datasetId)
+          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
+            .isEqualTo(dataDetail.id)
+          assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
+            .isEqualTo(dataProcessorMessage.eventTime)
+          assertThat(simpleEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+          assertThat(complexEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+
+          assertThat(simpleEvent?.dataPayload)
+            .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
+          assertThat(complexEvent?.dataPayload)
+            .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
+        },
       )
-      val dataDetail = DataDetail(
-        id = dataProcessorMessage.id!!,
-        data = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\"",
-      )
-
-      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
-        .returns(consumerSubscriptions)
-      coEvery { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
-
-      underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
-
-      coVerify(exactly = 1) {
-        eventDataRepository.saveAll(
-          withArg<Iterable<EventData>> {
-            assertThat(it).hasSize(2)
-            val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-            val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
-
-            assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-              .isEqualTo(dataProcessorMessage.datasetId)
-            assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-              .isEqualTo(dataDetail.id)
-            assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
-              .isEqualTo(dataProcessorMessage.eventTime)
-            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-              .isNull()
-
-            assertThat(simpleEvent?.dataPayload)
-              .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
-            assertThat(complexEvent?.dataPayload)
-              .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
-          },
-        )
-      }
     }
   }
 
   @Test
   fun `saveDeathNotificationEvents saves no death details for PASS_THROUGH`() {
-    runBlocking {
-      val dataProcessorMessage = DataProcessorMessage(
-        datasetId = "PASS_THROUGH",
-        eventTypeId = "DEATH_NOTIFICATION",
-        eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
-        publisher = "HMPO",
-        storePayload = true,
-        subscriptionId = UUID.randomUUID(),
-        id = "123456789",
-        details = null,
+    val dataProcessorMessage = DataProcessorMessage(
+      datasetId = "PASS_THROUGH",
+      eventTypeId = "DEATH_NOTIFICATION",
+      eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
+      publisher = "HMPO",
+      storePayload = true,
+      subscriptionId = UUID.randomUUID(),
+      id = "123456789",
+      details = null,
+    )
+    val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
+
+    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
+      .returns(consumerSubscriptions)
+    every { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
+
+    underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
+
+    verify(exactly = 1) {
+      eventDataRepository.saveAll(
+        withArg<Iterable<EventData>> {
+          assertThat(it).hasSize(2)
+          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
+          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
+
+          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
+            .isEqualTo(dataProcessorMessage.datasetId)
+          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
+            .isEqualTo(dataDetail.id)
+          assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
+            .isEqualTo(dataProcessorMessage.eventTime)
+          assertThat(simpleEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+          assertThat(complexEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+
+          assertThat(simpleEvent?.dataPayload)
+            .isNull()
+          assertThat(complexEvent?.dataPayload)
+            .isNull()
+        },
       )
-      val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
-
-      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
-        .returns(consumerSubscriptions)
-      coEvery { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
-
-      underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
-
-      coVerify(exactly = 1) {
-        eventDataRepository.saveAll(
-          withArg<Iterable<EventData>> {
-            assertThat(it).hasSize(2)
-            val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-            val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
-
-            assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-              .isEqualTo(dataProcessorMessage.datasetId)
-            assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-              .isEqualTo(dataDetail.id)
-            assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
-              .isEqualTo(dataProcessorMessage.eventTime)
-            assertThat(simpleEvent?.whenCreated).isEqualTo(complexEvent?.whenCreated)
-              .isNull()
-
-            assertThat(simpleEvent?.dataPayload)
-              .isNull()
-            assertThat(complexEvent?.dataPayload)
-              .isNull()
-          },
-        )
-      }
     }
   }
 
   @Test
   fun `saveDeathNotificationEvents throws error for not valid dataset ID`() {
-    runBlocking {
-      val dataProcessorMessage = DataProcessorMessage(
-        datasetId = "INVALID",
-        eventTypeId = "DEATH_NOTIFICATION",
-        eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
-        publisher = "HMPO",
-        storePayload = true,
-        subscriptionId = UUID.randomUUID(),
-        id = "123456789",
-        details = null,
-      )
-      val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
+    val dataProcessorMessage = DataProcessorMessage(
+      datasetId = "INVALID",
+      eventTypeId = "DEATH_NOTIFICATION",
+      eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
+      publisher = "HMPO",
+      storePayload = true,
+      subscriptionId = UUID.randomUUID(),
+      id = "123456789",
+      details = null,
+    )
+    val dataDetail = DataDetail(id = dataProcessorMessage.id!!, data = null)
 
-      coEvery { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
-        .returns(consumerSubscriptions)
+    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
+      .returns(consumerSubscriptions)
 
-      val exception = assertThrows<UnknownDatasetException> {
-        underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
-      }
-
-      assertThat(exception.message).isEqualTo("Unknown DataSet ${dataProcessorMessage.datasetId}")
-
-      coVerify(exactly = 0) { eventDataRepository.saveAll(any<Iterable<EventData>>()) }
+    val exception = assertThrows<UnknownDatasetException> {
+      underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
     }
+
+    assertThat(exception.message).isEqualTo("Unknown DataSet ${dataProcessorMessage.datasetId}")
+
+    verify(exactly = 0) { eventDataRepository.saveAll(any<Iterable<EventData>>()) }
   }
 
   private val simpleSubscription = ConsumerSubscription(
@@ -256,7 +250,7 @@ class DeathNotificationServiceTest {
     eventType = "DEATH_NOTIFICATION",
     enrichmentFields = "firstName,lastName,sex",
   )
-  private val consumerSubscriptions = flowOf(simpleSubscription, complexSubscription)
+  private val consumerSubscriptions = listOf(simpleSubscription, complexSubscription)
   private val simpleDeathNotificationDetails = DeathNotificationDetails(
     firstName = "Alice",
     lastName = "Smith",
@@ -264,7 +258,7 @@ class DeathNotificationServiceTest {
   private val complexDeathNotificationDetails = simpleDeathNotificationDetails.copy(
     sex = "female",
   )
-  private val fakeSavedEvents = flowOf(
+  private val fakeSavedEvents = listOf(
     EventData(
       consumerSubscriptionId = UUID.randomUUID(),
       datasetId = UUID.randomUUID().toString(),

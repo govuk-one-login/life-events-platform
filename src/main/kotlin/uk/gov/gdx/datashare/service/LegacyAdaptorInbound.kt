@@ -55,7 +55,7 @@ class LegacyAdaptorInbound(
     }
   }
 
-  suspend fun processBucketObject(objectKey: String) {
+  fun processBucketObject(objectKey: String) {
     try {
       log.debug("Retrieving object from S3: $objectKey")
       amazonS3.getObject(s3Config.ingressBucket, objectKey)
@@ -111,11 +111,13 @@ class LegacyAdaptorInbound(
     log.info("Deleted the existing $fileToArchive")
   }
 
-  suspend fun postDataToReceiver(payload: EventToPublish) {
-    dataReceiverApiWebClient.post()
-      .uri("/events")
-      .bodyValue(payload)
-      .retrieve()
-      .awaitBodilessEntity()
+  fun postDataToReceiver(payload: EventToPublish) {
+    runBlocking {
+      dataReceiverApiWebClient.post()
+        .uri("/events")
+        .bodyValue(payload)
+        .retrieve()
+        .awaitBodilessEntity()
+    }
   }
 }

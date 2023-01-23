@@ -6,13 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.config.AuthenticationFacade
-import uk.gov.gdx.datashare.config.DateTimeHandler
-import uk.gov.gdx.datashare.config.PublisherConfigException
-import uk.gov.gdx.datashare.config.PublisherPermissionException
-import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
-import uk.gov.gdx.datashare.config.UnknownDatasetException
+import uk.gov.gdx.datashare.config.*
 import uk.gov.gdx.datashare.controller.EventToPublish
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueService
@@ -39,17 +35,17 @@ class DataReceiverService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun sendToDataProcessor(eventPayload: EventToPublish) {
+  fun sendToDataProcessor(eventPayload: EventToPublish) {
     // check if client is allowed to send
     val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
       authenticationFacade.getUsername(),
       eventPayload.eventType,
     ) ?: throw PublisherPermissionException("${authenticationFacade.getUsername()} does not have permission")
 
-    val dataSet = eventDatasetRepository.findById(subscription.datasetId)
+    val dataSet = eventDatasetRepository.findByIdOrNull(subscription.datasetId)
       ?: throw UnknownDatasetException("Client ${authenticationFacade.getUsername()} is not a known dataset")
 
-    val publisher = publisherRepository.findById(subscription.publisherId)
+    val publisher = publisherRepository.findByIdOrNull(subscription.publisherId)
       ?: throw PublisherSubscriptionNotFoundException("Client ${authenticationFacade.getUsername()} is not a known publisher")
 
     if (dataSet.storePayload && eventPayload.eventDetails == null) {

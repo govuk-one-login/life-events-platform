@@ -19,7 +19,7 @@ data class Consumer(
   val consumerId: UUID = UUID.randomUUID(),
   @Schema(description = "Consumer Name", required = true, example = "DVLA")
   val name: String,
-  val whenCreated: LocalDateTime? = null,
+  val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient
   @Value("false")

@@ -17,8 +17,7 @@ import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repository.EgressEventDataRepository
-import uk.gov.gdx.datashare.repository.IngressEventDataRepository
+import uk.gov.gdx.datashare.repository.EventDataRepository
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
@@ -28,8 +27,7 @@ import java.util.*
 class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val egressEventDataRepository: EgressEventDataRepository,
-  private val ingressEventDataRepository: IngressEventDataRepository,
+  private val eventDataRepository: EventDataRepository,
   private val deathNotificationService: DeathNotificationService,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
@@ -51,8 +49,8 @@ class EventDataService(
 
     return consumerSubscriptions.map {
       EventStatus(
-        eventType = it.ingressEventType,
-        count = egressEventDataRepository.findAllByConsumerSubscription(it.id, startTime, endTime).count(),
+        eventType = it.eventType,
+        count = eventDataRepository.findAllByConsumerSubscription(it.id, startTime, endTime).count(),
       )
     }
   }
@@ -61,15 +59,15 @@ class EventDataService(
     id: UUID,
   ): EventNotification? {
     val clientId = authenticationFacade.getUsername()
-    val event = egressEventDataRepository.findByClientIdAndId(clientId, id)
-      ?: throw EventNotFoundException("Egress event $id not found for polling client $clientId")
-    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
-      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for egress event $id")
+    val event = eventDataRepository.findByClientIdAndId(clientId, id)
+      ?: throw EventNotFoundException("Event $id not found for polling client $clientId")
+    val consumerSubscription = consumerSubscriptionRepository.findByEventId(id)
+      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for event $id")
 
     return event.let {
       EventNotification(
         eventId = it.id,
-        eventType = consumerSubscription.ingressEventType,
+        eventType = consumerSubscription.eventType,
         sourceId = it.dataId,
         eventData = it.dataPayload?.let { dataPayload ->
           deathNotificationService.mapDeathNotification(dataPayload)
@@ -88,7 +86,7 @@ class EventDataService(
     val clientId = authenticationFacade.getUsername()
 
     val consumerSubscriptions = eventTypes?.let {
-      consumerSubscriptionRepository.findAllByIngressEventTypesAndClientId(clientId, eventTypes)
+      consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes)
     } ?: consumerSubscriptionRepository.findAllByClientId(clientId)
 
     if (consumerSubscriptions.count() == 0) {
@@ -97,17 +95,17 @@ class EventDataService(
 
     val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({ it.id }, { it })
 
-    val egressEvents = egressEventDataRepository.findAllByConsumerSubscriptions(
+    val events = eventDataRepository.findAllByConsumerSubscriptions(
       consumerSubscriptionIdMap.keys.toList(),
       startTime,
       endTime,
     )
 
-    return egressEvents.map { event ->
+    return events.map { event ->
       val subscription = consumerSubscriptionIdMap[event.consumerSubscriptionId]!!
       EventNotification(
         eventId = event.id,
-        eventType = subscription.ingressEventType,
+        eventType = subscription.eventType,
         sourceId = event.dataId,
         eventData = if (subscription.enrichmentFieldsIncludedInPoll) {
           event.dataPayload?.let { dataPayload ->
@@ -122,27 +120,22 @@ class EventDataService(
 
   suspend fun deleteEvent(id: UUID) {
     val callbackClientId = authenticationFacade.getUsername()
-    val egressEvent = egressEventDataRepository.findByClientIdAndId(callbackClientId, id)
-      ?: throw EventNotFoundException("Egress event $id not found for callback client $callbackClientId")
-    val consumerSubscription = consumerSubscriptionRepository.findByEgressEventId(id)
-      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for egress event $id")
+    val event = eventDataRepository.findByClientIdAndId(callbackClientId, id)
+      ?: throw EventNotFoundException("Event $id not found for callback client $callbackClientId")
+    val consumerSubscription = consumerSubscriptionRepository.findByEventId(id)
+      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for event $id")
 
-    egressEventDataRepository.delete(egressEvent)
+    eventDataRepository.delete(event)
     meterRegistry.counter(
-      "EVENT_ACTION.EgressEventDeleted",
+      "EVENT_ACTION.EventDeleted",
       "eventType",
-      consumerSubscription.ingressEventType,
+      consumerSubscription.eventType,
       "consumerSubscription",
-      egressEvent.consumerSubscriptionId.toString(),
+      event.consumerSubscriptionId.toString(),
     ).increment()
-    if (egressEvent.whenCreated != null) {
+    if (event.whenCreated != null) {
       meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
-        .record(Duration.between(egressEvent.whenCreated, dateTimeHandler.now()).abs())
-    }
-
-    val remainingEvents = egressEventDataRepository.findAllByIngressEventId(egressEvent.ingressEventId).toList()
-    if (remainingEvents.isEmpty()) {
-      ingressEventDataRepository.deleteById(egressEvent.ingressEventId)
+        .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
     }
   }
 }

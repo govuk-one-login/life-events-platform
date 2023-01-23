@@ -8,7 +8,7 @@ import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
 
-data class IngressEventType(
+data class EventType(
 
   @Id
   @Column("id")

@@ -27,8 +27,8 @@ data class ConsumerSubscription(
     example = "http://localhost/callback",
   )
   val pushUri: String? = null,
-  @Schema(description = "Events Type of Ingress Notification", required = true, example = "DEATH_NOTIFICATION")
-  val ingressEventType: String,
+  @Schema(description = "Event type for this subscription", required = true, example = "DEATH_NOTIFICATION")
+  val eventType: String,
   @Schema(
     description = "Indicates that the specified enrichment fields will be present when a poll of events occurs",
     required = false,
@@ -49,7 +49,7 @@ data class ConsumerSubscription(
   @JsonIgnore
   val new: Boolean = true,
 
-) : Persistable<UUID> {
+  ) : Persistable<UUID> {
 
   override fun getId(): UUID = consumerSubscriptionId
 

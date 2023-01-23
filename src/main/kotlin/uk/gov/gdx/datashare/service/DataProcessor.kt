@@ -12,7 +12,6 @@ import java.util.*
 
 @Service
 class DataProcessor(
-  private val ingressEventDataRepository: IngressEventDataRepository,
   private val objectMapper: ObjectMapper,
   private val deathNotificationService: DeathNotificationService,
 ) {
@@ -26,26 +25,11 @@ class DataProcessor(
       val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
       log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
 
-      val ingressEventId = UUID.randomUUID()
-
       // lookup provider
-      val details = getDataFromProvider(ingressEventId, dataProcessorMessage)
+      val details = getDataFromProvider(dataProcessorMessage)
 
-      val eventData = IngressEventData(
-        eventId = ingressEventId,
-        eventTypeId = dataProcessorMessage.eventTypeId,
-        subscriptionId = dataProcessorMessage.subscriptionId,
-        datasetId = dataProcessorMessage.datasetId,
-        dataId = details.id,
-        dataPayload = details.data as String?,
-        eventTime = dataProcessorMessage.eventTime,
-      )
-
-      ingressEventDataRepository.save(eventData)
-
-      when (eventData.eventTypeId) {
+      when (dataProcessorMessage.eventTypeId) {
         "DEATH_NOTIFICATION" -> deathNotificationService.saveDeathNotificationEvents(
-          eventData,
           details,
           dataProcessorMessage,
         )
@@ -55,8 +39,8 @@ class DataProcessor(
     }
   }
 
-  private fun getDataFromProvider(eventId: UUID, dataProcessorMessage: DataProcessorMessage): DataDetail {
-    val id = dataProcessorMessage.id ?: eventId.toString()
+  private fun getDataFromProvider(dataProcessorMessage: DataProcessorMessage): DataDetail {
+    val id = dataProcessorMessage.id ?: UUID.randomUUID().toString()
     val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 
     return when (dataProcessorMessage.datasetId) {

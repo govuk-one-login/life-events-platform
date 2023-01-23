@@ -31,7 +31,7 @@ class ConsumersService(
           consumerId = consumerId,
           oauthClientId = oauthClientId,
           pushUri = pushUri,
-          ingressEventType = ingressEventType,
+          eventType = eventType,
           enrichmentFields = enrichmentFields,
         ),
       )
@@ -49,7 +49,7 @@ class ConsumersService(
           consumerId = consumerId,
           oauthClientId = oauthClientId,
           pushUri = pushUri,
-          ingressEventType = ingressEventType,
+          eventType = eventType,
           enrichmentFields = enrichmentFields,
           enrichmentFieldsIncludedInPoll = enrichmentFieldsIncludedInPoll,
         ) ?: throw ConsumerSubscriptionNotFoundException("Subscription $subscriptionId not found"),
@@ -74,7 +74,7 @@ class ConsumersService(
 @Schema(description = "Consumer Subscription Request")
 data class ConsumerSubRequest(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
-  val ingressEventType: String,
+  val eventType: String,
   @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client")
   val oauthClientId: String? = null,
   @Schema(

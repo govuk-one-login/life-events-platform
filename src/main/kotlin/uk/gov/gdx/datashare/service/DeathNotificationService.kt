@@ -2,7 +2,6 @@ package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -17,10 +16,9 @@ import java.time.LocalDate
 @Service
 class DeathNotificationService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val egressEventDataRepository: EgressEventDataRepository,
+  private val eventDataRepository: EventDataRepository,
   private val levApiService: LevApiService,
   private val objectMapper: ObjectMapper,
-  private val meterRegistry: MeterRegistry,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -30,11 +28,10 @@ class DeathNotificationService(
     objectMapper.readValue(dataPayload, DeathNotificationDetails::class.java)
 
   suspend fun saveDeathNotificationEvents(
-    eventData: IngressEventData,
     details: DataDetail,
     dataProcessorMessage: DataProcessorMessage,
   ) {
-    val consumerSubscriptions = consumerSubscriptionRepository.findAllByIngressEventType(eventData.eventTypeId)
+    val consumerSubscriptions = consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId)
 
     val fullyEnrichedData = getAllEnrichedData(
       dataProcessorMessage.datasetId,
@@ -42,16 +39,15 @@ class DeathNotificationService(
       details.data as String?,
     )
 
-    val egressEventData = consumerSubscriptions.map {
+    val eventData = consumerSubscriptions.map {
       val dataPayload =
         enrichEventPayload(
           it.enrichmentFields.split(",").toList(),
           fullyEnrichedData,
         )
 
-      EgressEventData(
+      EventData(
         consumerSubscriptionId = it.id,
-        ingressEventId = eventData.eventId,
         datasetId = dataProcessorMessage.datasetId,
         dataId = details.id,
         dataPayload = dataPayload?.let { objectMapper.writeValueAsString(dataPayload) },
@@ -59,7 +55,7 @@ class DeathNotificationService(
       )
     }.toList()
 
-    egressEventDataRepository.saveAll(egressEventData).toList()
+    eventDataRepository.saveAll(eventData).toList()
   }
 
   private suspend fun enrichEventPayload(

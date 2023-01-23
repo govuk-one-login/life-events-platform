@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter
 
 plugins {
   id("org.owasp.dependencycheck") version "8.0.1"
-  id("org.springframework.boot") version "2.7.4"
+  id("org.springframework.boot") version "3.0.2"
   id("io.spring.dependency-management") version "1.1.0"
   id("org.jmailen.kotlinter") version "3.13.0"
   kotlin("jvm") version "1.8.0"

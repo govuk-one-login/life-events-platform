@@ -22,6 +22,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
+  implementation("org.springframework.boot:spring-boot-starter-hateoas")
 
   //  AWS dependencies for SNS, SQS etc
   implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.390"))
@@ -61,6 +62,8 @@ dependencies {
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.1.0")
+
+  implementation("com.toedter:spring-hateoas-jsonapi:1.6.0")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 

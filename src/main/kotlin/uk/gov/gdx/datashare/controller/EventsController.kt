@@ -1,34 +1,40 @@
 package uk.gov.gdx.datashare.controller
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.toedter.spring.hateoas.jsonapi.MediaTypes.JSON_API_VALUE
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.links.Link
 import io.swagger.v3.oas.annotations.links.LinkParameter
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.PagedModel
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.config.JacksonConfiguration
-import uk.gov.gdx.datashare.service.DataReceiverService
-import uk.gov.gdx.datashare.service.EventApiAuditService
-import uk.gov.gdx.datashare.service.EventDataService
-import uk.gov.gdx.datashare.service.EventNotification
-import uk.gov.gdx.datashare.service.EventStatus
+import uk.gov.gdx.datashare.helper.getPageLinks
+import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
 import java.util.*
+import javax.validation.constraints.Max
+import javax.validation.constraints.Positive
+import javax.validation.constraints.PositiveOrZero
 
 @RestController
-@RequestMapping("/events", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/events", produces = [JSON_API_VALUE])
 @Validated
 @Tag(name = "04. Events")
 class EventsController(
@@ -86,10 +92,67 @@ class EventsController(
           Link(
             name = "Get event details",
             operationId = "getEvent",
-            parameters = [LinkParameter(name = "id", expression = "\$response.body#/0/eventId")],
+            parameters = [LinkParameter(name = "id", expression = "\$response.body#/content/0/eventId")],
             description = "Full details of the event",
           ),
         ],
+        content = arrayOf(
+          Content(
+            examples = arrayOf(
+              ExampleObject(value ="""
+{
+  "data": [
+    {
+      "id": "a3e48cca-052f-4599-8ddc-e863de428f89",
+      "type": "events",
+      "attributes": {
+        "eventType": "DEATH_NOTIFICATION",
+        "sourceId": "123456789",
+        "eventData": {
+          "firstName": "Joan Narcissus Ouroboros",
+          "lastName": "SMITH"
+        }
+      },
+      "links": {
+        "self": "http://localhost:8080/events/a3e48cca-052f-4599-8ddc-e863de428f89"
+      }
+    },
+    {
+      "id": "184ae4c3-17c5-41b8-a1f2-0abefecdb6ca",
+      "type": "events",
+      "attributes": {
+        "eventType": "DEATH_NOTIFICATION",
+        "sourceId": "123456789",
+        "eventData": {
+          "firstName": "Joan Narcissus Ouroboros",
+          "lastName": "SMITH"
+        }
+      },
+      "links": {
+        "self": "http://localhost:8080/events/184ae4c3-17c5-41b8-a1f2-0abefecdb6ca"
+      }
+    }
+  ],
+  "links": {
+    "self": "http://localhost:8080/events?page[number]=1&page[size]=2",
+    "first": "http://localhost:8080/events?page[size]=2&page[number]=0",
+    "prev": "http://localhost:8080/events?page[size]=2&page[number]=0",
+    "next": "http://localhost:8080/events?page[size]=2&page[number]=2",
+    "last": "http://localhost:8080/events?page[size]=2&page[number]=5"
+  },
+  "meta": {
+    "page": {
+      "size": 2,
+      "totalElements": 11,
+      "totalPages": 6,
+      "number": 1
+    }
+  }
+}
+              """)
+            )
+          )
+        )
       ),
     ],
   )
@@ -99,33 +162,68 @@ class EventsController(
       required = false,
       allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
     )
-    @RequestParam(name = "eventType", required = false)
-    eventTypes: List<String>?,
+    @RequestParam(name = "filter[eventType]", required = false)
+    eventTypes: List<String>? = null,
     @Schema(
       description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
       type = "date-time",
       required = false,
     )
-    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "fromTime", required = false)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @RequestParam(name = "filter[fromTime]", required = false)
     startTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
       type = "date-time",
       required = false,
     )
-    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "toTime", required = false)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @RequestParam(name = "filter[toTime]", required = false)
     endTime: LocalDateTime? = null,
-  ): List<EventNotification> = run {
+    @Schema(
+      description = "Page number. Zero indexed.",
+      defaultValue = "0",
+      minimum = "0",
+    )
+    @RequestParam(name = "page[number]", defaultValue = "0")
+    @PositiveOrZero
+    pageNumber: Int,
+    @Schema(
+      description = "Number of items per page. Maximum 25.",
+      defaultValue = "10",
+      maximum = "25",
+      minimum = "0",
+    )
+    @RequestParam(name = "page[size]", defaultValue = "10")
+    @Max(25)
+    @Positive
+    pageSize: Int,
+  ): PagedModel<EntityModel<EventNotification>> = run {
     tryCallAndUpdateMetric(
-      {
-        val eventNotifications = eventDataService.getEvents(eventTypes, startTime, endTime).toList()
-        eventApiAuditService.auditEventApiCall(eventNotifications)
-        eventNotifications
-      },
+      { buildEventsResponse(eventTypes, startTime, endTime, pageSize, pageNumber) },
       meterRegistry.counter("API_CALLS.GetEvents", "success", "true"),
       meterRegistry.counter("API_CALLS.GetEvents", "success", "false"),
+    )
+  }
+
+  private fun buildEventsResponse(
+    eventTypes: List<String>?,
+    startTime: LocalDateTime?,
+    endTime: LocalDateTime?,
+    pageSize: Int,
+    pageNumber: Int,
+  ): PagedModel<EntityModel<EventNotification>> {
+    val events = eventDataService.getEvents(eventTypes, startTime, endTime, pageNumber, pageSize)
+    eventApiAuditService.auditEventApiCall(events.eventModels)
+    val linkBuilder = eventsLink(eventTypes, startTime, endTime, pageNumber, pageSize).toUriComponentsBuilder()
+    val pageMetadata = PagedModel.PageMetadata(pageSize.toLong(), pageNumber.toLong(), events.count.toLong())
+    val selfLink = org.springframework.hateoas.Link.of(linkBuilder.build().toUriString(), "self")
+    val pageLinks = getPageLinks(pageMetadata, linkBuilder)
+    val links = arrayListOf(selfLink) + pageLinks
+    return PagedModel.of(
+      events.eventModels.map { EntityModel.of(it, eventLink(it.eventId).withSelfRel()) },
+      pageMetadata,
+      links,
     )
   }
 
@@ -166,6 +264,32 @@ class EventsController(
       ApiResponse(
         responseCode = "200",
         description = "Event",
+        content = arrayOf(
+          Content(
+            examples = arrayOf(
+              ExampleObject(value ="""
+{
+  "data": {
+    "id": "a3e48cca-052f-4599-8ddc-e863de428f89",
+    "type": "events",
+    "attributes": {
+      "eventType": "DEATH_NOTIFICATION",
+      "sourceId": "123456789",
+      "eventData": {
+        "firstName": "Joan Narcissus Ouroboros",
+        "lastName": "SMITH"
+      }
+    }
+  },
+  "links": {
+    "self": "http://localhost:8080/events/a3e48cca-052f-4599-8ddc-e863de428f89",
+    "collection": "http://localhost:8080/events?page[number]=0&page[size]=10"
+  }
+}
+              """)
+            )
+          )
+        )
       ),
       ApiResponse(
         responseCode = "404",
@@ -178,12 +302,17 @@ class EventsController(
     @Schema(description = "Event ID", required = true)
     @PathVariable
     id: UUID,
-  ) = run {
+  ): EntityModel<EventNotification>? = run {
     tryCallAndUpdateMetric(
       {
-        val eventNotification = eventDataService.getEvent(id)
-        eventApiAuditService.auditEventApiCall(eventNotification)
-        eventNotification
+        eventDataService.getEvent(id)?.let {
+          eventApiAuditService.auditEventApiCall(it)
+          EntityModel.of(
+            it,
+            eventLink(id).withSelfRel(),
+            org.springframework.hateoas.Link.of(eventsLink().toUriComponentsBuilder().build().toUriString(), "collection")
+          )
+        }
       },
       meterRegistry.counter("API_CALLS.GetEvent", "success", "true"),
       meterRegistry.counter("API_CALLS.GetEvent", "success", "false"),
@@ -232,6 +361,18 @@ class EventsController(
       throw e
     }
   }
+
+  private fun eventLink(id: UUID): WebMvcLinkBuilder =
+    linkTo(methodOn(EventsController::class.java).getEvent(id))
+
+  private fun eventsLink(
+    eventTypes: List<String>? = null,
+    startTime: LocalDateTime? = null,
+    endTime: LocalDateTime? = null,
+    pageNumber: Int = 0,
+    pageSize: Int = 10,
+  ): WebMvcLinkBuilder =
+    linkTo(methodOn(EventsController::class.java).getEvents(eventTypes, startTime, endTime, pageNumber, pageSize))
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

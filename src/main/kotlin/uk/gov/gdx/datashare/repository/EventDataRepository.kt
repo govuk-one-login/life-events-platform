@@ -27,13 +27,29 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
       "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
-      "ORDER BY ed.when_created",
+      "ORDER BY ed.when_created " +
+      "LIMIT :pageSize " +
+      "OFFSET :offset",
   )
-  fun findAllByConsumerSubscriptions(
+  fun findPageByConsumerSubscriptions(
     consumerSubscriptionIds: List<UUID>,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
+    pageSize: Int,
+    offset: Int,
   ): List<EventData>
+
+  @Query(
+    "SELECT COUNT(ed.*) FROM event_data ed " +
+      "WHERE ed.when_created > :fromTime " +
+      "AND ed.when_created <= :toTime " +
+      "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds)",
+  )
+  fun countByConsumerSubscriptions(
+    consumerSubscriptionIds: List<UUID>,
+    fromTime: LocalDateTime,
+    toTime: LocalDateTime,
+  ): Int
 
   @Query(
     "SELECT ed.* FROM event_data ed " +

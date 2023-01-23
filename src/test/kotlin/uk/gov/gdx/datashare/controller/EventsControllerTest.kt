@@ -97,13 +97,14 @@ class EventsControllerTest {
       ),
     )
 
-    every { eventDataService.getEvents(eventTypes, startTime, endTime) }.returns(events)
+    every { eventDataService.getEvents(eventTypes, startTime, endTime, 0, 10) }.returns(Events(events.count(), events))
     every { eventApiAuditService.auditEventApiCall(events) }.returns(Unit)
 
-    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime)
+    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
-    assertThat(eventsOutput).hasSize(2)
-    assertThat(eventsOutput).isEqualTo(events)
+    assertThat(eventsOutput.content).hasSize(2)
+    assertThat(eventsOutput.content.map { it.content }).isEqualTo(events)
+    assertThat(eventsOutput.metadata?.totalElements).isEqualTo(2)
     verify(exactly = 1) { getEventsCounter.increment() }
     verify(exactly = 1) { eventApiAuditService.auditEventApiCall(events) }
   }
@@ -141,7 +142,7 @@ class EventsControllerTest {
 
     val eventOutput = underTest.getEvent(event.eventId)
 
-    assertThat(eventOutput).isEqualTo(event)
+    assertThat(eventOutput?.content).isEqualTo(event)
     verify(exactly = 1) { getEventCounter.increment() }
     verify(exactly = 1) { eventApiAuditService.auditEventApiCall(event) }
   }
@@ -201,10 +202,10 @@ class EventsControllerTest {
       ),
     )
 
-    every { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
+    every { eventDataService.getEvents(eventTypes, any(), any(), any(), any()) }.returns(Events(events.count(), events))
     every { eventApiAuditService.auditEventApiCall(events) }.returns(Unit)
 
-    val eventsOutput = underTest.getEvents(eventTypes)
+    val eventsOutput = underTest.getEvents(eventTypes, pageNumber = 0, pageSize = 10)
 
     Approvals.verify(eventsOutput)
   }

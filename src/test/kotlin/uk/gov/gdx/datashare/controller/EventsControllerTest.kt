@@ -193,6 +193,7 @@ class EventsControllerTest {
     )
 
     every { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
+    every { eventApiAuditService.auditGetEvents(events) }.returns(Unit)
 
     val eventsOutput = underTest.getEvents(eventTypes)
 

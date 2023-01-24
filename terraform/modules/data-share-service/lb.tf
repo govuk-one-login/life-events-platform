@@ -41,7 +41,7 @@ resource "aws_lb_target_group" "green" {
   vpc_id      = module.vpc.vpc_id
 
   health_check {
-    path = "/health/ping"
+    path = "/health"
   }
 
   lifecycle {
@@ -57,7 +57,7 @@ resource "aws_lb_target_group" "blue" {
   vpc_id      = module.vpc.vpc_id
 
   health_check {
-    path = "/health/ping"
+    path = "/health"
   }
 
   lifecycle {

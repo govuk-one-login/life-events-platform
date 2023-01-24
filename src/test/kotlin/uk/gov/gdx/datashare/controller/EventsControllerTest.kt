@@ -98,14 +98,14 @@ class EventsControllerTest {
     )
 
     every { eventDataService.getEvents(eventTypes, startTime, endTime) }.returns(events)
-    every { eventApiAuditService.auditEvents(events) }.returns(Unit)
+    every { eventApiAuditService.auditEventApiCall(events) }.returns(Unit)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime)
 
     assertThat(eventsOutput).hasSize(2)
     assertThat(eventsOutput).isEqualTo(events)
     verify(exactly = 1) { getEventsCounter.increment() }
-    verify(exactly = 1) { eventApiAuditService.auditEvents(events) }
+    verify(exactly = 1) { eventApiAuditService.auditEventApiCall(events) }
   }
 
   @Test
@@ -137,13 +137,13 @@ class EventsControllerTest {
     )
 
     every { eventDataService.getEvent(event.eventId) }.returns(event)
-    every { eventApiAuditService.auditEvents(listOf(event)) }.returns(Unit)
+    every { eventApiAuditService.auditEventApiCall(event) }.returns(Unit)
 
     val eventOutput = underTest.getEvent(event.eventId)
 
     assertThat(eventOutput).isEqualTo(event)
     verify(exactly = 1) { getEventCounter.increment() }
-    verify(exactly = 1) { eventApiAuditService.auditEvents(listOf(event)) }
+    verify(exactly = 1) { eventApiAuditService.auditEventApiCall(event) }
   }
 
   @Test
@@ -156,13 +156,13 @@ class EventsControllerTest {
     )
 
     every { eventDataService.deleteEvent(event.eventId) }.returns(event)
-    every { eventApiAuditService.auditEvents(listOf(event)) }.returns(Unit)
+    every { eventApiAuditService.auditEventApiCall(event) }.returns(Unit)
 
     underTest.deleteEvent(event.eventId)
 
     verify(exactly = 1) { eventDataService.deleteEvent(event.eventId) }
     verify(exactly = 1) { deleteEventCounter.increment() }
-    verify(exactly = 1) { eventApiAuditService.auditEvents(listOf(event)) }
+    verify(exactly = 1) { eventApiAuditService.auditEventApiCall(event) }
   }
 
   @Test
@@ -202,7 +202,7 @@ class EventsControllerTest {
     )
 
     every { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
-    every { eventApiAuditService.auditEvents(events) }.returns(Unit)
+    every { eventApiAuditService.auditEventApiCall(events) }.returns(Unit)
 
     val eventsOutput = underTest.getEvents(eventTypes)
 

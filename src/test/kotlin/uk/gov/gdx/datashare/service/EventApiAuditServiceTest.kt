@@ -74,7 +74,7 @@ class EventApiAuditServiceTest {
       ),
     )
 
-    underTest.auditEvents(listOf(eventNotification1, eventNotification2))
+    underTest.auditEventApiCall(listOf(eventNotification1, eventNotification2))
 
     verify(exactly = 1) {
       eventApiAuditRepository.save(

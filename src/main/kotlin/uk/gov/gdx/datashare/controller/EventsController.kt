@@ -121,7 +121,7 @@ class EventsController(
     tryCallAndUpdateMetric(
       {
         val eventNotifications = eventDataService.getEvents(eventTypes, startTime, endTime).toList()
-        eventApiAuditService.auditEvents(eventNotifications)
+        eventApiAuditService.auditEventApiCall(eventNotifications)
         eventNotifications
       },
       meterRegistry.counter("API_CALLS.GetEvents", "success", "true"),
@@ -182,7 +182,7 @@ class EventsController(
     tryCallAndUpdateMetric(
       {
         val eventNotification = eventDataService.getEvent(id)
-        eventApiAuditService.auditEvents(listOf(eventNotification))
+        eventApiAuditService.auditEventApiCall(eventNotification)
         eventNotification
       },
       meterRegistry.counter("API_CALLS.GetEvent", "success", "true"),
@@ -209,7 +209,7 @@ class EventsController(
   ): ResponseEntity<Void> {
     try {
       val eventNotification = eventDataService.deleteEvent(id)
-      eventApiAuditService.auditEvents(listOf(eventNotification))
+      eventApiAuditService.auditEventApiCall(eventNotification)
       meterRegistry.counter("API_CALLS.DeleteEvent", "success", "true").increment()
       return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
     } catch (e: Exception) {

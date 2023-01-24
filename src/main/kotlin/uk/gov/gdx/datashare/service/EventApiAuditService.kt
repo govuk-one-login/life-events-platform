@@ -17,7 +17,9 @@ class EventApiAuditService(
   private val authenticationFacade: AuthenticationFacade,
   private val objectMapper: ObjectMapper,
 ) {
-  fun auditGetEvents(eventNotifications: List<EventNotification>) {
+  fun auditEventApiCall(eventNotification: EventNotification) { auditEventApiCall(listOf(eventNotification)) }
+
+  fun auditEventApiCall(eventNotifications: List<EventNotification>) {
     val auditData = EventApiAudit.Payload(
       data = eventNotifications.map {
         EventApiAudit.Data(

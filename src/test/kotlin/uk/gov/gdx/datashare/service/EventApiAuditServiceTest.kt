@@ -35,7 +35,7 @@ class EventApiAuditServiceTest {
   )
 
   @Test
-  fun `auditGetEvents saves no PII`() {
+  fun `auditEvents saves no PII`() {
     val request = MockHttpServletRequest("GET", "/events")
     RequestContextHolder.setRequestAttributes(ServletRequestAttributes(request))
 
@@ -74,7 +74,7 @@ class EventApiAuditServiceTest {
       ),
     )
 
-    underTest.auditGetEvents(listOf(eventNotification1, eventNotification2))
+    underTest.auditEventApiCall(listOf(eventNotification1, eventNotification2))
 
     verify(exactly = 1) {
       eventApiAuditRepository.save(

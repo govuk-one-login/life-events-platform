@@ -1,6 +1,6 @@
 # 8. Use database for audit logs
 
-[Next >>](9999-end.md)
+[Next >>](0009-use-queue-to-buffer-input-events.md)
 
 Date: 2023-01-20
 
@@ -29,4 +29,4 @@ Use database directly for audit events.
   - data being read by a consumer (e.g. DWP)
   - data being marked as consumed by a consumer (e.g. DWP)
 
-[Next >>](9999-end.md)
+[Next >>](0009-use-queue-to-buffer-input-events.md)

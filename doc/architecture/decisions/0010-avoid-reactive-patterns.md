@@ -1,10 +1,12 @@
-# 8. Avoid reactive patterns
+# 10. Avoid reactive patterns
 
-Date: 2023-01-23
+[Next >>](9999-end.md)
+
+Date: 2023-01-24
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 

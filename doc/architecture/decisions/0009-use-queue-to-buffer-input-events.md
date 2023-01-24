@@ -1,6 +1,6 @@
 # 9. Use Queues to buffer input events
 
-[Next >>](9999-end.md)
+[Next >>](0010-avoid-reactive-patterns.md)
 
 Date: 2023-01-20
 
@@ -37,4 +37,4 @@ To prevent ingesting fully invalid data, the ingest API should do some lightweig
 
 - without splitting the ingest API out into its own scalable service, total throughput is potentially limited
 
-[Next >>](9999-end.md)
+[Next >>](0010-avoid-reactive-patterns.md)

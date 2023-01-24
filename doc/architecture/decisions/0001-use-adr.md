@@ -1,5 +1,7 @@
 # 1. Record architecture decisions
 
+[Next >>](0002-gdx-share-architecture.md)
+
 ## Status
 
 Accepted

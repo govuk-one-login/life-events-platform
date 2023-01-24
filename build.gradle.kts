@@ -23,12 +23,11 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-  //  AWS dependencies for SNS, SQS, S3 etc
+  //  AWS dependencies for SNS, SQS etc
   implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.388"))
   implementation(platform("software.amazon.awssdk:bom:2.19.21"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
   implementation("com.amazonaws:aws-java-sdk-sns")
-  implementation("com.amazonaws:aws-java-sdk-s3")
   implementation("software.amazon.awssdk:rds")
 
   implementation("org.springframework:spring-jms")

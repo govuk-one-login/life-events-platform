@@ -31,7 +31,7 @@ class EventsPublishTest : SqsIntegrationTestBase() {
   fun `404 returns on event not found`() {
     webTestClient.get()
       .uri("/events/" + UUID.randomUUID())
-      .headers(setAuthorisation("internal-outbound", listOf(""), listOf("events/consume")))
+      .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/consume")))
       .exchange()
       .expectStatus()
       .isNotFound
@@ -41,7 +41,7 @@ class EventsPublishTest : SqsIntegrationTestBase() {
   fun `404 returns on event not found for deletion`() {
     webTestClient.delete()
       .uri("/events/" + UUID.randomUUID())
-      .headers(setAuthorisation("internal-outbound", listOf(""), listOf("events/consume")))
+      .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/consume")))
       .exchange()
       .expectStatus()
       .isNotFound

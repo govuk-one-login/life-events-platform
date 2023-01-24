@@ -17,15 +17,6 @@
         },
         {
           "requestParam": "scope",
-          "match": "internal-inbound",
-          "claims": {
-            "sub": "internal-inbound",
-            "scope": "events/publish",
-            "client_id": "internal-inbound"
-          }
-        },
-        {
-          "requestParam": "scope",
           "match": "passthru",
           "claims": {
             "sub": "passthru",
@@ -53,19 +44,12 @@
         },
         {
           "requestParam": "scope",
-          "match": "internal-outbound",
-          "claims": {
-            "sub": "internal-outbound",
-            "scope": "events/consume",
-            "client_id": "internal-outbound"
-          }
-        },
-        {
-          "requestParam": "scope",
           "match": "maintainer",
           "claims": {
             "sub": "maintainer",
-            "scope": ["events/admin"],
+            "scope": [
+              "events/admin"
+            ],
             "client_id": "maintainer"
           }
         },
@@ -74,7 +58,11 @@
           "match": "everything",
           "claims": {
             "sub": "everything",
-            "scope": ["events/admin", "events/consume", "events/publish"],
+            "scope": [
+              "events/admin",
+              "events/consume",
+              "events/publish"
+            ],
             "client_id": "everything"
           }
         }

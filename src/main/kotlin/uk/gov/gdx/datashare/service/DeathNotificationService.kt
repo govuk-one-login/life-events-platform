@@ -33,7 +33,6 @@ class DeathNotificationService(
     val fullyEnrichedData = getAllEnrichedData(
       dataProcessorMessage.datasetId,
       details.id,
-      details.data as String?,
     )
 
     val eventData = consumerSubscriptions.map {
@@ -69,7 +68,6 @@ class DeathNotificationService(
   private fun getAllEnrichedData(
     datasetId: String,
     dataId: String,
-    dataPayload: String?,
   ): DeathNotificationDetails? = when (datasetId) {
     "DEATH_LEV" -> {
       // get the data from the LEV
@@ -85,23 +83,6 @@ class DeathNotificationService(
             address = it.deceased?.address,
           )
         }.first()
-    }
-
-    "DEATH_CSV" -> {
-      // get the data from the data store - it's a CSV file
-      val csvLine = dataPayload!!.split(",").toTypedArray()
-      DeathNotificationDetails(
-        firstName = csvLine[1],
-        lastName = csvLine[0],
-        dateOfBirth = LocalDate.parse(csvLine[2]),
-        dateOfDeath = LocalDate.parse(csvLine[3]),
-        sex = csvLine[4],
-        address = if (csvLine.count() > 5) {
-          csvLine[5]
-        } else {
-          null
-        },
-      )
     }
 
     "PASS_THROUGH" -> {

@@ -20,26 +20,6 @@ spring:
       resource-server:
         jwt:
           issuer-uri: ${api.base.url.issuer-uri}
-      client:
-        registration:
-          event-data-retrieval:
-            provider: cognito
-            client-id: ${legacy-outbound.api.client.id}
-            client-secret: ${legacy-outbound.api.client.secret}
-            authorization-grant-type: client_credentials
-            clientName: Internal Outbound Adaptor
-          data-receiver:
-            provider: cognito
-            client-id: ${legacy-inbound.api.client.id}
-            client-secret: ${legacy-inbound.api.client.secret}
-            authorization-grant-type: client_credentials
-            clientName: Internal Inbound Adaptor
-        provider:
-          cognito:
-            issuer-uri: ${api.base.url.issuer-uri}
-            token-uri: ${api.base.url.oauth}/token
-            user-name-attribute: cognito:username
-            jwk-set-uri: ${api.base.url.issuer-uri}/.well-known/openid-configuration
 
   devtools:
     add-properties: false
@@ -100,5 +80,3 @@ springdoc:
 api:
   base:
     consume-outbound-by-queue: false
-    s3:
-      region: eu-west-2

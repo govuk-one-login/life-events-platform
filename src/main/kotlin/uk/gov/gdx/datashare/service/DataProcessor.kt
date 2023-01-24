@@ -42,10 +42,6 @@ private fun getDataFromProvider(dataProcessorMessage: DataProcessorMessage): Dat
   val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 
   return when (dataProcessorMessage.datasetId) {
-    "DEATH_CSV" -> {
-      DataDetail(id = id, data = dataPayload)
-    }
-
     "DEATH_LEV" -> {
       DataDetail(id = id)
     }

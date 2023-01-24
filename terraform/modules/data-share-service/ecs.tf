@@ -33,9 +33,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },
         { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://localhost:8080" },
         { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },
-        { "name" : "API_BASE_S3_INGRESS_BUCKET", "value" : module.ingress.name },
-        { "name" : "API_BASE_S3_INGRESS_ARCHIVE_BUCKET", "value" : module.ingress_archive.name },
-        { "name" : "API_BASE_S3_EGRESS_BUCKET", "value" : module.egress.name },
 
         { "name" : "DB_PROVIDER", "value" : "rds" },
         { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
@@ -48,11 +45,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
 
         { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUENAME", "value" : module.data_processor_queue.queue_name },
         { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQNAME", "value" : module.data_processor_queue.dead_letter_queue_name },
-
-        { "name" : "LEGACY_INBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_inbound_client_id },
-        { "name" : "LEGACY_INBOUND_API_CLIENT_SECRET", "value" : module.cognito.legacy_inbound_client_secret },
-        { "name" : "LEGACY_OUTBOUND_API_CLIENT_ID", "value" : module.cognito.legacy_outbound_client_id },
-        { "name" : "LEGACY_OUTBOUND_API_CLIENT_SECRET", "value" : module.cognito.legacy_outbound_client_secret },
 
         {
           "name" : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL",

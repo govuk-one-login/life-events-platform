@@ -1,9 +1,6 @@
 resource "aws_s3_bucket" "bucket" {
-  bucket = "${var.environment}-${var.name}-gdx-data-share-poc"
-
-  lifecycle {
-    prevent_destroy = true
-  }
+  bucket        = "${var.environment}-${var.name}-gdx-data-share-poc"
+  force_destroy = true
 }
 
 # This is the logging bucket, it doesn't need logs or versioning

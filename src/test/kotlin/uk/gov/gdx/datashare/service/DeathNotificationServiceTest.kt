@@ -122,54 +122,6 @@ class DeathNotificationServiceTest {
   }
 
   @Test
-  fun `saveDeathNotificationEvents saves full death notifications for CSV`() {
-    val dataProcessorMessage = DataProcessorMessage(
-      datasetId = "DEATH_CSV",
-      eventTypeId = "DEATH_NOTIFICATION",
-      eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
-      publisher = "HMPO",
-      storePayload = true,
-      subscriptionId = UUID.randomUUID(),
-      id = "123456789",
-      details = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\"",
-    )
-    val dataDetail = DataDetail(
-      id = dataProcessorMessage.id!!,
-      data = "Smith,Alice,1920-01-01,2010-01-01,female,\"666 Inform House, 6 Inform street, Informington, Informshire\"",
-    )
-
-    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
-      .returns(consumerSubscriptions)
-    every { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
-
-    underTest.saveDeathNotificationEvents(dataDetail, dataProcessorMessage)
-
-    verify(exactly = 1) {
-      eventDataRepository.saveAll(
-        withArg<Iterable<EventData>> {
-          assertThat(it).hasSize(2)
-          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
-
-          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-            .isEqualTo(dataProcessorMessage.datasetId)
-          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-            .isEqualTo(dataDetail.id)
-          assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
-            .isEqualTo(dataProcessorMessage.eventTime)
-          assertThat(simpleEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
-          assertThat(complexEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
-
-          assertThat(simpleEvent?.dataPayload)
-            .isEqualTo(objectMapper.writeValueAsString(simpleDeathNotificationDetails))
-          assertThat(complexEvent?.dataPayload)
-            .isEqualTo(objectMapper.writeValueAsString(complexDeathNotificationDetails))
-        },
-      )
-    }
-  }
-
-  @Test
   fun `saveDeathNotificationEvents saves no death details for PASS_THROUGH`() {
     val dataProcessorMessage = DataProcessorMessage(
       datasetId = "PASS_THROUGH",

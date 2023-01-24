@@ -37,5 +37,3 @@ api:
       issuer-uri: http://localhost:9090/issuer1
       oauth: http://localhost:9090/issuer1
       lev: http://localhost:8099
-    s3:
-      localstack-url: http://127.0.0.1:4566

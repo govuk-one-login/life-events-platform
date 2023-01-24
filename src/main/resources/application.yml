@@ -80,5 +80,3 @@ springdoc:
 api:
   base:
     consume-outbound-by-queue: false
-    s3:
-      region: eu-west-2

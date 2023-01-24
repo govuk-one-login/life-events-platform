@@ -8,7 +8,7 @@ resource "aws_ecs_cluster" "main" {
 }
 
 locals {
-  rds_db_url = "jdbc:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?sslMode=require"
+  rds_db_url = "jdbc:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?sslmode=require"
 }
 
 resource "aws_ecs_task_definition" "gdx_data_share_poc" {

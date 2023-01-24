@@ -114,7 +114,7 @@ class EventDataService(
     return mapEventNotification(event, consumerSubscription.eventType, false)
   }
 
-  private fun mapEventNotification(event: EventData, eventType: String, includeData: Boolean) : EventNotification {
+  private fun mapEventNotification(event: EventData, eventType: String, includeData: Boolean): EventNotification {
     return EventNotification(
       eventId = event.id,
       eventType = eventType,

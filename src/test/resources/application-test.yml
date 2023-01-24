@@ -1,5 +1,6 @@
 server:
   shutdown: immediate
+  address: localhost
 
 aws:
   provider: localstack

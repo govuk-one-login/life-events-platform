@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface EventApiAuditRepository : CrudRepository<EventApiAudit, UUID> {
-}
+interface EventApiAuditRepository : CrudRepository<EventApiAudit, UUID>

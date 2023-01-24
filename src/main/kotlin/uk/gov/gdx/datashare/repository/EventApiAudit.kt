@@ -4,20 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.media.Schema
+import org.postgresql.util.PGobject
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.convert.converter.Converter
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.convert.ReadingConverter
 import org.springframework.data.convert.WritingConverter
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
-import org.postgresql.util.PGobject
-import org.springframework.core.convert.converter.Converter
 import java.time.LocalDateTime
 import java.util.UUID
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class EventApiAudit (
+class EventApiAudit(
   @Id
   @Column("id")
   @Schema(description = "Audit ID", required = true, example = "00000000-0000-0001-0000-000000000000")
@@ -40,16 +40,16 @@ class EventApiAudit (
   @JsonIgnore
   val new: Boolean = true,
 
-  ) : Persistable<UUID> {
+) : Persistable<UUID> {
 
   override fun getId(): UUID = auditId
 
   override fun isNew(): Boolean = new
 
-  class Payload (
+  class Payload(
     val data: List<Data>,
   )
-  class Data (
+  class Data(
     val eventId: UUID,
     val sourceId: String,
     val hashedEventData: String?,
@@ -57,7 +57,7 @@ class EventApiAudit (
 
   @WritingConverter
   class EntityWritingConverter(
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
   ) : Converter<Payload, PGobject> {
     override fun convert(source: Payload): PGobject? {
       val jsonObject = PGobject()
@@ -69,7 +69,7 @@ class EventApiAudit (
 
   @ReadingConverter
   class EntityReadingConverter(
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
   ) : Converter<PGobject, Payload> {
     override fun convert(pgObject: PGobject): Payload {
       val source = pgObject.value

@@ -23,9 +23,9 @@ class EventApiAuditService(
         EventApiAudit.Data(
           eventId = it.eventId,
           sourceId = it.sourceId,
-          hashedEventData = objectMapper.writeValueAsString(it.eventData).sha256()
+          hashedEventData = objectMapper.writeValueAsString(it.eventData).sha256(),
         )
-      }
+      },
     )
     val request = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes).request
 
@@ -34,7 +34,7 @@ class EventApiAuditService(
       requestMethod = request.method,
       url = request.queryString?.let {
         "${request.requestURL}?${request.queryString}"
-      } ?: request.requestURL.toString() ,
+      } ?: request.requestURL.toString(),
       payload = auditData,
       whenCreated = dateTimeHandler.now(),
     )

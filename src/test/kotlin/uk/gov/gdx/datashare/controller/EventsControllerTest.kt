@@ -3,7 +3,6 @@ package uk.gov.gdx.datashare.controller
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.*
-import org.approvaltests.Approvals
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -98,14 +97,14 @@ class EventsControllerTest {
     )
 
     every { eventDataService.getEvents(eventTypes, startTime, endTime) }.returns(events)
-    every {eventApiAuditService.auditGetEvents(events)}.returns(Unit)
+    every { eventApiAuditService.auditGetEvents(events) }.returns(Unit)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime)
 
     assertThat(eventsOutput).hasSize(2)
     assertThat(eventsOutput).isEqualTo(events)
     verify(exactly = 1) { getEventsCounter.increment() }
-    verify(exactly = 1) {eventApiAuditService.auditGetEvents(events)}
+    verify(exactly = 1) { eventApiAuditService.auditGetEvents(events) }
   }
 
   @Test

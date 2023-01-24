@@ -32,7 +32,7 @@ class EventApiAudit(
   @Schema(description = "Data of event(s)", required = true, example = "{\"data\":[]}")
   val payload: Payload,
 
-  @Schema(description = "Time of call", required = true)
+  @Schema(description = "When audit log created", required = true)
   val whenCreated: LocalDateTime,
 
   @Transient
@@ -46,10 +46,10 @@ class EventApiAudit(
 
   override fun isNew(): Boolean = new
 
-  class Payload(
+  data class Payload(
     val data: List<Data>,
   )
-  class Data(
+  data class Data(
     val eventId: UUID,
     val sourceId: String,
     val hashedEventData: String?,

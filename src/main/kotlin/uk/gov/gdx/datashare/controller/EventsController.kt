@@ -75,9 +75,29 @@ class EventsController(
     operationId = "getEvents",
     summary = "Event Get API - Get event data",
     description = "Get all events for consumer, Need scope of events/consume. " +
-      "Full data is only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled. " +
-      "When this flag is not enabled, the eventData will be an empty object. " +
-      "Full dataset for the event can be obtained by calling `/events/{id}`",
+      "     This field is only populated when the consumer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +
+      "     Full dataset for the event can be obtained by calling <pre>/events/{id}</pre>" +
+      "     <h3>Event Types</h3>" +
+      "     <h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +
+      "     <p>Death notifications take the following json structure." +
+      "     <pre>" +
+      "     {" +
+      "        \"registrationDate\": \"2023-01-23\"," +
+      "        \"firstNames\": \"Mary Jane\"," +
+      "        \"lastName\": \"Smith\"," +
+      "        \"maidenName\": \"Jones\"," +
+      "        \"sex\": \"Male\"," +
+      "        \"dateOfDeath\": \"2023-01-02\"," +
+      "        \"dateOfBirth\": \"1972-02-20\"," +
+      "        \"birthPlace\": \"56 Test Address, B Town\"," +
+      "        \"deathPlace\": \"Hospital Ward 5, C Town\"," +
+      "        \"occupation\": \"Doctor\"," +
+      "        \"retired\": true," +
+      "        \"address\": \"101 Address Street, A Town, Postcode\"" +
+      "        \"" +
+      "     }" +
+      "      </pre>" +
+      "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>",
     responses = [
       ApiResponse(
         responseCode = "200",

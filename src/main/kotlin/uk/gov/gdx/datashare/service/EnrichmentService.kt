@@ -20,7 +20,7 @@ class EnrichmentService {
           hashMap[prop.name] = value
         }
       }
-      return objectMapper.convertValue(hashMap, T::class.java)
+      return if (hashMap.size > 0) { objectMapper.convertValue(hashMap, T::class.java) } else { null }
     }
   }
 }

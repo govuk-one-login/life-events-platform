@@ -64,7 +64,7 @@ POST `/consumers/CONSUMER-ID-GUID/subscriptions`
 {
   "ingressEventType": "DEATH_NOTIFICATION",
   "oauthClientId": "an-oauth-client",
-  "enrichmentFields": "firstName,lastName,dateOfDeath"
+  "enrichmentFields": "firstNames,lastName,dateOfDeath,sex,registrationDate"
 }
 ```
 
@@ -76,7 +76,7 @@ Returns 200
   "consumerId": "CONSUMER-ID-GUID",
   "oauthClientId": "an-oauth-client",
   "ingressEventType": "DEATH_NOTIFICATION",
-  "enrichmentFields": "firstName,lastName,dateOfDeath",
+  "enrichmentFields": "firstNames,lastName,dateOfDeath",
   "id": "CONSUMER-SUBSCRIPTION-ID-GUID"
 }
 ```

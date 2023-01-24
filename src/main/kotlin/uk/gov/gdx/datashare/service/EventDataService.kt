@@ -11,6 +11,7 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
+import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EventData
 import uk.gov.gdx.datashare.repository.EventDataRepository
@@ -60,7 +61,7 @@ class EventDataService(
     val consumerSubscription = consumerSubscriptionRepository.findByEventId(id)
       ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for event $id")
 
-    return mapEventNotification(event, consumerSubscription.eventType, true)
+    return mapEventNotification(event, consumerSubscription, includeData = true, callbackEvent = true)
   }
 
   fun getEvents(
@@ -90,7 +91,7 @@ class EventDataService(
 
     return events.map { event ->
       val subscription = consumerSubscriptionIdMap[event.consumerSubscriptionId]!!
-      mapEventNotification(event, subscription.eventType, subscription.enrichmentFieldsIncludedInPoll)
+      mapEventNotification(event, subscription, subscription.enrichmentFieldsIncludedInPoll)
     }
   }
 
@@ -111,14 +112,21 @@ class EventDataService(
     ).increment()
     meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
       .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
-    return mapEventNotification(event, consumerSubscription.eventType, false)
+    return mapEventNotification(event, consumerSubscription, false)
   }
 
-  private fun mapEventNotification(event: EventData, eventType: String, includeData: Boolean): EventNotification {
+  private fun mapEventNotification(
+    event: EventData,
+    subscription: ConsumerSubscription,
+    includeData: Boolean = false,
+    callbackEvent: Boolean = false,
+  ): EventNotification {
     return EventNotification(
       eventId = event.id,
-      eventType = eventType,
+      eventType = subscription.eventType,
       sourceId = event.dataId,
+      dataIncluded = if (!callbackEvent) includeData else null,
+      enrichmentFields = if (!callbackEvent) subscription.enrichmentFields else null,
       eventData = if (includeData) {
         event.dataPayload?.let { dataPayload ->
           deathNotificationService.mapDeathNotification(dataPayload)
@@ -145,11 +153,45 @@ data class EventNotification(
   @Schema(description = "ID from the source of the notification", required = true, example = "999999901")
   val sourceId: String,
   @Schema(
-    description = "Event Data - only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled, otherwise an empty object. " +
-      "Full dataset for the event can be obtained by calling /events/{id}",
+    description = "Indicates that event data is returned when true,",
+    required = false,
+    example = "false",
+  )
+  val dataIncluded: Boolean? = null,
+  @Schema(
+    description = "list of data fields that will be returned in this event",
+    required = false,
+    example = "firstNames,lastName,sex,dateOfDeath",
+  )
+  val enrichmentFields: String? = null,
+  @Schema(
+    description = "<h2>Event Data</h2>" +
+      "     This field is only populated when the consumer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +
+      "     Full dataset for the event can be obtained by calling <pre>/events/{id}</pre>" +
+      "     <h3>Event Types</h3>" +
+      "     <h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +
+      "     <p>Death notifications take the following json structure." +
+      "     <pre>" +
+      "     {" +
+      "        \"registrationDate\": \"2023-01-23\"," +
+      "        \"firstNames\": \"Mary Jane\"," +
+      "        \"lastName\": \"Smith\"," +
+      "        \"maidenName\": \"Jones\"," +
+      "        \"sex\": \"Male\"," +
+      "        \"dateOfDeath\": \"2023-01-02\"," +
+      "        \"dateOfBirth\": \"1972-02-20\"," +
+      "        \"birthPlace\": \"56 Test Address, B Town\"," +
+      "        \"deathPlace\": \"Hospital Ward 5, C Town\"," +
+      "        \"occupation\": \"Doctor\"," +
+      "        \"retired\": true," +
+      "        \"address\": \"101 Address Street, A Town, Postcode\"" +
+      "        \"" +
+      "     }" +
+      "      </pre>" +
+      "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>",
     required = false,
   )
-  val eventData: Any?,
+  val eventData: Any? = null,
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

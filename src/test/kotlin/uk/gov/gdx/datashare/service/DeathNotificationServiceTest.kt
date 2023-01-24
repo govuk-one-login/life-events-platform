@@ -36,13 +36,13 @@ class DeathNotificationServiceTest {
   @Test
   fun `mapDeathNotification maps string to full DeathNotificationDetails`() {
     val input =
-      "{\"firstName\":\"Alice\",\"lastName\":\"Smith\",\"dateOfBirth\":\"1910-01-01\",\"dateOfDeath\":\"2010-12-12\",\"address\":\"666 Inform House, 6 Inform street, Informington, Informshire\",\"sex\":\"female\"}"
+      "{\"firstNames\":\"Alice\",\"lastName\":\"Smith\",\"dateOfBirth\":\"1910-01-01\",\"dateOfDeath\":\"2010-12-12\",\"address\":\"666 Inform House, 6 Inform street, Informington, Informshire\",\"sex\":\"female\"}"
 
     val deathNotificationDetails = underTest.mapDeathNotification(input)
 
     assertThat(deathNotificationDetails).isEqualTo(
       DeathNotificationDetails(
-        firstName = "Alice",
+        firstNames = "Alice",
         lastName = "Smith",
         dateOfBirth = LocalDate.of(1910, 1, 1),
         dateOfDeath = LocalDate.of(2010, 12, 12),
@@ -82,11 +82,9 @@ class DeathNotificationServiceTest {
         dateOfDeath = LocalDate.of(2010, 1, 1),
         sex = "female",
         address = "666 Inform House, 6 Inform street, Informington, Informshire",
-        dateOfDeathQualifier = null,
       ),
       id = dataDetail.id,
       date = LocalDate.now(),
-      partner = null,
     )
 
     every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
@@ -195,16 +193,16 @@ class DeathNotificationServiceTest {
   private val simpleSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
     eventType = "DEATH_NOTIFICATION",
-    enrichmentFields = "firstName,lastName",
+    enrichmentFields = "firstNames,lastName",
   )
   private val complexSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
     eventType = "DEATH_NOTIFICATION",
-    enrichmentFields = "firstName,lastName,sex",
+    enrichmentFields = "firstNames,lastName,sex",
   )
   private val consumerSubscriptions = listOf(simpleSubscription, complexSubscription)
   private val simpleDeathNotificationDetails = DeathNotificationDetails(
-    firstName = "Alice",
+    firstNames = "Alice",
     lastName = "Smith",
   )
   private val complexDeathNotificationDetails = simpleDeathNotificationDetails.copy(

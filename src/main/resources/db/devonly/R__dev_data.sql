@@ -44,19 +44,19 @@ VALUES
 INSERT INTO consumer_subscription
     (oauth_client_id, consumer_id, enrichment_fields, event_type, enrichment_fields_included_in_poll)
 VALUES
-    ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), 'firstName,lastName,age', 'DEATH_NOTIFICATION', false),
+    ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), 'registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired', 'DEATH_NOTIFICATION', false),
     ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), '', 'LIFE_EVENT', false);
 
 INSERT INTO consumer_subscription
     (oauth_client_id, consumer_id, enrichment_fields, event_type, enrichment_fields_included_in_poll)
 VALUES
-    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), 'firstName,lastName,age', 'DEATH_NOTIFICATION', true),
+    ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), 'registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired', 'DEATH_NOTIFICATION', true),
     ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), '', 'LIFE_EVENT', true);
 
 INSERT INTO consumer_subscription
     (oauth_client_id, consumer_id, enrichment_fields, event_type, enrichment_fields_included_in_poll)
 VALUES
-    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), 'firstName,lastName,age', 'DEATH_NOTIFICATION', true),
+    ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), 'registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired', 'DEATH_NOTIFICATION', true),
     ('internal-outbound', getIdFromConsumerName('Internal Adaptor'), '', 'LIFE_EVENT', true);
 
 DROP FUNCTION IF EXISTS getIdFromPublisherName;

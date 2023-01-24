@@ -25,9 +25,9 @@ sequenceDiagram
     participant DWP
     participant Other department
 
-    
+
     DWP ->> GDX: Onboarding, client generation
-    
+
     HMPO ->>+ GDX: Notification of death
     GDX ->> DWP: Notification of death
     GDX ->>- Other department: Notification of death
@@ -39,17 +39,17 @@ For this proof of concept, the key API calls will be
 sequenceDiagram
     participant GDX
     participant HMPO
-    participant DWP 
+    participant DWP
     participant Auth
 
     DWP ->> Auth: Generate OAuth tokens as appropriate
-    
+
     HMPO ->> GDX: Notification of death
     GDX-->>HMPO: Enrich event
     HMPO-->>GDX: Return enriched event
 
     DWP->>GDX: Query polling API
-    
+
     DWP->>+GDX: Request events
     GDX->>-DWP: Return enriched Events
 
@@ -107,7 +107,7 @@ Returns
       "eventType": "DEATH_NOTIFICATION",
       "sourceId": "{death certificate number}",
       "eventData": {
-        "firstName": "",
+        "firstNames": "",
         ...
       }
     }
@@ -129,7 +129,7 @@ Returns
   "eventType": "DEATH_NOTIFICATION",
   "sourceId": "{death certificate number}",
   "eventData": {
-    "firstName": "",
+    "firstNames": "",
     ...
   }
 }

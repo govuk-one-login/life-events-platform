@@ -18,6 +18,7 @@ import java.util.stream.Stream
 class EventsControllerTest {
   private val eventDataService = mockk<EventDataService>()
   private val dataReceiverService = mockk<DataReceiverService>()
+  private val eventApiAuditService = mockk<EventApiAuditService>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val publishEventCounter = mockk<Counter>()
   private val getEventCounter = mockk<Counter>()
@@ -46,7 +47,7 @@ class EventsControllerTest {
     every { deleteEventCounter.increment() }.returns(Unit)
     every { deleteEventSuccessCounter.increment() }.returns(Unit)
     every { publishEventSuccessCounter.increment() }.returns(Unit)
-    underTest = EventsController(eventDataService, dataReceiverService, meterRegistry)
+    underTest = EventsController(eventDataService, dataReceiverService, eventApiAuditService, meterRegistry)
   }
 
   @ParameterizedTest
@@ -97,12 +98,14 @@ class EventsControllerTest {
     )
 
     every { eventDataService.getEvents(eventTypes, startTime, endTime) }.returns(events)
+    every { eventApiAuditService.auditGetEvents(events) }.returns(Unit)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime)
 
     assertThat(eventsOutput).hasSize(2)
-    assertThat(eventsOutput).isEqualTo(events.toList())
+    assertThat(eventsOutput).isEqualTo(events)
     verify(exactly = 1) { getEventsCounter.increment() }
+    verify(exactly = 1) { eventApiAuditService.auditGetEvents(events) }
   }
 
   @Test
@@ -190,6 +193,7 @@ class EventsControllerTest {
     )
 
     every { eventDataService.getEvents(eventTypes, any(), any()) }.returns(events)
+    every { eventApiAuditService.auditGetEvents(events) }.returns(Unit)
 
     val eventsOutput = underTest.getEvents(eventTypes)
 

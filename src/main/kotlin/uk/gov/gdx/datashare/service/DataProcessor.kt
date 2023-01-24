@@ -41,10 +41,10 @@ private fun getDataFromProvider(dataProcessorMessage: DataProcessorMessage): Dat
   val id = dataProcessorMessage.id ?: UUID.randomUUID().toString()
   val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
 
-    return when (dataProcessorMessage.datasetId) {
-      "DEATH_LEV" -> {
-        DataDetail(id = id)
-      }
+  return when (dataProcessorMessage.datasetId) {
+    "DEATH_LEV" -> {
+      DataDetail(id = id)
+    }
 
     else -> {
       DataDetail(id = id, data = dataPayload)

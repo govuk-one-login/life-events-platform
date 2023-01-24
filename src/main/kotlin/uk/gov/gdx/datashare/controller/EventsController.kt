@@ -80,22 +80,21 @@ class EventsController(
       "     <h3>Event Types</h3>" +
       "     <h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +
       "     <p>Death notifications take the following json structure." +
-      "     <pre>" +
-      "     {" +
-      "        \"registrationDate\": \"2023-01-23\"," +
-      "        \"firstNames\": \"Mary Jane\"," +
-      "        \"lastName\": \"Smith\"," +
-      "        \"maidenName\": \"Jones\"," +
-      "        \"sex\": \"Male\"," +
-      "        \"dateOfDeath\": \"2023-01-02\"," +
-      "        \"dateOfBirth\": \"1972-02-20\"," +
-      "        \"birthPlace\": \"56 Test Address, B Town\"," +
-      "        \"deathPlace\": \"Hospital Ward 5, C Town\"," +
-      "        \"occupation\": \"Doctor\"," +
-      "        \"retired\": true," +
-      "        \"address\": \"101 Address Street, A Town, Postcode\"" +
-      "        \"" +
-      "     }" +
+      "     <pre>\n" +
+      "{\n" +
+      "        \"registrationDate\": \"2023-01-23\",\n" +
+      "        \"firstNames\": \"Mary Jane\",\n" +
+      "        \"lastName\": \"Smith\",\n" +
+      "        \"maidenName\": \"Jones\",\n" +
+      "        \"sex\": \"Male\",\n" +
+      "        \"dateOfDeath\": \"2023-01-02\",\n" +
+      "        \"dateOfBirth\": \"1972-02-20\",\n" +
+      "        \"birthPlace\": \"56 Test Address, B Town\",\n" +
+      "        \"deathPlace\": \"Hospital Ward 5, C Town\",\n" +
+      "        \"occupation\": \"Doctor\",\n" +
+      "        \"retired\": true,\n" +
+      "        \"address\": \"101 Address Street, A Town, Postcode\"\n" +
+      "}\n" +
       "      </pre>" +
       "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>",
     responses = [

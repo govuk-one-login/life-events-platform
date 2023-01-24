@@ -13,7 +13,7 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
     environment:
       - SQS_LOCALSTACK_URL=http://localstack:4566
       - SERVER_PORT=8080

@@ -62,7 +62,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       },
       healthCheck : {
         command : ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"],
-        startPeriod : 180
+        startPeriod : 300
       }
     }
   ])

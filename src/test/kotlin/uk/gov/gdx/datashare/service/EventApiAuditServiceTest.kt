@@ -21,7 +21,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-
 class EventApiAuditServiceTest {
   private val eventApiAuditRepository = mockk<EventApiAuditRepository>()
   private val dateTimeHandler = mockk<DateTimeHandler>()

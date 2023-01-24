@@ -12,6 +12,7 @@ import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.repository.EventData
 import uk.gov.gdx.datashare.repository.EventDataRepository
 import java.time.Duration
 import java.time.LocalDateTime
@@ -52,23 +53,14 @@ class EventDataService(
 
   fun getEvent(
     id: UUID,
-  ): EventNotification? {
+  ): EventNotification {
     val clientId = authenticationFacade.getUsername()
     val event = eventDataRepository.findByClientIdAndId(clientId, id)
       ?: throw EventNotFoundException("Event $id not found for polling client $clientId")
     val consumerSubscription = consumerSubscriptionRepository.findByEventId(id)
       ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for event $id")
 
-    return event.let {
-      EventNotification(
-        eventId = it.id,
-        eventType = consumerSubscription.eventType,
-        sourceId = it.dataId,
-        eventData = it.dataPayload?.let { dataPayload ->
-          deathNotificationService.mapDeathNotification(dataPayload)
-        },
-      )
-    }
+    return mapEventNotification(event, consumerSubscription.eventType, true)
   }
 
   fun getEvents(
@@ -98,22 +90,11 @@ class EventDataService(
 
     return events.map { event ->
       val subscription = consumerSubscriptionIdMap[event.consumerSubscriptionId]!!
-      EventNotification(
-        eventId = event.id,
-        eventType = subscription.eventType,
-        sourceId = event.dataId,
-        eventData = if (subscription.enrichmentFieldsIncludedInPoll) {
-          event.dataPayload?.let { dataPayload ->
-            deathNotificationService.mapDeathNotification(dataPayload)
-          }
-        } else {
-          null
-        },
-      )
+      mapEventNotification(event, subscription.eventType, subscription.enrichmentFieldsIncludedInPoll)
     }
   }
 
-  fun deleteEvent(id: UUID) {
+  fun deleteEvent(id: UUID): EventNotification {
     val callbackClientId = authenticationFacade.getUsername()
     val event = eventDataRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw EventNotFoundException("Event $id not found for callback client $callbackClientId")
@@ -130,6 +111,22 @@ class EventDataService(
     ).increment()
     meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
       .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
+    return mapEventNotification(event, consumerSubscription.eventType, false)
+  }
+
+  private fun mapEventNotification(event: EventData, eventType: String, includeData: Boolean) : EventNotification {
+    return EventNotification(
+      eventId = event.id,
+      eventType = eventType,
+      sourceId = event.dataId,
+      eventData = if (includeData) {
+        event.dataPayload?.let { dataPayload ->
+          deathNotificationService.mapDeathNotification(dataPayload)
+        }
+      } else {
+        null
+      },
+    )
   }
 }
 

@@ -72,7 +72,7 @@ class DeathNotificationServiceTest {
   fun `getEnrichedData returns correct data for a subset of enrichment fields`() {
     val dataId = "123456789"
     val datasetId = "DEATH_LEV"
-    val enrichmentFields = listOf("firstName", "dateOfDeath", "address", "retired")
+    val enrichmentFields = listOf("firstNames", "dateOfDeath", "address", "retired")
     val deathRecord = DeathRecord(
       deceased = Deceased(
         forenames = "Alice",

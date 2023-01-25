@@ -219,6 +219,13 @@ class EventDataServiceTest {
         endTime,
       )
     }.returns(deathEvents.count())
+    every {
+      deathNotificationService.getEnrichedPayload(
+        any(),
+        any(),
+        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+      )
+    }.returns(deathNotificationDetails)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -267,6 +274,13 @@ class EventDataServiceTest {
         endTime,
       )
     }.returns(totalEventCount)
+    every {
+      deathNotificationService.getEnrichedPayload(
+        any(),
+        any(),
+        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+      )
+    }.returns(deathNotificationDetails)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -359,6 +373,13 @@ class EventDataServiceTest {
         fallbackEndTime,
       )
     }.returns(extraDeathEvents.count())
+    every {
+      deathNotificationService.getEnrichedPayload(
+        any(),
+        any(),
+        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+      )
+    }.returns(deathNotificationDetails)
 
     val eventStatusOutput = underTest.getEvents(null, null, null, 0, 10)
 

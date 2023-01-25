@@ -71,7 +71,6 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
   override fun findAll(): List<EventData> = findAllByDeletedAtIsNull()
   fun findAllByDeletedAtIsNull(): List<EventData>
 
-
   @Query("UPDATE event_data SET deleted_at=now() WHERE id = :id")
   @Modifying
   fun softDeleteById(id: UUID)

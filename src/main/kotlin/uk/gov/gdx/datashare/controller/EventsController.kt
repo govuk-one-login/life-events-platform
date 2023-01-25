@@ -130,7 +130,7 @@ class EventsController(
         "sourceId": "123456789",
         "eventData": {
           "firstNames": "Joan Narcissus Ouroboros",
-          "lastName": "SMITH"
+          "lastName": "SMITH",
           "sex": "Male",
           "dateOfDeath": "2023-01-20"
         }

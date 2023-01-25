@@ -386,7 +386,7 @@ class EventsController(
   }
 
   private fun eventLink(id: UUID): WebMvcLinkBuilder =
-    linkTo(methodOn(EventsController::class.java).getEvent(id))
+    linkTo(methodOn(EventsController::class.java).getEvent(id) as Any)
 
   private fun eventsLink(
     eventTypes: List<String>? = null,

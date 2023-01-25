@@ -25,7 +25,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-hateoas")
 
   //  AWS dependencies for SNS, SQS etc
+  implementation(platform("software.amazon.awssdk:bom:2.19.21"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
+  implementation("software.amazon.awssdk:rds")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")

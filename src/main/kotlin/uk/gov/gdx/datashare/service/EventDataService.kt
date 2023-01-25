@@ -142,9 +142,11 @@ class EventDataService(
       dataIncluded = if (!callbackEvent) includeData else null,
       enrichmentFields = if (!callbackEvent) subscription.enrichmentFields else null,
       eventData = if (includeData) {
-        event.dataPayload?.let { dataPayload ->
-          deathNotificationService.mapDeathNotification(dataPayload)
-        }
+        deathNotificationService.getEnrichedPayload(
+          event.dataId,
+          event.datasetId,
+          subscription.enrichmentFields.split(",").toList(),
+        )
       } else {
         null
       },

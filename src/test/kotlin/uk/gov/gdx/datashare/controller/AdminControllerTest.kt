@@ -20,13 +20,11 @@ class AdminControllerTest {
         consumerSubscriptionId = UUID.randomUUID(),
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataPayload = null,
       ),
       EventData(
         consumerSubscriptionId = UUID.randomUUID(),
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataPayload = "{\"firstName\":\"Bob\"}",
       ),
     )
 

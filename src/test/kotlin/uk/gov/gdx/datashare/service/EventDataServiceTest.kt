@@ -147,7 +147,13 @@ class EventDataServiceTest {
 
     every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
     every { consumerSubscriptionRepository.findByEventId(event.id) }.returns(deathNotificationSubscription)
-    every { deathNotificationService.mapDeathNotification(event.dataPayload!!) }.returns(deathNotificationDetails)
+    every {
+      deathNotificationService.getEnrichedPayload(
+        event.dataId,
+        event.datasetId,
+        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+      )
+    }.returns(deathNotificationDetails)
 
     val eventOutput = underTest.getEvent(event.id)
 
@@ -213,8 +219,13 @@ class EventDataServiceTest {
         endTime,
       )
     }.returns(deathEvents.count())
-    val dataPayload = deathEvents.toList()[0].dataPayload!!
-    every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
+    every {
+      deathNotificationService.getEnrichedPayload(
+        any(),
+        any(),
+        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+      )
+    }.returns(deathNotificationDetails)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -263,8 +274,13 @@ class EventDataServiceTest {
         endTime,
       )
     }.returns(totalEventCount)
-    val dataPayload = deathEvents.toList()[0].dataPayload!!
-    every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
+    every {
+      deathNotificationService.getEnrichedPayload(
+        any(),
+        any(),
+        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+      )
+    }.returns(deathNotificationDetails)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -357,8 +373,13 @@ class EventDataServiceTest {
         fallbackEndTime,
       )
     }.returns(extraDeathEvents.count())
-    val dataPayload = extraDeathEvents.toList()[0].dataPayload!!
-    every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
+    every {
+      deathNotificationService.getEnrichedPayload(
+        any(),
+        any(),
+        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+      )
+    }.returns(deathNotificationDetails)
 
     val eventStatusOutput = underTest.getEvents(null, null, null, 0, 10)
 
@@ -383,7 +404,6 @@ class EventDataServiceTest {
       consumerSubscriptionId = UUID.randomUUID(),
       datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
-      dataPayload = null,
     )
     val now = LocalDateTime.now()
     every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
@@ -438,14 +458,13 @@ class EventDataServiceTest {
     enrichmentFieldsIncludedInPoll = true,
   )
   private val consumerSubscriptions = listOf(deathNotificationSubscription, lifeEventSubscription)
-  private val deathEvents = getEvents(4, "Alice", deathNotificationSubscription.id)
-  private val thinDeathEvents = getEvents(4, "Alice", thinDeathNotificationSubscription.id)
-  private val extraDeathEvents = getEvents(10, "Bob", deathNotificationSubscription.id)
-  private val lifeEvents = getEvents(7, "Charlie", lifeEventSubscription.id)
+  private val deathEvents = getEvents(4, deathNotificationSubscription.id)
+  private val thinDeathEvents = getEvents(4, thinDeathNotificationSubscription.id)
+  private val extraDeathEvents = getEvents(10, deathNotificationSubscription.id)
+  private val lifeEvents = getEvents(7, lifeEventSubscription.id)
 
   private fun getEvents(
     count: Int,
-    firstName: String = "Alice",
     subscriptionId: UUID = UUID.randomUUID(),
   ): List<EventData> =
     List(count) {
@@ -453,7 +472,6 @@ class EventDataServiceTest {
         consumerSubscriptionId = subscriptionId,
         datasetId = UUID.randomUUID().toString(),
         dataId = "HMPO",
-        dataPayload = "{\"firstName\":\"$firstName\",\"lastName\":\"Smith\",\"age\":12,\"address\":\"$subscriptionId\"}",
       )
     }
 }

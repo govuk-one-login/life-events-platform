@@ -12,7 +12,6 @@ data class EventDataset(
   @Column("id")
   val datasetId: String,
   val description: String,
-  val storePayload: Boolean = false,
   val active: Boolean = true,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 

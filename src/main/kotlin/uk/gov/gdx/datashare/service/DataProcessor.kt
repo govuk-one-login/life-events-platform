@@ -1,18 +1,19 @@
 package uk.gov.gdx.datashare.service
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
+import uk.gov.gdx.datashare.config.UnknownDatasetException
 import uk.gov.gdx.datashare.repository.*
 import java.util.*
 
 @Service
 class DataProcessor(
   private val objectMapper: ObjectMapper,
-  private val deathNotificationService: DeathNotificationService,
+  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
+  private val eventDataRepository: EventDataRepository,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -23,37 +24,23 @@ class DataProcessor(
     val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
     log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
 
-    // lookup provider
-    val details = getDataFromProvider(dataProcessorMessage)
+    val dataId = dataProcessorMessage.id ?: UUID.randomUUID().toString()
 
-    when (dataProcessorMessage.eventTypeId) {
-      "DEATH_NOTIFICATION" -> deathNotificationService.saveDeathNotificationEvents(
-        details,
-        dataProcessorMessage,
+    if (dataProcessorMessage.datasetId != "DEATH_LEV" && dataProcessorMessage.datasetId != "PASS_THROUGH") {
+      throw UnknownDatasetException("Unknown DataSet ${dataProcessorMessage.datasetId}")
+    }
+
+    val consumerSubscriptions = consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId)
+
+    val eventData = consumerSubscriptions.map {
+      EventData(
+        consumerSubscriptionId = it.id,
+        datasetId = dataProcessorMessage.datasetId,
+        dataId = dataId,
+        eventTime = dataProcessorMessage.eventTime,
       )
+    }.toList()
 
-      "LIFE_EVENT" -> print("x == 2")
-    }
+    eventDataRepository.saveAll(eventData).toList()
   }
 }
-
-private fun getDataFromProvider(dataProcessorMessage: DataProcessorMessage): DataDetail {
-  val id = dataProcessorMessage.id ?: UUID.randomUUID().toString()
-  val dataPayload = if (dataProcessorMessage.storePayload) dataProcessorMessage.details else null
-
-  return when (dataProcessorMessage.datasetId) {
-    "DEATH_LEV" -> {
-      DataDetail(id = id)
-    }
-
-    else -> {
-      DataDetail(id = id, data = dataPayload)
-    }
-  }
-}
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-data class DataDetail(
-  var id: String,
-  var data: Any? = null,
-)

@@ -8,14 +8,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.config.UnknownDatasetException
-import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDate
 
 @Service
 class DeathNotificationService(
-  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
-  private val eventDataRepository: EventDataRepository,
   private val levApiService: LevApiService,
   private val objectMapper: ObjectMapper,
 ) {
@@ -23,58 +19,14 @@ class DeathNotificationService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun mapDeathNotification(dataPayload: String): DeathNotificationDetails =
-    objectMapper.readValue(dataPayload, DeathNotificationDetails::class.java)
-
-  fun saveDeathNotificationEvents(
-    details: DataDetail,
-    dataProcessorMessage: DataProcessorMessage,
-  ) {
-    val consumerSubscriptions = consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId)
-
-    val fullyEnrichedData = getAllEnrichedData(
-      dataProcessorMessage.datasetId,
-      details.id,
-    )
-
-    val eventData = consumerSubscriptions.map {
-      val dataPayload =
-        enrichEventPayload(
-          it.enrichmentFields.split(",").toList(),
-          fullyEnrichedData,
-        )
-
-      EventData(
-        consumerSubscriptionId = it.id,
-        datasetId = dataProcessorMessage.datasetId,
-        dataId = details.id,
-        dataPayload = dataPayload?.let { objectMapper.writeValueAsString(dataPayload) },
-        eventTime = dataProcessorMessage.eventTime,
-      )
-    }.toList()
-
-    eventDataRepository.saveAll(eventData).toList()
-  }
-
-  private fun enrichEventPayload(
-    enrichmentFields: List<String>,
-    fullyEnrichedData: DeathNotificationDetails?,
-  ): DeathNotificationDetails? {
-    return EnrichmentService.getDataWithOnlyFields(
-      objectMapper,
-      fullyEnrichedData,
-      enrichmentFields,
-    )
-  }
-
-  private fun getAllEnrichedData(
-    datasetId: String,
+  fun getEnrichedPayload(
     dataId: String,
+    datasetId: String,
+    enrichmentFields: List<String>,
   ): DeathNotificationDetails? = when (datasetId) {
     "DEATH_LEV" -> {
-      // get the data from the LEV
       val citizenDeathId = dataId.toInt()
-      levApiService.findDeathById(citizenDeathId)
+      val allEnrichedData = levApiService.findDeathById(citizenDeathId)
         .map {
           DeathNotificationDetails(
             registrationDate = it.date,
@@ -91,14 +43,12 @@ class DeathNotificationService(
             address = it.deceased.address,
           )
         }.first()
-    }
 
-    "PASS_THROUGH" -> {
-      null
+      EnrichmentService.getDataWithOnlyFields(objectMapper, allEnrichedData, enrichmentFields)
     }
 
     else -> {
-      throw UnknownDatasetException("Unknown DataSet $datasetId")
+      null
     }
   }
 }
@@ -131,7 +81,11 @@ data class DeathNotificationDetails(
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   val dateOfBirth: LocalDate? = null,
 
-  @Schema(description = "The deceased's address", required = false, example = "888 Death House, 8 Death lane, Deadington, Deadshire")
+  @Schema(
+    description = "The deceased's address",
+    required = false,
+    example = "888 Death House, 8 Death lane, Deadington, Deadshire",
+  )
   val address: String? = null,
 
   @Schema(description = "The birthplace of the deceased", required = false, example = "Sheffield")

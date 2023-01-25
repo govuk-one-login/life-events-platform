@@ -29,7 +29,6 @@ import uk.gov.gdx.datashare.helper.getPageLinks
 import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
 import java.util.*
-import javax.validation.constraints.Max
 import javax.validation.constraints.Positive
 import javax.validation.constraints.PositiveOrZero
 
@@ -210,13 +209,11 @@ class EventsController(
     @PositiveOrZero
     pageNumber: Int,
     @Schema(
-      description = "Number of items per page. Maximum 25.",
-      defaultValue = "10",
-      maximum = "25",
+      description = "Number of items per page.",
+      defaultValue = "100",
       minimum = "0",
     )
-    @RequestParam(name = "page[size]", defaultValue = "10")
-    @Max(25)
+    @RequestParam(name = "page[size]", defaultValue = "100")
     @Positive
     pageSize: Int,
   ): PagedModel<EntityModel<EventNotification>> = run {

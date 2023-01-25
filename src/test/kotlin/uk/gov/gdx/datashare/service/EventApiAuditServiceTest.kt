@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.uk.gov.gdx.datashare.service
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -19,7 +20,7 @@ import uk.gov.gdx.datashare.service.EventApiAuditService
 import uk.gov.gdx.datashare.service.EventNotification
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class EventApiAuditServiceTest {
   private val eventApiAuditRepository = mockk<EventApiAuditRepository>()
@@ -37,7 +38,8 @@ class EventApiAuditServiceTest {
   @Test
   fun `auditEvents saves no PII`() {
     val request = MockHttpServletRequest("GET", "/events")
-    RequestContextHolder.setRequestAttributes(ServletRequestAttributes(request))
+    mockkStatic(RequestContextHolder::class)
+    every { RequestContextHolder.currentRequestAttributes() }.returns(ServletRequestAttributes(request))
 
     val oauthClientId = "abcdefg"
     val now = LocalDateTime.now()

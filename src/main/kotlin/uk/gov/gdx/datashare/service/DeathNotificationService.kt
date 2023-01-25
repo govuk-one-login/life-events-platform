@@ -118,7 +118,7 @@ data class DeathNotificationDetails(
   val lastName: String? = null,
 
   @Schema(description = "Sex of the deceased", required = true, example = "Female")
-  val sex: Gender? = null,
+  val sex: Sex? = null,
 
   @Schema(description = "Date the person died", required = true, example = "2021-12-31", type = "date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -147,7 +147,7 @@ data class DeathNotificationDetails(
   val retired: Boolean? = null,
 )
 
-enum class Gender(@JsonValue val jsonName: String) {
+enum class Sex(@JsonValue val jsonName: String) {
   MALE("Male"),
   FEMALE("Female"),
   INDETERMINATE("Indeterminate"),

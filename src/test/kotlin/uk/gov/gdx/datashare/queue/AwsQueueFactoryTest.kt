@@ -1,6 +1,5 @@
 package uk.gov.gdx.datashare.queue
 
-import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.CreateQueueRequest
 import com.amazonaws.services.sqs.model.GetQueueAttributesResult
@@ -286,14 +285,9 @@ class AwsQueueFactoryTest {
       queueName = "some-queue-name",
       dlqName = "some dlq name",
     )
-    private val someTopicConfig = SqsProperties.TopicConfig(
-      arn = "${localstackArnPrefix}some-topic-name",
-    )
-    private val sqsProperties = SqsProperties(provider = "localstack", queues = mapOf("somequeueid" to someQueueConfig), topics = mapOf("sometopicid" to someTopicConfig))
+    private val sqsProperties = SqsProperties(provider = "localstack", queues = mapOf("somequeueid" to someQueueConfig))
     private val sqsClient = mock<AmazonSQS>()
     private val sqsDlqClient = mock<AmazonSQS>()
-    private val snsClient = mock<AmazonSNS>()
-    private val topics = listOf(AwsTopic(id = "sometopicid", arn = "some topic arn", snsClient = snsClient))
     private lateinit var awsQueues: List<AwsQueue>
 
     @BeforeEach
@@ -306,36 +300,21 @@ class AwsQueueFactoryTest {
       whenever(sqsDlqClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
       whenever(sqsDlqClient.getQueueAttributes(anyString(), anyList())).thenReturn(GetQueueAttributesResult().withAttributes(mapOf("QueueArn" to "some dlq arn")))
 
-      awsQueues = awsQueueFactory.createAwsQueues(sqsProperties, topics)
+      awsQueues = awsQueueFactory.createAwsQueues(sqsProperties)
     }
 
     @Test
     fun `should return the queue AmazonSQS client`() {
       assertThat(awsQueues[0].sqsClient).isEqualTo(sqsClient)
     }
-
-    @Test
-    fun `should subscribe to the topic`() {
-      verify(snsClient).subscribe(
-        check { subscribeRequest ->
-          assertThat(subscribeRequest.topicArn).isEqualTo("some topic arn")
-          assertThat(subscribeRequest.protocol).isEqualTo("sqs")
-          assertThat(subscribeRequest.endpoint).isEqualTo("http://localhost:4566/queue/some-queue-name")
-          assertThat(subscribeRequest.attributes["FilterPolicy"]).isEqualTo("some topic filter")
-        },
-      )
-    }
   }
 
   @Nested
   inner class `Create AWS AwsQueue with topic subscription` {
     private val someQueueConfig = SqsProperties.QueueConfig(subscribeTopicId = "sometopicid", subscribeFilter = "some topic filter", queueName = "some queue name", dlqName = "some dlq name")
-    private val someTopicConfig = SqsProperties.TopicConfig(arn = "some topic arn")
-    private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig), topics = mapOf("sometopicid" to someTopicConfig))
+    private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig))
     private val sqsClient = mock<AmazonSQS>()
     private val sqsDlqClient = mock<AmazonSQS>()
-    private val snsClient = mock<AmazonSNS>()
-    private val topics = listOf(AwsTopic(id = "sometopicid", arn = "some topic arn", snsClient = snsClient))
     private lateinit var awsQueues: List<AwsQueue>
 
     @BeforeEach
@@ -347,17 +326,12 @@ class AwsQueueFactoryTest {
       whenever(sqsDlqClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
       whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
 
-      awsQueues = awsQueueFactory.createAwsQueues(sqsProperties, topics)
+      awsQueues = awsQueueFactory.createAwsQueues(sqsProperties)
     }
 
     @Test
     fun `should return the queue AmazonSQS client`() {
       assertThat(awsQueues[0].sqsClient).isEqualTo(sqsClient)
-    }
-
-    @Test
-    fun `should not subscribe to the topic`() {
-      verifyNoMoreInteractions(snsClient)
     }
   }
 }

@@ -10,11 +10,7 @@ import org.slf4j.LoggerFactory
 import kotlin.math.min
 import com.amazonaws.services.sqs.model.PurgeQueueRequest as AwsPurgeQueueRequest
 
-class MissingQueueException(message: String) : RuntimeException(message)
-class MissingTopicException(message: String) : RuntimeException(message)
-
 open class AwsQueueService(
-  awsTopicFactory: AwsTopicFactory,
   awsQueueFactory: AwsQueueFactory,
   sqsProperties: SqsProperties,
   private val objectMapper: ObjectMapper,
@@ -24,14 +20,11 @@ open class AwsQueueService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  private val awsTopics: List<AwsTopic> = awsTopicFactory.createAwsTopics(sqsProperties)
-  private val awsQueues: List<AwsQueue> = awsQueueFactory.createAwsQueues(sqsProperties, awsTopics)
+  private val awsQueues: List<AwsQueue> = awsQueueFactory.createAwsQueues(sqsProperties)
 
   open fun findByQueueId(queueId: String) = awsQueues.associateBy { it.id }.getOrDefault(queueId, null)
   open fun findByQueueName(queueName: String) = awsQueues.associateBy { it.queueName }.getOrDefault(queueName, null)
   open fun findByDlqName(dlqName: String) = awsQueues.associateBy { it.dlqName }.getOrDefault(dlqName, null)
-
-  open fun findByTopicId(topicId: String) = awsTopics.associateBy { it.id }.getOrDefault(topicId, null)
 
   open fun retryDlqMessages(request: RetryDlqRequest): RetryDlqResult =
     request.awsQueue.retryDlqMessages()

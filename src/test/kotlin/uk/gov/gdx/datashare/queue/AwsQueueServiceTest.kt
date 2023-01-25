@@ -14,7 +14,6 @@ import com.amazonaws.services.sqs.model.PurgeQueueRequest as AwsPurgeQueueReques
 
 class AwsQueueServiceTest {
 
-  private val awsTopicFactory = mock<AwsTopicFactory>()
   private val awsQueueFactory = mock<AwsQueueFactory>()
   private val sqsProperties = mock<SqsProperties>()
   private val objectMapper = ObjectMapper()
@@ -30,7 +29,7 @@ class AwsQueueServiceTest {
     fun `add test data`() {
       whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
       whenever(sqsDlqClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
-      whenever(awsQueueFactory.createAwsQueues(any(), any()))
+      whenever(awsQueueFactory.createAwsQueues(any()))
         .thenReturn(
           listOf(
             AwsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
@@ -38,7 +37,7 @@ class AwsQueueServiceTest {
           ),
         )
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+      awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @Test
@@ -83,7 +82,7 @@ class AwsQueueServiceTest {
       whenever(queueSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("queueUrl"))
       whenever(dlqSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("dlqUrl"))
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+      awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @Nested
@@ -150,7 +149,7 @@ class AwsQueueServiceTest {
             ),
           )
 
-        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+        awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
       }
 
       @Test
@@ -262,7 +261,7 @@ class AwsQueueServiceTest {
             ),
           )
 
-        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+        awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
       }
 
       @Test
@@ -372,7 +371,7 @@ class AwsQueueServiceTest {
           )
           .thenReturn(ReceiveMessageResult())
 
-        awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+        awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
       }
 
       @Test
@@ -471,7 +470,7 @@ class AwsQueueServiceTest {
       whenever(queueSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("queueUrl"))
       whenever(dlqSqs.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("dlqUrl"))
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+      awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @BeforeEach
@@ -496,7 +495,7 @@ class AwsQueueServiceTest {
           ),
         )
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+      awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @Test
@@ -537,7 +536,7 @@ class AwsQueueServiceTest {
     fun `add test data`() {
       whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
       whenever(sqsDlqClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some dlq url"))
-      whenever(awsQueueFactory.createAwsQueues(any(), any()))
+      whenever(awsQueueFactory.createAwsQueues(any()))
         .thenReturn(
           listOf(
             AwsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
@@ -545,7 +544,7 @@ class AwsQueueServiceTest {
           ),
         )
 
-      awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+      awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
     }
 
     @Test
@@ -574,7 +573,7 @@ class AwsQueueServiceTest {
   inner class PurgeQueue {
 
     private val sqsClient = mock<AmazonSQS>()
-    private val awsQueueService = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+    private val awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
 
     @Test
     fun `no messages found, should not attempt to purge queue`() {

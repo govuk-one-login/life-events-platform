@@ -31,7 +31,6 @@ class ConsumersService(
         ConsumerSubscription(
           consumerId = consumerId,
           oauthClientId = oauthClientId,
-          pushUri = pushUri,
           eventType = eventType,
           enrichmentFields = enrichmentFields,
         ),
@@ -49,7 +48,6 @@ class ConsumersService(
         consumerSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
           consumerId = consumerId,
           oauthClientId = oauthClientId,
-          pushUri = pushUri,
           eventType = eventType,
           enrichmentFields = enrichmentFields,
           enrichmentFieldsIncludedInPoll = enrichmentFieldsIncludedInPoll,
@@ -78,12 +76,6 @@ data class ConsumerSubRequest(
   val eventType: String,
   @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client")
   val oauthClientId: String? = null,
-  @Schema(
-    description = "URI where to push data, can be s3 or http",
-    required = false,
-    example = "http://localhost/callback",
-  )
-  val pushUri: String? = null,
   @Schema(
     description = "CSV List of required fields to enrich the event with",
     required = true,

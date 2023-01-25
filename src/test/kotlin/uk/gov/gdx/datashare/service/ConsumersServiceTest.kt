@@ -107,7 +107,6 @@ class ConsumersServiceTest {
         withArg {
           assertThat(it.consumerId).isEqualTo(consumer.id)
           assertThat(it.oauthClientId).isEqualTo(consumerSubRequest.oauthClientId)
-          assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
           assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
           assertThat(it.eventType).isEqualTo(consumerSubRequest.eventType)
         },
@@ -129,7 +128,6 @@ class ConsumersServiceTest {
         withArg {
           assertThat(it.consumerId).isEqualTo(consumer.id)
           assertThat(it.oauthClientId).isEqualTo(consumerSubRequest.oauthClientId)
-          assertThat(it.pushUri).isEqualTo(consumerSubRequest.pushUri)
           assertThat(it.enrichmentFields).isEqualTo(consumerSubRequest.enrichmentFields)
           assertThat(it.eventType).isEqualTo(consumerSubRequest.eventType)
         },
@@ -173,7 +171,6 @@ class ConsumersServiceTest {
   private val consumerSubscription = ConsumerSubscription(
     consumerId = consumer.id,
     oauthClientId = "pollClientId",
-    pushUri = "pushUri",
     eventType = "DEATH_NOTIFICATION",
     enrichmentFields = "a,b,c",
   )
@@ -181,6 +178,5 @@ class ConsumersServiceTest {
     eventType = "DEATH_NOTIFICATIONNew",
     enrichmentFields = "a,b,c,New",
     oauthClientId = "callbackClientIdNew",
-    pushUri = "pushUriNew",
   )
 }

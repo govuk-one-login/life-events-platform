@@ -35,6 +35,12 @@ FROM publisher_subscription
 WHERE client_id IN ('len', 'internal-inbound', 'internal-inbound');
 
 DELETE
+FROM event_data
+WHERE consumer_subscription_id IN (SELECT id
+                                   FROM consumer_subscription
+                                   WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'internal-outbound'));
+
+DELETE
 FROM consumer_subscription
 WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'internal-outbound');
 

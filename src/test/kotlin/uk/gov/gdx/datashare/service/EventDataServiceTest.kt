@@ -274,6 +274,8 @@ class EventDataServiceTest {
           eventId = it.id,
           eventType = "DEATH_NOTIFICATION",
           sourceId = it.dataId,
+          dataIncluded = true,
+          enrichmentFields = "a,b,c",
           eventData = deathNotificationDetails,
         )
       }.toList(),

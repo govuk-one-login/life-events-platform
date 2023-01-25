@@ -239,7 +239,7 @@ class EventDataServiceTest {
     val startTime = LocalDateTime.now().minusHours(1)
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
-      firstName = "Alice",
+      firstNames = "Alice",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),
     )

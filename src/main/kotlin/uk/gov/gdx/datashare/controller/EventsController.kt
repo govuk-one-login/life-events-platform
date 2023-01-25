@@ -118,7 +118,8 @@ class EventsController(
         content = arrayOf(
           Content(
             examples = arrayOf(
-              ExampleObject(value ="""
+              ExampleObject(
+                value = """
 {
   "data": [
     {
@@ -168,10 +169,11 @@ class EventsController(
     }
   }
 }
-              """)
-            )
-          )
-        )
+              """,
+              ),
+            ),
+          ),
+        ),
       ),
     ],
   )
@@ -286,7 +288,8 @@ class EventsController(
         content = arrayOf(
           Content(
             examples = arrayOf(
-              ExampleObject(value ="""
+              ExampleObject(
+                value = """
 {
   "data": {
     "id": "a3e48cca-052f-4599-8ddc-e863de428f89",
@@ -305,10 +308,11 @@ class EventsController(
     "collection": "http://localhost:8080/events?page[number]=0&page[size]=10"
   }
 }
-              """)
-            )
-          )
-        )
+              """,
+              ),
+            ),
+          ),
+        ),
       ),
       ApiResponse(
         responseCode = "404",
@@ -324,12 +328,12 @@ class EventsController(
   ): EntityModel<EventNotification>? = run {
     tryCallAndUpdateMetric(
       {
-        eventDataService.getEvent(id)?.let {
+        eventDataService.getEvent(id).let {
           eventApiAuditService.auditEventApiCall(it)
           EntityModel.of(
             it,
             eventLink(id).withSelfRel(),
-            org.springframework.hateoas.Link.of(eventsLink().toUriComponentsBuilder().build().toUriString(), "collection")
+            org.springframework.hateoas.Link.of(eventsLink().toUriComponentsBuilder().build().toUriString(), "collection"),
           )
         }
       },

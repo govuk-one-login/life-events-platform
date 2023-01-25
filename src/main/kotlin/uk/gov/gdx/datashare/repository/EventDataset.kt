@@ -12,7 +12,6 @@ data class EventDataset(
   @Column("id")
   val datasetId: String,
   val description: String,
-  val storePayload: Boolean = false,
   val active: Boolean = true,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
@@ -20,7 +19,7 @@ data class EventDataset(
   @Value("false")
   val new: Boolean = true,
 
-) : Persistable<String> {
+  ) : Persistable<String> {
   override fun getId() = datasetId
 
   override fun isNew(): Boolean = new

@@ -22,7 +22,6 @@ class DataReceiverService(
   private val authenticationFacade: AuthenticationFacade,
   private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
   private val publisherRepository: PublisherRepository,
-  private val eventDatasetRepository: EventDatasetRepository,
   private val objectMapper: ObjectMapper,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
@@ -42,15 +41,8 @@ class DataReceiverService(
       eventPayload.eventType,
     ) ?: throw PublisherPermissionException("${authenticationFacade.getUsername()} does not have permission")
 
-    val dataSet = eventDatasetRepository.findByIdOrNull(subscription.datasetId)
-      ?: throw UnknownDatasetException("Client ${authenticationFacade.getUsername()} is not a known dataset")
-
     val publisher = publisherRepository.findByIdOrNull(subscription.publisherId)
       ?: throw PublisherSubscriptionNotFoundException("Client ${authenticationFacade.getUsername()} is not a known publisher")
-
-    if (dataSet.storePayload && eventPayload.eventDetails == null) {
-      throw PublisherConfigException("Client ${authenticationFacade.getUsername()} must publish dataset for this event in format ${subscription.datasetId}")
-    }
 
     val dataProcessorMessage = DataProcessorMessage(
       subscriptionId = subscription.id,
@@ -59,12 +51,6 @@ class DataReceiverService(
       eventTypeId = eventPayload.eventType,
       eventTime = eventPayload.eventTime ?: dateTimeHandler.now(),
       id = eventPayload.id,
-      storePayload = dataSet.storePayload,
-      details = if (dataSet.storePayload) {
-        eventPayload.eventDetails
-      } else {
-        null
-      },
     )
 
     log.debug(
@@ -92,8 +78,6 @@ data class DataProcessorMessage(
   val eventTypeId: String,
   val eventTime: LocalDateTime,
   val publisher: String,
-  val storePayload: Boolean = false,
   val subscriptionId: UUID,
   val id: String?,
-  val details: String?,
 )

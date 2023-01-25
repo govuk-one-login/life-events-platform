@@ -19,8 +19,6 @@ data class EventData(
   val datasetId: String,
   @Schema(description = "Event data specific ID", required = true, example = "HMPO Death certificate number")
   val dataId: String,
-  @Schema(description = "Event data", required = false, example = "{\"firstNames\": \"Bob\",...}}")
-  val dataPayload: String?,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
   val eventTime: LocalDateTime = LocalDateTime.now(),
 
@@ -31,7 +29,7 @@ data class EventData(
   @Schema(description = "When event deleted", required = false)
   val deletedAt: LocalDateTime? = null,
 
-) : Persistable<UUID> {
+  ) : Persistable<UUID> {
   override fun getId() = eventId
 
   override fun isNew(): Boolean = new

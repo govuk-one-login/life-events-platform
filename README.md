@@ -141,40 +141,33 @@ curl --location --request GET 'http://localhost:8080/events' \
 This returns a list of events that have occurred and have not been deleted.
 
 ```json
-[
-  {
-    "eventId": "d8a6f3ba-e915-4e79-8479-f5f5830f4622",
-    "eventType": "DEATH_NOTIFICATION",
-    "sourceId": "999999901",
-    "eventData": {
-      "firstName": "Joan Narcissus Ouroboros",
-      "lastName": "SMITH",
-      "dateOfDeath": "2008-08-08",
-      "address": "888 Death House, 8 Death lane, Deadington, Deadshire"
+{
+  "data": [
+    {
+      "id": "9a7091ae-4fd5-4e67-815a-c18843a2a626",
+      "type": "events",
+      "attributes": {
+        "eventType": "DEATH_NOTIFICATION",
+        "sourceId": "123456789",
+        "dataIncluded": false,
+        "enrichmentFields": "registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired"
+      },
+      "links": {
+        "self": "http://localhost:8080/events/9a7091ae-4fd5-4e67-815a-c18843a2a626"
+      }
+    }
+  ],
+  "links": {
+    "self": "http://localhost:8080/events?page[number]=0&page[size]=10"
+  },
+  "meta": {
+    "page": {
+      "size": 10,
+      "totalElements": 1,
+      "totalPages": 1,
+      "number": 0
     }
   }
-]
-```
-
-Alternatively you can retrieve the event from a connected pub/sub queue
-
-```shell
-aws --endpoint-url=http://localhost:4566 sqs \
-  receive-message --queue-url http://localhost:4566/000000000000/ogd-event-queue
-```
-
-This returns the event id in the message payload:
-
-```json
-{
-  "Messages": [
-    {
-      "MessageId": "efba8087-0241-e573-ff6f-8323e44d6d7d",
-      "ReceiptHandle": "rutsynbkhesjqrdeifabjqywxxfuxhjdhhehvranouvwkryobnjmueowfcnesnnousseeuxyrvctgbxlisioxphgyliyukgrkklhojstaioabkthizocffrhgnroseinoifdutqknoeueahstxocbukbkkcmmxfodagcbyojtgczimttxabcqxfwf",
-      "MD5OfBody": "7c5924613fc5580006147077c2a37a2b",
-      "Body": "{\"Type\": \"Notification\", \"MessageId\": \"043c18ca-b6b8-47cd-b555-0469c06c9963\", \"TopicArn\": \"arn:aws:sns:eu-west-2:000000000000:728876a5-273b-4b48-9c75-acc6317fa304\", \"Message\": \"{\\\"eventType\\\":\\\"DEATH_NOTIFICATION\\\",\\\"id\\\":\\\"4c1f7599-f7b4-43c8-9c0e-cd59be7e717a\\\",\\\"version\\\":\\\"1.0\\\",\\\"occurredAt\\\":\\\"2022-11-30T16:41:31.908145919Z\\\",\\\"description\\\":\\\"Gov Event: DEATH_NOTIFICATION\\\"}\", \"Timestamp\": \"2022-11-30T16:41:32.135Z\", \"SignatureVersion\": \"1\", \"Signature\": \"EXAMPLEpH+..\", \"SigningCertURL\": \"https://sns.us-east-1.amazonaws.com/SimpleNotificationService-0000000000000000000000.pem\", \"MessageAttributes\": {\"eventType\": {\"Type\": \"String\", \"Value\": \"DEATH_NOTIFICATION\"}}}"
-    }
-  ]
 }
 ```
 
@@ -210,14 +203,26 @@ returns
 
 ```json
 {
-  "eventId": "4c1f7599-f7b4-43c8-9c0e-cd59be7e717a",
-  "eventType": "DEATH_NOTIFICATION",
-  "sourceId": "999999901",
-  "eventData": {
-    "firstName": "Joan Narcissus Ouroboros",
-    "lastName": "SMITH",
-    "dateOfDeath": "2008-08-08",
-    "address": "888 Death House, 8 Death lane, Deadington, Deadshire"
+  "data": {
+    "id": "22ba807d-2c4c-468b-b518-97c453a2615a",
+    "type": "events",
+    "attributes": {
+      "eventType": "DEATH_NOTIFICATION",
+      "sourceId": "123456789",
+      "eventData": {
+        "registrationDate": "2008-08-08",
+        "firstNames": "Joan Narcissus Ouroboros",
+        "lastName": "SMITH",
+        "sex": "Male",
+        "dateOfDeath": "2008-08-08",
+        "dateOfBirth": "2008-08-08",
+        "address": "888 Death House, 8 Death lane, Deadington, Deadshire"
+      }
+    }
+  },
+  "links": {
+    "self": "http://localhost:8080/events/22ba807d-2c4c-468b-b518-97c453a2615a",
+    "collection": "http://localhost:8080/events?page[number]=0&page[size]=10"
   }
 }
 ```

@@ -102,7 +102,8 @@ class EventsController(
       "        \"address\": \"101 Address Street, A Town, Postcode\"\n" +
       "}\n" +
       "      </pre>" +
-      "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>",
+      "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
+      "      <p><b>Gender Types:</b>: Male, Female, Indeterminate</p>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -129,8 +130,10 @@ class EventsController(
         "eventType": "DEATH_NOTIFICATION",
         "sourceId": "123456789",
         "eventData": {
-          "firstName": "Joan Narcissus Ouroboros",
+          "firstNames": "Joan Narcissus Ouroboros",
           "lastName": "SMITH"
+          "sex": "Male",
+          "dateOfDeath": "2023-01-20"
         }
       },
       "links": {
@@ -144,8 +147,10 @@ class EventsController(
         "eventType": "DEATH_NOTIFICATION",
         "sourceId": "123456789",
         "eventData": {
-          "firstName": "Joan Narcissus Ouroboros",
-          "lastName": "SMITH"
+          "firstNames": "Joan Narcissus Ouroboros",
+          "lastName": "SMITH",
+          "sex": "Male",
+          "dateOfDeath": "2023-01-20"
         }
       },
       "links": {
@@ -298,8 +303,10 @@ class EventsController(
       "eventType": "DEATH_NOTIFICATION",
       "sourceId": "123456789",
       "eventData": {
-        "firstName": "Joan Narcissus Ouroboros",
-        "lastName": "SMITH"
+        "firstNames": "Joan Narcissus Ouroboros",
+        "lastName": "SMITH",
+        "sex": "Male",
+        "dateOfDeath": "2023-01-20"
       }
     }
   },

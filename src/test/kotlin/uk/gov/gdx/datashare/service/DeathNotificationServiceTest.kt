@@ -54,18 +54,18 @@ class DeathNotificationServiceTest {
 
     every { levApiService.findDeathById(dataId.toInt()) }.returns(listOf(deathRecord))
 
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, datasetId, enrichmentFields)
+    val enrichedPayload = underTest.getEnrichedPayload(dataId, datasetId, enrichmentFields)!!
 
-    assertThat(enrichedPayload?.firstNames).isEqualTo(deathRecord.deceased.forenames)
-    assertThat(enrichedPayload?.lastName).isEqualTo(deathRecord.deceased.surname)
-    assertThat(enrichedPayload?.dateOfBirth).isEqualTo(deathRecord.deceased.dateOfBirth)
-    assertThat(enrichedPayload?.dateOfDeath).isEqualTo(deathRecord.deceased.dateOfDeath)
-    assertThat(enrichedPayload?.address).isEqualTo(deathRecord.deceased.address)
-    assertThat(enrichedPayload?.registrationDate).isEqualTo(deathRecord.date)
-    assertThat(enrichedPayload?.birthPlace).isEqualTo(deathRecord.deceased.birthplace)
-    assertThat(enrichedPayload?.deathPlace).isEqualTo(deathRecord.deceased.deathplace)
-    assertThat(enrichedPayload?.maidenName).isEqualTo(deathRecord.deceased.maidenSurname)
-    assertThat(enrichedPayload?.retired).isEqualTo(deathRecord.deceased.retired)
+    assertThat(enrichedPayload.firstNames).isEqualTo(deathRecord.deceased.forenames)
+    assertThat(enrichedPayload.lastName).isEqualTo(deathRecord.deceased.surname)
+    assertThat(enrichedPayload.dateOfBirth).isEqualTo(deathRecord.deceased.dateOfBirth)
+    assertThat(enrichedPayload.dateOfDeath).isEqualTo(deathRecord.deceased.dateOfDeath)
+    assertThat(enrichedPayload.address).isEqualTo(deathRecord.deceased.address)
+    assertThat(enrichedPayload.registrationDate).isEqualTo(deathRecord.date)
+    assertThat(enrichedPayload.birthPlace).isEqualTo(deathRecord.deceased.birthplace)
+    assertThat(enrichedPayload.deathPlace).isEqualTo(deathRecord.deceased.deathplace)
+    assertThat(enrichedPayload.maidenName).isEqualTo(deathRecord.deceased.maidenSurname)
+    assertThat(enrichedPayload.retired).isEqualTo(deathRecord.deceased.retired)
   }
 
   @Test
@@ -93,19 +93,19 @@ class DeathNotificationServiceTest {
 
     every { levApiService.findDeathById(dataId.toInt()) }.returns(listOf(deathRecord))
 
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, datasetId, enrichmentFields)
+    val enrichedPayload = underTest.getEnrichedPayload(dataId, datasetId, enrichmentFields)!!
 
-    assertThat(enrichedPayload?.firstNames).isEqualTo(deathRecord.deceased.forenames)
-    assertThat(enrichedPayload?.lastName).isNull()
-    assertThat(enrichedPayload?.dateOfBirth).isNull()
-    assertThat(enrichedPayload?.dateOfDeath).isEqualTo(deathRecord.deceased.dateOfDeath)
-    assertThat(enrichedPayload?.address).isEqualTo(deathRecord.deceased.address)
-    assertThat(enrichedPayload?.sex).isNull()
-    assertThat(enrichedPayload?.registrationDate).isNull()
-    assertThat(enrichedPayload?.birthPlace).isNull()
-    assertThat(enrichedPayload?.deathPlace).isNull()
-    assertThat(enrichedPayload?.maidenName).isNull()
-    assertThat(enrichedPayload?.retired).isEqualTo(deathRecord.deceased.retired)
+    assertThat(enrichedPayload.firstNames).isEqualTo(deathRecord.deceased.forenames)
+    assertThat(enrichedPayload.lastName).isNull()
+    assertThat(enrichedPayload.dateOfBirth).isNull()
+    assertThat(enrichedPayload.dateOfDeath).isEqualTo(deathRecord.deceased.dateOfDeath)
+    assertThat(enrichedPayload.address).isEqualTo(deathRecord.deceased.address)
+    assertThat(enrichedPayload.sex).isNull()
+    assertThat(enrichedPayload.registrationDate).isNull()
+    assertThat(enrichedPayload.birthPlace).isNull()
+    assertThat(enrichedPayload.deathPlace).isNull()
+    assertThat(enrichedPayload.maidenName).isNull()
+    assertThat(enrichedPayload.retired).isEqualTo(deathRecord.deceased.retired)
   }
 
   @Test

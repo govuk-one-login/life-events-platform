@@ -126,7 +126,6 @@ class EventsControllerTest {
       eventType = EventType.DEATH_NOTIFICATION,
       eventTime = LocalDateTime.now(),
       id = "123456789",
-      eventDetails = "{\"firstName\":\"Bob\"}",
     )
 
     every { dataReceiverService.sendToDataProcessor(any()) }.returns(Unit)

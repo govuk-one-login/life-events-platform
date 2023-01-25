@@ -78,5 +78,5 @@ data class DataProcessorMessage(
   val eventTime: LocalDateTime,
   val publisher: String,
   val subscriptionId: UUID,
-  val id: String?,
+  val id: String,
 )

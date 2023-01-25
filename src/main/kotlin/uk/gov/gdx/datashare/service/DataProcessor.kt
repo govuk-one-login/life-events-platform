@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.repository.*
-import java.util.*
 
 @Service
 class DataProcessor(
@@ -23,14 +22,12 @@ class DataProcessor(
     val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
     log.info("Received event [{}] from [{}]", dataProcessorMessage.eventType, dataProcessorMessage.publisher)
 
-    val dataId = dataProcessorMessage.id ?: UUID.randomUUID().toString()
-
     val consumerSubscriptions = consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType)
 
     val eventData = consumerSubscriptions.map {
       EventData(
         consumerSubscriptionId = it.id,
-        dataId = dataId,
+        dataId = dataProcessorMessage.id,
         eventTime = dataProcessorMessage.eventTime,
       )
     }.toList()

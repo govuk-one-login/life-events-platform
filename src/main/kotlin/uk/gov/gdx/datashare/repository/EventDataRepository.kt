@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.repository
 
+import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
@@ -8,12 +9,12 @@ import java.util.*
 
 @Repository
 interface EventDataRepository : CrudRepository<EventData, UUID> {
-
   @Query(
     "SELECT ed.* FROM event_data ed " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
       "AND ed.consumer_subscription_id = :consumerSubscriptionId " +
+      "AND ed.deleted_at is null " +
       "ORDER BY ed.when_created",
   )
   fun findAllByConsumerSubscription(
@@ -27,6 +28,7 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
       "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
+      "AND ed.deleted_at is null " +
       "ORDER BY ed.when_created " +
       "LIMIT :pageSize " +
       "OFFSET :offset",
@@ -43,7 +45,8 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
     "SELECT COUNT(ed.*) FROM event_data ed " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
-      "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds)",
+      "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
+      "AND ed.deleted_at is null",
   )
   fun countByConsumerSubscriptions(
     consumerSubscriptionIds: List<UUID>,
@@ -55,15 +58,21 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
     "SELECT ed.* FROM event_data ed " +
       "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
       "AND cs.oauth_client_id = :clientId " +
-      "WHERE ed.id = :id",
+      "WHERE ed.id = :id " +
+      "AND ed.deleted_at is null",
   )
   fun findByClientIdAndId(clientId: String, id: UUID): EventData?
 
-  @Query(
-    "SELECT ed.* FROM event_data ed " +
-      "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
-      "JOIN consumer c ON cs.consumer_id = c.id " +
-      "AND c.name = :name",
-  )
-  fun findAllByConsumerName(name: String): List<EventData>
+  @Override
+  override fun findById(id: UUID): Optional<EventData> = findByBaseIdAndDeletedAtIsNull(id)
+  fun findByBaseIdAndDeletedAtIsNull(id: UUID): Optional<EventData>
+
+  @Override
+  override fun findAll(): List<EventData> = findAllByDeletedAtIsNull()
+  fun findAllByDeletedAtIsNull(): List<EventData>
+
+
+  @Query("UPDATE event_data SET deleted_at=now() WHERE id = :id")
+  @Modifying
+  fun softDeleteById(id: UUID)
 }

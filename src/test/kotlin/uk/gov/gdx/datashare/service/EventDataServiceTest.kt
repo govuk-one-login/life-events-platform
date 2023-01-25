@@ -390,12 +390,12 @@ class EventDataServiceTest {
       deathNotificationSubscription,
     )
 
-    every { eventDataRepository.delete(event) }.returns(Unit)
+    every { eventDataRepository.softDeleteById(event.id) }.returns(Unit)
     every { dateTimeHandler.now() }.returns(LocalDateTime.now())
 
     underTest.deleteEvent(event.id)
 
-    verify(exactly = 1) { eventDataRepository.delete(event) }
+    verify(exactly = 1) { eventDataRepository.softDeleteById(event.id) }
     verify(exactly = 1) { eventDeletedCounter.increment() }
   }
 
@@ -410,7 +410,7 @@ class EventDataServiceTest {
 
     assertThat(exception.message).isEqualTo("Event $eventId not found for callback client $clientId")
 
-    verify(exactly = 0) { eventDataRepository.deleteById(any()) }
+    verify(exactly = 0) { eventDataRepository.softDeleteById(any()) }
     verify(exactly = 0) { eventDeletedCounter.increment() }
   }
 

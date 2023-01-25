@@ -28,8 +28,10 @@ data class EventData(
   @Value("false")
   val new: Boolean = true,
 
-) : Persistable<UUID> {
+  @Schema(description = "When event deleted", required = false)
+  val deletedAt: LocalDateTime? = null,
 
+  ) : Persistable<UUID> {
   override fun getId() = eventId
 
   override fun isNew(): Boolean = new

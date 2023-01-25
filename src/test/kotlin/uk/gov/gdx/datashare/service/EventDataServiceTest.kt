@@ -198,18 +198,27 @@ class EventDataServiceTest {
     every { consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes) }
       .returns(listOf(deathNotificationSubscription))
     every {
-      eventDataRepository.findAllByConsumerSubscriptions(
+      eventDataRepository.findPageByConsumerSubscriptions(
+        listOf(deathNotificationSubscription.id),
+        startTime,
+        endTime,
+        10,
+        0,
+      )
+    }.returns(deathEvents)
+    every {
+      eventDataRepository.countByConsumerSubscriptions(
         listOf(deathNotificationSubscription.id),
         startTime,
         endTime,
       )
-    }.returns(deathEvents)
+    }.returns(deathEvents.count())
     val dataPayload = deathEvents.toList()[0].dataPayload!!
     every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
 
-    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
+    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
-    assertThat(eventsOutput).isEqualTo(
+    assertThat(eventsOutput.eventModels).isEqualTo(
       deathEvents.map {
         EventNotification(
           eventId = it.id,
@@ -221,6 +230,55 @@ class EventDataServiceTest {
         )
       }.toList(),
     )
+    assertThat(eventsOutput.count).isEqualTo(deathEvents.count())
+  }
+
+  @Test
+  fun `getEvents returns the full count when paginated`() {
+    val eventTypes = listOf("DEATH_NOTIFICATION")
+    val startTime = LocalDateTime.now().minusHours(1)
+    val endTime = LocalDateTime.now().plusHours(1)
+    val deathNotificationDetails = DeathNotificationDetails(
+      firstName = "Alice",
+      lastName = "Smith",
+      address = deathNotificationSubscription.id.toString(),
+    )
+    val totalEventCount = 156
+
+    every { consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes) }
+      .returns(listOf(deathNotificationSubscription))
+    every {
+      eventDataRepository.findPageByConsumerSubscriptions(
+        listOf(deathNotificationSubscription.id),
+        startTime,
+        endTime,
+        10,
+        0,
+      )
+    }.returns(deathEvents)
+    every {
+      eventDataRepository.countByConsumerSubscriptions(
+        listOf(deathNotificationSubscription.id),
+        startTime,
+        endTime,
+      )
+    }.returns(totalEventCount)
+    val dataPayload = deathEvents.toList()[0].dataPayload!!
+    every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
+
+    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
+
+    assertThat(eventsOutput.eventModels).isEqualTo(
+      deathEvents.map {
+        EventNotification(
+          eventId = it.id,
+          eventType = "DEATH_NOTIFICATION",
+          sourceId = it.dataId,
+          eventData = deathNotificationDetails,
+        )
+      }.toList(),
+    )
+    assertThat(eventsOutput.count).isEqualTo(totalEventCount)
   }
 
   @Test
@@ -232,16 +290,25 @@ class EventDataServiceTest {
     every { consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes) }
       .returns(listOf(thinDeathNotificationSubscription))
     every {
-      eventDataRepository.findAllByConsumerSubscriptions(
+      eventDataRepository.findPageByConsumerSubscriptions(
+        listOf(thinDeathNotificationSubscription.id),
+        startTime,
+        endTime,
+        10,
+        0,
+      )
+    }.returns(thinDeathEvents)
+    every {
+      eventDataRepository.countByConsumerSubscriptions(
         listOf(thinDeathNotificationSubscription.id),
         startTime,
         endTime,
       )
-    }.returns(thinDeathEvents)
+    }.returns(thinDeathEvents.count())
 
-    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime).toList()
+    val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
-    assertThat(eventsOutput).isEqualTo(
+    assertThat(eventsOutput.eventModels).isEqualTo(
       thinDeathEvents.map {
         EventNotification(
           eventId = it.id,
@@ -253,6 +320,7 @@ class EventDataServiceTest {
         )
       }.toList(),
     )
+    assertThat(eventsOutput.count).isEqualTo(thinDeathEvents.count())
   }
 
   @Test
@@ -272,18 +340,27 @@ class EventDataServiceTest {
     every { consumerSubscriptionRepository.findAllByClientId(clientId) }
       .returns(listOf(deathNotificationSubscription))
     every {
-      eventDataRepository.findAllByConsumerSubscriptions(
+      eventDataRepository.findPageByConsumerSubscriptions(
+        listOf(deathNotificationSubscription.id),
+        fallbackStartTime,
+        fallbackEndTime,
+        10,
+        0,
+      )
+    }.returns(extraDeathEvents)
+    every {
+      eventDataRepository.countByConsumerSubscriptions(
         listOf(deathNotificationSubscription.id),
         fallbackStartTime,
         fallbackEndTime,
       )
-    }.returns(extraDeathEvents)
+    }.returns(extraDeathEvents.count())
     val dataPayload = extraDeathEvents.toList()[0].dataPayload!!
     every { deathNotificationService.mapDeathNotification(dataPayload) }.returns(deathNotificationDetails)
 
-    val eventStatusOutput = underTest.getEvents(null, null, null).toList()
+    val eventStatusOutput = underTest.getEvents(null, null, null, 0, 10)
 
-    assertThat(eventStatusOutput).isEqualTo(
+    assertThat(eventStatusOutput.eventModels).isEqualTo(
       extraDeathEvents.map {
         EventNotification(
           eventId = it.id,
@@ -295,6 +372,7 @@ class EventDataServiceTest {
         )
       }.toList(),
     )
+    assertThat(eventStatusOutput.count).isEqualTo(extraDeathEvents.count())
   }
 
   @Test

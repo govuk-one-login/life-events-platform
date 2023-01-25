@@ -1,6 +1,8 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.toedter.spring.hateoas.jsonapi.JsonApiId
+import com.toedter.spring.hateoas.jsonapi.JsonApiTypeForClass
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.media.Schema
 import org.slf4j.Logger
@@ -68,7 +70,9 @@ class EventDataService(
     eventTypes: List<String>?,
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?,
-  ): List<EventNotification> {
+    pageNumber: Int,
+    pageSize: Int,
+  ): Events {
     val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
     val endTime = optionalEndTime ?: dateTimeHandler.now()
     val clientId = authenticationFacade.getUsername()
@@ -78,21 +82,31 @@ class EventDataService(
     } ?: consumerSubscriptionRepository.findAllByClientId(clientId)
 
     if (consumerSubscriptions.isEmpty()) {
-      return emptyList()
+      return Events(0, emptyList())
     }
 
     val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({ it.id }, { it })
 
-    val events = eventDataRepository.findAllByConsumerSubscriptions(
+    val events = eventDataRepository.findPageByConsumerSubscriptions(
+      consumerSubscriptionIdMap.keys.toList(),
+      startTime,
+      endTime,
+      pageSize,
+      (pageSize * pageNumber),
+    )
+
+    val eventModels = events.map { event ->
+      val subscription = consumerSubscriptionIdMap[event.consumerSubscriptionId]!!
+      mapEventNotification(event, subscription, subscription.enrichmentFieldsIncludedInPoll)
+    }
+
+    val eventsCount = eventDataRepository.countByConsumerSubscriptions(
       consumerSubscriptionIdMap.keys.toList(),
       startTime,
       endTime,
     )
 
-    return events.map { event ->
-      val subscription = consumerSubscriptionIdMap[event.consumerSubscriptionId]!!
-      mapEventNotification(event, subscription, subscription.enrichmentFieldsIncludedInPoll)
-    }
+    return Events(eventsCount, eventModels)
   }
 
   fun deleteEvent(id: UUID): EventNotification {
@@ -140,8 +154,10 @@ class EventDataService(
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Subscribed event notification")
+@JsonApiTypeForClass("events")
 data class EventNotification(
   @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
+  @JsonApiId
   val eventId: UUID,
   @Schema(
     description = "Event's Type",
@@ -206,3 +222,5 @@ data class EventStatus(
   @Schema(description = "Number of events for the type", required = true, example = "123")
   val count: Number,
 )
+
+data class Events(val count: Int, val eventModels: List<EventNotification>)

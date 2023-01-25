@@ -49,7 +49,7 @@ data class DeathRecord(
 )
 
 data class Deceased(
-  val forenames: String,
+  val forenames: String? = null,
   val surname: String,
   val dateOfDeath: LocalDate,
   val sex: Sex,

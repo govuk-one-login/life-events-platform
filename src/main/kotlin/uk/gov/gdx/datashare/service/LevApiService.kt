@@ -42,24 +42,26 @@ class LevApiService(
 }
 
 data class DeathRecord(
-  val id: String?,
-  val date: LocalDate?,
-  val deceased: Deceased?,
-  val partner: Partner?,
-)
-
-data class Partner(
-  val name: String?,
-  val occupation: String?,
-  val retired: String?,
+  val id: String,
+  val date: LocalDate,
+  val deceased: Deceased,
+  val status: DeathRecordStatus? = null,
 )
 
 data class Deceased(
-  val forenames: String?,
-  val surname: String?,
-  val dateOfBirth: LocalDate?,
-  val dateOfDeath: LocalDate?,
-  val dateOfDeathQualifier: String?,
-  val sex: String?,
-  val address: String?,
+  val forenames: String,
+  val surname: String,
+  val dateOfDeath: LocalDate,
+  val sex: String,
+  val maidenSurname: String? = null,
+  val birthplace: String? = null,
+  val dateOfBirth: LocalDate? = null,
+  val deathplace: String? = null,
+  val occupation: String? = null,
+  val retired: Boolean? = null,
+  val address: String? = null,
+)
+
+data class DeathRecordStatus(
+  val blocked: Boolean? = null,
 )

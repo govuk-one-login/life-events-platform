@@ -39,7 +39,7 @@ data class ConsumerSubscription(
   @Schema(
     description = "CSV List of required fields to which enrich the event",
     required = true,
-    example = "firstName,lastName,dateOfBirth",
+    example = "firstNames,lastName,dateOfBirth",
   )
   val enrichmentFields: String,
   val whenCreated: LocalDateTime = LocalDateTime.now(),

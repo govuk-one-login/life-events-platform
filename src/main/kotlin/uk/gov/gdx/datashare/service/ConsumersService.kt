@@ -87,7 +87,7 @@ data class ConsumerSubRequest(
   @Schema(
     description = "CSV List of required fields to enrich the event with",
     required = true,
-    example = "firstName,lastName",
+    example = "firstNames,lastName",
   )
   val enrichmentFields: String,
   @Schema(

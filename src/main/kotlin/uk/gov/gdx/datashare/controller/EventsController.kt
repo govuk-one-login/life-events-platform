@@ -81,9 +81,28 @@ class EventsController(
     operationId = "getEvents",
     summary = "Event Get API - Get event data",
     description = "Get all events for consumer, Need scope of events/consume. " +
-      "Full data is only returned when the consumer has `enrichmentFieldsIncludedInPoll` enabled. " +
-      "When this flag is not enabled, the eventData will be an empty object. " +
-      "Full dataset for the event can be obtained by calling `/events/{id}`",
+      "     This field is only populated when the consumer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +
+      "     Full dataset for the event can be obtained by calling <pre>/events/{id}</pre>" +
+      "     <h3>Event Types</h3>" +
+      "     <h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +
+      "     <p>Death notifications take the following json structure." +
+      "     <pre>\n" +
+      "{\n" +
+      "        \"registrationDate\": \"2023-01-23\",\n" +
+      "        \"firstNames\": \"Mary Jane\",\n" +
+      "        \"lastName\": \"Smith\",\n" +
+      "        \"maidenName\": \"Jones\",\n" +
+      "        \"sex\": \"Male\",\n" +
+      "        \"dateOfDeath\": \"2023-01-02\",\n" +
+      "        \"dateOfBirth\": \"1972-02-20\",\n" +
+      "        \"birthPlace\": \"56 Test Address, B Town\",\n" +
+      "        \"deathPlace\": \"Hospital Ward 5, C Town\",\n" +
+      "        \"occupation\": \"Doctor\",\n" +
+      "        \"retired\": true,\n" +
+      "        \"address\": \"101 Address Street, A Town, Postcode\"\n" +
+      "}\n" +
+      "      </pre>" +
+      "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -309,7 +328,7 @@ class EventsController(
   ): EntityModel<EventNotification>? = run {
     tryCallAndUpdateMetric(
       {
-        eventDataService.getEvent(id)?.let {
+        eventDataService.getEvent(id).let {
           eventApiAuditService.auditEventApiCall(it)
           EntityModel.of(
             it,
@@ -367,7 +386,7 @@ class EventsController(
   }
 
   private fun eventLink(id: UUID): WebMvcLinkBuilder =
-    linkTo(methodOn(EventsController::class.java).getEvent(id))
+    linkTo(methodOn(EventsController::class.java).getEvent(id) as Any)
 
   private fun eventsLink(
     eventTypes: List<String>? = null,

@@ -11,6 +11,11 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.service.*
+import uk.gov.gdx.datashare.service.DataReceiverService
+import uk.gov.gdx.datashare.service.DeathNotificationDetails
+import uk.gov.gdx.datashare.service.EventDataService
+import uk.gov.gdx.datashare.service.EventNotification
+import uk.gov.gdx.datashare.service.EventStatus
 import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Stream
@@ -82,16 +87,20 @@ class EventsControllerTest {
         eventId = UUID.randomUUID(),
         eventType = "DEATH_NOTIFICATION",
         sourceId = UUID.randomUUID().toString(),
+        dataIncluded = true,
+        enrichmentFields = "firstNames",
         eventData = DeathNotificationDetails(
-          firstName = "Bob",
+          firstNames = "Bob",
         ),
       ),
       EventNotification(
         eventId = UUID.randomUUID(),
         eventType = "DEATH_NOTIFICATION",
         sourceId = UUID.randomUUID().toString(),
+        dataIncluded = true,
+        enrichmentFields = "firstNames,lastName",
         eventData = DeathNotificationDetails(
-          firstName = "Bob",
+          firstNames = "Bob",
           lastName = "Smith",
         ),
       ),
@@ -133,7 +142,7 @@ class EventsControllerTest {
       eventType = "DEATH_NOTIFICATION",
       sourceId = UUID.randomUUID().toString(),
       eventData = DeathNotificationDetails(
-        firstName = "Bob",
+        firstNames = "Bob",
       ),
     )
 
@@ -188,7 +197,7 @@ class EventsControllerTest {
         eventType = "DEATH_NOTIFICATION",
         sourceId = "a5383689-1192-4078-a4a6-a611b0a34c6e",
         eventData = DeathNotificationDetails(
-          firstName = "Bob",
+          firstNames = "Bob",
         ),
       ),
       EventNotification(
@@ -196,7 +205,7 @@ class EventsControllerTest {
         eventType = "DEATH_NOTIFICATION",
         sourceId = "ec39aa80-2fa2-4d46-9211-c66fc94024d3",
         eventData = DeathNotificationDetails(
-          firstName = "Bob",
+          firstNames = "Bob",
           lastName = "Smith",
         ),
       ),

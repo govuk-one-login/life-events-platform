@@ -14,7 +14,7 @@ data class EventType(
   @Column("id")
   val eventTypeId: String,
   val description: String,
-  @Schema(description = "CSV List of fields that can be enriched", required = true, example = "firstName,lastName")
+  @Schema(description = "CSV List of fields that can be enriched", required = true, example = "firstNames,lastName")
   val fields: String,
   val active: Boolean = true,
   val whenCreated: LocalDateTime = LocalDateTime.now(),

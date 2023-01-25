@@ -140,7 +140,7 @@ class EventDataServiceTest {
   fun `getEvent gets Event for client`() {
     val event = deathEvents.first()
     val deathNotificationDetails = DeathNotificationDetails(
-      firstName = "Alice",
+      firstNames = "Alice",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),
     )
@@ -190,7 +190,7 @@ class EventDataServiceTest {
     val startTime = LocalDateTime.now().minusHours(1)
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
-      firstName = "Alice",
+      firstNames = "Alice",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),
     )
@@ -224,6 +224,8 @@ class EventDataServiceTest {
           eventId = it.id,
           eventType = "DEATH_NOTIFICATION",
           sourceId = it.dataId,
+          dataIncluded = true,
+          enrichmentFields = "a,b,c",
           eventData = deathNotificationDetails,
         )
       }.toList(),
@@ -237,7 +239,7 @@ class EventDataServiceTest {
     val startTime = LocalDateTime.now().minusHours(1)
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
-      firstName = "Alice",
+      firstNames = "Alice",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),
     )
@@ -272,6 +274,8 @@ class EventDataServiceTest {
           eventId = it.id,
           eventType = "DEATH_NOTIFICATION",
           sourceId = it.dataId,
+          dataIncluded = true,
+          enrichmentFields = "a,b,c",
           eventData = deathNotificationDetails,
         )
       }.toList(),
@@ -312,6 +316,8 @@ class EventDataServiceTest {
           eventId = it.id,
           eventType = "DEATH_NOTIFICATION",
           sourceId = it.dataId,
+          dataIncluded = false,
+          enrichmentFields = "a,b,c",
           eventData = null,
         )
       }.toList(),
@@ -328,7 +334,7 @@ class EventDataServiceTest {
     every { dateTimeHandler.now() }.returns(fallbackEndTime)
 
     val deathNotificationDetails = DeathNotificationDetails(
-      firstName = "Bob",
+      firstNames = "Bob",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),
     )
@@ -362,6 +368,8 @@ class EventDataServiceTest {
           eventId = it.id,
           eventType = "DEATH_NOTIFICATION",
           sourceId = it.dataId,
+          dataIncluded = true,
+          enrichmentFields = "a,b,c",
           eventData = deathNotificationDetails,
         )
       }.toList(),

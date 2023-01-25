@@ -48,7 +48,11 @@ class EventApiAuditServiceTest {
       eventType = "DEATH_NOTIFICATION",
       sourceId = "123456788",
       eventData = DeathNotificationDetails(
-        firstName = "Alice",
+        firstNames = "Alice",
+        lastName = "Smith",
+        sex = "Female",
+        dateOfDeath = LocalDate.of(2023, 1, 2),
+        registrationDate = LocalDate.of(2023, 1, 2),
       ),
     )
     val hashedEventData1 = objectMapper.writeValueAsString(eventNotification1.eventData).sha256()
@@ -57,9 +61,11 @@ class EventApiAuditServiceTest {
       eventType = "DEATH_NOTIFICATION",
       sourceId = "123456789",
       eventData = DeathNotificationDetails(
-        firstName = "Bob",
+        firstNames = "Bob",
         lastName = "Smith",
         dateOfDeath = LocalDate.of(2020, 1, 1),
+        sex = "Male",
+        registrationDate = LocalDate.of(2023, 1, 2),
       ),
     )
     val hashedEventData2 = objectMapper.writeValueAsString(eventNotification2.eventData).sha256()

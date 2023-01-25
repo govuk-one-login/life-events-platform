@@ -43,7 +43,11 @@ def lambda_handler(event, _context):
 
 def get_event(auth_token: str, event_id: str):
     event_request = request.Request(f"{events_url}/{event_id}", headers={"Authorization": "Bearer " + auth_token})
+    start = time.time()
     response: HTTPResponse = request.urlopen(event_request)
+    stop = time.time()
+    delta = stop - start
+    record_metric(cloudwatch, cloudwatch_namespace, "GET_EVENT.Duration", delta, unit="Seconds")
     return json.loads(response.read())
 
 
@@ -52,11 +56,7 @@ def get_lev_record(record_id: str):
         f"{lev_api_url}/v1/registration/death/{record_id}",
         headers={"X-Auth-Aud": "gdx-data-share", "X-Auth-Username": "gdx-data-share-user"}
     )
-    start = time.time()
     response: HTTPResponse = request.urlopen(record_request)
-    stop = time.time()
-    delta = stop - start
-    record_metric(cloudwatch, cloudwatch_namespace, "GET_EVENT.Duration", delta, unit="Seconds")
     return json.loads(response.read())
 
 

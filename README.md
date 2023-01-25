@@ -2,7 +2,7 @@
 
 ## API Contracts
 
-API documentation can be found [here](https://d33v84mi0vopmk.cloudfront.net/webjars/swagger-ui/index.html)
+API documentation can be found [here](https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html)
 
 ## Running the service
 

@@ -15,9 +15,16 @@ abstract class TestBase {
     @DynamicPropertySource
     fun properties(registry: DynamicPropertyRegistry) {
       pgContainer?.run {
-        registry.add("spring.datasource.url", pgContainer::getJdbcUrl)
+        registry.add("spring.datasource.url") { datasourceUrl() }
         registry.add("spring.datasource.username", pgContainer::getUsername)
         registry.add("spring.datasource.password", pgContainer::getPassword)
+      }
+    }
+
+    private fun datasourceUrl(): String? {
+      return pgContainer?.jdbcUrl?.split(':')?.toMutableList()?.let {
+        it.add(1, "aws-wrapper")
+        it.joinToString(":")
       }
     }
   }

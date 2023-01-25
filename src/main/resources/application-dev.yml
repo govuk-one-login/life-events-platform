@@ -15,12 +15,9 @@ metrics:
   cloudwatch:
     namespace: "local-gdx"
 
-db:
-  provider: local
-
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/datashare?sslmode=disable
+    url: jdbc:aws-wrapper:postgresql://localhost:5432/datashare?sslmode=disable
     username: datashare
     password: datashare
 

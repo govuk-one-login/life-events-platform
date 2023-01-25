@@ -64,14 +64,14 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
   fun findByClientIdAndId(clientId: String, id: UUID): EventData?
 
   @Override
-  override fun findById(id: UUID): Optional<EventData> = findByBaseIdAndDeletedAtIsNull(id)
-  fun findByBaseIdAndDeletedAtIsNull(id: UUID): Optional<EventData>
+  override fun findById(id: UUID): Optional<EventData> = findByEventIdAndDeletedAtIsNull(id)
+  fun findByEventIdAndDeletedAtIsNull(id: UUID): Optional<EventData>
 
   @Override
   override fun findAll(): List<EventData> = findAllByDeletedAtIsNull()
   fun findAllByDeletedAtIsNull(): List<EventData>
 
-  @Query("UPDATE event_data SET deleted_at=now() WHERE id = :id")
+  @Query("UPDATE event_data SET deleted_at=:deletionTime WHERE id = :id")
   @Modifying
-  fun softDeleteById(id: UUID)
+  fun softDeleteById(id: UUID, deletionTime: LocalDateTime)
 }

@@ -385,17 +385,18 @@ class EventDataServiceTest {
       dataId = "HMPO",
       dataPayload = null,
     )
+    val now = LocalDateTime.now()
     every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
     every { consumerSubscriptionRepository.findByEventId(event.id) }.returns(
       deathNotificationSubscription,
     )
+    every { dateTimeHandler.now() }.returns(now)
 
-    every { eventDataRepository.softDeleteById(event.id) }.returns(Unit)
-    every { dateTimeHandler.now() }.returns(LocalDateTime.now())
+    every { eventDataRepository.softDeleteById(event.id, now) }.returns(Unit)
 
     underTest.deleteEvent(event.id)
 
-    verify(exactly = 1) { eventDataRepository.softDeleteById(event.id) }
+    verify(exactly = 1) { eventDataRepository.softDeleteById(event.id, now) }
     verify(exactly = 1) { eventDeletedCounter.increment() }
   }
 
@@ -410,7 +411,7 @@ class EventDataServiceTest {
 
     assertThat(exception.message).isEqualTo("Event $eventId not found for callback client $clientId")
 
-    verify(exactly = 0) { eventDataRepository.softDeleteById(any()) }
+    verify(exactly = 0) { eventDataRepository.softDeleteById(any(), any()) }
     verify(exactly = 0) { eventDeletedCounter.increment() }
   }
 

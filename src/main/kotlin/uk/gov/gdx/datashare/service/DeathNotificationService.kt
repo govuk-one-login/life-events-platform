@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.media.Schema
 import org.slf4j.Logger
@@ -116,8 +117,8 @@ data class DeathNotificationDetails(
   @Schema(description = "Surname of the deceased", required = true, example = "Smith")
   val lastName: String? = null,
 
-  @Schema(description = "Sex of the deceased", required = true, example = "Female", allowableValues = [ "Male", "Female", "Indeterminate"])
-  val sex: String? = null,
+  @Schema(description = "Sex of the deceased", required = true, example = "Female")
+  val sex: Gender? = null,
 
   @Schema(description = "Date the person died", required = true, example = "2021-12-31", type = "date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -145,3 +146,9 @@ data class DeathNotificationDetails(
   @Schema(description = "Whether the deceased was retired", required = false, example = "false")
   val retired: Boolean? = null,
 )
+
+enum class Gender(@JsonValue val jsonName: String) {
+  MALE("Male"),
+  FEMALE("Female"),
+  INDETERMINATE("Indeterminate"),
+}

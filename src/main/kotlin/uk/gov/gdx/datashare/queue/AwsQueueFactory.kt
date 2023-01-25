@@ -2,7 +2,6 @@ package uk.gov.gdx.datashare.queue
 
 import com.amazon.sqs.javamessaging.ProviderConfiguration
 import com.amazon.sqs.javamessaging.SQSConnectionFactory
-import com.amazonaws.services.sns.model.SubscribeRequest
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.CreateQueueRequest
 import com.amazonaws.services.sqs.model.QueueAttributeName
@@ -21,12 +20,11 @@ class AwsQueueFactory(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun createAwsQueues(sqsProperties: SqsProperties, awsTopics: List<AwsTopic> = listOf()) =
+  fun createAwsQueues(sqsProperties: SqsProperties) =
     sqsProperties.queues
       .map { (queueId, queueConfig) ->
         val sqsDlqClient = getOrDefaultSqsDlqClient(queueId, queueConfig, sqsProperties)
         val sqsClient = getOrDefaultSqsClient(queueId, queueConfig, sqsProperties, sqsDlqClient)
-          .also { subscribeToLocalStackTopic(sqsProperties, queueConfig, awsTopics) }
         AwsQueue(queueId, sqsClient, queueConfig.queueName, sqsDlqClient, queueConfig.dlqName.ifEmpty { null })
           .also { getOrDefaultHealthIndicator(it) }
           .also { createJmsListenerContainerFactory(it, sqsProperties) }
@@ -109,23 +107,6 @@ class AwsQueueFactory(
               ),
             ),
           )
-        }
-    }
-  }
-
-  private fun subscribeToLocalStackTopic(sqsProperties: SqsProperties, queueConfig: SqsProperties.QueueConfig, awsTopics: List<AwsTopic>) {
-    if (sqsProperties.provider == "localstack") {
-      awsTopics.firstOrNull { topic -> topic.id == queueConfig.subscribeTopicId }
-        ?.also { topic ->
-          val subscribeAttribute = if (queueConfig.subscribeFilter.isNullOrEmpty()) mapOf() else mapOf("FilterPolicy" to queueConfig.subscribeFilter)
-          topic.snsClient.subscribe(
-            SubscribeRequest()
-              .withTopicArn(topic.arn)
-              .withProtocol("sqs")
-              .withEndpoint("${sqsProperties.localstackUrl}/queue/${queueConfig.queueName}")
-              .withAttributes(subscribeAttribute),
-          )
-            .also { log.info("Queue ${queueConfig.queueName} has subscribed to topic with arn ${topic.arn}") }
         }
     }
   }

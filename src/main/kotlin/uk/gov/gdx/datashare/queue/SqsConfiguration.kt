@@ -19,22 +19,16 @@ class SqsConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  fun awsTopicFactory(applicationContext: ConfigurableApplicationContext) =
-    AwsTopicFactory(applicationContext, AmazonSnsFactory())
-
-  @Bean
-  @ConditionalOnMissingBean
   fun awsQueueFactory(applicationContext: ConfigurableApplicationContext) =
     AwsQueueFactory(applicationContext, AmazonSqsFactory())
 
   @Bean
   @ConditionalOnMissingBean
   fun awsQueueService(
-    awsTopicFactory: AwsTopicFactory,
     awsQueueFactory: AwsQueueFactory,
     sqsProperties: SqsProperties,
     objectMapper: ObjectMapper,
-  ) = AwsQueueService(awsTopicFactory, awsQueueFactory, sqsProperties, objectMapper)
+  ) = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
 
   @Bean
   @ConditionalOnMissingBean

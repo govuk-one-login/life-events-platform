@@ -158,11 +158,11 @@ class EventsController(
     }
   ],
   "links": {
-    "self": "http://localhost:8080/events?page[number]=1&page[size]=2",
-    "first": "http://localhost:8080/events?page[size]=2&page[number]=0",
-    "prev": "http://localhost:8080/events?page[size]=2&page[number]=0",
-    "next": "http://localhost:8080/events?page[size]=2&page[number]=2",
-    "last": "http://localhost:8080/events?page[size]=2&page[number]=5"
+    "self": "http://localhost:8080/events?page%5Bnumber%5D=1&page%5Bsize%5D=2",
+    "first": "http://localhost:8080/events?page%5Bsize%5D=2&page%5Bnumber%5D=0",
+    "prev": "http://localhost:8080/events?page%5Bsize%5D=2&page%5Bnumber%5D=0",
+    "next": "http://localhost:8080/events?page%5Bsize%5D=2&page%5Bnumber%5D=2",
+    "last": "http://localhost:8080/events?page%5Bsize%5D=2&page%5Bnumber%5D=5"
   },
   "meta": {
     "page": {
@@ -238,13 +238,13 @@ class EventsController(
   ): PagedModel<EntityModel<EventNotification>> {
     val events = eventDataService.getEvents(eventTypes, startTime, endTime, pageNumber, pageSize)
     eventApiAuditService.auditEventApiCall(events.eventModels)
-    val linkBuilder = eventsLink(eventTypes, startTime, endTime, pageNumber, pageSize).toUriComponentsBuilder()
+    val linkBuilder = eventsLink(eventTypes, startTime, endTime, pageNumber, pageSize).toUriComponentsBuilder().scheme("https")
     val pageMetadata = PagedModel.PageMetadata(pageSize.toLong(), pageNumber.toLong(), events.count.toLong())
-    val selfLink = org.springframework.hateoas.Link.of(linkBuilder.build().toUriString(), "self")
+    val selfLink = org.springframework.hateoas.Link.of(linkBuilder.toUriString(), "self")
     val pageLinks = getPageLinks(pageMetadata, linkBuilder)
     val links = arrayListOf(selfLink) + pageLinks
     return PagedModel.of(
-      events.eventModels.map { EntityModel.of(it, eventLink(it.eventId).withSelfRel()) },
+      events.eventModels.map { EntityModel.of(it, eventLink(it.eventId)) },
       pageMetadata,
       links,
     )
@@ -309,7 +309,7 @@ class EventsController(
   },
   "links": {
     "self": "http://localhost:8080/events/a3e48cca-052f-4599-8ddc-e863de428f89",
-    "collection": "http://localhost:8080/events?page[number]=0&page[size]=10"
+    "collection": "http://localhost:8080/events?page%5Bnumber%5D=0&page%5Bsize%5D=10"
   }
 }
               """,
@@ -336,8 +336,8 @@ class EventsController(
           eventApiAuditService.auditEventApiCall(it)
           EntityModel.of(
             it,
-            eventLink(id).withSelfRel(),
-            org.springframework.hateoas.Link.of(eventsLink().toUriComponentsBuilder().build().toUriString(), "collection"),
+            eventLink(id),
+            org.springframework.hateoas.Link.of(eventsLink().toUriComponentsBuilder().scheme("https").toUriString(), "collection"),
           )
         }
       },
@@ -389,8 +389,11 @@ class EventsController(
     }
   }
 
-  private fun eventLink(id: UUID): WebMvcLinkBuilder =
-    linkTo(methodOn(EventsController::class.java).getEvent(id) as Any)
+  private fun eventLink(id: UUID): org.springframework.hateoas.Link =
+    org.springframework.hateoas.Link.of(
+      linkTo(methodOn(EventsController::class.java).getEvent(id) as Any).toUriComponentsBuilder().scheme("https").build().toUriString(),
+      "self",
+    )
 
   private fun eventsLink(
     eventTypes: List<String>? = null,

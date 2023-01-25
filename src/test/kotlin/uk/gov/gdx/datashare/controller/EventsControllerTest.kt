@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.gdx.datashare.config.EventNotFoundException
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.service.*
 import uk.gov.gdx.datashare.service.DataReceiverService
 import uk.gov.gdx.datashare.service.DeathNotificationDetails
@@ -61,11 +62,11 @@ class EventsControllerTest {
   fun `getEventsStatus gets events status`(startTime: LocalDateTime?, endTime: LocalDateTime?) {
     val eventStatuses = listOf(
       EventStatus(
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         count = 123,
       ),
       EventStatus(
-        eventType = "LIFE_EVENT",
+        eventType = EventType.LIFE_EVENT,
         count = 456,
       ),
     )
@@ -82,11 +83,11 @@ class EventsControllerTest {
   @ParameterizedTest
   @MethodSource("provideLocalDateTimes")
   fun `getEvents gets events`(startTime: LocalDateTime?, endTime: LocalDateTime?) {
-    val eventTypes = listOf("DEATH_NOTIFICATION")
+    val eventTypes = listOf(EventType.DEATH_NOTIFICATION)
     val events = listOf(
       EventNotification(
         eventId = UUID.randomUUID(),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         sourceId = UUID.randomUUID().toString(),
         dataIncluded = true,
         enrichmentFields = "firstNames",
@@ -96,7 +97,7 @@ class EventsControllerTest {
       ),
       EventNotification(
         eventId = UUID.randomUUID(),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         sourceId = UUID.randomUUID().toString(),
         dataIncluded = true,
         enrichmentFields = "firstNames,lastName",
@@ -122,7 +123,7 @@ class EventsControllerTest {
   @Test
   fun `publishEvent sends event to processor`() {
     val event = EventToPublish(
-      eventType = "DEATH_NOTIFICATION",
+      eventType = EventType.DEATH_NOTIFICATION,
       eventTime = LocalDateTime.now(),
       id = "123456789",
       eventDetails = "{\"firstName\":\"Bob\"}",
@@ -140,7 +141,7 @@ class EventsControllerTest {
   fun `getEvent gets event`() {
     val event = EventNotification(
       eventId = UUID.randomUUID(),
-      eventType = "DEATH_NOTIFICATION",
+      eventType = EventType.DEATH_NOTIFICATION,
       sourceId = UUID.randomUUID().toString(),
       eventData = DeathNotificationDetails(
         firstNames = "Bob",
@@ -165,7 +166,7 @@ class EventsControllerTest {
   fun `deleteEvent deletes event`() {
     val event = EventNotification(
       eventId = UUID.randomUUID(),
-      eventType = "DEATH_NOTIFICATION",
+      eventType = EventType.DEATH_NOTIFICATION,
       sourceId = UUID.randomUUID().toString(),
       eventData = null,
     )
@@ -195,11 +196,11 @@ class EventsControllerTest {
 
   @Test
   fun `getEvents gets events of expected shape`() {
-    val eventTypes = listOf("DEATH_NOTIFICATION")
+    val eventTypes = listOf(EventType.DEATH_NOTIFICATION)
     val events = listOf(
       EventNotification(
         eventId = UUID.fromString("a5383689-1192-4078-a4a6-a611b0a34c6e"),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         sourceId = "a5383689-1192-4078-a4a6-a611b0a34c6e",
         eventData = DeathNotificationDetails(
           firstNames = "Bob",
@@ -207,7 +208,7 @@ class EventsControllerTest {
       ),
       EventNotification(
         eventId = UUID.fromString("ec39aa80-2fa2-4d46-9211-c66fc94024d3"),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         sourceId = "ec39aa80-2fa2-4d46-9211-c66fc94024d3",
         eventData = DeathNotificationDetails(
           firstNames = "Bob",

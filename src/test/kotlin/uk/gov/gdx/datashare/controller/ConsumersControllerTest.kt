@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.Consumer
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.service.ConsumerRequest
@@ -54,17 +55,17 @@ class ConsumersControllerTest {
     val consumerSubscriptions = listOf(
       ConsumerSubscription(
         consumerId = UUID.randomUUID(),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
       ConsumerSubscription(
         consumerId = UUID.randomUUID(),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
       ConsumerSubscription(
         consumerId = UUID.randomUUID(),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
     )
@@ -83,17 +84,17 @@ class ConsumersControllerTest {
     val consumerSubscriptions = listOf(
       ConsumerSubscription(
         consumerId = consumerId,
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
       ConsumerSubscription(
         consumerId = consumerId,
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
       ConsumerSubscription(
         consumerId = consumerId,
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
     )
@@ -110,12 +111,12 @@ class ConsumersControllerTest {
   fun `addConsumerSubscription adds consumer subscription`() {
     val consumerId = UUID.randomUUID()
     val consumerSubscriptionRequest = ConsumerSubRequest(
-      eventType = "DEATH_NOTIFICATIONNew",
+      eventType = EventType.LIFE_EVENT,
       enrichmentFields = "a,b,c,New",
     )
     val consumerSubscription = ConsumerSubscription(
       consumerId = consumerId,
-      eventType = "DEATH_NOTIFICATIONNew",
+      eventType = EventType.LIFE_EVENT,
       enrichmentFields = "a,b,c,New",
     )
 
@@ -131,14 +132,14 @@ class ConsumersControllerTest {
     val consumerId = UUID.randomUUID()
     val subscriptionId = UUID.randomUUID()
     val consumerSubscriptionRequest = ConsumerSubRequest(
-      eventType = "DEATH_NOTIFICATIONNew",
+      eventType = EventType.LIFE_EVENT,
       enrichmentFields = "a,b,c,New",
     )
     val consumerSubscription = ConsumerSubscription(
       consumerId = consumerId,
       consumerSubscriptionId = subscriptionId,
       oauthClientId = "callbackClientId",
-      eventType = "DEATH_NOTIFICATIONNew",
+      eventType = EventType.LIFE_EVENT,
       enrichmentFields = "a,b,c,New",
     )
 

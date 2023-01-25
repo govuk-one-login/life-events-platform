@@ -10,11 +10,12 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.*
 import uk.gov.gdx.datashare.controller.EventToPublish
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueService
 import uk.gov.gdx.datashare.repository.*
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Service
 class DataReceiverService(
@@ -46,20 +47,19 @@ class DataReceiverService(
 
     val dataProcessorMessage = DataProcessorMessage(
       subscriptionId = subscription.id,
-      datasetId = subscription.datasetId,
       publisher = publisher.name,
-      eventTypeId = eventPayload.eventType,
+      eventType = eventPayload.eventType,
       eventTime = eventPayload.eventTime ?: dateTimeHandler.now(),
       id = eventPayload.id,
     )
 
     log.debug(
       "Notifying Data Processor of event type {} from {}",
-      dataProcessorMessage.eventTypeId,
+      dataProcessorMessage.eventType,
       publisher.name,
     )
 
-    meterRegistry.counter("EVENT_ACTION.EventPublished", "eventType", eventPayload.eventType).increment()
+    meterRegistry.counter("EVENT_ACTION.EventPublished", "eventType", eventPayload.eventType.name).increment()
 
     dataReceiverSqsClient.sendMessage(
       SendMessageRequest(
@@ -74,8 +74,7 @@ class DataReceiverService(
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class DataProcessorMessage(
-  val datasetId: String,
-  val eventTypeId: String,
+  val eventType: EventType,
   val eventTime: LocalDateTime,
   val publisher: String,
   val subscriptionId: UUID,

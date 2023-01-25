@@ -45,8 +45,8 @@ FROM consumer_subscription
 WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'internal-outbound');
 
 INSERT INTO publisher_subscription
-    (client_id, publisher_id, event_type_id, dataset_id)
-VALUES ('len', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION', 'DEATH_LEV');
+    (client_id, publisher_id, event_type)
+VALUES ('len', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION');
 
 INSERT INTO consumer_subscription
 (oauth_client_id, consumer_id, enrichment_fields, event_type, enrichment_fields_included_in_poll)

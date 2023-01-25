@@ -19,7 +19,6 @@ class DeathNotificationServiceTest {
   @Test
   fun `getEnrichedData returns all data for a full set of enrichment fields`() {
     val dataId = "123456789"
-    val datasetId = "DEATH_LEV"
     val enrichmentFields = listOf(
       "registrationDate",
       "firstNames",
@@ -54,7 +53,7 @@ class DeathNotificationServiceTest {
 
     every { levApiService.findDeathById(dataId.toInt()) }.returns(listOf(deathRecord))
 
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, datasetId, enrichmentFields)!!
+    val enrichedPayload = underTest.getEnrichedPayload(dataId, enrichmentFields)!!
 
     assertThat(enrichedPayload.firstNames).isEqualTo(deathRecord.deceased.forenames)
     assertThat(enrichedPayload.lastName).isEqualTo(deathRecord.deceased.surname)
@@ -71,7 +70,6 @@ class DeathNotificationServiceTest {
   @Test
   fun `getEnrichedData returns correct data for a subset of enrichment fields`() {
     val dataId = "123456789"
-    val datasetId = "DEATH_LEV"
     val enrichmentFields = listOf("firstNames", "dateOfDeath", "address", "retired")
     val deathRecord = DeathRecord(
       deceased = Deceased(
@@ -93,7 +91,7 @@ class DeathNotificationServiceTest {
 
     every { levApiService.findDeathById(dataId.toInt()) }.returns(listOf(deathRecord))
 
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, datasetId, enrichmentFields)!!
+    val enrichedPayload = underTest.getEnrichedPayload(dataId, enrichmentFields)!!
 
     assertThat(enrichedPayload.firstNames).isEqualTo(deathRecord.deceased.forenames)
     assertThat(enrichedPayload.lastName).isNull()
@@ -106,30 +104,5 @@ class DeathNotificationServiceTest {
     assertThat(enrichedPayload.deathPlace).isNull()
     assertThat(enrichedPayload.maidenName).isNull()
     assertThat(enrichedPayload.retired).isEqualTo(deathRecord.deceased.retired)
-  }
-
-  @Test
-  fun `getEnrichedData returns no data for datasetId 'PASS_THROUGH`() {
-    val dataId = "123456789"
-    val datasetId = "PASS_THROUGH"
-    val enrichmentFields = listOf("firstName", "lastName", "dateOfBirth", "dateOfDeath", "address", "sex")
-    val deathRecord = DeathRecord(
-      deceased = Deceased(
-        forenames = "Alice",
-        surname = "Smith",
-        dateOfBirth = LocalDate.of(1920, 1, 1),
-        dateOfDeath = LocalDate.of(2010, 1, 1),
-        sex = Sex.FEMALE,
-        address = "666 Inform House, 6 Inform street, Informington, Informshire",
-      ),
-      id = dataId,
-      date = LocalDate.now(),
-    )
-
-    every { levApiService.findDeathById(dataId.toInt()) }.returns(listOf(deathRecord))
-
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, datasetId, enrichmentFields)
-
-    assertThat(enrichedPayload).isNull()
   }
 }

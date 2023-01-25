@@ -40,8 +40,8 @@ Each `Consumer` will have many `ConsumerSubscription`s, which will have an entry
 an `eventType`. These `enrichmentFields` will decide what extra data past the event ID that the consumer will receive
 upon calling for events.
 
-Each `Publisher` will have many `PublisherSubscription`s, which will have an entry for `eventType` and a `datasetId`.
-The `eventType` will show which event will be published, and the `datasetId` shows where enrichment data will come from.
+Each `Publisher` will have many `PublisherSubscription`s, which will have an entry for `eventType`.
+The `eventType` will show which event will be published.
 
 ### Limitations
 

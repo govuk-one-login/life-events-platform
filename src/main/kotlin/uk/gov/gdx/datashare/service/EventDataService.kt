@@ -13,6 +13,7 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EventData
@@ -67,7 +68,7 @@ class EventDataService(
   }
 
   fun getEvents(
-    eventTypes: List<String>?,
+    eventTypes: List<EventType>?,
     optionalStartTime: LocalDateTime?,
     optionalEndTime: LocalDateTime?,
     pageNumber: Int,
@@ -120,7 +121,7 @@ class EventDataService(
     meterRegistry.counter(
       "EVENT_ACTION.EventDeleted",
       "eventType",
-      consumerSubscription.eventType,
+      consumerSubscription.eventType.name,
       "consumerSubscription",
       event.consumerSubscriptionId.toString(),
     ).increment()
@@ -144,7 +145,6 @@ class EventDataService(
       eventData = if (includeData) {
         deathNotificationService.getEnrichedPayload(
           event.dataId,
-          event.datasetId,
           subscription.enrichmentFields.split(",").toList(),
         )
       } else {
@@ -167,7 +167,7 @@ data class EventNotification(
     example = "DEATH_NOTIFICATION",
     allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
-  val eventType: String,
+  val eventType: EventType,
   @Schema(description = "ID from the source of the notification", required = true, example = "999999901")
   val sourceId: String,
   @Schema(
@@ -218,9 +218,8 @@ data class EventStatus(
     description = "Event's Type",
     required = true,
     example = "DEATH_NOTIFICATION",
-    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
-  val eventType: String,
+  val eventType: EventType,
   @Schema(description = "Number of events for the type", required = true, example = "123")
   val count: Number,
 )

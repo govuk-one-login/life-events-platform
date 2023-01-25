@@ -15,8 +15,6 @@ data class EventData(
   val eventId: UUID = UUID.randomUUID(),
   @Schema(description = "Consumer subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000")
   val consumerSubscriptionId: UUID,
-  @Schema(description = "Dataset ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-  val datasetId: String,
   @Schema(description = "Event data specific ID", required = true, example = "HMPO Death certificate number")
   val dataId: String,
   val whenCreated: LocalDateTime = LocalDateTime.now(),

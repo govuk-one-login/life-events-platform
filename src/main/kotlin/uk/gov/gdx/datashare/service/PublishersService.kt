@@ -8,6 +8,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.Publisher
 import uk.gov.gdx.datashare.repository.PublisherRepository
 import uk.gov.gdx.datashare.repository.PublisherSubscription
@@ -40,8 +41,7 @@ class PublishersService(
         PublisherSubscription(
           publisherId = publisherId,
           clientId = clientId,
-          eventTypeId = eventTypeId,
-          datasetId = datasetId,
+          eventType = eventType,
         ),
       )
     }
@@ -57,8 +57,7 @@ class PublishersService(
         publisherSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
           publisherId = publisherId,
           clientId = clientId,
-          eventTypeId = eventTypeId,
-          datasetId = datasetId,
+          eventType = eventType,
         ) ?: throw PublisherSubscriptionNotFoundException("Subscription $subscriptionId not found"),
       )
     }
@@ -83,9 +82,7 @@ data class PublisherSubRequest(
   @Schema(description = "Client ID", required = true, example = "a-client-id")
   val clientId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
-  val eventTypeId: String,
-  @Schema(description = "Data Set", required = true, example = "DEATH_LEN")
-  val datasetId: String,
+  val eventType: EventType,
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -3,6 +3,7 @@ package uk.gov.gdx.datashare.repository
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import uk.gov.gdx.datashare.enums.EventType
 import java.util.*
 
 @Repository
@@ -14,7 +15,7 @@ interface ConsumerSubscriptionRepository : CrudRepository<ConsumerSubscription, 
     "SELECT * FROM consumer_subscription cs " +
       "WHERE cs.event_type = :eventType",
   )
-  fun findAllByEventType(eventType: String): List<ConsumerSubscription>
+  fun findAllByEventType(eventType: EventType): List<ConsumerSubscription>
 
   @Query(
     "SELECT * FROM consumer_subscription cs " +
@@ -23,7 +24,7 @@ interface ConsumerSubscriptionRepository : CrudRepository<ConsumerSubscription, 
   )
   fun findAllByEventTypesAndClientId(
     clientId: String,
-    eventTypes: List<String>,
+    eventTypes: List<EventType>,
   ): List<ConsumerSubscription>
 
   @Query(

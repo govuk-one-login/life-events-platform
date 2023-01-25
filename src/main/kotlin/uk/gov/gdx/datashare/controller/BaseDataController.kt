@@ -20,8 +20,6 @@ class BaseDataController(
   private val consumerRepository: ConsumerRepository,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val eventDataRepository: EventDataRepository,
-  private val eventDatasetRepository: EventDatasetRepository,
-  private val eventTypeRepository: EventTypeRepository,
   private val publisherRepository: PublisherRepository,
   private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
 ) {
@@ -115,66 +113,6 @@ class BaseDataController(
     id: UUID,
   ) = eventDataRepository.deleteById(id)
 
-  @GetMapping("/eventDatasets")
-  @Operation(
-    summary = "Get Event Datasets",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Event Dataset",
-      ),
-    ],
-  )
-  fun getEventDatasets() = eventDatasetRepository.findAll()
-
-  @DeleteMapping("/eventDatasets/{id}")
-  @Operation(
-    summary = "Delete Event Dataset",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "204",
-        description = "Event Dataset deleted",
-      ),
-    ],
-  )
-  fun deleteEventDataset(
-    @Schema(description = "Event Dataset ID", required = true)
-    @PathVariable
-    id: String,
-  ) = eventDatasetRepository.deleteById(id)
-
-  @GetMapping("/eventTypes")
-  @Operation(
-    summary = "Get Event Types",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Event Type",
-      ),
-    ],
-  )
-  fun getEventTypes() = eventTypeRepository.findAll()
-
-  @DeleteMapping("/eventTypes/{id}")
-  @Operation(
-    summary = "Delete Event Type",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "204",
-        description = "Event Type deleted",
-      ),
-    ],
-  )
-  fun deleteEventType(
-    @Schema(description = "Type ID", required = true)
-    @PathVariable
-    id: String,
-  ) = eventTypeRepository.deleteById(id)
-
   @GetMapping("/publishers")
   @Operation(
     summary = "Get Publishers",
@@ -234,47 +172,4 @@ class BaseDataController(
     @PathVariable
     id: UUID,
   ) = publisherSubscriptionRepository.deleteById(id)
-
-  // The below endpoints don't exist through any other means, so have added them here
-  @PostMapping("/eventTypes")
-  @Operation(
-    summary = "Add Event type type",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Event type added",
-      ),
-    ],
-  )
-  fun addEventType(
-    @Schema(
-      description = "Event type",
-      required = true,
-      implementation = EventType::class,
-    )
-    @RequestBody
-    eventType: EventType,
-  ) = eventTypeRepository.save(eventType)
-
-  @PostMapping("/eventDataset")
-  @Operation(
-    summary = "Add Event dataset",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Event dataset added",
-      ),
-    ],
-  )
-  fun addEventDataset(
-    @Schema(
-      description = "Event dataset type",
-      required = true,
-      implementation = EventDataset::class,
-    )
-    @RequestBody
-    eventDataset: EventDataset,
-  ) = eventDatasetRepository.save(eventDataset)
 }

@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.Publisher
 import uk.gov.gdx.datashare.repository.PublisherSubscription
 import uk.gov.gdx.datashare.service.PublisherRequest
@@ -55,20 +56,17 @@ class PublishersControllerTest {
       PublisherSubscription(
         publisherId = UUID.randomUUID(),
         clientId = "Client-1",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
       PublisherSubscription(
         publisherId = UUID.randomUUID(),
         clientId = "Client-2",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
       PublisherSubscription(
         publisherId = UUID.randomUUID(),
         clientId = "Client-3",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
     )
 
@@ -87,20 +85,17 @@ class PublishersControllerTest {
       PublisherSubscription(
         publisherId = publisherId,
         clientId = "Client-1",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
       PublisherSubscription(
         publisherId = publisherId,
         clientId = "Client-2",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
       PublisherSubscription(
         publisherId = publisherId,
         clientId = "Client-3",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
     )
 
@@ -117,14 +112,12 @@ class PublishersControllerTest {
     val publisherId = UUID.randomUUID()
     val publisherSubscriptionRequest = PublisherSubRequest(
       clientId = "Client-New",
-      eventTypeId = "DEATH_NOTIFICATION_NEW",
-      datasetId = "LEV_NEW",
+      eventType = EventType.LIFE_EVENT,
     )
     val publisherSubscription = PublisherSubscription(
       publisherId = publisherId,
       clientId = "Client-New",
-      eventTypeId = "DEATH_NOTIFICATION_NEW",
-      datasetId = "LEV_NEW",
+      eventType = EventType.LIFE_EVENT,
     )
 
     every { publishersService.addPublisherSubscription(publisherId, any()) }.returns(publisherSubscription)
@@ -140,15 +133,13 @@ class PublishersControllerTest {
     val subscriptionId = UUID.randomUUID()
     val publisherSubscriptionRequest = PublisherSubRequest(
       clientId = "Client-New",
-      eventTypeId = "DEATH_NOTIFICATION_NEW",
-      datasetId = "LEV_NEW",
+      eventType = EventType.LIFE_EVENT,
     )
     val publisherSubscription = PublisherSubscription(
       publisherId = publisherId,
       publisherSubscriptionId = subscriptionId,
       clientId = "Client-New",
-      eventTypeId = "DEATH_NOTIFICATION_NEW",
-      datasetId = "LEV_NEW",
+      eventType = EventType.LIFE_EVENT,
     )
 
     every { publishersService.updatePublisherSubscription(publisherId, subscriptionId, any()) }.returns(

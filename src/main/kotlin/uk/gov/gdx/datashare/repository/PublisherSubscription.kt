@@ -8,8 +8,11 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
+import uk.gov.gdx.datashare.enums.EventType
 import java.time.LocalDateTime
 import java.util.*
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class PublisherSubscription(
@@ -20,10 +23,9 @@ data class PublisherSubscription(
   val publisherId: UUID,
   @Schema(description = "Client ID", required = true, example = "a-client-id")
   val clientId: String,
+  @Enumerated(EnumType.STRING)
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
-  val eventTypeId: String,
-  @Schema(description = "Data Set", required = true, example = "DEATH_LEN")
-  val datasetId: String,
+  val eventType: EventType,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient

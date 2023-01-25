@@ -16,6 +16,7 @@ import uk.gov.gdx.datashare.service.DeathNotificationDetails
 import uk.gov.gdx.datashare.service.EventDataService
 import uk.gov.gdx.datashare.service.EventNotification
 import uk.gov.gdx.datashare.service.EventStatus
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Stream
@@ -143,6 +144,10 @@ class EventsControllerTest {
       sourceId = UUID.randomUUID().toString(),
       eventData = DeathNotificationDetails(
         firstNames = "Bob",
+        registrationDate = LocalDate.of(2023, 1, 3),
+        dateOfBirth = LocalDate.of(1954, 1, 3),
+        dateOfDeath = LocalDate.of(2023, 1, 2),
+        sex = Gender.INDETERMINATE,
       ),
     )
 

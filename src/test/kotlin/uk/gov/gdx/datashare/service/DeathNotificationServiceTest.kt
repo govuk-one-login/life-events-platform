@@ -36,7 +36,7 @@ class DeathNotificationServiceTest {
   @Test
   fun `mapDeathNotification maps string to full DeathNotificationDetails`() {
     val input =
-      "{\"firstNames\":\"Alice\",\"lastName\":\"Smith\",\"dateOfBirth\":\"1910-01-01\",\"dateOfDeath\":\"2010-12-12\",\"address\":\"666 Inform House, 6 Inform street, Informington, Informshire\",\"sex\":\"female\"}"
+      "{\"firstNames\":\"Alice\",\"lastName\":\"Smith\",\"dateOfBirth\":\"1910-01-01\",\"dateOfDeath\":\"2010-12-12\",\"address\":\"666 Inform House, 6 Inform street, Informington, Informshire\",\"sex\":\"Female\"}"
 
     val deathNotificationDetails = underTest.mapDeathNotification(input)
 
@@ -47,7 +47,7 @@ class DeathNotificationServiceTest {
         dateOfBirth = LocalDate.of(1910, 1, 1),
         dateOfDeath = LocalDate.of(2010, 12, 12),
         address = "666 Inform House, 6 Inform street, Informington, Informshire",
-        sex = GenderType.Female,
+        sex = Gender.FEMALE,
       ),
     )
   }
@@ -80,7 +80,7 @@ class DeathNotificationServiceTest {
         surname = "Smith",
         dateOfBirth = LocalDate.of(1920, 1, 1),
         dateOfDeath = LocalDate.of(2010, 1, 1),
-        sex = GenderType.Female,
+        sex = Gender.FEMALE,
         address = "666 Inform House, 6 Inform street, Informington, Informshire",
       ),
       id = dataDetail.id,
@@ -206,7 +206,7 @@ class DeathNotificationServiceTest {
     lastName = "Smith",
   )
   private val complexDeathNotificationDetails = simpleDeathNotificationDetails.copy(
-    sex = GenderType.Female,
+    sex = Gender.FEMALE,
   )
   private val fakeSavedEvents = listOf(
     EventData(

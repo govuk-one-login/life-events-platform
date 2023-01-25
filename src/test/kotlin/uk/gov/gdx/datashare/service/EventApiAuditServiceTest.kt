@@ -18,7 +18,7 @@ import uk.gov.gdx.datashare.repository.EventApiAuditRepository
 import uk.gov.gdx.datashare.service.DeathNotificationDetails
 import uk.gov.gdx.datashare.service.EventApiAuditService
 import uk.gov.gdx.datashare.service.EventNotification
-import uk.gov.gdx.datashare.service.GenderType
+import uk.gov.gdx.datashare.service.Gender
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -51,7 +51,7 @@ class EventApiAuditServiceTest {
       eventData = DeathNotificationDetails(
         firstNames = "Alice",
         lastName = "Smith",
-        sex = GenderType.Female,
+        sex = Gender.FEMALE,
         dateOfDeath = LocalDate.of(2023, 1, 2),
         registrationDate = LocalDate.of(2023, 1, 2),
       ),
@@ -65,7 +65,7 @@ class EventApiAuditServiceTest {
         firstNames = "Bob",
         lastName = "Smith",
         dateOfDeath = LocalDate.of(2020, 1, 1),
-        sex = GenderType.Male,
+        sex = Gender.MALE,
         registrationDate = LocalDate.of(2023, 1, 2),
       ),
     )

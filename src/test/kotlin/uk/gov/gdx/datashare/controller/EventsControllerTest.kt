@@ -147,7 +147,7 @@ class EventsControllerTest {
         registrationDate = LocalDate.of(2023, 1, 3),
         dateOfBirth = LocalDate.of(1954, 1, 3),
         dateOfDeath = LocalDate.of(2023, 1, 2),
-        sex = Gender.INDETERMINATE,
+        sex = Sex.INDETERMINATE,
       ),
     )
 

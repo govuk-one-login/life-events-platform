@@ -52,7 +52,7 @@ data class Deceased(
   val forenames: String,
   val surname: String,
   val dateOfDeath: LocalDate,
-  val sex: Gender,
+  val sex: Sex,
   val maidenSurname: String? = null,
   val birthplace: String? = null,
   val dateOfBirth: LocalDate? = null,

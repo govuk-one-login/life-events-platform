@@ -47,7 +47,7 @@ class DeathNotificationServiceTest {
         dateOfBirth = LocalDate.of(1910, 1, 1),
         dateOfDeath = LocalDate.of(2010, 12, 12),
         address = "666 Inform House, 6 Inform street, Informington, Informshire",
-        sex = Gender.FEMALE,
+        sex = Sex.FEMALE,
       ),
     )
   }
@@ -80,7 +80,7 @@ class DeathNotificationServiceTest {
         surname = "Smith",
         dateOfBirth = LocalDate.of(1920, 1, 1),
         dateOfDeath = LocalDate.of(2010, 1, 1),
-        sex = Gender.FEMALE,
+        sex = Sex.FEMALE,
         address = "666 Inform House, 6 Inform street, Informington, Informshire",
       ),
       id = dataDetail.id,
@@ -206,7 +206,7 @@ class DeathNotificationServiceTest {
     lastName = "Smith",
   )
   private val complexDeathNotificationDetails = simpleDeathNotificationDetails.copy(
-    sex = Gender.FEMALE,
+    sex = Sex.FEMALE,
   )
   private val fakeSavedEvents = listOf(
     EventData(

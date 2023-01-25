@@ -20,13 +20,6 @@ data class ConsumerSubscription(
   val consumerId: UUID,
   @Schema(description = "Client ID used to access the event platform", required = false, example = "an-oauth-client")
   val oauthClientId: String? = null,
-  @JsonIgnore
-  @Schema(
-    description = "URI where to push data, can be s3 or http",
-    required = false,
-    example = "http://localhost/callback",
-  )
-  val pushUri: String? = null,
   @Schema(description = "Event type for this subscription", required = true, example = "DEATH_NOTIFICATION")
   val eventType: String,
   @Schema(

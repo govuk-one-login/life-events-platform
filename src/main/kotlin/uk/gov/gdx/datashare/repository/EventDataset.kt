@@ -19,7 +19,7 @@ data class EventDataset(
   @Value("false")
   val new: Boolean = true,
 
-  ) : Persistable<String> {
+) : Persistable<String> {
   override fun getId() = datasetId
 
   override fun isNew(): Boolean = new

@@ -19,7 +19,9 @@ class DataProcessorTest {
   private val eventDataRepository = mockk<EventDataRepository>()
 
   private val underTest: DataProcessor = DataProcessor(
-    objectMapper, consumerSubscriptionRepository, eventDataRepository,
+    objectMapper,
+    consumerSubscriptionRepository,
+    eventDataRepository,
   )
 
   private val ONE_SECOND_OFFSET = TemporalUnitWithinOffset(1, ChronoUnit.SECONDS)

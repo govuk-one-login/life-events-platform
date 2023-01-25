@@ -33,7 +33,6 @@ class DataProcessor(
     val consumerSubscriptions = consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId)
 
     val eventData = consumerSubscriptions.map {
-
       EventData(
         consumerSubscriptionId = it.id,
         datasetId = dataProcessorMessage.datasetId,

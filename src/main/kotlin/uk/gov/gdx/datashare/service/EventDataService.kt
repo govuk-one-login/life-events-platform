@@ -116,7 +116,7 @@ class EventDataService(
     val consumerSubscription = consumerSubscriptionRepository.findByEventId(id)
       ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for event $id")
 
-    eventDataRepository.delete(event)
+    eventDataRepository.softDeleteById(event.id, dateTimeHandler.now())
     meterRegistry.counter(
       "EVENT_ACTION.EventDeleted",
       "eventType",

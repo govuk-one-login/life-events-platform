@@ -8,7 +8,7 @@ resource "aws_ecs_cluster" "main" {
 }
 
 locals {
-  rds_db_url = "jdbc:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?sslmode=require"
+  rds_db_url = "jdbc:aws-wrapper:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?wrapperPlugins=iam&sslmode=require"
 }
 
 resource "aws_ecs_task_definition" "gdx_data_share_poc" {
@@ -34,11 +34,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://localhost:8080" },
         { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },
 
-        { "name" : "DB_PROVIDER", "value" : "rds" },
         { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
-        { "name" : "DB_HOSTNAME", "value" : aws_rds_cluster.rds_postgres_cluster.endpoint },
-        { "name" : "DB_PORT", "value" : tostring(aws_rds_cluster.rds_postgres_cluster.port) },
-        { "name" : "DB_RDS_REGION", "value" : var.region },
         { "name" : "SPRING_DATASOURCE_USERNAME", "value" : var.db_username },
 
         { "name" : "METRICS_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },

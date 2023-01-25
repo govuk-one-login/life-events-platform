@@ -25,9 +25,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-hateoas")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.19.21"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
-  implementation("software.amazon.awssdk:rds")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")
@@ -38,6 +36,7 @@ dependencies {
 
   runtimeOnly("org.flywaydb:flyway-core")
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
+  implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:1.0.0")
   implementation("org.postgresql:postgresql:42.5.1")
 
   implementation("org.springdoc:springdoc-openapi-ui:1.6.14")

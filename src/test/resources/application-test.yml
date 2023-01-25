@@ -32,7 +32,7 @@ spring:
           jwk-set-uri: ${api.base.url.oauth}/.well-known/jwks.json
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/datashare?sslmode=disable
+    url: jdbc:aws-wrapper:postgresql://localhost:5432/datashare?sslmode=disable
     username: datashare
     password: datashare
 

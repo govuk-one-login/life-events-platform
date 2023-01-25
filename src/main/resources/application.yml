@@ -12,6 +12,7 @@ spring:
       request-timeout: 1m
 
   datasource:
+    driver-class-name: software.amazon.jdbc.Driver
     hikari:
       max-lifetime: 840000 # 14 minutes. RDS IAM token is valid for 15 minutes
 

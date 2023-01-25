@@ -5,8 +5,6 @@ import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.TemporalUnitWithinOffset
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import uk.gov.gdx.datashare.config.UnknownDatasetException
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.service.*

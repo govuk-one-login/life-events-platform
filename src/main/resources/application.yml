@@ -16,6 +16,9 @@ spring:
     hikari:
       max-lifetime: 840000 # 14 minutes. RDS IAM token is valid for 15 minutes
 
+  flyway:
+    validate-migration-naming: true
+
   security:
     oauth2:
       resource-server:

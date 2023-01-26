@@ -21,35 +21,28 @@ class DeathNotificationService(
 
   fun getEnrichedPayload(
     dataId: String,
-    datasetId: String,
     enrichmentFields: List<String>,
-  ): DeathNotificationDetails? = when (datasetId) {
-    "DEATH_LEV" -> {
-      val citizenDeathId = dataId.toInt()
-      val allEnrichedData = levApiService.findDeathById(citizenDeathId)
-        .map {
-          DeathNotificationDetails(
-            registrationDate = it.date,
-            firstNames = it.deceased.forenames,
-            lastName = it.deceased.surname,
-            sex = it.deceased.sex,
-            dateOfDeath = it.deceased.dateOfDeath,
-            dateOfBirth = it.deceased.dateOfBirth,
-            birthPlace = it.deceased.birthplace,
-            deathPlace = it.deceased.deathplace,
-            maidenName = it.deceased.maidenSurname,
-            occupation = it.deceased.occupation,
-            retired = it.deceased.retired,
-            address = it.deceased.address,
-          )
-        }.first()
+  ): DeathNotificationDetails? {
+    val citizenDeathId = dataId.toInt()
+    val allEnrichedData = levApiService.findDeathById(citizenDeathId)
+      .map {
+        DeathNotificationDetails(
+          registrationDate = it.date,
+          firstNames = it.deceased.forenames,
+          lastName = it.deceased.surname,
+          sex = it.deceased.sex,
+          dateOfDeath = it.deceased.dateOfDeath,
+          dateOfBirth = it.deceased.dateOfBirth,
+          birthPlace = it.deceased.birthplace,
+          deathPlace = it.deceased.deathplace,
+          maidenName = it.deceased.maidenSurname,
+          occupation = it.deceased.occupation,
+          retired = it.deceased.retired,
+          address = it.deceased.address,
+        )
+      }.first()
 
-      EnrichmentService.getDataWithOnlyFields(objectMapper, allEnrichedData, enrichmentFields)
-    }
-
-    else -> {
-      null
-    }
+    return EnrichmentService.getDataWithOnlyFields(objectMapper, allEnrichedData, enrichmentFields)
   }
 }
 

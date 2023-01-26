@@ -5,8 +5,7 @@ import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.TemporalUnitWithinOffset
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import uk.gov.gdx.datashare.config.UnknownDatasetException
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
@@ -29,15 +28,14 @@ class DataProcessorTest {
   @Test
   fun `onGovEvent saves death notifications for LEV`() {
     val dataProcessorMessage = DataProcessorMessage(
-      datasetId = "DEATH_LEV",
-      eventTypeId = "DEATH_NOTIFICATION",
+      eventType = EventType.DEATH_NOTIFICATION,
       eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
       publisher = "HMPO",
       subscriptionId = UUID.randomUUID(),
       id = "123456789",
     )
 
-    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
+    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType) }
       .returns(consumerSubscriptions)
     every { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
     every { objectMapper.readValue(any<String>(), DataProcessorMessage::class.java) }.returns(dataProcessorMessage)
@@ -51,8 +49,6 @@ class DataProcessorTest {
           val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
           val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
 
-          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-            .isEqualTo(dataProcessorMessage.datasetId)
           assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
             .isEqualTo(dataProcessorMessage.id)
           assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
@@ -67,15 +63,14 @@ class DataProcessorTest {
   @Test
   fun `onGovEvent saves death notifications for PASS_THROUGH`() {
     val dataProcessorMessage = DataProcessorMessage(
-      datasetId = "PASS_THROUGH",
-      eventTypeId = "DEATH_NOTIFICATION",
+      eventType = EventType.DEATH_NOTIFICATION,
       eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
       publisher = "HMPO",
       subscriptionId = UUID.randomUUID(),
       id = "123456789",
     )
 
-    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
+    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType) }
       .returns(consumerSubscriptions)
     every { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
     every { objectMapper.readValue(any<String>(), DataProcessorMessage::class.java) }.returns(dataProcessorMessage)
@@ -88,9 +83,6 @@ class DataProcessorTest {
           assertThat(it).hasSize(2)
           val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
           val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
-
-          assertThat(simpleEvent?.datasetId).isEqualTo(complexEvent?.datasetId)
-            .isEqualTo(dataProcessorMessage.datasetId)
           assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
             .isEqualTo(dataProcessorMessage.id)
           assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
@@ -102,50 +94,24 @@ class DataProcessorTest {
     }
   }
 
-  @Test
-  fun `saveDeathNotificationEvents throws error for not valid dataset ID`() {
-    val dataProcessorMessage = DataProcessorMessage(
-      datasetId = "INVALID",
-      eventTypeId = "DEATH_NOTIFICATION",
-      eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
-      publisher = "HMPO",
-      subscriptionId = UUID.randomUUID(),
-      id = "123456789",
-    )
-
-    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId) }
-      .returns(consumerSubscriptions)
-    every { objectMapper.readValue(any<String>(), DataProcessorMessage::class.java) }.returns(dataProcessorMessage)
-
-    val exception = assertThrows<UnknownDatasetException> {
-      underTest.onGovEvent("string")
-    }
-
-    assertThat(exception.message).isEqualTo("Unknown DataSet ${dataProcessorMessage.datasetId}")
-
-    verify(exactly = 0) { eventDataRepository.saveAll(any<Iterable<EventData>>()) }
-  }
-
   private val simpleSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
-    eventType = "DEATH_NOTIFICATION",
+    eventType = EventType.DEATH_NOTIFICATION,
     enrichmentFields = "firstName,lastName",
   )
   private val complexSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
-    eventType = "DEATH_NOTIFICATION",
+    eventType = EventType.DEATH_NOTIFICATION,
     enrichmentFields = "firstName,lastName,sex",
   )
   private val consumerSubscriptions = listOf(simpleSubscription, complexSubscription)
   private val fakeSavedEvents = listOf(
     EventData(
       consumerSubscriptionId = UUID.randomUUID(),
-      datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
     ),
     EventData(
       consumerSubscriptionId = UUID.randomUUID(),
-      datasetId = UUID.randomUUID().toString(),
       dataId = "HMPO",
     ),
   )

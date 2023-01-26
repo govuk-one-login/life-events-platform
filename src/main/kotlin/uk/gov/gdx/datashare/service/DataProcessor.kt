@@ -5,7 +5,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.config.UnknownDatasetException
 import uk.gov.gdx.datashare.repository.*
 import java.util.*
 
@@ -22,20 +21,15 @@ class DataProcessor(
   @JmsListener(destination = "dataprocessor", containerFactory = "awsQueueContainerFactoryProxy")
   fun onGovEvent(message: String) {
     val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
-    log.info("Received event [{}] from [{}]", dataProcessorMessage.eventTypeId, dataProcessorMessage.publisher)
+    log.info("Received event [{}] from [{}]", dataProcessorMessage.eventType, dataProcessorMessage.publisher)
 
     val dataId = dataProcessorMessage.id ?: UUID.randomUUID().toString()
 
-    if (dataProcessorMessage.datasetId != "DEATH_LEV" && dataProcessorMessage.datasetId != "PASS_THROUGH") {
-      throw UnknownDatasetException("Unknown DataSet ${dataProcessorMessage.datasetId}")
-    }
-
-    val consumerSubscriptions = consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventTypeId)
+    val consumerSubscriptions = consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType)
 
     val eventData = consumerSubscriptions.map {
       EventData(
         consumerSubscriptionId = it.id,
-        datasetId = dataProcessorMessage.datasetId,
         dataId = dataId,
         eventTime = dataProcessorMessage.eventTime,
       )

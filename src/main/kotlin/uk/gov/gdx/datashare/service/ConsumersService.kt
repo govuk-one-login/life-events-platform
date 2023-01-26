@@ -6,6 +6,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.*
 import java.util.*
 
@@ -73,7 +74,7 @@ class ConsumersService(
 @Schema(description = "Consumer Subscription Request")
 data class ConsumerSubRequest(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
-  val eventType: String,
+  val eventType: EventType,
   @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client")
   val oauthClientId: String? = null,
   @Schema(

@@ -25,6 +25,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.config.JacksonConfiguration
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.helper.getPageLinks
 import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
@@ -188,7 +189,7 @@ class EventsController(
       allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
     )
     @RequestParam(name = "filter[eventType]", required = false)
-    eventTypes: List<String>? = null,
+    eventTypes: List<EventType>? = null,
     @Schema(
       description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
       type = "date-time",
@@ -230,7 +231,7 @@ class EventsController(
   }
 
   private fun buildEventsResponse(
-    eventTypes: List<String>?,
+    eventTypes: List<EventType>?,
     startTime: LocalDateTime?,
     endTime: LocalDateTime?,
     pageSize: Int,
@@ -396,7 +397,7 @@ class EventsController(
     )
 
   private fun eventsLink(
-    eventTypes: List<String>? = null,
+    eventTypes: List<EventType>? = null,
     startTime: LocalDateTime? = null,
     endTime: LocalDateTime? = null,
     pageNumber: Int = 0,
@@ -414,7 +415,7 @@ data class EventToPublish(
     example = "DEATH_NOTIFICATION",
     allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
-  val eventType: String,
+  val eventType: EventType,
   @Schema(
     description = "Date and time when the event took place, default is now",
     required = false,

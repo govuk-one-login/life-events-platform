@@ -13,6 +13,7 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.config.sha256
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.EventApiAudit
 import uk.gov.gdx.datashare.repository.EventApiAuditRepository
 import uk.gov.gdx.datashare.service.DeathNotificationDetails
@@ -46,7 +47,7 @@ class EventApiAuditServiceTest {
     val now = LocalDateTime.now()
     val eventNotification1 = EventNotification(
       eventId = UUID.randomUUID(),
-      eventType = "DEATH_NOTIFICATION",
+      eventType = EventType.DEATH_NOTIFICATION,
       sourceId = "123456788",
       eventData = DeathNotificationDetails(
         firstNames = "Alice",
@@ -59,7 +60,7 @@ class EventApiAuditServiceTest {
     val hashedEventData1 = objectMapper.writeValueAsString(eventNotification1.eventData).sha256()
     val eventNotification2 = EventNotification(
       eventId = UUID.randomUUID(),
-      eventType = "DEATH_NOTIFICATION",
+      eventType = EventType.DEATH_NOTIFICATION,
       sourceId = "123456789",
       eventData = DeathNotificationDetails(
         firstNames = "Bob",

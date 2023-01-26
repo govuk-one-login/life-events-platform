@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.Consumer
 import uk.gov.gdx.datashare.repository.ConsumerRepository
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
@@ -44,17 +45,17 @@ class ConsumersServiceTest {
     val savedConsumerSubscriptions = listOf(
       ConsumerSubscription(
         consumerId = UUID.randomUUID(),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
       ConsumerSubscription(
         consumerId = UUID.randomUUID(),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
       ConsumerSubscription(
         consumerId = UUID.randomUUID(),
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
     )
@@ -72,17 +73,17 @@ class ConsumersServiceTest {
     val savedConsumerSubscriptions = listOf(
       ConsumerSubscription(
         consumerId = consumer.id,
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
       ConsumerSubscription(
         consumerId = consumer.id,
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
       ConsumerSubscription(
         consumerId = consumer.id,
-        eventType = "DEATH_NOTIFICATION",
+        eventType = EventType.DEATH_NOTIFICATION,
         enrichmentFields = "a,b,c",
       ),
     )
@@ -171,11 +172,11 @@ class ConsumersServiceTest {
   private val consumerSubscription = ConsumerSubscription(
     consumerId = consumer.id,
     oauthClientId = "pollClientId",
-    eventType = "DEATH_NOTIFICATION",
+    eventType = EventType.DEATH_NOTIFICATION,
     enrichmentFields = "a,b,c",
   )
   private val consumerSubRequest = ConsumerSubRequest(
-    eventType = "DEATH_NOTIFICATIONNew",
+    eventType = EventType.LIFE_EVENT,
     enrichmentFields = "a,b,c,New",
     oauthClientId = "callbackClientIdNew",
   )

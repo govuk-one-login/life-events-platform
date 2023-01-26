@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repository.Publisher
 import uk.gov.gdx.datashare.repository.PublisherRepository
 import uk.gov.gdx.datashare.repository.PublisherSubscription
@@ -42,20 +43,17 @@ class PublishersServiceTest {
       PublisherSubscription(
         publisherId = UUID.randomUUID(),
         clientId = "Client-1",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
       PublisherSubscription(
         publisherId = UUID.randomUUID(),
         clientId = "Client-2",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
       PublisherSubscription(
         publisherId = UUID.randomUUID(),
         clientId = "Client-3",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
     )
 
@@ -73,20 +71,17 @@ class PublishersServiceTest {
       PublisherSubscription(
         publisherId = publisher.id,
         clientId = "Client-1",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
       PublisherSubscription(
         publisherId = publisher.id,
         clientId = "Client-2",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
       PublisherSubscription(
         publisherId = publisher.id,
         clientId = "Client-3",
-        eventTypeId = "DEATH_NOTIFICATION",
-        datasetId = "LEV",
+        eventType = EventType.DEATH_NOTIFICATION,
       ),
     )
 
@@ -109,8 +104,7 @@ class PublishersServiceTest {
         withArg {
           assertThat(it.publisherId).isEqualTo(publisher.id)
           assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
-          assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
-          assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
+          assertThat(it.eventType).isEqualTo(publisherSubRequest.eventType)
         },
       )
     }
@@ -128,8 +122,7 @@ class PublishersServiceTest {
         withArg {
           assertThat(it.publisherId).isEqualTo(publisher.id)
           assertThat(it.clientId).isEqualTo(publisherSubRequest.clientId)
-          assertThat(it.eventTypeId).isEqualTo(publisherSubRequest.eventTypeId)
-          assertThat(it.datasetId).isEqualTo(publisherSubRequest.datasetId)
+          assertThat(it.eventType).isEqualTo(publisherSubRequest.eventType)
         },
       )
     }
@@ -170,12 +163,10 @@ class PublishersServiceTest {
   private val publisherSubscription = PublisherSubscription(
     publisherId = publisher.id,
     clientId = "Client",
-    eventTypeId = "DEATH_NOTIFICATION",
-    datasetId = "LEV",
+    eventType = EventType.DEATH_NOTIFICATION,
   )
   private val publisherSubRequest = PublisherSubRequest(
     clientId = "Client-New",
-    eventTypeId = "DEATH_NOTIFICATION_NEW",
-    datasetId = "LEV_NEW",
+    eventType = EventType.LIFE_EVENT,
   )
 }

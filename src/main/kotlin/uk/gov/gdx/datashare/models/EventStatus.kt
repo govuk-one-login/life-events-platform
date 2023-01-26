@@ -7,12 +7,12 @@ import uk.gov.gdx.datashare.enums.EventType
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Event type count")
 data class EventStatus(
-    @Schema(
+  @Schema(
     description = "Event's Type",
     required = true,
     example = "DEATH_NOTIFICATION",
   )
   val eventType: EventType,
-    @Schema(description = "Number of events for the type", required = true, example = "123")
+  @Schema(description = "Number of events for the type", required = true, example = "123")
   val count: Number,
 )

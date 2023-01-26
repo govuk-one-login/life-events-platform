@@ -10,14 +10,14 @@ import java.time.LocalDateTime
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Event Payload for GDX")
 data class EventToPublish(
-    @Schema(
+  @Schema(
     description = "Type of event",
     required = true,
     example = "DEATH_NOTIFICATION",
     allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
   val eventType: EventType,
-    @Schema(
+  @Schema(
     description = "Date and time when the event took place, default is now",
     required = false,
     type = "date-time",
@@ -25,6 +25,6 @@ data class EventToPublish(
   )
   @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
   val eventTime: LocalDateTime? = null,
-    @Schema(description = "ID that references the event", example = "123456789")
+  @Schema(description = "ID that references the event", example = "123456789")
   val id: String,
 )

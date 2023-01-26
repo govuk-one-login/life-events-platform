@@ -1,5 +1,5 @@
 package uk.gov.gdx.datashare.models
 
-class LevDeathRecordStatus (
+class LevDeathRecordStatus(
   val blocked: Boolean? = null,
 )

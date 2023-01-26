@@ -407,4 +407,3 @@ class EventsController(
   ): WebMvcLinkBuilder =
     linkTo(methodOn(EventsController::class.java).getEvents(eventTypes, startTime, endTime, pageNumber, pageSize))
 }
-

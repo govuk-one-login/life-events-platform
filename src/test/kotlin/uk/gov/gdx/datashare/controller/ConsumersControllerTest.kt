@@ -5,10 +5,10 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EventType
-import uk.gov.gdx.datashare.repository.Consumer
-import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.models.ConsumerRequest
 import uk.gov.gdx.datashare.models.ConsumerSubRequest
+import uk.gov.gdx.datashare.repository.Consumer
+import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.service.ConsumersService
 import java.util.*
 

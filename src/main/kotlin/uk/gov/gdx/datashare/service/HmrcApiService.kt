@@ -28,4 +28,3 @@ class HmrcApiService(meterRegistry: MeterRegistry) {
     return NinoRecord(id = id, ni_number = niNumber)
   }
 }
-

@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.*
-import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.models.DataProcessorMessage
+import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueService
 import uk.gov.gdx.datashare.repository.*
@@ -68,4 +68,3 @@ class DataReceiverService(
 
   private fun Any.toJson() = objectMapper.writeValueAsString(this)
 }
-

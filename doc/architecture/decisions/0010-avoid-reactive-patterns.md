@@ -1,6 +1,6 @@
 # 10. Avoid reactive patterns
 
-[Next >>](9999-end.md)
+[Next >>](0011-event-datasets-and-types.md)
 
 Date: 2023-01-24
 
@@ -30,4 +30,4 @@ Use more mature blocking APIs, except for WebClient which is the only supported 
 - Greater choice of dependencies
 - Increased overall speed of development
 
-[Next >>](9999-end.md)
+[Next >>](0011-event-datasets-and-types.md)

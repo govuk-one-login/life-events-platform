@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToFlow
 import uk.gov.gdx.datashare.config.NoDataFoundException
+import uk.gov.gdx.datashare.enums.Sex
 import java.time.LocalDate
 
 @Service

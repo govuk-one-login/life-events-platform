@@ -5,6 +5,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.config.JacksonConfiguration
+import uk.gov.gdx.datashare.enums.Sex
 import java.time.LocalDate
 
 class DeathNotificationServiceTest {

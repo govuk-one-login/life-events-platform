@@ -22,11 +22,9 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
-import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.helpers.getPageLinks
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.models.EventStatus
 import uk.gov.gdx.datashare.services.*
 import java.time.LocalDateTime
 import java.util.*
@@ -43,36 +41,6 @@ class AcquirerController(
   private val eventApiAuditService: EventApiAuditService,
   private val meterRegistry: MeterRegistry,
 ) : BaseController {
-  @GetMapping("/status")
-  @Operation(
-    summary = "Event Get API - Get event status",
-    description = "Get count of all events for consumer, Need scope of events/consume",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Count per type",
-      ),
-    ],
-  )
-  fun getEventsStatus(
-    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "fromTime", required = false)
-    startTime: LocalDateTime? = null,
-    @Schema(
-      description = "Events before this time, if not supplied it will be now",
-      type = "date-time",
-      required = false,
-    )
-    @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-    @RequestParam(name = "toTime", required = false)
-    endTime: LocalDateTime? = null,
-  ): List<EventStatus> = run {
-    tryCallAndUpdateMetric(
-      { eventDataService.getEventsStatus(startTime, endTime).toList() },
-      meterRegistry.counter("API_CALLS.GetEventsStatus", "success", "true"),
-      meterRegistry.counter("API_CALLS.GetEventsStatus", "success", "false"),
-    )
-  }
 
   @GetMapping
   @Operation(

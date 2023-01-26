@@ -14,7 +14,6 @@ import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.models.EventStatus
 import uk.gov.gdx.datashare.models.Events
 import uk.gov.gdx.datashare.services.*
 import uk.gov.gdx.datashare.services.EventDataService
@@ -37,38 +36,13 @@ class AcquirerControllerTest {
   init {
     every { meterRegistry.counter("API_CALLS.GetEvent", *anyVararg()) }.returns(getEventCounter)
     every { meterRegistry.counter("API_CALLS.GetEvents", *anyVararg()) }.returns(getEventsCounter)
-    every { meterRegistry.counter("API_CALLS.GetEventsStatus", *anyVararg()) }.returns(getEventsStatusCounter)
     every { meterRegistry.counter("API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventCounter)
 
     every { getEventCounter.increment() }.returns(Unit)
     every { getEventsCounter.increment() }.returns(Unit)
-    every { getEventsStatusCounter.increment() }.returns(Unit)
     every { deleteEventCounter.increment() }.returns(Unit)
 
     underTest = AcquirerController(eventDataService, eventApiAuditService, meterRegistry)
-  }
-
-  @ParameterizedTest
-  @MethodSource("provideLocalDateTimes")
-  fun `getEventsStatus gets events status`(startTime: LocalDateTime?, endTime: LocalDateTime?) {
-    val eventStatuses = listOf(
-      EventStatus(
-        eventType = EventType.DEATH_NOTIFICATION,
-        count = 123,
-      ),
-      EventStatus(
-        eventType = EventType.LIFE_EVENT,
-        count = 456,
-      ),
-    )
-
-    every { eventDataService.getEventsStatus(startTime, endTime) }.returns(eventStatuses)
-
-    val eventStatusesOutput = underTest.getEventsStatus(startTime, endTime)
-
-    assertThat(eventStatusesOutput).hasSize(2)
-    assertThat(eventStatusesOutput).isEqualTo(eventStatuses.toList())
-    verify(exactly = 1) { getEventsStatusCounter.increment() }
   }
 
   @ParameterizedTest

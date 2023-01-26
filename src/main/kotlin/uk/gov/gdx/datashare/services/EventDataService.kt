@@ -11,7 +11,6 @@ import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.models.EventStatus
 import uk.gov.gdx.datashare.models.Events
 import uk.gov.gdx.datashare.repositories.ConsumerSubscription
 import uk.gov.gdx.datashare.repositories.ConsumerSubscriptionRepository
@@ -34,24 +33,6 @@ class EventDataService(
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
-  }
-
-  fun getEventsStatus(
-    optionalStartTime: LocalDateTime?,
-    optionalEndTime: LocalDateTime?,
-  ): List<EventStatus> {
-    val startTime = optionalStartTime ?: dateTimeHandler.defaultStartTime()
-    val endTime = optionalEndTime ?: dateTimeHandler.now()
-    val clientId = authenticationFacade.getUsername()
-
-    val consumerSubscriptions = consumerSubscriptionRepository.findAllByClientId(clientId)
-
-    return consumerSubscriptions.map {
-      EventStatus(
-        eventType = it.eventType,
-        count = eventDataRepository.findAllByConsumerSubscription(it.id, startTime, endTime).count(),
-      )
-    }
   }
 
   fun getEvent(

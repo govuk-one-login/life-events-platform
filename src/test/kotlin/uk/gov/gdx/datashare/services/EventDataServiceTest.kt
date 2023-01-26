@@ -17,7 +17,6 @@ import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.models.EventStatus
 import uk.gov.gdx.datashare.repositories.ConsumerSubscription
 import uk.gov.gdx.datashare.repositories.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repositories.EventData
@@ -63,81 +62,6 @@ class EventDataServiceTest {
   @BeforeEach
   fun setup() {
     every { authenticationFacade.getUsername() }.returns(clientId)
-  }
-
-  @Test
-  fun `getEventsStatus gets EventStatuses for client`() {
-    val startTime = LocalDateTime.now().minusHours(1)
-    val endTime = LocalDateTime.now().plusHours(1)
-
-    every { consumerSubscriptionRepository.findAllByClientId(clientId) }.returns(consumerSubscriptions)
-    every {
-      eventDataRepository.findAllByConsumerSubscription(
-        deathNotificationSubscription.id,
-        startTime,
-        endTime,
-      )
-    }.returns(deathEvents)
-    every {
-      eventDataRepository.findAllByConsumerSubscription(
-        lifeEventSubscription.id,
-        startTime,
-        endTime,
-      )
-    }.returns(lifeEvents)
-    every {
-      eventDataRepository.findAllByConsumerSubscription(
-        UUID.randomUUID(),
-        startTime,
-        endTime,
-      )
-    }.returns(extraDeathEvents)
-
-    val eventStatusOutput = underTest.getEventsStatus(startTime, endTime).toList()
-
-    assertThat(eventStatusOutput).isEqualTo(
-      listOf(
-        EventStatus(eventType = deathNotificationSubscription.eventType, count = 4),
-        EventStatus(eventType = lifeEventSubscription.eventType, count = 7),
-      ),
-    )
-  }
-
-  @Test
-  fun `getEventsStatus uses default start and end time if null passed in`() {
-    val fallbackStartTime = LocalDateTime.now().minusHours(1)
-    val fallbackEndTime = LocalDateTime.now()
-
-    every { dateTimeHandler.defaultStartTime() }.returns(fallbackStartTime)
-    every { dateTimeHandler.now() }.returns(fallbackEndTime)
-
-    every { consumerSubscriptionRepository.findAllByClientId(clientId) }.returns(
-      listOf(
-        deathNotificationSubscription,
-      ),
-    )
-    every {
-      eventDataRepository.findAllByConsumerSubscription(
-        deathNotificationSubscription.id,
-        fallbackStartTime,
-        fallbackEndTime,
-      )
-    }.returns(deathEvents)
-
-    val eventStatusOutput = underTest.getEventsStatus(null, null).toList()
-
-    assertThat(eventStatusOutput).isEqualTo(
-      listOf(
-        EventStatus(eventType = deathNotificationSubscription.eventType, count = 4),
-      ),
-    )
-    verify(exactly = 1) {
-      eventDataRepository.findAllByConsumerSubscription(
-        deathNotificationSubscription.id,
-        fallbackStartTime,
-        fallbackEndTime,
-      )
-    }
   }
 
   @Test
@@ -449,18 +373,9 @@ class EventDataServiceTest {
     enrichmentFields = "a,b,c",
     enrichmentFieldsIncludedInPoll = false,
   )
-  private val lifeEventSubscription = ConsumerSubscription(
-    consumerId = UUID.randomUUID(),
-    oauthClientId = clientId,
-    eventType = EventType.LIFE_EVENT,
-    enrichmentFields = "a,b,c",
-    enrichmentFieldsIncludedInPoll = true,
-  )
-  private val consumerSubscriptions = listOf(deathNotificationSubscription, lifeEventSubscription)
   private val deathEvents = getEvents(4, deathNotificationSubscription.id)
   private val thinDeathEvents = getEvents(4, thinDeathNotificationSubscription.id)
   private val extraDeathEvents = getEvents(10, deathNotificationSubscription.id)
-  private val lifeEvents = getEvents(7, lifeEventSubscription.id)
 
   private fun getEvents(
     count: Int,

@@ -11,10 +11,6 @@ import java.text.SimpleDateFormat
 
 @Configuration
 class JacksonConfiguration {
-  companion object {
-    const val dateTimeFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-  }
-
   @Bean
   @Primary
   fun objectMapper(): ObjectMapper {
@@ -23,7 +19,7 @@ class JacksonConfiguration {
       .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
       .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-    objectMapper.dateFormat = SimpleDateFormat(dateTimeFormat)
+    objectMapper.dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 
     return objectMapper
   }

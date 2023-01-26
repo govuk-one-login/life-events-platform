@@ -424,8 +424,6 @@ data class EventToPublish(
   )
   @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
   val eventTime: LocalDateTime? = null,
-  @Schema(description = "ID that references the event (optional)", required = false, example = "123456789")
-  val id: String? = null,
-  @Schema(description = "Json payload of data, normally no additional data would be sent", required = false)
-  val eventDetails: String? = null,
+  @Schema(description = "ID that references the event", example = "123456789")
+  val id: String,
 )

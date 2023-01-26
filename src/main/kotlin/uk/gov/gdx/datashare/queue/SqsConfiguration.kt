@@ -32,10 +32,6 @@ class SqsConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  fun awsQueueController(awsQueueService: AwsQueueService) = AwsQueueController(awsQueueService)
-
-  @Bean
-  @ConditionalOnMissingBean
   @DependsOn("awsQueueService")
   fun awsQueueContainerFactoryProxy(factories: List<AwsQueueDestinationContainerFactory>) =
     AwsQueueJmsListenerContainerFactory(factories)

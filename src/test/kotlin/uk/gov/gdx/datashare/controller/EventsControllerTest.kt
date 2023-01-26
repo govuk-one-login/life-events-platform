@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.service.*
 import uk.gov.gdx.datashare.service.DataReceiverService
 import uk.gov.gdx.datashare.service.DeathNotificationDetails

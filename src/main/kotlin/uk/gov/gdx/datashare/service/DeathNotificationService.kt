@@ -1,13 +1,13 @@
 package uk.gov.gdx.datashare.service
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.oas.annotations.media.Schema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.stereotype.Service
+import uk.gov.gdx.datashare.enums.Sex
 import java.time.LocalDate
 
 @Service
@@ -93,9 +93,3 @@ data class DeathNotificationDetails(
   @Schema(description = "Whether the deceased was retired", required = false, example = "false")
   val retired: Boolean? = null,
 )
-
-enum class Sex(@JsonValue val jsonName: String) {
-  MALE("Male"),
-  FEMALE("Female"),
-  INDETERMINATE("Indeterminate"),
-}

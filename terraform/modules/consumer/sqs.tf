@@ -1,7 +1,7 @@
 module "consumer_queue" {
-  source = "../sqs"
+  source      = "../sqs"
   environment = var.environment
-  queue_name = "${var.environment}-example-consumer-queue"
+  queue_name  = "${var.environment}-example-consumer-queue"
 }
 
 data "aws_iam_policy_document" "lambda_sqs_access" {

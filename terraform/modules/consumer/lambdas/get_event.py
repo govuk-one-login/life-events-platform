@@ -26,6 +26,9 @@ lev_api_url = os.environ["lev_api_url"]
 cloudwatch = boto3.client("cloudwatch")
 cloudwatch_namespace = os.environ["cloudwatch_metric_namespace"]
 
+sqs = boto3.client("sqs")
+queue_name = os.environ["queue_name"]
+queue_url = sqs.get_queue_url(QueueName=queue_name)["QueueUrl"]
 
 def lambda_handler(event, _context):
     logger.info(f"## EVENT: {event}")
@@ -33,12 +36,14 @@ def lambda_handler(event, _context):
 
     auth_token = get_auth_token(auth_url, client_id, client_secret)
     retrieved_event = get_event(auth_token, event["event_id"])
-    lev_record = get_lev_record(retrieved_event["sourceId"])
+    lev_record = get_lev_record(retrieved_event["data"]["attributes"]["sourceId"])
 
-    for datum in retrieved_event["eventData"].keys():
+    for datum in retrieved_event["data"]["attributes"]["eventData"].keys():
         assert_matches_lev(retrieved_event, lev_record, datum)
 
-    return {"event_id": retrieved_event["eventId"]}
+    push_event_to_queue(retrieved_event)
+
+    return {"event_id": retrieved_event["data"]["id"]}
 
 
 def get_event(auth_token: str, event_id: str):
@@ -49,6 +54,15 @@ def get_event(auth_token: str, event_id: str):
     delta = stop - start
     record_metric(cloudwatch, cloudwatch_namespace, "GET_EVENT.Duration", delta, unit="Seconds")
     return json.loads(response.read())
+
+
+def push_event_to_queue(event):
+    queue_event = event["data"]["attributes"]
+    queue_event["id"] = event["data"]["id"]
+    sqs.send_message(
+        QueueUrl=queue_url,
+        MessageBody=json.dumps(queue_event)
+    )
 
 
 def get_lev_record(record_id: str):
@@ -64,9 +78,12 @@ def assert_matches_lev(retrieved_event, lev_record, datum):
     """Fetch the matching record from the LEV API and assert matches.
 
     This is not needed in a normal consumer. Only for validation."""
-    provided_data = retrieved_event["eventData"][datum]
-    lev_key = map_to_lev_key(datum)
-    lev_data = lev_record["deceased"][lev_key]
+    provided_data = retrieved_event["data"]["attributes"]["eventData"][datum]
+    if datum == "registrationDate":
+        lev_data = lev_record["date"]
+    else:
+        lev_key = map_to_lev_key(datum)
+        lev_data = lev_record["deceased"][lev_key]
     if provided_data != lev_data:
         logger.error(f"Data mismatch. Provided data: {provided_data}, lev key: {lev_key}, lev data: {lev_data}")
         record_metric(cloudwatch, cloudwatch_namespace, "GET_EVENT.DataMatchFailure", 1)
@@ -75,7 +92,7 @@ def assert_matches_lev(retrieved_event, lev_record, datum):
 
 
 def map_to_lev_key(key: str) -> str:
-    if key == "firstName":
+    if key == "firstNames":
         return "forenames"
     elif key == "lastName":
         return "surname"
@@ -85,3 +102,5 @@ def map_to_lev_key(key: str) -> str:
         return "dateOfDeath"
     elif key == "address":
         return "address"
+    else:
+        return key

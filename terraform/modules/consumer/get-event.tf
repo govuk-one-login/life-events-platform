@@ -28,6 +28,7 @@ resource "aws_lambda_function" "get_event" {
       client_secret               = var.consumer_client_secret
       lev_api_url                 = var.lev_api_url
       cloudwatch_metric_namespace = "${var.environment}-example-consumer"
+      queue_name                  = module.consumer_queue.queue_name
     }
   }
   tracing_config {

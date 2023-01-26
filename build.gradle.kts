@@ -36,7 +36,6 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
   implementation("org.apache.commons:commons-csv:1.9.0")
 
-  implementation("javax.persistence:javax.persistence-api:2.2")
   runtimeOnly("org.flywaydb:flyway-core")
 
   implementation("org.springframework.boot:spring-boot-starter-jdbc")

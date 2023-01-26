@@ -11,8 +11,6 @@ import org.springframework.data.relational.core.mapping.Column
 import uk.gov.gdx.datashare.enums.EventType
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class ConsumerSubscription(
@@ -23,7 +21,6 @@ data class ConsumerSubscription(
   val consumerId: UUID,
   @Schema(description = "Client ID used to access the event platform", required = false, example = "an-oauth-client")
   val oauthClientId: String? = null,
-  @Enumerated(EnumType.STRING)
   @Schema(description = "Event type for this subscription", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
   @Schema(

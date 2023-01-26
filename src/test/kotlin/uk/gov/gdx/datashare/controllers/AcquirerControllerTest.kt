@@ -15,49 +15,37 @@ import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.EventStatus
-import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.models.Events
 import uk.gov.gdx.datashare.services.*
-import uk.gov.gdx.datashare.services.DataReceiverService
 import uk.gov.gdx.datashare.services.EventDataService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Stream
 
-class EventsControllerTest {
+class AcquirerControllerTest {
   private val eventDataService = mockk<EventDataService>()
-  private val dataReceiverService = mockk<DataReceiverService>()
   private val eventApiAuditService = mockk<EventApiAuditService>()
   private val meterRegistry = mockk<MeterRegistry>()
-  private val publishEventCounter = mockk<Counter>()
   private val getEventCounter = mockk<Counter>()
   private val getEventsCounter = mockk<Counter>()
   private val getEventsStatusCounter = mockk<Counter>()
   private val deleteEventCounter = mockk<Counter>()
-  private val deleteEventSuccessCounter = mockk<Counter>()
-  private val publishEventSuccessCounter = mockk<Counter>()
 
-  private val underTest: EventsController
+  private val underTest: AcquirerController
 
   init {
-    every { meterRegistry.counter("API_CALLS.PublishEvent", *anyVararg()) }.returns(publishEventCounter)
     every { meterRegistry.counter("API_CALLS.GetEvent", *anyVararg()) }.returns(getEventCounter)
     every { meterRegistry.counter("API_CALLS.GetEvents", *anyVararg()) }.returns(getEventsCounter)
     every { meterRegistry.counter("API_CALLS.GetEventsStatus", *anyVararg()) }.returns(getEventsStatusCounter)
     every { meterRegistry.counter("API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventCounter)
-    every { meterRegistry.counter("SUCCESSFUL_API_CALLS.PublishEvent", *anyVararg()) }.returns(
-      publishEventSuccessCounter,
-    )
-    every { meterRegistry.counter("SUCCESSFUL_API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventSuccessCounter)
-    every { publishEventCounter.increment() }.returns(Unit)
+
     every { getEventCounter.increment() }.returns(Unit)
     every { getEventsCounter.increment() }.returns(Unit)
     every { getEventsStatusCounter.increment() }.returns(Unit)
     every { deleteEventCounter.increment() }.returns(Unit)
-    every { deleteEventSuccessCounter.increment() }.returns(Unit)
-    every { publishEventSuccessCounter.increment() }.returns(Unit)
-    underTest = EventsController(eventDataService, dataReceiverService, eventApiAuditService, meterRegistry)
+
+    underTest = AcquirerController(eventDataService, eventApiAuditService, meterRegistry)
   }
 
   @ParameterizedTest
@@ -121,22 +109,6 @@ class EventsControllerTest {
     assertThat(eventsOutput.metadata?.totalElements).isEqualTo(2)
     verify(exactly = 1) { getEventsCounter.increment() }
     verify(exactly = 1) { eventApiAuditService.auditEventApiCall(events) }
-  }
-
-  @Test
-  fun `publishEvent sends event to processor`() {
-    val event = EventToPublish(
-      eventType = EventType.DEATH_NOTIFICATION,
-      eventTime = LocalDateTime.now(),
-      id = "123456789",
-    )
-
-    every { dataReceiverService.sendToDataProcessor(any()) }.returns(Unit)
-
-    underTest.publishEvent(event)
-
-    verify(exactly = 1) { publishEventCounter.increment() }
-    verify(exactly = 1) { dataReceiverService.sendToDataProcessor(event) }
   }
 
   @Test

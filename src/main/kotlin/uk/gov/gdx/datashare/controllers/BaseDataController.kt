@@ -15,7 +15,7 @@ import java.util.*
 @RequestMapping("/data", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
-@Tag(name = "10. Data")
+@Tag(name = "20. Data")
 class BaseDataController(
   private val consumerRepository: ConsumerRepository,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,

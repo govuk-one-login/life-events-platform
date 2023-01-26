@@ -17,7 +17,7 @@ import java.util.*
 @RequestMapping("/publishers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
-@Tag(name = "03. Publishers")
+@Tag(name = "12. Publishers")
 class PublishersController(
   private val publishersService: PublishersService,
 ) {

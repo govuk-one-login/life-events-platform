@@ -15,7 +15,7 @@ import uk.gov.gdx.datashare.repositories.EventDataRepository
 @RequestMapping("/admin", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
-@Tag(name = "01. Admin")
+@Tag(name = "13. Admin")
 class AdminController(
   private val eventDataRepository: EventDataRepository,
 ) {

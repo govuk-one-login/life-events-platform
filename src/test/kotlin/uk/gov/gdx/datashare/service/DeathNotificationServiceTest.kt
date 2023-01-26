@@ -6,6 +6,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.enums.Sex
+import uk.gov.gdx.datashare.models.LevDeathRecord
+import uk.gov.gdx.datashare.models.LevDeceased
 import java.time.LocalDate
 
 class DeathNotificationServiceTest {
@@ -34,8 +36,8 @@ class DeathNotificationServiceTest {
       "occupation",
       "retired",
     )
-    val deathRecord = DeathRecord(
-      deceased = Deceased(
+    val deathRecord = LevDeathRecord(
+      deceased = LevDeceased(
         forenames = "Alice",
         surname = "Smith",
         dateOfBirth = LocalDate.of(1920, 1, 1),
@@ -72,8 +74,8 @@ class DeathNotificationServiceTest {
   fun `getEnrichedData returns correct data for a subset of enrichment fields`() {
     val dataId = "123456789"
     val enrichmentFields = listOf("firstNames", "dateOfDeath", "address", "retired")
-    val deathRecord = DeathRecord(
-      deceased = Deceased(
+    val deathRecord = LevDeathRecord(
+      deceased = LevDeceased(
         forenames = "Alice",
         surname = "Smith",
         dateOfBirth = LocalDate.of(1920, 1, 1),

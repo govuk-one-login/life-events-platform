@@ -7,6 +7,7 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.sha256
+import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.repository.EventApiAudit
 import uk.gov.gdx.datashare.repository.EventApiAuditRepository
 

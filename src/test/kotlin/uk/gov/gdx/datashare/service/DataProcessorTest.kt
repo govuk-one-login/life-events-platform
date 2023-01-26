@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.TemporalUnitWithinOffset
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.models.DataProcessorMessage
 import uk.gov.gdx.datashare.repository.*
 import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime

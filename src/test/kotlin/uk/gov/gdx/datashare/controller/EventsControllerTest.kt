@@ -16,8 +16,10 @@ import uk.gov.gdx.datashare.service.*
 import uk.gov.gdx.datashare.service.DataReceiverService
 import uk.gov.gdx.datashare.service.DeathNotificationDetails
 import uk.gov.gdx.datashare.service.EventDataService
-import uk.gov.gdx.datashare.service.EventNotification
-import uk.gov.gdx.datashare.service.EventStatus
+import uk.gov.gdx.datashare.models.EventNotification
+import uk.gov.gdx.datashare.models.EventStatus
+import uk.gov.gdx.datashare.models.EventToPublish
+import uk.gov.gdx.datashare.models.Events
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*

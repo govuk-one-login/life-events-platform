@@ -9,6 +9,8 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.models.ConsumerRequest
+import uk.gov.gdx.datashare.models.ConsumerSubRequest
 import uk.gov.gdx.datashare.repository.Consumer
 import uk.gov.gdx.datashare.repository.ConsumerRepository
 import uk.gov.gdx.datashare.repository.ConsumerSubscription

@@ -19,7 +19,7 @@ import uk.gov.gdx.datashare.repository.EventApiAudit
 import uk.gov.gdx.datashare.repository.EventApiAuditRepository
 import uk.gov.gdx.datashare.service.DeathNotificationDetails
 import uk.gov.gdx.datashare.service.EventApiAuditService
-import uk.gov.gdx.datashare.service.EventNotification
+import uk.gov.gdx.datashare.models.EventNotification
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*

@@ -1,6 +1,5 @@
 package uk.gov.gdx.datashare.controller
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.toedter.spring.hateoas.jsonapi.MediaTypes.JSON_API_VALUE
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
@@ -27,6 +26,9 @@ import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.helper.getPageLinks
+import uk.gov.gdx.datashare.models.EventNotification
+import uk.gov.gdx.datashare.models.EventStatus
+import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.service.*
 import java.time.LocalDateTime
 import java.util.*
@@ -406,24 +408,3 @@ class EventsController(
     linkTo(methodOn(EventsController::class.java).getEvents(eventTypes, startTime, endTime, pageNumber, pageSize))
 }
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Event Payload for GDX")
-data class EventToPublish(
-  @Schema(
-    description = "Type of event",
-    required = true,
-    example = "DEATH_NOTIFICATION",
-    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
-  )
-  val eventType: EventType,
-  @Schema(
-    description = "Date and time when the event took place, default is now",
-    required = false,
-    type = "date-time",
-    example = "2021-12-31T12:34:56",
-  )
-  @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
-  val eventTime: LocalDateTime? = null,
-  @Schema(description = "ID that references the event", example = "123456789")
-  val id: String,
-)

@@ -1,7 +1,6 @@
 package uk.gov.gdx.datashare.service
 
 import com.amazonaws.services.sqs.model.SendMessageRequest
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
@@ -9,13 +8,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.config.*
-import uk.gov.gdx.datashare.controller.EventToPublish
-import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.models.EventToPublish
+import uk.gov.gdx.datashare.models.DataProcessorMessage
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueService
 import uk.gov.gdx.datashare.repository.*
-import java.time.LocalDateTime
-import java.util.UUID
 
 @Service
 class DataReceiverService(
@@ -72,11 +69,3 @@ class DataReceiverService(
   private fun Any.toJson() = objectMapper.writeValueAsString(this)
 }
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-data class DataProcessorMessage(
-  val eventType: EventType,
-  val eventTime: LocalDateTime,
-  val publisher: String,
-  val subscriptionId: UUID,
-  val id: String,
-)

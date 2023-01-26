@@ -1,14 +1,13 @@
 package uk.gov.gdx.datashare.service
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import io.swagger.v3.oas.annotations.media.Schema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
-import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.models.PublisherRequest
+import uk.gov.gdx.datashare.models.PublisherSubRequest
 import uk.gov.gdx.datashare.repository.Publisher
 import uk.gov.gdx.datashare.repository.PublisherRepository
 import uk.gov.gdx.datashare.repository.PublisherSubscription
@@ -75,19 +74,3 @@ class PublishersService(
     }
   }
 }
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Publisher Subscription Request")
-data class PublisherSubRequest(
-  @Schema(description = "Client ID", required = true, example = "a-client-id")
-  val clientId: String,
-  @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
-  val eventType: EventType,
-)
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Publisher Request")
-data class PublisherRequest(
-  @Schema(description = "Publisher name", required = true, example = "DWP")
-  val name: String,
-)

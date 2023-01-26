@@ -3,6 +3,7 @@ package uk.gov.gdx.datashare.service
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.stereotype.Service
+import uk.gov.gdx.datashare.models.NinoRecord
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -27,8 +28,3 @@ class HmrcApiService(meterRegistry: MeterRegistry) {
     return NinoRecord(id = id, ni_number = niNumber)
   }
 }
-
-data class NinoRecord(
-  val id: UUID,
-  val ni_number: String,
-)

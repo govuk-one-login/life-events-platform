@@ -10,8 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToFlow
 import uk.gov.gdx.datashare.config.NoDataFoundException
-import uk.gov.gdx.datashare.enums.Sex
-import java.time.LocalDate
+import uk.gov.gdx.datashare.models.LevDeathRecord
 
 @Service
 class LevApiService(
@@ -21,14 +20,14 @@ class LevApiService(
   private val callsToLevCounter: Counter = meterRegistry.counter("API_CALLS.CallsToLev")
   private val responsesFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromLev")
 
-  fun findDeathById(id: Int): List<DeathRecord> {
+  fun findDeathById(id: Int): List<LevDeathRecord> {
     try {
       callsToLevCounter.increment()
       return runBlocking {
         val deathRecord = levApiWebClient.get()
           .uri("/v1/registration/death/$id")
           .retrieve()
-          .bodyToFlow<DeathRecord>()
+          .bodyToFlow<LevDeathRecord>()
         responsesFromLevCounter.increment()
         deathRecord.toList()
       }
@@ -41,28 +40,3 @@ class LevApiService(
     }
   }
 }
-
-data class DeathRecord(
-  val id: String,
-  val date: LocalDate? = null,
-  val deceased: Deceased,
-  val status: DeathRecordStatus? = null,
-)
-
-data class Deceased(
-  val forenames: String? = null,
-  val surname: String? = null,
-  val dateOfDeath: LocalDate? = null,
-  val sex: Sex? = null,
-  val maidenSurname: String? = null,
-  val birthplace: String? = null,
-  val dateOfBirth: LocalDate? = null,
-  val deathplace: String? = null,
-  val occupation: String? = null,
-  val retired: Boolean? = null,
-  val address: String? = null,
-)
-
-data class DeathRecordStatus(
-  val blocked: Boolean? = null,
-)

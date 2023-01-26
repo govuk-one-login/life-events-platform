@@ -8,8 +8,8 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import uk.gov.gdx.datashare.service.ConsumerRequest
-import uk.gov.gdx.datashare.service.ConsumerSubRequest
+import uk.gov.gdx.datashare.models.ConsumerRequest
+import uk.gov.gdx.datashare.models.ConsumerSubRequest
 import uk.gov.gdx.datashare.service.ConsumersService
 import java.util.*
 

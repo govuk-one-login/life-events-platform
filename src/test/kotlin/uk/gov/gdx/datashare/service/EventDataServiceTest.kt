@@ -15,6 +15,9 @@ import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.models.DeathNotificationDetails
+import uk.gov.gdx.datashare.models.EventNotification
+import uk.gov.gdx.datashare.models.EventStatus
 import uk.gov.gdx.datashare.repository.ConsumerSubscription
 import uk.gov.gdx.datashare.repository.ConsumerSubscriptionRepository
 import uk.gov.gdx.datashare.repository.EventData

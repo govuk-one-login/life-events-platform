@@ -15,11 +15,11 @@ import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.config.sha256
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Sex
+import uk.gov.gdx.datashare.models.DeathNotificationDetails
+import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.repository.EventApiAudit
 import uk.gov.gdx.datashare.repository.EventApiAuditRepository
-import uk.gov.gdx.datashare.service.DeathNotificationDetails
 import uk.gov.gdx.datashare.service.EventApiAuditService
-import uk.gov.gdx.datashare.service.EventNotification
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*

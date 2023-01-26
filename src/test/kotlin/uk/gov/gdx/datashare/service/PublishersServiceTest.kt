@@ -9,6 +9,8 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.models.PublisherRequest
+import uk.gov.gdx.datashare.models.PublisherSubRequest
 import uk.gov.gdx.datashare.repository.Publisher
 import uk.gov.gdx.datashare.repository.PublisherRepository
 import uk.gov.gdx.datashare.repository.PublisherSubscription

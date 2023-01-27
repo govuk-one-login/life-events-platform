@@ -3,7 +3,6 @@ package uk.gov.gdx.datashare.models
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.format.annotation.DateTimeFormat
-import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.enums.EventType
 import java.time.LocalDateTime
 
@@ -23,7 +22,7 @@ data class EventToPublish(
     type = "date-time",
     example = "2021-12-31T12:34:56",
   )
-  @DateTimeFormat(pattern = JacksonConfiguration.dateTimeFormat)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   val eventTime: LocalDateTime? = null,
   @Schema(description = "ID that references the event", example = "123456789")
   val id: String,

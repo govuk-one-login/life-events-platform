@@ -63,11 +63,6 @@ module "metrics_dashboard" {
           attributes = { label = "GetEvents" }
         },
         {
-          name       = "API_CALLS.GetEventsStatus.count",
-          dimensions = { success = true },
-          attributes = { label = "GetEventsStatus" }
-        },
-        {
           name       = "API_CALLS.DeleteEvent.count",
           dimensions = { success = true },
           attributes = { label = "DeleteEvent" }

@@ -5,7 +5,7 @@
 1. [Set up User Pool Client in Cognito](#set-up-user-pool-client-in-cognito)
 2. [Set up the Consumer through the API (if this is a new consumer)](#set-up-the-consumer-through-the-api-for-new-consumers)
 3. [Set up the Consumer Subscription through the API](#set-up-the-consumer-subscription-through-the-api)
-4. [Tell the Consumer what to do](#tell-the-consumer-what-to-do)
+4. [Tell the Acquirer what to do](#tell-the-acquirer-what-to-do)
 
 ## Set up User Pool Client in Cognito
 
@@ -81,31 +81,6 @@ Returns 200
 }
 ```
 
-## Tell the Consumer what to do
+## Tell the acquirer what to do
 
-The Consumer will now need to actually use this to access our API. For this they will need to be able to get themselves
-an access token, and then they will need to use that with the API.
-
-In order to get the access token, they will need to call the Cognito User Pools domain in order to get their Bearer
-authentication token. The base of the URL can be found in the `Cognito` -> `User Pool` -> `App integration` -> `Cognito
-domain`. They then need to make a call like below:
-
-e.g. POST to `BASEURL/oauth2/token`
-```json
-{
-  "grant_type": "client_credentials",
-  "client_id": "CLIENT ID",
-  "client_secret": "CLIENT SECRET"
-}
-```
-Returns 200
-```json
-
-{
-  "access_token": "ACCESS-TOKEN",
-  "expires_in": 3600,
-  "token_type": "Bearer"
-}
-```
-
-This access token is then used in the `Authentication` header of all requests to the API with value `Bearer ACCESS-TOKEN`
+Read over [How to acquire data from the service](acquiring-data-from-the-service.md) and make sure it is up-to-date, then send that over to the client so that they have the information.

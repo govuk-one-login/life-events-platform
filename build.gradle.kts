@@ -26,7 +26,7 @@ dependencies {
 
   //  AWS dependencies for SNS, SQS etc
   implementation(platform("software.amazon.awssdk:bom:2.19.24"))
-  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
+  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
 
   implementation("org.springframework:spring-jms")
@@ -76,6 +76,8 @@ dependencies {
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:localstack:1.17.6")
   testImplementation("org.testcontainers:postgresql:1.17.6")
+  // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.13")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.3")
   testImplementation("org.mockito:mockito-inline")

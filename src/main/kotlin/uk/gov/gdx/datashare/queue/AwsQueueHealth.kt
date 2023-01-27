@@ -1,16 +1,13 @@
 package uk.gov.gdx.datashare.queue
 
-import com.amazonaws.services.sqs.model.GetQueueAttributesRequest
-import com.amazonaws.services.sqs.model.GetQueueAttributesResult
-import com.amazonaws.services.sqs.model.QueueAttributeName.All
-import com.amazonaws.services.sqs.model.QueueAttributeName.ApproximateNumberOfMessages
-import com.amazonaws.services.sqs.model.QueueAttributeName.ApproximateNumberOfMessagesNotVisible
-import com.amazonaws.services.sqs.model.QueueAttributeName.RedrivePolicy
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.Health.Builder
 import org.springframework.boot.actuate.health.HealthIndicator
+import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest
+import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResponse
+import software.amazon.awssdk.services.sqs.model.QueueAttributeName
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
 
@@ -33,11 +30,11 @@ class AwsQueueHealth(private val awsQueue: AwsQueue) : HealthIndicator {
     results += success(HealthDetail("queueName" to awsQueue.queueName))
 
     getQueueAttributes().map { attributesResult ->
-      results += success(HealthDetail("messagesOnQueue" to """${attributesResult.attributes[ApproximateNumberOfMessages.toString()]}"""))
-      results += success(HealthDetail("messagesInFlight" to """${attributesResult.attributes[ApproximateNumberOfMessagesNotVisible.toString()]}"""))
+      results += success(HealthDetail("messagesOnQueue" to """${attributesResult.attributes()[QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES]}"""))
+      results += success(HealthDetail("messagesInFlight" to """${attributesResult.attributes()[QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE]}"""))
 
       awsQueue.dlqName?.let {
-        attributesResult.attributes["$RedrivePolicy"] ?: run { results += failure(MissingRedrivePolicyException(awsQueue.id)) }
+        attributesResult.attributes()[QueueAttributeName.REDRIVE_POLICY] ?: run { results += failure(MissingRedrivePolicyException(awsQueue.id)) }
       }
     }.onFailure { throwable -> results += failure(throwable) }
 
@@ -53,7 +50,7 @@ class AwsQueueHealth(private val awsQueue: AwsQueue) : HealthIndicator {
           results += success(
             HealthDetail(
               "messagesOnDlq" to
-                """${attributesResult.attributes[ApproximateNumberOfMessages.toString()]}""",
+                """${attributesResult.attributes()[QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES]}""",
             ),
           )
         }.onFailure { throwable -> results += failure(throwable) }
@@ -90,18 +87,18 @@ class AwsQueueHealth(private val awsQueue: AwsQueue) : HealthIndicator {
           .also { log.error("Queue health for queueId ${awsQueue.id} failed due to exception", throwable) }
       }
 
-  private fun getQueueAttributes(): Result<GetQueueAttributesResult> {
+  private fun getQueueAttributes(): Result<GetQueueAttributesResponse> {
     return runCatching {
-      awsQueue.sqsClient.getQueueAttributes(GetQueueAttributesRequest(awsQueue.queueUrl).withAttributeNames(All))
+      awsQueue.sqsClient.getQueueAttributes(GetQueueAttributesRequest.builder().queueUrl(awsQueue.queueUrl).attributeNames(QueueAttributeName.ALL).build())
     }
   }
 
-  private fun getDlqAttributes(): Result<GetQueueAttributesResult> =
+  private fun getDlqAttributes(): Result<GetQueueAttributesResponse> =
     runCatching {
-      awsQueue.sqsDlqClient?.getQueueAttributes(GetQueueAttributesRequest(awsQueue.dlqUrl).withAttributeNames(All))
+      awsQueue.sqsDlqClient?.getQueueAttributes(GetQueueAttributesRequest.builder().queueUrl(awsQueue.dlqUrl).attributeNames(QueueAttributeName.ALL).build())
         ?: throw MissingDlqClientException(awsQueue.dlqName)
     }
 }
 
-class MissingRedrivePolicyException(queueId: String) : RuntimeException("The main queue for $queueId is missing a $RedrivePolicy")
+class MissingRedrivePolicyException(queueId: String) : RuntimeException("The main queue for $queueId is missing a ${QueueAttributeName.REDRIVE_POLICY}")
 class MissingDlqClientException(dlqName: String?) : RuntimeException("Attempted to access dlqclient for $dlqName that does not exist")

@@ -28,5 +28,5 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "housekeeping: Automatically reformat terraform files"
+          commit_message: "GPC-NONE: Automatically reformat terraform files"
           file_pattern: '*.tf'

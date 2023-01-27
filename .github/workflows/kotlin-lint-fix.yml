@@ -29,6 +29,6 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "housekeeping: Automatically reformat Kotlin files"
+          commit_message: "GPC-NONE: Automatically reformat Kotlin files"
           file_pattern: '*.kt'
 

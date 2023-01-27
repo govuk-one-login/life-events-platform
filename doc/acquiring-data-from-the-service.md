@@ -136,5 +136,5 @@ call `GET /events`.
 * What is the `[event ID]` for event specific queries?
     * This is the `id` property of every object in the array `data` in the response from `GET /events`.
 * If there are no events, what will the response be from `GET /events`?
-    * The array `data` will have be empty, and `meta.page.totalElements` will be 0.
+    * The array `data` will be empty, and `meta.page.totalElements` will be 0.
 

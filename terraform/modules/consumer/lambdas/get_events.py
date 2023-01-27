@@ -63,7 +63,7 @@ def lambda_handler(event, _context):
 
 
 def get_first_events_page(auth_token: str):
-    return get_data(auth_token, events_url + "?page%5Bsize%5D=20")
+    return get_data(auth_token, events_url + "?page%5Bsize%5D=100")
 
 
 def get_data(auth_token: str, url: str):

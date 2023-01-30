@@ -17,10 +17,7 @@ import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.repositories.ConsumerSubscription
-import uk.gov.gdx.datashare.repositories.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repositories.EventData
-import uk.gov.gdx.datashare.repositories.EventDataRepository
+import uk.gov.gdx.datashare.repositories.*
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
@@ -34,6 +31,7 @@ class EventDataServiceTest {
   private val meterRegistry = mockk<MeterRegistry>()
   private val dataCreationToDeletionTimer = mockk<Timer>()
   private val eventDeletedCounter = mockk<Counter>()
+  private val consumerSubscriptionEnrichmentFieldRepository = mockk<ConsumerSubscriptionEnrichmentFieldRepository>()
 
   private val underTest: EventDataService
 
@@ -56,6 +54,7 @@ class EventDataServiceTest {
       deathNotificationService,
       dateTimeHandler,
       meterRegistry,
+      consumerSubscriptionEnrichmentFieldRepository,
     )
   }
 
@@ -78,9 +77,12 @@ class EventDataServiceTest {
     every {
       deathNotificationService.getEnrichedPayload(
         event.dataId,
-        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+        subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)
+    every { consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventOutput = underTest.getEvent(event.id)
 
@@ -149,9 +151,12 @@ class EventDataServiceTest {
     every {
       deathNotificationService.getEnrichedPayload(
         any(),
-        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+        subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)
+    every { consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -162,7 +167,7 @@ class EventDataServiceTest {
           eventType = EventType.DEATH_NOTIFICATION,
           sourceId = it.dataId,
           dataIncluded = true,
-          enrichmentFields = "a,b,c",
+          enrichmentFields = subscriptionEnrichmentFields,
           eventData = deathNotificationDetails,
         )
       }.toList(),
@@ -203,9 +208,12 @@ class EventDataServiceTest {
     every {
       deathNotificationService.getEnrichedPayload(
         any(),
-        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+        subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)
+    every { consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -216,7 +224,7 @@ class EventDataServiceTest {
           eventType = EventType.DEATH_NOTIFICATION,
           sourceId = it.dataId,
           dataIncluded = true,
-          enrichmentFields = "a,b,c",
+          enrichmentFields = subscriptionEnrichmentFields,
           eventData = deathNotificationDetails,
         )
       }.toList(),
@@ -248,6 +256,9 @@ class EventDataServiceTest {
         endTime,
       )
     }.returns(thinDeathEvents.count())
+    every { consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -258,7 +269,7 @@ class EventDataServiceTest {
           eventType = EventType.DEATH_NOTIFICATION,
           sourceId = it.dataId,
           dataIncluded = false,
-          enrichmentFields = "a,b,c",
+          enrichmentFields = subscriptionEnrichmentFields,
           eventData = null,
         )
       }.toList(),
@@ -301,9 +312,12 @@ class EventDataServiceTest {
     every {
       deathNotificationService.getEnrichedPayload(
         any(),
-        deathNotificationSubscription.enrichmentFields.split(",").toList(),
+        subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)
+    every { consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventStatusOutput = underTest.getEvents(null, null, null, 0, 10)
 
@@ -314,7 +328,7 @@ class EventDataServiceTest {
           eventType = EventType.DEATH_NOTIFICATION,
           sourceId = it.dataId,
           dataIncluded = true,
-          enrichmentFields = "a,b,c",
+          enrichmentFields = subscriptionEnrichmentFields,
           eventData = deathNotificationDetails,
         )
       }.toList(),
@@ -334,6 +348,9 @@ class EventDataServiceTest {
       deathNotificationSubscription,
     )
     every { dateTimeHandler.now() }.returns(now)
+    every { consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     every { eventDataRepository.softDeleteById(event.id, now) }.returns(Unit)
 
@@ -363,19 +380,24 @@ class EventDataServiceTest {
     consumerId = UUID.randomUUID(),
     oauthClientId = clientId,
     eventType = EventType.DEATH_NOTIFICATION,
-    enrichmentFields = "a,b,c",
     enrichmentFieldsIncludedInPoll = true,
   )
   private val thinDeathNotificationSubscription = ConsumerSubscription(
     consumerId = UUID.randomUUID(),
     oauthClientId = clientId,
     eventType = EventType.DEATH_NOTIFICATION,
-    enrichmentFields = "a,b,c",
     enrichmentFieldsIncludedInPoll = false,
   )
+  private val subscriptionEnrichmentFields = listOf("a", "b", "c")
   private val deathEvents = getEvents(4, deathNotificationSubscription.id)
   private val thinDeathEvents = getEvents(4, thinDeathNotificationSubscription.id)
   private val extraDeathEvents = getEvents(10, deathNotificationSubscription.id)
+  private val deathNotificationEnrichmentFields = subscriptionEnrichmentFields.map {
+    ConsumerSubscriptionEnrichmentField(
+      consumerSubscriptionId = deathNotificationSubscription.id,
+      enrichmentField = it,
+    )
+  }
 
   private fun getEvents(
     count: Int,

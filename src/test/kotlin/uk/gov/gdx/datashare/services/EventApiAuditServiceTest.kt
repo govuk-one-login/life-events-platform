@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.service
+package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
 
 import io.mockk.every
 import io.mockk.mockk

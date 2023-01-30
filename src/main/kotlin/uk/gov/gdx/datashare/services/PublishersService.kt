@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -16,6 +17,7 @@ import java.util.*
 
 @Service
 @Transactional
+@XRayEnabled
 class PublishersService(
   private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
   private val publisherRepository: PublisherRepository,

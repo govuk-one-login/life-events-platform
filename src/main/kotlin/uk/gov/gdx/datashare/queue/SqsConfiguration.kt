@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.queue
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -19,8 +20,8 @@ class SqsConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  fun awsQueueFactory(applicationContext: ConfigurableApplicationContext) =
-    AwsQueueFactory(applicationContext, AmazonSqsFactory())
+  fun awsQueueFactory(applicationContext: ConfigurableApplicationContext, @Value("\${xray-tracing.enabled}") tracingEnabled: Boolean) =
+    AwsQueueFactory(applicationContext, AmazonSqsFactory(tracingEnabled))
 
   @Bean
   @ConditionalOnMissingBean

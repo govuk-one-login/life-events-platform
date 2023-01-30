@@ -1,16 +1,21 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.models.ConsumerRequest
 import uk.gov.gdx.datashare.models.ConsumerSubRequest
-import uk.gov.gdx.datashare.repositories.*
+import uk.gov.gdx.datashare.repositories.Consumer
+import uk.gov.gdx.datashare.repositories.ConsumerRepository
+import uk.gov.gdx.datashare.repositories.ConsumerSubscription
+import uk.gov.gdx.datashare.repositories.ConsumerSubscriptionRepository
 import java.util.*
 
 @Service
 @Transactional
+@XRayEnabled
 class ConsumersService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val consumerRepository: ConsumerRepository,

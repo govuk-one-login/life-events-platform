@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 
 @Service
+@XRayEnabled
 class DeathNotificationService(
   private val levApiService: LevApiService,
   private val objectMapper: ObjectMapper,

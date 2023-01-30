@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.controllers
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.toedter.spring.hateoas.jsonapi.MediaTypes
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
@@ -19,6 +20,7 @@ import uk.gov.gdx.datashare.services.DataReceiverService
 @RequestMapping("/events", produces = [MediaTypes.JSON_API_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/publish')")
 @Validated
+@XRayEnabled
 @Tag(name = "02. Supplier")
 class SupplierController(
   private val dataReceiverService: DataReceiverService,

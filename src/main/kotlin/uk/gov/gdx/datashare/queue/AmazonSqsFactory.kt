@@ -3,11 +3,13 @@ package uk.gov.gdx.datashare.queue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider
+import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.sqs.SqsClient
+import uk.gov.gdx.datashare.config.SqsTracingInterceptor
 import java.net.URI
 
-class AmazonSqsFactory {
+class AmazonSqsFactory(private val tracingEnabled: Boolean = false) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
@@ -28,14 +30,26 @@ class AmazonSqsFactory {
     localStackAmazonSQS(localstackUrl, region)
       .also { log.info("Created a LocalStack SQS DLQ client for queueId $queueId with name $dlqName") }
 
-  private fun awsAmazonSQS(region: String) =
-    SqsClient.builder().region(Region.of(region))
-      .build()
+  private fun awsAmazonSQS(region: String): SqsClient {
+    val builder = SqsClient.builder().region(Region.of(region))
+    if (tracingEnabled) {
+      builder.overrideConfiguration(
+        ClientOverrideConfiguration.builder().addExecutionInterceptor(SqsTracingInterceptor()).build(),
+      )
+    }
+    return builder.build()
+  }
 
-  private fun localStackAmazonSQS(localstackUrl: String, region: String) =
-    SqsClient.builder()
+  private fun localStackAmazonSQS(localstackUrl: String, region: String): SqsClient {
+    val builder = SqsClient.builder()
       .endpointOverride(URI.create(localstackUrl))
       .region(Region.of(region))
       .credentialsProvider(AnonymousCredentialsProvider.create())
-      .build()
+    if (tracingEnabled) {
+      builder.overrideConfiguration(
+        ClientOverrideConfiguration.builder().addExecutionInterceptor(SqsTracingInterceptor()).build(),
+      )
+    }
+    return builder.build()
+  }
 }

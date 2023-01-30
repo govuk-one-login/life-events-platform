@@ -23,12 +23,17 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-hateoas")
+  implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
   implementation(platform("software.amazon.awssdk:bom:2.19.26"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
+  implementation(platform("com.amazonaws:aws-xray-recorder-sdk-bom:2.13.0"))
+  implementation("com.amazonaws:aws-xray-recorder-sdk-spring")
+  implementation("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2")
+  implementation("com.amazonaws:aws-xray-recorder-sdk-slf4j")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")

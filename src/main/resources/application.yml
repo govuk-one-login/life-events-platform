@@ -87,3 +87,6 @@ api:
 
 cognito:
   enabled: true
+
+xray-tracing:
+  enabled: true

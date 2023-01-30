@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,6 +23,7 @@ import java.util.*
 
 @Service
 @Transactional
+@XRayEnabled
 class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,

@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
@@ -7,14 +8,19 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest
-import uk.gov.gdx.datashare.config.*
+import uk.gov.gdx.datashare.config.AuthenticationFacade
+import uk.gov.gdx.datashare.config.DateTimeHandler
+import uk.gov.gdx.datashare.config.PublisherPermissionException
+import uk.gov.gdx.datashare.config.PublisherSubscriptionNotFoundException
 import uk.gov.gdx.datashare.models.DataProcessorMessage
 import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueService
-import uk.gov.gdx.datashare.repositories.*
+import uk.gov.gdx.datashare.repositories.PublisherRepository
+import uk.gov.gdx.datashare.repositories.PublisherSubscriptionRepository
 
 @Service
+@XRayEnabled
 class DataReceiverService(
   private val awsQueueService: AwsQueueService,
   private val authenticationFacade: AuthenticationFacade,

@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.controllers
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -15,6 +16,7 @@ import java.util.*
 @RequestMapping("/data", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Validated
+@XRayEnabled
 @Tag(name = "20. Data")
 class BaseDataController(
   private val consumerRepository: ConsumerRepository,

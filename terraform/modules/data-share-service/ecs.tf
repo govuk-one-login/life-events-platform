@@ -26,6 +26,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       image        = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
       portMappings = [{ "containerPort" : 8080, "hostPort" : 8080 }],
       environment = [
+        { "name" : "ENVIRONMENT", "value" : var.environment },
+
         { "name" : "SERVER_PORT", "value" : "8080" },
 
         { "name" : "API_BASE_URL_LEV", "value" : "https://${var.lev_url}" },

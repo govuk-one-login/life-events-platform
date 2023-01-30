@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.controllers
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.toedter.spring.hateoas.jsonapi.MediaTypes.JSON_API_VALUE
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
@@ -32,6 +33,7 @@ import javax.validation.constraints.Positive
 import javax.validation.constraints.PositiveOrZero
 
 @RestController
+@XRayEnabled
 @RequestMapping("/events", produces = [JSON_API_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
 @Validated

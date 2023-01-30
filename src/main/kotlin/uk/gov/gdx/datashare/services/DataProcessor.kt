@@ -1,14 +1,18 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.models.DataProcessorMessage
-import uk.gov.gdx.datashare.repositories.*
+import uk.gov.gdx.datashare.repositories.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.repositories.EventData
+import uk.gov.gdx.datashare.repositories.EventDataRepository
 
 @Service
+@XRayEnabled
 class DataProcessor(
   private val objectMapper: ObjectMapper,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,

@@ -1,8 +1,10 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlin.reflect.full.memberProperties
 
+@XRayEnabled
 class EnrichmentService {
   companion object {
     inline fun <reified T : Any> getDataWithOnlyFields(

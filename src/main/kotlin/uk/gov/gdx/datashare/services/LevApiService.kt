@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.flow.toList
@@ -13,6 +14,7 @@ import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.models.LevDeathRecord
 
 @Service
+@XRayEnabled
 class LevApiService(
   private val levApiWebClient: WebClient,
   meterRegistry: MeterRegistry,

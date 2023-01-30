@@ -1,3 +1,5 @@
+environment: test
+
 server:
   shutdown: immediate
 
@@ -45,6 +47,9 @@ sqs:
     dataprocessor:
       queueName: dataprocessor-queue
       dlqName: dataprocessor-dlq
+
+xray-tracing:
+  enabled: false
 
 cognito:
   enabled: false

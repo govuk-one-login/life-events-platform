@@ -39,7 +39,7 @@ class ConsumersService(
     }
   }
 
-  fun mapConsumerSubscriptionDto(
+  private fun mapConsumerSubscriptionDto(
     consumerSubscription: ConsumerSubscription,
     enrichmentFields: List<ConsumerSubscriptionEnrichmentField>,
   ): ConsumerSubscriptionDto {
@@ -54,7 +54,7 @@ class ConsumersService(
     )
   }
 
-  fun addConsumerSubscriptionEnrichmentFields(
+  private fun addConsumerSubscriptionEnrichmentFields(
     consumerSubscriptionId: UUID,
     enrichmentFields: List<String>,
   ): List<ConsumerSubscriptionEnrichmentField> {

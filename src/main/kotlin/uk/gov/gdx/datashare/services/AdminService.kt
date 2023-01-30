@@ -14,20 +14,22 @@ class AdminService(
     cognitoService.createUserPoolClient(cognitoClientRequest)
 
   @Transactional
-  fun createAcquirer(createAcquirerRequest: CreateAcquirerRequest) = cognitoService.createUserPoolClient(
-    CognitoClientRequest(createAcquirerRequest.clientName, listOf(CognitoClientType.ACQUIRER)),
-  )?.let {
+  fun createAcquirer(createAcquirerRequest: CreateAcquirerRequest): CognitoClientResponse? {
     val consumer = consumersService.addConsumer(ConsumerRequest(createAcquirerRequest.clientName))
-    consumersService.addConsumerSubscription(
-      consumer.id,
-      ConsumerSubRequest(
-        oauthClientId = it.clientId,
-        eventType = createAcquirerRequest.eventType,
-        enrichmentFields = createAcquirerRequest.enrichmentFields,
-        enrichmentFieldsIncludedInPoll = createAcquirerRequest.enrichmentFieldsIncludedInPoll,
-      ),
-    )
+    return cognitoService.createUserPoolClient(
+      CognitoClientRequest(createAcquirerRequest.clientName, listOf(CognitoClientType.ACQUIRER)),
+    )?.let {
+      consumersService.addConsumerSubscription(
+        consumer.id,
+        ConsumerSubRequest(
+          oauthClientId = it.clientId,
+          eventType = createAcquirerRequest.eventType,
+          enrichmentFields = createAcquirerRequest.enrichmentFields,
+          enrichmentFieldsIncludedInPoll = createAcquirerRequest.enrichmentFieldsIncludedInPoll,
+        ),
+      )
 
-    CognitoClientResponse(it.clientName, it.clientId, it.clientSecret)
+      CognitoClientResponse(it.clientName, it.clientId, it.clientSecret)
+    }
   }
 }

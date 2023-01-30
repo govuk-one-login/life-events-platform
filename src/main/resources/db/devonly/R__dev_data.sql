@@ -44,6 +44,12 @@ DELETE
 FROM consumer_subscription
 WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'internal-outbound');
 
+DELETE
+FROM consumer_subscription_enrichment_field
+WHERE enrichment_field IN
+      ('registrationDate', 'firstNames', 'lastName', 'maidenName', 'dateOfDeath', 'dateOfBirth', 'sex', 'address',
+       'birthplace', 'deathplace', 'occupation', 'retired');
+
 INSERT INTO publisher_subscription
     (client_id, publisher_id, event_type)
 VALUES ('len', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION');

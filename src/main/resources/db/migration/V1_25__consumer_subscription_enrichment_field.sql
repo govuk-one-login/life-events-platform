@@ -11,7 +11,7 @@ create table consumer_subscription_enrichment_field
 
 INSERT INTO consumer_subscription_enrichment_field (consumer_subscription_id, enrichment_field)
 SELECT id, unnest(string_to_array(enrichment_fields::TEXT, ','))
-from consumer_subscription;
+FROM consumer_subscription;
 
 ALTER TABLE consumer_subscription
     DROP COLUMN enrichment_fields;

@@ -14,7 +14,7 @@ import uk.gov.gdx.datashare.models.CognitoClientResponse
 @Service
 class CognitoService(
   @Value("\${cognito.user-pool-id:#{null}}") val userPoolId: String? = null,
-  @Value("\${cognito.enabled}:#{false}") val enabled: Boolean = false,
+  @Value("\${cognito.enabled:#{false}}") val enabled: Boolean = false,
   @Value("\${cognito.acquirer-scope:#{null}}") val acquirerScope: String? = null,
   @Value("\${cognito.supplier-scope:#{null}}") val supplierScope: String? = null,
   @Value("\${cognito.admin-scope:#{null}}") val adminScope: String? = null,

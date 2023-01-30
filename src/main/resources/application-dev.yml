@@ -34,3 +34,10 @@ api:
       issuer-uri: http://localhost:9090/issuer1
       oauth: http://localhost:9090/issuer1
       lev: http://localhost:8099
+
+cognito:
+  user-pool-id: fakeId
+  enabled: false
+  acquirer-scope: events/consume
+  supplier-scope: events/publish
+  admin-scope: events/admin

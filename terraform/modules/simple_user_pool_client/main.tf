@@ -1,3 +1,4 @@
+// This must be kept in line with createBaseUserPoolClientRequest in CognitoService
 resource "aws_cognito_user_pool_client" "client" {
   name                                 = "${var.environment}-${var.name}"
   user_pool_id                         = var.user_pool_id

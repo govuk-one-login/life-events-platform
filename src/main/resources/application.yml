@@ -84,3 +84,6 @@ springdoc:
 api:
   base:
     consume-outbound-by-queue: false
+
+cognito:
+  enabled: true

@@ -6,6 +6,22 @@ output "issuer_domain" {
   value = aws_cognito_user_pool.pool.endpoint
 }
 
+output "user_pool_id" {
+  value = aws_cognito_user_pool.pool.id
+}
+
+output "acquirer_scope" {
+  value = "${local.identifier}/${local.scope_consume}"
+}
+
+output "supplier_scope" {
+  value = "${local.identifier}/${local.scope_publish}"
+}
+
+output "admin_scope" {
+  value = "${local.identifier}/${local.scope_admin}"
+}
+
 output "len_client_id" {
   value = module.len_mock.client_id
 }

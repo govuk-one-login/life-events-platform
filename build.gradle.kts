@@ -28,6 +28,7 @@ dependencies {
   implementation(platform("software.amazon.awssdk:bom:2.19.26"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
+  implementation("software.amazon.awssdk:cognitoidentityprovider")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")

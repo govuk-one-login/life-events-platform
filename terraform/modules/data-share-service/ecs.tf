@@ -34,6 +34,11 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://localhost:8080" },
         { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },
 
+        { "name" : "COGNITO_USER_POOL_ID", "value" : module.cognito.user_pool_id },
+        { "name" : "COGNITO_ACQUIRER_SCOPE", "value" : module.cognito.acquirer_scope },
+        { "name" : "COGNITO_SUPPLIER_SCOPE", "value" : module.cognito.supplier_scope },
+        { "name" : "COGNITO_ADMIN_SCOPE", "value" : module.cognito.admin_scope },
+
         { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
         { "name" : "SPRING_DATASOURCE_USERNAME", "value" : var.db_username },
 

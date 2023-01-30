@@ -45,3 +45,6 @@ sqs:
     dataprocessor:
       queueName: dataprocessor-queue
       dlqName: dataprocessor-dlq
+
+cognito:
+  enabled: false

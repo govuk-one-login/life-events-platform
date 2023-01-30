@@ -15,7 +15,7 @@ import software.amazon.awssdk.core.interceptor.ExecutionAttributes
 
 @Aspect
 @Component
-@ConditionalOnProperty(prefix = "xray-tracing", name=["enabled"], havingValue = "true")
+@ConditionalOnProperty(prefix = "xray-tracing", name = ["enabled"], havingValue = "true")
 class XRayInspector : BaseAbstractXRayInterceptor() {
   @Throws(Exception::class)
   override fun generateMetadata(

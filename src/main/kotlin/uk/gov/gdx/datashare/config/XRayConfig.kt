@@ -13,7 +13,7 @@ import javax.servlet.Filter
 @Configuration
 class XRayConfig {
   @Bean
-  @ConditionalOnProperty(prefix = "xray-tracing", name=["enabled"], havingValue = "true")
+  @ConditionalOnProperty(prefix = "xray-tracing", name = ["enabled"], havingValue = "true")
   fun TracingFilter(
     @Value("\${environment}") environment: String,
     @Value("\${spring.application.name}") applicationName: String,

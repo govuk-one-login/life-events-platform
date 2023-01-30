@@ -11,13 +11,15 @@ import uk.gov.gdx.datashare.models.CognitoClientResponse
 import uk.gov.gdx.datashare.repositories.EventData
 import uk.gov.gdx.datashare.repositories.EventDataRepository
 import uk.gov.gdx.datashare.services.CognitoService
+import uk.gov.gdx.datashare.services.ConsumersService
 import java.util.*
 
 class AdminControllerTest {
   private val eventDataRepository = mockk<EventDataRepository>()
   private val cognitoService = mockk<CognitoService>()
+  private val consumersService = mockk<ConsumersService>()
 
-  private val underTest = AdminController(eventDataRepository, cognitoService)
+  private val underTest = AdminController(eventDataRepository, cognitoService, consumersService)
 
   @Test
   fun `getEvents gets events`() {

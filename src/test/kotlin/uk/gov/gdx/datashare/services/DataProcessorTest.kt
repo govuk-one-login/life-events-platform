@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.service
+package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.*
@@ -47,15 +47,12 @@ class DataProcessorTest {
       eventDataRepository.saveAll(
         withArg<Iterable<EventData>> {
           assertThat(it).hasSize(2)
-          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
 
-          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-            .isEqualTo(dataProcessorMessage.id)
-          assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
-            .isEqualTo(dataProcessorMessage.eventTime)
-          assertThat(simpleEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
-          assertThat(complexEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+          it.forEach { event ->
+            assertThat(event.dataId).isEqualTo(dataProcessorMessage.id)
+            assertThat(event.eventTime).isEqualTo(dataProcessorMessage.eventTime)
+            assertThat(event.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+          }
         },
       )
     }
@@ -82,30 +79,28 @@ class DataProcessorTest {
       eventDataRepository.saveAll(
         withArg<Iterable<EventData>> {
           assertThat(it).hasSize(2)
-          val simpleEvent = it.find { event -> event.consumerSubscriptionId == simpleSubscription.id }
-          val complexEvent = it.find { event -> event.consumerSubscriptionId == complexSubscription.id }
-          assertThat(simpleEvent?.dataId).isEqualTo(complexEvent?.dataId)
-            .isEqualTo(dataProcessorMessage.id)
-          assertThat(simpleEvent?.eventTime).isEqualTo(complexEvent?.eventTime)
-            .isEqualTo(dataProcessorMessage.eventTime)
-          assertThat(simpleEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
-          assertThat(complexEvent?.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+
+          it.forEach { event ->
+            assertThat(event.dataId).isEqualTo(dataProcessorMessage.id)
+            assertThat(event.eventTime).isEqualTo(dataProcessorMessage.eventTime)
+            assertThat(event.whenCreated).isCloseToUtcNow(ONE_SECOND_OFFSET)
+          }
         },
       )
     }
   }
 
-  private val simpleSubscription = ConsumerSubscription(
-    consumerId = UUID.randomUUID(),
-    eventType = EventType.DEATH_NOTIFICATION,
-    enrichmentFields = "firstName,lastName",
+  private val consumerSubscriptions = listOf(
+    ConsumerSubscription(
+      consumerId = UUID.randomUUID(),
+      eventType = EventType.DEATH_NOTIFICATION,
+    ),
+    ConsumerSubscription(
+      consumerId = UUID.randomUUID(),
+      eventType = EventType.DEATH_NOTIFICATION,
+    ),
   )
-  private val complexSubscription = ConsumerSubscription(
-    consumerId = UUID.randomUUID(),
-    eventType = EventType.DEATH_NOTIFICATION,
-    enrichmentFields = "firstName,lastName,sex",
-  )
-  private val consumerSubscriptions = listOf(simpleSubscription, complexSubscription)
+
   private val fakeSavedEvents = listOf(
     EventData(
       consumerSubscriptionId = UUID.randomUUID(),

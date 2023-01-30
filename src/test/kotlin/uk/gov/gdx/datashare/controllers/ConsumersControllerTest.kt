@@ -7,9 +7,10 @@ import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.ConsumerRequest
 import uk.gov.gdx.datashare.models.ConsumerSubRequest
+import uk.gov.gdx.datashare.models.ConsumerSubscriptionDto
 import uk.gov.gdx.datashare.repositories.Consumer
-import uk.gov.gdx.datashare.repositories.ConsumerSubscription
 import uk.gov.gdx.datashare.services.ConsumersService
+import java.time.LocalDateTime
 import java.util.*
 
 class ConsumersControllerTest {
@@ -52,59 +53,77 @@ class ConsumersControllerTest {
 
   @Test
   fun `getConsumerSubscriptions gets consumer subscriptions`() {
-    val consumerSubscriptions = listOf(
-      ConsumerSubscription(
+    val consumerSubscriptionDtos = listOf(
+      ConsumerSubscriptionDto(
+        consumerSubscriptionId = UUID.randomUUID(),
         consumerId = UUID.randomUUID(),
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = "a,b,c",
+        enrichmentFields = listOf("a"),
+        enrichmentFieldsIncludedInPoll = false,
+        whenCreated = LocalDateTime.now(),
       ),
-      ConsumerSubscription(
+      ConsumerSubscriptionDto(
+        consumerSubscriptionId = UUID.randomUUID(),
         consumerId = UUID.randomUUID(),
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = "a,b,c",
+        enrichmentFields = listOf("a"),
+        enrichmentFieldsIncludedInPoll = false,
+        whenCreated = LocalDateTime.now(),
       ),
-      ConsumerSubscription(
+      ConsumerSubscriptionDto(
+        consumerSubscriptionId = UUID.randomUUID(),
         consumerId = UUID.randomUUID(),
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = "a,b,c",
+        enrichmentFields = listOf("a"),
+        enrichmentFieldsIncludedInPoll = false,
+        whenCreated = LocalDateTime.now(),
       ),
     )
 
-    every { consumersService.getConsumerSubscriptions() }.returns(consumerSubscriptions)
+    every { consumersService.getConsumerSubscriptions() }.returns(consumerSubscriptionDtos)
 
     val consumerSubscriptionsOutput = underTest.getConsumerSubscriptions().toList()
 
     assertThat(consumerSubscriptionsOutput).hasSize(3)
-    assertThat(consumerSubscriptionsOutput).isEqualTo(consumerSubscriptions.toList())
+    assertThat(consumerSubscriptionsOutput).isEqualTo(consumerSubscriptionDtos.toList())
   }
 
   @Test
   fun `getSubscriptionsForConsumer gets consumer subscriptions`() {
     val consumerId = UUID.randomUUID()
-    val consumerSubscriptions = listOf(
-      ConsumerSubscription(
+    val consumerSubscriptionDtos = listOf(
+      ConsumerSubscriptionDto(
+        consumerSubscriptionId = UUID.randomUUID(),
         consumerId = consumerId,
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = "a,b,c",
+        enrichmentFields = listOf("a"),
+        enrichmentFieldsIncludedInPoll = false,
+        whenCreated = LocalDateTime.now(),
       ),
-      ConsumerSubscription(
+      ConsumerSubscriptionDto(
+        consumerSubscriptionId = UUID.randomUUID(),
         consumerId = consumerId,
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = "a,b,c",
+        enrichmentFields = listOf("a"),
+        enrichmentFieldsIncludedInPoll = false,
+        whenCreated = LocalDateTime.now(),
       ),
-      ConsumerSubscription(
+      ConsumerSubscriptionDto(
+        consumerSubscriptionId = UUID.randomUUID(),
         consumerId = consumerId,
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = "a,b,c",
+        enrichmentFields = listOf("a"),
+        enrichmentFieldsIncludedInPoll = false,
+        whenCreated = LocalDateTime.now(),
       ),
     )
 
-    every { consumersService.getSubscriptionsForConsumer(consumerId) }.returns(consumerSubscriptions)
+    every { consumersService.getSubscriptionsForConsumer(consumerId) }.returns(consumerSubscriptionDtos)
 
     val consumerSubscriptionsOutput = underTest.getSubscriptionsForConsumer(consumerId).toList()
 
     assertThat(consumerSubscriptionsOutput).hasSize(3)
-    assertThat(consumerSubscriptionsOutput).isEqualTo(consumerSubscriptions.toList())
+    assertThat(consumerSubscriptionsOutput).isEqualTo(consumerSubscriptionDtos.toList())
   }
 
   @Test
@@ -112,19 +131,22 @@ class ConsumersControllerTest {
     val consumerId = UUID.randomUUID()
     val consumerSubscriptionRequest = ConsumerSubRequest(
       eventType = EventType.LIFE_EVENT,
-      enrichmentFields = "a,b,c,New",
+      enrichmentFields = listOf("a", "b", "c", "New"),
     )
-    val consumerSubscription = ConsumerSubscription(
+    val consumerSubscriptionDto = ConsumerSubscriptionDto(
+      consumerSubscriptionId = UUID.randomUUID(),
       consumerId = consumerId,
       eventType = EventType.LIFE_EVENT,
-      enrichmentFields = "a,b,c,New",
+      enrichmentFields = listOf("a", "b", "c", "New"),
+      enrichmentFieldsIncludedInPoll = false,
+      whenCreated = LocalDateTime.now(),
     )
 
-    every { consumersService.addConsumerSubscription(consumerId, any()) }.returns(consumerSubscription)
+    every { consumersService.addConsumerSubscription(consumerId, any()) }.returns(consumerSubscriptionDto)
 
     val consumerSubscriptionOutput = underTest.addConsumerSubscription(consumerId, consumerSubscriptionRequest)
 
-    assertThat(consumerSubscriptionOutput).isEqualTo(consumerSubscription)
+    assertThat(consumerSubscriptionOutput).isEqualTo(consumerSubscriptionDto)
   }
 
   @Test
@@ -133,23 +155,25 @@ class ConsumersControllerTest {
     val subscriptionId = UUID.randomUUID()
     val consumerSubscriptionRequest = ConsumerSubRequest(
       eventType = EventType.LIFE_EVENT,
-      enrichmentFields = "a,b,c,New",
+      enrichmentFields = listOf("a", "b", "c", "New"),
     )
-    val consumerSubscription = ConsumerSubscription(
+    val consumerSubscriptionDto = ConsumerSubscriptionDto(
       consumerId = consumerId,
       consumerSubscriptionId = subscriptionId,
       oauthClientId = "callbackClientId",
       eventType = EventType.LIFE_EVENT,
-      enrichmentFields = "a,b,c,New",
+      enrichmentFields = listOf("a", "b", "c", "New"),
+      enrichmentFieldsIncludedInPoll = false,
+      whenCreated = LocalDateTime.now(),
     )
 
     every { consumersService.updateConsumerSubscription(consumerId, subscriptionId, any()) }.returns(
-      consumerSubscription,
+      consumerSubscriptionDto,
     )
 
     val consumerSubscriptionOutput =
       underTest.updateConsumerSubscription(consumerId, subscriptionId, consumerSubscriptionRequest)
 
-    assertThat(consumerSubscriptionOutput).isEqualTo(consumerSubscription)
+    assertThat(consumerSubscriptionOutput).isEqualTo(consumerSubscriptionDto)
   }
 }

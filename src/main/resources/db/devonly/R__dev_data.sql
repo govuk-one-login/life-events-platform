@@ -32,35 +32,49 @@ $$;
 
 DELETE
 FROM publisher_subscription
-WHERE client_id IN ('len', 'internal-inbound', 'internal-inbound');
+WHERE client_id = 'len';
 
 DELETE
 FROM event_data
 WHERE consumer_subscription_id IN (SELECT id
                                    FROM consumer_subscription
-                                   WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'internal-outbound'));
+                                   WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client'));
+
+DELETE
+FROM consumer_subscription_enrichment_field
+WHERE consumer_subscription_id IN (SELECT id
+                                   FROM consumer_subscription
+                                   WHERE event_type = 'DEATH_NOTIFICATION'
+                                     AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client'));
 
 DELETE
 FROM consumer_subscription
-WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'internal-outbound');
+WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');
+
+
 
 INSERT INTO publisher_subscription
     (client_id, publisher_id, event_type)
 VALUES ('len', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION');
 
 INSERT INTO consumer_subscription
-(oauth_client_id, consumer_id, enrichment_fields, event_type, enrichment_fields_included_in_poll)
+(oauth_client_id, consumer_id, event_type, enrichment_fields_included_in_poll)
 VALUES ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'),
-        'registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired',
         'DEATH_NOTIFICATION', false),
-       ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), '', 'LIFE_EVENT', false);
+       ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), 'LIFE_EVENT', false);
 
 INSERT INTO consumer_subscription
-(oauth_client_id, consumer_id, enrichment_fields, event_type, enrichment_fields_included_in_poll)
+(oauth_client_id, consumer_id, event_type, enrichment_fields_included_in_poll)
 VALUES ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'),
-        'registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired',
         'DEATH_NOTIFICATION', true),
-       ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), '', 'LIFE_EVENT', true);
+       ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), 'LIFE_EVENT', true);
+
+INSERT INTO consumer_subscription_enrichment_field(consumer_subscription_id, enrichment_field)
+SELECT id,
+       unnest(ARRAY ['registrationDate', 'firstNames', 'lastName', 'maidenName', 'dateOfDeath', 'dateOfBirth', 'sex', 'address', 'birthplace', 'deathplace', 'occupation', 'retired'])
+FROM consumer_subscription
+WHERE event_type = 'DEATH_NOTIFICATION'
+  AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');
 
 DROP FUNCTION IF EXISTS getIdFromPublisherName;
 DROP FUNCTION IF EXISTS getIdFromConsumerName;

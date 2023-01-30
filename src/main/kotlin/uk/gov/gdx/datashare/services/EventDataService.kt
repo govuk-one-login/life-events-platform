@@ -13,10 +13,7 @@ import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
-import uk.gov.gdx.datashare.repositories.ConsumerSubscription
-import uk.gov.gdx.datashare.repositories.ConsumerSubscriptionRepository
-import uk.gov.gdx.datashare.repositories.EventData
-import uk.gov.gdx.datashare.repositories.EventDataRepository
+import uk.gov.gdx.datashare.repositories.*
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
@@ -31,6 +28,7 @@ class EventDataService(
   private val deathNotificationService: DeathNotificationService,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
+  private val consumerSubscriptionEnrichmentFieldRepository: ConsumerSubscriptionEnrichmentFieldRepository,
 ) {
 
   companion object {
@@ -118,16 +116,19 @@ class EventDataService(
     includeData: Boolean = false,
     callbackEvent: Boolean = false,
   ): EventNotification {
+    val enrichmentFields =
+      consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(subscription.consumerSubscriptionId)
+        .map { it.enrichmentField }
     return EventNotification(
       eventId = event.id,
       eventType = subscription.eventType,
       sourceId = event.dataId,
       dataIncluded = if (!callbackEvent) includeData else null,
-      enrichmentFields = if (!callbackEvent) subscription.enrichmentFields else null,
+      enrichmentFields = if (!callbackEvent) enrichmentFields else null,
       eventData = if (includeData) {
         deathNotificationService.getEnrichedPayload(
           event.dataId,
-          subscription.enrichmentFields.split(",").toList(),
+          enrichmentFields,
         )
       } else {
         null

@@ -59,7 +59,7 @@ class EventsControllerTest {
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = UUID.randomUUID().toString(),
         dataIncluded = true,
-        enrichmentFields = "firstNames",
+        enrichmentFields = listOf("firstNames"),
         eventData = DeathNotificationDetails(
           firstNames = "Bob",
         ),
@@ -69,7 +69,7 @@ class EventsControllerTest {
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = UUID.randomUUID().toString(),
         dataIncluded = true,
-        enrichmentFields = "firstNames,lastName",
+        enrichmentFields = listOf("firstNames", "lastName"),
         eventData = DeathNotificationDetails(
           firstNames = "Bob",
           lastName = "Smith",

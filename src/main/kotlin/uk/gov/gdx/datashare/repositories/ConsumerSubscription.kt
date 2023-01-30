@@ -30,12 +30,6 @@ data class ConsumerSubscription(
     example = "false",
   )
   val enrichmentFieldsIncludedInPoll: Boolean = false,
-  @Schema(
-    description = "CSV List of required fields to which enrich the event",
-    required = true,
-    example = "firstNames,lastName,dateOfBirth",
-  )
-  val enrichmentFields: String,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient

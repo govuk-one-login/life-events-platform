@@ -1,14 +1,11 @@
 package uk.gov.gdx.datashare.queue
 
-import com.amazonaws.services.sqs.AmazonSQS
-import com.amazonaws.services.sqs.model.DeleteMessageRequest
-import com.amazonaws.services.sqs.model.Message
-import com.amazonaws.services.sqs.model.ReceiveMessageRequest
-import com.amazonaws.services.sqs.model.SendMessageRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
+import software.amazon.awssdk.services.sqs.SqsClient
+import software.amazon.awssdk.services.sqs.model.*
 import kotlin.math.min
-import com.amazonaws.services.sqs.model.PurgeQueueRequest as AwsPurgeQueueRequest
+import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest as AwsPurgeQueueRequest
 
 open class AwsQueueService(
   awsQueueFactory: AwsQueueFactory,
@@ -43,14 +40,14 @@ open class AwsQueueService(
     val messages = mutableListOf<Message>()
     repeat(messageCount) {
       sqsDlqClient.receiveMessage(
-        ReceiveMessageRequest(dlqUrl).withMaxNumberOfMessages(1).withMessageAttributeNames("All"),
-      ).messages.firstOrNull()
+        ReceiveMessageRequest.builder().queueUrl(dlqUrl).maxNumberOfMessages(1).messageAttributeNames("All").build(),
+      ).messages().firstOrNull()
         ?.also { msg ->
           sqsClient.sendMessage(
-            SendMessageRequest().withQueueUrl(queueUrl).withMessageBody(msg.body)
-              .withMessageAttributes(msg.messageAttributes),
+            SendMessageRequest.builder().queueUrl(queueUrl).messageBody(msg.body())
+              .messageAttributes(msg.messageAttributes()).build(),
           )
-          sqsDlqClient.deleteMessage(DeleteMessageRequest(dlqUrl, msg.receiptHandle))
+          sqsDlqClient.deleteMessage(DeleteMessageRequest.builder().queueUrl(dlqUrl).receiptHandle(msg.receiptHandle()).build())
           messages += msg
         }
     }
@@ -67,10 +64,10 @@ open class AwsQueueService(
     val messagesToReturnCount = min(messageCount, maxMessages)
 
     repeat(messagesToReturnCount) {
-      sqsDlqClient.receiveMessage(ReceiveMessageRequest(dlqUrl).withMaxNumberOfMessages(1)).messages.firstOrNull()
+      sqsDlqClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(dlqUrl).maxNumberOfMessages(1).build()).messages().firstOrNull()
         ?.also { msg ->
           val map: Map<String, Any> = HashMap()
-          messages += DlqMessage(messageId = msg.messageId, body = objectMapper.readValue(msg.body, map.javaClass))
+          messages += DlqMessage(messageId = msg.messageId(), body = objectMapper.readValue(msg.body(), map.javaClass))
         }
     }
 
@@ -81,7 +78,7 @@ open class AwsQueueService(
     with(request) {
       sqsClient.countMessagesOnQueue(queueUrl)
         .takeIf { it > 0 }
-        ?.also { sqsClient.purgeQueue(AwsPurgeQueueRequest(queueUrl)) }
+        ?.also { sqsClient.purgeQueue(AwsPurgeQueueRequest.builder().queueUrl(queueUrl).build()) }
         ?.also { log.info("For queue $queueName attempted to purge $it messages from queue") }
         ?.let { PurgeQueueResult(it) }
         ?: PurgeQueueResult(0)
@@ -101,9 +98,9 @@ data class GetDlqRequest(val awsQueue: AwsQueue, val maxMessages: Int)
 data class GetDlqResult(val messagesFoundCount: Int, val messagesReturnedCount: Int, val messages: List<DlqMessage>)
 data class DlqMessage(val body: Map<String, Any>, val messageId: String)
 
-data class PurgeQueueRequest(val queueName: String, val sqsClient: AmazonSQS, val queueUrl: String)
+data class PurgeQueueRequest(val queueName: String, val sqsClient: SqsClient, val queueUrl: String)
 data class PurgeQueueResult(val messagesFoundCount: Int)
 
-internal fun AmazonSQS.countMessagesOnQueue(queueUrl: String): Int =
-  this.getQueueAttributes(queueUrl, listOf("ApproximateNumberOfMessages"))
-    .let { it.attributes["ApproximateNumberOfMessages"]?.toInt() ?: 0 }
+internal fun SqsClient.countMessagesOnQueue(queueUrl: String): Int =
+  this.getQueueAttributes(GetQueueAttributesRequest.builder().queueUrl(queueUrl).attributeNames(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES).build())
+    .let { it.attributes()[QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES]?.toInt() ?: 0 }

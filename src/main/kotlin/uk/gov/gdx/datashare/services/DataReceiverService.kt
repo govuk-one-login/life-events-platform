@@ -1,12 +1,12 @@
 package uk.gov.gdx.datashare.services
 
-import com.amazonaws.services.sqs.model.SendMessageRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest
 import uk.gov.gdx.datashare.config.*
 import uk.gov.gdx.datashare.models.DataProcessorMessage
 import uk.gov.gdx.datashare.models.EventToPublish
@@ -59,10 +59,11 @@ class DataReceiverService(
     meterRegistry.counter("EVENT_ACTION.EventPublished", "eventType", eventPayload.eventType.name).increment()
 
     dataReceiverSqsClient.sendMessage(
-      SendMessageRequest(
+      SendMessageRequest.builder().queueUrl(
         dataReceiverQueueUrl,
+      ).messageBody(
         dataProcessorMessage.toJson(),
-      ),
+      ).build(),
     )
   }
 

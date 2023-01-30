@@ -1,8 +1,5 @@
 package uk.gov.gdx.datashare.queue
 
-import com.amazonaws.services.sqs.AmazonSQS
-import com.amazonaws.services.sqs.model.CreateQueueRequest
-import com.amazonaws.services.sqs.model.GetQueueUrlResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -12,10 +9,13 @@ import org.mockito.ArgumentMatchers.contains
 import org.mockito.kotlin.*
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.context.ConfigurableApplicationContext
+import software.amazon.awssdk.services.sqs.SqsClient
+import software.amazon.awssdk.services.sqs.model.CreateQueueRequest
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse
+import software.amazon.awssdk.services.sqs.model.QueueAttributeName
 
 class AwsNoDlqQueueFactoryTest {
-
-  private val localstackArnPrefix = "arn:aws:sns:eu-west-2:000000000000:"
 
   private val context = mock<ConfigurableApplicationContext>()
   private val beanFactory = mock<ConfigurableListableBeanFactory>()
@@ -32,14 +32,14 @@ class AwsNoDlqQueueFactoryTest {
       queueName = "some queue name",
     )
     private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig))
-    private val sqsClient = mock<AmazonSQS>()
+    private val sqsClient = mock<SqsClient>()
     private lateinit var awsQueues: List<AwsQueue>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
       whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsClient)
-      whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
+      whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(GetQueueUrlResponse.builder().queueUrl("some queue url").build())
 
       awsQueues = awsQueueFactory.createAwsQueues(sqsProperties)
     }
@@ -93,7 +93,7 @@ class AwsNoDlqQueueFactoryTest {
     @Test
     fun `should register the sqs client but not the dlq client`() {
       verify(beanFactory).registerSingleton("somequeueid-sqs-client", sqsClient)
-      verify(beanFactory, never()).registerSingleton(contains("dlq-client"), any<AmazonSQS>())
+      verify(beanFactory, never()).registerSingleton(contains("dlq-client"), any<SqsClient>())
     }
 
     @Test
@@ -106,14 +106,14 @@ class AwsNoDlqQueueFactoryTest {
   inner class `Create single LocalStack AwsQueue with no dlq` {
     private val someQueueConfig = SqsProperties.QueueConfig(queueName = "some queue name")
     private val sqsProperties = SqsProperties(provider = "localstack", queues = mapOf("somequeueid" to someQueueConfig))
-    private val sqsClient = mock<AmazonSQS>()
+    private val sqsClient = mock<SqsClient>()
     private lateinit var awsQueues: List<AwsQueue>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
       whenever(sqsFactory.localStackSqsClient(anyString(), anyString(), anyString(), anyString()))
         .thenReturn(sqsClient)
-      whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
+      whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(GetQueueUrlResponse.builder().queueUrl("some queue url").build())
 
       awsQueues = awsQueueFactory.createAwsQueues(sqsProperties)
     }
@@ -167,14 +167,14 @@ class AwsNoDlqQueueFactoryTest {
     @Test
     fun `should register the sqs client but not the dlq client`() {
       verify(beanFactory).registerSingleton("somequeueid-sqs-client", sqsClient)
-      verify(beanFactory, never()).registerSingleton(contains("dlq-client"), any<AmazonSQS>())
+      verify(beanFactory, never()).registerSingleton(contains("dlq-client"), any<SqsClient>())
     }
 
     @Test
     fun `should create a queue without a redrive policy`() {
       verify(sqsClient).createQueue(
         check<CreateQueueRequest> {
-          assertThat(it.attributes).doesNotContainEntry("RedrivePolicy", """{"deadLetterTargetArn":"some dlq arn","maxReceiveCount":"5"}""")
+          assertThat(it.attributes()).doesNotContainEntry(QueueAttributeName.REDRIVE_POLICY, """{"deadLetterTargetArn":"some dlq arn","maxReceiveCount":"5"}""")
         },
       )
     }
@@ -189,15 +189,15 @@ class AwsNoDlqQueueFactoryTest {
       queueName = "another queue name",
     )
     private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig, "anotherqueueid" to anotherQueueConfig))
-    private val sqsClient = mock<AmazonSQS>()
+    private val sqsClient = mock<SqsClient>()
     private lateinit var awsQueues: List<AwsQueue>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
       whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsClient)
-      whenever(sqsClient.getQueueUrl("some queue name")).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
-      whenever(sqsClient.getQueueUrl("another queue name")).thenReturn(GetQueueUrlResult().withQueueUrl("another queue url"))
+      whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName("some queue name").build())).thenReturn(GetQueueUrlResponse.builder().queueUrl("some queue url").build())
+      whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName("another queue name").build())).thenReturn(GetQueueUrlResponse.builder().queueUrl("another queue url").build())
 
       awsQueues = awsQueueFactory.createAwsQueues(sqsProperties)
     }
@@ -230,14 +230,14 @@ class AwsNoDlqQueueFactoryTest {
       queueName = "some-queue-name",
     )
     private val sqsProperties = SqsProperties(provider = "localstack", queues = mapOf("somequeueid" to someQueueConfig))
-    private val sqsClient = mock<AmazonSQS>()
+    private val sqsClient = mock<SqsClient>()
     private lateinit var awsQueues: List<AwsQueue>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
       whenever(sqsFactory.localStackSqsClient(anyString(), anyString(), anyString(), anyString()))
         .thenReturn(sqsClient)
-      whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
+      whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(GetQueueUrlResponse.builder().queueUrl("some queue url").build())
 
       awsQueues = awsQueueFactory.createAwsQueues(sqsProperties)
     }
@@ -256,14 +256,14 @@ class AwsNoDlqQueueFactoryTest {
       queueName = "some queue name",
     )
     private val sqsProperties = SqsProperties(queues = mapOf("somequeueid" to someQueueConfig))
-    private val sqsClient = mock<AmazonSQS>()
+    private val sqsClient = mock<SqsClient>()
     private lateinit var awsQueues: List<AwsQueue>
 
     @BeforeEach
     fun `configure mocks and register queues`() {
       whenever(sqsFactory.awsSqsClient(anyString(), anyString(), anyString()))
         .thenReturn(sqsClient)
-      whenever(sqsClient.getQueueUrl(anyString())).thenReturn(GetQueueUrlResult().withQueueUrl("some queue url"))
+      whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(GetQueueUrlResponse.builder().queueUrl("some queue url").build())
 
       awsQueues = awsQueueFactory.createAwsQueues(sqsProperties)
     }

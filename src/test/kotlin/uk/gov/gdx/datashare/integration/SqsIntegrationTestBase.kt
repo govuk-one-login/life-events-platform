@@ -1,12 +1,12 @@
 package uk.gov.gdx.datashare.integration
 
-import com.amazonaws.services.sqs.model.PurgeQueueRequest
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import uk.gov.gdx.datashare.integration.LocalStackContainer.setLocalStackProperties
 import uk.gov.gdx.datashare.queue.*
 
@@ -21,7 +21,7 @@ class SqsIntegrationTestBase : IntegrationTestBase() {
 
   @BeforeEach
   fun cleanQueue() {
-    dataProcessorQueue.sqsClient.purgeQueue(PurgeQueueRequest(dataProcessorQueue.queueUrl))
+    dataProcessorQueue.sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(dataProcessorQueue.queueUrl).build())
   }
 
   companion object {

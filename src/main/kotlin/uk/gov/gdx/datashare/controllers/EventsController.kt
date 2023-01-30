@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.controllers
 
 import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.toedter.spring.hateoas.jsonapi.MediaTypes.JSON_API_VALUE
+import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.links.Link
@@ -26,6 +27,7 @@ import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.helpers.getPageLinks
 import uk.gov.gdx.datashare.models.EventNotification
+import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.services.*
 import java.time.LocalDateTime
 import java.util.*
@@ -35,15 +37,15 @@ import javax.validation.constraints.PositiveOrZero
 @RestController
 @XRayEnabled
 @RequestMapping("/events", produces = [JSON_API_VALUE])
-@PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
 @Validated
-@Tag(name = "01. Acquirer")
-class AcquirerController(
+class EventsController(
   private val eventDataService: EventDataService,
   private val eventApiAuditService: EventApiAuditService,
+  private val dataReceiverService: DataReceiverService,
   private val meterRegistry: MeterRegistry,
-) : BaseController {
-
+) {
+  @Tag(name = "01. Acquirer")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping
   @Operation(
     operationId = "getEvents",
@@ -219,6 +221,8 @@ class AcquirerController(
     )
   }
 
+  @Tag(name = "01. Acquirer")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping("/{id}")
   @Operation(
     summary = "Get Specific Event API - Get event data",
@@ -286,6 +290,8 @@ class AcquirerController(
     )
   }
 
+  @Tag(name = "01. Acquirer")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @DeleteMapping("/{id}")
   @Operation(
     summary = "Event Delete API - Delete event data",
@@ -313,9 +319,38 @@ class AcquirerController(
     }
   }
 
+  @Tag(name = "02. Supplier")
+  @PreAuthorize("hasAnyAuthority('SCOPE_events/publish')")
+  @PostMapping
+  @Operation(
+    summary = "Send events to GDS - The 'Source' of the event - this could be HMPO or DWP for example",
+    description = "Scope is events/publish",
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Data Accepted",
+      ),
+    ],
+  )
+  fun publishEvent(
+    @Schema(
+      description = "Event Payload",
+      required = true,
+      implementation = EventToPublish::class,
+    )
+    @RequestBody
+    eventPayload: EventToPublish,
+  ) = run {
+    tryCallAndUpdateMetric(
+      { dataReceiverService.sendToDataProcessor(eventPayload) },
+      meterRegistry.counter("API_CALLS.PublishEvent", "success", "true"),
+      meterRegistry.counter("API_CALLS.PublishEvent", "success", "false"),
+    )
+  }
+
   private fun eventLink(id: UUID): org.springframework.hateoas.Link =
     org.springframework.hateoas.Link.of(
-      linkTo(methodOn(AcquirerController::class.java).getEvent(id) as Any).toUriComponentsBuilder().scheme("https").build().toUriString(),
+      linkTo(methodOn(EventsController::class.java).getEvent(id) as Any).toUriComponentsBuilder().scheme("https").build().toUriString(),
       "self",
     )
 
@@ -326,5 +361,20 @@ class AcquirerController(
     pageNumber: Int = 0,
     pageSize: Int = 10,
   ): WebMvcLinkBuilder =
-    linkTo(methodOn(AcquirerController::class.java).getEvents(eventTypes, startTime, endTime, pageNumber, pageSize))
+    linkTo(methodOn(EventsController::class.java).getEvents(eventTypes, startTime, endTime, pageNumber, pageSize))
+
+  private fun <T> tryCallAndUpdateMetric(
+    call: () -> T,
+    successCounter: Counter,
+    failureCounter: Counter,
+  ): T {
+    try {
+      val result = call()
+      successCounter.increment()
+      return result
+    } catch (e: Exception) {
+      failureCounter.increment()
+      throw e
+    }
+  }
 }

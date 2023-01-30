@@ -14,6 +14,7 @@ import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
+import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.models.Events
 import uk.gov.gdx.datashare.services.*
 import uk.gov.gdx.datashare.services.EventDataService
@@ -22,27 +23,30 @@ import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Stream
 
-class AcquirerControllerTest {
+class EventsControllerTest {
   private val eventDataService = mockk<EventDataService>()
   private val eventApiAuditService = mockk<EventApiAuditService>()
+  private val dataReceiverService = mockk<DataReceiverService>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val getEventCounter = mockk<Counter>()
   private val getEventsCounter = mockk<Counter>()
-  private val getEventsStatusCounter = mockk<Counter>()
   private val deleteEventCounter = mockk<Counter>()
+  private val publishEventCounter = mockk<Counter>()
 
-  private val underTest: AcquirerController
+  private val underTest: EventsController
 
   init {
     every { meterRegistry.counter("API_CALLS.GetEvent", *anyVararg()) }.returns(getEventCounter)
     every { meterRegistry.counter("API_CALLS.GetEvents", *anyVararg()) }.returns(getEventsCounter)
     every { meterRegistry.counter("API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventCounter)
+    every { meterRegistry.counter("API_CALLS.PublishEvent", *anyVararg()) }.returns(publishEventCounter)
 
     every { getEventCounter.increment() }.returns(Unit)
     every { getEventsCounter.increment() }.returns(Unit)
     every { deleteEventCounter.increment() }.returns(Unit)
+    every { publishEventCounter.increment() }.returns(Unit)
 
-    underTest = AcquirerController(eventDataService, eventApiAuditService, meterRegistry)
+    underTest = EventsController(eventDataService, eventApiAuditService, dataReceiverService, meterRegistry)
   }
 
   @ParameterizedTest
@@ -171,6 +175,22 @@ class AcquirerControllerTest {
     val eventsOutput = underTest.getEvents(eventTypes, pageNumber = 0, pageSize = 10)
 
     Approvals.verify(eventsOutput)
+  }
+
+  @Test
+  fun `publishEvent sends event to processor`() {
+    val event = EventToPublish(
+      eventType = EventType.DEATH_NOTIFICATION,
+      eventTime = LocalDateTime.now(),
+      id = "123456789",
+    )
+
+    every { dataReceiverService.sendToDataProcessor(any()) }.returns(Unit)
+
+    underTest.publishEvent(event)
+
+    verify(exactly = 1) { publishEventCounter.increment() }
+    verify(exactly = 1) { dataReceiverService.sendToDataProcessor(event) }
   }
 
   companion object {

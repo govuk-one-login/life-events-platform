@@ -13,11 +13,11 @@ import uk.gov.gdx.datashare.models.CognitoClientResponse
 
 @Service
 class CognitoService(
-  @Value("\${cognito.user-pool-id}") val userPoolId: String,
-  @Value("\${cognito.enabled}") val enabled: Boolean,
-  @Value("\${cognito.acquirer-scope}") val acquirerScope: String,
-  @Value("\${cognito.supplier-scope}") val supplierScope: String,
-  @Value("\${cognito.admin-scope}") val adminScope: String,
+  @Value("\${cognito.user-pool-id:#{null}}") val userPoolId: String? = null,
+  @Value("\${cognito.enabled}:#{false}") val enabled: Boolean = false,
+  @Value("\${cognito.acquirer-scope:#{null}}") val acquirerScope: String? = null,
+  @Value("\${cognito.supplier-scope:#{null}}") val supplierScope: String? = null,
+  @Value("\${cognito.admin-scope:#{null}}") val adminScope: String? = null,
 ) {
   fun createUserPoolClient(cognitoClientRequest: CognitoClientRequest): CognitoClientResponse? {
     val scopes = cognitoClientRequest.clientTypes.map {

@@ -45,13 +45,12 @@ class AdminController(
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Event",
+        description = "Cognito client details",
       ),
     ],
   )
   fun createCognitoClient(
     @Schema(
-      description = "Client details",
       required = true,
       implementation = CognitoClientRequest::class,
     )

@@ -36,8 +36,4 @@ api:
       lev: http://localhost:8099
 
 cognito:
-  user-pool-id: fakeId
   enabled: false
-  acquirer-scope: events/consume
-  supplier-scope: events/publish
-  admin-scope: events/admin

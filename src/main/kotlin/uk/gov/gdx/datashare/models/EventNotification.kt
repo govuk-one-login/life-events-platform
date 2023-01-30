@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.models
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.toedter.spring.hateoas.jsonapi.JsonApiId
+import com.toedter.spring.hateoas.jsonapi.JsonApiMeta
 import com.toedter.spring.hateoas.jsonapi.JsonApiTypeForClass
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.gdx.datashare.enums.EventType
@@ -29,12 +30,8 @@ data class EventNotification(
     example = "false",
   )
   val dataIncluded: Boolean? = null,
-  @Schema(
-    description = "list of data fields that will be returned in this event",
-    required = false,
-    example = "firstNames,lastName,sex,dateOfDeath",
-  )
-  val enrichmentFields: String? = null,
+  @JsonApiMeta
+  val enrichmentFields: List<String>? = null,
   @Schema(
     description = "<h2>Event Data</h2>" +
       "     This field is only populated when the consumer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +

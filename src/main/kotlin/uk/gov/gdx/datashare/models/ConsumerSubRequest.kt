@@ -12,11 +12,11 @@ data class ConsumerSubRequest(
   @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client")
   val oauthClientId: String? = null,
   @Schema(
-    description = "CSV List of required fields to enrich the event with",
+    description = "List of required fields to enrich the event with",
     required = true,
-    example = "firstNames,lastName",
+    example = "[\"firstNames\", \"lastName\"]",
   )
-  val enrichmentFields: String,
+  val enrichmentFields: List<String>,
   @Schema(
     description = "Indicates that the specified enrichment fields will be present when a poll of events occurs",
     required = false,

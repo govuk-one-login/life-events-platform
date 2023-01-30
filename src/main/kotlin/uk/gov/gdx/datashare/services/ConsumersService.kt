@@ -7,10 +7,8 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.models.ConsumerRequest
 import uk.gov.gdx.datashare.models.ConsumerSubRequest
-import uk.gov.gdx.datashare.repositories.Consumer
-import uk.gov.gdx.datashare.repositories.ConsumerRepository
-import uk.gov.gdx.datashare.repositories.ConsumerSubscription
-import uk.gov.gdx.datashare.repositories.ConsumerSubscriptionRepository
+import uk.gov.gdx.datashare.models.ConsumerSubscriptionDto
+import uk.gov.gdx.datashare.repositories.*
 import java.util.*
 
 @Service
@@ -19,6 +17,7 @@ import java.util.*
 class ConsumersService(
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val consumerRepository: ConsumerRepository,
+  private val consumerSubscriptionEnrichmentFieldRepository: ConsumerSubscriptionEnrichmentFieldRepository,
 ) {
   fun getConsumers() = consumerRepository.findAll()
 
@@ -30,16 +29,19 @@ class ConsumersService(
   fun addConsumerSubscription(
     consumerId: UUID,
     consumerSubRequest: ConsumerSubRequest,
-  ): ConsumerSubscription {
+  ): ConsumerSubscriptionDto {
     with(consumerSubRequest) {
-      return consumerSubscriptionRepository.save(
+      val consumerSubscription = consumerSubscriptionRepository.save(
         ConsumerSubscription(
           consumerId = consumerId,
           oauthClientId = oauthClientId,
           eventType = eventType,
-          enrichmentFields = enrichmentFields,
         ),
       )
+      val enrichmentFields =
+        addConsumerSubscriptionEnrichmentFields(consumerSubscription.consumerSubscriptionId, enrichmentFields)
+
+      return mapConsumerSubscriptionDto(consumerSubscription, enrichmentFields)
     }
   }
 
@@ -47,17 +49,22 @@ class ConsumersService(
     consumerId: UUID,
     subscriptionId: UUID,
     consumerSubRequest: ConsumerSubRequest,
-  ): ConsumerSubscription {
+  ): ConsumerSubscriptionDto {
     with(consumerSubRequest) {
-      return consumerSubscriptionRepository.save(
+      val consumerSubscription = consumerSubscriptionRepository.save(
         consumerSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
           consumerId = consumerId,
           oauthClientId = oauthClientId,
           eventType = eventType,
-          enrichmentFields = enrichmentFields,
           enrichmentFieldsIncludedInPoll = enrichmentFieldsIncludedInPoll,
         ) ?: throw ConsumerSubscriptionNotFoundException("Subscription $subscriptionId not found"),
       )
+
+      consumerSubscriptionEnrichmentFieldRepository.deleteAllByConsumerSubscriptionId(consumerSubscription.consumerSubscriptionId)
+      val enrichmentFields =
+        addConsumerSubscriptionEnrichmentFields(consumerSubscription.consumerSubscriptionId, enrichmentFields)
+
+      return mapConsumerSubscriptionDto(consumerSubscription, enrichmentFields)
     }
   }
 

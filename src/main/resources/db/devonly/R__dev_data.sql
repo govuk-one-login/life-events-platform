@@ -32,23 +32,26 @@ $$;
 
 DELETE
 FROM publisher_subscription
-WHERE client_id IN ('len', 'internal-inbound', 'internal-inbound');
+WHERE client_id = 'len';
 
 DELETE
 FROM event_data
 WHERE consumer_subscription_id IN (SELECT id
                                    FROM consumer_subscription
-                                   WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'internal-outbound'));
-
-DELETE
-FROM consumer_subscription
-WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'internal-outbound');
+                                   WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client'));
 
 DELETE
 FROM consumer_subscription_enrichment_field
-WHERE enrichment_field IN
-      ('registrationDate', 'firstNames', 'lastName', 'maidenName', 'dateOfDeath', 'dateOfBirth', 'sex', 'address',
-       'birthplace', 'deathplace', 'occupation', 'retired');
+WHERE consumer_subscription_id IN (SELECT id
+                                   FROM consumer_subscription
+                                   WHERE event_type = 'DEATH_NOTIFICATION'
+                                     AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client'));
+
+DELETE
+FROM consumer_subscription
+WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');
+
+
 
 INSERT INTO publisher_subscription
     (client_id, publisher_id, event_type)
@@ -70,7 +73,8 @@ INSERT INTO consumer_subscription_enrichment_field(consumer_subscription_id, enr
 SELECT id,
        unnest(ARRAY ['registrationDate', 'firstNames', 'lastName', 'maidenName', 'dateOfDeath', 'dateOfBirth', 'sex', 'address', 'birthplace', 'deathplace', 'occupation', 'retired'])
 FROM consumer_subscription
-WHERE event_type = 'DEATH_NOTIFICATION';
+WHERE event_type = 'DEATH_NOTIFICATION'
+  AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');
 
 DROP FUNCTION IF EXISTS getIdFromPublisherName;
 DROP FUNCTION IF EXISTS getIdFromConsumerName;

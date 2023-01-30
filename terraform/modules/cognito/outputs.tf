@@ -10,6 +10,10 @@ output "user_pool_id" {
   value = aws_cognito_user_pool.pool.id
 }
 
+output "user_pool_arn" {
+  value = aws_cognito_user_pool.pool.arn
+}
+
 output "acquirer_scope" {
   value = "${local.identifier}/${local.scope_consume}"
 }

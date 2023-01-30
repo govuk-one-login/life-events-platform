@@ -61,7 +61,7 @@ class AdminControllerTest {
       "HMPO",
       EventType.DEATH_NOTIFICATION,
       listOf("firstNames", "lastName"),
-      false
+      false,
     )
     val cognitoClientResponse = CognitoClientResponse("HMPO", "ClientId", "ClientSecret")
 

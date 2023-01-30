@@ -6,20 +6,20 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.CognitoClientType
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CognitoClientResponse
+import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.repositories.EventData
 import uk.gov.gdx.datashare.repositories.EventDataRepository
-import uk.gov.gdx.datashare.services.CognitoService
-import uk.gov.gdx.datashare.services.ConsumersService
+import uk.gov.gdx.datashare.services.AdminService
 import java.util.*
 
 class AdminControllerTest {
   private val eventDataRepository = mockk<EventDataRepository>()
-  private val cognitoService = mockk<CognitoService>()
-  private val consumersService = mockk<ConsumersService>()
+  private val adminService = mockk<AdminService>()
 
-  private val underTest = AdminController(eventDataRepository, cognitoService, consumersService)
+  private val underTest = AdminController(eventDataRepository, adminService)
 
   @Test
   fun `getEvents gets events`() {
@@ -47,11 +47,29 @@ class AdminControllerTest {
     val cognitoClientRequest = CognitoClientRequest("HMPO", listOf(CognitoClientType.ACQUIRER))
     val cognitoClientResponse = CognitoClientResponse("HMPO", "ClientId", "ClientSecret")
 
-    every { cognitoService.createUserPoolClient(cognitoClientRequest) }.returns(cognitoClientResponse)
+    every { adminService.createCognitoClient(cognitoClientRequest) }.returns(cognitoClientResponse)
 
     val cognitoClientResponseOutput = underTest.createCognitoClient(cognitoClientRequest)
 
-    verify(exactly = 1) { cognitoService.createUserPoolClient(cognitoClientRequest) }
+    verify(exactly = 1) { adminService.createCognitoClient(cognitoClientRequest) }
+    assertThat(cognitoClientResponseOutput).isEqualTo(cognitoClientResponse)
+  }
+
+  @Test
+  fun `createAcquirer calls createAcquirer`() {
+    val createAcquirerRequest = CreateAcquirerRequest(
+      "HMPO",
+      EventType.DEATH_NOTIFICATION,
+      listOf("firstNames", "lastName"),
+      false
+    )
+    val cognitoClientResponse = CognitoClientResponse("HMPO", "ClientId", "ClientSecret")
+
+    every { adminService.createAcquirer(createAcquirerRequest) }.returns(cognitoClientResponse)
+
+    val cognitoClientResponseOutput = underTest.createAcquirer(createAcquirerRequest)
+
+    verify(exactly = 1) { adminService.createAcquirer(createAcquirerRequest) }
     assertThat(cognitoClientResponseOutput).isEqualTo(cognitoClientResponse)
   }
 }

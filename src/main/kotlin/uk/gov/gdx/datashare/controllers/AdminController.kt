@@ -13,15 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.gdx.datashare.enums.CognitoClientType
 import uk.gov.gdx.datashare.models.CognitoClientRequest
-import uk.gov.gdx.datashare.models.CognitoClientResponse
-import uk.gov.gdx.datashare.models.ConsumerRequest
-import uk.gov.gdx.datashare.models.ConsumerSubRequest
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.repositories.EventDataRepository
-import uk.gov.gdx.datashare.services.CognitoService
-import uk.gov.gdx.datashare.services.ConsumersService
+import uk.gov.gdx.datashare.services.AdminService
 
 @RestController
 @RequestMapping("/admin", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -31,8 +26,7 @@ import uk.gov.gdx.datashare.services.ConsumersService
 @Tag(name = "13. Admin")
 class AdminController(
   private val eventDataRepository: EventDataRepository,
-  private val cognitoService: CognitoService,
-  private val consumersService: ConsumersService,
+  private val adminService: AdminService,
 ) {
   @GetMapping("/events")
   @Operation(
@@ -65,7 +59,7 @@ class AdminController(
     )
     @RequestBody
     cognitoClientRequest: CognitoClientRequest,
-  ) = cognitoService.createUserPoolClient(cognitoClientRequest)
+  ) = adminService.createCognitoClient(cognitoClientRequest)
 
   @PostMapping("/acquirer")
   @Operation(
@@ -85,20 +79,5 @@ class AdminController(
     )
     @RequestBody
     createAcquirerRequest: CreateAcquirerRequest,
-  ) = cognitoService.createUserPoolClient(
-    CognitoClientRequest(createAcquirerRequest.clientName, listOf(CognitoClientType.ACQUIRER)),
-  )?.let {
-    val consumer = consumersService.addConsumer(ConsumerRequest(createAcquirerRequest.clientName))
-    consumersService.addConsumerSubscription(
-      consumer.id,
-      ConsumerSubRequest(
-        oauthClientId = it.clientId,
-        eventType = createAcquirerRequest.eventType,
-        enrichmentFields = createAcquirerRequest.enrichmentFields,
-        enrichmentFieldsIncludedInPoll = createAcquirerRequest.enrichmentFieldsIncludedInPoll,
-      ),
-    )
-
-    CognitoClientResponse(it.clientName, it.clientId, it.clientSecret)
-  }
+  ) = adminService.createAcquirer(createAcquirerRequest)
 }

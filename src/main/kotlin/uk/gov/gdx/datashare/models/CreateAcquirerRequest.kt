@@ -20,5 +20,5 @@ data class CreateAcquirerRequest(
     defaultValue = "false",
     example = "false",
   )
-  val enrichmentFieldsIncludedInPoll: Boolean = false,
+  val enrichmentFieldsIncludedInPoll: Boolean,
 )

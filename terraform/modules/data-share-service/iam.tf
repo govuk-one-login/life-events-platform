@@ -147,7 +147,7 @@ data "aws_iam_policy_document" "ecs_task_cognito_access" {
   statement {
     actions = ["cognito-idp:CreateUserPoolClient"]
     resources = [
-      "arn:aws:cognito-idp:${var.region}:${data.aws_caller_identity.current.account_id}:userpool/${module.cognito.user_pool_id}"
+      module.cognito.user_pool_arn
     ]
     effect = "Allow"
   }

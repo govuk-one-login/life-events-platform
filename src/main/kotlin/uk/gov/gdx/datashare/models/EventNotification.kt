@@ -31,6 +31,11 @@ data class EventNotification(
   )
   val dataIncluded: Boolean? = null,
   @JsonApiMeta
+  @Schema(
+    description = "List of data fields that will be returned in this event",
+    required = false,
+    example = "[\"firstNames\", \"lastName\"]",
+  )
   val enrichmentFields: List<String>? = null,
   @Schema(
     description = "<h2>Event Data</h2>" +

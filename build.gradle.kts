@@ -79,7 +79,7 @@ dependencies {
   // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
   testImplementation("com.amazonaws:aws-java-sdk-core:1.12.13")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("io.mockk:mockk:1.13.3")
+  testImplementation("io.mockk:mockk:1.13.4")
   testImplementation("org.mockito:mockito-inline")
   testImplementation("org.mockito:mockito-junit-jupiter:5.0.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")

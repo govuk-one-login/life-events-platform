@@ -49,18 +49,22 @@ INSERT INTO publisher_subscription
 VALUES ('len', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION');
 
 INSERT INTO consumer_subscription
-(oauth_client_id, consumer_id, enrichment_fields, event_type, enrichment_fields_included_in_poll)
+(oauth_client_id, consumer_id, event_type, enrichment_fields_included_in_poll)
 VALUES ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'),
-        'registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired',
         'DEATH_NOTIFICATION', false),
-       ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), '', 'LIFE_EVENT', false);
+       ('dwp-event-receiver', getIdFromConsumerName('DWP Poller'), 'LIFE_EVENT', false);
 
 INSERT INTO consumer_subscription
-(oauth_client_id, consumer_id, enrichment_fields, event_type, enrichment_fields_included_in_poll)
+(oauth_client_id, consumer_id, event_type, enrichment_fields_included_in_poll)
 VALUES ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'),
-        'registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired',
         'DEATH_NOTIFICATION', true),
-       ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), '', 'LIFE_EVENT', true);
+       ('hmrc-client', getIdFromConsumerName('Pub/Sub Consumer'), 'LIFE_EVENT', true);
+
+INSERT INTO consumer_subscription_enrichment_field(consumer_subscription_id, enrichment_field)
+SELECT id,
+       unnest(ARRAY ['registrationDate', 'firstNames', 'lastName', 'maidenName', 'dateOfDeath', 'dateOfBirth', 'sex', 'address', 'birthplace', 'deathplace', 'occupation', 'retired'])
+FROM consumer_subscription
+WHERE event_type = 'DEATH_NOTIFICATION';
 
 DROP FUNCTION IF EXISTS getIdFromPublisherName;
 DROP FUNCTION IF EXISTS getIdFromConsumerName;

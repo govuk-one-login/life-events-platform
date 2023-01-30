@@ -142,3 +142,23 @@ resource "aws_iam_role_policy_attachment" "ecs_task_rds_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_task_rds_access.arn
 }
+
+data "aws_iam_policy_document" "ecs_task_cognito_access" {
+  statement {
+    actions = ["cognito-idp:CreateUserPoolClient"]
+    resources = [
+      "arn:aws:cognito-idp:${var.region}:${data.aws_caller_identity.current.account_id}:userpool/${module.cognito.user_pool_id}"
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_cognito_access" {
+  name   = "${var.environment}-ecs_task_cognito_access-policy"
+  policy = data.aws_iam_policy_document.ecs_task_cognito_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_cognito_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_cognito_access.arn
+}

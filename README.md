@@ -139,6 +139,7 @@ curl --location --request GET 'http://localhost:8080/events' \
 ```
 
 This returns a list of events that have occurred and have not been deleted.
+//todo
 
 ```json
 {
@@ -149,11 +150,26 @@ This returns a list of events that have occurred and have not been deleted.
       "attributes": {
         "eventType": "DEATH_NOTIFICATION",
         "sourceId": "123456789",
-        "dataIncluded": false,
-        "enrichmentFields": "registrationDate,firstNames,lastName,maidenName,dateOfDeath,dateOfBirth,sex,address,birthplace,deathplace,occupation,retired"
+        "dataIncluded": false
       },
       "links": {
         "self": "http://localhost:8080/events/9a7091ae-4fd5-4e67-815a-c18843a2a626"
+      },
+      "meta": {
+        "enrichmentFields": [
+          "registrationDate",
+          "firstNames",
+          "lastName",
+          "maidenName",
+          "dateOfDeath",
+          "dateOfBirth",
+          "sex",
+          "address",
+          "birthplace",
+          "deathplace",
+          "occupation",
+          "retired"
+        ]
       }
     }
   ],

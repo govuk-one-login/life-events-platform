@@ -21,10 +21,52 @@ class ConsumersService(
 ) {
   fun getConsumers() = consumerRepository.findAll()
 
-  fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
+  fun getConsumerSubscriptions(): List<ConsumerSubscriptionDto> {
+    val consumerSubscriptions = consumerSubscriptionRepository.findAll()
+    return consumerSubscriptions.map {
+      val enrichmentFields =
+        consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(it.consumerSubscriptionId)
+      mapConsumerSubscriptionDto(it, enrichmentFields)
+    }
+  }
 
-  fun getSubscriptionsForConsumer(consumerId: UUID) =
-    consumerSubscriptionRepository.findAllByConsumerId(consumerId)
+  fun getSubscriptionsForConsumer(consumerId: UUID): List<ConsumerSubscriptionDto> {
+    val consumerSubscriptions = consumerSubscriptionRepository.findAllByConsumerId(consumerId)
+    return consumerSubscriptions.map {
+      val enrichmentFields =
+        consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(it.consumerSubscriptionId)
+      mapConsumerSubscriptionDto(it, enrichmentFields)
+    }
+  }
+
+  fun mapConsumerSubscriptionDto(
+    consumerSubscription: ConsumerSubscription,
+    enrichmentFields: List<ConsumerSubscriptionEnrichmentField>,
+  ): ConsumerSubscriptionDto {
+    return ConsumerSubscriptionDto(
+      consumerSubscriptionId = consumerSubscription.consumerSubscriptionId,
+      consumerId = consumerSubscription.consumerId,
+      oauthClientId = consumerSubscription.oauthClientId,
+      eventType = consumerSubscription.eventType,
+      enrichmentFields = enrichmentFields.map { it.enrichmentField },
+      enrichmentFieldsIncludedInPoll = consumerSubscription.enrichmentFieldsIncludedInPoll,
+      whenCreated = consumerSubscription.whenCreated,
+    )
+  }
+
+  fun addConsumerSubscriptionEnrichmentFields(
+    consumerSubscriptionId: UUID,
+    enrichmentFields: List<String>,
+  ): List<ConsumerSubscriptionEnrichmentField> {
+    return consumerSubscriptionEnrichmentFieldRepository.saveAll(
+      enrichmentFields.map {
+        ConsumerSubscriptionEnrichmentField(
+          consumerSubscriptionId = consumerSubscriptionId,
+          enrichmentField = it,
+        )
+      },
+    ).toList()
+  }
 
   fun addConsumerSubscription(
     consumerId: UUID,

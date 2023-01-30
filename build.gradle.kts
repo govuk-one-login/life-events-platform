@@ -81,7 +81,7 @@ dependencies {
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
   testImplementation("org.mockito:mockito-inline")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.0.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.1.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
   testImplementation("org.mockito:mockito-inline:5.1.0")
   testImplementation("com.approvaltests:approvaltests:18.5.0")

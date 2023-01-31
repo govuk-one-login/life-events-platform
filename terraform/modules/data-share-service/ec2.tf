@@ -35,7 +35,6 @@ resource "aws_key_pair" "rds_bastion_key_pair" {
 }
 
 #tfsec:ignore:aws-ec2-no-public-ingress-sgr
-#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "rds_bastion_host_sg" {
   name_prefix = "${var.environment}-rds-bastion-"
   description = "For bastion host access to GDX Data Share PoC Service RDS instances"
@@ -53,7 +52,7 @@ resource "aws_security_group" "rds_bastion_host_sg" {
     protocol    = "-1"
     from_port   = 0
     to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.vpc_cidr
     description = "Allow egress for RDS bastion"
   }
 

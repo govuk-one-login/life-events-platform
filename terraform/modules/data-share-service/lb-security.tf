@@ -21,7 +21,7 @@ resource "aws_security_group" "lb_auto" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = var.vpc_cidr
+    cidr_blocks = [var.vpc_cidr]
     description = "LB egress rule"
   }
 

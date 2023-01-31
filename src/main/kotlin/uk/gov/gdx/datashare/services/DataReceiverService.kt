@@ -49,7 +49,7 @@ class DataReceiverService(
     ) ?: throw SupplierPermissionException("$clientId does not have permission")
 
     val supplier = supplierRepository.findByIdOrNull(subscription.supplierId)
-      ?: throw SupplierSubscriptionNotFoundException("Client $clientId is not a known publisher")
+      ?: throw SupplierSubscriptionNotFoundException("Client $clientId is not a known supplier")
 
     val dataProcessorMessage = DataProcessorMessage(
       subscriptionId = subscription.id,

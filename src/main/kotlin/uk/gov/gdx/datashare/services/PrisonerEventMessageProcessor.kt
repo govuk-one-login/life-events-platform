@@ -39,7 +39,7 @@ class PrisonerEventMessageProcessor(
   }
 
   fun processHMPPSEvent(hmppsDomainEvent: HMPPSDomainEvent) {
-    // find a publisher with a defined name
+    // find a supplier with a defined name
     supplierSubscriptionRepository.findAllByEventType(EventType.ENTERED_PRISON)
       .firstOrNull()?.let {
         dataReceiverService.sendToDataProcessor(
@@ -50,7 +50,7 @@ class PrisonerEventMessageProcessor(
           ),
           it.clientId,
         )
-      } ?: log.warn("No publisher found for this event type {}", EventType.ENTERED_PRISON)
+      } ?: log.warn("No supplier found for this event type {}", EventType.ENTERED_PRISON)
   }
 }
 

@@ -15,12 +15,12 @@ import java.util.*
 
 class DataProcessorTest {
   private val objectMapper = mockk<ObjectMapper>()
-  private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()
+  private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val eventDataRepository = mockk<EventDataRepository>()
 
   private val underTest: DataProcessor = DataProcessor(
     objectMapper,
-    consumerSubscriptionRepository,
+    acquirerSubscriptionRepository,
     eventDataRepository,
   )
 
@@ -36,8 +36,8 @@ class DataProcessorTest {
       id = "123456789",
     )
 
-    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType) }
-      .returns(consumerSubscriptions)
+    every { acquirerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType) }
+      .returns(acquirerSubscriptions)
     every { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
     every { objectMapper.readValue(any<String>(), DataProcessorMessage::class.java) }.returns(dataProcessorMessage)
 
@@ -68,8 +68,8 @@ class DataProcessorTest {
       id = "123456789",
     )
 
-    every { consumerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType) }
-      .returns(consumerSubscriptions)
+    every { acquirerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType) }
+      .returns(acquirerSubscriptions)
     every { eventDataRepository.saveAll(any<Iterable<EventData>>()) }.returns(fakeSavedEvents)
     every { objectMapper.readValue(any<String>(), DataProcessorMessage::class.java) }.returns(dataProcessorMessage)
 
@@ -90,24 +90,24 @@ class DataProcessorTest {
     }
   }
 
-  private val consumerSubscriptions = listOf(
-    ConsumerSubscription(
-      consumerId = UUID.randomUUID(),
+  private val acquirerSubscriptions = listOf(
+    AcquirerSubscription(
+      acquirerId = UUID.randomUUID(),
       eventType = EventType.DEATH_NOTIFICATION,
     ),
-    ConsumerSubscription(
-      consumerId = UUID.randomUUID(),
+    AcquirerSubscription(
+      acquirerId = UUID.randomUUID(),
       eventType = EventType.DEATH_NOTIFICATION,
     ),
   )
 
   private val fakeSavedEvents = listOf(
     EventData(
-      consumerSubscriptionId = UUID.randomUUID(),
+      acquirerSubscriptionId = UUID.randomUUID(),
       dataId = "HMPO",
     ),
     EventData(
-      consumerSubscriptionId = UUID.randomUUID(),
+      acquirerSubscriptionId = UUID.randomUUID(),
       dataId = "HMPO",
     ),
   )

@@ -13,12 +13,12 @@ import java.time.LocalDateTime
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class ConsumerSubscription(
+data class AcquirerSubscription(
   @Id
   @Column("id")
-  val consumerSubscriptionId: UUID = UUID.randomUUID(),
-  @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-  val consumerId: UUID,
+  val acquirerSubscriptionId: UUID = UUID.randomUUID(),
+  @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val acquirerId: UUID,
   @Schema(description = "Client ID used to access the event platform", required = false, example = "an-oauth-client")
   val oauthClientId: String? = null,
   @Schema(description = "Event type for this subscription", required = true, example = "DEATH_NOTIFICATION")
@@ -39,7 +39,7 @@ data class ConsumerSubscription(
 
 ) : Persistable<UUID> {
 
-  override fun getId(): UUID = consumerSubscriptionId
+  override fun getId(): UUID = acquirerSubscriptionId
 
   override fun isNew(): Boolean = new
 }

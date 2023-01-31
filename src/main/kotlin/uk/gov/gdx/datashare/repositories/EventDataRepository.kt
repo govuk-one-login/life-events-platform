@@ -13,12 +13,12 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
     "SELECT ed.* FROM event_data ed " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
-      "AND ed.consumer_subscription_id = :consumerSubscriptionId " +
+      "AND ed.acquirer_subscription_id = :acquirerSubscriptionId " +
       "AND ed.deleted_at is null " +
       "ORDER BY ed.when_created",
   )
-  fun findAllByConsumerSubscription(
-    consumerSubscriptionId: UUID,
+  fun findAllByAcquirerSubscription(
+    acquirerSubscriptionId: UUID,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
   ): List<EventData>
@@ -27,14 +27,14 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
     "SELECT ed.* FROM event_data ed " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
-      "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
+      "AND ed.acquirer_subscription_id IN (:acquirerSubscriptionIds) " +
       "AND ed.deleted_at is null " +
       "ORDER BY ed.when_created " +
       "LIMIT :pageSize " +
       "OFFSET :offset",
   )
-  fun findPageByConsumerSubscriptions(
-    consumerSubscriptionIds: List<UUID>,
+  fun findPageByAcquirerSubscriptions(
+    acquirerSubscriptionIds: List<UUID>,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
     pageSize: Int,
@@ -45,19 +45,19 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
     "SELECT COUNT(ed.*) FROM event_data ed " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
-      "AND ed.consumer_subscription_id IN (:consumerSubscriptionIds) " +
+      "AND ed.acquirer_subscription_id IN (:acquirerSubscriptionIds) " +
       "AND ed.deleted_at is null",
   )
-  fun countByConsumerSubscriptions(
-    consumerSubscriptionIds: List<UUID>,
+  fun countByAcquirerSubscriptions(
+    acquirerSubscriptionIds: List<UUID>,
     fromTime: LocalDateTime,
     toTime: LocalDateTime,
   ): Int
 
   @Query(
     "SELECT ed.* FROM event_data ed " +
-      "JOIN consumer_subscription cs on ed.consumer_subscription_id = cs.id " +
-      "AND cs.oauth_client_id = :clientId " +
+      "JOIN acquirer_subscription asub on ed.acquirer_subscription_id = asub.id " +
+      "AND asub.oauth_client_id = :clientId " +
       "WHERE ed.id = :id " +
       "AND ed.deleted_at is null",
   )

@@ -157,15 +157,15 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(ConsumerSubscriptionNotFoundException::class)
-  fun handleConsumerSubscriptionNotFoundException(e: ConsumerSubscriptionNotFoundException): ResponseEntity<ErrorResponse?>? {
-    log.debug("Consumer subscription not found exception caught: {}", e.message)
+  @ExceptionHandler(AcquirerSubscriptionNotFoundException::class)
+  fun handleAcquirerSubscriptionNotFoundException(e: AcquirerSubscriptionNotFoundException): ResponseEntity<ErrorResponse?>? {
+    log.debug("Acquirer subscription not found exception caught: {}", e.message)
     return ResponseEntity
       .status(NOT_FOUND)
       .body(
         ErrorResponse(
           status = NOT_FOUND,
-          userMessage = "Consumer subscription Not Found: ${e.message}",
+          userMessage = "Acquirer subscription Not Found: ${e.message}",
           developerMessage = e.message,
         ),
       )
@@ -268,7 +268,7 @@ class UnknownDatasetException(message: String) :
   Exception(message)
 class EventNotFoundException(message: String) :
   Exception(message)
-class ConsumerSubscriptionNotFoundException(message: String) :
+class AcquirerSubscriptionNotFoundException(message: String) :
   Exception(message)
 class PublisherSubscriptionNotFoundException(message: String) :
   Exception(message)

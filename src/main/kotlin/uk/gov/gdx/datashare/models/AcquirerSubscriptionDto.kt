@@ -4,9 +4,9 @@ import uk.gov.gdx.datashare.enums.EventType
 import java.time.LocalDateTime
 import java.util.*
 
-data class ConsumerSubscriptionDto(
-  val consumerSubscriptionId: UUID,
-  val consumerId: UUID,
+data class AcquirerSubscriptionDto(
+  val acquirerSubscriptionId: UUID,
+  val acquirerId: UUID,
   val oauthClientId: String? = null,
   val eventType: EventType,
   val enrichmentFields: List<String>,

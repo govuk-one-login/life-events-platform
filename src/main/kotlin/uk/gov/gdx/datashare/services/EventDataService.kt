@@ -6,8 +6,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
-import uk.gov.gdx.datashare.config.ConsumerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
@@ -23,12 +23,12 @@ import java.util.*
 @XRayEnabled
 class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
-  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
+  private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val eventDataRepository: EventDataRepository,
   private val deathNotificationService: DeathNotificationService,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
-  private val consumerSubscriptionEnrichmentFieldRepository: ConsumerSubscriptionEnrichmentFieldRepository,
+  private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
 ) {
 
   companion object {
@@ -41,10 +41,10 @@ class EventDataService(
     val clientId = authenticationFacade.getUsername()
     val event = eventDataRepository.findByClientIdAndId(clientId, id)
       ?: throw EventNotFoundException("Event $id not found for polling client $clientId")
-    val consumerSubscription = consumerSubscriptionRepository.findByEventId(id)
-      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for event $id")
+    val acquirerSubscription = acquirerSubscriptionRepository.findByEventId(id)
+      ?: throw AcquirerSubscriptionNotFoundException("Acquirer subscription not found for event $id")
 
-    return mapEventNotification(event, consumerSubscription, includeData = true, callbackEvent = true)
+    return mapEventNotification(event, acquirerSubscription, includeData = true, callbackEvent = true)
   }
 
   fun getEvents(
@@ -58,18 +58,18 @@ class EventDataService(
     val endTime = optionalEndTime ?: dateTimeHandler.now()
     val clientId = authenticationFacade.getUsername()
 
-    val consumerSubscriptions = eventTypes?.let {
-      consumerSubscriptionRepository.findAllByEventTypesAndClientId(clientId, eventTypes)
-    } ?: consumerSubscriptionRepository.findAllByClientId(clientId)
+    val acquirerSubscriptions = eventTypes?.let {
+      acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(clientId, eventTypes)
+    } ?: acquirerSubscriptionRepository.findAllByOauthClientId(clientId)
 
-    if (consumerSubscriptions.isEmpty()) {
+    if (acquirerSubscriptions.isEmpty()) {
       return Events(0, emptyList())
     }
 
-    val consumerSubscriptionIdMap = consumerSubscriptions.toList().associateBy({ it.id }, { it })
+    val acquirerSubscriptionIdMap = acquirerSubscriptions.toList().associateBy({ it.id }, { it })
 
-    val events = eventDataRepository.findPageByConsumerSubscriptions(
-      consumerSubscriptionIdMap.keys.toList(),
+    val events = eventDataRepository.findPageByAcquirerSubscriptions(
+      acquirerSubscriptionIdMap.keys.toList(),
       startTime,
       endTime,
       pageSize,
@@ -77,12 +77,12 @@ class EventDataService(
     )
 
     val eventModels = events.map { event ->
-      val subscription = consumerSubscriptionIdMap[event.consumerSubscriptionId]!!
+      val subscription = acquirerSubscriptionIdMap[event.acquirerSubscriptionId]!!
       mapEventNotification(event, subscription, subscription.enrichmentFieldsIncludedInPoll)
     }
 
-    val eventsCount = eventDataRepository.countByConsumerSubscriptions(
-      consumerSubscriptionIdMap.keys.toList(),
+    val eventsCount = eventDataRepository.countByAcquirerSubscriptions(
+      acquirerSubscriptionIdMap.keys.toList(),
       startTime,
       endTime,
     )
@@ -94,30 +94,30 @@ class EventDataService(
     val callbackClientId = authenticationFacade.getUsername()
     val event = eventDataRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw EventNotFoundException("Event $id not found for callback client $callbackClientId")
-    val consumerSubscription = consumerSubscriptionRepository.findByEventId(id)
-      ?: throw ConsumerSubscriptionNotFoundException("Consumer subscription not found for event $id")
+    val acquirerSubscription = acquirerSubscriptionRepository.findByEventId(id)
+      ?: throw AcquirerSubscriptionNotFoundException("Acquirer subscription not found for event $id")
 
     eventDataRepository.softDeleteById(event.id, dateTimeHandler.now())
     meterRegistry.counter(
       "EVENT_ACTION.EventDeleted",
       "eventType",
-      consumerSubscription.eventType.name,
-      "consumerSubscription",
-      event.consumerSubscriptionId.toString(),
+      acquirerSubscription.eventType.name,
+      "acquirerSubscription",
+      event.acquirerSubscriptionId.toString(),
     ).increment()
     meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
       .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
-    return mapEventNotification(event, consumerSubscription, false)
+    return mapEventNotification(event, acquirerSubscription, false)
   }
 
   private fun mapEventNotification(
     event: EventData,
-    subscription: ConsumerSubscription,
+    subscription: AcquirerSubscription,
     includeData: Boolean = false,
     callbackEvent: Boolean = false,
   ): EventNotification {
     val enrichmentFields =
-      consumerSubscriptionEnrichmentFieldRepository.findAllByConsumerSubscriptionId(subscription.consumerSubscriptionId)
+      acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(subscription.acquirerSubscriptionId)
         .map { it.enrichmentField }
     return EventNotification(
       eventId = event.id,

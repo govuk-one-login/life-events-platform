@@ -8,20 +8,20 @@ import uk.gov.gdx.datashare.models.*
 @Service
 class AdminService(
   private val cognitoService: CognitoService,
-  private val consumersService: ConsumersService,
+  private val acquirersService: AcquirersService,
 ) {
   fun createCognitoClient(cognitoClientRequest: CognitoClientRequest) =
     cognitoService.createUserPoolClient(cognitoClientRequest)
 
   @Transactional
   fun createAcquirer(createAcquirerRequest: CreateAcquirerRequest): CognitoClientResponse? {
-    val consumer = consumersService.addConsumer(ConsumerRequest(createAcquirerRequest.clientName))
+    val acquirer = acquirersService.addAcquirer(AcquirerRequest(createAcquirerRequest.clientName))
     return cognitoService.createUserPoolClient(
       CognitoClientRequest(createAcquirerRequest.clientName, listOf(CognitoClientType.ACQUIRER)),
     )?.let {
-      consumersService.addConsumerSubscription(
-        consumer.id,
-        ConsumerSubRequest(
+      acquirersService.addAcquirerSubscription(
+        acquirer.id,
+        AcquirerSubRequest(
           oauthClientId = it.clientId,
           eventType = createAcquirerRequest.eventType,
           enrichmentFields = createAcquirerRequest.enrichmentFields,

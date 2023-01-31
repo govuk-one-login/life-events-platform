@@ -45,7 +45,7 @@ class PrisonerEventMessageProcessor(
         dataReceiverService.sendToDataProcessor(
           EventToPublish(
             EventType.ENTERED_PRISON,
-            LocalDateTime.parse(hmppsDomainEvent.occurredAt),
+            LocalDateTime.parse(hmppsDomainEvent.occurredAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME),
             hmppsDomainEvent.additionalInformation.nomsNumber,
           ),
           it.clientId,

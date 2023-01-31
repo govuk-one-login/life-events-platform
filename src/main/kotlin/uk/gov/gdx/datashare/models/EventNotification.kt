@@ -19,7 +19,6 @@ data class EventNotification(
     description = "Event's Type",
     required = true,
     example = "DEATH_NOTIFICATION",
-    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
   val eventType: EventType,
   @Schema(description = "ID from the source of the notification", required = true, example = "999999901")

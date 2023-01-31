@@ -19,13 +19,13 @@ class PrisonerLookupService(
   }
 
   fun getEnrichedPayload(
-    dataId: String,
+    prisonerNumber: String,
     enrichmentFields: List<String>,
   ): PrisonerDetails? {
-    val allEnrichedData = prisonerApiService.findPrisonerById(dataId)
+    val allEnrichedData = prisonerApiService.findPrisonerById(prisonerNumber)
       ?.let {
         PrisonerDetails(
-          prisonerNumber = dataId,
+          prisonerNumber = prisonerNumber,
           firstName = it.firstName,
           middleNames = it.middleNames,
           lastName = it.lastName,

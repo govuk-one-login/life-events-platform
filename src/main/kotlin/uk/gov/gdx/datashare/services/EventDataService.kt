@@ -120,19 +120,20 @@ class EventDataService(
     val enrichmentFields =
       acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(subscription.acquirerSubscriptionId)
         .map { it.enrichmentField }
+
     return EventNotification(
       eventId = event.id,
       eventType = subscription.eventType,
       sourceId = event.dataId,
       dataIncluded = if (!callbackEvent) includeData else null,
-      enrichmentFields = if (!callbackEvent) enrichmentFields else null,
+      enrichmentFields = enrichmentFields,
       eventData = if (includeData) callbackAndEnrichData(subscription, event, enrichmentFields) else null,
     )
   }
 
   @Suppress("IMPLICIT_CAST_TO_ANY")
   private fun callbackAndEnrichData(
-    subscription: ConsumerSubscription,
+    subscription: AcquirerSubscription,
     event: EventData,
     enrichmentFields: List<String>,
   ) = when (subscription.eventType) {

@@ -3,12 +3,11 @@ package uk.gov.gdx.datashare.services
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventToPublish
-import uk.gov.gdx.datashare.repositories.PublisherSubscriptionRepository
+import uk.gov.gdx.datashare.repositories.SupplierSubscriptionRepository
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -18,7 +17,7 @@ import java.time.format.DateTimeFormatter
 class PrisonerEventMessageProcessor(
   private val objectMapper: ObjectMapper,
   private val dataReceiverService: DataReceiverService,
-  private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
+  private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -41,7 +40,7 @@ class PrisonerEventMessageProcessor(
 
   fun processHMPPSEvent(hmppsDomainEvent: HMPPSDomainEvent) {
     // find a publisher with a defined name
-    publisherSubscriptionRepository.findAllByPublisherNameAndEventType(EventType.ENTERED_PRISON)
+    supplierSubscriptionRepository.findAllByEventType(EventType.ENTERED_PRISON)
       .firstOrNull()?.let {
         dataReceiverService.sendToDataProcessor(
           EventToPublish(

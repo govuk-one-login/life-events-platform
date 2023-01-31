@@ -77,16 +77,16 @@ WHERE event_type = 'DEATH_NOTIFICATION'
 
 
 INSERT INTO supplier (name) VALUES ('HMPPS');
-INSERT INTO supplier_subscription (publisher_id, event_type, client_id)
+INSERT INTO supplier_subscription (supplier_id, event_type, client_id)
 VALUES (getIdFromSupplierName('HMPPS'), 'ENTERED_PRISON', 'passthru');
 
 INSERT INTO acquirer (name) VALUES ('Prisoner Check Client');
 INSERT INTO acquirer_subscription
-(oauth_client_id, consumer_id, event_type, enrichment_fields_included_in_poll)
+(oauth_client_id, acquirer_id, event_type, enrichment_fields_included_in_poll)
 VALUES ('prisoner-check', getIdFromAcquirerName('Prisoner Check Client'),
         'ENTERED_PRISON', false);
 
-INSERT INTO acquirer_subscription_enrichment_field(consumer_subscription_id, enrichment_field)
+INSERT INTO acquirer_subscription_enrichment_field(acquirer_subscription_id, enrichment_field)
 SELECT id,
        unnest(ARRAY ['firstName', 'lastName', 'middleNames', 'dateOfDeath', 'sex', 'prisonerNumber'])
 FROM acquirer_subscription

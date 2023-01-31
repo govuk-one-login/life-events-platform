@@ -20,6 +20,16 @@ services:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
+  prisoner-search:
+    image: wiremock/wiremock:2.35.0
+    networks:
+      - hmpps
+    container_name: prisoner-search
+    ports:
+      - "8082:8080"
+    volumes:
+      - ${PWD}/prisoner-search-data:/home/wiremock
+
   datashare-db:
     image: postgres:13.7
     networks:
@@ -81,3 +91,4 @@ services:
 networks:
   gds:
   hmpo:
+  hmpps:

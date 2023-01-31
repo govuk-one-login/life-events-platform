@@ -5,6 +5,7 @@ services:
     networks:
       - gds
       - hmpo
+      - hmpps
     container_name: gdx-data-share-poc
     depends_on:
       - datashare-db
@@ -108,6 +109,17 @@ services:
     volumes:
       - ${PWD}/oauth2-data:/tmp/
 
+  prisoner-search:
+    image: wiremock/wiremock:2.35.0
+    networks:
+      - hmpps
+    container_name: prisoner-search
+    ports:
+      - "8082:8080"
+    volumes:
+      - ${PWD}/prisoner-search-data:/home/wiremock
+
 networks:
   gds:
   hmpo:
+  hmpps:

@@ -27,6 +27,7 @@ class EventDataServiceTest {
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val eventDataRepository = mockk<EventDataRepository>()
   private val deathRegistrationLookupService = mockk<DeathRegistrationLookupService>()
+  private val prisonerLookupService = mockk<PrisonerLookupService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val dataCreationToDeletionTimer = mockk<Timer>()
@@ -52,6 +53,7 @@ class EventDataServiceTest {
       acquirerSubscriptionRepository,
       eventDataRepository,
       deathRegistrationLookupService,
+      prisonerLookupService,
       dateTimeHandler,
       meterRegistry,
       acquirerSubscriptionEnrichmentFieldRepository,

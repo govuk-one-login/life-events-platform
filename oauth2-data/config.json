@@ -48,6 +48,15 @@
         },
         {
           "requestParam": "scope",
+          "match": "prisoner",
+          "claims": {
+            "sub": "prisoner-check",
+            "scope": "events/consume",
+            "client_id": "prisoner-check"
+          }
+        },
+        {
+          "requestParam": "scope",
           "match": "maintainer",
           "claims": {
             "sub": "maintainer",

@@ -43,13 +43,13 @@ class DataReceiverService(
   }
 
   fun sendToDataProcessor(eventPayload: EventToPublish, clientId: String) {
-    val subscription = publisherSubscriptionRepository.findByClientIdAndEventType(
+    val subscription = supplierSubscriptionRepository.findByClientIdAndEventType(
       clientId,
       eventPayload.eventType,
-    ) ?: throw PublisherPermissionException("$clientId does not have permission")
+    ) ?: throw SupplierPermissionException("$clientId does not have permission")
 
-    val publisher = publisherRepository.findByIdOrNull(subscription.publisherId)
-      ?: throw PublisherSubscriptionNotFoundException("Client $clientId is not a known publisher")
+    val supplier = supplierRepository.findByIdOrNull(subscription.supplierId)
+      ?: throw SupplierSubscriptionNotFoundException("Client $clientId is not a known publisher")
 
     val dataProcessorMessage = DataProcessorMessage(
       subscriptionId = subscription.id,

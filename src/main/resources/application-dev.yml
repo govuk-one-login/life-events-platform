@@ -36,6 +36,7 @@ api:
       issuer-uri: http://localhost:9090/issuer1
       oauth: http://localhost:9090/issuer1
       lev: http://localhost:8099
+      prisoner-search: http://localhost:8082
 
 xray-tracing:
   enabled: false

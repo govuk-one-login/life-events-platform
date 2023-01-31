@@ -25,7 +25,8 @@ class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
   private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
   private val eventDataRepository: EventDataRepository,
-  private val deathNotificationService: DeathNotificationService,
+  private val deathRegistrationLookupService: DeathRegistrationLookupService,
+  private val prisonerLookupService: PrisonerLookupService,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
   private val consumerSubscriptionEnrichmentFieldRepository: ConsumerSubscriptionEnrichmentFieldRepository,
@@ -125,14 +126,18 @@ class EventDataService(
       sourceId = event.dataId,
       dataIncluded = if (!callbackEvent) includeData else null,
       enrichmentFields = if (!callbackEvent) enrichmentFields else null,
-      eventData = if (includeData) {
-        deathNotificationService.getEnrichedPayload(
-          event.dataId,
-          enrichmentFields,
-        )
-      } else {
-        null
-      },
+      eventData = if (includeData) callbackAndEnrichData(subscription, event, enrichmentFields) else null,
     )
+  }
+
+  @Suppress("IMPLICIT_CAST_TO_ANY")
+  private fun callbackAndEnrichData(
+    subscription: ConsumerSubscription,
+    event: EventData,
+    enrichmentFields: List<String>,
+  ) = when (subscription.eventType) {
+    EventType.DEATH_NOTIFICATION -> deathRegistrationLookupService.getEnrichedPayload(event.dataId, enrichmentFields)
+    EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFields)
+    else -> log.warn("Not handling this event type {}", subscription.eventType)
   }
 }

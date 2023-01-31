@@ -9,7 +9,7 @@ import uk.gov.gdx.datashare.models.DeathNotificationDetails
 
 @Service
 @XRayEnabled
-class DeathNotificationService(
+class DeathRegistrationLookupService(
   private val levApiService: LevApiService,
   private val objectMapper: ObjectMapper,
 ) {

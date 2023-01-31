@@ -26,7 +26,7 @@ class EventDataServiceTest {
   private val authenticationFacade = mockk<AuthenticationFacade>()
   private val consumerSubscriptionRepository = mockk<ConsumerSubscriptionRepository>()
   private val eventDataRepository = mockk<EventDataRepository>()
-  private val deathNotificationService = mockk<DeathNotificationService>()
+  private val deathRegistrationLookupService = mockk<DeathRegistrationLookupService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val dataCreationToDeletionTimer = mockk<Timer>()
@@ -51,7 +51,7 @@ class EventDataServiceTest {
       authenticationFacade,
       consumerSubscriptionRepository,
       eventDataRepository,
-      deathNotificationService,
+      deathRegistrationLookupService,
       dateTimeHandler,
       meterRegistry,
       consumerSubscriptionEnrichmentFieldRepository,
@@ -75,7 +75,7 @@ class EventDataServiceTest {
     every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
     every { consumerSubscriptionRepository.findByEventId(event.id) }.returns(deathNotificationSubscription)
     every {
-      deathNotificationService.getEnrichedPayload(
+      deathRegistrationLookupService.getEnrichedPayload(
         event.dataId,
         subscriptionEnrichmentFields,
       )
@@ -149,7 +149,7 @@ class EventDataServiceTest {
       )
     }.returns(deathEvents.count())
     every {
-      deathNotificationService.getEnrichedPayload(
+      deathRegistrationLookupService.getEnrichedPayload(
         any(),
         subscriptionEnrichmentFields,
       )
@@ -206,7 +206,7 @@ class EventDataServiceTest {
       )
     }.returns(totalEventCount)
     every {
-      deathNotificationService.getEnrichedPayload(
+      deathRegistrationLookupService.getEnrichedPayload(
         any(),
         subscriptionEnrichmentFields,
       )
@@ -310,7 +310,7 @@ class EventDataServiceTest {
       )
     }.returns(extraDeathEvents.count())
     every {
-      deathNotificationService.getEnrichedPayload(
+      deathRegistrationLookupService.getEnrichedPayload(
         any(),
         subscriptionEnrichmentFields,
       )

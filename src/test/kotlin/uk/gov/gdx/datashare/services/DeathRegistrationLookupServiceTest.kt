@@ -10,11 +10,11 @@ import uk.gov.gdx.datashare.models.LevDeathRecord
 import uk.gov.gdx.datashare.models.LevDeceased
 import java.time.LocalDate
 
-class DeathNotificationServiceTest {
+class DeathRegistrationLookupServiceTest {
   private val levApiService = mockk<LevApiService>()
   private val objectMapper = JacksonConfiguration().objectMapper()
 
-  private val underTest: DeathNotificationService = DeathNotificationService(
+  private val underTest: DeathRegistrationLookupService = DeathRegistrationLookupService(
     levApiService,
     objectMapper,
   )

@@ -1,0 +1,26 @@
+name: Snyk pull request scanning
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Snyk to check gradle
+        uses: snyk/actions/gradle-jdk17@0.3.0
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
+
+      - name: Run Snyk to check terraform
+        uses: snyk/actions/iac@0.3.0
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor

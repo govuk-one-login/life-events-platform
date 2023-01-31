@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Publisher Request")
-data class PublisherRequest(
-  @Schema(description = "Publisher name", required = true, example = "DWP")
+@Schema(description = "Supplier Request")
+data class SupplierRequest(
+  @Schema(description = "Supplier name", required = true, example = "DWP")
   val name: String,
 )

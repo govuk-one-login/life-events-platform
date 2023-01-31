@@ -54,8 +54,8 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(PublisherPermissionException::class)
-  fun handlePublisherPermissionException(e: PublisherPermissionException): ResponseEntity<ErrorResponse> {
+  @ExceptionHandler(SupplierPermissionException::class)
+  fun handleSupplierPermissionException(e: SupplierPermissionException): ResponseEntity<ErrorResponse> {
     log.debug("Forbidden (403) returned with message {}", e.message)
     return ResponseEntity
       .status(FORBIDDEN)
@@ -68,8 +68,8 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(PublisherConfigException::class)
-  fun handlePublisherConfigException(e: PublisherConfigException): ResponseEntity<ErrorResponse> {
+  @ExceptionHandler(SupplierConfigException::class)
+  fun handleSupplierConfigException(e: SupplierConfigException): ResponseEntity<ErrorResponse> {
     log.info("Config exception: {}", e.message)
     return ResponseEntity
       .status(BAD_REQUEST)
@@ -143,15 +143,15 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(PublisherSubscriptionNotFoundException::class)
-  fun handlePublisherSubscriptionNotFoundException(e: PublisherSubscriptionNotFoundException): ResponseEntity<ErrorResponse?>? {
-    log.debug("Publisher subscription not found exception caught: {}", e.message)
+  @ExceptionHandler(SupplierSubscriptionNotFoundException::class)
+  fun handleSupplierSubscriptionNotFoundException(e: SupplierSubscriptionNotFoundException): ResponseEntity<ErrorResponse?>? {
+    log.debug("Supplier subscription not found exception caught: {}", e.message)
     return ResponseEntity
       .status(NOT_FOUND)
       .body(
         ErrorResponse(
           status = NOT_FOUND,
-          userMessage = "Publisher Subscription Not Found: ${e.message}",
+          userMessage = "Supplier Subscription Not Found: ${e.message}",
           developerMessage = e.message,
         ),
       )
@@ -260,9 +260,9 @@ class ApiExceptionHandler {
   }
 }
 
-class PublisherConfigException(message: String) :
+class SupplierConfigException(message: String) :
   Exception(message)
-class PublisherPermissionException(message: String) :
+class SupplierPermissionException(message: String) :
   Exception(message)
 class UnknownDatasetException(message: String) :
   Exception(message)
@@ -270,7 +270,7 @@ class EventNotFoundException(message: String) :
   Exception(message)
 class AcquirerSubscriptionNotFoundException(message: String) :
   Exception(message)
-class PublisherSubscriptionNotFoundException(message: String) :
+class SupplierSubscriptionNotFoundException(message: String) :
   Exception(message)
 class NoDataFoundException(message: String) :
   Exception(message)

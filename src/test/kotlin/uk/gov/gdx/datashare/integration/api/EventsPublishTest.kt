@@ -17,10 +17,10 @@ class EventsPublishTest : SqsIntegrationTestBase() {
   }
 
   @Test
-  fun `403 returns on non valid publisher`() {
+  fun `403 returns on non valid supplier`() {
     webTestClient.post()
       .uri("/events")
-      .headers(setAuthorisation("bad-publisher", listOf(""), listOf("events/publish")))
+      .headers(setAuthorisation("bad-supplier", listOf(""), listOf("events/publish")))
       .bodyValue(mapOf("eventType" to "DEATH_NOTIFICATION", "id" to "123456789"))
       .exchange()
       .expectStatus()

@@ -13,12 +13,12 @@ import java.time.LocalDateTime
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class PublisherSubscription(
+data class SupplierSubscription(
   @Id
   @Column("id")
-  val publisherSubscriptionId: UUID = UUID.randomUUID(),
-  @Schema(description = "Publisher ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-  val publisherId: UUID,
+  val supplierSubscriptionId: UUID = UUID.randomUUID(),
+  @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val supplierId: UUID,
   @Schema(description = "Client ID", required = true, example = "a-client-id")
   val clientId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
@@ -31,7 +31,7 @@ data class PublisherSubscription(
   val new: Boolean = true,
 
 ) : Persistable<UUID> {
-  override fun getId(): UUID = publisherSubscriptionId
+  override fun getId(): UUID = supplierSubscriptionId
 
   override fun isNew(): Boolean = new
 }

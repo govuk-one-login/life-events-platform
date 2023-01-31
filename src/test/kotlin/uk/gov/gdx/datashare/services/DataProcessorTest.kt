@@ -31,7 +31,7 @@ class DataProcessorTest {
     val dataProcessorMessage = DataProcessorMessage(
       eventType = EventType.DEATH_NOTIFICATION,
       eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
-      publisher = "HMPO",
+      supplier = "HMPO",
       subscriptionId = UUID.randomUUID(),
       id = "123456789",
     )
@@ -63,7 +63,7 @@ class DataProcessorTest {
     val dataProcessorMessage = DataProcessorMessage(
       eventType = EventType.DEATH_NOTIFICATION,
       eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
-      publisher = "HMPO",
+      supplier = "HMPO",
       subscriptionId = UUID.randomUUID(),
       id = "123456789",
     )

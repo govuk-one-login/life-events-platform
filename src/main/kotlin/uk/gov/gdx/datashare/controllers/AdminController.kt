@@ -18,6 +18,7 @@ import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
 import uk.gov.gdx.datashare.repositories.EventDataRepository
 import uk.gov.gdx.datashare.services.AdminService
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/admin", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -79,6 +80,7 @@ class AdminController(
       implementation = CreateAcquirerRequest::class,
     )
     @RequestBody
+    @Valid
     createAcquirerRequest: CreateAcquirerRequest,
   ) = adminService.createAcquirer(createAcquirerRequest)
 
@@ -99,6 +101,7 @@ class AdminController(
       implementation = CreateSupplierRequest::class,
     )
     @RequestBody
+    @Valid
     createSupplierRequest: CreateSupplierRequest,
   ) = adminService.createSupplier(createSupplierRequest)
 }

@@ -29,9 +29,7 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
   is_ipv6_enabled = false
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "${var.environment}-gdx-data-share-poc-lb"
+    allowed_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
 
     forwarded_values {
       query_string = true
@@ -44,10 +42,15 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     # Auto-compress stuff if given Accept-Encoding: gzip header
     compress = true
 
+    min_ttl     = 0
+    max_ttl     = 0
+    default_ttl = 0
+
+    # Required even though settings above mean we are not caching
+    target_origin_id       = "${var.environment}-gdx-data-share-poc-lb"
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+
   }
 
   # This is the lowest class and only offers nodes in Europe, US and Asia.

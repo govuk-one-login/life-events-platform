@@ -26,7 +26,7 @@ interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, 
 
   @Query(
     "SELECT asub.* FROM acquirer_subscription asub " +
-      "JOIN acquirer a ON cs.acquirer_id = a.id " +
+      "JOIN acquirer a ON asub.acquirer_id = a.id " +
       "AND a.id = :id",
   )
   fun findAllByAcquirerId(id: UUID): List<AcquirerSubscription>

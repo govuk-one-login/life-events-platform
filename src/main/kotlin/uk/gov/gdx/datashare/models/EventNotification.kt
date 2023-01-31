@@ -39,7 +39,7 @@ data class EventNotification(
   val enrichmentFields: List<String>? = null,
   @Schema(
     description = "<h2>Event Data</h2>" +
-      "     This field is only populated when the consumer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +
+      "     This field is only populated when the acquirer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +
       "     Full dataset for the event can be obtained by calling <pre>/events/{id}</pre>" +
       "     <h3>Event Types</h3>" +
       "     <h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +

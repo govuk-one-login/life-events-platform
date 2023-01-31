@@ -8,12 +8,12 @@ import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import java.util.*
 
-data class ConsumerSubscriptionEnrichmentField(
+data class AcquirerSubscriptionEnrichmentField(
   @Id
   @Column("id")
-  val consumerSubscriptionEnrichmentFieldId: UUID = UUID.randomUUID(),
-  @Schema(description = "Consumer subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-  val consumerSubscriptionId: UUID,
+  val acquirerSubscriptionEnrichmentFieldId: UUID = UUID.randomUUID(),
+  @Schema(description = "Acquirer subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val acquirerSubscriptionId: UUID,
   @Schema(description = "Enrichment field name", required = true, example = "firstName")
   val enrichmentField: String,
 
@@ -22,7 +22,7 @@ data class ConsumerSubscriptionEnrichmentField(
   val new: Boolean = true,
 
 ) : Persistable<UUID> {
-  override fun getId() = consumerSubscriptionEnrichmentFieldId
+  override fun getId() = acquirerSubscriptionEnrichmentFieldId
 
   override fun isNew(): Boolean = new
 }

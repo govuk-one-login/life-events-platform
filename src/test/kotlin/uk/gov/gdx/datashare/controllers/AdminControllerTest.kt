@@ -25,11 +25,11 @@ class AdminControllerTest {
   fun `getEvents gets events`() {
     val events = listOf(
       EventData(
-        consumerSubscriptionId = UUID.randomUUID(),
+        acquirerSubscriptionId = UUID.randomUUID(),
         dataId = "HMPO",
       ),
       EventData(
-        consumerSubscriptionId = UUID.randomUUID(),
+        acquirerSubscriptionId = UUID.randomUUID(),
         dataId = "HMPO",
       ),
     )

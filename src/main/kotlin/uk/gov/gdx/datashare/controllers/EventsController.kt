@@ -50,8 +50,8 @@ class EventsController(
   @Operation(
     operationId = "getEvents",
     summary = "Event Get API - Get event data",
-    description = "Get all events for consumer, Need scope of events/consume. " +
-      "     This field is only populated when the consumer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +
+    description = "Get all events for Acquirer, Need scope of events/consume. " +
+      "     This field is only populated when the acquirer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +
       "     Full dataset for the event can be obtained by calling <pre>/events/{id}</pre>" +
       "     <h3>Event Types</h3>" +
       "     <h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +

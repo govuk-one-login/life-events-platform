@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Consumer Request")
-data class ConsumerRequest(
-  @Schema(description = "Consumer name", required = true, example = "DWP")
+@Schema(description = "Acquirer Request")
+data class AcquirerRequest(
+  @Schema(description = "Acquirer name", required = true, example = "DWP")
   val name: String,
 )

@@ -12,12 +12,12 @@ import java.time.LocalDateTime
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class Consumer(
+data class Acquirer(
   @Id
   @Column("id")
-  @Schema(description = "Consumer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
-  val consumerId: UUID = UUID.randomUUID(),
-  @Schema(description = "Consumer Name", required = true, example = "DVLA")
+  @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  val acquirerId: UUID = UUID.randomUUID(),
+  @Schema(description = "Acquirer Name", required = true, example = "DVLA")
   val name: String,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
@@ -28,7 +28,7 @@ data class Consumer(
 
 ) : Persistable<UUID> {
 
-  override fun getId(): UUID = consumerId
+  override fun getId(): UUID = acquirerId
 
   override fun isNew(): Boolean = new
 }

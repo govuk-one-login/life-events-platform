@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.gdx.datashare.enums.EventType
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(description = "Consumer Subscription Request")
-data class ConsumerSubRequest(
+@Schema(description = "Acquirer Subscription Request")
+data class AcquirerSubRequest(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
   @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client")

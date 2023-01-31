@@ -25,7 +25,7 @@ class DataProcessor(
   @JmsListener(destination = "dataprocessor", containerFactory = "awsQueueContainerFactoryProxy")
   fun onGovEvent(message: String) {
     val dataProcessorMessage: DataProcessorMessage = objectMapper.readValue(message, DataProcessorMessage::class.java)
-    log.info("Received event [{}] from [{}]", dataProcessorMessage.eventType, dataProcessorMessage.publisher)
+    log.info("Received event [{}] from [{}]", dataProcessorMessage.eventType, dataProcessorMessage.supplier)
 
     val acquirerSubscriptions = acquirerSubscriptionRepository.findAllByEventType(dataProcessorMessage.eventType)
 

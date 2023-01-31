@@ -5,4 +5,4 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface PublisherRepository : CrudRepository<Publisher, UUID>
+interface SupplierRepository : CrudRepository<Supplier, UUID>

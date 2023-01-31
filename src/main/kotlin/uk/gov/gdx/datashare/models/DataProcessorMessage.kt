@@ -9,7 +9,7 @@ import java.util.UUID
 data class DataProcessorMessage(
   val eventType: EventType,
   val eventTime: LocalDateTime,
-  val publisher: String,
+  val supplier: String,
   val subscriptionId: UUID,
   val id: String,
 )

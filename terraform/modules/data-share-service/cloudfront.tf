@@ -12,10 +12,10 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
       https_port             = 443
       origin_protocol_policy = "http-only"
       # Required but irrelevant - we do not use HTTPS to talk to LB
-      origin_ssl_protocols   = ["TLSv1.2"]
+      origin_ssl_protocols = ["TLSv1.2"]
       # AWS enforce a maximum of 60s, but we can request more if desired.
       # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginResponseTimeout
-      origin_read_timeout    = 60
+      origin_read_timeout = 60
     }
   }
 

@@ -1,16 +1,16 @@
-CREATE OR REPLACE FUNCTION getIdFromPublisherName(publisher_name_check varchar(80))
+CREATE OR REPLACE FUNCTION getIdFromSupplierName(supplier_name_check varchar(80))
     RETURNS UUID
     LANGUAGE plpgsql
 AS
 $$
 Declare
-    publisher_id UUID;
+    supplier_id UUID;
 Begin
     SELECT id
-    INTO publisher_id
-    FROM publisher
-    WHERE name = publisher_name_check;
-    RETURN publisher_id;
+    INTO supplier_id
+    FROM supplier
+    WHERE name = supplier_name_check;
+    RETURN supplier_id;
 End;
 $$;
 
@@ -31,7 +31,7 @@ End;
 $$;
 
 DELETE
-FROM publisher_subscription
+FROM supplier_subscription
 WHERE client_id = 'len';
 
 DELETE
@@ -52,10 +52,9 @@ FROM acquirer_subscription
 WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');
 
 
-
-INSERT INTO publisher_subscription
-    (client_id, publisher_id, event_type)
-VALUES ('len', getIdFromPublisherName('HMPO'), 'DEATH_NOTIFICATION');
+INSERT INTO supplier_subscription
+    (client_id, supplier_id, event_type)
+VALUES ('len', getIdFromSupplierName('HMPO'), 'DEATH_NOTIFICATION');
 
 INSERT INTO acquirer_subscription
 (oauth_client_id, acquirer_id, event_type, enrichment_fields_included_in_poll)
@@ -76,5 +75,5 @@ FROM acquirer_subscription
 WHERE event_type = 'DEATH_NOTIFICATION'
   AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');
 
-DROP FUNCTION IF EXISTS getIdFromPublisherName;
+DROP FUNCTION IF EXISTS getIdFromSupplierName;
 DROP FUNCTION IF EXISTS getIdFromAcquirerName;

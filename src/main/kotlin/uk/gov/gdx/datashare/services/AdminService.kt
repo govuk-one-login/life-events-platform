@@ -1,11 +1,13 @@
 package uk.gov.gdx.datashare.services
 
+import com.amazonaws.xray.spring.aop.XRayEnabled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.enums.CognitoClientType
 import uk.gov.gdx.datashare.models.*
 
 @Service
+@XRayEnabled
 class AdminService(
   private val cognitoService: CognitoService,
   private val acquirersService: AcquirersService,

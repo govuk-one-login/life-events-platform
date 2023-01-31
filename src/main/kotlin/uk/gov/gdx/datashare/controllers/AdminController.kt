@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
+import uk.gov.gdx.datashare.models.CreateSupplierRequest
 import uk.gov.gdx.datashare.repositories.EventDataRepository
 import uk.gov.gdx.datashare.services.AdminService
 
@@ -80,4 +81,24 @@ class AdminController(
     @RequestBody
     createAcquirerRequest: CreateAcquirerRequest,
   ) = adminService.createAcquirer(createAcquirerRequest)
+
+  @PostMapping("/supplier")
+  @Operation(
+    summary = "Create supplier",
+    description = "Need scope of events/admin",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Cognito client details",
+      ),
+    ],
+  )
+  fun createSupplier(
+    @Schema(
+      required = true,
+      implementation = CreateSupplierRequest::class,
+    )
+    @RequestBody
+    createSupplierRequest: CreateSupplierRequest,
+  ) = adminService.createSupplier(createSupplierRequest)
 }

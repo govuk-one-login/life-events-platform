@@ -1,6 +1,6 @@
 # 11. Event datasets and types
 
-[Next >>](9999-end.md)
+[Next >>](0012-delay-enrichment.md)
 
 Date: 2023-01-26
 
@@ -32,4 +32,4 @@ The `event_type` table has been replaced with an enum of `EventType` instead.
 - Any functionality involving event types can now be type safe through enums
 - There are fewer database tables, simplifying the data structure
 
-[Next >>](9999-end.md)
+[Next >>](0012-delay-enrichment.md)

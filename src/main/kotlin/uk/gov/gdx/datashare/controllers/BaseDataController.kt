@@ -19,71 +19,71 @@ import java.util.*
 @XRayEnabled
 @Tag(name = "20. Data")
 class BaseDataController(
-  private val consumerRepository: ConsumerRepository,
-  private val consumerSubscriptionRepository: ConsumerSubscriptionRepository,
+  private val acquirerRepository: AcquirerRepository,
+  private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val eventDataRepository: EventDataRepository,
-  private val publisherRepository: PublisherRepository,
-  private val publisherSubscriptionRepository: PublisherSubscriptionRepository,
+  private val supplierRepository: SupplierRepository,
+  private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
 ) {
-  @GetMapping("/consumers")
+  @GetMapping("/acquirers")
   @Operation(
-    summary = "Get Consumers",
+    summary = "Get Acquirers",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Consumers",
+        description = "Acquirers",
       ),
     ],
   )
-  fun getConsumers() = consumerRepository.findAll()
+  fun getAcquirers() = acquirerRepository.findAll()
 
-  @DeleteMapping("/consumers/{id}")
+  @DeleteMapping("/acquirers/{id}")
   @Operation(
-    summary = "Delete Consumer",
+    summary = "Delete Acquirer",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Consumer deleted",
+        description = "Acquirer deleted",
       ),
     ],
   )
-  fun deleteConsumer(
-    @Schema(description = "Consumer ID", required = true)
+  fun deleteAcquirer(
+    @Schema(description = "Acquirer ID", required = true)
     @PathVariable
     id: UUID,
-  ) = consumerRepository.deleteById(id)
+  ) = acquirerRepository.deleteById(id)
 
-  @GetMapping("/consumerSubscriptions")
+  @GetMapping("/acquirerSubscriptions")
   @Operation(
-    summary = "Get Consumer Subscriptions",
+    summary = "Get Acquirer Subscriptions",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Consumer Subscriptions",
+        description = "Acquirer Subscriptions",
       ),
     ],
   )
-  fun getConsumerSubscriptions() = consumerSubscriptionRepository.findAll()
+  fun getAcquirerSubscriptions() = acquirerSubscriptionRepository.findAll()
 
-  @DeleteMapping("/consumerSubscriptions/{id}")
+  @DeleteMapping("/acquirerSubscriptions/{id}")
   @Operation(
-    summary = "Delete Consumer Subscription",
+    summary = "Delete Acquirer Subscription",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Consumer Subscription deleted",
+        description = "Acquirer Subscription deleted",
       ),
     ],
   )
-  fun deleteConsumerSubscription(
-    @Schema(description = "Consumer Subscription ID", required = true)
+  fun deleteAcquirerSubscription(
+    @Schema(description = "Acquirer Subscription ID", required = true)
     @PathVariable
     id: UUID,
-  ) = consumerSubscriptionRepository.deleteById(id)
+  ) = acquirerSubscriptionRepository.deleteById(id)
 
   @GetMapping("/events")
   @Operation(
@@ -115,63 +115,63 @@ class BaseDataController(
     id: UUID,
   ) = eventDataRepository.deleteById(id)
 
-  @GetMapping("/publishers")
+  @GetMapping("/suppliers")
   @Operation(
-    summary = "Get Publishers",
+    summary = "Get Suppliers",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Publishers",
+        description = "Suppliers",
       ),
     ],
   )
-  fun getPublishers() = publisherRepository.findAll()
+  fun getSuppliers() = supplierRepository.findAll()
 
-  @DeleteMapping("/publishers/{id}")
+  @DeleteMapping("/suppliers/{id}")
   @Operation(
-    summary = "Delete Publisher",
+    summary = "Delete Supplier",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Publisher deleted",
+        description = "Supplier deleted",
       ),
     ],
   )
-  fun deletePublisher(
-    @Schema(description = "Publisher ID", required = true)
+  fun deleteSupplier(
+    @Schema(description = "Supplier ID", required = true)
     @PathVariable
     id: UUID,
-  ) = publisherRepository.deleteById(id)
+  ) = supplierRepository.deleteById(id)
 
-  @GetMapping("/publisherSubscriptions")
+  @GetMapping("/supplierSubscriptions")
   @Operation(
-    summary = "Get Publisher Subscriptions",
+    summary = "Get Supplier Subscriptions",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",
-        description = "Publisher Subscriptions",
+        description = "Supplier Subscriptions",
       ),
     ],
   )
-  fun getPublisherSubscriptions() = publisherSubscriptionRepository.findAll()
+  fun getSupplierSubscriptions() = supplierSubscriptionRepository.findAll()
 
-  @DeleteMapping("/publisherSubscriptions/{id}")
+  @DeleteMapping("/supplierSubscriptions/{id}")
   @Operation(
-    summary = "Delete Publisher Subscription",
+    summary = "Delete Supplier Subscription",
     description = "Need scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "204",
-        description = "Publisher Subscription deleted",
+        description = "Supplier Subscription deleted",
       ),
     ],
   )
-  fun deletePublisherSubscription(
-    @Schema(description = "Publisher Subscription ID", required = true)
+  fun deleteSupplierSubscription(
+    @Schema(description = "Supplier Subscription ID", required = true)
     @PathVariable
     id: UUID,
-  ) = publisherSubscriptionRepository.deleteById(id)
+  ) = supplierSubscriptionRepository.deleteById(id)
 }

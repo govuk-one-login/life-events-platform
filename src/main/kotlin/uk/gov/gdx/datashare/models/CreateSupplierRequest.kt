@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.Length
 import uk.gov.gdx.datashare.enums.EventType
 import javax.validation.constraints.Pattern
 
-class CreateAcquirerRequest(
+data class CreateSupplierRequest(
   @Schema(
     description = "Name of client, may only contain lowercase letters, numbers, and the following special characters: + = , . @ -",
     required = true,
@@ -21,17 +21,4 @@ class CreateAcquirerRequest(
   val clientName: String,
   @Schema(description = "Event's Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
-  @Schema(
-    description = "List of required fields to enrich the event with",
-    required = true,
-    example = "[\"firstNames\",\"lastName\"]",
-  )
-  val enrichmentFields: List<String>,
-  @Schema(
-    description = "Indicates that the specified enrichment fields will be present when a poll of events occurs",
-    required = false,
-    defaultValue = "false",
-    example = "false",
-  )
-  val enrichmentFieldsIncludedInPoll: Boolean,
 )

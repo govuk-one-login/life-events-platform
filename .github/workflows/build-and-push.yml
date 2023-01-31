@@ -54,7 +54,7 @@ jobs:
           load: true
           cache-to: type=gha
           cache-from: type=gha
-          build-args: BUILD_VERSION=${{ steps.gitversion.outputs.majorMinorPatch }}
+          build-args: BUILD_NUMBER=${{ steps.gitversion.outputs.majorMinorPatch }}
 
       - name: Configure AWS credentials
         if: inputs.push

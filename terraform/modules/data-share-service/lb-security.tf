@@ -11,7 +11,6 @@ locals {
   update_ips_sns_arn = "arn:aws:sns:us-east-1:806199016981:AmazonIpSpaceChanged"
 }
 
-#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "lb_auto" {
   count       = length(local.lb_sg_opts)
   name_prefix = "${var.environment}-ecs-alb-auto-${count.index}-"
@@ -22,7 +21,7 @@ resource "aws_security_group" "lb_auto" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.vpc_cidr]
     description = "LB egress rule"
   }
 

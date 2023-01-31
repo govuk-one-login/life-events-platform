@@ -32,6 +32,17 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     allowed_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
     cached_methods  = []
 
+    forwarded_values {
+      query_string = true
+      headers      = ["*"]
+      cookies {
+        forward = "all"
+      }
+    }
+
+    # Auto-compress stuff if given Accept-Encoding: gzip header
+    compress = true
+
     # Required even though we are not caching
     target_origin_id       = "${var.environment}-gdx-data-share-poc-lb"
     viewer_protocol_policy = "redirect-to-https"

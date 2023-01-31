@@ -7,7 +7,7 @@ Date: 2023-01-03
 
 ## Status
 
-Draft
+Accepted, see [ADR-0012](0012=delay-enrichment.md) for followup
 
 ## Context
 
@@ -33,6 +33,8 @@ sequenceDiagram
     GDX ->>- Other department: Notification of death
 
 ```
+
+NOTE: SEE [ADR-0012](0012=delay-enrichment.md) FOR FOLLOWUP
 
 For this proof of concept, the key API calls will be
 ```mermaid

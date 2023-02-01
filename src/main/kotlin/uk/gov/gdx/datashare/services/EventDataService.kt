@@ -70,7 +70,7 @@ class EventDataService(
     val acquirerSubscriptionIdMap = acquirerSubscriptions.toList().associateBy({ it.id }, { it })
     val acquirerSubscriptionEnrichmentFieldsById = acquirerSubscriptions.toList().associateBy(
       { it.id },
-      { enrichmentFieldNamesForAcquirerSubscription(it) }
+      { enrichmentFieldNamesForAcquirerSubscription(it) },
     )
 
     val events = eventDataRepository.findPageByAcquirerSubscriptions(
@@ -139,7 +139,6 @@ class EventDataService(
       },
     )
   }
-
 
   private fun enrichmentFieldNamesForAcquirerSubscription(it: AcquirerSubscription) =
     acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(it.id).map { it.enrichmentField }

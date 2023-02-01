@@ -16,6 +16,8 @@ metrics:
 
 api:
   base:
+    prisoner-event:
+      enabled: true
     prisoner-search:
       api:
         client:

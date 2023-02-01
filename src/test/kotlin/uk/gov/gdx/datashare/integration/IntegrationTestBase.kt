@@ -11,6 +11,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.gdx.datashare.helpers.JwtAuthHelper
 import uk.gov.gdx.datashare.helpers.TestBase
 import uk.gov.gdx.datashare.integration.wiremock.OAuthMockServer
+import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.wiremock.PrisonerSearchApi
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -37,10 +38,14 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val OauthMockServer = OAuthMockServer()
 
+    @JvmField
+    val PrisonerSearchApi = PrisonerSearchApi()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
       OauthMockServer.start()
+      PrisonerSearchApi.start()
       OauthMockServer.stubGrantToken()
       OauthMockServer.stubOpenId()
     }
@@ -48,6 +53,7 @@ abstract class IntegrationTestBase : TestBase() {
     @AfterAll
     @JvmStatic
     fun stopMocks() {
+      PrisonerSearchApi.stop()
       OauthMockServer.stop()
     }
   }

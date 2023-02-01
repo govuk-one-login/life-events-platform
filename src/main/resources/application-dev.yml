@@ -31,7 +31,8 @@ spring:
 
 api:
   base:
-    consume-outbound-by-queue: false
+    prisoner-event:
+      enabled: true
     prisoner-search:
       api:
         client:

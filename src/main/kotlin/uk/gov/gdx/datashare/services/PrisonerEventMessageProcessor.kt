@@ -3,6 +3,7 @@ package uk.gov.gdx.datashare.services
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.enums.EventType
@@ -14,6 +15,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Service
+@ConditionalOnProperty(name = ["api.base.prisoner-event.enabled"], havingValue = "true")
 class PrisonerEventMessageProcessor(
   private val objectMapper: ObjectMapper,
   private val dataReceiverService: DataReceiverService,

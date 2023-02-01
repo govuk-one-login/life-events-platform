@@ -21,9 +21,12 @@ jobs:
   test:
     uses: ./.github/workflows/test.yml
 
+  openapi-lint:
+    uses: ./.github/workflows/openapi-lint.yml
+
   build-and-push-image:
     name: Build ${{ ((github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch') && 'and push' || '' }} docker image
-    needs: test
+    needs: [test, openapi-lint]
     uses: ./.github/workflows/build-and-push.yml
     with:
       push: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' }}

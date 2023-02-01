@@ -26,7 +26,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.19.26"))
+  implementation(platform("software.amazon.awssdk:bom:2.19.27"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
@@ -46,7 +46,7 @@ dependencies {
 
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:1.0.0")
-  implementation("org.postgresql:postgresql:42.5.1")
+  implementation("org.postgresql:postgresql:42.5.2")
 
   implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.14")
@@ -83,13 +83,13 @@ dependencies {
   testImplementation("org.testcontainers:localstack:1.17.6")
   testImplementation("org.testcontainers:postgresql:1.17.6")
   // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.395")
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.396")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
   testImplementation("org.mockito:mockito-inline")
   testImplementation("org.mockito:mockito-junit-jupiter:5.1.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-  testImplementation("org.mockito:mockito-inline:5.1.0")
+  testImplementation("org.mockito:mockito-inline:5.1.1")
   testImplementation("com.approvaltests:approvaltests:18.5.0")
 }
 

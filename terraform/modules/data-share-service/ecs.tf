@@ -73,7 +73,19 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       mountPoints : [],
       volumesFrom : [],
       essential : true,
-      cpu : 0
+      cpu : 0,
+    },
+    {
+      name : "xray-daemon",
+      image : "amazon/aws-xray-daemon"
+      cpu : 32,
+      memoryReservation : 256,
+      portMappings : [
+        {
+          containerPort : 2000,
+          protocol : "udp"
+        }
+      ]
     }
   ])
 }

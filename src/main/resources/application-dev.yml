@@ -50,5 +50,3 @@ xray-tracing:
 
 cognito:
   enabled: false
-
-

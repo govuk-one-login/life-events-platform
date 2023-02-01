@@ -131,12 +131,11 @@ class EventDataService(
     )
   }
 
-  @Suppress("IMPLICIT_CAST_TO_ANY")
   private fun callbackAndEnrichData(
     subscription: AcquirerSubscription,
     event: EventData,
     enrichmentFields: List<String>,
-  ) = when (subscription.eventType) {
+  ): Any? = when (subscription.eventType) {
     EventType.DEATH_NOTIFICATION -> deathRegistrationLookupService.getEnrichedPayload(event.dataId, enrichmentFields)
     EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFields)
     else -> log.warn("Not handling this event type {}", subscription.eventType)

@@ -90,9 +90,3 @@ cognito:
 
 xray-tracing:
   enabled: true
-
-logging:
-  level:
-    com:
-      amazonaws:
-        xray: DEBUG

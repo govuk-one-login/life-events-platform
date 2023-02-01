@@ -33,12 +33,4 @@ jobs:
           node-version: 18
 
       - name: Lint API docs
-        run: npx @stoplight/spectral-cli lint build/openapi.json -o junit-lint-results.xml -f junit
-
-      - name: Upload Lint Report
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: junit-lint-results
-          path: '**/junit-lint-results.xml'
-          retention-days: 1
+        run: npx @stoplight/spectral-cli lint build/openapi.json

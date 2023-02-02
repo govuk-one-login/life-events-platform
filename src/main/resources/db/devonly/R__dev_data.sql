@@ -70,7 +70,7 @@ VALUES ('hmrc-client', getIdFromAcquirerName('Pub/Sub Consumer'),
 
 INSERT INTO acquirer_subscription_enrichment_field(acquirer_subscription_id, enrichment_field)
 SELECT id,
-       unnest(ARRAY ['registrationDate', 'firstNames', 'lastName', 'maidenName', 'dateOfDeath', 'dateOfBirth', 'sex', 'address', 'birthplace', 'deathplace', 'occupation', 'retired'])
+       unnest(ARRAY ['registrationDate', 'firstNames', 'lastName', 'maidenName', 'dateOfDeath', 'dateOfBirth', 'sex', 'address', 'birthPlace', 'deathPlace', 'occupation', 'retired'])
 FROM acquirer_subscription
 WHERE event_type = 'DEATH_NOTIFICATION'
   AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');

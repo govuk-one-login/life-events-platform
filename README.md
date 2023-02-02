@@ -165,8 +165,8 @@ This returns a list of events that have occurred and have not been deleted.
           "dateOfBirth",
           "sex",
           "address",
-          "birthplace",
-          "deathplace",
+          "birthPlace",
+          "deathPlace",
           "occupation",
           "retired"
         ]

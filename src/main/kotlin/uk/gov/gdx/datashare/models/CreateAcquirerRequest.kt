@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.models
 
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import org.hibernate.validator.constraints.Length
 import uk.gov.gdx.datashare.enums.DeathNotificationField
@@ -22,10 +23,12 @@ class CreateAcquirerRequest(
   val clientName: String,
   @Schema(description = "Event's Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
-  @Schema(
-    description = "List of required fields to enrich the event with",
-    required = true,
-    example = "[\"firstNames\",\"lastName\"]",
+  @ArraySchema(
+    schema = Schema(
+      description = "Field to enrich the event with",
+      required = true,
+      example = "firstNames",
+    ),
   )
   val enrichmentFields: List<DeathNotificationField>,
   @Schema(

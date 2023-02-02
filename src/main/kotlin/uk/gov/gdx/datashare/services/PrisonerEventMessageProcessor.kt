@@ -29,9 +29,10 @@ class PrisonerEventMessageProcessor(
   fun onPrisonerEventMessage(prisonerEventMessage: String) {
     val (message, messageAttributes) = objectMapper.readValue(prisonerEventMessage, TopicMessage::class.java)
     val eventType = messageAttributes.eventType.Value
-    log.info("Received message $message, type $eventType")
-
     val hmppsDomainEvent = objectMapper.readValue(message, HMPPSDomainEvent::class.java)
+
+    log.info("Received message ${hmppsDomainEvent.additionalInformation.nomsNumber}, type $eventType")
+
     when (eventType) {
       "prison-offender-events.prisoner.received" -> processHMPPSEvent(hmppsDomainEvent)
       else -> {
@@ -42,8 +43,8 @@ class PrisonerEventMessageProcessor(
 
   fun processHMPPSEvent(hmppsDomainEvent: HMPPSDomainEvent) {
     // find a supplier with a defined name
-    supplierSubscriptionRepository.findAllByEventType(EventType.ENTERED_PRISON)
-      .firstOrNull()?.let {
+    supplierSubscriptionRepository.findFirstByEventType(EventType.ENTERED_PRISON)
+      ?.let {
         dataReceiverService.sendToDataProcessor(
           EventToPublish(
             EventType.ENTERED_PRISON,

@@ -93,7 +93,7 @@ class EventDataServiceTest {
         eventId = event.id,
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = event.dataId,
-        enrichmentFields = listOf("a", "b", "c"),
+        enrichmentFields = null,
         eventData = deathNotificationDetails,
       ),
     )

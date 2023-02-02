@@ -11,5 +11,5 @@ interface SupplierSubscriptionRepository : CrudRepository<SupplierSubscription, 
 
   fun findAllBySupplierId(id: UUID): List<SupplierSubscription>
 
-  fun findAllByEventType(eventType: EventType): List<SupplierSubscription>
+  fun findFirstByEventType(eventType: EventType): SupplierSubscription?
 }

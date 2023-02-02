@@ -58,7 +58,7 @@ class WebClientConfiguration(
       .evictInBackground(Duration.ofSeconds(120))
       .build()
 
-    return HttpClient.create(connectionProvider).responseTimeout(Duration.ofMinutes(10))
+    return HttpClient.create(connectionProvider).responseTimeout(Duration.ofSeconds(10))
   }
 
   @Bean

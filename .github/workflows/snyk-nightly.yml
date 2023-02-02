@@ -1,4 +1,4 @@
-name: Snyk pull request scanning
+name: Snyk nightly scanning
 
 on:
   workflow_dispatch:
@@ -28,16 +28,3 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk-gradle.sarif
-
-      - name: Run Snyk to check terraform
-        continue-on-error: true
-        uses: snyk/actions/iac@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --sarif-file-output=snyk-terraform.sarif --report
-
-      - name: Upload terraform result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: snyk-terraform.sarif

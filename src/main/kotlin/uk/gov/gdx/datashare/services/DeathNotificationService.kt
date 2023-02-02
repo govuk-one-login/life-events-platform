@@ -4,7 +4,7 @@ import com.amazonaws.xray.spring.aop.XRayEnabled
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 
 @Service
@@ -18,7 +18,7 @@ class DeathNotificationService(
 
   fun getEnrichedPayload(
     dataId: String,
-    enrichmentFields: List<DeathNotificationField>,
+    enrichmentFields: List<EnrichmentField>,
   ): DeathNotificationDetails? {
     val citizenDeathId = dataId.toInt()
     return levApiService

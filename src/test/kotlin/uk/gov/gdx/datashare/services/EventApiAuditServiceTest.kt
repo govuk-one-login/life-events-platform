@@ -13,7 +13,7 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.config.sha256
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
@@ -52,11 +52,11 @@ class EventApiAuditServiceTest {
       sourceId = "123456788",
       eventData = DeathNotificationDetails(
         listOf(
-          DeathNotificationField.FIRST_NAMES,
-          DeathNotificationField.LAST_NAME,
-          DeathNotificationField.SEX,
-          DeathNotificationField.DATE_OF_DEATH,
-          DeathNotificationField.REGISTRATION_DATE,
+          EnrichmentField.FIRST_NAMES,
+          EnrichmentField.LAST_NAME,
+          EnrichmentField.SEX,
+          EnrichmentField.DATE_OF_DEATH,
+          EnrichmentField.REGISTRATION_DATE,
         ),
         firstNames = "Alice",
         lastName = "Smith",
@@ -72,11 +72,11 @@ class EventApiAuditServiceTest {
       sourceId = "123456789",
       eventData = DeathNotificationDetails(
         listOf(
-          DeathNotificationField.FIRST_NAMES,
-          DeathNotificationField.LAST_NAME,
-          DeathNotificationField.SEX,
-          DeathNotificationField.DATE_OF_DEATH,
-          DeathNotificationField.REGISTRATION_DATE,
+          EnrichmentField.FIRST_NAMES,
+          EnrichmentField.LAST_NAME,
+          EnrichmentField.SEX,
+          EnrichmentField.DATE_OF_DEATH,
+          EnrichmentField.REGISTRATION_DATE,
         ),
         firstNames = "Bob",
         lastName = "Smith",

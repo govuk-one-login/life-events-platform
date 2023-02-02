@@ -61,7 +61,7 @@ class EventsControllerTest {
         dataIncluded = true,
         enrichmentFields = listOf(EnrichmentField.FIRST_NAMES),
         eventData = DeathNotificationDetails(
-          listOf(DeathNotificationField.FIRST_NAMES),
+          listOf(EnrichmentField.FIRST_NAMES),
           firstNames = "Bob",
         ),
       ),
@@ -72,7 +72,7 @@ class EventsControllerTest {
         dataIncluded = true,
         enrichmentFields = listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
         eventData = DeathNotificationDetails(
-          listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
+          listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
           firstNames = "Bob",
           lastName = "Smith",
         ),
@@ -99,11 +99,11 @@ class EventsControllerTest {
       sourceId = UUID.randomUUID().toString(),
       eventData = DeathNotificationDetails(
         listOf(
-          DeathNotificationField.FIRST_NAMES,
-          DeathNotificationField.DATE_OF_BIRTH,
-          DeathNotificationField.DATE_OF_DEATH,
-          DeathNotificationField.REGISTRATION_DATE,
-          DeathNotificationField.SEX,
+          EnrichmentField.FIRST_NAMES,
+          EnrichmentField.DATE_OF_BIRTH,
+          EnrichmentField.DATE_OF_DEATH,
+          EnrichmentField.REGISTRATION_DATE,
+          EnrichmentField.SEX,
         ),
         firstNames = "Bob",
         registrationDate = LocalDate.of(2023, 1, 3),
@@ -164,7 +164,7 @@ class EventsControllerTest {
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = "a5383689-1192-4078-a4a6-a611b0a34c6e",
         eventData = DeathNotificationDetails(
-          listOf(DeathNotificationField.FIRST_NAMES),
+          listOf(EnrichmentField.FIRST_NAMES),
           firstNames = "Bob",
         ),
       ),
@@ -173,7 +173,7 @@ class EventsControllerTest {
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = "ec39aa80-2fa2-4d46-9211-c66fc94024d3",
         eventData = DeathNotificationDetails(
-          listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
+          listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
           firstNames = "Bob",
           lastName = "Smith",
         ),

@@ -26,7 +26,7 @@ class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val eventDataRepository: EventDataRepository,
-  private val deathRegistrationLookupService: DeathRegistrationLookupService,
+  private val deathNotificationService: DeathNotificationService,
   private val prisonerLookupService: PrisonerLookupService,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
@@ -140,7 +140,7 @@ class EventDataService(
     event: EventData,
     enrichmentFieldNames: List<EnrichmentField>,
   ): Any? = when (subscription.eventType) {
-    EventType.DEATH_NOTIFICATION -> deathRegistrationLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
+    EventType.DEATH_NOTIFICATION -> deathNotificationService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
     EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
     else -> log.warn("Not handling this event type {}", subscription.eventType)
   }

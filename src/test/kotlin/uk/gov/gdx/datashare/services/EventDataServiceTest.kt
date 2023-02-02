@@ -27,7 +27,7 @@ class EventDataServiceTest {
   private val authenticationFacade = mockk<AuthenticationFacade>()
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val eventDataRepository = mockk<EventDataRepository>()
-  private val deathRegistrationLookupService = mockk<DeathRegistrationLookupService>()
+  private val deathNotificationService = mockk<DeathNotificationService>()
   private val prisonerLookupService = mockk<PrisonerLookupService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
   private val meterRegistry = mockk<MeterRegistry>()
@@ -53,7 +53,7 @@ class EventDataServiceTest {
       authenticationFacade,
       acquirerSubscriptionRepository,
       eventDataRepository,
-      deathRegistrationLookupService,
+      deathNotificationService,
       prisonerLookupService,
       dateTimeHandler,
       meterRegistry,
@@ -71,9 +71,9 @@ class EventDataServiceTest {
     val event = deathEvents.first()
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
-        DeathNotificationField.FIRST_NAMES,
-        DeathNotificationField.LAST_NAME,
-        DeathNotificationField.ADDRESS,
+        EnrichmentField.FIRST_NAMES,
+        EnrichmentField.LAST_NAME,
+        EnrichmentField.ADDRESS,
       ),
       firstNames = "Alice",
       lastName = "Smith",
@@ -83,7 +83,7 @@ class EventDataServiceTest {
     every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
     every { acquirerSubscriptionRepository.findByEventId(event.id) }.returns(deathNotificationSubscription)
     every {
-      deathRegistrationLookupService.getEnrichedPayload(
+      deathNotificationService.getEnrichedPayload(
         event.dataId,
         subscriptionEnrichmentFields,
       )
@@ -135,9 +135,9 @@ class EventDataServiceTest {
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
-        DeathNotificationField.FIRST_NAMES,
-        DeathNotificationField.LAST_NAME,
-        DeathNotificationField.ADDRESS,
+        EnrichmentField.FIRST_NAMES,
+        EnrichmentField.LAST_NAME,
+        EnrichmentField.ADDRESS,
       ),
       firstNames = "Alice",
       lastName = "Smith",
@@ -163,7 +163,7 @@ class EventDataServiceTest {
       )
     }.returns(deathEvents.count())
     every {
-      deathRegistrationLookupService.getEnrichedPayload(
+      deathNotificationService.getEnrichedPayload(
         any(),
         subscriptionEnrichmentFields,
       )
@@ -196,9 +196,9 @@ class EventDataServiceTest {
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
-        DeathNotificationField.FIRST_NAMES,
-        DeathNotificationField.LAST_NAME,
-        DeathNotificationField.ADDRESS,
+        EnrichmentField.FIRST_NAMES,
+        EnrichmentField.LAST_NAME,
+        EnrichmentField.ADDRESS,
       ),
       firstNames = "Alice",
       lastName = "Smith",
@@ -225,7 +225,7 @@ class EventDataServiceTest {
       )
     }.returns(totalEventCount)
     every {
-      deathRegistrationLookupService.getEnrichedPayload(
+      deathNotificationService.getEnrichedPayload(
         any(),
         subscriptionEnrichmentFields,
       )
@@ -306,9 +306,9 @@ class EventDataServiceTest {
 
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
-        DeathNotificationField.FIRST_NAMES,
-        DeathNotificationField.LAST_NAME,
-        DeathNotificationField.ADDRESS,
+        EnrichmentField.FIRST_NAMES,
+        EnrichmentField.LAST_NAME,
+        EnrichmentField.ADDRESS,
       ),
       firstNames = "Bob",
       lastName = "Smith",
@@ -334,7 +334,7 @@ class EventDataServiceTest {
       )
     }.returns(extraDeathEvents.count())
     every {
-      deathRegistrationLookupService.getEnrichedPayload(
+      deathNotificationService.getEnrichedPayload(
         any(),
         subscriptionEnrichmentFields,
       )

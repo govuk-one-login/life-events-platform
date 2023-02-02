@@ -6,7 +6,7 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.CognitoClientType
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CognitoClientResponse
@@ -62,7 +62,7 @@ class AdminControllerTest {
     val createAcquirerRequest = CreateAcquirerRequest(
       "HMPO",
       EventType.DEATH_NOTIFICATION,
-      listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
+      listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
       false,
     )
     val cognitoClientResponse = CognitoClientResponse("HMPO", "ClientId", "ClientSecret")

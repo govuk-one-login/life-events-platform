@@ -2,7 +2,7 @@ package uk.gov.gdx.datashare.models
 
 import io.swagger.v3.oas.annotations.media.Schema
 import org.hibernate.validator.constraints.Length
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import javax.validation.constraints.Pattern
 
@@ -27,7 +27,7 @@ class CreateAcquirerRequest(
     required = true,
     example = "[\"firstNames\",\"lastName\"]",
   )
-  val enrichmentFields: List<DeathNotificationField>,
+  val enrichmentFields: List<EnrichmentField>,
   @Schema(
     description = "Indicates that the specified enrichment fields will be present when a poll of events occurs",
     required = false,

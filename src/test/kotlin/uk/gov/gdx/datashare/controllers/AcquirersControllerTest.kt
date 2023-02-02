@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
@@ -59,7 +59,7 @@ class AcquirersControllerTest {
         acquirerSubscriptionId = UUID.randomUUID(),
         acquirerId = UUID.randomUUID(),
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES),
+        enrichmentFields = listOf(EnrichmentField.FIRST_NAMES),
         enrichmentFieldsIncludedInPoll = false,
         whenCreated = LocalDateTime.now(),
       ),
@@ -67,7 +67,7 @@ class AcquirersControllerTest {
         acquirerSubscriptionId = UUID.randomUUID(),
         acquirerId = UUID.randomUUID(),
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES),
+        enrichmentFields = listOf(EnrichmentField.FIRST_NAMES),
         enrichmentFieldsIncludedInPoll = false,
         whenCreated = LocalDateTime.now(),
       ),
@@ -75,7 +75,7 @@ class AcquirersControllerTest {
         acquirerSubscriptionId = UUID.randomUUID(),
         acquirerId = UUID.randomUUID(),
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES),
+        enrichmentFields = listOf(EnrichmentField.FIRST_NAMES),
         enrichmentFieldsIncludedInPoll = false,
         whenCreated = LocalDateTime.now(),
       ),
@@ -97,7 +97,7 @@ class AcquirersControllerTest {
         acquirerSubscriptionId = UUID.randomUUID(),
         acquirerId = acquirerId,
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES),
+        enrichmentFields = listOf(EnrichmentField.FIRST_NAMES),
         enrichmentFieldsIncludedInPoll = false,
         whenCreated = LocalDateTime.now(),
       ),
@@ -105,7 +105,7 @@ class AcquirersControllerTest {
         acquirerSubscriptionId = UUID.randomUUID(),
         acquirerId = acquirerId,
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES),
+        enrichmentFields = listOf(EnrichmentField.FIRST_NAMES),
         enrichmentFieldsIncludedInPoll = false,
         whenCreated = LocalDateTime.now(),
       ),
@@ -113,7 +113,7 @@ class AcquirersControllerTest {
         acquirerSubscriptionId = UUID.randomUUID(),
         acquirerId = acquirerId,
         eventType = EventType.DEATH_NOTIFICATION,
-        enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES),
+        enrichmentFields = listOf(EnrichmentField.FIRST_NAMES),
         enrichmentFieldsIncludedInPoll = false,
         whenCreated = LocalDateTime.now(),
       ),
@@ -132,13 +132,13 @@ class AcquirersControllerTest {
     val acquirerId = UUID.randomUUID()
     val acquirerSubscriptionRequest = AcquirerSubRequest(
       eventType = EventType.LIFE_EVENT,
-      enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
+      enrichmentFields = listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
     )
     val acquirerSubscriptionDto = AcquirerSubscriptionDto(
       acquirerSubscriptionId = UUID.randomUUID(),
       acquirerId = acquirerId,
       eventType = EventType.LIFE_EVENT,
-      enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
+      enrichmentFields = listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
       enrichmentFieldsIncludedInPoll = false,
       whenCreated = LocalDateTime.now(),
     )
@@ -156,14 +156,14 @@ class AcquirersControllerTest {
     val subscriptionId = UUID.randomUUID()
     val acquirerSubscriptionRequest = AcquirerSubRequest(
       eventType = EventType.LIFE_EVENT,
-      enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
+      enrichmentFields = listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
     )
     val acquirerSubscriptionDto = AcquirerSubscriptionDto(
       acquirerId = acquirerId,
       acquirerSubscriptionId = subscriptionId,
       oauthClientId = "callbackClientId",
       eventType = EventType.LIFE_EVENT,
-      enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
+      enrichmentFields = listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
       enrichmentFieldsIncludedInPoll = false,
       whenCreated = LocalDateTime.now(),
     )

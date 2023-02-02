@@ -10,7 +10,7 @@ import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
@@ -121,7 +121,7 @@ class EventDataService(
   private fun mapEventNotification(
     event: EventData,
     subscription: AcquirerSubscription,
-    enrichmentFieldNames: List<DeathNotificationField>,
+    enrichmentFieldNames: List<EnrichmentField>,
     includeData: Boolean = false,
     callbackEvent: Boolean = false,
   ): EventNotification {
@@ -138,7 +138,7 @@ class EventDataService(
   private fun callbackAndEnrichData(
     subscription: AcquirerSubscription,
     event: EventData,
-    enrichmentFieldNames: List<String>,
+    enrichmentFieldNames: List<EnrichmentField>,
   ): Any? = when (subscription.eventType) {
     EventType.DEATH_NOTIFICATION -> deathRegistrationLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
     EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)

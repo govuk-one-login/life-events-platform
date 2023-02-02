@@ -4,7 +4,7 @@ import com.amazonaws.xray.spring.aop.XRayEnabled
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.LevDeathRecord
 
@@ -19,7 +19,7 @@ class DeathRegistrationLookupService(
 
   fun getEnrichedPayload(
     dataId: String,
-    enrichmentFields: List<DeathNotificationField>,
+    enrichmentFields: List<EnrichmentField>,
   ): DeathNotificationDetails? {
     val citizenDeathId = dataId.toInt()
     return levApiService.findDeathById(citizenDeathId)
@@ -30,22 +30,22 @@ class DeathRegistrationLookupService(
 
   private fun mapDeathNotificationDetails(
     deathRecord: LevDeathRecord,
-    ef: List<DeathNotificationField>,
+    ef: List<EnrichmentField>,
   ): DeathNotificationDetails {
     val deceased = deathRecord.deceased
     return DeathNotificationDetails(
-      registrationDate = if (ef.contains(DeathNotificationField.REGISTRATION_DATE)) deathRecord.date else null,
-      firstNames = if (ef.contains(DeathNotificationField.FIRST_NAMES)) deceased.forenames else null,
-      lastName = if (ef.contains(DeathNotificationField.LAST_NAME)) deceased.surname else null,
-      sex = if (ef.contains(DeathNotificationField.SEX)) deceased.sex else null,
-      dateOfDeath = if (ef.contains(DeathNotificationField.DATE_OF_DEATH)) deceased.dateOfDeath else null,
-      dateOfBirth = if (ef.contains(DeathNotificationField.DATE_OF_BIRTH)) deceased.dateOfBirth else null,
-      birthPlace = if (ef.contains(DeathNotificationField.BIRTH_PLACE)) deceased.birthplace else null,
-      deathPlace = if (ef.contains(DeathNotificationField.DEATH_PLACE)) deceased.deathplace else null,
-      maidenName = if (ef.contains(DeathNotificationField.MAIDEN_NAME)) deceased.maidenSurname else null,
-      occupation = if (ef.contains(DeathNotificationField.OCCUPATION)) deceased.occupation else null,
-      retired = if (ef.contains(DeathNotificationField.RETIRED)) deceased.retired else null,
-      address = if (ef.contains(DeathNotificationField.ADDRESS)) deceased.address else null,
+      registrationDate = if (ef.contains(EnrichmentField.REGISTRATION_DATE)) deathRecord.date else null,
+      firstNames = if (ef.contains(EnrichmentField.FIRST_NAMES)) deceased.forenames else null,
+      lastName = if (ef.contains(EnrichmentField.LAST_NAME)) deceased.surname else null,
+      sex = if (ef.contains(EnrichmentField.SEX)) deceased.sex else null,
+      dateOfDeath = if (ef.contains(EnrichmentField.DATE_OF_DEATH)) deceased.dateOfDeath else null,
+      dateOfBirth = if (ef.contains(EnrichmentField.DATE_OF_BIRTH)) deceased.dateOfBirth else null,
+      birthPlace = if (ef.contains(EnrichmentField.BIRTH_PLACE)) deceased.birthplace else null,
+      deathPlace = if (ef.contains(EnrichmentField.DEATH_PLACE)) deceased.deathplace else null,
+      maidenName = if (ef.contains(EnrichmentField.MAIDEN_NAME)) deceased.maidenSurname else null,
+      occupation = if (ef.contains(EnrichmentField.OCCUPATION)) deceased.occupation else null,
+      retired = if (ef.contains(EnrichmentField.RETIRED)) deceased.retired else null,
+      address = if (ef.contains(EnrichmentField.ADDRESS)) deceased.address else null,
     )
   }
 }

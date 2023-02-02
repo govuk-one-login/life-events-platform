@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.config.JacksonConfiguration
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.PrisonerRecord
 import uk.gov.gdx.datashare.services.PrisonerApiService
@@ -13,23 +13,21 @@ import java.time.LocalDate
 
 class PrisonerLookupServiceTest {
   private val prisonerApiService = mockk<PrisonerApiService>()
-  private val objectMapper = JacksonConfiguration().objectMapper()
 
   private val underTest: PrisonerLookupService = PrisonerLookupService(
     prisonerApiService,
-    objectMapper,
   )
 
   @Test
   fun `getEnrichedData returns all data for a full set of enrichment fields`() {
     val dataId = "A1234AB"
     val enrichmentFields = listOf(
-      "firstName",
-      "lastName",
-      "sex",
-      "prisonerNumber",
-      "middleNames",
-      "dateOfBirth",
+      EnrichmentField.FIRST_NAME,
+      EnrichmentField.LAST_NAME,
+      EnrichmentField.SEX,
+      EnrichmentField.PRISONER_NUMBER,
+      EnrichmentField.MIDDLE_NAMES,
+      EnrichmentField.DATE_OF_BIRTH,
     )
     val prisonerRecord = PrisonerRecord(
       prisonerNumber = dataId,
@@ -55,7 +53,11 @@ class PrisonerLookupServiceTest {
   @Test
   fun `getEnrichedData returns correct data for a subset of enrichment fields`() {
     val dataId = "A1234AC"
-    val enrichmentFields = listOf("firstName", "dateOfBirth", "sex")
+    val enrichmentFields = listOf(
+      EnrichmentField.FIRST_NAME,
+      EnrichmentField.SEX,
+      EnrichmentField.DATE_OF_BIRTH,
+    )
     val prisonerRecord = PrisonerRecord(
       prisonerNumber = dataId,
       firstName = "Test",

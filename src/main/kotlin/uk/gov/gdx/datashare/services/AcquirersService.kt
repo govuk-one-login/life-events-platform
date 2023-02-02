@@ -5,6 +5,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
+import uk.gov.gdx.datashare.enums.DeathNotificationField
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
 import uk.gov.gdx.datashare.models.AcquirerSubscriptionDto
@@ -56,7 +57,7 @@ class AcquirersService(
 
   private fun addAcquirerSubscriptionEnrichmentFields(
     acquirerSubscriptionId: UUID,
-    enrichmentFields: List<String>,
+    enrichmentFields: List<DeathNotificationField>,
   ): List<AcquirerSubscriptionEnrichmentField> {
     return acquirerSubscriptionEnrichmentFieldRepository.saveAll(
       enrichmentFields.map {

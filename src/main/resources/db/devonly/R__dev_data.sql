@@ -75,10 +75,17 @@ FROM acquirer_subscription
 WHERE event_type = 'DEATH_NOTIFICATION'
   AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');
 
+DELETE FROM supplier_subscription WHERE event_type = 'ENTERED_PRISON' and supplier_id = getIdFromSupplierName('HMPPS');
+
+DELETE FROM supplier where name = 'HMPPS';
 
 INSERT INTO supplier (name) VALUES ('HMPPS');
 INSERT INTO supplier_subscription (supplier_id, event_type, client_id)
 VALUES (getIdFromSupplierName('HMPPS'), 'ENTERED_PRISON', 'passthru');
+
+DELETE FROM acquirer_subscription_enrichment_field WHERE event_type = 'ENTERED_PRISON' AND oauth_client_id IN ('prisoner-check');
+DELETE FROM acquirer_subscription WHERE event_type = 'ENTERED_PRISON' AND oauth_client_id IN ('prisoner-check') and acquirer_id = getIdFromAcquirerName('Prisoner Check Client');
+DELETE FROM acquirer WHERE name = 'Prisoner Check Client';
 
 INSERT INTO acquirer (name) VALUES ('Prisoner Check Client');
 INSERT INTO acquirer_subscription

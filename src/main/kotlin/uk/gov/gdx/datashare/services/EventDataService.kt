@@ -44,8 +44,9 @@ class EventDataService(
       ?: throw EventNotFoundException("Event $id not found for polling client $clientId")
     val acquirerSubscription = acquirerSubscriptionRepository.findByEventId(id)
       ?: throw AcquirerSubscriptionNotFoundException("Acquirer subscription not found for event $id")
+    val enrichmentFieldNames = enrichmentFieldNamesForAcquirerSubscription(acquirerSubscription)
 
-    return mapEventNotification(event, acquirerSubscription, includeData = true, callbackEvent = true)
+    return mapEventNotification(event, acquirerSubscription, enrichmentFieldNames, includeData = true, callbackEvent = true)
   }
 
   fun getEvents(
@@ -68,6 +69,10 @@ class EventDataService(
     }
 
     val acquirerSubscriptionIdMap = acquirerSubscriptions.toList().associateBy({ it.id }, { it })
+    val acquirerSubscriptionEnrichmentFieldsById = acquirerSubscriptions.toList().associateBy(
+      { it.id },
+      { enrichmentFieldNamesForAcquirerSubscription(it) },
+    )
 
     val events = eventDataRepository.findPageByAcquirerSubscriptions(
       acquirerSubscriptionIdMap.keys.toList(),
@@ -79,7 +84,8 @@ class EventDataService(
 
     val eventModels = events.map { event ->
       val subscription = acquirerSubscriptionIdMap[event.acquirerSubscriptionId]!!
-      mapEventNotification(event, subscription, subscription.enrichmentFieldsIncludedInPoll)
+      val enrichmentFieldNames = acquirerSubscriptionEnrichmentFieldsById[event.acquirerSubscriptionId]!!
+      mapEventNotification(event, subscription, enrichmentFieldNames, subscription.enrichmentFieldsIncludedInPoll)
     }
 
     val eventsCount = eventDataRepository.countByAcquirerSubscriptions(
@@ -108,36 +114,36 @@ class EventDataService(
     ).increment()
     meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
       .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
-    return mapEventNotification(event, acquirerSubscription, false)
+    return mapEventNotification(event, acquirerSubscription, emptyList(), false)
   }
 
   private fun mapEventNotification(
     event: EventData,
     subscription: AcquirerSubscription,
+    enrichmentFieldNames: List<String>,
     includeData: Boolean = false,
     callbackEvent: Boolean = false,
   ): EventNotification {
-    val enrichmentFields =
-      acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(subscription.acquirerSubscriptionId)
-        .map { it.enrichmentField }
-
     return EventNotification(
       eventId = event.id,
       eventType = subscription.eventType,
       sourceId = event.dataId,
       dataIncluded = if (!callbackEvent) includeData else null,
-      enrichmentFields = enrichmentFields,
-      eventData = if (includeData) callbackAndEnrichData(subscription, event, enrichmentFields) else null,
+      enrichmentFields = if (!callbackEvent) enrichmentFieldNames else null,
+      eventData = if (includeData) callbackAndEnrichData(subscription, event, enrichmentFieldNames) else null,
     )
   }
 
   private fun callbackAndEnrichData(
     subscription: AcquirerSubscription,
     event: EventData,
-    enrichmentFields: List<String>,
+    enrichmentFieldNames: List<String>,
   ): Any? = when (subscription.eventType) {
-    EventType.DEATH_NOTIFICATION -> deathRegistrationLookupService.getEnrichedPayload(event.dataId, enrichmentFields)
-    EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFields)
+    EventType.DEATH_NOTIFICATION -> deathRegistrationLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
+    EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
     else -> log.warn("Not handling this event type {}", subscription.eventType)
   }
+
+  private fun enrichmentFieldNamesForAcquirerSubscription(it: AcquirerSubscription) =
+    acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(it.id).map { it.enrichmentField }
 }

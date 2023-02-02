@@ -112,3 +112,5 @@ oauth2-data/hsperfdata_root
 
 # Approval Tests
 *.received.txt
+
+node_modules

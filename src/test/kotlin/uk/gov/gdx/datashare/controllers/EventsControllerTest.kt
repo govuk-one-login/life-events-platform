@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.gdx.datashare.config.EventNotFoundException
+import uk.gov.gdx.datashare.enums.DeathNotificationField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
@@ -59,7 +60,7 @@ class EventsControllerTest {
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = UUID.randomUUID().toString(),
         dataIncluded = true,
-        enrichmentFields = listOf("firstNames"),
+        enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES),
         eventData = DeathNotificationDetails(
           firstNames = "Bob",
         ),
@@ -69,7 +70,7 @@ class EventsControllerTest {
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = UUID.randomUUID().toString(),
         dataIncluded = true,
-        enrichmentFields = listOf("firstNames", "lastName"),
+        enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
         eventData = DeathNotificationDetails(
           firstNames = "Bob",
           lastName = "Smith",

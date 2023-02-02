@@ -13,9 +13,7 @@ import java.time.LocalDate
 class DeathNotificationServiceTest {
   private val levApiService = mockk<LevApiService>()
 
-  private val underTest: DeathNotificationService = DeathNotificationService(
-    levApiService,
-  )
+  private val underTest: DeathNotificationService = DeathNotificationService(levApiService)
 
   @Test
   fun `getEnrichedData returns all data for a full set of enrichment fields`() {

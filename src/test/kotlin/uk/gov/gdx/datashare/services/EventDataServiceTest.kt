@@ -68,6 +68,11 @@ class EventDataServiceTest {
   fun `getEvent gets Event for client`() {
     val event = deathEvents.first()
     val deathNotificationDetails = DeathNotificationDetails(
+      listOf(
+        DeathNotificationField.FIRST_NAMES,
+        DeathNotificationField.LAST_NAME,
+        DeathNotificationField.ADDRESS,
+      ),
       firstNames = "Alice",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),
@@ -126,6 +131,11 @@ class EventDataServiceTest {
     val startTime = LocalDateTime.now().minusHours(1)
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
+      listOf(
+        DeathNotificationField.FIRST_NAMES,
+        DeathNotificationField.LAST_NAME,
+        DeathNotificationField.ADDRESS,
+      ),
       firstNames = "Alice",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),
@@ -182,6 +192,11 @@ class EventDataServiceTest {
     val startTime = LocalDateTime.now().minusHours(1)
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
+      listOf(
+        DeathNotificationField.FIRST_NAMES,
+        DeathNotificationField.LAST_NAME,
+        DeathNotificationField.ADDRESS,
+      ),
       firstNames = "Alice",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),
@@ -287,6 +302,11 @@ class EventDataServiceTest {
     every { dateTimeHandler.now() }.returns(fallbackEndTime)
 
     val deathNotificationDetails = DeathNotificationDetails(
+      listOf(
+        DeathNotificationField.FIRST_NAMES,
+        DeathNotificationField.LAST_NAME,
+        DeathNotificationField.ADDRESS,
+      ),
       firstNames = "Bob",
       lastName = "Smith",
       address = deathNotificationSubscription.id.toString(),

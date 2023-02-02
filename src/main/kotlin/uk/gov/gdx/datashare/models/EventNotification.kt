@@ -7,7 +7,7 @@ import com.toedter.spring.hateoas.jsonapi.JsonApiTypeForClass
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.gdx.datashare.enums.DeathNotificationField
 import uk.gov.gdx.datashare.enums.EventType
-import java.util.UUID
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Subscribed event notification")

@@ -1,6 +1,6 @@
 # 12. Delay enrichment calls API
 
-[Next >>](9999-end.md)
+[Next >>](0013-event-auditing.md)
 
 
 Date: 2023-01-31
@@ -45,4 +45,4 @@ sequenceDiagram
 ## Consequences
 We may need to revisit this with future performance concerns, particularly around caching data from upstream services
 
-[Next >>](9999-end.md)
+[Next >>](0013-event-auditing.md)

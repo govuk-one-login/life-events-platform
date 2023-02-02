@@ -10,6 +10,7 @@ import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
+import uk.gov.gdx.datashare.enums.DeathNotificationField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
@@ -119,7 +120,7 @@ class EventDataService(
   private fun mapEventNotification(
     event: EventData,
     subscription: AcquirerSubscription,
-    enrichmentFieldNames: List<String>,
+    enrichmentFieldNames: List<DeathNotificationField>,
     includeData: Boolean = false,
     callbackEvent: Boolean = false,
   ): EventNotification {

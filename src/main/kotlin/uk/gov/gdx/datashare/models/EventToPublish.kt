@@ -13,7 +13,6 @@ data class EventToPublish(
     description = "Type of event",
     required = true,
     example = "DEATH_NOTIFICATION",
-    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
   val eventType: EventType,
   @Schema(

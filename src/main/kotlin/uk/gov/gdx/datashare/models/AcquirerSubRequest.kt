@@ -3,7 +3,7 @@ package uk.gov.gdx.datashare.models
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,7 +20,7 @@ data class AcquirerSubRequest(
       example = "firstNames",
     ),
   )
-  val enrichmentFields: List<DeathNotificationField>,
+  val enrichmentFields: List<EnrichmentField>,
   @Schema(
     description = "Indicates that the specified enrichment fields will be present when a poll of events occurs",
     required = false,

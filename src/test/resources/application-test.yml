@@ -16,10 +16,19 @@ metrics:
 
 api:
   base:
+    prisoner-event:
+      enabled: true
+    prisoner-search:
+      api:
+        client:
+          id: prisoner-search-client
+          secret: prisoner-search-secret
     url:
       issuer-uri: http://localhost:19090
       oauth: http://localhost:19090
       lev: http://localhost:18099
+      prisoner-search: http://localhost:18082
+      hmpps-auth:  http://localhost:19090
     s3:
       localstack-url: http://127.0.0.1:4566
 
@@ -47,6 +56,9 @@ sqs:
     dataprocessor:
       queueName: dataprocessor-queue
       dlqName: dataprocessor-dlq
+    prisoner-event:
+      queueName: prisoner-event-queue
+      dlqName: prisoner-event-dlq
 
 xray-tracing:
   enabled: false

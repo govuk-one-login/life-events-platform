@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
@@ -62,7 +62,7 @@ class AcquirersServiceTest {
     val enrichmentFields = savedAcquirerSubscriptions.map {
       AcquirerSubscriptionEnrichmentField(
         acquirerSubscriptionId = it.acquirerSubscriptionId,
-        enrichmentField = DeathNotificationField.FIRST_NAMES,
+        enrichmentField = EnrichmentField.FIRST_NAMES,
       )
     }
     savedAcquirerSubscriptions.forEach {
@@ -107,7 +107,7 @@ class AcquirersServiceTest {
     val enrichmentFields = savedAcquirerSubscriptions.map {
       AcquirerSubscriptionEnrichmentField(
         acquirerSubscriptionId = it.acquirerSubscriptionId,
-        enrichmentField = DeathNotificationField.FIRST_NAMES,
+        enrichmentField = EnrichmentField.FIRST_NAMES,
       )
     }
 
@@ -158,8 +158,8 @@ class AcquirersServiceTest {
             .isEqualTo(acquirerSubscription.id)
           assertThat(it.map { enrichmentField -> enrichmentField.enrichmentField }).isEqualTo(
             listOf(
-              DeathNotificationField.FIRST_NAMES,
-              DeathNotificationField.LAST_NAME,
+              EnrichmentField.FIRST_NAMES,
+              EnrichmentField.LAST_NAME,
             ),
           )
         },
@@ -199,8 +199,8 @@ class AcquirersServiceTest {
             .isEqualTo(acquirerSubscription.id)
           assertThat(it.map { enrichmentField -> enrichmentField.enrichmentField }).isEqualTo(
             listOf(
-              DeathNotificationField.FIRST_NAMES,
-              DeathNotificationField.LAST_NAME,
+              EnrichmentField.FIRST_NAMES,
+              EnrichmentField.LAST_NAME,
             ),
           )
         },
@@ -248,16 +248,16 @@ class AcquirersServiceTest {
   )
   private val acquirerSubRequest = AcquirerSubRequest(
     eventType = EventType.LIFE_EVENT,
-    enrichmentFields = listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME),
+    enrichmentFields = listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
     oauthClientId = "callbackClientIdNew",
   )
   private val acquirerSubscriptionEnrichmentField = AcquirerSubscriptionEnrichmentField(
     acquirerSubscriptionId = acquirerSubscription.id,
-    enrichmentField = DeathNotificationField.FIRST_NAMES,
+    enrichmentField = EnrichmentField.FIRST_NAMES,
   )
   private val newAcquirerSubscriptionEnrichmentField = AcquirerSubscriptionEnrichmentField(
     acquirerSubscriptionId = acquirerSubscription.id,
-    enrichmentField = DeathNotificationField.LAST_NAME,
+    enrichmentField = EnrichmentField.LAST_NAME,
   )
   private val allEnrichmentFields = listOf(acquirerSubscriptionEnrichmentField, newAcquirerSubscriptionEnrichmentField)
 }

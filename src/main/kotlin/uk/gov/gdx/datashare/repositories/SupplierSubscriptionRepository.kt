@@ -10,4 +10,6 @@ interface SupplierSubscriptionRepository : CrudRepository<SupplierSubscription, 
   fun findByClientIdAndEventType(clientId: String, eventType: EventType): SupplierSubscription?
 
   fun findAllBySupplierId(id: UUID): List<SupplierSubscription>
+
+  fun findFirstByEventType(eventType: EventType): SupplierSubscription?
 }

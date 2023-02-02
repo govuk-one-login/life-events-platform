@@ -4,3 +4,6 @@ sqs:
     dataprocessor:
       queueName: dataprocessor-queue
       dlqName: dataprocessor-dlq
+    prisoner-event:
+      queueName: prisoner-event-queue
+      dlqName: prisoner-event-dlq

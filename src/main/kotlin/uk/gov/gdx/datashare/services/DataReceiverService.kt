@@ -39,14 +39,17 @@ class DataReceiverService(
   }
 
   fun sendToDataProcessor(eventPayload: EventToPublish) {
-    // check if client is allowed to send
+    sendToDataProcessor(eventPayload, authenticationFacade.getUsername())
+  }
+
+  fun sendToDataProcessor(eventPayload: EventToPublish, clientId: String) {
     val subscription = supplierSubscriptionRepository.findByClientIdAndEventType(
-      authenticationFacade.getUsername(),
+      clientId,
       eventPayload.eventType,
-    ) ?: throw SupplierPermissionException("${authenticationFacade.getUsername()} does not have permission")
+    ) ?: throw SupplierPermissionException("$clientId does not have permission")
 
     val supplier = supplierRepository.findByIdOrNull(subscription.supplierId)
-      ?: throw SupplierSubscriptionNotFoundException("Client ${authenticationFacade.getUsername()} is not a known supplier")
+      ?: throw SupplierSubscriptionNotFoundException("Client $clientId is not a known supplier")
 
     val dataProcessorMessage = DataProcessorMessage(
       subscriptionId = subscription.id,

@@ -3,7 +3,7 @@ package uk.gov.gdx.datashare.uk.gov.gdx.datashare.models
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.LevDeathRecord
@@ -42,19 +42,19 @@ class DeathNotificationDetailsTest {
         address = expectedAddress,
       ),
     )
-    val enrichmentFields = listOf<DeathNotificationField>(
-      DeathNotificationField.REGISTRATION_DATE,
-      DeathNotificationField.FIRST_NAMES,
-      DeathNotificationField.LAST_NAME,
-      DeathNotificationField.SEX,
-      DeathNotificationField.DATE_OF_DEATH,
-      DeathNotificationField.DATE_OF_BIRTH,
-      DeathNotificationField.BIRTH_PLACE,
-      DeathNotificationField.DEATH_PLACE,
-      DeathNotificationField.MAIDEN_NAME,
-      DeathNotificationField.OCCUPATION,
-      DeathNotificationField.RETIRED,
-      DeathNotificationField.ADDRESS,
+    val enrichmentFields = listOf<EnrichmentField>(
+      EnrichmentField.REGISTRATION_DATE,
+      EnrichmentField.FIRST_NAMES,
+      EnrichmentField.LAST_NAME,
+      EnrichmentField.SEX,
+      EnrichmentField.DATE_OF_DEATH,
+      EnrichmentField.DATE_OF_BIRTH,
+      EnrichmentField.BIRTH_PLACE,
+      EnrichmentField.DEATH_PLACE,
+      EnrichmentField.MAIDEN_NAME,
+      EnrichmentField.OCCUPATION,
+      EnrichmentField.RETIRED,
+      EnrichmentField.ADDRESS,
     )
 
     val deathNotificationDetails = DeathNotificationDetails.fromLevDeathRecord(enrichmentFields, levDeathRecord)
@@ -94,7 +94,7 @@ class DeathNotificationDetailsTest {
         address = "address",
       ),
     )
-    val enrichmentFieldNames = emptyList<DeathNotificationField>()
+    val enrichmentFieldNames = emptyList<EnrichmentField>()
 
     val deathNotificationDetails = DeathNotificationDetails.fromLevDeathRecord(enrichmentFieldNames, levDeathRecord)
 
@@ -116,7 +116,7 @@ class DeathNotificationDetailsTest {
 
   @Test
   fun `allowed fields are included in serialized result`() {
-    val deathNotificationDetails = DeathNotificationDetails(listOf(DeathNotificationField.FIRST_NAMES))
+    val deathNotificationDetails = DeathNotificationDetails(listOf(EnrichmentField.FIRST_NAMES))
     val ser = ObjectMapper().writeValueAsString(deathNotificationDetails)
     assertThat(ser).isEqualTo("{\"firstNames\":null}")
   }

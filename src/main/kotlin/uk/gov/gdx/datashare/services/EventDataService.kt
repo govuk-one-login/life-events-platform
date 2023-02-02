@@ -10,7 +10,7 @@ import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
@@ -27,6 +27,7 @@ class EventDataService(
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val eventDataRepository: EventDataRepository,
   private val deathNotificationService: DeathNotificationService,
+  private val prisonerLookupService: PrisonerLookupService,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
@@ -120,7 +121,7 @@ class EventDataService(
   private fun mapEventNotification(
     event: EventData,
     subscription: AcquirerSubscription,
-    enrichmentFieldNames: List<DeathNotificationField>,
+    enrichmentFieldNames: List<EnrichmentField>,
     includeData: Boolean = false,
     callbackEvent: Boolean = false,
   ): EventNotification {
@@ -130,15 +131,18 @@ class EventDataService(
       sourceId = event.dataId,
       dataIncluded = if (!callbackEvent) includeData else null,
       enrichmentFields = if (!callbackEvent) enrichmentFieldNames else null,
-      eventData = if (includeData) {
-        deathNotificationService.getEnrichedPayload(
-          event.dataId,
-          enrichmentFieldNames,
-        )
-      } else {
-        null
-      },
+      eventData = if (includeData) callbackAndEnrichData(subscription, event, enrichmentFieldNames) else null,
     )
+  }
+
+  private fun callbackAndEnrichData(
+    subscription: AcquirerSubscription,
+    event: EventData,
+    enrichmentFieldNames: List<EnrichmentField>,
+  ): Any? = when (subscription.eventType) {
+    EventType.DEATH_NOTIFICATION -> deathNotificationService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
+    EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
+    else -> log.warn("Not handling this event type {}", subscription.eventType)
   }
 
   private fun enrichmentFieldNamesForAcquirerSubscription(it: AcquirerSubscription) =

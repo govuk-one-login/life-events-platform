@@ -25,6 +25,17 @@ spring:
         jwt:
           issuer-uri: ${api.base.url.issuer-uri}
 
+      client:
+        registration:
+          prisoner-search:
+            provider: hmpps-auth
+            client-id: ${api.base.prisoner-search.api.client.id:-}
+            client-secret: ${api.base.prisoner-search.api.client.secret:-}
+            authorization-grant-type: client_credentials
+        provider:
+          hmpps-auth:
+            token-uri: ${api.base.url.hmpps-auth:-}/oauth/token
+
   devtools:
     add-properties: false
 
@@ -83,7 +94,8 @@ springdoc:
 
 api:
   base:
-    consume-outbound-by-queue: false
+    prisoner-event:
+      enabled: false
 
 cognito:
   enabled: true

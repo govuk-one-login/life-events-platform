@@ -14,7 +14,7 @@ import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
@@ -28,6 +28,7 @@ class EventDataServiceTest {
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val eventDataRepository = mockk<EventDataRepository>()
   private val deathNotificationService = mockk<DeathNotificationService>()
+  private val prisonerLookupService = mockk<PrisonerLookupService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val dataCreationToDeletionTimer = mockk<Timer>()
@@ -53,6 +54,7 @@ class EventDataServiceTest {
       acquirerSubscriptionRepository,
       eventDataRepository,
       deathNotificationService,
+      prisonerLookupService,
       dateTimeHandler,
       meterRegistry,
       acquirerSubscriptionEnrichmentFieldRepository,
@@ -69,9 +71,9 @@ class EventDataServiceTest {
     val event = deathEvents.first()
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
-        DeathNotificationField.FIRST_NAMES,
-        DeathNotificationField.LAST_NAME,
-        DeathNotificationField.ADDRESS,
+        EnrichmentField.FIRST_NAMES,
+        EnrichmentField.LAST_NAME,
+        EnrichmentField.ADDRESS,
       ),
       firstNames = "Alice",
       lastName = "Smith",
@@ -97,6 +99,7 @@ class EventDataServiceTest {
         eventId = event.id,
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = event.dataId,
+        enrichmentFields = null,
         eventData = deathNotificationDetails,
       ),
     )
@@ -132,9 +135,9 @@ class EventDataServiceTest {
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
-        DeathNotificationField.FIRST_NAMES,
-        DeathNotificationField.LAST_NAME,
-        DeathNotificationField.ADDRESS,
+        EnrichmentField.FIRST_NAMES,
+        EnrichmentField.LAST_NAME,
+        EnrichmentField.ADDRESS,
       ),
       firstNames = "Alice",
       lastName = "Smith",
@@ -193,9 +196,9 @@ class EventDataServiceTest {
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
-        DeathNotificationField.FIRST_NAMES,
-        DeathNotificationField.LAST_NAME,
-        DeathNotificationField.ADDRESS,
+        EnrichmentField.FIRST_NAMES,
+        EnrichmentField.LAST_NAME,
+        EnrichmentField.ADDRESS,
       ),
       firstNames = "Alice",
       lastName = "Smith",
@@ -303,9 +306,9 @@ class EventDataServiceTest {
 
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
-        DeathNotificationField.FIRST_NAMES,
-        DeathNotificationField.LAST_NAME,
-        DeathNotificationField.ADDRESS,
+        EnrichmentField.FIRST_NAMES,
+        EnrichmentField.LAST_NAME,
+        EnrichmentField.ADDRESS,
       ),
       firstNames = "Bob",
       lastName = "Smith",
@@ -410,7 +413,7 @@ class EventDataServiceTest {
     enrichmentFieldsIncludedInPoll = false,
   )
   private val subscriptionEnrichmentFields =
-    listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME)
+    listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME)
   private val deathEvents = getEvents(4, deathNotificationSubscription.id)
   private val thinDeathEvents = getEvents(4, thinDeathNotificationSubscription.id)
   private val extraDeathEvents = getEvents(10, deathNotificationSubscription.id)

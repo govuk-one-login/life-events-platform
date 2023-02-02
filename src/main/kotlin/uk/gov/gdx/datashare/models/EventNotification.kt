@@ -5,7 +5,7 @@ import com.toedter.spring.hateoas.jsonapi.JsonApiId
 import com.toedter.spring.hateoas.jsonapi.JsonApiMeta
 import com.toedter.spring.hateoas.jsonapi.JsonApiTypeForClass
 import io.swagger.v3.oas.annotations.media.Schema
-import uk.gov.gdx.datashare.enums.DeathNotificationField
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import java.util.*
 
@@ -20,7 +20,6 @@ data class EventNotification(
     description = "Event's Type",
     required = true,
     example = "DEATH_NOTIFICATION",
-    allowableValues = ["DEATH_NOTIFICATION", "LIFE_EVENT"],
   )
   val eventType: EventType,
   @Schema(description = "ID from the source of the notification", required = true, example = "999999901")
@@ -37,7 +36,7 @@ data class EventNotification(
     required = false,
     example = "[\"firstNames\", \"lastName\"]",
   )
-  val enrichmentFields: List<DeathNotificationField>? = null,
+  val enrichmentFields: List<EnrichmentField>? = null,
   @Schema(
     description = "<h2>Event Data</h2>" +
       "     This field is only populated when the acquirer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +

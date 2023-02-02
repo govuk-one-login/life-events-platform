@@ -162,7 +162,8 @@ class EventsController(
     eventTypes: List<EventType>? = null,
     @Schema(
       description = "Events after this time, if not supplied it will be from the last time this endpoint was called for this client",
-      type = "date-time",
+      type = "string",
+      format = "date-time",
       required = false,
     )
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -170,7 +171,8 @@ class EventsController(
     startTime: LocalDateTime? = null,
     @Schema(
       description = "Events before this time, if not supplied it will be now",
-      type = "date-time",
+      type = "string",
+      format = "date-time",
       required = false,
     )
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

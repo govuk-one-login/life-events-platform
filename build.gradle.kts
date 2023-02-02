@@ -6,8 +6,14 @@ plugins {
   id("org.springframework.boot") version "2.7.8"
   id("io.spring.dependency-management") version "1.1.0"
   id("org.jmailen.kotlinter") version "3.13.0"
+  id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   kotlin("jvm") version "1.8.0"
   kotlin("plugin.spring") version "1.8.0"
+}
+
+openApi {
+  outputFileName.set("openapi.json")
+  customBootRun.args.set(listOf("--spring.profiles.active=dev,localstack"))
 }
 
 group = "uk.gov.gds"

@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
+import software.amazon.awssdk.services.ssm.SsmClient
+import software.amazon.awssdk.services.ssm.model.GetParameterRequest
 import java.time.Duration
 
 @Configuration
@@ -27,12 +29,19 @@ class WebClientConfiguration(
 
   @Bean
   fun levApiWebClient(): WebClient {
+    val ssmClient = SsmClient.create()
+
     return WebClient.builder()
       .baseUrl(levApiRootUri)
       .clientConnector(ReactorClientHttpConnector(createHttpClient("levApi")))
-      .defaultHeader("X-Auth-Aud", "gdx-data-share")
-      .defaultHeader("X-Auth-Username", "gdx-data-share-user")
+      .defaultHeader("X-Auth-Aud", getParameterFromSsm(ssmClient, "lev_api_client_name"))
+      .defaultHeader("X-Auth-Username", getParameterFromSsm(ssmClient, "lev_api_client_user"))
       .build()
+  }
+
+  private fun getParameterFromSsm(ssmClient: SsmClient, parameterName: String): String {
+    val paramRequest = GetParameterRequest.builder().name(parameterName).build()
+    return ssmClient.getParameter(paramRequest).parameter().value()
   }
 
   @Bean

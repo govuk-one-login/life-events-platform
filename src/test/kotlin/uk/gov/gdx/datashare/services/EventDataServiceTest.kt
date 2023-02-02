@@ -14,6 +14,7 @@ import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
+import uk.gov.gdx.datashare.enums.DeathNotificationField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
@@ -391,7 +392,8 @@ class EventDataServiceTest {
     eventType = EventType.DEATH_NOTIFICATION,
     enrichmentFieldsIncludedInPoll = false,
   )
-  private val subscriptionEnrichmentFields = listOf("a", "b", "c")
+  private val subscriptionEnrichmentFields =
+    listOf(DeathNotificationField.FIRST_NAMES, DeathNotificationField.LAST_NAME)
   private val deathEvents = getEvents(4, deathNotificationSubscription.id)
   private val thinDeathEvents = getEvents(4, thinDeathNotificationSubscription.id)
   private val extraDeathEvents = getEvents(10, deathNotificationSubscription.id)

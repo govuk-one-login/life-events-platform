@@ -64,7 +64,13 @@ POST `/consumers/CONSUMER-ID-GUID/subscriptions`
 {
   "ingressEventType": "DEATH_NOTIFICATION",
   "oauthClientId": "an-oauth-client",
-  "enrichmentFields": "firstNames,lastName,dateOfDeath,sex,registrationDate"
+  "enrichmentFields": [
+    "firstNames",
+    "lastName",
+    "dateOfDeath",
+    "sex",
+    "registrationDate"
+  ]
 }
 ```
 
@@ -76,11 +82,16 @@ Returns 200
   "consumerId": "CONSUMER-ID-GUID",
   "oauthClientId": "an-oauth-client",
   "ingressEventType": "DEATH_NOTIFICATION",
-  "enrichmentFields": "firstNames,lastName,dateOfDeath",
+  "enrichmentFields": [
+    "firstNames",
+    "lastName",
+    "dateOfDeath"
+  ],
   "id": "CONSUMER-SUBSCRIPTION-ID-GUID"
 }
 ```
 
 ## Tell the acquirer what to do
 
-Read over [How to acquire data from the service](acquiring-data-from-the-service.md) and make sure it is up-to-date, then send that over to the client so that they have the information.
+Read over [How to acquire data from the service](acquiring-data-from-the-service.md) and make sure it is up-to-date,
+then send that over to the client so that they have the information.

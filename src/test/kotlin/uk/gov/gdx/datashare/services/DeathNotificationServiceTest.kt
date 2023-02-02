@@ -4,35 +4,33 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.enums.EnrichmentField
+import uk.gov.gdx.datashare.enums.DeathNotificationField
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.LevDeathRecord
 import uk.gov.gdx.datashare.models.LevDeceased
 import java.time.LocalDate
 
-class DeathRegistrationLookupServiceTest {
+class DeathNotificationServiceTest {
   private val levApiService = mockk<LevApiService>()
 
-  private val underTest: DeathRegistrationLookupService = DeathRegistrationLookupService(
-    levApiService,
-  )
+  private val underTest: DeathNotificationService = DeathNotificationService(levApiService)
 
   @Test
   fun `getEnrichedData returns all data for a full set of enrichment fields`() {
     val dataId = "123456789"
     val enrichmentFields = listOf(
-      EnrichmentField.REGISTRATION_DATE,
-      EnrichmentField.FIRST_NAMES,
-      EnrichmentField.LAST_NAME,
-      EnrichmentField.SEX,
-      EnrichmentField.DATE_OF_DEATH,
-      EnrichmentField.MAIDEN_NAME,
-      EnrichmentField.DATE_OF_BIRTH,
-      EnrichmentField.ADDRESS,
-      EnrichmentField.BIRTH_PLACE,
-      EnrichmentField.DEATH_PLACE,
-      EnrichmentField.OCCUPATION,
-      EnrichmentField.RETIRED,
+      DeathNotificationField.REGISTRATION_DATE,
+      DeathNotificationField.FIRST_NAMES,
+      DeathNotificationField.LAST_NAME,
+      DeathNotificationField.SEX,
+      DeathNotificationField.DATE_OF_DEATH,
+      DeathNotificationField.MAIDEN_NAME,
+      DeathNotificationField.DATE_OF_BIRTH,
+      DeathNotificationField.ADDRESS,
+      DeathNotificationField.BIRTH_PLACE,
+      DeathNotificationField.DEATH_PLACE,
+      DeathNotificationField.OCCUPATION,
+      DeathNotificationField.RETIRED,
     )
     val deathRecord = LevDeathRecord(
       deceased = LevDeceased(
@@ -72,10 +70,10 @@ class DeathRegistrationLookupServiceTest {
   fun `getEnrichedData returns correct data for a subset of enrichment fields`() {
     val dataId = "123456789"
     val enrichmentFields = listOf(
-      EnrichmentField.FIRST_NAMES,
-      EnrichmentField.DATE_OF_DEATH,
-      EnrichmentField.ADDRESS,
-      EnrichmentField.RETIRED,
+      DeathNotificationField.FIRST_NAMES,
+      DeathNotificationField.DATE_OF_DEATH,
+      DeathNotificationField.ADDRESS,
+      DeathNotificationField.RETIRED,
     )
     val deathRecord = LevDeathRecord(
       deceased = LevDeceased(

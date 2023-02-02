@@ -22,7 +22,7 @@ data class AcquirerSubscriptionEnrichmentField(
   @Value("false")
   val new: Boolean = true,
 
-  ) : Persistable<UUID> {
+) : Persistable<UUID> {
   override fun getId() = acquirerSubscriptionEnrichmentFieldId
 
   override fun isNew(): Boolean = new

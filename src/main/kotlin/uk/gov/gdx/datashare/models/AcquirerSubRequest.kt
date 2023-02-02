@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.models
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
@@ -12,10 +13,12 @@ data class AcquirerSubRequest(
   val eventType: EventType,
   @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client")
   val oauthClientId: String? = null,
-  @Schema(
-    description = "List of required fields to enrich the event with",
-    required = true,
-    example = "[\"firstNames\", \"lastName\"]",
+  @ArraySchema(
+    schema = Schema(
+      description = "Field to enrich the event with",
+      required = true,
+      example = "firstNames",
+    ),
   )
   val enrichmentFields: List<EnrichmentField>,
   @Schema(

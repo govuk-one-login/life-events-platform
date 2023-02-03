@@ -83,6 +83,13 @@ module "data-share-service" {
   externally_allowed_cidrs = [
     "82.163.115.96/27", "87.224.105.240/29", "87.224.105.248/29", "31.221.86.176/28", "167.98.33.80/28", # Softwire
   ]
+  prisoner-event-enabled        = "true"
+  prisoner-search-client-id     = "gdx-data-share-poc"
+  prisoner-search-client-secret = "***" // TODO:Needs secret injection
+  prisoner-event-queue-name     = "dps-tech-dev-gds-data-share-queue"
+  prisoner-event-dlq-name       = "dps-tech-dev-gds-data-share-dlq"
+  prisoner-search-url           = "https://prisoner-offender-search-dev.prison.service.justice.gov.uk"
+  hmpps-auth_url                = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
 }
 
 module "len" {

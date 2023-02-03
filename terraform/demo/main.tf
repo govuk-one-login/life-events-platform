@@ -86,4 +86,12 @@ module "data-share-service" {
   externally_allowed_cidrs = [
     "82.163.115.96/27", "87.224.105.240/29", "87.224.105.248/29", "31.221.86.176/28", "167.98.33.80/28", # Softwire
   ]
+
+  prisoner-event-enabled        = "false"
+  prisoner-search-client-id     = ""
+  prisoner-search-client-secret = ""
+  prisoner-event-queue-name     = ""
+  prisoner-event-dlq-name       = ""
+  prisoner-search-url           = ""
+  hmpps-auth_url                = ""
 }

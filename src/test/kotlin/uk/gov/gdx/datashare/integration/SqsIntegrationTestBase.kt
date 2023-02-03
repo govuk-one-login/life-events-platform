@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.utility.TestEnvironment
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import uk.gov.gdx.datashare.integration.LocalStackContainer.setLocalStackProperties
 import uk.gov.gdx.datashare.queue.*

@@ -1,13 +1,6 @@
 package uk.gov.gdx.datashare.integration.api
 
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import software.amazon.awssdk.services.ssm.SsmClient
-import software.amazon.awssdk.services.ssm.model.GetParameterRequest
-import software.amazon.awssdk.services.ssm.model.GetParameterResponse
-import software.amazon.awssdk.services.ssm.model.Parameter
 import uk.gov.gdx.datashare.integration.SqsIntegrationTestBase
 import java.util.*
 

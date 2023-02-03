@@ -304,4 +304,3 @@ There are numerous terms and acronyms used in this codebase that aren't immediat
 | TUO      | Tell us once - https://www.gov.uk/after-a-death/organisations-you-need-to-contact-and-tell-us-once  |
 | Acquirer | A downstream department or service consuming events from our API (for example DWP)                  |
 | Supplier | An upstream department or service GDX consumes events and data from (for example HMPO)              |
-

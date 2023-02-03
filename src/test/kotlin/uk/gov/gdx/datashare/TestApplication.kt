@@ -23,7 +23,6 @@ class TestApplication {
     )
     return mockSsmClient
   }
-
 }
 
 fun main(args: Array<String>) {

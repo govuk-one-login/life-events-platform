@@ -25,7 +25,7 @@ class PrisonerEventMessageProcessor(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  @JmsListener(destination = "prisoner-event", containerFactory = "awsQueueContainerFactoryProxy")
+  @JmsListener(destination = "prisonerevent", containerFactory = "awsQueueContainerFactoryProxy")
   fun onPrisonerEventMessage(prisonerEventMessage: String) {
     val (message, messageAttributes) = objectMapper.readValue(prisonerEventMessage, TopicMessage::class.java)
     val eventType = messageAttributes.eventType.Value

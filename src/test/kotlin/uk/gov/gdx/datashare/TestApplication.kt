@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.ssm.model.Parameter
 class TestApplication {
   @Bean
   @Primary
-  fun ssmClient(): SsmClient {
+  fun mockSsmClient(): SsmClient {
     val mockSsmClient = mockk<SsmClient>()
     val parameter = Parameter.builder().value("mock_parameter").build()
     val getParameterResponse = GetParameterResponse.builder().parameter(parameter).build()

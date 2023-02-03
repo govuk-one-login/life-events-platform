@@ -172,8 +172,8 @@ data "aws_iam_policy_document" "ecs_task_ssm_access" {
   statement {
     actions = ["ssm:GetParameter"]
     resources = [
-      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${aws_ssm_parameter.lev_api_client_name}",
-      "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter/${aws_ssm_parameter.lev_api_client_user}"
+      aws_ssm_parameter.lev_api_client_name.arn,
+      aws_ssm_parameter.lev_api_client_user.arn
     ]
     effect = "Allow"
   }

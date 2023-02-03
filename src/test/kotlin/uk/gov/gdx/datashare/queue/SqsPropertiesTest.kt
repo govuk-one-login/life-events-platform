@@ -66,9 +66,9 @@ class SqsPropertiesTest {
         SqsProperties(
           provider = "localstack",
           queues = mapOf(
-            "queueid1" to validLocalstackQueueConfig(1).copy(queueName = "1stQueueName"),
-            "queueid2" to validLocalstackQueueConfig(2).copy(queueName = "2ndQueueName"),
-            "queueid3" to validLocalstackQueueConfig(3).copy(queueName = "1stQueueName"),
+            "queueid1" to validLocalStackQueueConfig(1).copy(queueName = "1stQueueName"),
+            "queueid2" to validLocalStackQueueConfig(2).copy(queueName = "2ndQueueName"),
+            "queueid3" to validLocalStackQueueConfig(3).copy(queueName = "1stQueueName"),
           ),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
@@ -83,9 +83,9 @@ class SqsPropertiesTest {
         SqsProperties(
           provider = "localstack",
           queues = mapOf(
-            "queueid1" to validLocalstackQueueConfig(1).copy(dlqName = "1stDlqName"),
-            "queueid2" to validLocalstackQueueConfig(2).copy(dlqName = "2ndDlqName"),
-            "queueid3" to validLocalstackQueueConfig(3).copy(dlqName = "2ndDlqName"),
+            "queueid1" to validLocalStackQueueConfig(1).copy(dlqName = "1stDlqName"),
+            "queueid2" to validLocalStackQueueConfig(2).copy(dlqName = "2ndDlqName"),
+            "queueid3" to validLocalStackQueueConfig(3).copy(dlqName = "2ndDlqName"),
           ),
         )
       }.isInstanceOf(InvalidAwsSqsPropertiesException::class.java)
@@ -100,9 +100,9 @@ class SqsPropertiesTest {
         SqsProperties(
           provider = "localstack",
           queues = mapOf(
-            "queueid1" to validLocalstackQueueNoDlqConfig(1),
-            "queueid2" to validLocalstackQueueNoDlqConfig(2),
-            "queueid3" to validLocalstackQueueNoDlqConfig(3),
+            "queueid1" to validLocalStackQueueNoDlqConfig(1),
+            "queueid2" to validLocalStackQueueNoDlqConfig(2),
+            "queueid3" to validLocalStackQueueNoDlqConfig(3),
           ),
         )
       }
@@ -114,8 +114,8 @@ class SqsPropertiesTest {
     dlqName = "dlqName$index",
   )
 
-  private fun validLocalstackQueueConfig(index: Int = 1) =
+  private fun validLocalStackQueueConfig(index: Int = 1) =
     SqsProperties.QueueConfig(queueName = "name$index", dlqName = "dlqName$index")
 
-  private fun validLocalstackQueueNoDlqConfig(index: Int = 1) = SqsProperties.QueueConfig(queueName = "name$index")
+  private fun validLocalStackQueueNoDlqConfig(index: Int = 1) = SqsProperties.QueueConfig(queueName = "name$index")
 }

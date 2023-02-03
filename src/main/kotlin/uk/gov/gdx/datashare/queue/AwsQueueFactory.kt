@@ -23,7 +23,7 @@ class AwsQueueFactory(
   }
 
   fun createAwsQueues(sqsProperties: SqsProperties) =
-    sqsProperties.queues
+    sqsProperties.enabledQueues
       .map { (queueId, queueConfig) ->
         val sqsDlqClient = getOrDefaultSqsDlqClient(queueId, queueConfig, sqsProperties)
         val sqsClient = getOrDefaultSqsClient(queueId, queueConfig, sqsProperties, sqsDlqClient)

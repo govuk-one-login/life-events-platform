@@ -9,7 +9,7 @@ data class SqsProperties(
   val provider: String = "aws",
   val region: String = "eu-west-2",
   val localstackUrl: String = "http://localhost:4566",
-  val queues: Map<String, QueueConfig> = mapOf(),
+  private val queues: Map<String, QueueConfig> = mapOf(),
 ) {
   data class QueueConfig(
     val queueName: String,
@@ -20,7 +20,7 @@ data class SqsProperties(
     val enabled: Boolean = true,
   )
 
-  private val enabledQueues = queues.filter { it.value.enabled }
+  val enabledQueues = queues.filter { it.value.enabled }
 
   init {
     enabledQueues.forEach { (queueId, queueConfig) ->

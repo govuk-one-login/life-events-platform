@@ -28,9 +28,7 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun levApiWebClient(): WebClient {
-    val ssmClient = SsmClient.create()
-
+  fun levApiWebClient(ssmClient: SsmClient): WebClient {
     return WebClient.builder()
       .baseUrl(levApiRootUri)
       .clientConnector(ReactorClientHttpConnector(createHttpClient("levApi")))
@@ -39,9 +37,15 @@ class WebClientConfiguration(
       .build()
   }
 
+  @Bean
+  fun ssmClient(): SsmClient {
+    return SsmClient.create()
+  }
+
   private fun getParameterFromSsm(ssmClient: SsmClient, parameterName: String): String {
-    val paramRequest = GetParameterRequest.builder().name(parameterName).build()
-    return ssmClient.getParameter(paramRequest).parameter().value()
+    val paramRequest: GetParameterRequest = GetParameterRequest.builder().name(parameterName).build()
+    val paramResponse = ssmClient.getParameter(paramRequest)
+    return paramResponse.parameter().value()
   }
 
   @Bean

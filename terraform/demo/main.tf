@@ -88,7 +88,7 @@ module "data-share-service" {
   ]
 
   prisoner_event_enabled        = "false"
-  prisoner_search_client_id     = ""
+  prisoner_search_client_id     = "invalid"
   prisoner_search_client_secret = ""
   prisoner_event_queue_name     = ""
   prisoner_event_dlq_name       = ""

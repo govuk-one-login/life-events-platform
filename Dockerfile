@@ -1,17 +1,20 @@
 FROM eclipse-temurin:19-jre-jammy AS builder
 
+WORKDIR /app
+
+COPY build.gradle.kts settings.gradle.kts gradlew .
+COPY gradle/ gradle/
+RUN ./gradlew build || return 0
+
+
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
-WORKDIR /app
-ADD . .
+COPY . .
 RUN ./gradlew assemble -Dorg.gradle.daemon=false
 
 FROM eclipse-temurin:19-jre-jammy
 LABEL maintainer="GDX Vison <info@gds.gov.uk>"
-
-ARG BUILD_NUMBER
-ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
 RUN apt-get update && \
     apt-get -y upgrade && \

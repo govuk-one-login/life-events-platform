@@ -11,7 +11,7 @@ ARG BUILD_NUMBER
 ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
 COPY . .
-RUN ./gradlew assemble -Dorg.gradle.daemon=false
+RUN ./gradlew clean assemble -Dorg.gradle.daemon=false
 
 FROM eclipse-temurin:19-jre-jammy
 LABEL maintainer="GDX Vison <info@gds.gov.uk>"

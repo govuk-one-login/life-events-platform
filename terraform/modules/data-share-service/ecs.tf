@@ -33,8 +33,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_LEV", "value" : "https://${var.lev_url}" },
         { "name" : "API_BASE_URL_ISSUER_URI", "value" : "https://${module.cognito.issuer_domain}" },
         { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },
-        { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://localhost:8080" },
-        { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },
 
         { "name" : "COGNITO_USER_POOL_ID", "value" : module.cognito.user_pool_id },
         { "name" : "COGNITO_ACQUIRER_SCOPE", "value" : module.cognito.acquirer_scope },

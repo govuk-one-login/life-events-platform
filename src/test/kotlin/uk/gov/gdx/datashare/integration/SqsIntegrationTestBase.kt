@@ -7,10 +7,11 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
+import uk.gov.gdx.datashare.TestApplication
 import uk.gov.gdx.datashare.integration.LocalStackContainer.setLocalStackProperties
 import uk.gov.gdx.datashare.queue.*
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [TestApplication::class])
 @ActiveProfiles("test")
 class SqsIntegrationTestBase : IntegrationTestBase() {
 

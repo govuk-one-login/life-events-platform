@@ -37,11 +37,6 @@ class WebClientConfiguration(
       .build()
   }
 
-  @Bean
-  fun ssmClient(): SsmClient {
-    return SsmClient.create()
-  }
-
   private fun getParameterFromSsm(ssmClient: SsmClient, parameterName: String): String {
     val paramRequest: GetParameterRequest = GetParameterRequest.builder().name(parameterName).build()
     val paramResponse = ssmClient.getParameter(paramRequest)

@@ -44,6 +44,10 @@ class EventsController(
   private val dataReceiverService: DataReceiverService,
   private val meterRegistry: MeterRegistry,
 ) {
+  companion object {
+    private const val DEFAULT_PAGE_SIZE = 100
+  }
+
   @Tag(name = "01. Acquirer")
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
   @GetMapping
@@ -187,7 +191,7 @@ class EventsController(
     pageNumber: Int,
     @Schema(
       description = "Number of items per page.",
-      defaultValue = "100",
+      defaultValue = DEFAULT_PAGE_SIZE.toString(),
       minimum = "0",
     )
     @RequestParam(name = "page[size]", defaultValue = "100")
@@ -360,7 +364,7 @@ class EventsController(
     startTime: LocalDateTime? = null,
     endTime: LocalDateTime? = null,
     pageNumber: Int = 0,
-    pageSize: Int = 10,
+    pageSize: Int = DEFAULT_PAGE_SIZE,
   ): WebMvcLinkBuilder =
     linkTo(methodOn(EventsController::class.java).getEvents(eventTypes, startTime, endTime, pageNumber, pageSize))
 

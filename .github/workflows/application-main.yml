@@ -24,10 +24,6 @@ jobs:
   deploy-dev:
     name: Deploy dev environment
     needs: build-and-push-image
-    strategy:
-      matrix:
-        env: dev
-      fail-fast: false
     uses: ./.github/workflows/deploy.yml
     with:
       environment: dev
@@ -39,10 +35,6 @@ jobs:
   deploy-demo:
     name: Deploy demo environment
     needs: build-and-push-image
-    strategy:
-      matrix:
-        env: demo
-      fail-fast: false
     uses: ./.github/workflows/deploy.yml
     with:
       environment: demo

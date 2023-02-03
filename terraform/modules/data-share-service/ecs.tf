@@ -53,7 +53,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUENAME", "value" : module.data_processor_queue.queue_name },
         { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQNAME", "value" : module.data_processor_queue.dead_letter_queue_name },
 
-        { "name" : "SQS_QUEUES_PRISONEREVENT_ENABLED", "value" : false },
+        { "name" : "SQS_QUEUES_PRISONEREVENT_ENABLED", "value" : "false" },
         { "name" : "SQS_QUEUES_PRISONEREVENT_QUEUENAME", "value" : var.prisoner_event_queue_name },
         { "name" : "SQS_QUEUES_PRISONEREVENT_DLQNAME", "value" : var.prisoner_event_dlq_name },
         {

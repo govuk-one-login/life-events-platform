@@ -10,10 +10,10 @@ variable "externally_allowed_cidrs" {
   type = list(string)
 }
 
-variable "prisoner-event-enabled" {}
-variable "prisoner-search-url" {}
-variable "hmpps-auth_url" {}
-variable "prisoner-search-client-id" {}
-variable "prisoner-search-client-secret" {}
-variable "prisoner-event-queue-name" {}
-variable "prisoner-event-dlq-name" {}
+variable "prisoner_event_enabled" {}
+variable "prisoner_search_url" {}
+variable "hmpps_auth_url" {}
+variable "prisoner_search_client_id" {}
+variable "prisoner_search_client_secret" {}
+variable "prisoner_event_queue_name" {}
+variable "prisoner_event_dlq_name" {}

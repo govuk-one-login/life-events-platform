@@ -17,10 +17,13 @@ data class SqsProperties(
     val subscribeFilter: String = "",
     val dlqName: String = "",
     val dlqMaxReceiveCount: Int = 5,
+    val enabled: Boolean = true,
   )
 
+  private val enabledQueues = queues.filter { it.value.enabled }
+
   init {
-    queues.forEach { (queueId, queueConfig) ->
+    enabledQueues.forEach { (queueId, queueConfig) ->
       queueIdMustBeLowerCase(queueId)
       queueNamesMustExist(queueId, queueConfig)
     }
@@ -38,15 +41,15 @@ data class SqsProperties(
 
   private fun checkForAwsDuplicateValues() {
     if (provider == "aws") {
-      mustNotContainDuplicates("queue names", queues) { it.value.queueName }
-      mustNotContainDuplicates("dlq names", queues) { it.value.dlqName }
+      mustNotContainDuplicates("queue names", enabledQueues) { it.value.queueName }
+      mustNotContainDuplicates("dlq names", enabledQueues) { it.value.dlqName }
     }
   }
 
   private fun checkForLocalStackDuplicateValues() {
     if (provider == "localstack") {
-      mustNotContainDuplicates("queue names", queues) { it.value.queueName }
-      mustNotContainDuplicates("dlq names", queues) { it.value.dlqName }
+      mustNotContainDuplicates("queue names", enabledQueues) { it.value.queueName }
+      mustNotContainDuplicates("dlq names", enabledQueues) { it.value.dlqName }
     }
   }
 

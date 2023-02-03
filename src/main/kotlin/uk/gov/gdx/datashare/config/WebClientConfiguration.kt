@@ -37,8 +37,8 @@ class WebClientConfiguration(
 
   @Bean
   @ConditionalOnProperty(name = ["api.base.prisoner-event.enabled"], havingValue = "true")
-  fun prisonerSearchApiWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+  fun prisonerSearchApiWebClient(prisonerSearchAuthorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(prisonerSearchAuthorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId("prisoner-search")
 
     return WebClient.builder()
@@ -70,7 +70,8 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun authorizedClientManager(
+  @ConditionalOnProperty(name = ["api.base.prisoner-event.enabled"], havingValue = "true")
+  fun prisonerSearchAuthorizedClientManager(
     clientRegistrationRepository: ClientRegistrationRepository?,
     oAuth2AuthorizedClientService: OAuth2AuthorizedClientService?,
   ): OAuth2AuthorizedClientManager? {

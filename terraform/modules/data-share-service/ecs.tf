@@ -33,8 +33,12 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_LEV", "value" : "https://${var.lev_url}" },
         { "name" : "API_BASE_URL_ISSUER_URI", "value" : "https://${module.cognito.issuer_domain}" },
         { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },
-        { "name" : "API_BASE_URL_DATA_RECEIVER", "value" : "http://localhost:8080" },
-        { "name" : "API_BASE_URL_EVENT_DATA_RETRIEVAL", "value" : "http://localhost:8080" },
+
+        { "name" : "API_BASE_PRISONER_EVENT_ENABLED", "value" : var.prisoner_event_enabled },
+        { "name" : "API_BASE_URL_PRISONER_SEARCH", "value" : var.prisoner_search_url },
+        { "name" : "API_BASE_URL_HMPPS_AUTH", "value" : var.hmpps_auth_url },
+        { "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_ID", "value" : var.prisoner_search_client_id },
+        { "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_SECRET", "value" : var.prisoner_search_client_secret },
 
         { "name" : "COGNITO_USER_POOL_ID", "value" : module.cognito.user_pool_id },
         { "name" : "COGNITO_ACQUIRER_SCOPE", "value" : module.cognito.acquirer_scope },
@@ -49,6 +53,9 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUENAME", "value" : module.data_processor_queue.queue_name },
         { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQNAME", "value" : module.data_processor_queue.dead_letter_queue_name },
 
+        { "name" : "SQS_QUEUES_PRISONEREVENT_ENABLED", "value" : "false" },
+        { "name" : "SQS_QUEUES_PRISONEREVENT_QUEUENAME", "value" : var.prisoner_event_queue_name },
+        { "name" : "SQS_QUEUES_PRISONEREVENT_DLQNAME", "value" : var.prisoner_event_dlq_name },
         {
           "name" : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL",
           "value" : "https://${aws_cloudfront_distribution.gdx_data_share_poc.domain_name}/webjars/swagger-ui/oauth2-redirect.html"

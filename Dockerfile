@@ -1,21 +1,20 @@
 FROM eclipse-temurin:19-jre-jammy AS builder
 
+WORKDIR /app
+
+COPY build.gradle.kts settings.gradle.kts gradlew .
+COPY gradle/ gradle/
+RUN ./gradlew build || return 0
+
+
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
-WORKDIR /app
-ADD . .
+COPY . .
 RUN ./gradlew assemble -Dorg.gradle.daemon=false
-
-# Grab AWS RDS Root cert
-RUN apt-get update && apt-get install -y curl
-RUN curl https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem  > root.crt
 
 FROM eclipse-temurin:19-jre-jammy
 LABEL maintainer="GDX Vison <info@gds.gov.uk>"
-
-ARG BUILD_NUMBER
-ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
 RUN apt-get update && \
     apt-get -y upgrade && \
@@ -29,7 +28,7 @@ RUN addgroup --gid 2000 --system appgroup && \
 
 # Install AWS RDS Root cert into Java truststore
 RUN mkdir /home/appuser/.postgresql
-COPY --from=builder --chown=appuser:appgroup /app/root.crt /home/appuser/.postgresql/root.crt
+ADD --chown=appuser:appgroup https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem /home/appuser/.postgresql/root.crt
 
 WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup /app/build/libs/gdx-data-share-poc*.jar /app/app.jar

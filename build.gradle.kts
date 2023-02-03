@@ -7,8 +7,8 @@ plugins {
   id("io.spring.dependency-management") version "1.1.0"
   id("org.jmailen.kotlinter") version "3.13.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
-  kotlin("jvm") version "1.8.0"
-  kotlin("plugin.spring") version "1.8.0"
+  kotlin("jvm") version "1.8.10"
+  kotlin("plugin.spring") version "1.8.10"
 }
 
 openApi {
@@ -32,7 +32,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.19.29"))
+  implementation(platform("software.amazon.awssdk:bom:2.19.30"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
@@ -47,7 +47,7 @@ dependencies {
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
-  implementation("org.apache.commons:commons-csv:1.9.0")
+  implementation("org.apache.commons:commons-csv:1.10.0")
 
   runtimeOnly("org.flywaydb:flyway-core")
 
@@ -90,7 +90,7 @@ dependencies {
   testImplementation("org.testcontainers:localstack:1.17.6")
   testImplementation("org.testcontainers:postgresql:1.17.6")
   // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.397")
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.398")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
   testImplementation("org.mockito:mockito-inline")

@@ -11,7 +11,7 @@ import java.net.ServerSocket
 
 object LocalStackContainer {
   private val log = LoggerFactory.getLogger(this::class.java)
-  val instance by lazy { startLocalstackIfNotRunning() }
+  val instance by lazy { startLocalStackIfNotRunning() }
 
   fun setLocalStackProperties(localStackContainer: LocalStackContainer, registry: DynamicPropertyRegistry) {
     val localstackUrl = localStackContainer.getEndpointOverride(LocalStackContainer.Service.SNS).toString()
@@ -20,7 +20,7 @@ object LocalStackContainer {
     registry.add("sqs.region") { region }
   }
 
-  private fun startLocalstackIfNotRunning(): LocalStackContainer? {
+  private fun startLocalStackIfNotRunning(): LocalStackContainer? {
     if (localstackIsRunning()) return null
     val logConsumer = Slf4jLogConsumer(log).withPrefix("localstack")
     return LocalStackContainer(
@@ -28,6 +28,7 @@ object LocalStackContainer {
     ).apply {
       withServices(LocalStackContainer.Service.SQS, LocalStackContainer.Service.SNS, LocalStackContainer.Service.S3)
       withEnv("DEFAULT_REGION", "eu-west-2")
+      withStartupAttempts(3)
       waitingFor(
         Wait.forLogMessage(".*Running on.*", 1),
       )

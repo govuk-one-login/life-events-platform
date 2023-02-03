@@ -56,6 +56,13 @@ jobs:
           aws-region: eu-west-2
           mask-aws-account-id: false
 
+      - name: Add tag for ${{ inputs.environment }} environment
+        uses: abronin/ecr-retag-action@v1
+        with:
+          repository: gdx-data-share-poc
+          tag: ${{ github.sha }}
+          new-tags: ${{ inputs.environment }}
+
       - name: Set ECS task definition
         id: task-definition
         env:

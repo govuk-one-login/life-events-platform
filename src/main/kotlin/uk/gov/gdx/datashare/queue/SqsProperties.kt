@@ -9,7 +9,7 @@ data class SqsProperties(
   val provider: String = "aws",
   val region: String = "eu-west-2",
   val localstackUrl: String = "http://localhost:4566",
-  val queues: Map<String, QueueConfig> = mapOf(),
+  private val queues: Map<String, QueueConfig> = mapOf(),
 ) {
   data class QueueConfig(
     val queueName: String,
@@ -17,10 +17,13 @@ data class SqsProperties(
     val subscribeFilter: String = "",
     val dlqName: String = "",
     val dlqMaxReceiveCount: Int = 5,
+    val enabled: Boolean = true,
   )
 
+  val enabledQueues = queues.filter { it.value.enabled }
+
   init {
-    queues.forEach { (queueId, queueConfig) ->
+    enabledQueues.forEach { (queueId, queueConfig) ->
       queueIdMustBeLowerCase(queueId)
       queueNamesMustExist(queueId, queueConfig)
     }
@@ -38,15 +41,15 @@ data class SqsProperties(
 
   private fun checkForAwsDuplicateValues() {
     if (provider == "aws") {
-      mustNotContainDuplicates("queue names", queues) { it.value.queueName }
-      mustNotContainDuplicates("dlq names", queues) { it.value.dlqName }
+      mustNotContainDuplicates("queue names", enabledQueues) { it.value.queueName }
+      mustNotContainDuplicates("dlq names", enabledQueues) { it.value.dlqName }
     }
   }
 
   private fun checkForLocalStackDuplicateValues() {
     if (provider == "localstack") {
-      mustNotContainDuplicates("queue names", queues) { it.value.queueName }
-      mustNotContainDuplicates("dlq names", queues) { it.value.dlqName }
+      mustNotContainDuplicates("queue names", enabledQueues) { it.value.queueName }
+      mustNotContainDuplicates("dlq names", enabledQueues) { it.value.dlqName }
     }
   }
 

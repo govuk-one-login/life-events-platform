@@ -58,7 +58,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SQS_QUEUES_PRISONEREVENT_DLQNAME", "value" : var.prisoner_event_dlq_name },
         {
           "name" : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL",
-          "value" : "https://${aws_cloudfront_distribution.gdx_data_share_poc.domain_name}/webjars/swagger-ui/oauth2-redirect.html"
+          "value" : "${local.gdx_api_base_url}/webjars/swagger-ui/oauth2-redirect.html"
         },
       ]
       logConfiguration : {

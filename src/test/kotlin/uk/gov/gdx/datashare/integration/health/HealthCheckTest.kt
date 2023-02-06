@@ -7,7 +7,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class HealthCheckTest : SqsIntegrationTestBase() {
-
   @Test
   fun `Health page reports ok`() {
     webTestClient.get()

@@ -7,7 +7,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class InfoTest : SqsIntegrationTestBase() {
-
   @Test
   fun `Info page is accessible`() {
     webTestClient.get()

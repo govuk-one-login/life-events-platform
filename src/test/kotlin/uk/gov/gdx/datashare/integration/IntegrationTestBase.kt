@@ -8,12 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import uk.gov.gdx.datashare.TestApplication
 import uk.gov.gdx.datashare.helpers.JwtAuthHelper
 import uk.gov.gdx.datashare.helpers.TestBase
 import uk.gov.gdx.datashare.integration.wiremock.OAuthMockServer
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.wiremock.PrisonerSearchApi
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = [TestApplication::class])
 @ActiveProfiles("test")
 abstract class IntegrationTestBase : TestBase() {
 

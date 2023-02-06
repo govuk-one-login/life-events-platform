@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.integration.SqsIntegrationTestBase
 
 class EventsQueryTest : SqsIntegrationTestBase() {
+
   @Test
   fun `Get events successfully queries db`() {
     webTestClient.get()

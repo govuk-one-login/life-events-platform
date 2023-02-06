@@ -167,3 +167,24 @@ resource "aws_iam_role_policy_attachment" "ecs_task_xray_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
+
+data "aws_iam_policy_document" "ecs_task_ssm_access" {
+  statement {
+    actions = ["ssm:GetParameter"]
+    resources = [
+      aws_ssm_parameter.lev_api_client_name.arn,
+      aws_ssm_parameter.lev_api_client_user.arn
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_ssm_access" {
+  name   = "${var.environment}-ecs-task-ssm-access"
+  policy = data.aws_iam_policy_document.ecs_task_ssm_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_ssm_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_ssm_access.arn
+}

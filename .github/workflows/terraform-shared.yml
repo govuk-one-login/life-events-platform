@@ -1,5 +1,9 @@
 name: Terraform plan and apply
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     inputs:
@@ -17,11 +21,6 @@ on:
         required: true
         type: string
         description: Specify the environment to plan/apply
-    secrets:
-      AWS_SECRET_ACCESS_KEY:
-        required: true
-      AWS_ACCESS_KEY_ID:
-        required: true
 
 jobs:
   plan:
@@ -31,12 +30,17 @@ jobs:
     defaults:
       run:
         working-directory: ${{ inputs.working-directory }}
-    env:
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::776473272850:role/${{ inputs.environment }}-github-oidc-deploy
+          role-session-name: codedeploy
+          aws-region: eu-west-2
+          mask-aws-account-id: false
 
       - name: Set up Terraform
         # Exposes stdout, stderr and exitcode as outputs for any steps that run terraform

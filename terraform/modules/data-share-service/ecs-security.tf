@@ -1,4 +1,3 @@
-#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group" "ecs_tasks" {
   name_prefix = "${var.environment}-ecs-tasks-"
   description = "For GDX Data Share PoC Service ECS tasks, inbound access from GDX LB only"
@@ -21,6 +20,7 @@ resource "aws_security_group_rule" "ecs_tasks_ingress" {
   security_group_id        = aws_security_group.ecs_tasks.id
 }
 
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group_rule" "ecs_tasks_https_egress" {
   type              = "egress"
   protocol          = "tcp"

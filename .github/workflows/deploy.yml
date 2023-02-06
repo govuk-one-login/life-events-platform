@@ -85,6 +85,7 @@ jobs:
       - name: Set appspec.json values
         id: appspec
         env:
+          ENVIRONMENT: ${{ inputs.environment }}
           container_port: ${{ inputs.container_port }}
           container_name: ${{ steps.vars.outputs.container_name }}
           cluster: ${{ steps.vars.outputs.ecs_cluster }}
@@ -93,9 +94,11 @@ jobs:
           codedeploy-deployment-group: ${{ steps.vars.outputs.codedeploy_deployment_group }}
         run: |
           export TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition="$container_name" | jq '.taskDefinition.taskDefinitionArn')
+          HOOK_LAMBDA_ARN=$(aws lambda get-function --function-name="$ENVIRONMENT-codedeploy-before-traffic-hook" | jq .Configuration.FunctionArn)
           cat ./ci/appspec.json | jq --arg key "$TASK_DEF_ARN" '.Resources[].TargetService.Properties.TaskDefinition=$key' \
           | jq --arg key "$container_port" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerPort=$key' \
-          | jq --arg key "$container_name" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerName=$key' > .aws/appspec.json
+          | jq --arg key "$container_name" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerName=$key' \
+          | jq --arg key "$HOOK_LAMBDA_ARN" '.Hooks[].BeforeAllowTraffic=$key' > .aws/appspec.json
           sed -i 's#\\"##g' .aws/appspec.json
 
       - name: Deploy Amazon ECS task definition

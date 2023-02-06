@@ -2,7 +2,7 @@ data "archive_file" "hook_lambda" {
   type = "zip"
   source {
     content  = file("${path.module}/lambdas/hook.py")
-    filename = "get_event.py"
+    filename = "hook.py"
   }
   source {
     content  = file("${path.module}/../lambdas/common.py")

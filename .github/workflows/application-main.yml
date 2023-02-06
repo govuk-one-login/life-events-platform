@@ -14,8 +14,12 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
   build-and-push-image:
     name: Build and push docker image
+    needs: test
     uses: ./.github/workflows/build-and-push.yml
     secrets:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

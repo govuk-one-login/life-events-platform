@@ -13,7 +13,3 @@ variable "externally_allowed_cidrs" {
 variable "prisoner_event_enabled" {}
 variable "prisoner_search_url" {}
 variable "hmpps_auth_url" {}
-variable "prisoner_search_client_id" {}
-variable "prisoner_search_client_secret" {}
-variable "prisoner_event_queue_name" {}
-variable "prisoner_event_dlq_name" {}

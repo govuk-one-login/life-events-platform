@@ -15,7 +15,7 @@ resource "aws_kms_key" "log_key" {
 }
 
 resource "aws_kms_alias" "log_key_alias" {
-  name          = "alias/${var.environment}/len-log-key"
+  name          = "alias/${var.environment}/deploy-hook-log-key"
   target_key_id = aws_kms_key.log_key.arn
 }
 

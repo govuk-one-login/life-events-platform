@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "hook_assume_policy" {
 }
 
 resource "aws_iam_role" "hook" {
-  name               = "${var.environment}-len"
+  name               = "${var.environment}-deploy-hook"
   assume_role_policy = data.aws_iam_policy_document.hook_assume_policy.json
 }
 

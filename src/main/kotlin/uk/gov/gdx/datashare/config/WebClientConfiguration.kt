@@ -14,7 +14,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
 import software.amazon.awssdk.services.ssm.SsmClient
-import software.amazon.awssdk.services.ssm.model.GetParameterRequest
 import java.time.Duration
 
 @Configuration
@@ -37,12 +36,6 @@ class WebClientConfiguration(
       .defaultHeader("X-Auth-Aud", levApiClientName)
       .defaultHeader("X-Auth-Username", levApiClientUser)
       .build()
-  }
-
-  private fun getParameterFromSsm(ssmClient: SsmClient, parameterName: String): String {
-    val paramRequest: GetParameterRequest = GetParameterRequest.builder().name(parameterName).build()
-    val paramResponse = ssmClient.getParameter(paramRequest)
-    return paramResponse.parameter().value()
   }
 
   @Bean

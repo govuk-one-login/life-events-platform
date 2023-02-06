@@ -87,5 +87,5 @@ resource "aws_iam_openid_connect_provider" "github_oidc" {
 
   client_id_list = ["sts.amazonaws.com"]
 
-  thumbprint_list = ["6938FD4D98BAB03FAADB97B34396831E3780AEA1"]
+  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
 }

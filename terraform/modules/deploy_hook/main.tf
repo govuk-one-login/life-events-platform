@@ -53,3 +53,24 @@ resource "aws_iam_role_policy_attachment" "hook_xray_access" {
   role       = aws_iam_role.hook.name
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
+
+data "aws_iam_policy_document" "hook_codedeploy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "codedeploy:PutLifecycleEventHookExecutionStatus"
+    ]
+    resources = [var.codedeploy_arn]
+  }
+}
+
+resource "aws_iam_policy" "hook_codedeploy" {
+  name   = "${var.environment}-hook-codedeploy"
+  policy = data.aws_iam_policy_document.hook_codedeploy.json
+}
+
+resource "aws_iam_role_policy_attachment" "hook_codedeploy" {
+  role       = aws_iam_role.hook.name
+  policy_arn = aws_iam_policy.hook_codedeploy.arn
+}
+

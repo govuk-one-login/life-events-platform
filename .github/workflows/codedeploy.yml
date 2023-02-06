@@ -73,7 +73,7 @@ jobs:
         id: update-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ inputs.ecs_task_definition_filepath }}
+          task-definition: ${{ steps.vars.outputs.ecs_task_definition_filepath }}
           container-name: ${{ steps.vars.outputs.ecs_task_definition }}
           image: ${{ inputs.image }}
 

@@ -19,17 +19,23 @@ resource "aws_ssm_parameter" "prisoner_search_api_client_id" {
 resource "aws_ssm_parameter" "prisoner_search_api_client_secret" {
   name  = "${var.environment}_prisoner_search_api_client_secret"
   type  = "SecureString"
-  value = "dummyvalue"
+  value = "secretvalue"
 }
 
 resource "aws_ssm_parameter" "prisoner_event_queue_name" {
   name  = "${var.environment}_prisoner_event_queue_name"
   type  = "String"
-  value = "dummyvalue"
+  value = "dps-tech-dev-gds-data-share-queue"
 }
 
 resource "aws_ssm_parameter" "prisoner_event_dlq_name" {
   name  = "${var.environment}_prisoner_event_dlq_name"
   type  = "String"
-  value = "dummyvalue"
+  value = "dps-tech-dev-gds-data-share-dlq"
+}
+
+resource "aws_ssm_parameter" "prisoner_event_aws_account_id" {
+  name  = "${var.environment}_prisoner_event_aws_account_id"
+  type  = "String"
+  value = "754256621582"
 }

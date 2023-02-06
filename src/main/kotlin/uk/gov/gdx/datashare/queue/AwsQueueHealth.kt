@@ -89,13 +89,15 @@ class AwsQueueHealth(private val awsQueue: AwsQueue) : HealthIndicator {
 
   private fun getQueueAttributes(): Result<GetQueueAttributesResponse> {
     return runCatching {
-      awsQueue.sqsClient.getQueueAttributes(GetQueueAttributesRequest.builder().queueUrl(awsQueue.queueUrl).attributeNames(QueueAttributeName.ALL).build())
+      val queueUrl = awsQueue.queueUrl
+      awsQueue.sqsClient.getQueueAttributes(GetQueueAttributesRequest.builder().queueUrl(queueUrl).attributeNames(QueueAttributeName.ALL).build())
     }
   }
 
   private fun getDlqAttributes(): Result<GetQueueAttributesResponse> =
     runCatching {
-      awsQueue.sqsDlqClient?.getQueueAttributes(GetQueueAttributesRequest.builder().queueUrl(awsQueue.dlqUrl).attributeNames(QueueAttributeName.ALL).build())
+      val dlqUrl = awsQueue.dlqUrl
+      awsQueue.sqsDlqClient?.getQueueAttributes(GetQueueAttributesRequest.builder().queueUrl(dlqUrl).attributeNames(QueueAttributeName.ALL).build())
         ?: throw MissingDlqClientException(awsQueue.dlqName)
     }
 }

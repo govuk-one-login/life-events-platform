@@ -9,7 +9,16 @@ class AwsQueue(
   val queueName: String,
   val sqsDlqClient: SqsClient? = null,
   val dlqName: String? = null,
+  private val awsAccountId: String? = null,
 ) {
-  val queueUrl: String by lazy { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()).queueUrl() }
-  val dlqUrl by lazy { sqsDlqClient?.getQueueUrl(GetQueueUrlRequest.builder().queueName(dlqName).build())?.queueUrl() }
+  val queueUrl: String by lazy { sqsClient.getQueueUrl(buildQueueUrlRequest(queueName, awsAccountId)).queueUrl() }
+  val dlqUrl by lazy { sqsDlqClient?.getQueueUrl(buildQueueUrlRequest(dlqName, awsAccountId))?.queueUrl() }
+
+  private fun buildQueueUrlRequest(name: String?, accountId: String?): GetQueueUrlRequest {
+    val getQueueUrlRequestBuilder = GetQueueUrlRequest.builder().queueName(name)
+    if (accountId != null) {
+      getQueueUrlRequestBuilder.queueOwnerAWSAccountId(accountId)
+    }
+    return getQueueUrlRequestBuilder.build()
+  }
 }

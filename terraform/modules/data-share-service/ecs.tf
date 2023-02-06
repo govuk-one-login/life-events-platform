@@ -62,6 +62,9 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_SECRET", "valueFrom" : aws_ssm_parameter.prisoner_search_api_client_secret.arn },
         { "name" : "SQS_QUEUES_PRISONEREVENT_QUEUENAME", "valueFrom" : aws_ssm_parameter.prisoner_event_queue_name.arn },
         { "name" : "SQS_QUEUES_PRISONEREVENT_DLQNAME", "valueFrom" : aws_ssm_parameter.prisoner_event_dlq_name.arn },
+        { "name" : "SQS_QUEUES_PRISONEREVENT_AWSACCOUNTID", "valueFrom" : aws_ssm_parameter.prisoner_event_aws_account_id.arn },
+        { "name" : "API_BASE_LEV_API_CLIENT_NAME", "valueFrom" : aws_ssm_parameter.lev_api_client_name.arn },
+        { "name" : "API_BASE_LEV_API_CLIENT_USER", "valueFrom" : aws_ssm_parameter.lev_api_client_user.arn },
       ]
       logConfiguration : {
         logDriver : "awslogs",

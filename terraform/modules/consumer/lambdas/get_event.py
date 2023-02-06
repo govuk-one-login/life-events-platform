@@ -30,6 +30,7 @@ sqs = boto3.client("sqs")
 queue_name = os.environ["queue_name"]
 queue_url = sqs.get_queue_url(QueueName=queue_name)["QueueUrl"]
 
+
 def lambda_handler(event, _context):
     logger.info(f"## EVENT: {event}")
     logger.info(f"## TIME: {datetime.now()}")
@@ -79,12 +80,29 @@ def assert_matches_lev(retrieved_event, lev_record, datum):
 
     This is not needed in a normal consumer. Only for validation."""
     provided_data = retrieved_event["data"]["attributes"]["eventData"][datum]
+
+    if provided_data is None:
+        return check_missing_field(datum, lev_record, provided_data)
+
     if datum == "registrationDate":
+        lev_key = "date"
         lev_data = lev_record["date"]
     else:
         lev_key = map_to_lev_key(datum)
         lev_data = lev_record["deceased"][lev_key]
+
     if provided_data != lev_data:
+        logger.error(f"Data mismatch. Provided data: {provided_data}, lev key: {lev_key}, lev data: {lev_data}")
+        record_metric(cloudwatch, cloudwatch_namespace, "GET_EVENT.DataMatchFailure", 1)
+    else:
+        record_metric(cloudwatch, cloudwatch_namespace, "GET_EVENT.DataMatchSuccess", 1)
+
+
+def check_missing_field(datum, lev_record, provided_data):
+    # LEV API will sometimes omit a null field entirely from the response
+    lev_key = map_to_lev_key(datum)
+    if lev_key in lev_record["deceased"] and lev_record["deceased"][lev_key] is not None:
+        lev_data = lev_record["deceased"][datum]
         logger.error(f"Data mismatch. Provided data: {provided_data}, lev key: {lev_key}, lev data: {lev_data}")
         record_metric(cloudwatch, cloudwatch_namespace, "GET_EVENT.DataMatchFailure", 1)
     else:

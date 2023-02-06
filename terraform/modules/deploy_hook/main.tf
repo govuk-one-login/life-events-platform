@@ -18,7 +18,7 @@ resource "aws_lambda_function" "hook" {
   runtime          = "python3.9"
   filename         = data.archive_file.hook_lambda.output_path
   source_code_hash = data.archive_file.hook_lambda.output_base64sha256
-  timeout          = 10
+  timeout          = 300
 
   environment {
     variables = {

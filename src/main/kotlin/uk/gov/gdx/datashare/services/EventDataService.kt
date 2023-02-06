@@ -143,7 +143,7 @@ class EventDataService(
   ): Any? = when (subscription.eventType) {
     EventType.DEATH_NOTIFICATION -> deathNotificationService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
     EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
-    EventType.TEST_EVENT -> TestEvent(testField="Test Field Value")
+    EventType.TEST_EVENT -> TestEvent(testField = "Test Field Value")
     else -> log.warn("Not handling this event type {}", subscription.eventType)
   }
 

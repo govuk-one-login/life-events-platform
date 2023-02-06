@@ -60,8 +60,14 @@ sqs:
       queueName: prisoner-event-queue
       dlqName: prisoner-event-dlq
 
-xray-tracing:
+cognito:
   enabled: false
 
-cognito:
+ssm-client:
+  enabled: false
+  mock-parameters:
+    lev-api-client-name: test
+    lev-api-client-user: test
+
+xray-tracing:
   enabled: false

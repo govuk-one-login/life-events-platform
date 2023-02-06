@@ -100,5 +100,8 @@ api:
 cognito:
   enabled: true
 
+ssm-client:
+  enabled: true
+
 xray-tracing:
   enabled: true

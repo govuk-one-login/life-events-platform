@@ -10,18 +10,6 @@ on:
       environment:
         required: true
         type: string
-      ecs_task_definition_filepath:
-        required: false
-        type: string
-        default: .aws/task-definition.json
-      ecs_task_definition_directory:
-        required: false
-        type: string
-        default: .aws
-      container_port:
-        required: false
-        type: number
-        default: 8080
       image:
         required: true
         type: string
@@ -37,10 +25,19 @@ jobs:
         env:
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "ecs_task_definition_name=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
-          echo "container_name=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
+          echo "base_directory=.aws" >> $GITHUB_OUTPUT
+          echo "ecs_task_definition_filepath=.aws/task-definition.json" >> $GITHUB_OUTPUT
+          echo "codedeploy_appspec_filepath=.aws/appspec.json" >> $GITHUB_OUTPUT
+          echo "codedeploy_appspec_template_filepath=ci/appspec-template.json" >> $GITHUB_OUTPUT
+
+          echo "ecs_task_definition_filepath=.aws/task-definition.json" >> $GITHUB_OUTPUT
+
+          echo "ecs_task_definition=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "ecs_service=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "ecs_cluster=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+          echo "container_port=8080" >> $GITHUB_OUTPUT
+
           echo "codedeploy_application=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "codedeploy_deployment_group=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
 
@@ -65,13 +62,12 @@ jobs:
       - name: Set ECS task definition
         id: task-definition
         env:
-          ECS_TASK_DEFINITION_NAME: ${{ steps.vars.outputs.ecs_task_definition_name }}
-          ECS_TASK_DEFINITION_DIRECTORY: ${{ inputs.ecs_task_definition_directory }}
-          ECS_TASK_DEFINITION_FILEPATH: ${{ inputs.ecs_task_definition_filepath }}
+          ECS_TASK_DEFINITION: ${{ steps.vars.outputs.ecs_task_definition }}
+          ECS_TASK_DEFINITION_DIRECTORY: ${{ steps.vars.outputs.base_directory }}
+          ECS_TASK_DEFINITION_FILEPATH: ${{ steps.vars.outputs.ecs_task_definition_filepath }}
         run: |
           mkdir -p $ECS_TASK_DEFINITION_DIRECTORY
-          aws ecs describe-task-definition --task-definition "$ECS_TASK_DEFINITION_NAME" | jq '.taskDefinition' > $ECS_TASK_DEFINITION_FILEPATH
-          cat $ECS_TASK_DEFINITION_FILEPATH
+          aws ecs describe-task-definition --task-definition "$ECS_TASK_DEFINITION" | jq '.taskDefinition' > $ECS_TASK_DEFINITION_FILEPATH
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: update-task-def
@@ -84,18 +80,18 @@ jobs:
       - name: Set appspec.json values
         id: appspec
         env:
-          container_port: ${{ inputs.container_port }}
-          container_name: ${{ steps.vars.outputs.container_name }}
-          cluster: ${{ steps.vars.outputs.ecs_cluster }}
-          service: ${{ steps.vars.outputs.ecs_service }}
-          codedeploy-application: ${{ steps.vars.outputs.codedeploy_application }}
-          codedeploy-deployment-group: ${{ steps.vars.outputs.codedeploy_deployment_group }}
+          CONTAINER_PORT: ${{ steps.vars.outputs.container_port }}
+          ECS_TASK_DEFINITION: ${{ steps.vars.outputs.ecs_task_definition }}
+          CODEDEPLOY_APPSPEC_FILEPATH: ${{ steps.vars.outputs.codedeploy_appspec_filepath }}
+          CODEDEPLOY_APPSPEC_TEMPLATE_FILEPATH: ${{ steps.vars.outputs.codedeploy_appspec_template_filepath }}
         run: |
-          export TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition="$container_name" | jq '.taskDefinition.taskDefinitionArn')
-          cat ./ci/appspec.json | jq --arg key "$TASK_DEF_ARN" '.Resources[].TargetService.Properties.TaskDefinition=$key' \
-          | jq --arg key "$container_port" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerPort=$key' \
-          | jq --arg key "$container_name" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerName=$key' > .aws/appspec.json
-          sed -i 's#\\"##g' .aws/appspec.json
+          ECS_TASK_DEFINITION_ARN=$(aws ecs describe-task-definition --task-definition="$ECS_TASK_DEFINITION" | jq '.taskDefinition.taskDefinitionArn')
+          cat $CODEDEPLOY_APPSPEC_TEMPLATE_FILEPATH \
+          | jq --arg key "$ECS_TASK_DEFINITION_ARN" '.Resources[].TargetService.Properties.TaskDefinition=$key' \
+          | jq --arg key "CONTAINER_PORT" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerPort=$key' \
+          | jq --arg key "$ECS_TASK_DEFINITION" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerName=$key' \
+          > $CODEDEPLOY_APPSPEC_FILEPATH
+          sed -i 's#\\"##g' $CODEDEPLOY_APPSPEC_FILEPATH
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -104,6 +100,6 @@ jobs:
           service: ${{ steps.vars.outputs.ecs_service }}
           cluster: ${{ steps.vars.outputs.ecs_cluster }}
           wait-for-service-stability: true
-          codedeploy-appspec: .aws/appspec.json
+          codedeploy-appspec: ${{ steps.vars.outputs.codedeploy_appspec_filepath }}
           codedeploy-application: ${{ steps.vars.outputs.codedeploy_application }}
           codedeploy-deployment-group: ${{ steps.vars.outputs.codedeploy_deployment_group }}

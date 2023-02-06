@@ -32,7 +32,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.19.30"))
+  implementation(platform("software.amazon.awssdk:bom:2.19.31"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
@@ -53,7 +53,7 @@ dependencies {
 
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:1.0.1")
-  implementation("org.postgresql:postgresql:42.5.2")
+  implementation("org.postgresql:postgresql:42.5.3")
 
   implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.14")
@@ -90,7 +90,7 @@ dependencies {
   testImplementation("org.testcontainers:localstack:1.17.6")
   testImplementation("org.testcontainers:postgresql:1.17.6")
   // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.398")
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.399")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
   testImplementation("org.mockito:mockito-inline")

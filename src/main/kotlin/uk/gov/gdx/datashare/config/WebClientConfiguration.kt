@@ -21,6 +21,7 @@ import java.time.Duration
 class WebClientConfiguration(
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
   @Value("\${api.base.url.prisoner-search:-}") private val prisonerSearchApiUri: String,
+  @Value("\${environment:-}") private val environment: String,
 ) {
 
   companion object {
@@ -32,8 +33,8 @@ class WebClientConfiguration(
     return WebClient.builder()
       .baseUrl(levApiRootUri)
       .clientConnector(ReactorClientHttpConnector(createHttpClient("levApi")))
-      .defaultHeader("X-Auth-Aud", getParameterFromSsm(ssmClient, "lev_api_client_name"))
-      .defaultHeader("X-Auth-Username", getParameterFromSsm(ssmClient, "lev_api_client_user"))
+      .defaultHeader("X-Auth-Aud", getParameterFromSsm(ssmClient, "$environment-lev-api-client-name"))
+      .defaultHeader("X-Auth-Username", getParameterFromSsm(ssmClient, "$environment-lev-api-client-user"))
       .build()
   }
 

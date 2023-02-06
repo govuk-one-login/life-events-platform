@@ -1,5 +1,9 @@
 name: Deploy
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     inputs:
@@ -9,11 +13,6 @@ on:
       image:
         required: true
         type: string
-    secrets:
-      AWS_SECRET_ACCESS_KEY:
-        required: true
-      AWS_ACCESS_KEY_ID:
-        required: true
 
 jobs:
   trigger-codedeploy:
@@ -48,8 +47,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::776473272850:role/${{ inputs.environment }}-github-oidc-deploy
+          role-session-name: codedeploy
           aws-region: eu-west-2
           mask-aws-account-id: false
 

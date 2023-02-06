@@ -4,23 +4,39 @@ resource "aws_security_group" "ecs_tasks" {
   description = "For GDX Data Share PoC Service ECS tasks, inbound access from GDX LB only"
   vpc_id      = module.vpc.vpc_id
 
-  ingress {
-    protocol        = "tcp"
-    from_port       = 8080
-    to_port         = 8080
-    security_groups = aws_security_group.lb_auto.*.id
-    description     = "ECS task ingress rule, allow access from LB only"
-  }
-
-  egress {
-    protocol    = "tcp"
-    from_port   = 443
-    to_port     = 443
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "ECS task egress rule"
-  }
-
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_security_group_rule" "ecs_tasks_ingress" {
+  for_each = toset(aws_security_group.lb_auto.*.id)
+
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+  source_security_group_id = each.key
+  description              = "ECS task ingress rule, allow access from LB for SG ${each.key} only"
+  security_group_id        = aws_security_group.ecs_tasks.id
+}
+
+resource "aws_security_group_rule" "ecs_tasks_https_egress" {
+  type              = "egress"
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_blocks       = ["0.0.0.0/0"]
+  description       = "ECS task egress rule for HTTPS"
+  security_group_id = aws_security_group.ecs_tasks.id
+}
+
+resource "aws_security_group_rule" "ecs_tasks_rds_egress" {
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 5432
+  to_port                  = 5432
+  source_security_group_id = aws_security_group.rds_postgres_cluster.id
+  description              = "ECS task egress rule to RDS"
+  security_group_id        = aws_security_group.ecs_tasks.id
 }

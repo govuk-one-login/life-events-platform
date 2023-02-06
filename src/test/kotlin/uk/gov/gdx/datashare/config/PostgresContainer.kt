@@ -1,5 +1,9 @@
 package uk.gov.gdx.datashare.config
 
+import com.github.dockerjava.api.model.ExposedPort
+import com.github.dockerjava.api.model.HostConfig
+import com.github.dockerjava.api.model.PortBinding
+import com.github.dockerjava.api.model.Ports
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.wait.strategy.Wait
@@ -19,9 +23,11 @@ object PostgresContainer {
       withEnv("HOSTNAME_EXTERNAL", "localhost")
       withStartupAttempts(5)
       withDatabaseName("datashareint_db")
-      withUsername("datashare")
-      withPassword("datashare")
+      withUsername("test")
+      withPassword("test")
       setWaitStrategy(Wait.forListeningPort())
+      withExposedPorts()
+      withCreateContainerCmdModifier { cmd -> cmd.withHostConfig(HostConfig().withPortBindings(PortBinding(Ports.Binding.bindPort(5434), ExposedPort(5432))))}
       withReuse(true)
 
       start()
@@ -30,7 +36,7 @@ object PostgresContainer {
 
   private fun isPostgresRunning(): Boolean =
     try {
-      val serverSocket = ServerSocket(5432)
+      val serverSocket = ServerSocket(5434)
       serverSocket.localPort == 0
     } catch (e: IOException) {
       true

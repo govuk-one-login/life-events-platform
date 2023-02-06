@@ -1,3 +1,7 @@
+locals {
+  gdx_api_base_url = "https://${aws_cloudfront_distribution.gdx_data_share_poc.domain_name}"
+}
+
 #TODO-https://github.com/alphagov/gdx-data-share-poc/issues/20: When we have our own route53 we can specify certs and not use default
 #tfsec:ignore:aws-cloudfront-use-secure-tls-policy
 resource "aws_cloudfront_distribution" "gdx_data_share_poc" {

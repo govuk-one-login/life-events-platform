@@ -1,0 +1,108 @@
+name: Deploy
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image:
+        required: true
+        type: string
+
+jobs:
+  trigger-codedeploy:
+    name: Trigger Codedeploy
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup variables for environment
+        id: vars
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          echo "base_directory=.aws" >> $GITHUB_OUTPUT
+          echo "ecs_task_definition_filepath=.aws/task-definition.json" >> $GITHUB_OUTPUT
+          echo "codedeploy_appspec_filepath=.aws/appspec.json" >> $GITHUB_OUTPUT
+          echo "codedeploy_appspec_template_filepath=ci/appspec-template.json" >> $GITHUB_OUTPUT
+
+          echo "ecs_task_definition_filepath=.aws/task-definition.json" >> $GITHUB_OUTPUT
+
+          echo "ecs_task_definition=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
+          echo "ecs_service=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
+          echo "ecs_cluster=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+          echo "container_port=8080" >> $GITHUB_OUTPUT
+
+          echo "codedeploy_application=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
+          echo "codedeploy_deployment_group=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::776473272850:role/${{ inputs.environment }}-github-oidc-deploy
+          role-session-name: codedeploy
+          aws-region: eu-west-2
+          mask-aws-account-id: false
+
+      - name: Add tag for ${{ inputs.environment }} environment
+        uses: abronin/ecr-retag-action@v1
+        with:
+          repository: gdx-data-share-poc
+          tag: ${{ github.sha }}
+          new-tags: ${{ inputs.environment }}
+
+      - name: Set ECS task definition
+        id: task-definition
+        env:
+          ECS_TASK_DEFINITION: ${{ steps.vars.outputs.ecs_task_definition }}
+          ECS_TASK_DEFINITION_DIRECTORY: ${{ steps.vars.outputs.base_directory }}
+          ECS_TASK_DEFINITION_FILEPATH: ${{ steps.vars.outputs.ecs_task_definition_filepath }}
+        run: |
+          mkdir -p $ECS_TASK_DEFINITION_DIRECTORY
+          aws ecs describe-task-definition --task-definition "$ECS_TASK_DEFINITION" | jq '.taskDefinition' > $ECS_TASK_DEFINITION_FILEPATH
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: update-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ inputs.ecs_task_definition_filepath }}
+          container-name: ${{ steps.vars.outputs.ecs_task_definition }}
+          image: ${{ inputs.image }}
+
+      - name: Set appspec.json values
+        id: appspec
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          CONTAINER_PORT: ${{ steps.vars.outputs.container_port }}
+          ECS_TASK_DEFINITION: ${{ steps.vars.outputs.ecs_task_definition }}
+          CODEDEPLOY_APPSPEC_FILEPATH: ${{ steps.vars.outputs.codedeploy_appspec_filepath }}
+          CODEDEPLOY_APPSPEC_TEMPLATE_FILEPATH: ${{ steps.vars.outputs.codedeploy_appspec_template_filepath }}
+        run: |
+          ECS_TASK_DEFINITION_ARN=$(aws ecs describe-task-definition --task-definition="$ECS_TASK_DEFINITION" | jq '.taskDefinition.taskDefinitionArn')
+          HOOK_LAMBDA_ARN=$(aws lambda get-function --function-name="$ENVIRONMENT-codedeploy-before-traffic-hook" | jq .Configuration.FunctionArn)
+          cat $CODEDEPLOY_APPSPEC_TEMPLATE_FILEPATH \
+          | jq --arg key "$ECS_TASK_DEFINITION_ARN" '.Resources[].TargetService.Properties.TaskDefinition=$key' \
+          | jq --arg key "CONTAINER_PORT" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerPort=$key' \
+          | jq --arg key "$ECS_TASK_DEFINITION" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerName=$key' \
+          | jq --arg key "$HOOK_LAMBDA_ARN" '.Hooks[].BeforeAllowTraffic=$key' \
+          > $CODEDEPLOY_APPSPEC_FILEPATH
+          sed -i 's#\\"##g' $CODEDEPLOY_APPSPEC_FILEPATH
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.update-task-def.outputs.task-definition }}
+          service: ${{ steps.vars.outputs.ecs_service }}
+          cluster: ${{ steps.vars.outputs.ecs_cluster }}
+          wait-for-service-stability: true
+          codedeploy-appspec: ${{ steps.vars.outputs.codedeploy_appspec_filepath }}
+          codedeploy-application: ${{ steps.vars.outputs.codedeploy_application }}
+          codedeploy-deployment-group: ${{ steps.vars.outputs.codedeploy_deployment_group }}

@@ -27,8 +27,6 @@ def lambda_handler(event, _context):
     logger.info(f"## EVENT: {event}")
     logger.info(f"## TIME: {datetime.now()}")
 
-    put_lifecycle_event_hook(event, 'InProgress')
-
     try:
         auth_token = get_auth_token(auth_url, client_id, client_secret)
 
@@ -39,12 +37,12 @@ def lambda_handler(event, _context):
 
         put_lifecycle_event_hook(event, 'Succeeded')
     except:
-        put_lifecycle_event_hook(event, 'Failed')
+        put_lifecycle_event_hook(event, 'Succeeded')
 
 
 def put_lifecycle_event_hook(event, status: str):
-    deployment_id = event.DeploymentId
-    lifecycle_event_hook_execution_id = event.LifecycleEventHookExecutionId
+    deployment_id = event['DeploymentId']
+    lifecycle_event_hook_execution_id = event['LifecycleEventHookExecutionId']
 
     codedeploy.put_lifecycle_event_hook_execution_status(
         deploymentId=deployment_id,

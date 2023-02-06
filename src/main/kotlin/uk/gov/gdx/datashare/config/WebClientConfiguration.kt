@@ -19,8 +19,8 @@ import java.time.Duration
 class WebClientConfiguration(
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
   @Value("\${api.base.url.prisoner-search:-}") private val prisonerSearchApiUri: String,
-  @Value("\${api.base.lev.api.client.name}") private val levApiClientName: String,
-  @Value("\${api.base.dev.api.client.user}") private val levApiClientUser: String,
+  @Value("\${api.base.lev.api.client.name:-}") private val levApiClientName: String,
+  @Value("\${api.base.lev.api.client.user:-}") private val levApiClientUser: String,
 ) {
 
   companion object {

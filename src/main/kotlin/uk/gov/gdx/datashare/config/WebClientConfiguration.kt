@@ -13,15 +13,14 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
-import software.amazon.awssdk.services.ssm.SsmClient
 import java.time.Duration
 
 @Configuration
 class WebClientConfiguration(
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
   @Value("\${api.base.url.prisoner-search:-}") private val prisonerSearchApiUri: String,
-  @Value("\${api.base.lev.api.client.name:-}") private val levApiClientName: String,
-  @Value("\${api.base.dev.api.client.user:-}") private val levApiClientUser: String,
+  @Value("\${api.base.lev.api.client.name}") private val levApiClientName: String,
+  @Value("\${api.base.dev.api.client.user}") private val levApiClientUser: String,
 ) {
 
   companion object {
@@ -29,7 +28,7 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun levApiWebClient(ssmClient: SsmClient): WebClient {
+  fun levApiWebClient(): WebClient {
     return WebClient.builder()
       .baseUrl(levApiRootUri)
       .clientConnector(ReactorClientHttpConnector(createHttpClient("levApi")))

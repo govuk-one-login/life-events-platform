@@ -29,7 +29,7 @@ resource "aws_iam_role" "github_oidc_environment" {
 }
 
 data "aws_iam_policy" "github_oidc_environment" {
-  name = "Admin"
+  name = "AdministratorAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "github_oidc_environment" {
@@ -76,6 +76,6 @@ data "aws_iam_policy" "github_oidc_pull_request" {
 resource "aws_iam_role_policy_attachment" "github_oidc_pull_request" {
   count = var.environment == "dev" ? 1 : 0
 
-  role       = aws_iam_role.github_oidc_pull_request.name
+  role       = aws_iam_role.github_oidc_pull_request[0].name
   policy_arn = data.aws_iam_policy.github_oidc_pull_request.arn
 }

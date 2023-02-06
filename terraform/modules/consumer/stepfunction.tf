@@ -17,7 +17,8 @@ resource "aws_sfn_state_machine" "consumer" {
             "Lambda.ServiceException",
             "Lambda.AWSLambdaException",
             "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
+            "Lambda.TooManyRequestsException",
+            "Lambda.Unknown"
           ],
           "IntervalSeconds": 2,
           "MaxAttempts": 6,
@@ -49,7 +50,8 @@ resource "aws_sfn_state_machine" "consumer" {
                   "Lambda.ServiceException",
                   "Lambda.AWSLambdaException",
                   "Lambda.SdkClientException",
-                  "Lambda.TooManyRequestsException"
+                  "Lambda.TooManyRequestsException",
+                  "Lambda.Unknown"
                 ],
                 "IntervalSeconds": 2,
                 "MaxAttempts": 6,
@@ -72,7 +74,8 @@ resource "aws_sfn_state_machine" "consumer" {
                   "Lambda.ServiceException",
                   "Lambda.AWSLambdaException",
                   "Lambda.SdkClientException",
-                  "Lambda.TooManyRequestsException"
+                  "Lambda.TooManyRequestsException",
+                  "Lambda.Unknown"
                 ],
                 "IntervalSeconds": 2,
                 "MaxAttempts": 6,

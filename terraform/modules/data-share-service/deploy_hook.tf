@@ -4,7 +4,7 @@ module "deploy_hook" {
   region                      = var.region
   cloudwatch_retention_period = var.cloudwatch_retention_period
 
-  gdx_url       = local.gdx_url
+  gdx_url       = local.gdx_api_base_url
   auth_url      = module.cognito.token_auth_url
   client_id     = module.cognito.deploy_hook_client_id
   client_secret = module.cognito.deploy_hook_client_secret

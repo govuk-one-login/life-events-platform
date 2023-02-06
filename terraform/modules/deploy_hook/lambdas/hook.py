@@ -29,13 +29,17 @@ def lambda_handler(event, _context):
 
     put_lifecycle_event_hook(event, 'InProgress')
 
-    auth_token = get_auth_token(auth_url, client_id, client_secret)
+    try:
+        auth_token = get_auth_token(auth_url, client_id, client_secret)
 
-    post_event(auth_token)
-    events = get_events(auth_token)
-    get_event(auth_token, events[0]["id"])
+        post_event(auth_token)
+        events = get_events(auth_token)
+        get_event(auth_token, events[0]["id"])
+        delete_event(auth_token, events[0]["id"])
 
-    put_lifecycle_event_hook(event, 'Succeeded')
+        put_lifecycle_event_hook(event, 'Succeeded')
+    except:
+        put_lifecycle_event_hook(event, 'Failed')
 
 
 def put_lifecycle_event_hook(event, status: str):
@@ -80,6 +84,15 @@ def get_event(auth_token: str, event_id: str):
     event = get_data(auth_token, f"{events_url}/{event_id}")
     logger.info(f"## Successfully retrieved event {event_id}")
     return event
+
+
+def delete_event(auth_token: str, event_id: str):
+    event_request = request.Request(
+        f"{events_url}/{event_id}",
+        headers={"Authorization": "Bearer " + auth_token},
+        method="DELETE"
+    )
+    request.urlopen(event_request)
 
 
 def get_data(auth_token: str, url: str):

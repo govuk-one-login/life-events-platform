@@ -1,8 +1,8 @@
 output "gdx_url" {
-  value = "https://${aws_cloudfront_distribution.gdx_data_share_poc.domain_name}"
+  value = local.gdx_url
 }
 output "token_auth_url" {
-  value = "https://${module.cognito.auth_domain}/oauth2/token"
+  value = module.cognito.token_auth_url
 }
 output "len_client_id" {
   value = module.cognito.len_client_id

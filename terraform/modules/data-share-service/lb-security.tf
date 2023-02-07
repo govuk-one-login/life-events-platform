@@ -44,11 +44,11 @@ resource "aws_security_group" "lb_test" {
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    description = "Allow access to LB from port 8080"
-    cidr_blocks = [var.vpc_cidr]
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    description     = "Allow access to LB from port 8080"
+    security_groups = [aws_security_group.lambda.id]
   }
 
   lifecycle {

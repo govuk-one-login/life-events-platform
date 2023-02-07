@@ -19,15 +19,28 @@ resource "aws_security_group" "lambda" {
   description = "Access to vpc for lambda"
   vpc_id      = module.vpc.vpc_id
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    description = "Allow access from lambda"
-    cidr_blocks = [var.vpc_cidr]
-  }
-
   lifecycle {
     create_before_destroy = true
   }
 }
+
+resource "aws_security_group_rule" "lambda_ecs" {
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+  description              = "Lambda security group egress rule for access to LB test listener"
+  security_group_id        = aws_security_group.lambda.id
+  source_security_group_id = aws_security_group.lb_test.id
+}
+
+resource "aws_security_group_rule" "lambda_https" {
+  type              = "egress"
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_blocks       = ["0.0.0.0/0"]
+  description       = "Lambda security group egress rule for HTTPS"
+  security_group_id = aws_security_group.lambda.id
+}
+

@@ -123,6 +123,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
     resources = [
       module.data_processor_queue.queue_arn,
       module.data_processor_queue.dead_letter_queue_arn,
+      "https://sqs.eu-west-2.amazonaws.com/${aws_ssm_parameter.prisoner_event_aws_account_id}/${aws_ssm_parameter.prisoner_event_queue_name}",
+      "https://sqs.eu-west-2.amazonaws.com/${aws_ssm_parameter.prisoner_event_aws_account_id}/${aws_ssm_parameter.prisoner_event_dlq_name}",
     ]
     effect = "Allow"
   }

@@ -58,6 +58,15 @@ resource "aws_iam_role_policy_attachment" "hook_xray_access" {
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
 
+data "aws_iam_policy" "hook_vpc_access" {
+  name = "AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "hook_vpc_access" {
+  role       = aws_iam_role.hook.name
+  policy_arn = data.aws_iam_policy.hook_vpc_access.arn
+}
+
 data "aws_iam_policy_document" "hook_codedeploy" {
   statement {
     effect = "Allow"

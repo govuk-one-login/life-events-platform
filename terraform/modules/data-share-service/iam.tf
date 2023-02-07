@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "ecs_task_execution_ssm" {
       "kms:Decrypt"
     ]
     effect    = "Allow"
-    resources = local.ecs_task_parameters.*.arn
+    resources = local.ecs_task_execution_parameters.*.arn
   }
 }
 
@@ -104,6 +104,17 @@ resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
   policy_arn = aws_iam_policy.ecs_task_cloudwatch_access.arn
 }
 
+data "aws_ssm_parameter" "prisoner_event_aws_account_id" {
+  name = aws_ssm_parameter.prisoner_event_aws_account_id.name
+}
+
+data "aws_ssm_parameter" "prisoner_event_queue_name" {
+  name = aws_ssm_parameter.prisoner_event_queue_name.name
+}
+
+data "aws_ssm_parameter" "prisoner_event_dlq_name" {
+  name = aws_ssm_parameter.prisoner_event_dlq_name.name
+}
 
 data "aws_iam_policy_document" "ecs_task_sqs_access" {
   statement {
@@ -118,8 +129,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
     resources = [
       module.data_processor_queue.queue_arn,
       module.data_processor_queue.dead_letter_queue_arn,
-      "https://sqs.eu-west-2.amazonaws.com/${aws_ssm_parameter.prisoner_event_aws_account_id.value}/${aws_ssm_parameter.prisoner_event_queue_name.value}",
-      "https://sqs.eu-west-2.amazonaws.com/${aws_ssm_parameter.prisoner_event_aws_account_id.value}/${aws_ssm_parameter.prisoner_event_dlq_name.value}",
+      "https://sqs.eu-west-2.amazonaws.com/${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}/${data.aws_ssm_parameter.prisoner_event_queue_name.value}",
+      "https://sqs.eu-west-2.amazonaws.com/${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}/${data.aws_ssm_parameter.prisoner_event_dlq_name.value}",
     ]
     effect = "Allow"
   }

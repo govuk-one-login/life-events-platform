@@ -1,5 +1,5 @@
 locals {
-  ecs_task_parameters = [
+  ecs_task_execution_parameters = [
     aws_ssm_parameter.lev_api_client_name,
     aws_ssm_parameter.lev_api_client_user,
     aws_ssm_parameter.prisoner_search_api_client_id,

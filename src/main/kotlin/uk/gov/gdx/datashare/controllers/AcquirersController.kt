@@ -1,13 +1,11 @@
 package uk.gov.gdx.datashare.controllers
 
-import com.amazonaws.xray.spring.aop.XRayEnabled
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
@@ -18,12 +16,10 @@ import java.util.*
 @RestController
 @RequestMapping("/acquirers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
-@Validated
-@XRayEnabled
 @Tag(name = "11. Acquirers")
 class AcquirersController(
   private val acquirersService: AcquirersService,
-) {
+) : BaseApiController() {
   @GetMapping
   @Operation(
     summary = "Get Acquirers",

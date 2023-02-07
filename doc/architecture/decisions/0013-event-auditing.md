@@ -1,6 +1,6 @@
 # 13. Event Auditing Process
 
-[Next >>](9999-end.md)
+[Next >>](0014-retention-policy.md)
 
 Date: 2023-02-01
 
@@ -46,4 +46,4 @@ This table has 6 columns:
 In the future we expect the auditing to be in its own database so that we can lock down access much more, but for the
 moment this is less important as we are only in development and prototyping.
 
-[Next >>](9999-end.md)
+[Next >>](0014-retention-policy.md)

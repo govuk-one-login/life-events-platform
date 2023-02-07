@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.repositories
 
+import org.javers.spring.annotation.JaversSpringDataAuditable
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
@@ -7,6 +8,7 @@ import uk.gov.gdx.datashare.enums.EventType
 import java.util.*
 
 @Repository
+@JaversSpringDataAuditable
 interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, UUID> {
   fun findAllByOauthClientId(oauthClientId: String): List<AcquirerSubscription>
 

@@ -18,6 +18,7 @@ data class SqsProperties(
     val dlqName: String = "",
     val dlqMaxReceiveCount: Int = 5,
     val enabled: Boolean = true,
+    val awsAccountId: String = "",
   )
 
   val enabledQueues = queues.filter { it.value.enabled }

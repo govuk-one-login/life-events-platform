@@ -173,7 +173,12 @@ data "aws_iam_policy_document" "ecs_task_ssm_access" {
     actions = ["ssm:GetParameter"]
     resources = [
       aws_ssm_parameter.lev_api_client_name.arn,
-      aws_ssm_parameter.lev_api_client_user.arn
+      aws_ssm_parameter.lev_api_client_user.arn,
+      aws_ssm_parameter.prisoner_search_api_client_id.arn,
+      aws_ssm_parameter.prisoner_search_api_client_secret.arn,
+      aws_ssm_parameter.prisoner_event_queue_name.arn,
+      aws_ssm_parameter.prisoner_event_dlq_name.arn,
+      aws_ssm_parameter.prisoner_event_aws_account_id.arn
     ]
     effect = "Allow"
   }

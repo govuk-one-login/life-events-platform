@@ -1,33 +1,8 @@
 resource "aws_iam_role" "ecs_execution" {
-  name               = "${var.environment}-execution-role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+  name                = "${var.environment}-execution-role"
+  assume_role_policy  = data.aws_iam_policy_document.assume_role_policy.json
+  managed_policy_arns = [data.aws_iam_policy.ecs_task_execution.arn, data.aws_iam_policy.ecs_task_execution_ssm_access.arn]
 
-  inline_policy {
-    name = "ecs_task_execution_ssm_access"
-
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = [
-            "ssm:GetParameters",
-            "secretsmanager:GetSecretValue",
-            "kms:Decrypt"
-          ]
-          Effect = "Allow"
-          Resource = [
-            aws_ssm_parameter.lev_api_client_name.arn,
-            aws_ssm_parameter.lev_api_client_user.arn,
-            aws_ssm_parameter.prisoner_search_api_client_id.arn,
-            aws_ssm_parameter.prisoner_search_api_client_secret.arn,
-            aws_ssm_parameter.prisoner_event_queue_name.arn,
-            aws_ssm_parameter.prisoner_event_dlq_name.arn,
-            aws_ssm_parameter.prisoner_event_aws_account_id.arn
-          ]
-        },
-      ]
-    })
-  }
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -44,6 +19,34 @@ data "aws_iam_policy_document" "assume_role_policy" {
 data "aws_iam_policy" "ecs_task_execution" {
   name = "AmazonECSTaskExecutionRolePolicy"
 }
+
+data "aws_iam_policy" "ecs_task_execution_ssm_access" {
+  name = "EcsTaskExecutionSsmAccess"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ssm:GetParameters",
+          "secretsmanager:GetSecretValue",
+          "kms:Decrypt"
+        ]
+        Effect = "Allow"
+        Resource = [
+          aws_ssm_parameter.lev_api_client_name.arn,
+          aws_ssm_parameter.lev_api_client_user.arn,
+          aws_ssm_parameter.prisoner_search_api_client_id.arn,
+          aws_ssm_parameter.prisoner_search_api_client_secret.arn,
+          aws_ssm_parameter.prisoner_event_queue_name.arn,
+          aws_ssm_parameter.prisoner_event_dlq_name.arn,
+          aws_ssm_parameter.prisoner_event_aws_account_id.arn
+        ]
+      },
+    ]
+  })
+}
+
 
 resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
   role       = aws_iam_role.ecs_execution.name
@@ -123,8 +126,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
     resources = [
       module.data_processor_queue.queue_arn,
       module.data_processor_queue.dead_letter_queue_arn,
-      "https://sqs.eu-west-2.amazonaws.com/${aws_ssm_parameter.prisoner_event_aws_account_id}/${aws_ssm_parameter.prisoner_event_queue_name}",
-      "https://sqs.eu-west-2.amazonaws.com/${aws_ssm_parameter.prisoner_event_aws_account_id}/${aws_ssm_parameter.prisoner_event_dlq_name}",
+      "https://sqs.eu-west-2.amazonaws.com/${aws_ssm_parameter.prisoner_event_aws_account_id.value}/${aws_ssm_parameter.prisoner_event_queue_name.value}",
+      "https://sqs.eu-west-2.amazonaws.com/${aws_ssm_parameter.prisoner_event_aws_account_id.value}/${aws_ssm_parameter.prisoner_event_dlq_name.value}",
     ]
     effect = "Allow"
   }

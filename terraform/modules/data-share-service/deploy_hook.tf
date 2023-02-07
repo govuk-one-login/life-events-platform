@@ -34,6 +34,7 @@ resource "aws_security_group_rule" "lambda_ecs" {
   source_security_group_id = aws_security_group.lb_test.id
 }
 
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group_rule" "lambda_https" {
   type              = "egress"
   protocol          = "tcp"

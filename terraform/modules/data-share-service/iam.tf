@@ -129,8 +129,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
     resources = [
       module.data_processor_queue.queue_arn,
       module.data_processor_queue.dead_letter_queue_arn,
-      "https://sqs.eu-west-2.amazonaws.com/${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}/${data.aws_ssm_parameter.prisoner_event_queue_name.value}",
-      "https://sqs.eu-west-2.amazonaws.com/${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}/${data.aws_ssm_parameter.prisoner_event_dlq_name.value}",
+      "arn:aws:sqs:eu-west-2:${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}:${data.aws_ssm_parameter.prisoner_event_queue_name.value}",
+      "arn:aws:sqs:eu-west-2:${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}:${data.aws_ssm_parameter.prisoner_event_dlq_name.value}",
     ]
     effect = "Allow"
   }

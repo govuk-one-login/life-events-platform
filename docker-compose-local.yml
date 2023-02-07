@@ -1,7 +1,7 @@
 version: "3"
 services:
   localstack:
-    image: localstack/localstack:0.14.0
+    image: localstack/localstack:1.3.1
     networks:
       - gds
     container_name: localstack
@@ -17,7 +17,7 @@ services:
       - AWS_EXECUTION_ENV=True
       - DEFAULT_REGION=eu-west-2
     volumes:
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "${TMPDIR:-/tmp/localstack}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
   prisoner-search:
@@ -28,7 +28,7 @@ services:
     ports:
       - "8082:8080"
     volumes:
-      - ${PWD}/prisoner-search-data:/home/wiremock
+      - ./prisoner-search-data:/home/wiremock
 
   datashare-db:
     image: postgres:13.7
@@ -86,7 +86,7 @@ services:
       - JSON_CONFIG_PATH=/tmp/config-local.json
       - SERVER_PORT=8080
     volumes:
-      - ${PWD}/oauth2-data:/tmp/
+      - ./oauth2-data:/tmp/
 
 networks:
   gds:

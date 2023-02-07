@@ -17,7 +17,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
   network_mode             = "awsvpc"
   memory                   = 2048
   cpu                      = 1024
-  execution_role_arn       = aws_iam_role.ecs_execution.arn
+  execution_role_arn       = aws_iam_role.ecs_task_execution.arn
   task_role_arn            = aws_iam_role.ecs_task.arn
 
   container_definitions = jsonencode([

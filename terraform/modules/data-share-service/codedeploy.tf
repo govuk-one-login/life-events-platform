@@ -42,6 +42,10 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
         listener_arns = [aws_lb_listener.listener-http.arn]
       }
 
+      test_traffic_route {
+        listener_arns = [aws_lb_listener.test-listener-http.arn]
+      }
+
       target_group {
         name = aws_lb_target_group.green.name
       }

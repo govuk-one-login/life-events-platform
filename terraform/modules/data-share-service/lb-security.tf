@@ -38,6 +38,23 @@ resource "aws_security_group" "lb_auto" {
   }
 }
 
+resource "aws_security_group" "lb_test" {
+  name_prefix = "${var.environment}-ecs-lb-test"
+  description = "Access to LB test port"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    description = "Allow access to LB from port 8080"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 data "aws_iam_policy_document" "lb_sg_update_assume_policy" {
   statement {
     effect = "Allow"

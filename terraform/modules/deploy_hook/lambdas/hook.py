@@ -12,8 +12,8 @@ from common import get_auth_token, record_metric
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-gdx_url = os.environ["gdx_url"]
-events_url = gdx_url + "/events"
+test_gdx_url = os.environ["test_gdx_url"]
+events_url = test_gdx_url + "/events"
 
 auth_url = os.environ["auth_url"]
 
@@ -38,6 +38,7 @@ def lambda_handler(event, _context):
         put_lifecycle_event_hook(event, 'Succeeded')
     except:
         put_lifecycle_event_hook(event, 'Succeeded')
+        raise
 
 
 def put_lifecycle_event_hook(event, status: str):

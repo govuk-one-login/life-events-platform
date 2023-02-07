@@ -1,6 +1,5 @@
 package uk.gov.gdx.datashare.controllers
 
-import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.toedter.spring.hateoas.jsonapi.MediaTypes.JSON_API_VALUE
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
@@ -21,7 +20,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.enums.EventType
@@ -35,15 +33,13 @@ import javax.validation.constraints.Positive
 import javax.validation.constraints.PositiveOrZero
 
 @RestController
-@XRayEnabled
 @RequestMapping("/events", produces = [JSON_API_VALUE])
-@Validated
 class EventsController(
   private val eventDataService: EventDataService,
   private val eventApiAuditService: EventApiAuditService,
   private val dataReceiverService: DataReceiverService,
   private val meterRegistry: MeterRegistry,
-) {
+) : BaseApiController() {
   companion object {
     private const val DEFAULT_PAGE_SIZE = 100
   }
@@ -214,7 +210,8 @@ class EventsController(
   ): PagedModel<EntityModel<EventNotification>> {
     val events = eventDataService.getEvents(eventTypes, startTime, endTime, pageNumber, pageSize)
     eventApiAuditService.auditEventApiCall(events.eventModels)
-    val linkBuilder = eventsLink(eventTypes, startTime, endTime, pageNumber, pageSize).toUriComponentsBuilder().scheme("https")
+    val linkBuilder =
+      eventsLink(eventTypes, startTime, endTime, pageNumber, pageSize).toUriComponentsBuilder().scheme("https")
     val pageMetadata = PagedModel.PageMetadata(pageSize.toLong(), pageNumber.toLong(), events.count.toLong())
     val selfLink = org.springframework.hateoas.Link.of(linkBuilder.toUriString(), "self")
     val pageLinks = getPageLinks(pageMetadata, linkBuilder)
@@ -286,7 +283,10 @@ class EventsController(
           EntityModel.of(
             it,
             eventLink(id),
-            org.springframework.hateoas.Link.of(eventsLink().toUriComponentsBuilder().scheme("https").toUriString(), "collection"),
+            org.springframework.hateoas.Link.of(
+              eventsLink().toUriComponentsBuilder().scheme("https").toUriString(),
+              "collection",
+            ),
           )
         }
       },
@@ -355,7 +355,8 @@ class EventsController(
 
   private fun eventLink(id: UUID): org.springframework.hateoas.Link =
     org.springframework.hateoas.Link.of(
-      linkTo(methodOn(EventsController::class.java).getEvent(id) as Any).toUriComponentsBuilder().scheme("https").build().toUriString(),
+      linkTo(methodOn(EventsController::class.java).getEvent(id) as Any).toUriComponentsBuilder().scheme("https")
+        .build().toUriString(),
       "self",
     )
 

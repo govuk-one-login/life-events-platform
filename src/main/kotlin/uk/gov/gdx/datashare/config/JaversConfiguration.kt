@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.datasource.DataSourceUtils
 
-
 @Configuration
 class JaversConfiguration {
   @Bean
@@ -41,7 +40,9 @@ class JaversConfiguration {
   fun javersSpringDataAuditableAspect(javers: Javers): JaversSpringDataAuditableRepositoryAspect? {
     val commitPropertiesProvider = EmptyPropertiesProvider()
     return JaversSpringDataAuditableRepositoryAspect(
-      javers, authorProvider(), commitPropertiesProvider,
+      javers,
+      authorProvider(),
+      commitPropertiesProvider,
     )
   }
 }

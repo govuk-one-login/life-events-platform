@@ -1,13 +1,11 @@
 package uk.gov.gdx.datashare.controllers
 
-import com.amazonaws.xray.spring.aop.XRayEnabled
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,13 +21,11 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/admin", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
-@Validated
-@XRayEnabled
 @Tag(name = "13. Admin")
 class AdminController(
   private val eventDataRepository: EventDataRepository,
   private val adminService: AdminService,
-) {
+) : BaseApiController() {
   @GetMapping("/events")
   @Operation(
     summary = "Get Events",

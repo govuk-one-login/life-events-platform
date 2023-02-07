@@ -1,6 +1,33 @@
 resource "aws_iam_role" "ecs_execution" {
   name               = "${var.environment}-execution-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+
+  inline_policy {
+    name = "ecs_task_execution_ssm_access"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = [
+            "ssm:GetParameters",
+            "secretsmanager:GetSecretValue",
+            "kms:Decrypt"
+          ]
+          Effect = "Allow"
+          Resource = [
+            aws_ssm_parameter.lev_api_client_name.arn,
+            aws_ssm_parameter.lev_api_client_user.arn,
+            aws_ssm_parameter.prisoner_search_api_client_id.arn,
+            aws_ssm_parameter.prisoner_search_api_client_secret.arn,
+            aws_ssm_parameter.prisoner_event_queue_name.arn,
+            aws_ssm_parameter.prisoner_event_dlq_name.arn,
+            aws_ssm_parameter.prisoner_event_aws_account_id.arn
+          ]
+        },
+      ]
+    })
+  }
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -166,30 +193,4 @@ resource "aws_iam_role_policy_attachment" "ecs_task_cognito_access" {
 resource "aws_iam_role_policy_attachment" "ecs_task_xray_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
-}
-
-data "aws_iam_policy_document" "ecs_task_ssm_access" {
-  statement {
-    actions = ["ssm:GetParameter"]
-    resources = [
-      aws_ssm_parameter.lev_api_client_name.arn,
-      aws_ssm_parameter.lev_api_client_user.arn,
-      aws_ssm_parameter.prisoner_search_api_client_id.arn,
-      aws_ssm_parameter.prisoner_search_api_client_secret.arn,
-      aws_ssm_parameter.prisoner_event_queue_name.arn,
-      aws_ssm_parameter.prisoner_event_dlq_name.arn,
-      aws_ssm_parameter.prisoner_event_aws_account_id.arn
-    ]
-    effect = "Allow"
-  }
-}
-
-resource "aws_iam_policy" "ecs_task_ssm_access" {
-  name   = "${var.environment}-ecs-task-ssm-access"
-  policy = data.aws_iam_policy_document.ecs_task_ssm_access.json
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_ssm_access" {
-  role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.ecs_task_ssm_access.arn
 }

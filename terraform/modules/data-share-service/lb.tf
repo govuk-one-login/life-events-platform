@@ -5,7 +5,7 @@ resource "aws_lb" "load_balancer" {
   name                       = "${var.environment}-lb"
   load_balancer_type         = "application"
   subnets                    = module.vpc.public_subnet_ids
-  security_groups            = aws_security_group.lb_auto.*.id
+  security_groups            = concat(aws_security_group.lb_auto.*.id, [aws_security_group.lb_test.id])
   drop_invalid_header_fields = true
 }
 
@@ -16,7 +16,7 @@ resource "random_id" "http_sufix" {
 
 #TODO-https://github.com/alphagov/gdx-data-share-poc/issues/20: When we have our own route53 we can lock this to HTTPS
 #tfsec:ignore:aws-elb-http-not-used
-resource "aws_lb_listener" "listener-http" {
+resource "aws_lb_listener" "listener_http" {
   load_balancer_arn = aws_lb.load_balancer.arn
   port              = 80
   protocol          = "HTTP"
@@ -31,6 +31,24 @@ resource "aws_lb_listener" "listener-http" {
   }
 
   depends_on = [aws_lb_target_group.green]
+}
+
+#tfsec:ignore:aws-elb-http-not-used
+resource "aws_lb_listener" "test_listener_http" {
+  load_balancer_arn = aws_lb.load_balancer.arn
+  port              = 8080
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.blue.arn
+  }
+
+  lifecycle {
+    ignore_changes = [default_action]
+  }
+
+  depends_on = [aws_lb_target_group.blue]
 }
 
 resource "aws_lb_target_group" "green" {

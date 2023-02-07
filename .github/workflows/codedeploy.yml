@@ -92,7 +92,7 @@ jobs:
           | jq --arg key "$ECS_TASK_DEFINITION_ARN" '.Resources[].TargetService.Properties.TaskDefinition=$key' \
           | jq --arg key "$CONTAINER_PORT" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerPort=$key' \
           | jq --arg key "$ECS_TASK_DEFINITION" '.Resources[].TargetService.Properties.LoadBalancerInfo.ContainerName=$key' \
-          | jq --arg key "$HOOK_LAMBDA_ARN" '.Hooks[].BeforeAllowTraffic=$key' \
+          | jq --arg key "$HOOK_LAMBDA_ARN" '.Hooks[].AfterAllowTestTraffic=$key' \
           > $CODEDEPLOY_APPSPEC_FILEPATH
           sed -i 's#\\"##g' $CODEDEPLOY_APPSPEC_FILEPATH
 

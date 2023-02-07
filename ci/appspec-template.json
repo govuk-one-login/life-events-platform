@@ -16,7 +16,7 @@
   ],
   "Hooks": [
     {
-      "BeforeAllowTraffic": "lambda-hook"
+      "AfterAllowTestTraffic": "lambda-hook"
     }
   ]
 }

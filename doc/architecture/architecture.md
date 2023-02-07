@@ -1,6 +1,8 @@
 # Architecture
 
-## AWS
+This is a summary of the ADRs across the service, trying to produce a single consolidated view of the as-is systeym.
+
+## AWS/Infrastructure
 A current state view of the overall system architecture and services used in AWS is documented below.
 
 ![](architecture.drawio.svg)

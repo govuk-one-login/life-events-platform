@@ -1,5 +1,5 @@
-resource "aws_iam_role" "ecs_execution" {
-  name               = "${var.environment}-execution-role"
+resource "aws_iam_role" "ecs_task_execution" {
+  name               = "${var.environment}-task-execution-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
@@ -18,9 +18,31 @@ data "aws_iam_policy" "ecs_task_execution" {
   name = "AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
-  role       = aws_iam_role.ecs_execution.name
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
+  role       = aws_iam_role.ecs_task_execution.name
   policy_arn = data.aws_iam_policy.ecs_task_execution.arn
+}
+
+data "aws_iam_policy_document" "ecs_task_execution_ssm" {
+  statement {
+    actions = [
+      "ssm:GetParameters",
+      "secretsmanager:GetSecretValue",
+      "kms:Decrypt"
+    ]
+    effect    = "Allow"
+    resources = local.ecs_task_execution_parameters.*.arn
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_execution_ssm" {
+  name   = "${var.environment}-ecs-task-execution-ssm"
+  policy = data.aws_iam_policy_document.ecs_task_execution_ssm.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_ssm" {
+  role       = aws_iam_role.ecs_task_execution.name
+  policy_arn = aws_iam_policy.ecs_task_execution_ssm.arn
 }
 
 resource "aws_iam_role" "ecs_task" {
@@ -82,6 +104,17 @@ resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
   policy_arn = aws_iam_policy.ecs_task_cloudwatch_access.arn
 }
 
+data "aws_ssm_parameter" "prisoner_event_aws_account_id" {
+  name = aws_ssm_parameter.prisoner_event_aws_account_id.name
+}
+
+data "aws_ssm_parameter" "prisoner_event_queue_name" {
+  name = aws_ssm_parameter.prisoner_event_queue_name.name
+}
+
+data "aws_ssm_parameter" "prisoner_event_dlq_name" {
+  name = aws_ssm_parameter.prisoner_event_dlq_name.name
+}
 
 data "aws_iam_policy_document" "ecs_task_sqs_access" {
   statement {
@@ -96,6 +129,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
     resources = [
       module.data_processor_queue.queue_arn,
       module.data_processor_queue.dead_letter_queue_arn,
+      "https://sqs.eu-west-2.amazonaws.com/${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}/${data.aws_ssm_parameter.prisoner_event_queue_name.value}",
+      "https://sqs.eu-west-2.amazonaws.com/${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}/${data.aws_ssm_parameter.prisoner_event_dlq_name.value}",
     ]
     effect = "Allow"
   }
@@ -166,25 +201,4 @@ resource "aws_iam_role_policy_attachment" "ecs_task_cognito_access" {
 resource "aws_iam_role_policy_attachment" "ecs_task_xray_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
-}
-
-data "aws_iam_policy_document" "ecs_task_ssm_access" {
-  statement {
-    actions = ["ssm:GetParameter"]
-    resources = [
-      aws_ssm_parameter.lev_api_client_name.arn,
-      aws_ssm_parameter.lev_api_client_user.arn
-    ]
-    effect = "Allow"
-  }
-}
-
-resource "aws_iam_policy" "ecs_task_ssm_access" {
-  name   = "${var.environment}-ecs-task-ssm-access"
-  policy = data.aws_iam_policy_document.ecs_task_ssm_access.json
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_ssm_access" {
-  role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.ecs_task_ssm_access.arn
 }

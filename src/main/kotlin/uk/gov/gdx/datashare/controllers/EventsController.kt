@@ -77,7 +77,20 @@ class EventsController(
       "}\n" +
       "      </pre>" +
       "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
-      "      <p><b>Gender Types:</b>: Male, Female, Indeterminate</p>",
+      "      <p><b>Gender Types:</b>: Male, Female, Indeterminate</p>" +
+      "<h4>2. Person has been sent to prison - Type: <em>ENTERED_PRISON</em></h4>" +
+      "     <p>Prisoner received notifications take the following json structure." +
+      "     <pre>\n" +
+      "{\n" +
+      "        \"prisonerNumber\": \"A1234DB\",\n" +
+      "        \"firstName\": \"Mary\",\n" +
+      "        \"middleNames\": \"Jane\",\n" +
+      "        \"lastName\": \"Smith\",\n" +
+      "        \"sex\": \"Male\",\n" +
+      "        \"dateOfBirth\": \"1972-02-20\",\n" +
+      "}\n" +
+      "      </pre>" +
+      "      <p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, sex, dateOfBirth</p>",
     responses = [
       ApiResponse(
         responseCode = "200",

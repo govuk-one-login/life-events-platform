@@ -1,6 +1,6 @@
 # Architecture
 
-This is a summary of the ADRs across the service, trying to produce a single consolidated view of the as-is systeym.
+This is a summary of the ADRs across the service, trying to produce a single consolidated view of the as-is system.
 
 ## AWS/Infrastructure
 A current state view of the overall system architecture and services used in AWS is documented below.
@@ -40,3 +40,8 @@ We currently have a fake version of the supplier side (HMPO), running as
 
 We also have a mock consumer running as
 - a set of Step Functions calling the API
+
+## Load/Volumes
+
+We're currently working with a limited data set of notifications of death. Using ONS data, we've worked out what an "average" day looks like, and are targetting ~3,000 notifications a day. 
+We're currently working with one data acquirer, and one data supplier, as well as na internal mock acquirer, so the total data volumes are relatively low currently.

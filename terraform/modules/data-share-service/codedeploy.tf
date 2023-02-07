@@ -39,11 +39,11 @@ resource "aws_codedeploy_deployment_group" "gdx_data_share_poc" {
     target_group_pair_info {
 
       prod_traffic_route {
-        listener_arns = [aws_lb_listener.listener-http.arn]
+        listener_arns = [aws_lb_listener.listener_http.arn]
       }
 
       test_traffic_route {
-        listener_arns = [aws_lb_listener.test-listener-http.arn]
+        listener_arns = [aws_lb_listener.test_listener_http.arn]
       }
 
       target_group {

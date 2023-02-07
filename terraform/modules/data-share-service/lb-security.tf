@@ -48,6 +48,7 @@ resource "aws_security_group" "lb_test" {
     to_port     = 8080
     protocol    = "tcp"
     description = "Allow access to LB from port 8080"
+    cidr_blocks = [var.vpc_cidr]
   }
 
   lifecycle {

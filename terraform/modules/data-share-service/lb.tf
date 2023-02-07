@@ -16,7 +16,7 @@ resource "random_id" "http_sufix" {
 
 #TODO-https://github.com/alphagov/gdx-data-share-poc/issues/20: When we have our own route53 we can lock this to HTTPS
 #tfsec:ignore:aws-elb-http-not-used
-resource "aws_lb_listener" "listener-http" {
+resource "aws_lb_listener" "listener_http" {
   load_balancer_arn = aws_lb.load_balancer.arn
   port              = 80
   protocol          = "HTTP"
@@ -34,7 +34,7 @@ resource "aws_lb_listener" "listener-http" {
 }
 
 #tfsec:ignore:aws-elb-http-not-used
-resource "aws_lb_listener" "test-listener-http" {
+resource "aws_lb_listener" "test_listener_http" {
   load_balancer_arn = aws_lb.load_balancer.arn
   port              = 8080
   protocol          = "HTTP"

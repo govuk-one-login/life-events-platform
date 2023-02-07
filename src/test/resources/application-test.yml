@@ -18,6 +18,11 @@ api:
   base:
     prisoner-event:
       enabled: true
+    lev:
+      api:
+        client:
+          name: gdx-data-share
+          user: gdx-data-share-user
     prisoner-search:
       api:
         client:

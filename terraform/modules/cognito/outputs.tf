@@ -1,5 +1,13 @@
+locals {
+  auth_domain = "${aws_cognito_user_pool.pool.domain}.auth.${var.region}.amazoncognito.com"
+}
+
 output "auth_domain" {
-  value = "${aws_cognito_user_pool.pool.domain}.auth.${var.region}.amazoncognito.com"
+  value = local.auth_domain
+}
+
+output "token_auth_url" {
+  value = "https://${local.auth_domain}/oauth2/token"
 }
 
 output "issuer_domain" {
@@ -40,4 +48,12 @@ output "consumer_client_id" {
 
 output "consumer_client_secret" {
   value = module.example_consumer.client_secret
+}
+
+output "deploy_hook_client_id" {
+  value = module.deploy_hook.client_id
+}
+
+output "deploy_hook_client_secret" {
+  value = module.deploy_hook.client_secret
 }

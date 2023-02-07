@@ -14,6 +14,7 @@ import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
+import uk.gov.gdx.datashare.models.TestEvent
 import uk.gov.gdx.datashare.repositories.*
 import java.time.Duration
 import java.time.LocalDateTime
@@ -142,6 +143,7 @@ class EventDataService(
   ): Any? = when (subscription.eventType) {
     EventType.DEATH_NOTIFICATION -> deathNotificationService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
     EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
+    EventType.TEST_EVENT -> TestEvent(testField = "Test Field Value")
     else -> log.warn("Not handling this event type {}", subscription.eventType)
   }
 

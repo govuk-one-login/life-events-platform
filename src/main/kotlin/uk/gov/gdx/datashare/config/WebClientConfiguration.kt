@@ -13,15 +13,14 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
-import software.amazon.awssdk.services.ssm.SsmClient
-import software.amazon.awssdk.services.ssm.model.GetParameterRequest
 import java.time.Duration
 
 @Configuration
 class WebClientConfiguration(
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
   @Value("\${api.base.url.prisoner-search:-}") private val prisonerSearchApiUri: String,
-  @Value("\${environment:-}") private val environment: String,
+  @Value("\${api.base.lev.api.client.name:-}") private val levApiClientName: String,
+  @Value("\${api.base.lev.api.client.user:-}") private val levApiClientUser: String,
 ) {
 
   companion object {
@@ -29,19 +28,13 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun levApiWebClient(ssmClient: SsmClient): WebClient {
+  fun levApiWebClient(): WebClient {
     return WebClient.builder()
       .baseUrl(levApiRootUri)
       .clientConnector(ReactorClientHttpConnector(createHttpClient("levApi")))
-      .defaultHeader("X-Auth-Aud", getParameterFromSsm(ssmClient, "$environment-lev-api-client-name"))
-      .defaultHeader("X-Auth-Username", getParameterFromSsm(ssmClient, "$environment-lev-api-client-user"))
+      .defaultHeader("X-Auth-Aud", levApiClientName)
+      .defaultHeader("X-Auth-Username", levApiClientUser)
       .build()
-  }
-
-  private fun getParameterFromSsm(ssmClient: SsmClient, parameterName: String): String {
-    val paramRequest: GetParameterRequest = GetParameterRequest.builder().name(parameterName).build()
-    val paramResponse = ssmClient.getParameter(paramRequest)
-    return paramResponse.parameter().value()
   }
 
   @Bean

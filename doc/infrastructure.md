@@ -32,3 +32,21 @@ terraform {
 To run automatically, this also requires an IAM user/role, and this should be configured in GitHub actions to create the environment variables `AWS_SECRET_ACCESS_KEY` and `AWS_ACCESS_KEY_ID`.
 
 This infrastructure is configured in the `backend` directory of terraform config.
+
+## Creating a new hosted environment
+
+### Terraform
+
+todo GPC-166
+
+### Database
+
+Once the infrastructure has been created using terraform, a database user needs to be created.
+Connect to the RDS cluster using the bastion ([instructions](./connecting-to-hosted-databases.md)) and create the user:
+```psql
+CREATE USER <username> WITH LOGIN;
+GRANT rds_iam TO <username>;
+GRANT rds_superuser TO <username>;
+```
+
+The `<username>` needs to be set as a module varible in terraform, e.g. `terraform/dev/main.tf` > `module "data-share-service"` > `db_username`

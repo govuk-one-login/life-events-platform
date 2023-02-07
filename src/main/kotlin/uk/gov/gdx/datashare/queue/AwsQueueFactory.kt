@@ -27,7 +27,7 @@ class AwsQueueFactory(
       .map { (queueId, queueConfig) ->
         val sqsDlqClient = getOrDefaultSqsDlqClient(queueId, queueConfig, sqsProperties)
         val sqsClient = getOrDefaultSqsClient(queueId, queueConfig, sqsProperties, sqsDlqClient)
-        AwsQueue(queueId, sqsClient, queueConfig.queueName, sqsDlqClient, queueConfig.dlqName.ifEmpty { null })
+        AwsQueue(queueId, sqsClient, queueConfig.queueName, sqsDlqClient, queueConfig.dlqName.ifEmpty { null }, queueConfig.awsAccountId.ifEmpty { null })
           .also { getOrDefaultHealthIndicator(it) }
           .also { createJmsListenerContainerFactory(it, sqsProperties) }
       }.toList()

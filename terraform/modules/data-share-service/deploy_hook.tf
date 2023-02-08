@@ -3,7 +3,7 @@ module "deploy_hook" {
   environment                 = var.environment
   region                      = var.region
   cloudwatch_retention_period = var.cloudwatch_retention_period
-  codedeploy_arn              = aws_codedeploy_app.gdx_data_share_poc.arn
+  codedeploy_arn              = aws_codedeploy_deployment_group.gdx_data_share_poc.arn
 
   security_group_id = aws_security_group.lambda.id
   subnet_ids        = module.vpc.private_subnet_ids

@@ -83,6 +83,7 @@ dependencies {
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+  // test containers
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")
   // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
@@ -103,6 +104,7 @@ dependencies {
   testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
   testImplementation("org.mockito:mockito-inline:5.1.1")
   testImplementation("com.approvaltests:approvaltests:18.5.0")
+  testImplementation("com.google.code.gson:gson:2.10.1") // Needed for JsonApprovals
 }
 
 java {

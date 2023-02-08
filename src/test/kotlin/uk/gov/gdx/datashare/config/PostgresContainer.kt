@@ -27,7 +27,7 @@ object PostgresContainer {
       withPassword("test")
       setWaitStrategy(Wait.forListeningPort())
       withExposedPorts()
-      withCreateContainerCmdModifier { cmd -> cmd.withHostConfig(HostConfig().withPortBindings(PortBinding(Ports.Binding.bindPort(5434), ExposedPort(5432))))}
+      withCreateContainerCmdModifier { cmd -> cmd.withHostConfig(HostConfig().withPortBindings(PortBinding(Ports.Binding.bindPort(5434), ExposedPort(5432)))) }
       withReuse(true)
 
       start()

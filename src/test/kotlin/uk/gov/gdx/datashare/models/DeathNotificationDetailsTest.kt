@@ -42,7 +42,7 @@ class DeathNotificationDetailsTest {
         address = expectedAddress,
       ),
     )
-    val enrichmentFields = listOf<EnrichmentField>(
+    val enrichmentFields = listOf(
       EnrichmentField.REGISTRATION_DATE,
       EnrichmentField.FIRST_NAMES,
       EnrichmentField.LAST_NAME,

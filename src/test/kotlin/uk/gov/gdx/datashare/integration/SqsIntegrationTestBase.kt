@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.web.reactive.server.WebTestClient
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import uk.gov.gdx.datashare.integration.LocalStackContainer.setLocalStackProperties
 import uk.gov.gdx.datashare.queue.*
@@ -13,9 +14,11 @@ import uk.gov.gdx.datashare.queue.*
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class SqsIntegrationTestBase : IntegrationTestBase() {
-
   @Autowired
   private lateinit var awsQueueService: AwsQueueService
+
+  @Autowired
+  lateinit var webTestClient: WebTestClient
 
   protected val dataProcessorQueue by lazy { awsQueueService.findByQueueId("dataprocessor") as AwsQueue }
 

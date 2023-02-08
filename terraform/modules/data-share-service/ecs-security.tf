@@ -1,5 +1,5 @@
 resource "aws_security_group" "ecs_tasks" {
-  name_prefix = "${var.environment}-ecs-tasks-"
+  name        = "${var.environment}-ecs-tasks"
   description = "For GDX Data Share PoC Service ECS tasks, inbound access from GDX LB only"
   vpc_id      = module.vpc.vpc_id
 
@@ -9,14 +9,12 @@ resource "aws_security_group" "ecs_tasks" {
 }
 
 resource "aws_security_group_rule" "ecs_tasks_ingress" {
-  for_each = toset(aws_security_group.lb_auto.*.id)
-
   type                     = "ingress"
   protocol                 = "tcp"
   from_port                = 8080
   to_port                  = 8080
-  source_security_group_id = each.key
-  description              = "ECS task ingress rule, allow access from LB for SG ${each.key} only"
+  source_security_group_id = aws_security_group.lb_cloudfront.id
+  description              = "ECS task ingress rule, allow access from LB"
   security_group_id        = aws_security_group.ecs_tasks.id
 }
 

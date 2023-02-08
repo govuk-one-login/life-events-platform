@@ -40,8 +40,12 @@ resource "aws_lb_listener" "test_listener_http" {
   protocol          = "HTTP"
 
   default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.blue.arn
+    type = "fixed-response"
+
+    fixed_response {
+      status_code  = "403"
+      content_type = "text/plain"
+    }
   }
 
   lifecycle {
@@ -49,6 +53,28 @@ resource "aws_lb_listener" "test_listener_http" {
   }
 
   depends_on = [aws_lb_target_group.blue]
+}
+
+resource "random_password" "test_auth_header" {
+  length  = 64
+  special = false
+}
+
+resource "aws_lb_listener_rule" "protected_test_forward" {
+  listener_arn = aws_lb_listener.test_listener_http.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.blue.arn
+  }
+
+  condition {
+    http_header {
+      values           = [random_password.test_auth_header]
+      http_header_name = "X-TEST-AUTH"
+    }
+  }
 }
 
 resource "aws_lb_target_group" "green" {

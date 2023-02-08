@@ -14,6 +14,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 test_gdx_url = os.environ["test_gdx_url"]
+test_auth_header = os.environ["test_auth_header"]
 events_url = test_gdx_url + "/events"
 
 auth_url = os.environ["auth_url"]
@@ -64,6 +65,7 @@ def post_event(auth_token: str):
         data=event_request_data,
         headers={
             "Authorization": "Bearer " + auth_token,
+            "X-TEST-AUTH": test_auth_header,
             "Content-Type": "application/json; charset=utf-8",
             "Content-Length": len(event_request_data)
         }
@@ -90,7 +92,10 @@ def get_event(auth_token: str, event_id: str):
 def delete_event(auth_token: str, event_id: str):
     event_request = request.Request(
         f"{events_url}/{event_id}",
-        headers={"Authorization": "Bearer " + auth_token},
+        headers={
+            "Authorization": "Bearer " + auth_token,
+            "X-TEST-AUTH": test_auth_header
+        },
         method="DELETE"
     )
     request.urlopen(event_request)
@@ -99,7 +104,11 @@ def delete_event(auth_token: str, event_id: str):
 def get_data(auth_token: str, url: str):
     event_request = request.Request(
         url,
-        headers={"Authorization": "Bearer " + auth_token, "Accept": "application/vnd.api+json"}
+        headers={
+            "Authorization": "Bearer " + auth_token,
+            "X-TEST-AUTH": test_auth_header,
+            "Accept": "application/vnd.api+json"
+        }
     )
     response: HTTPResponse = request.urlopen(event_request)
     return json.loads(response.read())

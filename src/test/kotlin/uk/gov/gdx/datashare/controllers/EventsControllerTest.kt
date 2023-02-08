@@ -58,6 +58,8 @@ class EventsControllerTest {
         eventId = UUID.randomUUID(),
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = UUID.randomUUID().toString(),
+        eventTime = LocalDateTime.now().minusMinutes(2),
+        ingestTime = LocalDateTime.now(),
         dataIncluded = true,
         enrichmentFields = listOf(EnrichmentField.FIRST_NAMES),
         eventData = DeathNotificationDetails(
@@ -70,6 +72,8 @@ class EventsControllerTest {
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = UUID.randomUUID().toString(),
         dataIncluded = true,
+        eventTime = LocalDateTime.now().minusMinutes(2),
+        ingestTime = LocalDateTime.now(),
         enrichmentFields = listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
         eventData = DeathNotificationDetails(
           listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
@@ -97,6 +101,8 @@ class EventsControllerTest {
       eventId = UUID.randomUUID(),
       eventType = EventType.DEATH_NOTIFICATION,
       sourceId = UUID.randomUUID().toString(),
+      eventTime = LocalDateTime.now().minusMinutes(2),
+      ingestTime = LocalDateTime.now(),
       eventData = DeathNotificationDetails(
         listOf(
           EnrichmentField.FIRST_NAMES,
@@ -129,6 +135,8 @@ class EventsControllerTest {
       eventId = UUID.randomUUID(),
       eventType = EventType.DEATH_NOTIFICATION,
       sourceId = UUID.randomUUID().toString(),
+      eventTime = LocalDateTime.now().minusMinutes(2),
+      ingestTime = LocalDateTime.now(),
       eventData = null,
     )
 
@@ -163,6 +171,8 @@ class EventsControllerTest {
         eventId = UUID.fromString("a5383689-1192-4078-a4a6-a611b0a34c6e"),
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = "a5383689-1192-4078-a4a6-a611b0a34c6e",
+        eventTime = LocalDateTime.now().minusMinutes(2),
+        ingestTime = LocalDateTime.now(),
         eventData = DeathNotificationDetails(
           listOf(EnrichmentField.FIRST_NAMES),
           firstNames = "Bob",
@@ -172,6 +182,8 @@ class EventsControllerTest {
         eventId = UUID.fromString("ec39aa80-2fa2-4d46-9211-c66fc94024d3"),
         eventType = EventType.DEATH_NOTIFICATION,
         sourceId = "ec39aa80-2fa2-4d46-9211-c66fc94024d3",
+        eventTime = LocalDateTime.now().minusMinutes(2),
+        ingestTime = LocalDateTime.now(),
         eventData = DeathNotificationDetails(
           listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
           firstNames = "Bob",

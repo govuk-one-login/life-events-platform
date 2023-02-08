@@ -51,7 +51,7 @@ class EventApiAudit(
   )
   data class Data(
     val eventId: UUID,
-    val sourceId: String,
+    val sourceId: String?,
     val hashedEventData: String?,
   )
 

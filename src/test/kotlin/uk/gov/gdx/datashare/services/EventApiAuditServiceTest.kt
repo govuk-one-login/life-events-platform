@@ -50,6 +50,8 @@ class EventApiAuditServiceTest {
       eventId = UUID.randomUUID(),
       eventType = EventType.DEATH_NOTIFICATION,
       sourceId = "123456788",
+      eventTime = LocalDateTime.now().minusMinutes(2),
+      ingestTime = LocalDateTime.now(),
       eventData = DeathNotificationDetails(
         listOf(
           EnrichmentField.FIRST_NAMES,
@@ -70,6 +72,8 @@ class EventApiAuditServiceTest {
       eventId = UUID.randomUUID(),
       eventType = EventType.DEATH_NOTIFICATION,
       sourceId = "123456789",
+      eventTime = LocalDateTime.now().minusMinutes(2),
+      ingestTime = LocalDateTime.now(),
       eventData = DeathNotificationDetails(
         listOf(
           EnrichmentField.FIRST_NAMES,

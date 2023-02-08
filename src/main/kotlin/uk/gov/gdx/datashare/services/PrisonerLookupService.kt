@@ -49,6 +49,7 @@ class PrisonerLookupService(
       lastName = if (ef.contains(EnrichmentField.LAST_NAME)) prisonerRecord.lastName else null,
       gender = if (ef.contains(EnrichmentField.GENDER)) gender else null,
       dateOfBirth = if (ef.contains(EnrichmentField.DATE_OF_BIRTH)) prisonerRecord.dateOfBirth else null,
+      prisonName = if (ef.contains(EnrichmentField.PRISON_NAME)) prisonerRecord.prisonName else null,
     )
   }
 }

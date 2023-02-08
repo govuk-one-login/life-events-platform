@@ -29,6 +29,7 @@ class PrisonerLookupServiceTest {
       EnrichmentField.PRISONER_NUMBER,
       EnrichmentField.MIDDLE_NAMES,
       EnrichmentField.DATE_OF_BIRTH,
+      EnrichmentField.PRISON_NAME,
     )
     val prisonerRecord = PrisonerRecord(
       prisonerNumber = dataId,
@@ -36,6 +37,7 @@ class PrisonerLookupServiceTest {
       middleNames = "MiddleNames",
       lastName = "TestLastName",
       gender = "Male",
+      prisonName = "HMP Leeds",
       dateOfBirth = LocalDate.of(1974, 3, 4),
     )
 
@@ -49,6 +51,7 @@ class PrisonerLookupServiceTest {
     assertThat(enrichedPayload.middleNames).isEqualTo(prisonerRecord.middleNames)
     assertThat(enrichedPayload.prisonerNumber).isEqualTo(prisonerRecord.prisonerNumber)
     assertThat(enrichedPayload.gender).isEqualTo(Gender.MALE)
+    assertThat(enrichedPayload.prisonName).isEqualTo(prisonerRecord.prisonName)
   }
 
   @Test
@@ -65,6 +68,7 @@ class PrisonerLookupServiceTest {
       middleNames = "MiddleNames",
       lastName = "TestLastName",
       gender = "Non-Binary",
+      prisonName = "HMP Brixton",
       dateOfBirth = LocalDate.of(1974, 3, 4),
     )
 
@@ -77,6 +81,7 @@ class PrisonerLookupServiceTest {
     assertThat(enrichedPayload.dateOfBirth).isEqualTo(prisonerRecord.dateOfBirth)
     assertThat(enrichedPayload.middleNames).isNull()
     assertThat(enrichedPayload.prisonerNumber).isNull()
+    assertThat(enrichedPayload.prisonName).isNull()
     assertThat(enrichedPayload.gender).isEqualTo(Gender.INDETERMINATE)
   }
 }

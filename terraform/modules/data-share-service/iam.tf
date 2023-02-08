@@ -1,3 +1,7 @@
+locals {
+  ecs_task_sqs_access_json = sensitive(data.aws_iam_policy_document.ecs_task_sqs_access.json)
+}
+
 resource "aws_iam_role" "ecs_task_execution" {
   name               = "${var.environment}-task-execution-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
@@ -150,7 +154,7 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
 
 resource "aws_iam_policy" "ecs_task_sqs_access" {
   name   = "${var.environment}-ecs-task-sqs-access"
-  policy = data.aws_iam_policy_document.ecs_task_sqs_access.json
+  policy = local.ecs_task_sqs_access_json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {

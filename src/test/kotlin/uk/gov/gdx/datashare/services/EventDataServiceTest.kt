@@ -58,6 +58,12 @@ class EventDataServiceTest {
       dateTimeHandler,
       meterRegistry,
       acquirerSubscriptionEnrichmentFieldRepository,
+      listOf(
+        deathNotificationService,
+        prisonerLookupService,
+        TestEventEnrichmentService(),
+        NullEventEnrichmentService(),
+      ),
     )
   }
 

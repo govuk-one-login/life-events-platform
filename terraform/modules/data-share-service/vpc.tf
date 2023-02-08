@@ -1,5 +1,4 @@
 #tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
-#tfsec:ignore:aws-ec2-no-public-ip-subnet
 module "vpc" {
   source = "git::https://github.com/Softwire/terraform-vpc-aws?ref=dcc0cee3eafc5578d93479bb7798c22a8e5baba1"
 
@@ -9,8 +8,6 @@ module "vpc" {
   # At least two availability zones are required in order to set up a load balancer, so that the
   # infrastructure is kept consistent with other environments which use multiple availability zones.
   availability_zones = data.aws_availability_zones.available.zone_ids
-
-  map_public_subnet_public_ips = true
 
   tags_default = {
     Environment = var.environment

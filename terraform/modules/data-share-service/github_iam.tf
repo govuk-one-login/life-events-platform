@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "github_oidc_pull_request_assume" {
 
     condition {
       test     = "StringLike"
-      values   = ["repo:alphagov/gdx-data-share-poc:ref:refs/heads/*"]
+      values   = ["repo:alphagov/gdx-data-share-poc:pull_request"]
       variable = "token.actions.githubusercontent.com:sub"
     }
   }

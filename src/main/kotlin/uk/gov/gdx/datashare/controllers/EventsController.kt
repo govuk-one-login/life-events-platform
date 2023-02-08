@@ -82,11 +82,11 @@ class EventsController(
       "        \"firstName\": \"Mary\",\n" +
       "        \"middleNames\": \"Jane\",\n" +
       "        \"lastName\": \"Smith\",\n" +
-      "        \"sex\": \"Male\",\n" +
+      "        \"gender\": \"Male\",\n" +
       "        \"dateOfBirth\": \"1972-02-20\",\n" +
       "}\n" +
       "      </pre>" +
-      "      <p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, sex, dateOfBirth</p>",
+      "      <p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, gender, dateOfBirth</p>",
     responses = [
       ApiResponse(
         responseCode = "200",

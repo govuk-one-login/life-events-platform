@@ -96,7 +96,7 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.11")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.401")
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.402")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
   testImplementation("org.mockito:mockito-inline")

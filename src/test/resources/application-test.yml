@@ -48,12 +48,9 @@ spring:
           jwk-set-uri: ${api.base.url.oauth}/.well-known/jwks.json
 
   datasource:
-    url: jdbc:aws-wrapper:postgresql://localhost:5432/datashare?sslmode=disable
-    username: datashare
-    password: datashare
-
-db:
-  provider: local
+    url: jdbc:aws-wrapper:postgresql://localhost:5433/datashare?sslmode=disable
+    username: test
+    password: test
 
 sqs:
   provider: localstack

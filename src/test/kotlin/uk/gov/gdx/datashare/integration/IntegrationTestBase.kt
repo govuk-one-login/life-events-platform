@@ -2,26 +2,24 @@ package uk.gov.gdx.datashare.integration
 
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.jdbc.JdbcTestUtils
 import uk.gov.gdx.datashare.helpers.JwtAuthHelper
 import uk.gov.gdx.datashare.helpers.TestBase
 import uk.gov.gdx.datashare.integration.wiremock.OAuthMockServer
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.wiremock.PrisonerSearchApi
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 abstract class IntegrationTestBase : TestBase() {
-
-  @Autowired
-  lateinit var webTestClient: WebTestClient
-
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
+
+  @Autowired
+  private lateinit var jdbcTemplate: JdbcTemplate
 
   init {
     // Resolves an issue where Wiremock keeps previous sockets open from other tests causing connection resets
@@ -56,5 +54,10 @@ abstract class IntegrationTestBase : TestBase() {
       PrisonerSearchApi.stop()
       OauthMockServer.stop()
     }
+  }
+
+  @BeforeEach
+  fun clean() {
+    JdbcTestUtils.deleteFromTables(jdbcTemplate, "event_data", "event_api_audit")
   }
 }

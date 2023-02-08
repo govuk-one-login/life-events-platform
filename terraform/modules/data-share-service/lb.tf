@@ -71,7 +71,7 @@ resource "aws_lb_listener_rule" "protected_test_forward" {
 
   condition {
     http_header {
-      values           = [random_password.test_auth_header]
+      values           = [random_password.test_auth_header.result]
       http_header_name = "X-TEST-AUTH"
     }
   }

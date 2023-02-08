@@ -26,8 +26,6 @@ class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val eventDataRepository: EventDataRepository,
-  private val deathNotificationService: DeathNotificationService,
-  private val prisonerLookupService: PrisonerLookupService,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,

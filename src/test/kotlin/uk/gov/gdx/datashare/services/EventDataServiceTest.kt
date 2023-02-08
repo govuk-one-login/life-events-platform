@@ -28,7 +28,6 @@ class EventDataServiceTest {
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val eventDataRepository = mockk<EventDataRepository>()
   private val deathNotificationService = mockk<DeathNotificationService>()
-  private val prisonerLookupService = mockk<PrisonerLookupService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val dataCreationToDeletionTimer = mockk<Timer>()
@@ -50,20 +49,16 @@ class EventDataServiceTest {
     }.returns(eventDeletedCounter)
     every { eventDeletedCounter.increment() }.returns(Unit)
     underTest = EventDataService(
-      authenticationFacade,
-      acquirerSubscriptionRepository,
-      eventDataRepository,
-      deathNotificationService,
-      prisonerLookupService,
-      dateTimeHandler,
-      meterRegistry,
-      acquirerSubscriptionEnrichmentFieldRepository,
-      listOf(
-        deathNotificationService,
-        prisonerLookupService,
-        TestEventEnrichmentService(),
-        NullEventEnrichmentService(),
-      ),
+        authenticationFacade,
+        acquirerSubscriptionRepository,
+        eventDataRepository,
+        dateTimeHandler,
+        meterRegistry,
+        acquirerSubscriptionEnrichmentFieldRepository,
+        listOf(
+          deathNotificationService,
+          TestEventEnrichmentService(),
+        ),
     )
   }
 

@@ -5,8 +5,8 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EnrichmentField
-import uk.gov.gdx.datashare.enums.Gender
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.Gender
 import uk.gov.gdx.datashare.models.PrisonerRecord
 import uk.gov.gdx.datashare.services.PrisonerApiService
 import uk.gov.gdx.datashare.services.PrisonerLookupService

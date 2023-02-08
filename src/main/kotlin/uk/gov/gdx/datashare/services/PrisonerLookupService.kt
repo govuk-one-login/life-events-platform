@@ -5,6 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.enums.EnrichmentField
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Gender
 import uk.gov.gdx.datashare.models.PrisonerDetails
 import uk.gov.gdx.datashare.models.PrisonerRecord
@@ -36,7 +37,11 @@ class PrisonerLookupService(
     prisonerRecord: PrisonerRecord,
     ef: List<EnrichmentField>,
   ): PrisonerDetails {
-    val gender = when (prisonerRecord.gender) { "Female" -> Gender.FEMALE "Male" -> Gender.MALE else -> Gender.INDETERMINATE }
+    val gender = when (prisonerRecord.gender) {
+      "Female" -> Gender.FEMALE
+      "Male" -> Gender.MALE
+      else -> Gender.INDETERMINATE
+    }
     return PrisonerDetails(
       prisonerNumber = if (ef.contains(EnrichmentField.PRISONER_NUMBER)) prisonerRecord.prisonerNumber else null,
       firstName = if (ef.contains(EnrichmentField.FIRST_NAME)) prisonerRecord.firstName else null,

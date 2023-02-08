@@ -5,7 +5,7 @@ resource "aws_lb" "load_balancer" {
   name                       = "${var.environment}-lb"
   load_balancer_type         = "application"
   subnets                    = module.vpc.public_subnet_ids
-  security_groups            = [aws_security_group.lb_cloudfront.id, aws_security_group.lb_test.id]
+  security_groups            = [aws_security_group.lb_cloudfront.id]
   drop_invalid_header_fields = true
 }
 

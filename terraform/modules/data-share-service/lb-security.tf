@@ -22,7 +22,7 @@ resource "aws_security_group_rule" "lb_cloudfront" {
   prefix_list_ids   = [data.aws_ec2_managed_prefix_list.cloudfront.id]
 }
 
-resource "aws_security_group_rule" "lb_cloudfront" {
+resource "aws_security_group_rule" "lb_test_cloudfront" {
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 8080

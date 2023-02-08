@@ -5,6 +5,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EnrichmentField
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.PrisonerRecord
 import uk.gov.gdx.datashare.services.PrisonerApiService
@@ -40,7 +41,7 @@ class PrisonerLookupServiceTest {
 
     every { prisonerApiService.findPrisonerById(dataId) }.returns(prisonerRecord)
 
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, enrichmentFields)!!
+    val enrichedPayload = underTest.process(EventType.ENTERED_PRISON, dataId, enrichmentFields)!!
 
     assertThat(enrichedPayload.firstName).isEqualTo(prisonerRecord.firstName)
     assertThat(enrichedPayload.lastName).isEqualTo(prisonerRecord.lastName)
@@ -69,7 +70,7 @@ class PrisonerLookupServiceTest {
 
     every { prisonerApiService.findPrisonerById(dataId) }.returns(prisonerRecord)
 
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, enrichmentFields)!!
+    val enrichedPayload = underTest.process(EventType.ENTERED_PRISON, dataId, enrichmentFields)!!
 
     assertThat(enrichedPayload.firstName).isEqualTo(prisonerRecord.firstName)
     assertThat(enrichedPayload.lastName).isNull()

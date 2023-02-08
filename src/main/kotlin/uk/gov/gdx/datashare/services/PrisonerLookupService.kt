@@ -19,11 +19,16 @@ class PrisonerLookupService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getEnrichedPayload(
-    prisonerNumber: String,
+  override fun accepts(eventType: EventType): Boolean {
+    return eventType == EventType.ENTERED_PRISON
+  }
+
+  override fun process(
+    eventType: EventType,
+    dataId: String,
     enrichmentFields: List<EnrichmentField>,
   ): PrisonerDetails? {
-    val allEnrichedData = prisonerApiService.findPrisonerById(prisonerNumber)
+    val allEnrichedData = prisonerApiService.findPrisonerById(dataId)
 
     return allEnrichedData?.let { mapPrisonerRecord(it, enrichmentFields) }
   }
@@ -45,13 +50,5 @@ class PrisonerLookupService(
       sex = if (ef.contains(EnrichmentField.SEX)) sex else null,
       dateOfBirth = if (ef.contains(EnrichmentField.DATE_OF_BIRTH)) prisonerRecord.dateOfBirth else null,
     )
-  }
-
-  override fun accepts(eventType: EventType): Boolean {
-    return eventType == EventType.ENTERED_PRISON
-  }
-
-  override fun process(eventType: EventType, dataId: String, enrichmentFields: List<EnrichmentField>): Any? {
-    return getEnrichedPayload(dataId, enrichmentFields)
   }
 }

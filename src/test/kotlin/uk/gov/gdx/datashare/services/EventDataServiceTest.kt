@@ -91,7 +91,7 @@ class EventDataServiceTest {
     every {
       deathNotificationService.process(
         EventType.DEATH_NOTIFICATION,
-      event.dataId,
+        event.dataId,
         subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)

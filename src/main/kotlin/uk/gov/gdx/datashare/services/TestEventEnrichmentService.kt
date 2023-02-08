@@ -10,7 +10,7 @@ import uk.gov.gdx.datashare.models.TestEvent
 @XRayEnabled
 class TestEventEnrichmentService : EnrichmentService {
   override fun accepts(eventType: EventType): Boolean {
-    return eventType == EventType.TEST_EVENT;
+    return eventType == EventType.TEST_EVENT
   }
 
   override fun process(eventType: EventType, dataId: String, enrichmentFields: List<EnrichmentField>): Any? {

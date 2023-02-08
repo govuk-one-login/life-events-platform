@@ -26,6 +26,6 @@ class DeathNotificationService(
     return levApiService
       .findDeathById(citizenDeathId)
       .map { DeathNotificationDetails.fromLevDeathRecord(enrichmentFields, it) }
-      .first();
+      .first()
   }
 }

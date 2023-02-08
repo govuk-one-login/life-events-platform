@@ -37,6 +37,7 @@ jobs:
         run: terraform fmt -check -diff -recursive
 
   deploy-terraform:
+    needs: tf-fmt
     strategy:
       matrix:
         env: [dev, demo]

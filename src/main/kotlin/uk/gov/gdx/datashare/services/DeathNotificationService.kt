@@ -17,22 +17,15 @@ class DeathNotificationService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getEnrichedPayload(
-    dataId: String,
-    enrichmentFields: List<EnrichmentField>,
-  ): DeathNotificationDetails? {
-    val citizenDeathId = dataId.toInt()
-    return levApiService
-      .findDeathById(citizenDeathId)
-      .map { DeathNotificationDetails.fromLevDeathRecord(enrichmentFields, it) }
-      .first()
-  }
-
   override fun accepts(eventType: EventType): Boolean {
     return eventType == EventType.DEATH_NOTIFICATION
   }
 
-  override fun process(eventType: EventType, dataId: String, enrichmentFields: List<EnrichmentField>): Any? {
-    return getEnrichedPayload(dataId, enrichmentFields);
+  override fun process(eventType: EventType, dataId: String, enrichmentFields: List<EnrichmentField>): DeathNotificationDetails? {
+    val citizenDeathId = dataId.toInt()
+    return levApiService
+      .findDeathById(citizenDeathId)
+      .map { DeathNotificationDetails.fromLevDeathRecord(enrichmentFields, it) }
+      .first();
   }
 }

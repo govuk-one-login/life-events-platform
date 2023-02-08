@@ -89,11 +89,13 @@ class EventDataServiceTest {
     every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
     every { acquirerSubscriptionRepository.findByEventId(event.id) }.returns(deathNotificationSubscription)
     every {
-      deathNotificationService.getEnrichedPayload(
-        event.dataId,
+      deathNotificationService.process(
+        EventType.DEATH_NOTIFICATION,
+      event.dataId,
         subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)
+    every { deathNotificationService.accepts(eventType = EventType.DEATH_NOTIFICATION) }.returns(true)
     every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
       deathNotificationEnrichmentFields,
     )
@@ -169,11 +171,13 @@ class EventDataServiceTest {
       )
     }.returns(deathEvents.count())
     every {
-      deathNotificationService.getEnrichedPayload(
+      deathNotificationService.process(
+        EventType.DEATH_NOTIFICATION,
         any(),
         subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)
+    every { deathNotificationService.accepts(eventType = EventType.DEATH_NOTIFICATION) }.returns(true)
     every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
       deathNotificationEnrichmentFields,
     )
@@ -231,11 +235,13 @@ class EventDataServiceTest {
       )
     }.returns(totalEventCount)
     every {
-      deathNotificationService.getEnrichedPayload(
+      deathNotificationService.process(
+        eventType = EventType.DEATH_NOTIFICATION,
         any(),
         subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)
+    every { deathNotificationService.accepts(eventType = EventType.DEATH_NOTIFICATION) }.returns(true)
     every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
       deathNotificationEnrichmentFields,
     )
@@ -340,11 +346,13 @@ class EventDataServiceTest {
       )
     }.returns(extraDeathEvents.count())
     every {
-      deathNotificationService.getEnrichedPayload(
+      deathNotificationService.process(
+        EventType.DEATH_NOTIFICATION,
         any(),
         subscriptionEnrichmentFields,
       )
     }.returns(deathNotificationDetails)
+    every { deathNotificationService.accepts(eventType = EventType.DEATH_NOTIFICATION) }.returns(true)
     every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
       deathNotificationEnrichmentFields,
     )

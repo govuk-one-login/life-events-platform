@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "github_oidc_pull_request_assume" {
 
     condition {
       test     = "StringLike"
-      values   = ["repo:alphagov/gdx-data-share-poc:ref:refs/heads/*"]
+      values   = ["repo:alphagov/gdx-data-share-poc:pull_request"]
       variable = "token.actions.githubusercontent.com:sub"
     }
   }
@@ -69,15 +69,46 @@ resource "aws_iam_role" "github_oidc_pull_request" {
   assume_role_policy = data.aws_iam_policy_document.github_oidc_pull_request_assume.json
 }
 
-data "aws_iam_policy" "github_oidc_pull_request" {
-  name = "ReadOnlyAccess"
+data "aws_dynamodb_table" "terraform_lock" {
+  name = "gdx-data-share-poc-lock"
 }
 
-resource "aws_iam_role_policy_attachment" "github_oidc_pull_request" {
+data "aws_iam_policy_document" "github_oidc_pull_request_state" {
+  statement {
+    actions = [
+      "dynamodb:PutItem",
+      "dynamodb:DeleteItem"
+    ]
+    resources = [
+      data.aws_dynamodb_table.terraform_lock.arn
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "github_oidc_pull_request_state" {
+  count = var.environment == "dev" ? 1 : 0
+
+  name   = "github-oidc-pull-request-state"
+  policy = data.aws_iam_policy_document.github_oidc_pull_request_state.json
+}
+
+resource "aws_iam_role_policy_attachment" "github_oidc_pull_request_state" {
   count = var.environment == "dev" ? 1 : 0
 
   role       = aws_iam_role.github_oidc_pull_request[0].name
-  policy_arn = data.aws_iam_policy.github_oidc_pull_request.arn
+  policy_arn = aws_iam_policy.github_oidc_pull_request_state[0].arn
+}
+
+data "aws_iam_policy" "github_oidc_pull_request_readonly" {
+  name = "ReadOnlyAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "github_oidc_pull_request_readonly" {
+  count = var.environment == "dev" ? 1 : 0
+
+  role       = aws_iam_role.github_oidc_pull_request[0].name
+  policy_arn = data.aws_iam_policy.github_oidc_pull_request_readonly.arn
 }
 
 resource "aws_iam_openid_connect_provider" "github_oidc" {

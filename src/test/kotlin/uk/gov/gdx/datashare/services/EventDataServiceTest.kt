@@ -49,16 +49,16 @@ class EventDataServiceTest {
     }.returns(eventDeletedCounter)
     every { eventDeletedCounter.increment() }.returns(Unit)
     underTest = EventDataService(
-        authenticationFacade,
-        acquirerSubscriptionRepository,
-        eventDataRepository,
-        dateTimeHandler,
-        meterRegistry,
-        acquirerSubscriptionEnrichmentFieldRepository,
-        listOf(
-          deathNotificationService,
-          TestEventEnrichmentService(),
-        ),
+      authenticationFacade,
+      acquirerSubscriptionRepository,
+      eventDataRepository,
+      dateTimeHandler,
+      meterRegistry,
+      acquirerSubscriptionEnrichmentFieldRepository,
+      listOf(
+        deathNotificationService,
+        TestEventEnrichmentService(),
+      ),
     )
   }
 

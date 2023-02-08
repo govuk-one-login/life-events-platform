@@ -20,4 +20,5 @@ enum class EnrichmentField(@JsonValue val jsonName: String) {
   PRISONER_NUMBER("prisonerNumber"),
   FIRST_NAME("firstName"),
   MIDDLE_NAMES("middleNames"),
+  GENDER("gender"),
 }

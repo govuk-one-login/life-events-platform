@@ -3,7 +3,7 @@ package uk.gov.gdx.datashare.models
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.format.annotation.DateTimeFormat
-import uk.gov.gdx.datashare.enums.Sex
+import uk.gov.gdx.datashare.enums.Gender
 import java.time.LocalDate
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -22,8 +22,8 @@ data class PrisonerDetails(
   @Schema(description = "Surname of the prisoner", required = true, example = "Smith")
   val lastName: String? = null,
 
-  @Schema(description = "Sex of the prisoner", required = true, example = "Female")
-  val sex: Sex? = null,
+  @Schema(description = "Gender of the prisoner", required = true, example = "Female")
+  val gender: Gender? = null,
 
   @Schema(description = "Date the prisoner was born", required = false, example = "2001-12-31", type = "date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

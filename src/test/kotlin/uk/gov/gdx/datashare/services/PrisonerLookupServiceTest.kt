@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
-import uk.gov.gdx.datashare.enums.Sex
+import uk.gov.gdx.datashare.enums.Gender
 import uk.gov.gdx.datashare.models.PrisonerRecord
 import uk.gov.gdx.datashare.services.PrisonerApiService
 import uk.gov.gdx.datashare.services.PrisonerLookupService
@@ -25,7 +25,7 @@ class PrisonerLookupServiceTest {
     val enrichmentFields = listOf(
       EnrichmentField.FIRST_NAME,
       EnrichmentField.LAST_NAME,
-      EnrichmentField.SEX,
+      EnrichmentField.GENDER,
       EnrichmentField.PRISONER_NUMBER,
       EnrichmentField.MIDDLE_NAMES,
       EnrichmentField.DATE_OF_BIRTH,
@@ -48,7 +48,7 @@ class PrisonerLookupServiceTest {
     assertThat(enrichedPayload.dateOfBirth).isEqualTo(prisonerRecord.dateOfBirth)
     assertThat(enrichedPayload.middleNames).isEqualTo(prisonerRecord.middleNames)
     assertThat(enrichedPayload.prisonerNumber).isEqualTo(prisonerRecord.prisonerNumber)
-    assertThat(enrichedPayload.sex).isEqualTo(Sex.MALE)
+    assertThat(enrichedPayload.gender).isEqualTo(Gender.MALE)
   }
 
   @Test
@@ -56,7 +56,7 @@ class PrisonerLookupServiceTest {
     val dataId = "A1234AC"
     val enrichmentFields = listOf(
       EnrichmentField.FIRST_NAME,
-      EnrichmentField.SEX,
+      EnrichmentField.GENDER,
       EnrichmentField.DATE_OF_BIRTH,
     )
     val prisonerRecord = PrisonerRecord(
@@ -77,6 +77,6 @@ class PrisonerLookupServiceTest {
     assertThat(enrichedPayload.dateOfBirth).isEqualTo(prisonerRecord.dateOfBirth)
     assertThat(enrichedPayload.middleNames).isNull()
     assertThat(enrichedPayload.prisonerNumber).isNull()
-    assertThat(enrichedPayload.sex).isEqualTo(Sex.INDETERMINATE)
+    assertThat(enrichedPayload.gender).isEqualTo(Gender.INDETERMINATE)
   }
 }

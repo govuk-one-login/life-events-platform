@@ -83,7 +83,7 @@ WHERE event_type = 'DEATH_NOTIFICATION'
 
 INSERT INTO acquirer_subscription_enrichment_field(acquirer_subscription_id, enrichment_field)
 SELECT id,
-       unnest(ARRAY ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAMES', 'DATE_OF_DEATH', 'SEX', 'PRISONER_NUMBER'])
+       unnest(ARRAY ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAMES', 'DATE_OF_DEATH', 'GENDER', 'PRISONER_NUMBER'])
 FROM acquirer_subscription
 WHERE event_type = 'ENTERED_PRISON'
   AND oauth_client_id IN ('prisoner-check');

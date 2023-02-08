@@ -28,7 +28,7 @@ object LocalStackContainer {
     ).apply {
       withServices(LocalStackContainer.Service.SQS, LocalStackContainer.Service.SNS, LocalStackContainer.Service.S3)
       withEnv("DEFAULT_REGION", "eu-west-2")
-      withStartupAttempts(3)
+      withStartupAttempts(5)
       waitingFor(
         Wait.forLogMessage(".*Running on.*", 1),
       )

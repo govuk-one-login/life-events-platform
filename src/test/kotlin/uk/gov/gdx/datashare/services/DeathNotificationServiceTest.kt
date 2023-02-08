@@ -5,6 +5,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EnrichmentField
+import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.LevDeathRecord
 import uk.gov.gdx.datashare.models.LevDeceased
@@ -52,7 +53,7 @@ class DeathNotificationServiceTest {
 
     every { levApiService.findDeathById(dataId.toInt()) }.returns(listOf(deathRecord))
 
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, enrichmentFields)!!
+    val enrichedPayload = underTest.process(EventType.DEATH_NOTIFICATION, dataId, enrichmentFields)!!
 
     assertThat(enrichedPayload.firstNames).isEqualTo(deathRecord.deceased.forenames)
     assertThat(enrichedPayload.lastName).isEqualTo(deathRecord.deceased.surname)
@@ -95,7 +96,7 @@ class DeathNotificationServiceTest {
 
     every { levApiService.findDeathById(dataId.toInt()) }.returns(listOf(deathRecord))
 
-    val enrichedPayload = underTest.getEnrichedPayload(dataId, enrichmentFields)!!
+    val enrichedPayload = underTest.process(EventType.DEATH_NOTIFICATION, dataId, enrichmentFields)!!
 
     assertThat(enrichedPayload.firstNames).isEqualTo(deathRecord.deceased.forenames)
     assertThat(enrichedPayload.lastName).isNull()

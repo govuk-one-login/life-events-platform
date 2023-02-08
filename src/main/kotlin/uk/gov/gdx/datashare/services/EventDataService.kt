@@ -14,7 +14,6 @@ import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
-import uk.gov.gdx.datashare.models.TestEvent
 import uk.gov.gdx.datashare.repositories.*
 import java.time.Duration
 import java.time.LocalDateTime
@@ -32,6 +31,7 @@ class EventDataService(
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
+  private val enrichmentServices: List<EnrichmentService>,
 ) {
 
   companion object {
@@ -48,7 +48,13 @@ class EventDataService(
       ?: throw AcquirerSubscriptionNotFoundException("Acquirer subscription not found for event $id")
     val enrichmentFieldNames = enrichmentFieldNamesForAcquirerSubscription(acquirerSubscription)
 
-    return mapEventNotification(event, acquirerSubscription, enrichmentFieldNames, includeData = true, callbackEvent = true)
+    return mapEventNotification(
+      event,
+      acquirerSubscription,
+      enrichmentFieldNames,
+      includeData = true,
+      callbackEvent = true,
+    )
   }
 
   fun getEvents(
@@ -140,11 +146,9 @@ class EventDataService(
     subscription: AcquirerSubscription,
     event: EventData,
     enrichmentFieldNames: List<EnrichmentField>,
-  ): Any? = when (subscription.eventType) {
-    EventType.DEATH_NOTIFICATION -> deathNotificationService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
-    EventType.ENTERED_PRISON -> prisonerLookupService.getEnrichedPayload(event.dataId, enrichmentFieldNames)
-    EventType.TEST_EVENT -> TestEvent(testField = "Test Field Value")
-    else -> log.warn("Not handling this event type {}", subscription.eventType)
+  ): Any? {
+    return enrichmentServices.first { p -> p.accepts(subscription.eventType) }
+      .process(subscription.eventType, event.dataId, enrichmentFieldNames)
   }
 
   private fun enrichmentFieldNamesForAcquirerSubscription(it: AcquirerSubscription) =

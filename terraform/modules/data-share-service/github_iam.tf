@@ -82,14 +82,14 @@ data "aws_iam_policy_document" "github_oidc_pull_request_state" {
     resources = [
       data.aws_dynamodb_table.terraform_lock.arn
     ]
-    effect    = "Allow"
+    effect = "Allow"
   }
 }
 
 resource "aws_iam_policy" "github_oidc_pull_request_state" {
   count = var.environment == "dev" ? 1 : 0
 
-  name = "github-oidc-pull-request-state"
+  name   = "github-oidc-pull-request-state"
   policy = data.aws_iam_policy_document.github_oidc_pull_request_state.json
 }
 

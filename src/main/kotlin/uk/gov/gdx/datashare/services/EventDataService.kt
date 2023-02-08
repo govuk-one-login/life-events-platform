@@ -26,8 +26,6 @@ class EventDataService(
   private val authenticationFacade: AuthenticationFacade,
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val eventDataRepository: EventDataRepository,
-  private val deathNotificationService: DeathNotificationService,
-  private val prisonerLookupService: PrisonerLookupService,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
@@ -147,7 +145,7 @@ class EventDataService(
     event: EventData,
     enrichmentFieldNames: List<EnrichmentField>,
   ): Any? {
-    return enrichmentServices.first { p -> p.accepts(subscription.eventType) }
+    return enrichmentServices.single { p -> p.accepts(subscription.eventType) }
       .process(subscription.eventType, event.dataId, enrichmentFieldNames)
   }
 

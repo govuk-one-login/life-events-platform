@@ -6,7 +6,7 @@ module "deploy_hook" {
   codedeploy_arn              = aws_codedeploy_app.gdx_data_share_poc.arn
 
   security_group_id = aws_security_group.lambda.id
-  subnet_ids        = module.vpc.public_subnet_ids
+  subnet_ids        = module.vpc.private_subnet_ids
 
   test_gdx_url  = "http://${aws_lb.load_balancer.dns_name}:8080"
   auth_url      = module.cognito.token_auth_url

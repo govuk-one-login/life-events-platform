@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.Gender
-import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.PrisonerDetails
 import uk.gov.gdx.datashare.models.PrisonerRecord
 

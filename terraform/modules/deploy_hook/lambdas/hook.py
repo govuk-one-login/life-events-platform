@@ -3,11 +3,12 @@ import logging
 import os
 from datetime import datetime
 from http.client import HTTPResponse
+from typing import Literal
 from urllib import request
 
 import boto3
 
-from common import get_auth_token, record_metric
+from common import get_auth_token
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -20,7 +21,7 @@ auth_url = os.environ["auth_url"]
 client_id = os.environ["client_id"]
 client_secret = os.environ["client_secret"]
 
-codedeploy = boto3.client('codedeploy')
+codedeploy = boto3.client("codedeploy")
 
 
 def lambda_handler(event, _context):
@@ -35,15 +36,15 @@ def lambda_handler(event, _context):
         get_event(auth_token, events[0]["id"])
         delete_event(auth_token, events[0]["id"])
 
-        put_lifecycle_event_hook(event, 'Succeeded')
+        put_lifecycle_event_hook(event, "Succeeded")
     except:
-        put_lifecycle_event_hook(event, 'Succeeded')
+        put_lifecycle_event_hook(event, "Succeeded")
         raise
 
 
-def put_lifecycle_event_hook(event, status: str):
-    deployment_id = event['DeploymentId']
-    lifecycle_event_hook_execution_id = event['LifecycleEventHookExecutionId']
+def put_lifecycle_event_hook(event, status: Literal["Failed", "Succeeded"]):
+    deployment_id = event["DeploymentId"]
+    lifecycle_event_hook_execution_id = event["LifecycleEventHookExecutionId"]
 
     codedeploy.put_lifecycle_event_hook_execution_status(
         deploymentId=deployment_id,

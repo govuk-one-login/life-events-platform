@@ -147,7 +147,7 @@ class EventDataService(
     event: EventData,
     enrichmentFieldNames: List<EnrichmentField>,
   ): Any? {
-    return enrichmentServices.first { p -> p.accepts(subscription.eventType) }
+    return enrichmentServices.single { p -> p.accepts(subscription.eventType) }
       .process(subscription.eventType, event.dataId, enrichmentFieldNames)
   }
 

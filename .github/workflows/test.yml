@@ -22,6 +22,15 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew clean test
 
+      - name: Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test results
+          path: "**/build/test-results/test/TEST-*.xml"
+          reporter: java-junit
+          only-summary: true
+
       - name: Upload Test Report
         uses: actions/upload-artifact@v3
         if: always()

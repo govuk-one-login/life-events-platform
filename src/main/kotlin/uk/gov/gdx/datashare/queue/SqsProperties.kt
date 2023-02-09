@@ -1,9 +1,7 @@
 package uk.gov.gdx.datashare.queue
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 
-@ConstructorBinding
 @ConfigurationProperties(prefix = "sqs")
 data class SqsProperties(
   val provider: String = "aws",

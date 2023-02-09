@@ -1,10 +1,10 @@
 package uk.gov.gdx.datashare.queue
 
 import com.amazon.sqs.javamessaging.SQSSession
+import jakarta.jms.Destination
+import jakarta.jms.Queue
+import jakarta.jms.Session
 import org.springframework.jms.support.destination.DynamicDestinationResolver
-import javax.jms.Destination
-import javax.jms.Queue
-import javax.jms.Session
 
 class AwsQueueDestinationResolver(private val sqsProperties: SqsProperties) : DynamicDestinationResolver() {
 

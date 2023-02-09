@@ -51,6 +51,18 @@ class EventsQueryTest : MockIntegrationTestBase() {
   }
 
   @Test
+  fun `getEvents returns correctly formatted pagination links`() {
+    // given
+    thereAreFiveEvents()
+
+    // when
+    val respsone = getMiddlePageOfEvents()
+
+    // then
+    JsonApprovals.verifyJson(respsone, approvalsOptions)
+  }
+
+  @Test
   fun `getEvent returns a death notification event in the correct format`() {
     // given
     thereIsAnEvent()
@@ -64,6 +76,8 @@ class EventsQueryTest : MockIntegrationTestBase() {
   }
 
   private fun getEvents(): String? = getEndpoint("/events")
+
+  private fun getMiddlePageOfEvents(): String? = getEndpoint("/events?page[size]=1&page[number]=1")
 
   private fun getEvent(): String? = getEndpoint("/events/$eventId")
 
@@ -85,5 +99,23 @@ class EventsQueryTest : MockIntegrationTestBase() {
       LocalDateTime.of(2000, 5, 3, 12, 4, 3),
     )
     eventDataRepository.save(eventData)
+  }
+
+  private fun thereAreFiveEvents() {
+    val acquirerSubscription = acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(
+      DWP_EVENT_RECEIVER,
+      listOf(EventType.DEATH_NOTIFICATION),
+    ).first()
+    listOf("1", "2", "3", "4", "5").map { sourceId ->
+
+      val eventData = EventData(
+        UUID.randomUUID(),
+        acquirerSubscription.acquirerSubscriptionId,
+        sourceId,
+        LocalDateTime.of(2000, 5, 3, 12, 4, 3),
+        LocalDateTime.of(2000, 5, 3, 12, 4, 3),
+      )
+      eventDataRepository.save(eventData)
+    }
   }
 }

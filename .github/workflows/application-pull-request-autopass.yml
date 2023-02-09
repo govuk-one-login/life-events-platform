@@ -6,6 +6,10 @@ on:
     paths:
       - "terraform/**"
       - "!terraform/modules/data-share-service/ecs.tf"
+  merge_group:
+    paths:
+      - "terraform/**"
+      - "!terraform/modules/data-share-service/ecs.tf"
 
 jobs:
   test:

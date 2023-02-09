@@ -1,0 +1,19 @@
+name: Application - Pull request
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "terraform/**"
+      - "!terraform/modules/data-share-service/ecs.tf"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'
+
+  openapi-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'

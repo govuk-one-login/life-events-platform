@@ -1,0 +1,23 @@
+name: Infrastructure - Pull request
+
+on:
+  pull_request:
+    paths-ignore:
+      - "terraform/**"
+      - ".github/workflows/**"
+
+jobs:
+  tf-fmt:
+    name: Validate Terraform formatting
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'
+
+  validate-terraform:
+    strategy:
+      matrix:
+        env: [dev, demo]
+    name: Validate ${{ matrix.env }} Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'

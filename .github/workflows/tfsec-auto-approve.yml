@@ -1,0 +1,14 @@
+name: TFSec
+
+on:
+  pull_request:
+    paths-ignore:
+      - "terraform/**"
+      - ".github/workflows/**"
+
+jobs:
+  tfsec:
+    name: tfsec
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'

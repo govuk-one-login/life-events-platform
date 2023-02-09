@@ -22,18 +22,15 @@ resource "aws_lambda_function" "hook" {
 
   environment {
     variables = {
-      test_gdx_url  = var.test_gdx_url
-      auth_url      = var.auth_url
-      client_id     = var.client_id
-      client_secret = var.client_secret
+      test_gdx_url     = var.test_gdx_url
+      test_auth_header = var.test_auth_header
+      auth_url         = var.auth_url
+      client_id        = var.client_id
+      client_secret    = var.client_secret
     }
   }
   tracing_config {
     mode = "Active"
-  }
-  vpc_config {
-    security_group_ids = [var.security_group_id]
-    subnet_ids         = var.subnet_ids
   }
 }
 

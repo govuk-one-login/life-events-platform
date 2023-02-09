@@ -13,7 +13,7 @@ resource "aws_security_group_rule" "ecs_tasks_ingress" {
   protocol                 = "tcp"
   from_port                = 8080
   to_port                  = 8080
-  source_security_group_id = aws_security_group.lb_cloudfront.id
+  source_security_group_id = aws_security_group.lb.id
   description              = "ECS task ingress rule, allow access from LB"
   security_group_id        = aws_security_group.ecs_tasks.id
 }

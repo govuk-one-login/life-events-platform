@@ -9,7 +9,7 @@ on:
 
 jobs:
   test:
-    uses: ./.github/workflows/autopass/test-autopass.yml
+    uses: ./.github/workflows/test-autopass.yml
 
   openapi-lint:
-    uses: ./.github/workflows/autopass/openapi-lint-autopass.yml
+    uses: ./.github/workflows/openapi-lint-autopass.yml

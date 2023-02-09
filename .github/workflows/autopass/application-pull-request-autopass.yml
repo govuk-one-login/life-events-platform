@@ -9,11 +9,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-      - run: 'echo "No build required"'
+    uses: ./.github/workflows/autopass/test-autopass.yml
 
   openapi-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - run: 'echo "No build required"'
+    uses: ./.github/workflows/autopass/openapi-lint-autopass.yml

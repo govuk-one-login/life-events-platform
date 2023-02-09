@@ -16,8 +16,8 @@ module "deploy_hook" {
 }
 
 resource "aws_security_group" "lambda" {
-  name_prefix = "${var.environment}-ecs-lb-test"
-  description = "Access to vpc for lambda"
+  name        = "${var.environment}-deploy-hook-lambda"
+  description = "Egress rules for lambda"
   vpc_id      = module.vpc.vpc_id
 
   lifecycle {

@@ -1,5 +1,5 @@
-resource "aws_security_group" "lb_cloudfront" {
-  name        = "${var.environment}-lb-cloudfront"
+resource "aws_security_group" "lb" {
+  name        = "${var.environment}-lb"
   description = "Allow access to GDX data share POC LB from Cloudfront"
   vpc_id      = module.vpc.vpc_id
 
@@ -18,7 +18,7 @@ resource "aws_security_group_rule" "lb_cloudfront" {
   from_port         = 80
   to_port           = 80
   description       = "LB ingress rule for cloudfront"
-  security_group_id = aws_security_group.lb_cloudfront.id
+  security_group_id = aws_security_group.lb.id
   prefix_list_ids   = [data.aws_ec2_managed_prefix_list.cloudfront.id]
 }
 
@@ -29,7 +29,7 @@ resource "aws_security_group_rule" "lb_test" {
   from_port         = 8080
   to_port           = 8080
   description       = "LB ingress rule for tests"
-  security_group_id = aws_security_group.lb_cloudfront.id
+  security_group_id = aws_security_group.lb.id
   cidr_blocks       = [for ip in module.vpc.nat_gateway_public_eips : "${ip}/32"]
 }
 
@@ -39,7 +39,7 @@ resource "aws_security_group_rule" "lb_egress" {
   to_port           = 80
   protocol          = "tcp"
   description       = "LB egress rule to VPC"
-  security_group_id = aws_security_group.lb_cloudfront.id
+  security_group_id = aws_security_group.lb.id
   cidr_blocks       = [var.vpc_cidr]
 }
 
@@ -49,17 +49,6 @@ resource "aws_security_group_rule" "lb_test_egress" {
   to_port           = 8080
   protocol          = "tcp"
   description       = "LB test egress rule to VPC"
-  security_group_id = aws_security_group.lb_cloudfront.id
+  security_group_id = aws_security_group.lb.id
   cidr_blocks       = [var.vpc_cidr]
-}
-
-data "aws_iam_policy_document" "lb_sg_update_assume_policy" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
-  }
 }

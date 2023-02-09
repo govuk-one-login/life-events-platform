@@ -11,6 +11,10 @@ on:
     paths:
       - "terraform/**"
       - ".github/workflows/**"
+  merge_group:
+    paths:
+      - "terraform/**"
+      - ".github/workflows/**"
 
 jobs:
   tfsec:

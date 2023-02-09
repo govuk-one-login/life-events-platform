@@ -23,22 +23,6 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     }
   }
 
-  origin {
-    domain_name = aws_lb.load_balancer.dns_name
-    origin_id   = "${var.environment}-gdx-data-share-poc-lb-test"
-
-    custom_origin_config {
-      http_port              = 8080
-      https_port             = 8443
-      origin_protocol_policy = "http-only"
-      # Required but irrelevant - we do not use HTTPS to talk to LB
-      origin_ssl_protocols = ["TLSv1.2"]
-      # AWS enforce a maximum of 60s, but we can request more if desired.
-      # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginResponseTimeout
-      origin_read_timeout = 60
-    }
-  }
-
   logging_config {
     include_cookies = false
     bucket          = "${aws_s3_bucket.cloudfront_logs_bucket.bucket}.s3.amazonaws.com"

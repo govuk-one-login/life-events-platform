@@ -22,22 +22,32 @@ resource "aws_security_group_rule" "lb_cloudfront" {
   prefix_list_ids   = [data.aws_ec2_managed_prefix_list.cloudfront.id]
 }
 
-resource "aws_security_group_rule" "lb_test_cloudfront" {
+resource "aws_security_group_rule" "lb_test" {
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 8080
   to_port           = 8080
-  description       = "LB ingress rule for cloudfront tests"
+  description       = "LB ingress rule for tests"
   security_group_id = aws_security_group.lb_cloudfront.id
-  prefix_list_ids   = [data.aws_ec2_managed_prefix_list.cloudfront.id]
+  cidr_blocks = ["0.0.0.0/0"]
 }
 
 resource "aws_security_group_rule" "lb_egress" {
   type              = "egress"
-  protocol          = "-1"
-  from_port         = 0
-  to_port           = 0
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
   description       = "LB egress rule to VPC"
+  security_group_id = aws_security_group.lb_cloudfront.id
+  cidr_blocks       = [var.vpc_cidr]
+}
+
+resource "aws_security_group_rule" "lb_test_egress" {
+  type              = "egress"
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+  description       = "LB test egress rule to VPC"
   security_group_id = aws_security_group.lb_cloudfront.id
   cidr_blocks       = [var.vpc_cidr]
 }

@@ -32,15 +32,14 @@ def lambda_handler(event, _context):
     try:
         auth_token = get_auth_token(auth_url, client_id, client_secret)
 
-        ## TODO: Once a valid GDX URL is setup, uncomment below lines
-        # post_event(auth_token)
-        # events = get_events(auth_token)
-        # get_event(auth_token, events[0]["id"])
-        # delete_event(auth_token, events[0]["id"])
+        post_event(auth_token)
+        events = get_events(auth_token)
+        get_event(auth_token, events[0]["id"])
+        delete_event(auth_token, events[0]["id"])
 
         put_lifecycle_event_hook(event, "Succeeded")
     except:
-        put_lifecycle_event_hook(event, "Succeeded")
+        put_lifecycle_event_hook(event, "Failed")
         raise
 
 
@@ -90,6 +89,7 @@ def get_event(auth_token: str, event_id: str):
 
 
 def delete_event(auth_token: str, event_id: str):
+    logger.info(f"## Deleting test event {event_id}")
     event_request = request.Request(
         f"{events_url}/{event_id}",
         headers={
@@ -99,6 +99,7 @@ def delete_event(auth_token: str, event_id: str):
         method="DELETE"
     )
     request.urlopen(event_request)
+    logger.info(f"## Successfully deleted event {event_id}")
 
 
 def get_data(auth_token: str, url: str):

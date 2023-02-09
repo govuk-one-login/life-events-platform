@@ -5,6 +5,10 @@ on:
     paths-ignore:
       - "terraform/**"
       - ".github/workflows/**"
+  merge_group:
+    paths-ignore:
+      - "terraform/**"
+      - ".github/workflows/**"
 
 jobs:
   tf-fmt:

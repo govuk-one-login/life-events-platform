@@ -1,0 +1,13 @@
+name: Terraform automatically fix linting
+
+on:
+  pull_request:
+    paths-ignore:
+      - "terraform/**"
+
+jobs:
+  tf-fmt:
+    name: Validate and fix formatting
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'

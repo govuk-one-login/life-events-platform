@@ -26,7 +26,7 @@ client_secret = os.environ["client_secret"]
 codedeploy = boto3.client("codedeploy")
 
 max_retries = 5
-delay = 5
+delay_in_seconds = 5
 
 
 def lambda_handler(event, _context):
@@ -85,9 +85,9 @@ def get_events(auth_token: str, retries: int = 0):
     if len(events) == 0:
         logger.info(f"## Retrieved no test events")
         if retries >= max_retries:
-            raise Exception(f"Exceeded max retries of {max_retries} with a delay of {delay}")
-        logger.info(f"## Retrying getting events in {delay} seconds")
-        time.sleep(delay)
+            raise Exception(f"Exceeded max retries of {max_retries} with a delay of {delay_in_seconds}")
+        logger.info(f"## Retrying getting events in {delay_in_seconds} seconds")
+        time.sleep(delay_in_seconds)
         events = get_events(auth_token, retries + 1)
     return events
 

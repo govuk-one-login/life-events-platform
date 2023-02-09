@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import time
 from datetime import datetime
 from http.client import HTTPResponse
 from typing import Literal
@@ -23,6 +24,9 @@ client_id = os.environ["client_id"]
 client_secret = os.environ["client_secret"]
 
 codedeploy = boto3.client("codedeploy")
+
+max_retries = 5
+delay_in_seconds = 5
 
 
 def lambda_handler(event, _context):
@@ -74,10 +78,17 @@ def post_event(auth_token: str):
     logger.info(f"## Successfully posted test event")
 
 
-def get_events(auth_token: str):
+def get_events(auth_token: str, retries: int = 0):
     logger.info(f"## Getting test events")
     events = get_data(auth_token, events_url)["data"]
     logger.info(f"## Successfully retrieved {len(events)} test event(s)")
+    if len(events) == 0:
+        logger.info(f"## Retrieved no test events")
+        if retries >= max_retries:
+            raise Exception(f"Exceeded max retries of {max_retries} with a delay of {delay_in_seconds}")
+        logger.info(f"## Retrying getting events in {delay_in_seconds} seconds")
+        time.sleep(delay_in_seconds)
+        events = get_events(auth_token, retries + 1)
     return events
 
 

@@ -18,8 +18,8 @@ concurrency:
 
 jobs:
   test:
-    uses: ./.github/workflows/shared/test.yml
+    uses: ./.github/workflows/test.yml
 
   openapi-lint:
-    uses: ./.github/workflows/pull-request/openapi-lint.yml
+    uses: ./.github/workflows/openapi-lint.yml
 

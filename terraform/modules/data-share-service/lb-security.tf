@@ -30,7 +30,7 @@ resource "aws_security_group_rule" "lb_test" {
   to_port           = 8080
   description       = "LB ingress rule for tests"
   security_group_id = aws_security_group.lb_cloudfront.id
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [for ip in module.vpc.nat_gateway_public_eips : "${ip}/32"]
 }
 
 resource "aws_security_group_rule" "lb_egress" {

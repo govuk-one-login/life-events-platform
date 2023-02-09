@@ -22,6 +22,7 @@ resource "aws_security_group_rule" "lb_cloudfront" {
   prefix_list_ids   = [data.aws_ec2_managed_prefix_list.cloudfront.id]
 }
 
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group_rule" "lb_test" {
   type              = "ingress"
   protocol          = "tcp"

@@ -89,6 +89,7 @@ def get_event(auth_token: str, event_id: str):
 
 
 def delete_event(auth_token: str, event_id: str):
+    logger.info(f"## Deleting test event {event_id}")
     event_request = request.Request(
         f"{events_url}/{event_id}",
         headers={
@@ -98,6 +99,7 @@ def delete_event(auth_token: str, event_id: str):
         method="DELETE"
     )
     request.urlopen(event_request)
+    logger.info(f"## Successfully deleted event {event_id}")
 
 
 def get_data(auth_token: str, url: str):

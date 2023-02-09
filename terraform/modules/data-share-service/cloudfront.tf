@@ -25,7 +25,7 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
 
   origin {
     domain_name = aws_lb.load_balancer.dns_name
-    origin_id   = "${var.environment}-gdx-data-share-poc-lb"
+    origin_id   = "${var.environment}-gdx-data-share-poc-lb-test"
 
     custom_origin_config {
       http_port              = 8080

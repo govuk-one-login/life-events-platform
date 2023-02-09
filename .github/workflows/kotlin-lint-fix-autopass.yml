@@ -1,0 +1,13 @@
+name: Kotlin automatically fix linting
+
+on:
+  pull_request:
+    paths-ignore:
+      - "src/**"
+
+jobs:
+  kotlin-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'
+

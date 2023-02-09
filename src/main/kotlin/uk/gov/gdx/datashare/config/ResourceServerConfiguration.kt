@@ -11,11 +11,11 @@ import org.springframework.security.web.SecurityFilterChain
 class ResourceServerConfiguration {
 
   @Bean
-  fun filterChain(http: HttpSecurity): SecurityFilterChain {
+  fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
     return http
       .csrf { it.disable() } // csrf not needed on a rest api
       .authorizeHttpRequests { requests ->
-        requests.antMatchers(
+        requests.requestMatchers(
           "/webjars/**", "/favicon.ico", "/csrf",
           "/health/**", "/info", "/h2-console/**",
           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",

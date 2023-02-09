@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.constraints.Positive
+import jakarta.validation.constraints.PositiveOrZero
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
@@ -29,8 +31,6 @@ import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.services.*
 import java.time.LocalDateTime
 import java.util.*
-import javax.validation.constraints.Positive
-import javax.validation.constraints.PositiveOrZero
 
 @RestController
 @RequestMapping("/events", produces = [JSON_API_VALUE])
@@ -226,7 +226,7 @@ class EventsController(
     val linkBuilder =
       eventsLink(eventTypes, startTime, endTime, pageNumber, pageSize).toUriComponentsBuilder().scheme("https")
     val pageMetadata = PagedModel.PageMetadata(pageSize.toLong(), pageNumber.toLong(), events.count.toLong())
-    val selfLink = org.springframework.hateoas.Link.of(linkBuilder.toUriString(), "self")
+    val selfLink = org.springframework.hateoas.Link.of(linkBuilder.build().toUriString(), "self")
     val pageLinks = getPageLinks(pageMetadata, linkBuilder)
     val links = arrayListOf(selfLink) + pageLinks
     return PagedModel.of(
@@ -297,7 +297,7 @@ class EventsController(
             it,
             eventLink(id),
             org.springframework.hateoas.Link.of(
-              eventsLink().toUriComponentsBuilder().scheme("https").toUriString(),
+              eventsLink().toUriComponentsBuilder().scheme("https").build().toUriString(),
               "collection",
             ),
           )

@@ -1,4 +1,4 @@
-name: TFSec
+name: Trivy Infrastructure scan
 
 on:
   push:
@@ -17,15 +17,14 @@ on:
       - ".github/workflows/**"
 
 jobs:
-  tfsec:
-    name: tfsec
+  trivy-infra:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: tfsec
-        uses: aquasecurity/tfsec-action@v1.0.3
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
         with:
-          working_directory: terraform/
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          scan-type: config
+          trivy-config: trivy.yaml

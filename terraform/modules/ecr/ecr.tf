@@ -22,7 +22,7 @@ resource "aws_kms_alias" "ecr_key_alias" {
 }
 
 resource "aws_ecr_registry_scanning_configuration" "ecr_scanning_configuration" {
-  scan_type = "BASIC"
+  scan_type = "ENHANCED"
 
   rule {
     scan_frequency = "SCAN_ON_PUSH"

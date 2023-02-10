@@ -3,3 +3,5 @@ scan:
     - lev-data/
 
 exit-code: 1
+
+ignorefile: .trivyignore

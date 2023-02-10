@@ -27,5 +27,4 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: config
-          trivyignores: .trivyignore
           trivy-config: trivy.yaml

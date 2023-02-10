@@ -1,1 +1,6 @@
-https://avd.aquasec.com/misconfig/ds005
+## DOCKER
+
+# ADD is used for getting file from the internet
+AVD-DS-0005
+# Healthcheck already exists
+AVD-DS-0026

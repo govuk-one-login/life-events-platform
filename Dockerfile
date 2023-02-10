@@ -2,7 +2,7 @@ FROM eclipse-temurin:19-jre-jammy AS builder
 
 WORKDIR /app
 
-COPY build.gradle.kts settings.gradle.kts gradlew .
+COPY build.gradle.kts settings.gradle.kts gradlew ./
 COPY gradle/ gradle/
 RUN ./gradlew build || return 0
 

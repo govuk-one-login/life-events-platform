@@ -1,3 +1,5 @@
 scan:
   skip-dirs:
     - lev-data/
+
+exit-code: 1

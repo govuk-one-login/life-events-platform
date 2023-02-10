@@ -1,4 +1,4 @@
-name: TFSec
+name: Trivy Infrastructure scan
 
 on:
   pull_request:
@@ -11,8 +11,7 @@ on:
       - ".github/workflows/**"
 
 jobs:
-  tfsec:
-    name: tfsec
+  trivy-infra:
     runs-on: ubuntu-latest
     steps:
       - run: 'echo "No build required"'

@@ -1,0 +1,10 @@
+name: Run Trivy
+
+on:
+  workflow_call:
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'

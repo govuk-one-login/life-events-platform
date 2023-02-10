@@ -105,10 +105,6 @@ dependencies {
   testImplementation("com.amazonaws:aws-java-sdk-core:1.12.404")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
-  testImplementation("org.mockito:mockito-inline")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.1.1")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-  testImplementation("org.mockito:mockito-inline:5.1.1")
   testImplementation("com.approvaltests:approvaltests:18.5.0")
   testImplementation("com.google.code.gson:gson:2.10.1") // Needed for JsonApprovals
 }

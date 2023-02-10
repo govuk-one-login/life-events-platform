@@ -116,3 +116,40 @@ module "metrics_dashboard" {
     }
   ]
 }
+
+locals {
+  cost                   = var.environment == "dev" ? "£1234.56" : "£1234.56"
+  completed_transactions = var.environment == "dev" ? "22,600" : "13"
+  cost_per_transaction   = var.environment == "dev" ? "5.46p" : "£94.97"
+}
+
+resource "aws_cloudwatch_dashboard" "private_beta_metrics" {
+  dashboard_name = "${var.environment}-private-beta-metrics"
+  dashboard_body = jsonencode({
+    widgets : [
+      {
+        type : "text",
+        x : 0,
+        y : 0,
+        height : 6,
+        width : 12,
+        properties : {
+          markdown : <<EOT
+# Cost per transaction
+## Definition
+
+Our costs are the costs of AWS hosting and services.
+
+Our number of completed transaction is the number of requests to mark an event as consumed.
+
+Period | Cost | Completed transactions | Cost per transaction
+-|-|-|-
+3 Months | ${local.cost} | ${local.completed_transactions} | ${local.cost_per_transaction}
+
+https://www.gov.uk/service-manual/measuring-success/measuring-cost-per-transaction
+EOT
+        }
+      }
+    ]
+  })
+}

@@ -101,7 +101,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-.trivyignore
 sonar-project.properties
 
 bin

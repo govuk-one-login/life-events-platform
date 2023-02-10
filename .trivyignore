@@ -2,5 +2,5 @@
 
 # ADD is used for getting file from the internet
 AVD-DS-0005
-# Healthcheck already exists
+# Healthcheck already exists in ECS config and docker compose locally
 AVD-DS-0026

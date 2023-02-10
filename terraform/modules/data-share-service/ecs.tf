@@ -76,7 +76,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         }
       },
       healthCheck : {
-        command : ["CMD-SHELL", "wget tries=1 --spider http://localhost:8080/health"],
+        command : ["CMD-SHELL", "wget --tries=1 --spider http://localhost:8080/health"],
         startPeriod : 300,
         interval : 30,
         retries : 3,

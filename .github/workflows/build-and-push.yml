@@ -52,7 +52,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: gdx-data-share-poc:${{ github.sha }}
+          image-ref: ${{ github.ref_name }}:latest
           trivy-config: trivy.yaml
 
       - name: Configure AWS credentials

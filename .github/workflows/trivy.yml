@@ -2,6 +2,8 @@ name: Run Trivy
 
 on:
   workflow_call:
+  schedule:
+    - cron: '0 3 * * *'
 
 jobs:
   trivy:

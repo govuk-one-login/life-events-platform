@@ -26,7 +26,6 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-ref: terraform/
           scan-type: config
           exit-code: 1
           trivyignores: .trivyignore

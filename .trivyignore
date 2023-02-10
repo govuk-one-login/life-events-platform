@@ -4,3 +4,35 @@
 AVD-DS-0005
 # Healthcheck already exists in ECS config and docker compose locally
 AVD-DS-0026
+
+## OS
+
+# Very low level Ubuntu vulnerabilities
+CVE-2022-3715
+CVE-2017-13716
+CVE-2018-20657
+CVE-2019-1010204
+CVE-2021-3530
+CVE-2022-27943
+CVE-2016-2781
+CVE-2022-3219
+CVE-2016-20013
+CVE-2022-29458
+CVE-2017-11164
+CVE-2022-3857
+CVE-2022-29458
+
+# Medium level Ubuntu vulnerabilities
+CVE-2022-3821
+CVE-2021-31879
+
+# Recently published OpenSSL vulnerability, in triage with Ubuntu
+CVE-2023-0286
+CVE-2022-4203
+CVE-2022-4304
+CVE-2022-4450
+CVE-2023-0215
+CVE-2023-0216
+CVE-2023-0217
+CVE-2023-0401
+CVE-2022-3996

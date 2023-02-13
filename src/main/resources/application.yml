@@ -97,6 +97,9 @@ api:
     prisoner-event:
       enabled: false
 
+metrics:
+  log-to-console: false
+
 cognito:
   enabled: true
 

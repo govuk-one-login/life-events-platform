@@ -12,7 +12,8 @@ management.endpoint:
 
 metrics:
   cloudwatch:
-    namespace: "local-gdx"
+    namespace: "test-gdx"
+  log-to-console: true
 
 api:
   base:

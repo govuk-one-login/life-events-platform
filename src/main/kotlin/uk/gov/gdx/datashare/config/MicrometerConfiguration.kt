@@ -4,6 +4,7 @@ import io.micrometer.cloudwatch2.CloudWatchConfig
 import io.micrometer.cloudwatch2.CloudWatchMeterRegistry
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.logging.LoggingMeterRegistry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,15 +16,13 @@ import java.time.Duration
 class MicrometerConfiguration {
 
   @Bean
-  fun cloudWatchAsyncClient(): CloudWatchAsyncClient {
-    return CloudWatchAsyncClient
-      .builder()
-      .region(Region.EU_WEST_2)
-      .build()
-  }
-
-  @Bean
-  fun getMeterRegistry(@Value("\${metrics.cloudwatch.namespace}") namespace: String): MeterRegistry? {
+  fun getMeterRegistry(
+    @Value("\${metrics.cloudwatch.namespace}") namespace: String,
+    @Value("\${metrics.log-to-console:#{false}}") logToConsole: Boolean,
+  ): MeterRegistry? {
+    if (logToConsole) {
+      return LoggingMeterRegistry()
+    }
     val cloudWatchConfig: CloudWatchConfig = setupCloudWatchConfig(namespace)
     return CloudWatchMeterRegistry(
       cloudWatchConfig,
@@ -44,5 +43,12 @@ class MicrometerConfiguration {
       }
     }
     return cloudWatchConfig
+  }
+
+  private fun cloudWatchAsyncClient(): CloudWatchAsyncClient {
+    return CloudWatchAsyncClient
+      .builder()
+      .region(Region.EU_WEST_2)
+      .build()
   }
 }

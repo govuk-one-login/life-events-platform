@@ -5,6 +5,8 @@ import io.micrometer.cloudwatch2.CloudWatchMeterRegistry
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.logging.LoggingMeterRegistry
+import io.micrometer.core.instrument.logging.LoggingRegistryConfig
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,6 +16,9 @@ import java.time.Duration
 
 @Configuration
 class MicrometerConfiguration {
+  companion object {
+    private val log = LoggerFactory.getLogger(LoggingMeterRegistry::class.java)
+  }
 
   @Bean
   fun getMeterRegistry(
@@ -21,7 +26,7 @@ class MicrometerConfiguration {
     @Value("\${metrics.log-to-console:#{false}}") logToConsole: Boolean,
   ): MeterRegistry? {
     if (logToConsole) {
-      return LoggingMeterRegistry()
+      return LoggingMeterRegistry.builder(LoggingRegistryConfig.DEFAULT).loggingSink(log::debug).build()
     }
     val cloudWatchConfig: CloudWatchConfig = setupCloudWatchConfig(namespace)
     return CloudWatchMeterRegistry(

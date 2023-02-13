@@ -9,5 +9,4 @@ data class PrisonerRecord(
   val lastName: String,
   val dateOfBirth: LocalDate,
   val gender: String,
-  val prisonName: String?,
 )

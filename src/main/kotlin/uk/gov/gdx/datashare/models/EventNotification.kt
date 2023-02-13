@@ -25,13 +25,13 @@ data class EventNotification(
   val eventType: EventType,
 
   @Schema(description = "The date and time the event took place from the supplier system, if provided", required = true, type = "date-time", example = "2023-02-01T14:35:10.000")
-  val eventTime: LocalDateTime,
+  val eventTime: LocalDateTime? = null,
 
   @Schema(description = "The date and time the event was ingested into the platform", required = true, type = "date-time", example = "2023-02-01T14:39:20.000")
-  val ingestTime: LocalDateTime,
+  val ingestTime: LocalDateTime? = null,
 
   @Schema(description = "ID from the source of the notification, if allowed", required = false, example = "999999901")
-  val sourceId: String?,
+  val sourceId: String? = null,
   @Schema(
     description = "Indicates that event data is returned when true,",
     required = false,

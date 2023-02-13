@@ -13,9 +13,7 @@
       "middleNames": "John James",
       "lastName": "Larsen",
       "dateOfBirth": "1975-04-02",
-      "gender": "Female",
-      "prisonId": "LEI",
-      "prisonName": "HMP Leeds"
+      "gender": "Female"
     },
     "headers": {
       "Content-Type": "application/json"

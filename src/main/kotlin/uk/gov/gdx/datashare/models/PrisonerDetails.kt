@@ -28,7 +28,4 @@ data class PrisonerDetails(
   @Schema(description = "Date the prisoner was born", required = false, example = "2001-12-31", type = "date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   val dateOfBirth: LocalDate? = null,
-
-  @Schema(description = "Name of the prison where prisoner is held", required = false, example = "HMP Leeds")
-  val prisonName: String? = null,
 )

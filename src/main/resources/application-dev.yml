@@ -16,6 +16,7 @@ management:
 metrics:
   cloudwatch:
     namespace: "local-gdx"
+  log-to-console: true
 
 spring:
   datasource:

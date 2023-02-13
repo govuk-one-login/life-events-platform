@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import time
 from datetime import datetime
 from http.client import HTTPResponse
 from typing import Literal
@@ -14,6 +15,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 test_gdx_url = os.environ["test_gdx_url"]
+test_auth_header = os.environ["test_auth_header"]
 events_url = test_gdx_url + "/events"
 
 auth_url = os.environ["auth_url"]
@@ -23,6 +25,9 @@ client_secret = os.environ["client_secret"]
 
 codedeploy = boto3.client("codedeploy")
 
+max_retries = 5
+delay_in_seconds = 5
+
 
 def lambda_handler(event, _context):
     logger.info(f"## EVENT: {event}")
@@ -31,15 +36,14 @@ def lambda_handler(event, _context):
     try:
         auth_token = get_auth_token(auth_url, client_id, client_secret)
 
-        ## TODO: Once a valid GDX URL is setup, uncomment below lines
-        # post_event(auth_token)
-        # events = get_events(auth_token)
-        # get_event(auth_token, events[0]["id"])
-        # delete_event(auth_token, events[0]["id"])
+        post_event(auth_token)
+        events = get_events(auth_token)
+        get_event(auth_token, events[0]["id"])
+        delete_event(auth_token, events[0]["id"])
 
         put_lifecycle_event_hook(event, "Succeeded")
     except:
-        put_lifecycle_event_hook(event, "Succeeded")
+        put_lifecycle_event_hook(event, "Failed")
         raise
 
 
@@ -64,6 +68,7 @@ def post_event(auth_token: str):
         data=event_request_data,
         headers={
             "Authorization": "Bearer " + auth_token,
+            "X-TEST-AUTH": test_auth_header,
             "Content-Type": "application/json; charset=utf-8",
             "Content-Length": len(event_request_data)
         }
@@ -73,10 +78,17 @@ def post_event(auth_token: str):
     logger.info(f"## Successfully posted test event")
 
 
-def get_events(auth_token: str):
+def get_events(auth_token: str, retries: int = 0):
     logger.info(f"## Getting test events")
     events = get_data(auth_token, events_url)["data"]
     logger.info(f"## Successfully retrieved {len(events)} test event(s)")
+    if len(events) == 0:
+        logger.info(f"## Retrieved no test events")
+        if retries >= max_retries:
+            raise Exception(f"Exceeded max retries of {max_retries} with a delay of {delay_in_seconds}")
+        logger.info(f"## Retrying getting events in {delay_in_seconds} seconds")
+        time.sleep(delay_in_seconds)
+        events = get_events(auth_token, retries + 1)
     return events
 
 
@@ -88,18 +100,27 @@ def get_event(auth_token: str, event_id: str):
 
 
 def delete_event(auth_token: str, event_id: str):
+    logger.info(f"## Deleting test event {event_id}")
     event_request = request.Request(
         f"{events_url}/{event_id}",
-        headers={"Authorization": "Bearer " + auth_token},
+        headers={
+            "Authorization": "Bearer " + auth_token,
+            "X-TEST-AUTH": test_auth_header
+        },
         method="DELETE"
     )
     request.urlopen(event_request)
+    logger.info(f"## Successfully deleted event {event_id}")
 
 
 def get_data(auth_token: str, url: str):
     event_request = request.Request(
         url,
-        headers={"Authorization": "Bearer " + auth_token, "Accept": "application/vnd.api+json"}
+        headers={
+            "Authorization": "Bearer " + auth_token,
+            "X-TEST-AUTH": test_auth_header,
+            "Accept": "application/vnd.api+json"
+        }
     )
     response: HTTPResponse = request.urlopen(event_request)
     return json.loads(response.read())

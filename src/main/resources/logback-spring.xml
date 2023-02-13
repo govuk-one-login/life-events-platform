@@ -8,17 +8,17 @@
 
     <springProfile name="dev || stdout">
         <appender name="logAppender" class="ch.qos.logback.core.ConsoleAppender">
-            <layout class="ch.qos.logback.classic.PatternLayout">
+            <encoder>
                 <Pattern>${LOG_PATTERN}</Pattern>
-            </layout>
+            </encoder>
         </appender>
     </springProfile>
 
     <springProfile name="!(dev || stdout)">
         <appender name="logAppender" class="ch.qos.logback.core.ConsoleAppender">
-            <layout class="ch.qos.logback.classic.PatternLayout">
+            <encoder>
                 <Pattern>${LOG_PATTERN}</Pattern>
-            </layout>
+            </encoder>
         </appender>
     </springProfile>
 

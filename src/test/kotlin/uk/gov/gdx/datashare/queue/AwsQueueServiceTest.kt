@@ -1,42 +1,42 @@
 package uk.gov.gdx.datashare.queue
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.groups.Tuple.tuple
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.*
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.*
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest as AwsPurgeQueueRequest
 
 class AwsQueueServiceTest {
 
-  private val awsQueueFactory = mock<AwsQueueFactory>()
-  private val sqsProperties = mock<SqsProperties>()
+  private val awsQueueFactory = mockk<AwsQueueFactory>(relaxed = true)
+  private val sqsProperties = mockk<SqsProperties>()
   private val objectMapper = ObjectMapper()
   private lateinit var awsQueueService: AwsQueueService
 
   @Nested
   inner class AwsQueues {
 
-    private val sqsClient = mock<SqsClient>()
-    private val sqsDlqClient = mock<SqsClient>()
+    private val sqsClient = mockk<SqsClient>()
+    private val sqsDlqClient = mockk<SqsClient>()
 
     @BeforeEach
     fun `add test data`() {
-      whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(
+      every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(
         GetQueueUrlResponse.builder().queueUrl("some queue url").build(),
       )
-      whenever(sqsDlqClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(
+      every { sqsDlqClient.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(
         GetQueueUrlResponse.builder().queueUrl("some dlq url").build(),
       )
-      whenever(awsQueueFactory.createAwsQueues(any()))
-        .thenReturn(
+      every { awsQueueFactory.createAwsQueues(any()) }
+        .returns(
           listOf(
             AwsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
-            AwsQueue("another queue id", mock(), "another queue name", mock(), "another dlq name"),
+            AwsQueue("another queue id", mockk(), "another queue name", mockk(), "another dlq name"),
           ),
         )
 
@@ -77,15 +77,15 @@ class AwsQueueServiceTest {
   @Nested
   inner class RetryDlqMessages {
 
-    private val dlqSqs = mock<SqsClient>()
-    private val queueSqs = mock<SqsClient>()
+    private val dlqSqs = mockk<SqsClient>(relaxed = true)
+    private val queueSqs = mockk<SqsClient>(relaxed = true)
 
     @BeforeEach
     fun `stub getting of queue url`() {
-      whenever(queueSqs.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(
+      every { queueSqs.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(
         GetQueueUrlResponse.builder().queueUrl("queueUrl").build(),
       )
-      whenever(dlqSqs.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(
+      every { dlqSqs.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(
         GetQueueUrlResponse.builder().queueUrl("dlqUrl").build(),
       )
 
@@ -96,13 +96,13 @@ class AwsQueueServiceTest {
     inner class NoMessages {
       @BeforeEach
       fun `finds zero messages on dlq`() {
-        whenever(
+        every {
           dlqSqs.getQueueAttributes(
-            argThat<GetQueueAttributesRequest> { r ->
+            match<GetQueueAttributesRequest> { r ->
               r.attributeNames().contains(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES)
             },
-          ),
-        ).thenReturn(
+          )
+        }.returns(
           GetQueueAttributesResponse.builder()
             .attributes(mapOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES to "0")).build(),
         )
@@ -121,14 +121,14 @@ class AwsQueueServiceTest {
             ),
           ),
         )
+        val queueAttributesRequest = slot<GetQueueAttributesRequest>()
 
-        verify(dlqSqs).getQueueAttributes(
-          check<GetQueueAttributesRequest> {
-            it.queueUrl().equals("dlqUrl") && it.attributeNames()
-              .equals(listOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES))
-          },
-        )
-        verify(dlqSqs, times(0)).receiveMessage(any<ReceiveMessageRequest>())
+        verify { dlqSqs.getQueueAttributes(capture(queueAttributesRequest)) }
+
+        assertThat(queueAttributesRequest.captured.queueUrl()).isEqualTo("dlqUrl")
+        assertThat(queueAttributesRequest.captured.attributeNames()).isEqualTo(listOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES))
+
+        verify { dlqSqs.receiveMessage(any<ReceiveMessageRequest>()) wasNot called }
       }
 
       @Test
@@ -155,18 +155,18 @@ class AwsQueueServiceTest {
     inner class SingleMessage {
       @BeforeEach
       fun `finds a single message on the dlq`() {
-        whenever(
+        every {
           dlqSqs.getQueueAttributes(
-            argThat<GetQueueAttributesRequest> { r ->
+            match<GetQueueAttributesRequest> { r ->
               r.attributeNames().contains(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES)
             },
-          ),
-        ).thenReturn(
+          )
+        }.returns(
           GetQueueAttributesResponse.builder()
             .attributes(mapOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES to "1")).build(),
         )
-        whenever(dlqSqs.receiveMessage(any<ReceiveMessageRequest>()))
-          .thenReturn(
+        every { dlqSqs.receiveMessage(any<ReceiveMessageRequest>()) }
+          .returns(
             ReceiveMessageResponse.builder().messages(
               Message.builder()
                 .body("message-body")
@@ -191,13 +191,11 @@ class AwsQueueServiceTest {
             ),
           ),
         )
+        val receiveMessageRequest = slot<ReceiveMessageRequest>()
+        verify { dlqSqs.receiveMessage(capture(receiveMessageRequest)) }
 
-        verify(dlqSqs).receiveMessage(
-          check<ReceiveMessageRequest> {
-            assertThat(it.queueUrl()).isEqualTo("dlqUrl")
-            assertThat(it.maxNumberOfMessages()).isEqualTo(1)
-          },
-        )
+        assertThat(receiveMessageRequest.captured.queueUrl()).isEqualTo("dlqUrl")
+        assertThat(receiveMessageRequest.captured.maxNumberOfMessages()).isEqualTo(1)
       }
 
       @Test
@@ -214,12 +212,11 @@ class AwsQueueServiceTest {
           ),
         )
 
-        verify(dlqSqs).deleteMessage(
-          check<DeleteMessageRequest> {
-            assertThat(it.queueUrl()).isEqualTo("dlqUrl")
-            assertThat(it.receiptHandle()).isEqualTo("message-receipt-handle")
-          },
-        )
+        val deleteMessageRequest = slot<DeleteMessageRequest>()
+        verify { dlqSqs.deleteMessage(capture(deleteMessageRequest)) }
+
+        assertThat(deleteMessageRequest.captured.queueUrl()).isEqualTo("dlqUrl")
+        assertThat(deleteMessageRequest.captured.receiptHandle()).isEqualTo("message-receipt-handle")
       }
 
       @Test
@@ -235,13 +232,15 @@ class AwsQueueServiceTest {
             ),
           ),
         )
-        verify(queueSqs).sendMessage(
-          SendMessageRequest.builder()
-            .queueUrl("queueUrl")
-            .messageBody("message-body")
-            .messageAttributes(mutableMapOf("some" to stringAttributeOf("attribute")))
-            .build(),
-        )
+        verify {
+          queueSqs.sendMessage(
+            SendMessageRequest.builder()
+              .queueUrl("queueUrl")
+              .messageBody("message-body")
+              .messageAttributes(mutableMapOf("some" to stringAttributeOf("attribute")))
+              .build(),
+          )
+        }
       }
 
       @Test
@@ -269,18 +268,18 @@ class AwsQueueServiceTest {
     inner class MultipleMessages {
       @BeforeEach
       fun `finds two message on the dlq`() {
-        whenever(
+        every {
           dlqSqs.getQueueAttributes(
-            argThat<GetQueueAttributesRequest> { r ->
+            match<GetQueueAttributesRequest> { r ->
               r.attributeNames().contains(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES)
             },
-          ),
-        ).thenReturn(
+          )
+        }.returns(
           GetQueueAttributesResponse.builder()
             .attributes(mapOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES to "2")).build(),
         )
-        whenever(dlqSqs.receiveMessage(any<ReceiveMessageRequest>()))
-          .thenReturn(
+        every { dlqSqs.receiveMessage(any<ReceiveMessageRequest>()) }
+          .returnsMany(
             ReceiveMessageResponse.builder().messages(
               Message.builder()
                 .body("message-1-body")
@@ -289,8 +288,6 @@ class AwsQueueServiceTest {
                 .build(),
             )
               .build(),
-          )
-          .thenReturn(
             ReceiveMessageResponse.builder().messages(
               Message.builder()
                 .body("message-2-body")
@@ -317,12 +314,14 @@ class AwsQueueServiceTest {
           ),
         )
 
-        verify(dlqSqs, times(2)).receiveMessage(
-          check<ReceiveMessageRequest> {
-            assertThat(it.queueUrl()).isEqualTo("dlqUrl")
-            assertThat(it.maxNumberOfMessages()).isEqualTo(1)
-          },
-        )
+        val receivedMessageRequests = mutableListOf<ReceiveMessageRequest>()
+
+        verify(exactly = 2) {
+          dlqSqs.receiveMessage(capture(receivedMessageRequests))
+        }
+        assertThat(receivedMessageRequests).allMatch {
+          it.queueUrl().equals("dlqUrl") && it.maxNumberOfMessages().equals(1)
+        }
       }
 
       @Test
@@ -339,11 +338,13 @@ class AwsQueueServiceTest {
           ),
         )
 
-        val captor = argumentCaptor<DeleteMessageRequest>()
-        verify(dlqSqs, times(2)).deleteMessage(captor.capture())
+        val captor = mutableListOf<DeleteMessageRequest>()
+        verify(exactly = 2) {
+          dlqSqs.deleteMessage(capture(captor))
+        }
 
-        assertThat(captor.firstValue.receiptHandle()).isEqualTo("message-1-receipt-handle")
-        assertThat(captor.secondValue.receiptHandle()).isEqualTo("message-2-receipt-handle")
+        assertThat(captor[0].receiptHandle()).isEqualTo("message-1-receipt-handle")
+        assertThat(captor[1].receiptHandle()).isEqualTo("message-2-receipt-handle")
       }
 
       @Test
@@ -360,14 +361,18 @@ class AwsQueueServiceTest {
           ),
         )
 
-        verify(queueSqs).sendMessage(
-          SendMessageRequest.builder().queueUrl("queueUrl").messageBody("message-1-body")
-            .messageAttributes((mutableMapOf("attribute-key-1" to stringAttributeOf("attribute-value-1")))).build(),
-        )
-        verify(queueSqs).sendMessage(
-          SendMessageRequest.builder().queueUrl("queueUrl").messageBody("message-2-body")
-            .messageAttributes((mutableMapOf("attribute-key-2" to stringAttributeOf("attribute-value-2")))).build(),
-        )
+        verify {
+          queueSqs.sendMessage(
+            SendMessageRequest.builder().queueUrl("queueUrl").messageBody("message-1-body")
+              .messageAttributes((mutableMapOf("attribute-key-1" to stringAttributeOf("attribute-value-1")))).build(),
+          )
+        }
+        verify {
+          queueSqs.sendMessage(
+            SendMessageRequest.builder().queueUrl("queueUrl").messageBody("message-2-body")
+              .messageAttributes((mutableMapOf("attribute-key-2" to stringAttributeOf("attribute-value-2")))).build(),
+          )
+        }
       }
 
       @Test
@@ -398,18 +403,18 @@ class AwsQueueServiceTest {
     inner class MultipleMessagesSomeNotFound {
       @BeforeEach
       fun `finds only one of two message on the dlq`() {
-        whenever(
+        every {
           dlqSqs.getQueueAttributes(
-            argThat<GetQueueAttributesRequest> { r ->
+            match<GetQueueAttributesRequest> { r ->
               r.attributeNames().contains(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES)
             },
-          ),
-        ).thenReturn(
+          )
+        }.returns(
           GetQueueAttributesResponse.builder()
             .attributes(mapOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES to "2")).build(),
         )
-        whenever(dlqSqs.receiveMessage(any<ReceiveMessageRequest>()))
-          .thenReturn(
+        every { dlqSqs.receiveMessage(any<ReceiveMessageRequest>()) }
+          .returnsMany(
             ReceiveMessageResponse.builder().messages(
               Message.builder()
                 .body("message-1-body")
@@ -417,8 +422,6 @@ class AwsQueueServiceTest {
                 .messageAttributes((mutableMapOf("some" to stringAttributeOf("attribute"))))
                 .build(),
             ).build(),
-          )
-          .thenReturn(
             ReceiveMessageResponse.builder().build(),
           )
 
@@ -439,12 +442,14 @@ class AwsQueueServiceTest {
           ),
         )
 
-        verify(dlqSqs, times(2)).receiveMessage(
-          check<ReceiveMessageRequest> {
-            assertThat(it.queueUrl()).isEqualTo("dlqUrl")
-            assertThat(it.maxNumberOfMessages()).isEqualTo(1)
-          },
-        )
+        val receivedMessageRequests = mutableListOf<ReceiveMessageRequest>()
+
+        verify(exactly = 2) {
+          dlqSqs.receiveMessage(capture(receivedMessageRequests))
+        }
+        assertThat(receivedMessageRequests).allMatch {
+          it.queueUrl().equals("dlqUrl") && it.maxNumberOfMessages().equals(1)
+        }
       }
 
       @Test
@@ -461,12 +466,11 @@ class AwsQueueServiceTest {
           ),
         )
 
-        verify(dlqSqs).deleteMessage(
-          check<DeleteMessageRequest> {
-            assertThat(it.queueUrl()).isEqualTo("dlqUrl")
-            assertThat(it.receiptHandle()).isEqualTo("message-1-receipt-handle")
-          },
-        )
+        val deleteMessageRequest = slot<DeleteMessageRequest>()
+        verify { dlqSqs.deleteMessage(capture(deleteMessageRequest)) }
+
+        assertThat(deleteMessageRequest.captured.queueUrl()).isEqualTo("dlqUrl")
+        assertThat(deleteMessageRequest.captured.receiptHandle()).isEqualTo("message-1-receipt-handle")
       }
 
       @Test
@@ -483,11 +487,13 @@ class AwsQueueServiceTest {
           ),
         )
 
-        verify(queueSqs).sendMessage(
-          SendMessageRequest.builder().queueUrl("queueUrl").messageBody("message-1-body")
-            .messageAttributes(mutableMapOf("some" to stringAttributeOf("attribute")))
-            .build(),
-        )
+        verify {
+          queueSqs.sendMessage(
+            SendMessageRequest.builder().queueUrl("queueUrl").messageBody("message-1-body")
+              .messageAttributes(mutableMapOf("some" to stringAttributeOf("attribute")))
+              .build(),
+          )
+        }
       }
 
       @Test
@@ -514,15 +520,15 @@ class AwsQueueServiceTest {
 
   @Nested
   inner class GetDlqMessages {
-    private val dlqSqs = mock<SqsClient>()
-    private val queueSqs = mock<SqsClient>()
+    private val dlqSqs = mockk<SqsClient>()
+    private val queueSqs = mockk<SqsClient>()
 
     @BeforeEach
     fun `stub getting of queue url`() {
-      whenever(queueSqs.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(
+      every { queueSqs.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(
         GetQueueUrlResponse.builder().queueUrl("queueUrl").build(),
       )
-      whenever(dlqSqs.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(
+      every { dlqSqs.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(
         GetQueueUrlResponse.builder().queueUrl("dlqUrl").build(),
       )
 
@@ -531,18 +537,18 @@ class AwsQueueServiceTest {
 
     @BeforeEach
     fun `gets a message on the dlq`() {
-      whenever(
+      every {
         dlqSqs.getQueueAttributes(
-          argThat<GetQueueAttributesRequest> { r ->
+          match<GetQueueAttributesRequest> { r ->
             r.attributeNames().contains(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES)
           },
-        ),
-      ).thenReturn(
+        )
+      }.returns(
         GetQueueAttributesResponse.builder().attributes(mapOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES to "1"))
           .build(),
       )
-      whenever(dlqSqs.receiveMessage(any<ReceiveMessageRequest>()))
-        .thenReturn(
+      every { dlqSqs.receiveMessage(any<ReceiveMessageRequest>()) }
+        .returns(
           ReceiveMessageResponse.builder().messages(
             Message.builder()
               .body(
@@ -584,33 +590,33 @@ class AwsQueueServiceTest {
       assertThat(dlqResult.messages[0].messageId).isEqualTo("external-message-id-1")
       val messageMap = dlqResult.messages[0].body["Message"] as Map<*, *>
       assertThat(messageMap["longProperty"]).isEqualTo(7076632681529943151L)
-      verify(dlqSqs).receiveMessage(
-        check<ReceiveMessageRequest> {
-          assertThat(it.queueUrl()).isEqualTo("dlqUrl")
-        },
-      )
+
+      val receiveMessageRequest = slot<ReceiveMessageRequest>()
+      verify { dlqSqs.receiveMessage(capture(receiveMessageRequest)) }
+
+      assertThat(receiveMessageRequest.captured.queueUrl()).isEqualTo("dlqUrl")
     }
   }
 
   @Nested
   inner class FindQueueToPurge {
 
-    private val sqsClient = mock<SqsClient>()
-    private val sqsDlqClient = mock<SqsClient>()
+    private val sqsClient = mockk<SqsClient>()
+    private val sqsDlqClient = mockk<SqsClient>()
 
     @BeforeEach
     fun `add test data`() {
-      whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(
+      every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(
         GetQueueUrlResponse.builder().queueUrl("some queue url").build(),
       )
-      whenever(sqsDlqClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(
+      every { sqsDlqClient.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(
         GetQueueUrlResponse.builder().queueUrl("some dlq url").build(),
       )
-      whenever(awsQueueFactory.createAwsQueues(any()))
-        .thenReturn(
+      every { awsQueueFactory.createAwsQueues(any()) }
+        .returns(
           listOf(
             AwsQueue("some queue id", sqsClient, "some queue name", sqsDlqClient, "some dlq name"),
-            AwsQueue("another queue id", mock(), "another queue name", mock(), "another dlq name"),
+            AwsQueue("another queue id", mockk(), "another queue name", mockk(), "another dlq name"),
           ),
         )
 
@@ -642,7 +648,7 @@ class AwsQueueServiceTest {
   @Nested
   inner class PurgeQueue {
 
-    private val sqsClient = mock<SqsClient>()
+    private val sqsClient = mockk<SqsClient>(relaxed = true)
     private val awsQueueService = AwsQueueService(awsQueueFactory, sqsProperties, objectMapper)
 
     @Test
@@ -651,7 +657,7 @@ class AwsQueueServiceTest {
 
       awsQueueService.purgeQueue(PurgeQueueRequest("some queue", sqsClient, "some queue url"))
 
-      verify(sqsClient, times(0)).purgeQueue(any<AwsPurgeQueueRequest>())
+      verify { sqsClient.purgeQueue(any<AwsPurgeQueueRequest>()) wasNot called }
     }
 
     @Test
@@ -660,7 +666,7 @@ class AwsQueueServiceTest {
 
       awsQueueService.purgeQueue(PurgeQueueRequest("some queue", sqsClient, "some queue url"))
 
-      verify(sqsClient).purgeQueue(AwsPurgeQueueRequest.builder().queueUrl("some queue url").build())
+      verify { sqsClient.purgeQueue(AwsPurgeQueueRequest.builder().queueUrl("some queue url").build()) wasNot called }
     }
 
     @Test
@@ -673,15 +679,15 @@ class AwsQueueServiceTest {
     }
 
     private fun stubMessagesOnQueue(messageCount: Int) {
-      whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>()))
-        .thenReturn(GetQueueUrlResponse.builder().queueUrl("some queue url").build())
-      whenever(
+      every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()) }
+        .returns(GetQueueUrlResponse.builder().queueUrl("some queue url").build())
+      every {
         sqsClient.getQueueAttributes(
-          argThat<GetQueueAttributesRequest> { r ->
+          match<GetQueueAttributesRequest> { r ->
             r.attributeNames().contains(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES)
           },
-        ),
-      ).thenReturn(
+        )
+      }.returns(
         GetQueueAttributesResponse.builder()
           .attributes(mapOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES to "$messageCount")).build(),
       )

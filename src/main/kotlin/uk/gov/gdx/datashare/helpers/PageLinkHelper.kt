@@ -47,5 +47,6 @@ private fun pageLink(uriBuilder: UriComponentsBuilder, pageNumber: Long, rel: Li
   Link.of(
     uriBuilder
       .replaceQueryParam(PAGE_NUMBER_PARAM, pageNumber)
+      .build()
       .toUriString(),
   ).withRel(rel)

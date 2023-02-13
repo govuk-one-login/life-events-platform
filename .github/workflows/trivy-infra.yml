@@ -1,0 +1,32 @@
+name: Trivy Infrastructure scan
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "terraform/**"
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - "terraform/**"
+      - ".github/workflows/**"
+  merge_group:
+    paths:
+      - "terraform/**"
+      - ".github/workflows/**"
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  trivy-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          trivy-config: trivy.yaml

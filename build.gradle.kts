@@ -2,13 +2,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-  id("org.owasp.dependencycheck") version "8.0.2"
-  id("org.springframework.boot") version "2.7.8"
+  id("org.springframework.boot") version "3.0.2"
   id("io.spring.dependency-management") version "1.1.0"
   id("org.jmailen.kotlinter") version "3.13.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   kotlin("jvm") version "1.8.10"
   kotlin("plugin.spring") version "1.8.10"
+  id("com.netflix.nebula.jakartaee-migration") version "0.1.9"
+}
+
+jakartaeeMigration {
+  migrate()
 }
 
 openApi {
@@ -32,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.19.32"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.1"))
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
@@ -47,7 +51,6 @@ dependencies {
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")
-  implementation("org.apache.commons:commons-csv:1.10.0")
 
   runtimeOnly("org.flywaydb:flyway-core")
 
@@ -55,12 +58,13 @@ dependencies {
   implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:1.0.1")
   implementation("org.postgresql:postgresql:42.5.3")
 
-  implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.14")
+  implementation("org.springdoc:springdoc-openapi-starter-common:2.0.2")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.0.2")
+
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.14.2")
 
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.10.0")
@@ -76,7 +80,7 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.1.0")
 
-  implementation("com.toedter:spring-hateoas-jsonapi:1.6.0")
+  implementation("com.toedter:spring-hateoas-jsonapi:2.0.2")
 
   implementation("org.javers:javers-spring:6.9.1")
   implementation("org.javers:javers-persistence-sql:6.9.1")
@@ -96,13 +100,9 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.11")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.401")
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.404")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
-  testImplementation("org.mockito:mockito-inline")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.1.1")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-  testImplementation("org.mockito:mockito-inline:5.1.1")
   testImplementation("com.approvaltests:approvaltests:18.5.0")
   testImplementation("com.google.code.gson:gson:2.10.1") // Needed for JsonApprovals
 }

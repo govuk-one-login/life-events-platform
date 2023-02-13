@@ -1,0 +1,47 @@
+{
+  "data": [
+    {
+      "id": "guid_1",
+      "type": "events",
+      "attributes": {
+        "eventType": "DEATH_NOTIFICATION",
+        "sourceId": "1",
+        "dataIncluded": false
+      },
+      "links": {
+        "self": "https://localhost/events/guid_1"
+      },
+      "meta": {
+        "enrichmentFields": [
+          "registrationDate",
+          "firstNames",
+          "lastName",
+          "maidenName",
+          "dateOfDeath",
+          "dateOfBirth",
+          "sex",
+          "address",
+          "birthPlace",
+          "deathPlace",
+          "occupation",
+          "retired"
+        ]
+      }
+    }
+  ],
+  "links": {
+    "self": "https://localhost/events?page%5Bnumber%5D\u003d1\u0026page%5Bsize%5D\u003d1",
+    "first": "https://localhost/events?page%5Bsize%5D\u003d1\u0026page%5Bnumber%5D\u003d0",
+    "prev": "https://localhost/events?page%5Bsize%5D\u003d1\u0026page%5Bnumber%5D\u003d0",
+    "next": "https://localhost/events?page%5Bsize%5D\u003d1\u0026page%5Bnumber%5D\u003d2",
+    "last": "https://localhost/events?page%5Bsize%5D\u003d1\u0026page%5Bnumber%5D\u003d4"
+  },
+  "meta": {
+    "page": {
+      "size": 1,
+      "totalElements": 5,
+      "totalPages": 5,
+      "number": 1
+    }
+  }
+}

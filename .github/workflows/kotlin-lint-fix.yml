@@ -6,7 +6,7 @@ on:
       - "src/**"
 
 jobs:
-  tf-fmt:
+  kotlin-fmt:
     name: Validate and fix formatting
     runs-on: ubuntu-latest
     permissions:

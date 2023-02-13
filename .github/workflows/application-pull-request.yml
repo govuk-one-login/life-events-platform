@@ -11,6 +11,10 @@ on:
     paths-ignore:
       - "terraform/**"
       - "!terraform/modules/data-share-service/ecs.tf"
+  merge_group:
+    paths-ignore:
+      - "terraform/**"
+      - "!terraform/modules/data-share-service/ecs.tf"
 
 concurrency:
   group: application-pipeline-${{ github.ref_name }}
@@ -22,4 +26,7 @@ jobs:
 
   openapi-lint:
     uses: ./.github/workflows/openapi-lint.yml
+
+  trivy:
+    uses: ./.github/workflows/trivy.yml
 

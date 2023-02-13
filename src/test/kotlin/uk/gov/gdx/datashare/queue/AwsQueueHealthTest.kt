@@ -1,18 +1,17 @@
 package uk.gov.gdx.datashare.queue
 
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import org.springframework.boot.actuate.health.Status
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.*
 
 class AwsQueueHealthTest {
 
-  private val sqsClient = mock<SqsClient>()
-  private val sqsDlqClient = mock<SqsClient>()
+  private val sqsClient = mockk<SqsClient>()
+  private val sqsDlqClient = mockk<SqsClient>()
   private val queueId = "some queue id"
   private val queueUrl = "some queue url"
   private val dlqUrl = "some dlq url"
@@ -53,7 +52,7 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show status DOWN`() {
-    whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenThrow(QueueDoesNotExistException::class.java)
+    every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()) }.throws(QueueDoesNotExistException.builder().build())
 
     val health = queueHealth.health()
 
@@ -62,7 +61,7 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show exception causing status DOWN`() {
-    whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenThrow(QueueDoesNotExistException::class.java)
+    every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()) }.throws(QueueDoesNotExistException.builder().build())
 
     val health = queueHealth.health()
 
@@ -71,7 +70,7 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show queue name if status DOWN`() {
-    whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenThrow(QueueDoesNotExistException::class.java)
+    every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()) }.throws(QueueDoesNotExistException.builder().build())
 
     val health = queueHealth.health()
 
@@ -80,8 +79,8 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show status DOWN if unable to retrieve queue attributes`() {
-    whenever(sqsClient.getQueueUrl(any<GetQueueUrlRequest>())).thenReturn(someGetQueueUrlResult())
-    whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenThrow(RuntimeException::class.java)
+    every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()) }.returns(someGetQueueUrlResult())
+    every { sqsClient.getQueueAttributes(someGetQueueAttributesRequest()) }.throws(RuntimeException())
 
     val health = queueHealth.health()
 
@@ -117,8 +116,10 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show status DOWN if DLQ status is down`() {
-    whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build())).thenReturn(someGetQueueUrlResult())
-    whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
+    every { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()) }.returns(
+      someGetQueueUrlResult(),
+    )
+    every { sqsClient.getQueueAttributes(someGetQueueAttributesRequest()) }.returns(
       someGetQueueAttributesResultWithoutDLQ(),
     )
 
@@ -130,8 +131,10 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show DLQ name if DLQ status is down`() {
-    whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build())).thenReturn(someGetQueueUrlResult())
-    whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
+    every { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()) }.returns(
+      someGetQueueUrlResult(),
+    )
+    every { sqsClient.getQueueAttributes(someGetQueueAttributesRequest()) }.returns(
       someGetQueueAttributesResultWithoutDLQ(),
     )
 
@@ -142,8 +145,10 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show DLQ status DOWN if no RedrivePolicy attribute on main queue`() {
-    whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build())).thenReturn(someGetQueueUrlResult())
-    whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
+    every { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()) }.returns(
+      someGetQueueUrlResult(),
+    )
+    every { sqsClient.getQueueAttributes(someGetQueueAttributesRequest()) }.returns(
       someGetQueueAttributesResultWithoutDLQ(),
     )
 
@@ -154,11 +159,15 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show DLQ status DOWN if DLQ not found`() {
-    whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build())).thenReturn(someGetQueueUrlResult())
-    whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
+    every { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()) }.returns(
+      someGetQueueUrlResult(),
+    )
+    every { sqsClient.getQueueAttributes(someGetQueueAttributesRequest()) }.returns(
       someGetQueueAttributesResultWithDLQ(),
     )
-    whenever(sqsDlqClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(dlqName).build())).thenThrow(QueueDoesNotExistException::class.java)
+    every { sqsDlqClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(dlqName).build()) }.throws(
+      QueueDoesNotExistException.builder().build(),
+    )
 
     val health = queueHealth.health()
 
@@ -167,11 +176,15 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show exception causing DLQ status DOWN`() {
-    whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build())).thenReturn(someGetQueueUrlResult())
-    whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
+    every { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()) }.returns(
+      someGetQueueUrlResult(),
+    )
+    every { sqsClient.getQueueAttributes(someGetQueueAttributesRequest()) }.returns(
       someGetQueueAttributesResultWithDLQ(),
     )
-    whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build())).thenThrow(QueueDoesNotExistException::class.java)
+    every { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()) }.throws(
+      QueueDoesNotExistException.builder().build(),
+    )
 
     val health = queueHealth.health()
 
@@ -180,12 +193,16 @@ class AwsQueueHealthTest {
 
   @Test
   fun `should show DLQ status DOWN if unable to retrieve DLQ attributes`() {
-    whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build())).thenReturn(someGetQueueUrlResult())
-    whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
+    every { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()) }.returns(
+      someGetQueueUrlResult(),
+    )
+    every { sqsClient.getQueueAttributes(someGetQueueAttributesRequest()) }.returns(
       someGetQueueAttributesResultWithDLQ(),
     )
-    whenever(sqsDlqClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(dlqName).build())).thenReturn(someGetQueueUrlResultForDLQ())
-    whenever(sqsDlqClient.getQueueAttributes(someGetQueueAttributesRequestForDLQ())).thenThrow(RuntimeException::class.java)
+    every { sqsDlqClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(dlqName).build()) }.returns(
+      someGetQueueUrlResultForDLQ(),
+    )
+    every { sqsDlqClient.getQueueAttributes(someGetQueueAttributesRequestForDLQ()) }.throws(RuntimeException())
 
     val health = queueHealth.health()
 
@@ -193,12 +210,16 @@ class AwsQueueHealthTest {
   }
 
   private fun mockHealthyQueue() {
-    whenever(sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build())).thenReturn(someGetQueueUrlResult())
-    whenever(sqsClient.getQueueAttributes(someGetQueueAttributesRequest())).thenReturn(
+    every { sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(queueName).build()) }.returns(
+      someGetQueueUrlResult(),
+    )
+    every { sqsClient.getQueueAttributes(someGetQueueAttributesRequest()) }.returns(
       someGetQueueAttributesResultWithDLQ(),
     )
-    whenever(sqsDlqClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(dlqName).build())).thenReturn(someGetQueueUrlResultForDLQ())
-    whenever(sqsDlqClient.getQueueAttributes(someGetQueueAttributesRequestForDLQ())).thenReturn(
+    every { sqsDlqClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(dlqName).build()) }.returns(
+      someGetQueueUrlResultForDLQ(),
+    )
+    every { sqsDlqClient.getQueueAttributes(someGetQueueAttributesRequestForDLQ()) }.returns(
       someGetQueueAttributesResultForDLQ(),
     )
   }
@@ -226,7 +247,9 @@ class AwsQueueHealthTest {
   private fun someGetQueueAttributesRequestForDLQ() =
     GetQueueAttributesRequest.builder().queueUrl(dlqUrl).attributeNames(QueueAttributeName.ALL).build()
 
-  private fun someGetQueueUrlResultForDLQ(): GetQueueUrlResponse = GetQueueUrlResponse.builder().queueUrl(dlqUrl).build()
+  private fun someGetQueueUrlResultForDLQ(): GetQueueUrlResponse =
+    GetQueueUrlResponse.builder().queueUrl(dlqUrl).build()
+
   private fun someGetQueueAttributesResultForDLQ() = GetQueueAttributesResponse.builder().attributes(
     mapOf(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES to messagesOnDLQCount.toString()),
   ).build()

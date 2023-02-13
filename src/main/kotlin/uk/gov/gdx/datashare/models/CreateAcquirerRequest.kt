@@ -2,10 +2,10 @@ package uk.gov.gdx.datashare.models
 
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.Pattern
 import org.hibernate.validator.constraints.Length
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
-import javax.validation.constraints.Pattern
 
 class CreateAcquirerRequest(
   @Schema(

@@ -14,7 +14,7 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8080/health"]
     environment:
       - SQS_LOCALSTACK_URL=http://localstack:4566
       - SERVER_PORT=8080

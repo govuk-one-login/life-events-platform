@@ -1,0 +1,17 @@
+name: Trivy Infrastructure scan
+
+on:
+  pull_request:
+    paths-ignore:
+      - "terraform/**"
+      - ".github/workflows/**"
+  merge_group:
+    paths-ignore:
+      - "terraform/**"
+      - ".github/workflows/**"
+
+jobs:
+  trivy-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'

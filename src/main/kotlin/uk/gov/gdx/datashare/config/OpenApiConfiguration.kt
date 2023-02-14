@@ -43,7 +43,7 @@ class OpenApiConfiguration(
       ),
     )
     .info(
-      Info().title("GDX Data Share API")
+      Info().title("GDX Platform API")
         .version(version)
         .license(License().name("MIT").url("https://opensource.org/license/mit-0"))
         .description("API for obtaining data about citizen life events")

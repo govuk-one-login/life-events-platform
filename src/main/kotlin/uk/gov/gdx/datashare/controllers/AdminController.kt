@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -8,6 +9,7 @@ import jakarta.validation.Valid
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
@@ -31,6 +33,26 @@ class AdminController(
         responseCode = "200",
         description = "Event",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getEvents() = eventDataRepository.findAll().toList()
@@ -43,6 +65,26 @@ class AdminController(
       ApiResponse(
         responseCode = "200",
         description = "Cognito client details",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -64,6 +106,26 @@ class AdminController(
         responseCode = "200",
         description = "Cognito client details",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun createAcquirer(
@@ -84,6 +146,26 @@ class AdminController(
       ApiResponse(
         responseCode = "200",
         description = "Cognito client details",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )

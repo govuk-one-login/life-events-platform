@@ -163,6 +163,26 @@ class EventsController(
           ),
         ),
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getEvents(
@@ -282,6 +302,26 @@ class EventsController(
         description = "Event with UUID cannot be found",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getEvent(
@@ -318,6 +358,22 @@ class EventsController(
       ApiResponse(
         responseCode = "204",
         description = "Event deleted",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -347,6 +403,26 @@ class EventsController(
       ApiResponse(
         responseCode = "201",
         description = "Data Accepted",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )

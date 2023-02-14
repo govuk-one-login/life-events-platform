@@ -1,12 +1,14 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.repositories.*
 import java.util.*
 
@@ -30,6 +32,26 @@ class BaseDataController(
         responseCode = "200",
         description = "Acquirers",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getAcquirers() = acquirerRepository.findAll()
@@ -42,6 +64,16 @@ class BaseDataController(
       ApiResponse(
         responseCode = "204",
         description = "Acquirer deleted",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -60,6 +92,26 @@ class BaseDataController(
         responseCode = "200",
         description = "Acquirer Subscriptions",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getAcquirerSubscriptions() = acquirerSubscriptionRepository.findAll()
@@ -72,6 +124,16 @@ class BaseDataController(
       ApiResponse(
         responseCode = "204",
         description = "Acquirer Subscription deleted",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -90,6 +152,26 @@ class BaseDataController(
         responseCode = "200",
         description = "Event",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getEvents() = eventDataRepository.findAll()
@@ -102,6 +184,16 @@ class BaseDataController(
       ApiResponse(
         responseCode = "204",
         description = "Event deleted",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -120,6 +212,26 @@ class BaseDataController(
         responseCode = "200",
         description = "Suppliers",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getSuppliers() = supplierRepository.findAll()
@@ -132,6 +244,16 @@ class BaseDataController(
       ApiResponse(
         responseCode = "204",
         description = "Supplier deleted",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -150,6 +272,26 @@ class BaseDataController(
         responseCode = "200",
         description = "Supplier Subscriptions",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getSupplierSubscriptions() = supplierSubscriptionRepository.findAll()
@@ -162,6 +304,16 @@ class BaseDataController(
       ApiResponse(
         responseCode = "204",
         description = "Supplier Subscription deleted",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )

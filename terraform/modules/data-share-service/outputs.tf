@@ -16,3 +16,6 @@ output "consumer_client_id" {
 output "consumer_client_secret" {
   value = module.cognito.consumer_client_secret
 }
+output "alarm_action" {
+  value = aws_cloudformation_stack.sns_alarm_topic.outputs["ARN"]
+}

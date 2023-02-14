@@ -175,11 +175,11 @@ module "queue_alarm_dashboard" {
   metric_namespace = local.metric_namespace
   widgets = [
     {
-      title  = "Queue processor error rate",
+      title  = aws_cloudwatch_metric_alarm.queue_process_error_rate.alarm_description,
       alarms = [aws_cloudwatch_metric_alarm.queue_process_error_rate.arn]
     },
     {
-      title  = "Queue processor error number",
+      title  = aws_cloudwatch_metric_alarm.queue_process_error_number.alarm_description,
       alarms = [aws_cloudwatch_metric_alarm.queue_process_error_number.arn]
     },
   ]

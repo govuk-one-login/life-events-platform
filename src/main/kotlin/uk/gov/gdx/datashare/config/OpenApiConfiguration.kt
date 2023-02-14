@@ -107,13 +107,6 @@ class OpenApiConfiguration(
     }
   }
 
-  private fun errorSchema(): Schema<Any> {
-    val errorResponseSchema = Schema<Any>()
-    errorResponseSchema.name = "ErrorResponse"
-    errorResponseSchema.`$ref` = "#/components/schemas/ErrorResponse"
-    return errorResponseSchema
-  }
-
   private fun createErrorApiResponse(message: String): ApiResponse {
     val errorResponseSchema = Schema<Any>()
     errorResponseSchema.name = "ErrorResponse"

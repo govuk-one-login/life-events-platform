@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -13,6 +14,7 @@ import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
+import uk.gov.gdx.datashare.repositories.EventData
 import uk.gov.gdx.datashare.repositories.EventDataRepository
 import uk.gov.gdx.datashare.services.AdminService
 
@@ -32,6 +34,12 @@ class AdminController(
       ApiResponse(
         responseCode = "200",
         description = "Event",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = EventData::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",

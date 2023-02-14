@@ -2,12 +2,15 @@ package uk.gov.gdx.datashare.config
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
+import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.DateTimeSchema
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.StringSchema
+import io.swagger.v3.oas.models.responses.ApiResponse
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.servers.Server
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.MediaType
 
 @Configuration
 class OpenApiConfiguration(
@@ -71,12 +75,23 @@ class OpenApiConfiguration(
             .openIdConnectUrl("$issuerUri/.well-known/openid-configuration"),
         ),
     )
-    .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
+    .addSecurityItem(SecurityRequirement().addList("bearer-jwt"))
     .addSecurityItem(SecurityRequirement().addList("cognito"))
 
   @Bean
   fun openAPICustomiser(): OpenApiCustomizer = OpenApiCustomizer {
+    val errorResponseSchema = errorSchema()
+
+    it.paths.forEach { (_, path: PathItem) ->
+      path.readOperations().forEach { operation ->
+        operation.responses.default = createApiResponse("Unexpected error", errorResponseSchema)
+        operation.responses.addApiResponse("401", createApiResponse("Unauthorized", errorResponseSchema))
+        operation.responses.addApiResponse("403", createApiResponse("Forbidden", errorResponseSchema))
+        operation.responses.addApiResponse("429", createApiResponse("Too many requests", errorResponseSchema))
+      }
+    }
     it.components.schemas.forEach { (_, schema: Schema<*>) ->
+      schema.additionalProperties = false
       val properties = schema.properties ?: mutableMapOf()
       for (propertyName in properties.keys) {
         val propertySchema = properties[propertyName]!!
@@ -92,5 +107,20 @@ class OpenApiConfiguration(
         }
       }
     }
+  }
+
+  private fun errorSchema(): Schema<Any> {
+    val errorResponseSchema = Schema<Any>()
+    errorResponseSchema.name = "ErrorResponse"
+    errorResponseSchema.`$ref` = "#/components/schemas/ErrorResponse"
+    return errorResponseSchema
+  }
+
+  private fun createApiResponse(message: String, schema: Schema<Any>): ApiResponse {
+    return ApiResponse()
+      .description(message)
+      .content(
+        Content().addMediaType(MediaType.APPLICATION_JSON_VALUE, io.swagger.v3.oas.models.media.MediaType().schema(schema)),
+      )
   }
 }

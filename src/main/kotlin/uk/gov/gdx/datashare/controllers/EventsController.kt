@@ -189,6 +189,8 @@ class EventsController(
     @Schema(
       description = "Event Types, if none supplied it will be the allowed types for this client",
       required = false,
+      maxLength = 40,
+      pattern = "[A-Z_]{40}",
     )
     @RequestParam(name = "filter[eventType]", required = false)
     eventTypes: List<EventType>? = null,
@@ -197,6 +199,7 @@ class EventsController(
       type = "string",
       format = "date-time",
       required = false,
+      maxLength = 26,
     )
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @RequestParam(name = "filter[fromTime]", required = false)
@@ -206,6 +209,7 @@ class EventsController(
       type = "string",
       format = "date-time",
       required = false,
+      maxLength = 26,
     )
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @RequestParam(name = "filter[toTime]", required = false)
@@ -214,6 +218,8 @@ class EventsController(
       description = "Page number. Zero indexed.",
       defaultValue = "0",
       minimum = "0",
+      maxLength = 8,
+      pattern = "^\\d+\$",
     )
     @RequestParam(name = "page[number]", defaultValue = "0")
     @PositiveOrZero
@@ -222,6 +228,8 @@ class EventsController(
       description = "Number of items per page.",
       defaultValue = DEFAULT_PAGE_SIZE.toString(),
       minimum = "0",
+      maxLength = 8,
+      pattern = "^\\d+\$",
     )
     @RequestParam(name = "page[size]", defaultValue = "100")
     @Positive
@@ -325,7 +333,7 @@ class EventsController(
     ],
   )
   fun getEvent(
-    @Schema(description = "Event ID", required = true)
+    @Schema(description = "Event ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     id: UUID,
   ): EntityModel<EventNotification>? = run {
@@ -358,12 +366,6 @@ class EventsController(
       ApiResponse(
         responseCode = "204",
         description = "Event deleted",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -378,7 +380,7 @@ class EventsController(
     ],
   )
   fun deleteEvent(
-    @Schema(description = "Event ID", required = true)
+    @Schema(description = "Event ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     id: UUID,
   ): ResponseEntity<Void> {
@@ -403,6 +405,7 @@ class EventsController(
       ApiResponse(
         responseCode = "201",
         description = "Data Accepted",
+
       ),
       ApiResponse(
         responseCode = "406",

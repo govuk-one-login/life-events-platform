@@ -13,13 +13,15 @@ import java.time.LocalDateTime
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Supplier Subscription")
 data class SupplierSubscription(
   @Id
   @Column("id")
+  @Schema(description = "Supplier Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
   val supplierSubscriptionId: UUID = UUID.randomUUID(),
-  @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
   val supplierId: UUID,
-  @Schema(description = "Client ID", required = true, example = "a-client-id")
+  @Schema(description = "Client ID", required = true, example = "a-client-id", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{50}\$")
   val clientId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
@@ -31,6 +33,7 @@ data class SupplierSubscription(
   val new: Boolean = true,
 
 ) : Persistable<UUID> {
+  @JsonIgnore
   override fun getId(): UUID = supplierSubscriptionId
 
   override fun isNew(): Boolean = new

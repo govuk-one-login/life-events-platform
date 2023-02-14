@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
+import uk.gov.gdx.datashare.models.AcquirerSubscriptionDto
 import uk.gov.gdx.datashare.repositories.Acquirer
 import uk.gov.gdx.datashare.services.AcquirersService
 import java.util.*
@@ -30,6 +32,12 @@ class AcquirersController(
       ApiResponse(
         responseCode = "200",
         description = "Acquirers",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = Acquirer::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -104,6 +112,12 @@ class AcquirersController(
       ApiResponse(
         responseCode = "200",
         description = "Acquirer Subscriptions",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = AcquirerSubscriptionDto::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -137,6 +151,12 @@ class AcquirersController(
       ApiResponse(
         responseCode = "200",
         description = "Acquirer Subscriptions",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = AcquirerSubscriptionDto::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -161,7 +181,7 @@ class AcquirersController(
     ],
   )
   fun getSubscriptionsForAcquirer(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     acquirerId: UUID,
   ) = acquirersService.getSubscriptionsForAcquirer(acquirerId)
@@ -198,7 +218,7 @@ class AcquirersController(
     ],
   )
   fun addAcquirerSubscription(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     acquirerId: UUID,
     @Schema(
@@ -242,10 +262,10 @@ class AcquirersController(
     ],
   )
   fun updateAcquirerSubscription(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     acquirerId: UUID,
-    @Schema(description = "Acquirer Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Acquirer Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     subscriptionId: UUID,
     @Schema(

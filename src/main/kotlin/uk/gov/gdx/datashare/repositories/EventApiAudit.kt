@@ -17,13 +17,14 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Event Api Audit")
 class EventApiAudit(
   @Id
   @Column("id")
-  @Schema(description = "Audit ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  @Schema(description = "Audit ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
   val auditId: UUID = UUID.randomUUID(),
 
-  @Schema(description = "Oauth ID of client making call", required = true, example = "alskd987")
+  @Schema(description = "Oauth ID of client making call", required = true, example = "alskd987", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{50}\$")
   val oauthClientId: String,
   @Schema(description = "URL", required = true, example = "https://d33v84mi0vopmk.cloudfront.net/events")
   val url: String,
@@ -42,6 +43,7 @@ class EventApiAudit(
 
 ) : Persistable<UUID> {
 
+  @JsonIgnore
   override fun getId(): UUID = auditId
 
   override fun isNew(): Boolean = new

@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.models.SupplierRequest
 import uk.gov.gdx.datashare.models.SupplierSubRequest
+import uk.gov.gdx.datashare.repositories.Supplier
+import uk.gov.gdx.datashare.repositories.SupplierSubscription
 import uk.gov.gdx.datashare.services.SuppliersService
 import java.util.*
 
@@ -29,6 +32,12 @@ class SuppliersController(
       ApiResponse(
         responseCode = "200",
         description = "Suppliers",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = Supplier::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -103,6 +112,12 @@ class SuppliersController(
       ApiResponse(
         responseCode = "200",
         description = "Supplier Subscriptions",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = SupplierSubscription::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -136,6 +151,12 @@ class SuppliersController(
       ApiResponse(
         responseCode = "200",
         description = "Supplier Subscriptions",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = SupplierSubscription::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -160,7 +181,7 @@ class SuppliersController(
     ],
   )
   fun getSubscriptionsForSupplier(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     supplierId: UUID,
   ) = suppliersService.getSubscriptionsForSupplier(supplierId)
@@ -197,7 +218,7 @@ class SuppliersController(
     ],
   )
   fun addSupplierSubscription(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     supplierId: UUID,
     @Schema(
@@ -242,13 +263,14 @@ class SuppliersController(
 
   )
   fun updateSupplierSubscription(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     supplierId: UUID,
     @Schema(
       description = "Supplier Subscription ID",
       required = true,
       example = "00000000-0000-0001-0000-000000000000",
+      pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$",
     )
     @PathVariable
     subscriptionId: UUID,

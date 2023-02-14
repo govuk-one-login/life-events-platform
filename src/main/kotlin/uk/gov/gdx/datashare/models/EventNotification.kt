@@ -13,7 +13,7 @@ import java.util.*
 @Schema(description = "Subscribed event notification")
 @JsonApiTypeForClass("events")
 data class EventNotification(
-  @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622")
+  @Schema(description = "Event ID (UUID)", required = true, example = "d8a6f3ba-e915-4e79-8479-f5f5830f4622", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
   @JsonApiId
   val eventId: UUID,
   @Schema(
@@ -22,7 +22,7 @@ data class EventNotification(
     example = "DEATH_NOTIFICATION",
   )
   val eventType: EventType,
-  @Schema(description = "ID from the source of the notification", required = true, example = "999999901")
+  @Schema(description = "ID from the source of the notification", required = true, example = "999999901", maxLength = 80, pattern = "^[A-Za-z0-9+=,.@-_]*\$")
   val sourceId: String,
   @Schema(
     description = "Indicates that event data is returned when true,",

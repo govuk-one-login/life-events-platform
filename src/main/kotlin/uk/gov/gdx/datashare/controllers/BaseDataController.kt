@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -31,6 +32,12 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Acquirers",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = Acquirer::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -54,7 +61,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getAcquirers() = acquirerRepository.findAll()
+  fun getAcquirers() = acquirerRepository.findAll().toList()
 
   @DeleteMapping("/acquirers/{id}")
   @Operation(
@@ -78,7 +85,7 @@ class BaseDataController(
     ],
   )
   fun deleteAcquirer(
-    @Schema(description = "Acquirer ID", required = true)
+    @Schema(description = "Acquirer ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     id: UUID,
   ) = acquirerRepository.deleteById(id)
@@ -91,6 +98,12 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Acquirer Subscriptions",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = AcquirerSubscription::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -114,7 +127,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getAcquirerSubscriptions() = acquirerSubscriptionRepository.findAll()
+  fun getAcquirerSubscriptions() = acquirerSubscriptionRepository.findAll().toList()
 
   @DeleteMapping("/acquirerSubscriptions/{id}")
   @Operation(
@@ -138,7 +151,7 @@ class BaseDataController(
     ],
   )
   fun deleteAcquirerSubscription(
-    @Schema(description = "Acquirer Subscription ID", required = true)
+    @Schema(description = "Acquirer Subscription ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     id: UUID,
   ) = acquirerSubscriptionRepository.deleteById(id)
@@ -151,6 +164,12 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Event",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = EventData::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -174,7 +193,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getEvents() = eventDataRepository.findAll()
+  fun getEvents() = eventDataRepository.findAll().toList()
 
   @DeleteMapping("/events/{id}")
   @Operation(
@@ -198,7 +217,7 @@ class BaseDataController(
     ],
   )
   fun deleteEvent(
-    @Schema(description = "Event ID", required = true)
+    @Schema(description = "Event ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     id: UUID,
   ) = eventDataRepository.deleteById(id)
@@ -211,6 +230,12 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Suppliers",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = Supplier::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -234,7 +259,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getSuppliers() = supplierRepository.findAll()
+  fun getSuppliers() = supplierRepository.findAll().toList()
 
   @DeleteMapping("/suppliers/{id}")
   @Operation(
@@ -258,7 +283,7 @@ class BaseDataController(
     ],
   )
   fun deleteSupplier(
-    @Schema(description = "Supplier ID", required = true)
+    @Schema(description = "Supplier ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     id: UUID,
   ) = supplierRepository.deleteById(id)
@@ -271,6 +296,12 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Supplier Subscriptions",
+        content = [
+          Content(
+            mediaType = "application/json",
+            array = ArraySchema(schema = Schema(implementation = SupplierSubscription::class)),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "406",
@@ -294,7 +325,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getSupplierSubscriptions() = supplierSubscriptionRepository.findAll()
+  fun getSupplierSubscriptions() = supplierSubscriptionRepository.findAll().toList()
 
   @DeleteMapping("/supplierSubscriptions/{id}")
   @Operation(
@@ -318,7 +349,7 @@ class BaseDataController(
     ],
   )
   fun deleteSupplierSubscription(
-    @Schema(description = "Supplier Subscription ID", required = true)
+    @Schema(description = "Supplier Subscription ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
     @PathVariable
     id: UUID,
   ) = supplierSubscriptionRepository.deleteById(id)

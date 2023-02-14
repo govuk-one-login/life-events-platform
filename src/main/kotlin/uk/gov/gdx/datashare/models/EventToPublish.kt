@@ -23,6 +23,6 @@ data class EventToPublish(
   )
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   val eventTime: LocalDateTime? = null,
-  @Schema(description = "ID that references the event", example = "123456789")
+  @Schema(description = "ID that references the event", example = "123456789", maxLength = 80, pattern = "^[A-Za-z0-9+=,.@-_]*\$")
   val id: String,
 )

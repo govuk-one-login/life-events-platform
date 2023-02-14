@@ -288,11 +288,11 @@ data class ErrorResponse(
   val status: Int,
   @Schema(description = "Error Code", example = "500", required = false)
   val errorCode: Int? = null,
-  @Schema(description = "User Message of error", example = "Bad Data", required = false)
+  @Schema(description = "User Message of error", example = "Bad Data", required = false, maxLength = 200, pattern = "^[ -~]{200}\$")
   val userMessage: String? = null,
-  @Schema(description = "More detailed error message", example = "This is a stack trace", required = false)
+  @Schema(description = "More detailed error message", example = "This is a stack trace", required = false, maxLength = 4000, pattern = "^[ -~]{4000}\$")
   val developerMessage: String? = null,
-  @Schema(description = "More information about the error", example = "More info", required = false)
+  @Schema(description = "More information about the error", example = "More info", required = false, maxLength = 4000, pattern = "^[ -~]{4000}\$")
   val moreInfo: String? = null,
 ) {
   constructor(

@@ -1,12 +1,14 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.models.SupplierRequest
 import uk.gov.gdx.datashare.models.SupplierSubRequest
 import uk.gov.gdx.datashare.services.SuppliersService
@@ -28,6 +30,26 @@ class SuppliersController(
         responseCode = "200",
         description = "Suppliers",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getSuppliers() = suppliersService.getSuppliers()
@@ -40,6 +62,26 @@ class SuppliersController(
       ApiResponse(
         responseCode = "201",
         description = "Supplier Added",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -62,6 +104,26 @@ class SuppliersController(
         responseCode = "200",
         description = "Supplier Subscriptions",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   fun getSupplierSubscriptions() = suppliersService.getSupplierSubscriptions()
@@ -74,6 +136,26 @@ class SuppliersController(
       ApiResponse(
         responseCode = "200",
         description = "Supplier Subscriptions",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -91,6 +173,26 @@ class SuppliersController(
       ApiResponse(
         responseCode = "201",
         description = "Supplier Subscription Added",
+      ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )
@@ -116,7 +218,28 @@ class SuppliersController(
         responseCode = "200",
         description = "Supplier Subscription Updated",
       ),
+      ApiResponse(
+        responseCode = "406",
+        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
+
   )
   fun updateSupplierSubscription(
     @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")

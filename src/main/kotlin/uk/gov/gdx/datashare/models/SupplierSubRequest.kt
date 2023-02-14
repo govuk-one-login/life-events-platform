@@ -7,7 +7,7 @@ import uk.gov.gdx.datashare.enums.EventType
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Supplier Subscription Request")
 data class SupplierSubRequest(
-  @Schema(description = "Client ID", required = true, example = "a-client-id", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{50}\$")
+  @Schema(description = "Client ID", required = true, example = "a-client-id", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{1,50}\$")
   val clientId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,

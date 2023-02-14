@@ -190,7 +190,7 @@ class EventsController(
       description = "Event Types, if none supplied it will be the allowed types for this client",
       required = false,
       maxLength = 40,
-      pattern = "[A-Z_]{40}",
+      pattern = "[A-Z_]{1,40}",
     )
     @RequestParam(name = "filter[eventType]", required = false)
     eventTypes: List<EventType>? = null,

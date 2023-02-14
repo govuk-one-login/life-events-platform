@@ -21,7 +21,7 @@ data class AcquirerSubscription(
   val acquirerSubscriptionId: UUID = UUID.randomUUID(),
   @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
   val acquirerId: UUID,
-  @Schema(description = "Client ID used to access the event platform", required = false, example = "an-oauth-client", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{50}\$")
+  @Schema(description = "Client ID used to access the event platform", required = false, example = "an-oauth-client", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{1,50}\$")
   val oauthClientId: String? = null,
   @Schema(description = "Event type for this subscription", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,

@@ -21,7 +21,7 @@ data class SupplierSubscription(
   val supplierSubscriptionId: UUID = UUID.randomUUID(),
   @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
   val supplierId: UUID,
-  @Schema(description = "Client ID", required = true, example = "a-client-id", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{50}\$")
+  @Schema(description = "Client ID", required = true, example = "a-client-id", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{1,50}\$")
   val clientId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,

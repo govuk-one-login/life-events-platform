@@ -20,7 +20,7 @@ resource "aws_iam_policy" "allow_cloudwatch_metrics" {
 }
 
 module "metrics_dashboard" {
-  source           = "../cloudwatch_dashboard"
+  source           = "../cloudwatch_metrics_dashboard"
   region           = var.region
   dashboard_name   = "${var.environment}-example-consumer-metrics-dashboard"
   metric_namespace = "${var.environment}-example-consumer"

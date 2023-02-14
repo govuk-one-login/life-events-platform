@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.client.*
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.Builder
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
 import java.time.Duration
@@ -28,8 +29,8 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun levApiWebClient(): WebClient {
-    return WebClient.builder()
+  fun levApiWebClient(builder: Builder): WebClient {
+    return builder
       .baseUrl(levApiRootUri)
       .clientConnector(ReactorClientHttpConnector(createHttpClient("levApi")))
       .defaultHeader("X-Auth-Aud", levApiClientName)
@@ -39,11 +40,14 @@ class WebClientConfiguration(
 
   @Bean
   @ConditionalOnProperty(name = ["api.base.prisoner-event.enabled"], havingValue = "true")
-  fun prisonerSearchApiWebClient(prisonerSearchAuthorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+  fun prisonerSearchApiWebClient(
+    builder: Builder,
+    prisonerSearchAuthorizedClientManager: OAuth2AuthorizedClientManager,
+  ): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(prisonerSearchAuthorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId("prisoner-search")
 
-    return WebClient.builder()
+    return builder
       .baseUrl(prisonerSearchApiUri)
       .clientConnector(ReactorClientHttpConnector(createHttpClient("prisonerSearch")))
       .filter(oauth2Client)
@@ -65,8 +69,8 @@ class WebClientConfiguration(
 
   @Bean
   @ConditionalOnProperty(name = ["api.base.prisoner-event.enabled"], havingValue = "true")
-  fun offenderSearchHealthWebClient(): WebClient {
-    return WebClient.builder()
+  fun offenderSearchHealthWebClient(builder: Builder): WebClient {
+    return builder
       .baseUrl(prisonerSearchApiUri)
       .build()
   }

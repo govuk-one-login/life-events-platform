@@ -42,7 +42,7 @@ data class EventNotification(
   @Schema(
     description = "List of data fields that will be returned in this event",
     required = false,
-    example = "[\"firstNames\", \"lastName\"]",
+    example = "firstNames",
   )
   val enrichmentFields: List<EnrichmentField>? = null,
   @Schema(

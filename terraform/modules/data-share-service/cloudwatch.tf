@@ -41,23 +41,43 @@ module "metrics_dashboard" {
       stat   = "Sum",
       metrics = [
         {
-          name       = "API_CALLS.PublishEvent.count",
-          dimensions = { success = true },
+          name = "count.eventsController.publishEvent.count",
+          dimensions = {
+            result    = "success",
+            exception = "none",
+            method    = "publishEvent",
+            class     = "uk.gov.gdx.datashare.controllers.EventsController"
+          },
           attributes = { label = "PublishEvent" }
         },
         {
-          name       = "API_CALLS.GetEvent.count",
-          dimensions = { success = true },
+          name = "count.eventsController.getEvent.count",
+          dimensions = {
+            result    = "success",
+            exception = "none",
+            method    = "getEvent",
+            class     = "uk.gov.gdx.datashare.controllers.EventsController"
+          },
           attributes = { label = "GetEvent" }
         },
         {
-          name       = "API_CALLS.GetEvents.count",
-          dimensions = { success = true },
+          name = "count.eventsController.getEvents.count",
+          dimensions = {
+            result    = "success",
+            exception = "none",
+            method    = "getEvents",
+            class     = "uk.gov.gdx.datashare.controllers.EventsController"
+          },
           attributes = { label = "GetEvents" }
         },
         {
-          name       = "API_CALLS.DeleteEvent.count",
-          dimensions = { success = true },
+          name = "count.eventsController.deleteEvent.count",
+          dimensions = {
+            result    = "success",
+            exception = "none",
+            method    = "deleteEvent",
+            class     = "uk.gov.gdx.datashare.controllers.EventsController"
+          },
           attributes = { label = "DeleteEvent" }
         },
       ]
@@ -68,8 +88,13 @@ module "metrics_dashboard" {
       stat   = "Sum",
       metrics = [
         {
-          name       = "API_CALLS.PublishEvent.count",
-          dimensions = { success = true },
+          name = "count.eventsController.publishEvent.count",
+          dimensions = {
+            result    = "success",
+            exception = "none",
+            method    = "publishEvent",
+            class     = "uk.gov.gdx.datashare.controllers.EventsController"
+          },
           attributes = { label = "PublishEvent" }
         },
         {

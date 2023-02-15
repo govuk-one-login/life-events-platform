@@ -1,8 +1,8 @@
 package uk.gov.gdx.datashare.controllers
 
 import com.toedter.spring.hateoas.jsonapi.MediaTypes.JSON_API_VALUE
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.annotation.Counted
+import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.links.Link
 import io.swagger.v3.oas.annotations.links.LinkParameter
@@ -37,7 +37,6 @@ class EventsController(
   private val eventDataService: EventDataService,
   private val eventApiAuditService: EventApiAuditService,
   private val dataReceiverService: DataReceiverService,
-  private val meterRegistry: MeterRegistry,
 ) : BaseApiController() {
   companion object {
     private const val DEFAULT_PAGE_SIZE = 100
@@ -184,6 +183,8 @@ class EventsController(
       ),
     ],
   )
+  @Timed("time.eventsController.getEvents", percentiles = [0.5, 0.90, 0.99])
+  @Counted("count.eventsController.getEvents")
   fun getEvents(
     @Schema(
       description = "Event Types, if none supplied it will be the allowed types for this client",
@@ -225,13 +226,8 @@ class EventsController(
     @RequestParam(name = "page[size]", defaultValue = "100")
     @Positive
     pageSize: Int,
-  ): PagedModel<EntityModel<EventNotification>> = run {
-    tryCallAndUpdateMetric(
-      { buildEventsResponse(eventTypes, startTime, endTime, pageSize, pageNumber) },
-      meterRegistry.counter("API_CALLS.GetEvents", "success", "true"),
-      meterRegistry.counter("API_CALLS.GetEvents", "success", "false"),
-    )
-  }
+  ): PagedModel<EntityModel<EventNotification>> =
+    buildEventsResponse(eventTypes, startTime, endTime, pageSize, pageNumber)
 
   private fun buildEventsResponse(
     eventTypes: List<EventType>?,
@@ -323,28 +319,24 @@ class EventsController(
       ),
     ],
   )
+  @Timed("time.eventsController.getEvent", percentiles = [0.5, 0.90, 0.99])
+  @Counted("count.eventsController.getEvent")
   fun getEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable
     id: UUID,
   ): EntityModel<EventNotification>? = run {
-    tryCallAndUpdateMetric(
-      {
-        eventDataService.getEvent(id).let {
-          eventApiAuditService.auditEventApiCall(it)
-          EntityModel.of(
-            it,
-            eventLink(id),
-            org.springframework.hateoas.Link.of(
-              eventsLink().toUriComponentsBuilder().scheme("https").build().toUriString(),
-              "collection",
-            ),
-          )
-        }
-      },
-      meterRegistry.counter("API_CALLS.GetEvent", "success", "true"),
-      meterRegistry.counter("API_CALLS.GetEvent", "success", "false"),
-    )
+    eventDataService.getEvent(id).let {
+      eventApiAuditService.auditEventApiCall(it)
+      EntityModel.of(
+        it,
+        eventLink(id),
+        org.springframework.hateoas.Link.of(
+          eventsLink().toUriComponentsBuilder().scheme("https").build().toUriString(),
+          "collection",
+        ),
+      )
+    }
   }
 
   @Tag(name = "01. Acquirer")
@@ -370,20 +362,16 @@ class EventsController(
       ),
     ],
   )
+  @Timed("time.eventsController.deleteEvent", percentiles = [0.5, 0.90, 0.99])
+  @Counted("count.eventsController.deleteEvent")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable
     id: UUID,
   ) {
-    try {
-      val eventNotification = eventDataService.deleteEvent(id)
-      eventApiAuditService.auditEventApiCall(eventNotification)
-      meterRegistry.counter("API_CALLS.DeleteEvent", "success", "true").increment()
-    } catch (e: Exception) {
-      meterRegistry.counter("API_CALLS.DeleteEvent", "success", "false").increment()
-      throw e
-    }
+    val eventNotification = eventDataService.deleteEvent(id)
+    eventApiAuditService.auditEventApiCall(eventNotification)
   }
 
   @Tag(name = "02. Supplier")
@@ -419,6 +407,8 @@ class EventsController(
       ),
     ],
   )
+  @Timed("time.eventsController.publishEvent", percentiles = [0.5, 0.90, 0.99])
+  @Counted("count.eventsController.publishEvent")
   fun publishEvent(
     @Schema(
       description = "Event Payload",
@@ -427,13 +417,7 @@ class EventsController(
     )
     @RequestBody
     eventPayload: EventToPublish,
-  ) = run {
-    tryCallAndUpdateMetric(
-      { dataReceiverService.sendToDataProcessor(eventPayload) },
-      meterRegistry.counter("API_CALLS.PublishEvent", "success", "true"),
-      meterRegistry.counter("API_CALLS.PublishEvent", "success", "false"),
-    )
-  }
+  ) = dataReceiverService.sendToDataProcessor(eventPayload)
 
   private fun eventLink(id: UUID): org.springframework.hateoas.Link =
     org.springframework.hateoas.Link.of(
@@ -450,19 +434,4 @@ class EventsController(
     pageSize: Int = DEFAULT_PAGE_SIZE,
   ): WebMvcLinkBuilder =
     linkTo(methodOn(EventsController::class.java).getEvents(eventTypes, startTime, endTime, pageNumber, pageSize))
-
-  private fun <T> tryCallAndUpdateMetric(
-    call: () -> T,
-    successCounter: Counter,
-    failureCounter: Counter,
-  ): T {
-    try {
-      val result = call()
-      successCounter.increment()
-      return result
-    } catch (e: Exception) {
-      failureCounter.increment()
-      throw e
-    }
-  }
 }

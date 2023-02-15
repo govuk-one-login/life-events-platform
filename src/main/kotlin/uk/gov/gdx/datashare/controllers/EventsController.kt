@@ -20,7 +20,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
@@ -381,16 +380,16 @@ class EventsController(
       ),
     ],
   )
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteEvent(
     @Schema(description = "Event ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
-  ): ResponseEntity<Void> {
+  ) {
     try {
       val eventNotification = eventDataService.deleteEvent(id)
       eventApiAuditService.auditEventApiCall(eventNotification)
       meterRegistry.counter("API_CALLS.DeleteEvent", "success", "true").increment()
-      return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
     } catch (e: Exception) {
       meterRegistry.counter("API_CALLS.DeleteEvent", "success", "false").increment()
       throw e

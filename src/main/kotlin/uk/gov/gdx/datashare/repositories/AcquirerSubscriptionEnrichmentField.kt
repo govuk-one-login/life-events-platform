@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import uk.gov.gdx.datashare.enums.EnrichmentField
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

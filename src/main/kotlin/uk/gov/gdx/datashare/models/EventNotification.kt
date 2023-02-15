@@ -7,6 +7,7 @@ import com.toedter.spring.hateoas.jsonapi.JsonApiTypeForClass
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

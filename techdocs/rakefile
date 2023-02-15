@@ -1,3 +1,0 @@
-require 'middleman-gh-pages'
-
-ENV["PROJECT_ROOT"] = "."

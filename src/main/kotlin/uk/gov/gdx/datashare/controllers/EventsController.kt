@@ -1,8 +1,6 @@
 package uk.gov.gdx.datashare.controllers
 
 import com.toedter.spring.hateoas.jsonapi.MediaTypes.JSON_API_VALUE
-import io.micrometer.core.annotation.Counted
-import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.links.Link
 import io.swagger.v3.oas.annotations.links.LinkParameter
@@ -183,8 +181,6 @@ class EventsController(
       ),
     ],
   )
-  @Timed("time.eventsController.getEvents", percentiles = [0.5, 0.90, 0.99])
-  @Counted("count.eventsController.getEvents")
   fun getEvents(
     @Schema(
       description = "Event Types, if none supplied it will be the allowed types for this client",
@@ -319,8 +315,6 @@ class EventsController(
       ),
     ],
   )
-  @Timed("time.eventsController.getEvent", percentiles = [0.5, 0.90, 0.99])
-  @Counted("count.eventsController.getEvent")
   fun getEvent(
     @Schema(description = "Event ID", required = true)
     @PathVariable
@@ -362,8 +356,6 @@ class EventsController(
       ),
     ],
   )
-  @Timed("time.eventsController.deleteEvent", percentiles = [0.5, 0.90, 0.99])
-  @Counted("count.eventsController.deleteEvent")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteEvent(
     @Schema(description = "Event ID", required = true)
@@ -407,8 +399,6 @@ class EventsController(
       ),
     ],
   )
-  @Timed("time.eventsController.publishEvent", percentiles = [0.5, 0.90, 0.99])
-  @Counted("count.eventsController.publishEvent")
   fun publishEvent(
     @Schema(
       description = "Event Payload",

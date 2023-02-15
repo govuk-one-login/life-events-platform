@@ -2,8 +2,6 @@ package uk.gov.gdx.datashare.config
 
 import io.micrometer.cloudwatch2.CloudWatchConfig
 import io.micrometer.cloudwatch2.CloudWatchMeterRegistry
-import io.micrometer.core.aop.CountedAspect
-import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.logging.LoggingMeterRegistry
@@ -36,12 +34,6 @@ class MicrometerConfiguration {
         cloudWatchAsyncClient(),
       )
     }
-
-  @Bean
-  fun timedAspect(registry: MeterRegistry) = TimedAspect(registry)
-
-  @Bean
-  fun countedAspect(registry: MeterRegistry) = CountedAspect(registry)
 
   private fun setupCloudWatchConfig(namespace: String): CloudWatchConfig {
     val cloudWatchConfig = object : CloudWatchConfig {

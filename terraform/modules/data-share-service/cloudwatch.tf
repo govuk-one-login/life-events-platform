@@ -6,6 +6,35 @@ locals {
     green = "#2ca02c"
     red   = "#d62728"
   }
+
+  publish_event_dimensions = {
+    exception = "None",
+    method    = "POST",
+    uri       = "/events",
+    outcome   = "SUCCESS",
+    status    = "200"
+  }
+  delete_event_dimensions = {
+    exception = "None",
+    method    = "DELETE",
+    uri       = "/events/{id}",
+    outcome   = "SUCCESS",
+    status    = "204"
+  }
+  get_event_dimensions = {
+    exception = "None",
+    method    = "GET",
+    uri       = "/events/{id}",
+    outcome   = "SUCCESS",
+    status    = "200"
+  }
+  get_events_dimensions = {
+    exception = "None",
+    method    = "GET",
+    uri       = "/events",
+    outcome   = "SUCCESS",
+    status    = "200"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "ecs_logs" {
@@ -41,43 +70,23 @@ module "metrics_dashboard" {
       stat   = "Sum",
       metrics = [
         {
-          name = "count.eventsController.publishEvent.count",
-          dimensions = {
-            result    = "success",
-            exception = "none",
-            method    = "publishEvent",
-            class     = "uk.gov.gdx.datashare.controllers.EventsController"
-          },
+          name       = "http.server.requests.count",
+          dimensions = local.publish_event_dimensions,
           attributes = { label = "PublishEvent" }
         },
         {
-          name = "count.eventsController.getEvent.count",
-          dimensions = {
-            result    = "success",
-            exception = "none",
-            method    = "getEvent",
-            class     = "uk.gov.gdx.datashare.controllers.EventsController"
-          },
+          name       = "http.server.requests.count",
+          dimensions = local.get_event_dimensions,
           attributes = { label = "GetEvent" }
         },
         {
-          name = "count.eventsController.getEvents.count",
-          dimensions = {
-            result    = "success",
-            exception = "none",
-            method    = "getEvents",
-            class     = "uk.gov.gdx.datashare.controllers.EventsController"
-          },
+          name       = "http.server.requests.count",
+          dimensions = local.get_events_dimensions,
           attributes = { label = "GetEvents" }
         },
         {
-          name = "count.eventsController.deleteEvent.count",
-          dimensions = {
-            result    = "success",
-            exception = "none",
-            method    = "deleteEvent",
-            class     = "uk.gov.gdx.datashare.controllers.EventsController"
-          },
+          name       = "http.server.requests.count",
+          dimensions = local.delete_event_dimensions,
           attributes = { label = "DeleteEvent" }
         },
       ]
@@ -88,13 +97,8 @@ module "metrics_dashboard" {
       stat   = "Sum",
       metrics = [
         {
-          name = "count.eventsController.publishEvent.count",
-          dimensions = {
-            result    = "success",
-            exception = "none",
-            method    = "publishEvent",
-            class     = "uk.gov.gdx.datashare.controllers.EventsController"
-          },
+          name       = "http.server.requests.count",
+          dimensions = local.publish_event_dimensions,
           attributes = { label = "PublishEvent" }
         },
         {

@@ -181,7 +181,7 @@ class SuppliersController(
     ],
   )
   fun getSubscriptionsForSupplier(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     supplierId: UUID,
   ) = suppliersService.getSubscriptionsForSupplier(supplierId)
@@ -218,7 +218,7 @@ class SuppliersController(
     ],
   )
   fun addSupplierSubscription(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     supplierId: UUID,
     @Schema(
@@ -263,14 +263,14 @@ class SuppliersController(
 
   )
   fun updateSupplierSubscription(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     supplierId: UUID,
     @Schema(
       description = "Supplier Subscription ID",
       required = true,
       example = "00000000-0000-0001-0000-000000000000",
-      pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$",
+      pattern = UUID_REGEX,
     )
     @PathVariable
     subscriptionId: UUID,

@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import uk.gov.gdx.datashare.repositories.*
 import java.util.*
 
@@ -85,7 +86,7 @@ class BaseDataController(
     ],
   )
   fun deleteAcquirer(
-    @Schema(description = "Acquirer ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Acquirer ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = acquirerRepository.deleteById(id)
@@ -151,7 +152,7 @@ class BaseDataController(
     ],
   )
   fun deleteAcquirerSubscription(
-    @Schema(description = "Acquirer Subscription ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Acquirer Subscription ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = acquirerSubscriptionRepository.deleteById(id)
@@ -217,7 +218,7 @@ class BaseDataController(
     ],
   )
   fun deleteEvent(
-    @Schema(description = "Event ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Event ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = eventDataRepository.deleteById(id)
@@ -283,7 +284,7 @@ class BaseDataController(
     ],
   )
   fun deleteSupplier(
-    @Schema(description = "Supplier ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Supplier ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = supplierRepository.deleteById(id)
@@ -349,7 +350,7 @@ class BaseDataController(
     ],
   )
   fun deleteSupplierSubscription(
-    @Schema(description = "Supplier Subscription ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Supplier Subscription ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = supplierSubscriptionRepository.deleteById(id)

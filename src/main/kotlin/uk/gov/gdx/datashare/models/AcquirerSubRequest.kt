@@ -5,13 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Acquirer Subscription Request")
 data class AcquirerSubRequest(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
-  @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client", maxLength = 50, pattern = "^[a-zA-Z0-9-_]{1,50}\$")
+  @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client", maxLength = 50, pattern = CLIENT_ID_REGEX)
   val oauthClientId: String? = null,
   @ArraySchema(
     schema = Schema(

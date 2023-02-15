@@ -25,6 +25,8 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.EVENT_TYPE_REGEX
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import uk.gov.gdx.datashare.helpers.getPageLinks
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.EventToPublish
@@ -190,7 +192,7 @@ class EventsController(
       description = "Event Types, if none supplied it will be the allowed types for this client",
       required = false,
       maxLength = 40,
-      pattern = "[A-Z_]{1,40}",
+      pattern = EVENT_TYPE_REGEX,
     )
     @RequestParam(name = "filter[eventType]", required = false)
     eventTypes: List<EventType>? = null,
@@ -333,7 +335,7 @@ class EventsController(
     ],
   )
   fun getEvent(
-    @Schema(description = "Event ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Event ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ): EntityModel<EventNotification>? = run {
@@ -380,7 +382,7 @@ class EventsController(
     ],
   )
   fun deleteEvent(
-    @Schema(description = "Event ID", required = true, pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Event ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ): ResponseEntity<Void> {

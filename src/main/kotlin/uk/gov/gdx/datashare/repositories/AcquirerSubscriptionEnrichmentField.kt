@@ -17,7 +17,7 @@ data class AcquirerSubscriptionEnrichmentField(
   @Id
   @Column("id")
   val acquirerSubscriptionEnrichmentFieldId: UUID = UUID.randomUUID(),
-  @Schema(description = "Acquirer subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+  @Schema(description = "Acquirer subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val acquirerSubscriptionId: UUID,
   @Schema(description = "Enrichment field name", required = true, example = "firstName")
   val enrichmentField: EnrichmentField,

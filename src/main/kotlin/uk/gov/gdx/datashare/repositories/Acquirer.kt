@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
+import uk.gov.gdx.datashare.enums.RegExConstants
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.time.LocalDateTime
 import java.util.*
 
@@ -16,9 +18,9 @@ import java.util.*
 data class Acquirer(
   @Id
   @Column("id")
-  @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+  @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val acquirerId: UUID = UUID.randomUUID(),
-  @Schema(description = "Acquirer Name", required = true, example = "DVLA", maxLength = 80, pattern = "^[a-zA-Z\\d. _-]{1,80}\$")
+  @Schema(description = "Acquirer Name", required = true, example = "DVLA", maxLength = 80, pattern = RegExConstants.SUP_ACQ_NAME_REGEX)
   val name: String,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 

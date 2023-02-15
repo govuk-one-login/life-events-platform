@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
 import uk.gov.gdx.datashare.models.AcquirerSubscriptionDto
@@ -181,7 +182,7 @@ class AcquirersController(
     ],
   )
   fun getSubscriptionsForAcquirer(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     acquirerId: UUID,
   ) = acquirersService.getSubscriptionsForAcquirer(acquirerId)
@@ -218,7 +219,7 @@ class AcquirersController(
     ],
   )
   fun addAcquirerSubscription(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     acquirerId: UUID,
     @Schema(
@@ -262,10 +263,10 @@ class AcquirersController(
     ],
   )
   fun updateAcquirerSubscription(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     acquirerId: UUID,
-    @Schema(description = "Acquirer Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}\$")
+    @Schema(description = "Acquirer Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     subscriptionId: UUID,
     @Schema(

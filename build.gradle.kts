@@ -73,7 +73,7 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("io.micrometer:micrometer-core:1.10.3")
+  implementation("io.micrometer:micrometer-core:1.10.4")
   implementation("io.micrometer:micrometer-registry-cloudwatch2:1.10.3")
   implementation("io.opentelemetry:opentelemetry-api:1.23.0")
 

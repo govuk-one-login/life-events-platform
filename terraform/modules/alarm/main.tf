@@ -16,26 +16,12 @@ resource "aws_cloudwatch_metric_alarm" "error_rate_alarms" {
   }
 
   metric_query {
-    id = "errors"
-    metric {
-      metric_name = var.error_metric.name
-      namespace   = var.error_metric.namespace
-      period      = "300"
-      stat        = "Sum"
-
-      dimensions = var.error_metric.dimensions
-    }
+    id         = "errors"
+    expression = var.error_metric_query
   }
 
   metric_query {
-    id = "successful_requests"
-    metric {
-      metric_name = var.success_metric.name
-      namespace   = var.success_metric.namespace
-      period      = "300"
-      stat        = "Sum"
-
-      dimensions = var.success_metric.dimensions
-    }
+    id         = "successful_requests"
+    expression = var.success_metric_query
   }
 }

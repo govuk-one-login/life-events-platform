@@ -89,7 +89,9 @@ management:
   metrics:
     distribution:
       percentiles:
-        http.server.requests: 0.9,0.99
+        http:
+          server.requests: 0.9,0.99
+          client.requests: 0.9,0.99
 
 springdoc:
   swagger-ui:

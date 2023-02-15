@@ -6,20 +6,12 @@ variable "alarm_description" {
   type = string
 }
 
-variable "error_metric" {
-  type = object({
-    name       = string,
-    namespace  = string,
-    dimensions = optional(map(string)),
-  })
+variable "error_metric_query" {
+  type = string
 }
 
-variable "success_metric" {
-  type = object({
-    name       = string,
-    namespace  = string,
-    dimensions = optional(map(string)),
-  })
+variable "success_metric_query" {
+  type = string
 }
 
 variable "alarm_action" {

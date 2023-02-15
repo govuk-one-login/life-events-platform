@@ -1,8 +1,6 @@
 package uk.gov.gdx.datashare.services
 
 import com.amazonaws.xray.spring.aop.XRayEnabled
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -14,26 +12,15 @@ import uk.gov.gdx.datashare.models.PrisonerRecord
 @XRayEnabled
 class PrisonerApiService(
   private val prisonerSearchApiWebClient: WebClient,
-  meterRegistry: MeterRegistry,
 ) {
-  private val callsToPrisonerSearchCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPrisonerSearch")
-  private val responsesFromPrisonerSearchCounter: Counter =
-    meterRegistry.counter("API_RESPONSES.ResponsesFromPrisonerSearch")
-  private val errorsFromPrisonerSearchCounter: Counter =
-    meterRegistry.counter("API_RESPONSES.ErrorsFromPrisonerSearch")
-
   fun findPrisonerById(id: String): PrisonerRecord? {
-    return try {
-      callsToPrisonerSearchCounter.increment()
-
+    try {
       val prisonerRecord = prisonerSearchApiWebClient.get()
-        .uri("/prisoner/$id")
+        .uri("/prisoner/{id}", id)
         .retrieve()
         .bodyToMono(PrisonerRecord::class.java)
-      responsesFromPrisonerSearchCounter.increment()
-      prisonerRecord.block()
+      return prisonerRecord.block()
     } catch (e: WebClientResponseException) {
-      errorsFromPrisonerSearchCounter.increment()
       throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) {
         NoDataFoundException(id)
       } else {

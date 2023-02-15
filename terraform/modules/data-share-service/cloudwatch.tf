@@ -92,23 +92,27 @@ module "metrics_dashboard" {
       ]
     },
     {
-      title  = "Data ingest calls",
+      title  = "Data enrichment calls",
       period = local.metric_period,
       stat   = "Sum",
       metrics = [
         {
           name       = "http.server.requests.count",
-          dimensions = local.publish_event_dimensions,
-          attributes = { label = "PublishEvent" }
+          dimensions = local.get_event_dimensions,
+          attributes = { label = "Get event calls", color = local.metric_colours.green }
         },
         {
-          name       = "API_CALLS.CallsToLev.count",
-          attributes = { label = "CallsToLev" }
+          dimensions = {
+            expression = "SUM(SEARCH('\"${local.metric_namespace}\" MetricName=\"http.client.requests.count\" uri=\"/v1/registration/death/{id}\"', 'Sum', ${local.metric_period}))"
+          },
+          attributes = { label = "Total LEV calls", color = local.metric_colours.blue }
         },
         {
-          name       = "API_RESPONSES.ResponsesFromLev.count",
-          attributes = { label = "ResponsesFromLev" }
-        },
+          dimensions = {
+            expression = "SEARCH('\"${local.metric_namespace}\" MetricName=\"http.client.requests.count\" uri=\"/v1/registration/death/{id}\" NOT outcome=\"SUCCESS\"', 'Sum', ${local.metric_period})"
+          },
+          attributes = { label = "LEV errors", color = local.metric_colours.red }
+        }
       ]
     },
     {

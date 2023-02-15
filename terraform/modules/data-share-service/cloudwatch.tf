@@ -160,7 +160,7 @@ module "request_alarm_dashboard" {
   dashboard_name   = "${var.environment}-request-alarm-dashboard"
   metric_namespace = local.metric_namespace
   widgets = [
-    for alarm in module.error_rate_alarm :
+    for alarm in module.error_rate_alarms :
     {
       title  = alarm.alarm_description,
       alarms = [alarm.alarm_arn]

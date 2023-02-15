@@ -5,11 +5,11 @@ locals {
       alarm_name        = "${local.alarm_prefix}-lev-error-rate",
       alarm_description = "LEV error rate",
       error_metric = {
-        name      = "API_RESPONSES.ResponsesFromLev",
+        name      = "API_RESPONSES.ErrorsFromLev",
         namespace = local.metric_namespace,
       },
       success_metric = {
-        name      = "API_RESPONSES.ErrorsFromLev",
+        name      = "API_RESPONSES.ResponsesFromLev",
         namespace = local.metric_namespace,
       },
     },
@@ -17,11 +17,11 @@ locals {
       alarm_name        = "${local.alarm_prefix}-prisoner-search-error-rate",
       alarm_description = "Prisoner search error rate",
       error_metric = {
-        name      = "API_RESPONSES.ResponsesFromPrisonerSearch",
+        name      = "API_RESPONSES.ErrorsFromPrisonerSearch",
         namespace = local.metric_namespace,
       },
       success_metric = {
-        name      = "API_RESPONSES.ErrorsFromPrisonerSearch",
+        name      = "API_RESPONSES.ResponsesFromPrisonerSearch",
         namespace = local.metric_namespace,
       },
     },
@@ -100,7 +100,7 @@ locals {
   }
 }
 
-module "error_rate_alarm" {
+module "error_rate_alarms" {
   source   = "../alarm"
   for_each = local.alarms
 
@@ -108,7 +108,7 @@ module "error_rate_alarm" {
   alarm_description = each.value.alarm_description
   error_metric      = each.value.error_metric
   success_metric    = each.value.success_metric
-  alarm_action      = aws_cloudformation_stack.sns_alarm_topic.outputs["ARN"]
+  alarm_action      = aws_sns_topic.sns_alarm_topic.arn
 }
 
 resource "aws_cloudwatch_metric_alarm" "queue_process_error_rate" {
@@ -118,8 +118,8 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_rate" {
   threshold           = "10"
   alarm_description   = "Queue processor error rate"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_cloudformation_stack.sns_alarm_topic.outputs["ARN"]]
-  ok_actions          = [aws_cloudformation_stack.sns_alarm_topic.outputs["ARN"]]
+  alarm_actions       = [aws_sns_topic.sns_alarm_topic.arn]
+  ok_actions          = [aws_sns_topic.sns_alarm_topic.arn]
 
   metric_query {
     id          = "error_rate"
@@ -164,8 +164,8 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_number" {
   threshold           = "1"
   alarm_description   = "Events added to dead letter queue"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_cloudformation_stack.sns_alarm_topic.outputs["ARN"]]
-  ok_actions          = [aws_cloudformation_stack.sns_alarm_topic.outputs["ARN"]]
+  alarm_actions       = [aws_sns_topic.sns_alarm_topic.arn]
+  ok_actions          = [aws_sns_topic.sns_alarm_topic.arn]
 
   metric_name = "NumberOfMessagesReceived"
   namespace   = "AWS/SQS"

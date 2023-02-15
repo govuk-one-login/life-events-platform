@@ -1,34 +1,14 @@
 locals {
   notification_emails = []
-  prefix              = "${var.environment}-gdx-data-share"
 }
 
-resource "aws_cloudformation_stack" "sns_alarm_topic" {
-  name = "${local.prefix}-alarms-topic"
+resource "aws_sns_topic" "sns_alarm_topic" {
+  name = "${var.environment}-gdx-alarms"
+}
 
-  template_body = jsonencode(
-    {
-      "AWSTemplateFormatVersion" : "2010-09-09",
-      "Resources" : {
-        "EmailSNSTopic" : {
-          "Type" : "AWS::SNS::Topic",
-          "Properties" : {
-            "DisplayName" : "Softwire - ${local.prefix}-alarms",
-            "Subscription" : [
-              for address in local.notification_emails : {
-                Endpoint = address
-                Protocol = "email"
-              }
-            ]
-          }
-        }
-      },
-      "Outputs" : {
-        "ARN" : {
-          "Description" : "Email SNS Topic ARN",
-          "Value" : { "Ref" : "EmailSNSTopic" }
-        }
-      }
-    }
-  )
+resource "aws_sns_topic_subscription" "user_updates_sqs_target" {
+  for_each  = toset(local.notification_emails)
+  topic_arn = aws_sns_topic.sns_alarm_topic.arn
+  protocol  = "email"
+  endpoint  = each.key
 }

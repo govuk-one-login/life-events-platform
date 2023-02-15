@@ -1,4 +1,4 @@
-resource "aws_cloudwatch_metric_alarm" "error_rate_alarm" {
+resource "aws_cloudwatch_metric_alarm" "error_rate_alarms" {
   alarm_name          = var.alarm_name
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "2"
@@ -10,7 +10,7 @@ resource "aws_cloudwatch_metric_alarm" "error_rate_alarm" {
 
   metric_query {
     id          = "error_rate"
-    expression  = "IF(successful_requests + errors > 10, 100*errors/(successful_requests + errors), 0)"
+    expression  = "IF(successful_requests + errors > 10, 100 * errors/(successful_requests + errors), 0)"
     label       = "Error Rate"
     return_data = "true"
   }

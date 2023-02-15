@@ -21,6 +21,7 @@ class LevApiService(
 ) {
   private val callsToLevCounter: Counter = meterRegistry.counter("API_CALLS.CallsToLev")
   private val responsesFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromLev")
+  private val errorsFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ErrorsFromLev")
 
   fun findDeathById(id: Int): List<LevDeathRecord> {
     try {
@@ -34,6 +35,7 @@ class LevApiService(
         deathRecord.toList()
       }
     } catch (e: WebClientResponseException) {
+      errorsFromLevCounter.increment()
       throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) {
         NoDataFoundException(id.toString())
       } else {

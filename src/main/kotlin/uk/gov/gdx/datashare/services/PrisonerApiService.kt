@@ -19,6 +19,8 @@ class PrisonerApiService(
   private val callsToPrisonerSearchCounter: Counter = meterRegistry.counter("API_CALLS.CallsToPrisonerSearch")
   private val responsesFromPrisonerSearchCounter: Counter =
     meterRegistry.counter("API_RESPONSES.ResponsesFromPrisonerSearch")
+  private val errorsFromPrisonerSearchCounter: Counter =
+    meterRegistry.counter("API_RESPONSES.ErrorsFromPrisonerSearch")
 
   fun findPrisonerById(id: String): PrisonerRecord? {
     return try {
@@ -31,6 +33,7 @@ class PrisonerApiService(
       responsesFromPrisonerSearchCounter.increment()
       prisonerRecord.block()
     } catch (e: WebClientResponseException) {
+      errorsFromPrisonerSearchCounter.increment()
       throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) {
         NoDataFoundException(id)
       } else {

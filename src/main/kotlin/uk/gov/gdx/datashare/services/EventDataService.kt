@@ -2,8 +2,11 @@ package uk.gov.gdx.datashare.services
 
 import com.amazonaws.xray.spring.aop.XRayEnabled
 import io.micrometer.core.instrument.MeterRegistry
+import net.javacrumbs.shedlock.core.LockAssert
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
@@ -18,6 +21,7 @@ import uk.gov.gdx.datashare.repositories.*
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Service
 @Transactional
@@ -121,6 +125,15 @@ class EventDataService(
     meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
       .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
     return mapEventNotification(event, acquirerSubscription, emptyList(), false)
+  }
+
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+  @SchedulerLock(name = "countUnconsumedEvents", lockAtMostFor = "3m", lockAtLeastFor = "3m")
+  fun countUnconsumedEvents() {
+    LockAssert.assertLocked()
+    log.debug("Looking for unconsumed events")
+    val unconsumedEventsCount = eventDataRepository.findAll().count()
+    meterRegistry.gauge("UnconsumedEvents", unconsumedEventsCount)
   }
 
   private fun mapEventNotification(

@@ -16,10 +16,14 @@ class ResourceServerConfiguration {
       .csrf { it.disable() } // csrf not needed on a rest api
       .authorizeHttpRequests { requests ->
         requests.requestMatchers(
-          "/webjars/**", "/favicon.ico", "/csrf",
-          "/health/**", "/info", "/h2-console/**",
-          "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
-          "/queue-admin/retry-all-dlqs", "/metrics/**",
+          "/favicon.ico",
+          "/health/**",
+          "/info",
+          "/v3/api-docs/**",
+          "/v3/api-docs.yaml",
+          "/swagger-ui/**",
+          "/swagger-ui.html",
+          "/metrics/**",
         ).permitAll().anyRequest().authenticated()
       }
       .oauth2ResourceServer { it.jwt() }

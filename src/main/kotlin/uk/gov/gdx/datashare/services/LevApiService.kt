@@ -1,8 +1,6 @@
 package uk.gov.gdx.datashare.services
 
 import com.amazonaws.xray.spring.aop.XRayEnabled
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.springframework.http.HttpStatus
@@ -17,25 +15,17 @@ import uk.gov.gdx.datashare.models.LevDeathRecord
 @XRayEnabled
 class LevApiService(
   private val levApiWebClient: WebClient,
-  meterRegistry: MeterRegistry,
 ) {
-  private val callsToLevCounter: Counter = meterRegistry.counter("API_CALLS.CallsToLev")
-  private val responsesFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ResponsesFromLev")
-  private val errorsFromLevCounter: Counter = meterRegistry.counter("API_RESPONSES.ErrorsFromLev")
-
   fun findDeathById(id: Int): List<LevDeathRecord> {
     try {
-      callsToLevCounter.increment()
       return runBlocking {
         val deathRecord = levApiWebClient.get()
-          .uri("/v1/registration/death/$id")
+          .uri("/v1/registration/death/{id}", id)
           .retrieve()
           .bodyToFlow<LevDeathRecord>()
-        responsesFromLevCounter.increment()
         deathRecord.toList()
       }
     } catch (e: WebClientResponseException) {
-      errorsFromLevCounter.increment()
       throw if (e.statusCode.equals(HttpStatus.NOT_FOUND)) {
         NoDataFoundException(id.toString())
       } else {

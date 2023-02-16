@@ -1,7 +1,5 @@
 package uk.gov.gdx.datashare.controllers
 
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -26,27 +24,8 @@ class EventsControllerTest {
   private val eventDataService = mockk<EventDataService>()
   private val eventApiAuditService = mockk<EventApiAuditService>()
   private val dataReceiverService = mockk<DataReceiverService>()
-  private val meterRegistry = mockk<MeterRegistry>()
-  private val getEventCounter = mockk<Counter>()
-  private val getEventsCounter = mockk<Counter>()
-  private val deleteEventCounter = mockk<Counter>()
-  private val publishEventCounter = mockk<Counter>()
 
-  private val underTest: EventsController
-
-  init {
-    every { meterRegistry.counter("API_CALLS.GetEvent", *anyVararg()) }.returns(getEventCounter)
-    every { meterRegistry.counter("API_CALLS.GetEvents", *anyVararg()) }.returns(getEventsCounter)
-    every { meterRegistry.counter("API_CALLS.DeleteEvent", *anyVararg()) }.returns(deleteEventCounter)
-    every { meterRegistry.counter("API_CALLS.PublishEvent", *anyVararg()) }.returns(publishEventCounter)
-
-    every { getEventCounter.increment() }.returns(Unit)
-    every { getEventsCounter.increment() }.returns(Unit)
-    every { deleteEventCounter.increment() }.returns(Unit)
-    every { publishEventCounter.increment() }.returns(Unit)
-
-    underTest = EventsController(eventDataService, eventApiAuditService, dataReceiverService, meterRegistry)
-  }
+  private val underTest = EventsController(eventDataService, eventApiAuditService, dataReceiverService)
 
   @ParameterizedTest
   @MethodSource("provideLocalDateTimes")
@@ -86,7 +65,6 @@ class EventsControllerTest {
     assertThat(eventsOutput.content).hasSize(2)
     assertThat(eventsOutput.content.map { it.content }).isEqualTo(events)
     assertThat(eventsOutput.metadata?.totalElements).isEqualTo(2)
-    verify(exactly = 1) { getEventsCounter.increment() }
     verify(exactly = 1) { eventApiAuditService.auditEventApiCall(events) }
   }
 
@@ -118,7 +96,6 @@ class EventsControllerTest {
     val eventOutput = underTest.getEvent(event.eventId)
 
     assertThat(eventOutput?.content).isEqualTo(event)
-    verify(exactly = 1) { getEventCounter.increment() }
     verify(exactly = 1) { eventApiAuditService.auditEventApiCall(event) }
   }
 
@@ -137,7 +114,6 @@ class EventsControllerTest {
     underTest.deleteEvent(event.eventId)
 
     verify(exactly = 1) { eventDataService.deleteEvent(event.eventId) }
-    verify(exactly = 1) { deleteEventCounter.increment() }
     verify(exactly = 1) { eventApiAuditService.auditEventApiCall(event) }
   }
 
@@ -166,7 +142,6 @@ class EventsControllerTest {
 
     underTest.publishEvent(event)
 
-    verify(exactly = 1) { publishEventCounter.increment() }
     verify(exactly = 1) { dataReceiverService.sendToDataProcessor(event) }
   }
 

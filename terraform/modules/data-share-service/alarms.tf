@@ -1,47 +1,101 @@
 locals {
-  alarm_prefix        = "${var.environment}-gdx"
-  client_query_prefix = "SUM(SEARCH('\"${local.metric_namespace}\" MetricName=\"http.client.requests.count\" uri="
-  server_query_prefix = "SUM(SEARCH('\"${local.metric_namespace}\" MetricName=\"http.server.requests.count\" uri="
-
-  query_suffix = "', 'Sum', ${local.metric_period}))"
-
-
+  alarm_prefix = "${var.environment}-gdx"
   alarms = {
     lev_error_rate = {
-      alarm_name           = "${local.alarm_prefix}-lev-error-rate",
-      alarm_description    = "LEV error rate",
-      error_metric_query   = "${local.client_query_prefix}\"/v1/registration/death/{id}\" NOT outcome=\"SUCCESS\"${local.query_suffix}"
-      success_metric_query = "${local.client_query_prefix}\"/v1/registration/death/{id}\" outcome=\"SUCCESS\"${local.query_suffix}"
+      alarm_name        = "${local.alarm_prefix}-lev-error-rate",
+      alarm_description = "LEV error rate",
+      error_metric = {
+        name      = "API_RESPONSES.ErrorsFromLev",
+        namespace = local.metric_namespace,
+      },
+      success_metric = {
+        name      = "API_RESPONSES.ResponsesFromLev",
+        namespace = local.metric_namespace,
+      },
     },
     prisoner_search_error_rate = {
-      alarm_name           = "${local.alarm_prefix}-prisoner-search-error-rate",
-      alarm_description    = "Prisoner search error rate",
-      error_metric_query   = "${local.client_query_prefix}\"/prisoner/{id}\" NOT outcome=\"SUCCESS\"${local.query_suffix}"
-      success_metric_query = "${local.client_query_prefix}\"/prisoner/{id}\" outcome=\"SUCCESS\"${local.query_suffix}"
+      alarm_name        = "${local.alarm_prefix}-prisoner-search-error-rate",
+      alarm_description = "Prisoner search error rate",
+      error_metric = {
+        name      = "API_RESPONSES.ErrorsFromPrisonerSearch",
+        namespace = local.metric_namespace,
+      },
+      success_metric = {
+        name      = "API_RESPONSES.ResponsesFromPrisonerSearch",
+        namespace = local.metric_namespace,
+      },
     },
     get_event_error_rate = {
-      alarm_name           = "${local.alarm_prefix}-get-event-error-rate",
-      alarm_description    = "Get event error rate",
-      error_metric_query   = "${local.server_query_prefix}\"/events/{id}\" method=\"GET\" NOT outcome=\"SUCCESS\"${local.query_suffix}"
-      success_metric_query = "${local.server_query_prefix}\"/events/{id}\" method=\"GET\" outcome=\"SUCCESS\"${local.query_suffix}"
+      alarm_name        = "${local.alarm_prefix}-get-event-error-rate",
+      alarm_description = "Get event error rate",
+      error_metric = {
+        name      = "API_CALLS.GetEvent",
+        namespace = local.metric_namespace,
+        dimensions = {
+          success = false
+        }
+      },
+      success_metric = {
+        name      = "API_CALLS.GetEvent",
+        namespace = local.metric_namespace,
+        dimensions = {
+          success = true
+        }
+      },
     },
     get_events_error_rate = {
-      alarm_name           = "${local.alarm_prefix}-get-events-error-rate",
-      alarm_description    = "Get events error rate",
-      error_metric_query   = "${local.server_query_prefix}\"/events\" method=\"GET\" NOT outcome=\"SUCCESS\"${local.query_suffix}"
-      success_metric_query = "${local.server_query_prefix}\"/events\" method=\"GET\" outcome=\"SUCCESS\"${local.query_suffix}"
+      alarm_name        = "${local.alarm_prefix}-get-events-error-rate",
+      alarm_description = "Get events error rate",
+      error_metric = {
+        name      = "API_CALLS.GetEvents",
+        namespace = local.metric_namespace,
+        dimensions = {
+          success = false
+        }
+      },
+      success_metric = {
+        name      = "API_CALLS.GetEvents",
+        namespace = local.metric_namespace,
+        dimensions = {
+          success = true
+        }
+      },
     },
     delete_event_error_rate = {
-      alarm_name           = "${local.alarm_prefix}-delete-event-error-rate",
-      alarm_description    = "Delete event error rate",
-      error_metric_query   = "${local.server_query_prefix}\"/events/{id}\" method=\"DELETE\" NOT outcome=\"SUCCESS\"${local.query_suffix}"
-      success_metric_query = "${local.server_query_prefix}\"/events/{id}\" method=\"DELETE\" outcome=\"SUCCESS\"${local.query_suffix}"
+      alarm_name        = "${local.alarm_prefix}-delete-event-error-rate",
+      alarm_description = "Delete event error rate",
+      error_metric = {
+        name      = "API_CALLS.DeleteEvent",
+        namespace = local.metric_namespace,
+        dimensions = {
+          success = false
+        }
+      },
+      success_metric = {
+        name      = "API_CALLS.DeleteEvent",
+        namespace = local.metric_namespace,
+        dimensions = {
+          success = true
+        }
+      },
     },
     publish_event_error_rate = {
-      alarm_name           = "${local.alarm_prefix}-publish-event-error-rate",
-      alarm_description    = "Publish event error rate",
-      error_metric_query   = "${local.server_query_prefix}\"/events\" method=\"POST\" NOT outcome=\"SUCCESS\"${local.query_suffix}"
-      success_metric_query = "${local.server_query_prefix}\"/events\" method=\"POST\" outcome=\"SUCCESS\"${local.query_suffix}"
+      alarm_name        = "${local.alarm_prefix}-publish-event-error-rate",
+      alarm_description = "Publish event error rate",
+      error_metric = {
+        name      = "API_CALLS.PublishEvent",
+        namespace = local.metric_namespace,
+        dimensions = {
+          success = false
+        }
+      },
+      success_metric = {
+        name      = "API_CALLS.PublishEvent",
+        namespace = local.metric_namespace,
+        dimensions = {
+          success = true
+        }
+      },
     },
   }
 }
@@ -50,11 +104,11 @@ module "error_rate_alarms" {
   source   = "../alarm"
   for_each = local.alarms
 
-  alarm_name           = each.value.alarm_name
-  alarm_description    = each.value.alarm_description
-  error_metric_query   = each.value.error_metric_query
-  success_metric_query = each.value.success_metric_query
-  alarm_action         = aws_sns_topic.sns_alarm_topic.arn
+  alarm_name        = each.value.alarm_name
+  alarm_description = each.value.alarm_description
+  error_metric      = each.value.error_metric
+  success_metric    = each.value.success_metric
+  alarm_action      = aws_sns_topic.sns_alarm_topic.arn
 }
 
 resource "aws_cloudwatch_metric_alarm" "queue_process_error_rate" {

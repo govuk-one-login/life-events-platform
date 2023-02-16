@@ -50,11 +50,11 @@ module "error_rate_alarms" {
   source   = "../alarm"
   for_each = local.alarms
 
-  alarm_name        = each.value.alarm_name
-  alarm_description = each.value.alarm_description
-  error_metric      = each.value.error_metric
-  success_metric    = each.value.success_metric
-  alarm_action      = aws_sns_topic.sns_alarm_topic.arn
+  alarm_name           = each.value.alarm_name
+  alarm_description    = each.value.alarm_description
+  error_metric_query   = each.value.error_metric_query
+  success_metric_query = each.value.success_metric_query
+  alarm_action         = aws_sns_topic.sns_alarm_topic.arn
 }
 
 resource "aws_cloudwatch_metric_alarm" "queue_process_error_rate" {

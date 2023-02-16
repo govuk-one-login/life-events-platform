@@ -22,6 +22,7 @@ data class Acquirer(
   val acquirerId: UUID = UUID.randomUUID(),
   @Schema(description = "Acquirer Name", required = true, example = "DVLA", maxLength = 80, pattern = RegExConstants.SUP_ACQ_NAME_REGEX)
   val name: String,
+  @Schema(description = "Indicates when the Acquirer was created", required = true, example = "2023-01-04T12:30:00")
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient

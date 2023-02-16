@@ -34,6 +34,7 @@ data class AcquirerSubscription(
     example = "false",
   )
   val enrichmentFieldsIncludedInPoll: Boolean = false,
+  @Schema(description = "Indicates when the Acquirer Subscription was created", required = true, example = "2023-01-04T12:30:00")
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient

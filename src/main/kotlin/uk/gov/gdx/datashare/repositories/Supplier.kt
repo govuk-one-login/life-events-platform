@@ -23,6 +23,7 @@ data class Supplier(
   val supplierId: UUID = UUID.randomUUID(),
   @Schema(description = "Supplier Name", required = true, example = "HMPO", maxLength = 80, pattern = RegExConstants.SUP_ACQ_NAME_REGEX)
   val name: String,
+  @Schema(description = "Indicates when the Supplier was created", required = true, example = "2023-01-04T12:30:00")
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient

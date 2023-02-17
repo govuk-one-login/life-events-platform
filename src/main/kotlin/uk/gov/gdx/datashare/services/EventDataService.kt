@@ -123,7 +123,6 @@ class EventDataService(
     return mapEventNotification(event, acquirerSubscription, emptyList(), false)
   }
 
-
   private fun mapEventNotification(
     event: EventData,
     subscription: AcquirerSubscription,

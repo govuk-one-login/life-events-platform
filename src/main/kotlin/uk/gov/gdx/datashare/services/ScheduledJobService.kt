@@ -22,5 +22,3 @@ class ScheduledJobService(
     meterRegistry.gauge("UnconsumedEvents", unconsumedEventsCount)
   }
 }
-
-

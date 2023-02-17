@@ -13,17 +13,20 @@ import org.springframework.data.convert.ReadingConverter
 import org.springframework.data.convert.WritingConverter
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
+import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.time.LocalDateTime
 import java.util.UUID
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Event Api Audit")
 class EventApiAudit(
   @Id
   @Column("id")
-  @Schema(description = "Audit ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  @Schema(description = "Audit ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val auditId: UUID = UUID.randomUUID(),
 
-  @Schema(description = "Oauth ID of client making call", required = true, example = "alskd987")
+  @Schema(description = "Oauth ID of client making call", required = true, example = "alskd987", maxLength = 50, pattern = CLIENT_ID_REGEX)
   val oauthClientId: String,
   @Schema(description = "URL", required = true, example = "https://d33v84mi0vopmk.cloudfront.net/events")
   val url: String,
@@ -42,6 +45,7 @@ class EventApiAudit(
 
 ) : Persistable<UUID> {
 
+  @JsonIgnore
   override fun getId(): UUID = auditId
 
   override fun isNew(): Boolean = new

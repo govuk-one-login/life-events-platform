@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import uk.gov.gdx.datashare.repositories.*
 import java.util.*
 
@@ -31,14 +33,10 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Acquirers",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = Acquirer::class)),
           ),
         ],
       ),
@@ -54,7 +52,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getAcquirers() = acquirerRepository.findAll()
+  fun getAcquirers() = acquirerRepository.findAll().toList()
 
   @DeleteMapping("/acquirers/{id}")
   @Operation(
@@ -78,7 +76,7 @@ class BaseDataController(
     ],
   )
   fun deleteAcquirer(
-    @Schema(description = "Acquirer ID", required = true)
+    @Schema(description = "Acquirer ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = acquirerRepository.deleteById(id)
@@ -91,14 +89,10 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Acquirer Subscriptions",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = AcquirerSubscription::class)),
           ),
         ],
       ),
@@ -114,7 +108,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getAcquirerSubscriptions() = acquirerSubscriptionRepository.findAll()
+  fun getAcquirerSubscriptions() = acquirerSubscriptionRepository.findAll().toList()
 
   @DeleteMapping("/acquirerSubscriptions/{id}")
   @Operation(
@@ -138,7 +132,7 @@ class BaseDataController(
     ],
   )
   fun deleteAcquirerSubscription(
-    @Schema(description = "Acquirer Subscription ID", required = true)
+    @Schema(description = "Acquirer Subscription ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = acquirerSubscriptionRepository.deleteById(id)
@@ -151,14 +145,10 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Event",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = EventData::class)),
           ),
         ],
       ),
@@ -174,7 +164,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getEvents() = eventDataRepository.findAll()
+  fun getEvents() = eventDataRepository.findAll().toList()
 
   @DeleteMapping("/events/{id}")
   @Operation(
@@ -198,7 +188,7 @@ class BaseDataController(
     ],
   )
   fun deleteEvent(
-    @Schema(description = "Event ID", required = true)
+    @Schema(description = "Event ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = eventDataRepository.deleteById(id)
@@ -211,14 +201,10 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Suppliers",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = Supplier::class)),
           ),
         ],
       ),
@@ -234,7 +220,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getSuppliers() = supplierRepository.findAll()
+  fun getSuppliers() = supplierRepository.findAll().toList()
 
   @DeleteMapping("/suppliers/{id}")
   @Operation(
@@ -258,7 +244,7 @@ class BaseDataController(
     ],
   )
   fun deleteSupplier(
-    @Schema(description = "Supplier ID", required = true)
+    @Schema(description = "Supplier ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = supplierRepository.deleteById(id)
@@ -271,14 +257,10 @@ class BaseDataController(
       ApiResponse(
         responseCode = "200",
         description = "Supplier Subscriptions",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = SupplierSubscription::class)),
           ),
         ],
       ),
@@ -294,7 +276,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getSupplierSubscriptions() = supplierSubscriptionRepository.findAll()
+  fun getSupplierSubscriptions() = supplierSubscriptionRepository.findAll().toList()
 
   @DeleteMapping("/supplierSubscriptions/{id}")
   @Operation(
@@ -318,7 +300,7 @@ class BaseDataController(
     ],
   )
   fun deleteSupplierSubscription(
-    @Schema(description = "Supplier Subscription ID", required = true)
+    @Schema(description = "Supplier Subscription ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) = supplierSubscriptionRepository.deleteById(id)

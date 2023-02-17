@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -9,8 +10,11 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import uk.gov.gdx.datashare.models.SupplierRequest
 import uk.gov.gdx.datashare.models.SupplierSubRequest
+import uk.gov.gdx.datashare.repositories.Supplier
+import uk.gov.gdx.datashare.repositories.SupplierSubscription
 import uk.gov.gdx.datashare.services.SuppliersService
 import java.util.*
 
@@ -29,14 +33,10 @@ class SuppliersController(
       ApiResponse(
         responseCode = "200",
         description = "Suppliers",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = Supplier::class)),
           ),
         ],
       ),
@@ -62,16 +62,6 @@ class SuppliersController(
       ApiResponse(
         responseCode = "201",
         description = "Supplier Added",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
       ),
       ApiResponse(
         responseCode = "415",
@@ -103,14 +93,10 @@ class SuppliersController(
       ApiResponse(
         responseCode = "200",
         description = "Supplier Subscriptions",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = SupplierSubscription::class)),
           ),
         ],
       ),
@@ -136,14 +122,10 @@ class SuppliersController(
       ApiResponse(
         responseCode = "200",
         description = "Supplier Subscriptions",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = SupplierSubscription::class)),
           ),
         ],
       ),
@@ -160,7 +142,7 @@ class SuppliersController(
     ],
   )
   fun getSubscriptionsForSupplier(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     supplierId: UUID,
   ) = suppliersService.getSubscriptionsForSupplier(supplierId)
@@ -175,16 +157,6 @@ class SuppliersController(
         description = "Supplier Subscription Added",
       ),
       ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
@@ -197,7 +169,7 @@ class SuppliersController(
     ],
   )
   fun addSupplierSubscription(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     supplierId: UUID,
     @Schema(
@@ -219,16 +191,6 @@ class SuppliersController(
         description = "Supplier Subscription Updated",
       ),
       ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
@@ -242,13 +204,14 @@ class SuppliersController(
 
   )
   fun updateSupplierSubscription(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
     @PathVariable
     supplierId: UUID,
     @Schema(
       description = "Supplier Subscription ID",
       required = true,
       example = "00000000-0000-0001-0000-000000000000",
+      pattern = UUID_REGEX,
     )
     @PathVariable
     subscriptionId: UUID,

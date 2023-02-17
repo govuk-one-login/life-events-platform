@@ -133,8 +133,6 @@ class EventDataService(
     return EventNotification(
       eventId = event.id,
       eventType = subscription.eventType,
-      eventTime = event.eventTime,
-      ingestTime = event.whenCreated,
       sourceId = if (EnrichmentField.SOURCE_ID in enrichmentFieldNames) event.dataId else null,
       dataIncluded = if (!callbackEvent) includeData else null,
       enrichmentFields = if (!callbackEvent) enrichmentFieldNames else null,

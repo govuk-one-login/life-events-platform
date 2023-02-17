@@ -7,7 +7,6 @@ import com.toedter.spring.hateoas.jsonapi.JsonApiTypeForClass
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
-import java.time.LocalDateTime
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,13 +22,6 @@ data class EventNotification(
     example = "DEATH_NOTIFICATION",
   )
   val eventType: EventType,
-
-  @Schema(description = "The date and time the event took place from the supplier system, if provided", required = true, type = "date-time", example = "2023-02-01T14:35:10.000")
-  val eventTime: LocalDateTime? = null,
-
-  @Schema(description = "The date and time the event was ingested into the platform", required = true, type = "date-time", example = "2023-02-01T14:39:20.000")
-  val ingestTime: LocalDateTime? = null,
-
   @Schema(description = "ID from the source of the notification, if allowed", required = false, example = "999999901")
   val sourceId: String? = null,
   @Schema(

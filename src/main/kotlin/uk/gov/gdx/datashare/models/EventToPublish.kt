@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.format.annotation.DateTimeFormat
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.SOURCE_ID_REGEX
 import java.time.LocalDateTime
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,6 +24,6 @@ data class EventToPublish(
   )
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   val eventTime: LocalDateTime? = null,
-  @Schema(description = "ID that references the event", example = "123456789", maxLength = 80, pattern = "^[A-Za-z0-9+=,.@-_]*\$")
+  @Schema(description = "ID that references the event", example = "123456789", maxLength = 80, pattern = SOURCE_ID_REGEX)
   val id: String,
 )

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern
 import org.hibernate.validator.constraints.Length
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_NAME_REGEX
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Create Acquirer Request")
@@ -15,12 +16,12 @@ class CreateAcquirerRequest(
     description = "Name of client, may only contain lowercase letters, numbers, and the following special characters: + = , . @ -",
     required = true,
     example = "hmpo",
-    maxLength = 128,
-    pattern = "^[a-z0-9+=,.@-]*\$",
+    maxLength = 80,
+    pattern = CLIENT_NAME_REGEX,
   )
-  @get:Length(min = 3, max = 128)
+  @get:Length(min = 3, max = 80)
   @get:Pattern(
-    regexp = "^[a-z0-9+=,.@-]*\$",
+    regexp = CLIENT_NAME_REGEX,
     message = "Name may only contain lowercase letters, numbers, and the following special characters: + = , . @ -",
   )
   val clientName: String,

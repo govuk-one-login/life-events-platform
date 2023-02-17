@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
+import uk.gov.gdx.datashare.enums.RegExConstants.SOURCE_ID_REGEX
 import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.time.LocalDateTime
 import java.util.*
@@ -21,7 +22,7 @@ data class EventData(
   val eventId: UUID = UUID.randomUUID(),
   @Schema(description = "Acquirer subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val acquirerSubscriptionId: UUID,
-  @Schema(description = "Event data specific ID", required = true, example = "HMPO Death certificate number", maxLength = 80, pattern = "^[A-Za-z0-9+= ,.@-_]{1,80}\$")
+  @Schema(description = "Event data specific ID", required = true, example = "HMPO Death certificate number", maxLength = 80, pattern = SOURCE_ID_REGEX)
   val dataId: String,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
   val eventTime: LocalDateTime = LocalDateTime.now(),

@@ -85,6 +85,7 @@ class OpenApiConfiguration(
         operation.responses.default = createErrorApiResponse("Unexpected error")
         operation.responses.addApiResponse("401", createErrorApiResponse("Unauthorized"))
         operation.responses.addApiResponse("403", createErrorApiResponse("Forbidden"))
+        operation.responses.addApiResponse("406", createErrorApiResponse("Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle"))
         operation.responses.addApiResponse("429", createErrorApiResponse("Too many requests"))
       }
     }

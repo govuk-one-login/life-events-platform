@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.DIGITS_REGEX
 import uk.gov.gdx.datashare.enums.RegExConstants.EVENT_TYPE_REGEX
 import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import uk.gov.gdx.datashare.helpers.getPageLinks
@@ -162,16 +163,6 @@ class EventsController(
         ),
       ),
       ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
@@ -217,7 +208,7 @@ class EventsController(
       defaultValue = "0",
       minimum = "0",
       maxLength = 8,
-      pattern = "^\\d+\$",
+      pattern = DIGITS_REGEX,
     )
     @RequestParam(name = "page[number]", defaultValue = "0")
     @PositiveOrZero
@@ -227,7 +218,7 @@ class EventsController(
       defaultValue = DEFAULT_PAGE_SIZE.toString(),
       minimum = "0",
       maxLength = 8,
-      pattern = "^\\d+\$",
+      pattern = DIGITS_REGEX,
     )
     @RequestParam(name = "page[size]", defaultValue = "100")
     @Positive
@@ -304,16 +295,6 @@ class EventsController(
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
@@ -387,16 +368,6 @@ class EventsController(
         responseCode = "201",
         description = "Data Accepted",
 
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
       ),
       ApiResponse(
         responseCode = "415",

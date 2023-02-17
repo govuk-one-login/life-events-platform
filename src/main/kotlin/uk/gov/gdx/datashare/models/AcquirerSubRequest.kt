@@ -3,6 +3,8 @@ package uk.gov.gdx.datashare.models
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.Pattern
+import org.hibernate.validator.constraints.Length
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
@@ -13,6 +15,11 @@ data class AcquirerSubRequest(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
   @Schema(description = "Client ID used to access event platform", required = false, example = "an-oauth-client", maxLength = 50, pattern = CLIENT_ID_REGEX)
+  @get:Length(min = 3, max = 50)
+  @get:Pattern(
+    regexp = CLIENT_ID_REGEX,
+    message = "Name may only contain letters, numbers, and the following special characters: _ -",
+  )
   val oauthClientId: String? = null,
   @ArraySchema(
     schema = Schema(

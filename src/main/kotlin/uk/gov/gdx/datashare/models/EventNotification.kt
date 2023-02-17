@@ -7,6 +7,7 @@ import com.toedter.spring.hateoas.jsonapi.JsonApiTypeForClass
 import io.swagger.v3.oas.annotations.media.Schema
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.SOURCE_ID_REGEX
 import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.util.*
 
@@ -23,7 +24,7 @@ data class EventNotification(
     example = "DEATH_NOTIFICATION",
   )
   val eventType: EventType,
-  @Schema(description = "ID from the source of the notification", required = true, example = "999999901", maxLength = 80, pattern = "^[A-Za-z0-9+=,.@-_]*\$")
+  @Schema(description = "ID from the source of the notification", required = true, example = "999999901", maxLength = 80, pattern = SOURCE_ID_REGEX)
   val sourceId: String,
   @Schema(
     description = "Indicates that event data is returned when true,",

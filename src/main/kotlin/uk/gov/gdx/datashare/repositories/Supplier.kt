@@ -15,7 +15,6 @@ import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Supplier")
-
 data class Supplier(
   @Id
   @Column("id")

@@ -6,6 +6,35 @@ locals {
     green = "#2ca02c"
     red   = "#d62728"
   }
+
+  publish_event_dimensions = {
+    exception = "None",
+    method    = "POST",
+    uri       = "/events",
+    outcome   = "SUCCESS",
+    status    = "200"
+  }
+  delete_event_dimensions = {
+    exception = "None",
+    method    = "DELETE",
+    uri       = "/events/{id}",
+    outcome   = "SUCCESS",
+    status    = "204"
+  }
+  get_event_dimensions = {
+    exception = "None",
+    method    = "GET",
+    uri       = "/events/{id}",
+    outcome   = "SUCCESS",
+    status    = "200"
+  }
+  get_events_dimensions = {
+    exception = "None",
+    method    = "GET",
+    uri       = "/events",
+    outcome   = "SUCCESS",
+    status    = "200"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "ecs_logs" {
@@ -16,7 +45,7 @@ resource "aws_cloudwatch_log_group" "ecs_logs" {
 }
 
 module "metrics_dashboard" {
-  source           = "../cloudwatch_dashboard"
+  source           = "../cloudwatch_metrics_dashboard"
   region           = var.region
   dashboard_name   = "${var.environment}-metrics-dashboard"
   metric_namespace = local.metric_namespace
@@ -41,45 +70,49 @@ module "metrics_dashboard" {
       stat   = "Sum",
       metrics = [
         {
-          name       = "API_CALLS.PublishEvent.count",
-          dimensions = { success = true },
+          name       = "http.server.requests.count",
+          dimensions = local.publish_event_dimensions,
           attributes = { label = "PublishEvent" }
         },
         {
-          name       = "API_CALLS.GetEvent.count",
-          dimensions = { success = true },
+          name       = "http.server.requests.count",
+          dimensions = local.get_event_dimensions,
           attributes = { label = "GetEvent" }
         },
         {
-          name       = "API_CALLS.GetEvents.count",
-          dimensions = { success = true },
+          name       = "http.server.requests.count",
+          dimensions = local.get_events_dimensions,
           attributes = { label = "GetEvents" }
         },
         {
-          name       = "API_CALLS.DeleteEvent.count",
-          dimensions = { success = true },
+          name       = "http.server.requests.count",
+          dimensions = local.delete_event_dimensions,
           attributes = { label = "DeleteEvent" }
         },
       ]
     },
     {
-      title  = "Data ingest calls",
+      title  = "Data enrichment calls",
       period = local.metric_period,
       stat   = "Sum",
       metrics = [
         {
-          name       = "API_CALLS.PublishEvent.count",
-          dimensions = { success = true },
-          attributes = { label = "PublishEvent" }
+          name       = "http.server.requests.count",
+          dimensions = local.get_event_dimensions,
+          attributes = { label = "Get event calls", color = local.metric_colours.green }
         },
         {
-          name       = "API_CALLS.CallsToLev.count",
-          attributes = { label = "CallsToLev" }
+          dimensions = {
+            expression = "SUM(SEARCH('\"${local.metric_namespace}\" MetricName=\"http.client.requests.count\" uri=\"/v1/registration/death/{id}\"', 'Sum', ${local.metric_period}))"
+          },
+          attributes = { label = "Total LEV calls", color = local.metric_colours.blue }
         },
         {
-          name       = "API_RESPONSES.ResponsesFromLev.count",
-          attributes = { label = "ResponsesFromLev" }
-        },
+          dimensions = {
+            expression = "SEARCH('\"${local.metric_namespace}\" MetricName=\"http.client.requests.count\" uri=\"/v1/registration/death/{id}\" NOT outcome=\"SUCCESS\"', 'Sum', ${local.metric_period})"
+          },
+          attributes = { label = "LEV errors", color = local.metric_colours.red }
+        }
       ]
     },
     {
@@ -152,4 +185,35 @@ EOT
       }
     ]
   })
+}
+
+module "request_alarm_dashboard" {
+  source           = "../cloudwatch_alarm_dashboard"
+  region           = var.region
+  dashboard_name   = "${var.environment}-request-alarm-dashboard"
+  metric_namespace = local.metric_namespace
+  widgets = [
+    for alarm in module.error_rate_alarms :
+    {
+      title  = alarm.alarm_description,
+      alarms = [alarm.alarm_arn]
+    }
+  ]
+}
+
+module "queue_alarm_dashboard" {
+  source           = "../cloudwatch_alarm_dashboard"
+  region           = var.region
+  dashboard_name   = "${var.environment}-queue-alarm-dashboard"
+  metric_namespace = local.metric_namespace
+  widgets = [
+    {
+      title  = aws_cloudwatch_metric_alarm.queue_process_error_rate.alarm_description,
+      alarms = [aws_cloudwatch_metric_alarm.queue_process_error_rate.arn]
+    },
+    {
+      title  = aws_cloudwatch_metric_alarm.queue_process_error_number.alarm_description,
+      alarms = [aws_cloudwatch_metric_alarm.queue_process_error_number.arn]
+    },
+  ]
 }

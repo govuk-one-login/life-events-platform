@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -13,6 +14,7 @@ import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
+import uk.gov.gdx.datashare.repositories.EventData
 import uk.gov.gdx.datashare.repositories.EventDataRepository
 import uk.gov.gdx.datashare.services.AdminService
 
@@ -32,14 +34,10 @@ class AdminController(
       ApiResponse(
         responseCode = "200",
         description = "Event",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
         content = [
           Content(
             mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
+            array = ArraySchema(schema = Schema(implementation = EventData::class)),
           ),
         ],
       ),
@@ -65,16 +63,6 @@ class AdminController(
       ApiResponse(
         responseCode = "200",
         description = "Cognito client details",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
       ),
       ApiResponse(
         responseCode = "415",
@@ -107,16 +95,6 @@ class AdminController(
         description = "Cognito client details",
       ),
       ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
@@ -146,16 +124,6 @@ class AdminController(
       ApiResponse(
         responseCode = "200",
         description = "Cognito client details",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
       ),
       ApiResponse(
         responseCode = "415",

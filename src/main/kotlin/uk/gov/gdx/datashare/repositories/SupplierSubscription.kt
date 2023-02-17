@@ -9,20 +9,25 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.time.LocalDateTime
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Supplier Subscription")
 data class SupplierSubscription(
   @Id
   @Column("id")
+  @Schema(description = "Supplier Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val supplierSubscriptionId: UUID = UUID.randomUUID(),
-  @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000")
+  @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val supplierId: UUID,
-  @Schema(description = "Client ID", required = true, example = "a-client-id")
+  @Schema(description = "Client ID", required = true, example = "a-client-id", maxLength = 50, pattern = CLIENT_ID_REGEX)
   val clientId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
+  @Schema(description = "Indicates when the Supplier subcription was created", required = true, example = "2023-01-04T12:30:00")
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient
@@ -31,6 +36,7 @@ data class SupplierSubscription(
   val new: Boolean = true,
 
 ) : Persistable<UUID> {
+  @JsonIgnore
   override fun getId(): UUID = supplierSubscriptionId
 
   override fun isNew(): Boolean = new

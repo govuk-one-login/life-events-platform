@@ -1,21 +1,25 @@
 package uk.gov.gdx.datashare.models
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Pattern
 import org.hibernate.validator.constraints.Length
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Create Supplier Request")
 data class CreateSupplierRequest(
   @Schema(
     description = "Name of client, may only contain lowercase letters, numbers, and the following special characters: + = , . @ -",
     required = true,
     example = "hmpo",
-    maxLength = 128,
-    pattern = "^[a-z0-9+=,.@-]*\$",
+    maxLength = 80,
+    pattern = RegExConstants.CLIENT_NAME_REGEX,
   )
-  @get:Length(min = 3, max = 128)
+  @get:Length(min = 3, max = 80)
   @get:Pattern(
-    regexp = "^[a-z0-9+=,.@-]*\$",
+    regexp = RegExConstants.CLIENT_NAME_REGEX,
     message = "Name may only contain lowercase letters, numbers, and the following special characters: + = , . @ -",
   )
   val clientName: String,

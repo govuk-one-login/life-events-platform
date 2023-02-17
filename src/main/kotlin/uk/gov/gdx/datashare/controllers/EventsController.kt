@@ -22,6 +22,9 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.RegExConstants.DIGITS_REGEX
+import uk.gov.gdx.datashare.enums.RegExConstants.EVENT_TYPE_REGEX
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import uk.gov.gdx.datashare.helpers.getPageLinks
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.EventToPublish
@@ -160,16 +163,6 @@ class EventsController(
         ),
       ),
       ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
@@ -185,6 +178,8 @@ class EventsController(
     @Schema(
       description = "Event Types, if none supplied it will be the allowed types for this client",
       required = false,
+      maxLength = 40,
+      pattern = EVENT_TYPE_REGEX,
     )
     @RequestParam(name = "filter[eventType]", required = false)
     eventTypes: List<EventType>? = null,
@@ -193,6 +188,7 @@ class EventsController(
       type = "string",
       format = "date-time",
       required = false,
+      maxLength = 26,
     )
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @RequestParam(name = "filter[fromTime]", required = false)
@@ -202,6 +198,7 @@ class EventsController(
       type = "string",
       format = "date-time",
       required = false,
+      maxLength = 26,
     )
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @RequestParam(name = "filter[toTime]", required = false)
@@ -210,6 +207,8 @@ class EventsController(
       description = "Page number. Zero indexed.",
       defaultValue = "0",
       minimum = "0",
+      maxLength = 8,
+      pattern = DIGITS_REGEX,
     )
     @RequestParam(name = "page[number]", defaultValue = "0")
     @PositiveOrZero
@@ -218,6 +217,8 @@ class EventsController(
       description = "Number of items per page.",
       defaultValue = DEFAULT_PAGE_SIZE.toString(),
       minimum = "0",
+      maxLength = 8,
+      pattern = DIGITS_REGEX,
     )
     @RequestParam(name = "page[size]", defaultValue = "100")
     @Positive
@@ -294,16 +295,6 @@ class EventsController(
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
@@ -316,7 +307,7 @@ class EventsController(
     ],
   )
   fun getEvent(
-    @Schema(description = "Event ID", required = true)
+    @Schema(description = "Event ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ): EntityModel<EventNotification>? = run {
@@ -358,7 +349,7 @@ class EventsController(
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteEvent(
-    @Schema(description = "Event ID", required = true)
+    @Schema(description = "Event ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
   ) {
@@ -376,16 +367,7 @@ class EventsController(
       ApiResponse(
         responseCode = "201",
         description = "Data Accepted",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
+
       ),
       ApiResponse(
         responseCode = "415",

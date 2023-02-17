@@ -56,10 +56,10 @@ class EventsQueryTest : MockIntegrationTestBase() {
     thereAreFiveEvents()
 
     // when
-    val respsone = getMiddlePageOfEvents()
+    val response = getMiddlePageOfEvents()
 
     // then
-    JsonApprovals.verifyJson(respsone, approvalsOptions)
+    JsonApprovals.verifyJson(response, approvalsOptions)
   }
 
   @Test

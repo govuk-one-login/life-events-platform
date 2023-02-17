@@ -72,6 +72,7 @@ class EventDataServiceTest {
     val event = deathEvents.first()
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
+        EnrichmentField.SOURCE_ID,
         EnrichmentField.FIRST_NAMES,
         EnrichmentField.LAST_NAME,
         EnrichmentField.ADDRESS,
@@ -138,6 +139,7 @@ class EventDataServiceTest {
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
+        EnrichmentField.SOURCE_ID,
         EnrichmentField.FIRST_NAMES,
         EnrichmentField.LAST_NAME,
         EnrichmentField.ADDRESS,
@@ -201,6 +203,7 @@ class EventDataServiceTest {
     val endTime = LocalDateTime.now().plusHours(1)
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
+        EnrichmentField.SOURCE_ID,
         EnrichmentField.FIRST_NAMES,
         EnrichmentField.LAST_NAME,
         EnrichmentField.ADDRESS,
@@ -313,6 +316,7 @@ class EventDataServiceTest {
 
     val deathNotificationDetails = DeathNotificationDetails(
       listOf(
+        EnrichmentField.SOURCE_ID,
         EnrichmentField.FIRST_NAMES,
         EnrichmentField.LAST_NAME,
         EnrichmentField.ADDRESS,
@@ -422,7 +426,7 @@ class EventDataServiceTest {
     enrichmentFieldsIncludedInPoll = false,
   )
   private val subscriptionEnrichmentFields =
-    listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME)
+    listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME)
   private val deathEvents = getEvents(4, deathNotificationSubscription.id)
   private val thinDeathEvents = getEvents(4, thinDeathNotificationSubscription.id)
   private val extraDeathEvents = getEvents(10, deathNotificationSubscription.id)

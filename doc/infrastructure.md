@@ -37,7 +37,11 @@ This infrastructure is configured in the `backend` directory of terraform config
 
 ### Terraform
 
-todo GPC-166
+- Create a new top level module in the terraform code (e.g. like `terraform\dev`)
+- Pull in relevant configuration into it (see existing environments for available services, e.g. the lambdas for generating data may not be required)
+- Add to GitHub actions, particularly [infrastructure-main.yml](.github/workflows/infrastructure-main.yml)
+- Validate credentials and access
+- Set up GitHub Environment rules for the relevant environment to prevent or allow automatic deploys
 
 ### Database
 

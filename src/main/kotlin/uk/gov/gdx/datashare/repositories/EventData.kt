@@ -22,7 +22,7 @@ data class EventData(
   val eventId: UUID = UUID.randomUUID(),
   @Schema(description = "Acquirer subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val acquirerSubscriptionId: UUID,
-  @Schema(description = "Event data specific ID", required = true, example = "HMPO Death certificate number", maxLength = 80, pattern = SOURCE_ID_REGEX)
+  @Schema(description = "Event data specific ID", required = true, example = "123456789ABC", maxLength = 80, pattern = SOURCE_ID_REGEX)
   val dataId: String,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
   val eventTime: LocalDateTime = LocalDateTime.now(),

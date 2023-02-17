@@ -76,7 +76,7 @@ VALUES ('dwp-event-receiver', getIdFromAcquirerName('DWP Poller'),'DEATH_NOTIFIC
 
 INSERT INTO acquirer_subscription_enrichment_field(acquirer_subscription_id, enrichment_field)
 SELECT id,
-       unnest(ARRAY ['REGISTRATION_DATE', 'FIRST_NAMES', 'LAST_NAME', 'MAIDEN_NAME', 'DATE_OF_DEATH', 'DATE_OF_BIRTH', 'SEX', 'ADDRESS', 'BIRTH_PLACE', 'DEATH_PLACE', 'OCCUPATION', 'RETIRED'])
+       unnest(ARRAY ['SOURCE_ID', 'REGISTRATION_DATE', 'FIRST_NAMES', 'LAST_NAME', 'MAIDEN_NAME', 'DATE_OF_DEATH', 'DATE_OF_BIRTH', 'SEX', 'ADDRESS', 'BIRTH_PLACE', 'DEATH_PLACE', 'OCCUPATION', 'RETIRED'])
 FROM acquirer_subscription
 WHERE event_type = 'DEATH_NOTIFICATION'
   AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');

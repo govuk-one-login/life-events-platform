@@ -24,8 +24,8 @@ data class EventNotification(
     example = "DEATH_NOTIFICATION",
   )
   val eventType: EventType,
-  @Schema(description = "ID from the source of the notification", required = true, example = "999999901", maxLength = 80, pattern = SOURCE_ID_REGEX)
-  val sourceId: String,
+  @Schema(description = "ID from the source of the notification, if allowed", required = false, example = "999999901", maxLength = 80, pattern = SOURCE_ID_REGEX)
+  val sourceId: String? = null,
   @Schema(
     description = "Indicates that event data is returned when true,",
     required = false,

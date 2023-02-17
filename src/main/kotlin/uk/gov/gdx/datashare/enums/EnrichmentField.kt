@@ -3,6 +3,8 @@ package uk.gov.gdx.datashare.enums
 import com.fasterxml.jackson.annotation.JsonValue
 
 enum class EnrichmentField(@JsonValue val jsonName: String) {
+  SOURCE_ID("sourceId"),
+
   LAST_NAME("lastName"),
   SEX("sex"),
   DATE_OF_BIRTH("dateOfBirth"),

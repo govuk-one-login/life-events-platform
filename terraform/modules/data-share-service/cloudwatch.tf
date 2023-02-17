@@ -8,28 +8,32 @@ locals {
   }
 
   publish_event_dimensions = {
-    exception = "None",
+    error     = "none",
+    exception = "none",
     method    = "POST",
     uri       = "/events",
     outcome   = "SUCCESS",
     status    = "200"
   }
   delete_event_dimensions = {
-    exception = "None",
+    error     = "none",
+    exception = "none",
     method    = "DELETE",
     uri       = "/events/{id}",
     outcome   = "SUCCESS",
     status    = "204"
   }
   get_event_dimensions = {
-    exception = "None",
+    error     = "none",
+    exception = "none",
     method    = "GET",
     uri       = "/events/{id}",
     outcome   = "SUCCESS",
     status    = "200"
   }
   get_events_dimensions = {
-    exception = "None",
+    error     = "none",
+    exception = "none",
     method    = "GET",
     uri       = "/events",
     outcome   = "SUCCESS",

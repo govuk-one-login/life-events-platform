@@ -77,7 +77,7 @@ resource "aws_lb_listener_rule" "protected_test_forward" {
   }
 
   lifecycle {
-    ignore_changes = [default_action]
+    ignore_changes = [action]
   }
 }
 

@@ -29,11 +29,8 @@ processors:
           - ecs.task.storage.read_bytes
           - ecs.task.storage.write_bytes
 exporters:
-  awsprometheusremotewrite:
+  prometheusremotewrite:
     endpoint: $AWS_PROMETHEUS_ENDPOINT
-    aws_auth:
-      region: $AWS_REGION
-      service: aps
   logging:
     loglevel: info
 extensions:
@@ -43,8 +40,8 @@ service:
   pipelines:
     metrics:
       receivers: [prometheus]
-      exporters: [logging, awsprometheusremotewrite]
+      exporters: [logging, prometheusremotewrite]
     metrics/ecs:
       receivers: [awsecscontainermetrics]
       processors: [filter]
-      exporters: [logging, awsprometheusremotewrite]
+      exporters: [logging, prometheusremotewrite]

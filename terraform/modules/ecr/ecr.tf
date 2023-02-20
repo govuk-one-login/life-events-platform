@@ -43,10 +43,7 @@ resource "aws_ecr_registry_scanning_configuration" "ecr_scanning_configuration" 
       filter      = aws_ecr_repository.gdx_data_share_poc.name
       filter_type = "WILDCARD"
     }
-  }
 
-  rule {
-    scan_frequency = "SCAN_ON_PUSH"
     repository_filter {
       filter      = aws_ecr_repository.prometheus-adot.name
       filter_type = "WILDCARD"

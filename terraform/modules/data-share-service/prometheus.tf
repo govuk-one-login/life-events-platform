@@ -1,3 +1,3 @@
 resource "aws_prometheus_workspace" "prometheus" {
-  alias = "dev-prometheus"
+  alias = "${var.environment}-prometheus"
 }

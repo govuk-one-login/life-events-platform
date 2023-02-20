@@ -14,10 +14,6 @@ on:
       - "terraform/**"
       - "!terraform/modules/data-share-service/ecs.tf"
 
-concurrency:
-  group: application-pipeline-${{ github.ref_name }}
-  cancel-in-progress: ${{ github.ref_name != 'main' }}
-
 jobs:
   test:
     uses: ./.github/workflows/test.yml

@@ -31,12 +31,16 @@ processors:
 exporters:
   prometheusremotewrite:
     endpoint: $AWS_PROMETHEUS_ENDPOINT
+    auth:
+      authenticator: sigv4auth
   logging:
     loglevel: info
 extensions:
   health_check:
+  sigv4auth:
+    region: $AWS_REGION
 service:
-  extensions: [health_check]
+  extensions: [health_check, sigv4auth]
   pipelines:
     metrics:
       receivers: [prometheus]

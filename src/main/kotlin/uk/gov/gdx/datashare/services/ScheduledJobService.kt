@@ -1,5 +1,6 @@
 package uk.gov.gdx.datashare.services
 
+import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
 import net.javacrumbs.shedlock.core.LockAssert
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
@@ -19,6 +20,6 @@ class ScheduledJobService(
     LockAssert.assertLocked()
     EventDataService.log.debug("Looking for unconsumed events")
     val unconsumedEventsCount = eventDataRepository.countByDeletedAtIsNull()
-    meterRegistry.gauge("UnconsumedEvents", unconsumedEventsCount)
+    Gauge.builder("UnconsumedEvents", unconsumedEventsCount, Int::toDouble).register(meterRegistry)
   }
 }

@@ -1,6 +1,6 @@
-FROM public.ecr.aws/aws-observability/aws-otel-collector:latest as base
+FROM public.ecr.aws/aws-observability/aws-otel-collector:v0.26.1 as base
 
-FROM alpine:latest as run
+FROM alpine:3.17.2 as run
 
 ## Adds envsubst
 ENV BUILD_DEPS="gettext"  \

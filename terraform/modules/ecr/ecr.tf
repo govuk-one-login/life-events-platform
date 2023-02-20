@@ -11,7 +11,6 @@ resource "aws_ecr_repository" "gdx_data_share_poc" {
   }
 }
 
-#tfsec:ignore:aws-ecr-enforce-immutable-repository
 resource "aws_ecr_repository" "prometheus-adot" {
   name = "prometheus-adot"
 
@@ -22,6 +21,7 @@ resource "aws_ecr_repository" "prometheus-adot" {
     encryption_type = "KMS"
     kms_key         = aws_kms_key.ecr_key.arn
   }
+  image_tag_mutability = "false"
 }
 
 resource "aws_kms_key" "ecr_key" {

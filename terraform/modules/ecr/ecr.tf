@@ -21,7 +21,7 @@ resource "aws_ecr_repository" "prometheus-adot" {
     encryption_type = "KMS"
     kms_key         = aws_kms_key.ecr_key.arn
   }
-  image_tag_mutability = "false"
+  image_tag_mutability = "IMMUTABLE"
 }
 
 resource "aws_kms_key" "ecr_key" {

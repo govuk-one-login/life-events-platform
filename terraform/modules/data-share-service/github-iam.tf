@@ -91,10 +91,8 @@ data "aws_iam_policy_document" "github_oidc_pull_request_state" {
     actions = [
       "aps:DescribeLoggingConfiguration"
     ]
-    resources = [
-      aws_prometheus_workspace.prometheus.arn
-    ]
-    effect = "Allow"
+    resources = ["*"]
+    effect    = "Allow"
   }
 }
 

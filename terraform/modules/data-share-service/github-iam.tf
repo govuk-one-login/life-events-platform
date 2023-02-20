@@ -87,6 +87,15 @@ data "aws_iam_policy_document" "github_oidc_pull_request_state" {
     ]
     effect = "Allow"
   }
+  statement {
+    actions = [
+      "aps:DescribeLoggingConfiguration"
+    ]
+    resources = [
+      aws_prometheus_workspace.prometheus.arn
+    ]
+    effect = "Allow"
+  }
 }
 
 resource "aws_iam_policy" "github_oidc_pull_request_state" {

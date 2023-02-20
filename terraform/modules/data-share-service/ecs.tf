@@ -47,8 +47,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "COGNITO_SUPPLIER_SCOPE", "value" : module.cognito.supplier_scope },
         { "name" : "COGNITO_ADMIN_SCOPE", "value" : module.cognito.admin_scope },
 
-        { "name" : "PROMETHEUS_USER_NAME", "value" : random_password.prometheus_username },
-        { "name" : "PROMETHEUS_USER_PASSWORD", "value" : random_password.prometheus_password },
+        { "name" : "PROMETHEUS_USER_NAME", "value" : random_password.prometheus_username.result },
+        { "name" : "PROMETHEUS_USER_PASSWORD", "value" : random_password.prometheus_password.result },
 
         { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
         { "name" : "SPRING_DATASOURCE_USERNAME", "value" : var.db_username },
@@ -123,8 +123,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         }
       },
       environment = [
-        { "name" : "PROMETHEUS_USERNAME", "value" : random_password.prometheus_username },
-        { "name" : "PROMETHEUS_PASSWORD", "value" : random_password.prometheus_password },
+        { "name" : "PROMETHEUS_USERNAME", "value" : random_password.prometheus_username.result },
+        { "name" : "PROMETHEUS_PASSWORD", "value" : random_password.prometheus_password.result },
         { "name" : "AWS_PROMETHEUS_ENDPOINT", "value" : aws_prometheus_workspace.prometheus.prometheus_endpoint },
         { "name" : "AWS_REGION", "value" : var.region },
       ]

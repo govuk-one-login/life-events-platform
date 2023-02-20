@@ -125,7 +125,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       environment = [
         { "name" : "PROMETHEUS_USERNAME", "value" : random_password.prometheus_username.result },
         { "name" : "PROMETHEUS_PASSWORD", "value" : random_password.prometheus_password.result },
-        { "name" : "AWS_PROMETHEUS_ENDPOINT", "value" : aws_prometheus_workspace.prometheus.prometheus_endpoint },
+        { "name" : "AWS_PROMETHEUS_ENDPOINT", "value" : "${aws_prometheus_workspace.prometheus.prometheus_endpoint}api/v1/remote_write" },
       ]
     },
   ])

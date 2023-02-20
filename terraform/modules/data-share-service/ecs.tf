@@ -111,7 +111,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
     },
     {
       name : "adot-collector",
-      image : "${var.ecr_url}/prometheus-adot:105c052e9bfd44d713b59c401dfe6d8cbe0097e5ff2689ea8672558bca811217",
+      image : "${var.ecr_url}/prometheus-adot:eaef8f64a2c1db698d31419fd2c5b181bb8c37dd5c8c50749b753819443d48a9",
       essential : true,
       logConfiguration : {
         logDriver : "awslogs",
@@ -126,6 +126,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "PROMETHEUS_USERNAME", "value" : random_password.prometheus_username.result },
         { "name" : "PROMETHEUS_PASSWORD", "value" : random_password.prometheus_password.result },
         { "name" : "AWS_PROMETHEUS_ENDPOINT", "value" : "${aws_prometheus_workspace.prometheus.prometheus_endpoint}api/v1/remote_write" },
+        { "name" : "AWS_REGION", "value" : var.region },
       ]
     },
   ])

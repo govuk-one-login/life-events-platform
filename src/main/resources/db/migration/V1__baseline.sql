@@ -42,6 +42,17 @@ CREATE TABLE acquirer_subscription
             REFERENCES acquirer (id)
 );
 
+CREATE TABLE acquirer_subscription_enrichment_field
+(
+    id                       UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
+    acquirer_subscription_id UUID             NOT NULL,
+    enrichment_field         VARCHAR(200)     NOT NULL,
+
+    CONSTRAINT fk_acquirer_subscription
+        FOREIGN KEY (acquirer_subscription_id)
+            REFERENCES acquirer_subscription (id)
+);
+
 CREATE TABLE event_data
 (
     id                       UUID PRIMARY KEY         NOT NULL DEFAULT gen_random_uuid(),
@@ -53,15 +64,7 @@ CREATE TABLE event_data
 
     CONSTRAINT fk_acquirer_subscription
         FOREIGN KEY (acquirer_subscription_id)
-            REFERENCES acquirer_subscription
-);
-
-CREATE TABLE shedlock
-(
-    name       VARCHAR(64) PRIMARY KEY NOT NULL,
-    lock_until TIMESTAMP               NOT NULL,
-    locked_at  TIMESTAMP               NOT NULL,
-    locked_by  VARCHAR(255)            NOT NULL
+            REFERENCES acquirer_subscription (id)
 );
 
 CREATE TABLE event_api_audit
@@ -74,13 +77,10 @@ CREATE TABLE event_api_audit
     when_created    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
-CREATE TABLE acquirer_subscription_enrichment_field
+CREATE TABLE shedlock
 (
-    id                       UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-    acquirer_subscription_id UUID             NOT NULL,
-    enrichment_field         VARCHAR(200)     NOT NULL,
-
-    CONSTRAINT fk_acquirer_subscription
-        FOREIGN KEY (acquirer_subscription_id)
-            REFERENCES acquirer_subscription (id)
+    name       VARCHAR(64) PRIMARY KEY NOT NULL,
+    lock_until TIMESTAMP               NOT NULL,
+    locked_at  TIMESTAMP               NOT NULL,
+    locked_by  VARCHAR(255)            NOT NULL
 );

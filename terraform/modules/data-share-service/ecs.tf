@@ -22,9 +22,13 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
 
   container_definitions = jsonencode([
     {
-      name         = "${var.environment}-gdx-data-share-poc",
-      image        = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
-      portMappings = [{ "containerPort" : 8080, "hostPort" : 8080 }],
+      name  = "${var.environment}-gdx-data-share-poc",
+      image = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
+      portMappings = [{
+        containerPort : 8080,
+        hostPort : 8080,
+        protocol : "tcp",
+      }],
       environment = [
         { "name" : "ENVIRONMENT", "value" : var.environment },
 
@@ -43,10 +47,11 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "COGNITO_SUPPLIER_SCOPE", "value" : module.cognito.supplier_scope },
         { "name" : "COGNITO_ADMIN_SCOPE", "value" : module.cognito.admin_scope },
 
+        { "name" : "PROMETHEUS_USER_NAME", "value" : random_password.prometheus_username },
+        { "name" : "PROMETHEUS_USER_PASSWORD", "value" : random_password.prometheus_password },
+
         { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
         { "name" : "SPRING_DATASOURCE_USERNAME", "value" : var.db_username },
-
-        { "name" : "METRICS_CLOUDWATCH_NAMESPACE", "value" : "${var.environment}-gdx" },
 
         { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUENAME", "value" : module.data_processor_queue.queue_name },
         { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQNAME", "value" : module.data_processor_queue.dead_letter_queue_name },
@@ -95,10 +100,35 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       portMappings : [
         {
           containerPort : 2000,
+          hostPort : 2000,
           protocol : "udp"
         }
+      ],
+      mountPoints : [],
+      volumesFrom : [],
+      essential : true,
+      environment : [],
+    },
+    {
+      name : "adot-collector",
+      image : "${var.ecr_url}/prometheus-adot:17d986c53f5164ccd6fb4f55e249b750d681ff98cf63ba28ba9540d8f5a60506",
+      essential : true,
+      logConfiguration : {
+        logDriver : "awslogs",
+        options : {
+          awslogs-group : aws_cloudwatch_log_group.ecs_adot_logs.name,
+          awslogs-region : var.region,
+          awslogs-stream-prefix : "ecs",
+          awslogs-create-group : "True"
+        }
+      },
+      environment = [
+        { "name" : "PROMETHEUS_USERNAME", "value" : random_password.prometheus_username },
+        { "name" : "PROMETHEUS_PASSWORD", "value" : random_password.prometheus_password },
+        { "name" : "AWS_PROMETHEUS_ENDPOINT", "value" : aws_prometheus_workspace.prometheus.prometheus_endpoint },
+        { "name" : "AWS_REGION", "value" : var.region },
       ]
-    }
+    },
   ])
 }
 

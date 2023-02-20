@@ -31,6 +31,8 @@ processors:
 exporters:
   prometheusremotewrite:
     endpoint: $AWS_PROMETHEUS_ENDPOINT
+    auth:
+      authenticator: sigv4auth
   logging:
     loglevel: info
 extensions:

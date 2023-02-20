@@ -82,7 +82,7 @@ dependencies {
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.2")
 
-  implementation("org.javers:javers-spring:6.10.0")
+  implementation("org.javers:javers-spring:6.11.0")
   implementation("org.javers:javers-persistence-sql:6.10.0")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")

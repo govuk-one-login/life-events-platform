@@ -30,6 +30,19 @@ services:
     volumes:
       - ./prisoner-search-data:/home/wiremock
 
+  prometheus:
+    image: prom/prometheus
+    networks:
+      - prometheus
+    ports:
+      - "9092:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
   datashare-db:
     image: postgres:13.7
     networks:
@@ -92,3 +105,7 @@ networks:
   gds:
   hmpo:
   hmpps:
+  prometheus:
+
+volumes:
+  prometheus_data: {}

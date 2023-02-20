@@ -74,7 +74,7 @@ management:
     web:
       base-path: /
       exposure:
-        include: 'info, health'
+        include: 'info, health, prometheus'
   endpoint:
     health:
       cache:
@@ -93,6 +93,10 @@ management:
           server.requests: 0.9,0.99
           client.requests: 0.9,0.99
 
+prometheus:
+  user:
+    role: "ACTUATOR"
+
 springdoc:
   swagger-ui:
     oauth2RedirectUrl: http://localhost:8080/webjars/swagger-ui/oauth2-redirect.html
@@ -102,9 +106,6 @@ api:
   base:
     prisoner-event:
       enabled: false
-
-metrics:
-  log-to-console: false
 
 cognito:
   enabled: true

@@ -93,7 +93,7 @@ data "aws_iam_policy_document" "ecs_task_cloudwatch_access" {
       "logs:PutLogEvents",
       "logs:DescribeLogStreams"
     ]
-    resources = [aws_cloudwatch_log_group.ecs_logs.arn]
+    resources = [aws_cloudwatch_log_group.ecs_logs.arn, aws_cloudwatch_log_group.ecs_adot_logs.arn]
     effect    = "Allow"
   }
 }
@@ -106,6 +106,15 @@ resource "aws_iam_policy" "ecs_task_cloudwatch_access" {
 resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_task_cloudwatch_access.arn
+}
+
+data "aws_iam_policy" "ecs_task_prometheus_access" {
+  name = "AmazonPrometheusRemoteWriteAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_prometheus_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = data.aws_iam_policy.ecs_task_prometheus_access.arn
 }
 
 data "aws_ssm_parameter" "prisoner_event_aws_account_id" {

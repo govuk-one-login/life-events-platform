@@ -10,10 +10,11 @@ management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
 
-metrics:
-  cloudwatch:
-    namespace: "test-gdx"
-  log-to-console: true
+prometheus:
+  user:
+    name: prometheus
+    password: prometheus
+    role: ACTUATOR
 
 api:
   base:

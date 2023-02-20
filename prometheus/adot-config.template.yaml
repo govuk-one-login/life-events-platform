@@ -38,12 +38,8 @@ exporters:
     loglevel: info
 extensions:
   health_check:
-  pprof:
-    endpoint: :1888
-  zpages:
-    endpoint: :55679
 service:
-  extensions: [pprof, zpages, health_check]
+  extensions: [health_check]
   pipelines:
     metrics:
       receivers: [prometheus]

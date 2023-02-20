@@ -111,7 +111,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
     },
     {
       name : "adot-collector",
-      image : "${var.ecr_url}/prometheus-adot:17d986c53f5164ccd6fb4f55e249b750d681ff98cf63ba28ba9540d8f5a60506",
+      image : "${var.ecr_url}/prometheus-adot:d8e619140799243ed5d214f57696af0c503494fbf8b81d2a9cd2ae4ae557af7c",
       essential : true,
       logConfiguration : {
         logDriver : "awslogs",

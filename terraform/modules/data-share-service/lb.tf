@@ -75,6 +75,10 @@ resource "aws_lb_listener_rule" "protected_test_forward" {
       http_header_name = "X-TEST-AUTH"
     }
   }
+
+  lifecycle {
+    ignore_changes = [action]
+  }
 }
 
 resource "aws_lb_target_group" "green" {

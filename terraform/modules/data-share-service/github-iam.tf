@@ -87,6 +87,13 @@ data "aws_iam_policy_document" "github_oidc_pull_request_state" {
     ]
     effect = "Allow"
   }
+  statement {
+    actions = [
+      "aps:DescribeLoggingConfiguration"
+    ]
+    resources = ["arn:aws:aps:eu-west-2:${data.aws_caller_identity.current.account_id}:workspace/*"]
+    effect    = "Allow"
+  }
 }
 
 resource "aws_iam_policy" "github_oidc_pull_request_state" {

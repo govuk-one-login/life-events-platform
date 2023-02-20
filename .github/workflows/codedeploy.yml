@@ -14,6 +14,10 @@ on:
         required: true
         type: string
 
+concurrency:
+  group: application-pipeline-${{ inputs.environment }}
+  cancel-in-progress: false
+
 jobs:
   trigger-codedeploy:
     name: Trigger Codedeploy

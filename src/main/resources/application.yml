@@ -88,10 +88,10 @@ management:
         time-to-live: 2000ms
   metrics:
     distribution:
-      percentiles:
+      percentiles-histogram:
         http:
-          server.requests: 0.9,0.99
-          client.requests: 0.9,0.99
+          server.requests: true
+          client.requests: true
 
 prometheus:
   user:

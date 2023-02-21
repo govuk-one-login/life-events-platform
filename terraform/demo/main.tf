@@ -55,6 +55,18 @@ provider "aws" {
   }
 }
 
+data "terraform_remote_state" "shared" {
+  backend = "s3"
+
+  config = {
+    bucket         = "gdx-data-share-poc-tfstate"
+    key            = "terraform-shared.tfstate"
+    region         = "eu-west-2"
+    dynamodb_table = "gdx-data-share-poc-lock"
+    encrypt        = true
+  }
+}
+
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
@@ -90,4 +102,6 @@ module "data-share-service" {
   prisoner_event_enabled = "false"
   prisoner_search_url    = ""
   hmpps_auth_url         = ""
+
+  grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
 }

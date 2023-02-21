@@ -1,3 +1,7 @@
+locals {
+  auth_base_url = "https://${aws_cognito_user_pool.pool.domain}.auth.${var.region}.amazoncognito.com"
+}
+
 resource "aws_ecs_cluster" "grafana" {
   name = "grafana"
 
@@ -28,6 +32,21 @@ resource "aws_ecs_task_definition" "grafana" {
       environment = [
         { "name" : "AWS_SDK_LOAD_CONFIG", "value" : "true" },
         { "name" : "GF_AUTH_SIGV4_AUTH_ENABLED", "value" : "true" },
+
+        { "name" : "GF_SERVER_DOMAIN", "value" : aws_cloudfront_distribution.grafana.domain_name },
+        { "name" : "GF_SERVER_ROOT_URL", "value" : "https://${aws_cloudfront_distribution.grafana.domain_name}" },
+        { "name" : "GF_SESSION_COOKIE_SECURE", "value" : "true" },
+        { "name" : "GF_SESSION_COOKIE_SAMESITE", "value" : "lax" },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_ENABLED", "value" : "true" },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_NAME", "value" : "Cognito" },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP", "value" : "true" },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_CLIENT_ID", "value" : aws_cognito_user_pool_client.grafana.id },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET", "value" : aws_cognito_user_pool_client.grafana.client_secret },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_SCOPES", "value" : "email profile aws.cognito.signin.user.admin openid" },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_AUTH_URL", "value" : "${local.auth_base_url}/oauth2/authorize" },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_TOKEN_URL", "value" : "${local.auth_base_url}/oauth2/token" },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_API_URL", "value" : "${local.auth_base_url}/oauth2/userInfo" },
+        { "name" : "GF_AUTH_SIGNOUT_REDIRECT_URL", "value" : "${local.auth_base_url}/logout?client_id=${aws_cognito_user_pool_client.grafana.id}&logout_uri=https://${aws_cloudfront_distribution.grafana.domain_name}/login" },
       ],
       logConfiguration : {
         logDriver : "awslogs",

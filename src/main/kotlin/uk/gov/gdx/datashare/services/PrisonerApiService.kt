@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.services
 
 import com.amazonaws.xray.spring.aop.XRayEnabled
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -10,6 +11,7 @@ import uk.gov.gdx.datashare.models.PrisonerRecord
 
 @Service
 @XRayEnabled
+@ConditionalOnProperty(name = ["api.base.prisoner-event.enabled"], havingValue = "true")
 class PrisonerApiService(
   private val prisonerSearchApiWebClient: WebClient,
 ) {

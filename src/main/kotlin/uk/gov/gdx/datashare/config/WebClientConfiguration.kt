@@ -29,6 +29,13 @@ class WebClientConfiguration(
   }
 
   @Bean
+  fun baseHttpClient(builder: Builder): WebClient {
+    return builder
+      .clientConnector(ReactorClientHttpConnector(createHttpClient("baseHttpClient")))
+      .build()
+  }
+
+  @Bean
   fun levApiWebClient(builder: Builder): WebClient {
     return builder
       .baseUrl(levApiRootUri)

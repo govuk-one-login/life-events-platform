@@ -9,15 +9,15 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class EcsContainerConfiguration(
-  @Value("\${ecs.container.metadata.uri.v4:-}") private val metadataUri: String?,
+  @Value("\${ecs.container.metadata.uri.v4:#{null}}") private val metadataUri: String?,
 ) {
   @Bean
-  fun taskId(baseHttpClient: WebClient): String {
+  fun taskId(setupHttpClient: WebClient): String {
     if (metadataUri == null) {
       return "local"
     }
     return runBlocking {
-      baseHttpClient
+      setupHttpClient
         .get()
         .uri(metadataUri)
         .retrieve()

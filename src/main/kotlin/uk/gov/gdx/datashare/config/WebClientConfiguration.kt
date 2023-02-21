@@ -19,9 +19,9 @@ import java.time.Duration
 @Configuration
 class WebClientConfiguration(
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
-  @Value("\${api.base.url.prisoner-search:-}") private val prisonerSearchApiUri: String,
-  @Value("\${api.base.lev.api.client.name:-}") private val levApiClientName: String,
-  @Value("\${api.base.lev.api.client.user:-}") private val levApiClientUser: String,
+  @Value("\${api.base.url.prisoner-search}") private val prisonerSearchApiUri: String,
+  @Value("\${api.base.lev.api.client.name}") private val levApiClientName: String,
+  @Value("\${api.base.lev.api.client.user}") private val levApiClientUser: String,
 ) {
 
   companion object {
@@ -29,9 +29,9 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun baseHttpClient(builder: Builder): WebClient {
-    return builder
-      .clientConnector(ReactorClientHttpConnector(createHttpClient("baseHttpClient")))
+  fun setupHttpClient(): WebClient {
+    return WebClient.builder()
+      .clientConnector(ReactorClientHttpConnector(createHttpClient("setupHttpClient")))
       .build()
   }
 

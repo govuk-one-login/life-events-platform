@@ -19,13 +19,20 @@ import java.time.Duration
 @Configuration
 class WebClientConfiguration(
   @Value("\${api.base.url.lev}") private val levApiRootUri: String,
-  @Value("\${api.base.url.prisoner-search:-}") private val prisonerSearchApiUri: String,
-  @Value("\${api.base.lev.api.client.name:-}") private val levApiClientName: String,
-  @Value("\${api.base.lev.api.client.user:-}") private val levApiClientUser: String,
+  @Value("\${api.base.url.prisoner-search}") private val prisonerSearchApiUri: String,
+  @Value("\${api.base.lev.api.client.name}") private val levApiClientName: String,
+  @Value("\${api.base.lev.api.client.user}") private val levApiClientUser: String,
 ) {
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
+  @Bean
+  fun setupHttpClient(): WebClient {
+    return WebClient.builder()
+      .clientConnector(ReactorClientHttpConnector(createHttpClient("setupHttpClient")))
+      .build()
   }
 
   @Bean

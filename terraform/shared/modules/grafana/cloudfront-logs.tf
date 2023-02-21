@@ -35,7 +35,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudfront_logs_bucket_lifecyc
     id     = "grafana-logs"
     status = "Enabled"
     expiration {
-      days = 180
+      days = 7
     }
   }
 }

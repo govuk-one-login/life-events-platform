@@ -37,13 +37,3 @@ resource "aws_security_group_rule" "efs_ingress" {
   description              = "EFS task ingress rule, allow access from ECS"
   security_group_id        = aws_security_group.efs.id
 }
-
-resource "aws_security_group_rule" "efs_egress" {
-  type                     = "egress"
-  protocol                 = "tcp"
-  from_port                = 2049
-  to_port                  = 2049
-  source_security_group_id = aws_security_group.ecs_task.id
-  description              = "EFS task egress rule, allow access to ECS"
-  security_group_id        = aws_security_group.efs.id
-}

@@ -13,3 +13,5 @@ variable "externally_allowed_cidrs" {
 variable "prisoner_event_enabled" {}
 variable "prisoner_search_url" {}
 variable "hmpps_auth_url" {}
+
+variable "grafana_task_role_name" {}

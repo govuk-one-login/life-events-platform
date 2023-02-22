@@ -212,7 +212,7 @@ module "request_alarm_dashboard" {
   ]
 }
 
-module "queue_alarm_dashboard" {
+module "internal_alarm_dashboard" {
   source           = "../cloudwatch_alarm_dashboard"
   region           = var.region
   dashboard_name   = "${var.environment}-queue-alarm-dashboard"
@@ -225,6 +225,10 @@ module "queue_alarm_dashboard" {
     {
       title  = aws_cloudwatch_metric_alarm.queue_process_error_number.alarm_description,
       alarms = [aws_cloudwatch_metric_alarm.queue_process_error_number.arn]
+    },
+    {
+      title  = aws_cloudwatch_metric_alarm.unconsumed_events.alarm_description,
+      alarms = [aws_cloudwatch_metric_alarm.unconsumed_events.arn]
     },
   ]
 }

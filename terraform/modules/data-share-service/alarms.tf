@@ -177,3 +177,18 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_number" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "unconsumed_events" {
+  alarm_name          = "${local.alarm_prefix}-growing-unconsumed-events"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  threshold           = "500"
+  alarm_description   = "Number of unconsumed events"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [aws_sns_topic.sns_alarm_topic.arn]
+  ok_actions          = [aws_sns_topic.sns_alarm_topic.arn]
+
+  metric_name = "UnconsumedEvents.value"
+  namespace   = local.metric_namespace
+  period      = "300"
+  statistic   = "Maximum"
+}

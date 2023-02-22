@@ -74,4 +74,6 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
   @Query("UPDATE event_data SET deleted_at=:deletionTime WHERE id = :id")
   @Modifying
   fun softDeleteById(id: UUID, deletionTime: LocalDateTime)
+
+  fun countByDeletedAtIsNull(): Int
 }

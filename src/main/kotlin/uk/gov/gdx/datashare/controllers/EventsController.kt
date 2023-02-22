@@ -49,43 +49,9 @@ class EventsController(
   @Operation(
     operationId = "getEvents",
     summary = "Event Get API - Get event data",
-    description = "Get all events for Acquirer, Need scope of events/consume. " +
-      "     This field is only populated when the acquirer has <em>enrichmentFieldsIncludedInPoll</em> enabled, otherwise an empty object." +
-      "     Full dataset for the event can be obtained by calling <pre>/events/{id}</pre>" +
-      "     <h3>Event Types</h3>" +
-      "     <h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +
-      "     <p>Death notifications take the following json structure." +
-      "     <pre>\n" +
-      "{\n" +
-      "        \"registrationDate\": \"2023-01-23\",\n" +
-      "        \"firstNames\": \"Mary Jane\",\n" +
-      "        \"lastName\": \"Smith\",\n" +
-      "        \"maidenName\": \"Jones\",\n" +
-      "        \"sex\": \"Male\",\n" +
-      "        \"dateOfDeath\": \"2023-01-02\",\n" +
-      "        \"dateOfBirth\": \"1972-02-20\",\n" +
-      "        \"birthPlace\": \"56 Test Address, B Town\",\n" +
-      "        \"deathPlace\": \"Hospital Ward 5, C Town\",\n" +
-      "        \"occupation\": \"Doctor\",\n" +
-      "        \"retired\": true,\n" +
-      "        \"address\": \"101 Address Street, A Town, Postcode\"\n" +
-      "}\n" +
-      "      </pre>" +
-      "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
-      "      <p><b>Gender Types:</b>: Male, Female, Indeterminate</p>" +
-      "<h4>2. Person has been sent to prison - Type: <em>ENTERED_PRISON</em></h4>" +
-      "     <p>Prisoner received notifications take the following json structure." +
-      "     <pre>\n" +
-      "{\n" +
-      "        \"prisonerNumber\": \"A1234DB\",\n" +
-      "        \"firstName\": \"Mary\",\n" +
-      "        \"middleNames\": \"Jane\",\n" +
-      "        \"lastName\": \"Smith\",\n" +
-      "        \"gender\": \"Male\",\n" +
-      "        \"dateOfBirth\": \"1972-02-20\",\n" +
-      "}\n" +
-      "      </pre>" +
-      "      <p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, gender, dateOfBirth</p>",
+    description = "<h3>Event Types</h3>" +
+      "<h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +
+      "<h4>2. Person has been sent to prison - Type: <em>ENTERED_PRISON</em></h4>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -106,52 +72,47 @@ class EventsController(
 {
   "data": [
     {
-      "id": "a3e48cca-052f-4599-8ddc-e863de428f89",
+      "id": "guid_1",
       "type": "events",
       "attributes": {
         "eventType": "DEATH_NOTIFICATION",
-        "sourceId": "123456789",
-        "eventData": {
-          "firstNames": "Joan Narcissus Ouroboros",
-          "lastName": "SMITH",
-          "sex": "Male",
-          "dateOfDeath": "2023-01-20"
-        }
+        "sourceId": "1",
+        "dataIncluded": false
       },
       "links": {
-        "self": "http://localhost:8080/events/a3e48cca-052f-4599-8ddc-e863de428f89"
-      }
-    },
-    {
-      "id": "184ae4c3-17c5-41b8-a1f2-0abefecdb6ca",
-      "type": "events",
-      "attributes": {
-        "eventType": "DEATH_NOTIFICATION",
-        "sourceId": "123456789",
-        "eventData": {
-          "firstNames": "Joan Narcissus Ouroboros",
-          "lastName": "SMITH",
-          "sex": "Male",
-          "dateOfDeath": "2023-01-20"
-        }
+        "self": "https://localhost/events/guid_1"
       },
-      "links": {
-        "self": "http://localhost:8080/events/184ae4c3-17c5-41b8-a1f2-0abefecdb6ca"
+      "meta": {
+        "enrichmentFields": [
+          "sourceId",
+          "registrationDate",
+          "firstNames",
+          "lastName",
+          "maidenName",
+          "dateOfDeath",
+          "dateOfBirth",
+          "sex",
+          "address",
+          "birthPlace",
+          "deathPlace",
+          "occupation",
+          "retired"
+        ]
       }
     }
   ],
   "links": {
-    "self": "http://localhost:8080/events?page%5Bnumber%5D=1&page%5Bsize%5D=2",
-    "first": "http://localhost:8080/events?page%5Bsize%5D=2&page%5Bnumber%5D=0",
-    "prev": "http://localhost:8080/events?page%5Bsize%5D=2&page%5Bnumber%5D=0",
-    "next": "http://localhost:8080/events?page%5Bsize%5D=2&page%5Bnumber%5D=2",
-    "last": "http://localhost:8080/events?page%5Bsize%5D=2&page%5Bnumber%5D=5"
+    "self": "https://localhost/events?page%5Bnumber%5D=1\u0026page%5Bsize%5D=1",
+    "first": "https://localhost/events?page%5Bsize%5D=1\u0026page%5Bnumber%5D=0",
+    "prev": "https://localhost/events?page%5Bsize%5D=1\u0026page%5Bnumber%5D=0",
+    "next": "https://localhost/events?page%5Bsize%5D=1\u0026page%5Bnumber%5D=2",
+    "last": "https://localhost/events?page%5Bsize%5D=1\u0026page%5Bnumber%5D=4"
   },
   "meta": {
     "page": {
-      "size": 2,
-      "totalElements": 11,
-      "totalPages": 6,
+      "size": 1,
+      "totalElements": 5,
+      "totalPages": 5,
       "number": 1
     }
   }
@@ -253,7 +214,40 @@ class EventsController(
   @GetMapping("/{id}")
   @Operation(
     summary = "Get Specific Event API - Get event data",
-    description = "The event ID is the UUID received off the queue, Need scope of events/consume",
+    description = "<h3>Event Types</h3> " +
+      "<h4>Death Notifications</h4>" +
+      " <p>The <samp>event_data</samp> object for a death notification takes the following json structure: " +
+      "<pre>" +
+      "{\n" +
+      "\"registrationDate\": \"2023-01-23\"," +
+      "\"firstNames\": \"Mary Jane\",\n" +
+      "\"lastName\": \"Smith\",\n" +
+      "\"maidenName\": \"Jones\",\n" +
+      "\"sex\": \"Male\",\n" +
+      "\"dateOfDeath\": \"2023-01-02\",\n" +
+      "\"dateOfBirth\": \"1972-02-20\",\n" +
+      "\"birthPlace\": \"56 Test Address, B Town\",\n" +
+      "\"deathPlace\": \"Hospital Ward 5, C Town\",\n" +
+      "\"occupation\": \"Doctor\",\n" +
+      "\"retired\": true," +
+      "\"address\": \"101 Address Street, A Town, Postcode\"\n" +
+      "}" +
+      "</pre></p>" +
+      "<p><b>Mandatory Fields</b>:registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
+      "<p><b>Gender Types:</b>: Male, Female, Indeterminate</p>" +
+      "<h4>Person has been sent to prison</h4>" +
+      "<p>The <samp>event_data</samp> object for a prisoner received notification takes the following json structure:" +
+      "<pre>" +
+      "{\n" +
+      "\"prisonerNumber\": \"A1234DB\",\n" +
+      "\"firstName\": \"Mary\",\n" +
+      "\"middleNames\": \"Jane\",\n" +
+      "\"lastName\": \"Smith\",\n" +
+      "\"gender\": \"Male\",\n" +
+      "\"dateOfBirth\": \"1972-02-20\"\n" +
+      "}" +
+      "</pre></p>" +
+      "<p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, gender, dateOfBirth</p>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -271,10 +265,18 @@ class EventsController(
       "eventType": "DEATH_NOTIFICATION",
       "sourceId": "123456789",
       "eventData": {
-        "firstNames": "Joan Narcissus Ouroboros",
-        "lastName": "SMITH",
+        "registrationDate": "2023-01-23",
+        "firstNames": "Mary Jane",
+        "lastName": "Smith",
+        "maidenName": "Jones",
         "sex": "Male",
-        "dateOfDeath": "2023-01-20"
+        "dateOfDeath": "2023-01-02",
+        "dateOfBirth": "1972-02-20",
+        "birthPlace": "56 Test Address, B Town",
+        "deathPlace": "Hospital Ward 5, C Town",
+        "occupation": "Doctor",
+        "retired": true,
+        "address": "101 Address Street, A Town, Postcode"
       }
     }
   },
@@ -329,7 +331,7 @@ class EventsController(
   @DeleteMapping("/{id}")
   @Operation(
     summary = "Event Delete API - Delete event data",
-    description = "The event ID is the UUID received off the queue, Need scope of events/consume",
+    description = "Mark an event as processed and prevent it from being returned from calls to /events",
     responses = [
       ApiResponse(
         responseCode = "204",

@@ -18,6 +18,7 @@ resource "aws_sns_topic" "sns_alarm_topic" {
 }
 
 data "aws_iam_policy_document" "sns_access" {
+  policy_id = "default_policy_with_prometheus"
   statement {
     actions = [
       "SNS:Subscribe",
@@ -62,7 +63,7 @@ data "aws_iam_policy_document" "sns_access" {
   }
 }
 
-resource "aws_sns_topic_policy" "default" {
+resource "aws_sns_topic_policy" "sns_access" {
   arn = aws_sns_topic.sns_alarm_topic.arn
 
   policy = data.aws_iam_policy_document.sns_access.json

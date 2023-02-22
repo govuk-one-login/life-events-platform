@@ -1,7 +1,5 @@
 locals {
   notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
-
-
 }
 
 resource "aws_kms_key" "sns_alarm_key" {

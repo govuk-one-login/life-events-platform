@@ -13,7 +13,7 @@ ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 COPY . .
 RUN ./gradlew clean assemble -Dorg.gradle.daemon=false
 
-FROM eclipse-temurin:19-jre-alpine
+FROM amazoncorretto:19-alpine
 LABEL maintainer="GDX Vison <info@gds.gov.uk>"
 
 RUN apk --no-cache upgrade
@@ -23,10 +23,6 @@ RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezo
 
 RUN addgroup --gid 2000 --system appgroup && \
     adduser --u 2000 --system appuser 2000
-
-# Install AWS RDS Root cert into Java truststore
-RUN mkdir /home/appuser/.postgresql
-ADD --chown=appuser:appgroup https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem /home/appuser/.postgresql/root.crt
 
 WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup /app/build/libs/gdx-data-share-poc*.jar /app/app.jar

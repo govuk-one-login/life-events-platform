@@ -18,8 +18,8 @@ resource "aws_sns_topic" "sns_alarm_topic" {
 }
 
 data "aws_iam_policy_document" "sns_access" {
-  policy_id = "default_policy_with_prometheus"
   statement {
+    sid = "__default_statement_ID"
     actions = [
       "SNS:Subscribe",
       "SNS:SetTopicAttributes",
@@ -45,6 +45,7 @@ data "aws_iam_policy_document" "sns_access" {
     }
   }
   statement {
+    sid = "__prometheus_statement_ID"
     actions = [
       "SNS:Publish",
     ]

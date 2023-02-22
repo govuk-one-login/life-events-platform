@@ -2,9 +2,44 @@ locals {
   notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
 }
 
+data "aws_iam_policy_document" "sns_kms_access" {
+  statement {
+    sid = "__default_statement_ID"
+    actions = [
+      "kms:*",
+    ]
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    resources = ["*"]
+  }
+  statement {
+    sid = "__prometheus_statement_ID"
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    resources = ["*"]
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+
+      values = [aws_prometheus_workspace.prometheus.arn]
+    }
+  }
+}
+
 resource "aws_kms_key" "sns_alarm_key" {
   enable_key_rotation = true
   description         = "Key used to encrypt sns alarm"
+  policy              = data.aws_iam_policy_document.sns_kms_access.json
 }
 
 resource "aws_kms_alias" "sqs_key_alias" {

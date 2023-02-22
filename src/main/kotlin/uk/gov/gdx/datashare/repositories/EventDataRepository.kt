@@ -13,20 +13,6 @@ interface EventDataRepository : CrudRepository<EventData, UUID> {
     "SELECT ed.* FROM event_data ed " +
       "WHERE ed.when_created > :fromTime " +
       "AND ed.when_created <= :toTime " +
-      "AND ed.acquirer_subscription_id = :acquirerSubscriptionId " +
-      "AND ed.deleted_at is null " +
-      "ORDER BY ed.when_created",
-  )
-  fun findAllByAcquirerSubscription(
-    acquirerSubscriptionId: UUID,
-    fromTime: LocalDateTime,
-    toTime: LocalDateTime,
-  ): List<EventData>
-
-  @Query(
-    "SELECT ed.* FROM event_data ed " +
-      "WHERE ed.when_created > :fromTime " +
-      "AND ed.when_created <= :toTime " +
       "AND ed.acquirer_subscription_id IN (:acquirerSubscriptionIds) " +
       "AND ed.deleted_at is null " +
       "ORDER BY ed.when_created " +

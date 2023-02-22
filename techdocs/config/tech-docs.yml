@@ -37,3 +37,5 @@ prevent_indexing: false
 show_contribution_banner: true
 github_repo: alphagov/gdx-data-share-poc
 github_branch: main
+
+api_path: https://d33v84mi0vopmk.cloudfront.net/v3/api-docs.yaml

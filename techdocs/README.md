@@ -2,13 +2,6 @@
 
 This project uses the [Tech Docs Template][template], which is a [Middleman template][mmt] that you can use to build technical documentation using a GOV.UK style.
 
-You’re welcome to use the template even if your service isn’t considered part of GOV.UK, but your site or service must not:
-
-- identify itself as being part of GOV.UK
-- use the crown or GOV.UK logotype in the header
-- use the GDS Transport typeface
-- suggest that it’s an official UK government website if it’s not
-
 👉 To find out more about setting up and managing content for a website using this template, see the [Tech Docs Template documentation][tdt-docs].
 
 ## Before you start
@@ -55,6 +48,11 @@ bundle exec middleman build
 ```
 
 Every time you run this command, the `build` folder gets generated from scratch. This means any changes to the `build` folder that are not part of the build command will get overwritten.
+
+## Deploy
+
+The `techdocs` Github action automatically builds this site and deploys it to github pages. It runs whenever a change to
+this dir (techdocs) are pushed to main. You can also trigger a manual deploy using actions.
 
 ## Troubleshooting
 

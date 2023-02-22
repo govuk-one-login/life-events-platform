@@ -77,7 +77,7 @@ class EventsQueryTest : MockIntegrationTestBase() {
 
   private fun getEvents(): String? = getEndpoint("/events")
 
-  private fun getMiddlePageOfEvents(): String? = getEndpoint("/events?page[size]=1&page[number]=1")
+  private fun getMiddlePageOfEvents(): String? = getEndpoint("/events?page[size]=1&page[number]=2")
 
   private fun getEvent(): String? = getEndpoint("/events/$eventId")
 
@@ -112,8 +112,8 @@ class EventsQueryTest : MockIntegrationTestBase() {
         UUID.randomUUID(),
         acquirerSubscription.acquirerSubscriptionId,
         sourceId,
-        LocalDateTime.of(2000, 5, 3, 12, 4, 3),
-        LocalDateTime.of(2000, 5, 3, 12, 4, 3),
+        LocalDateTime.of(2000, 5, 3, 12, 4, 3 + sourceId.toInt()),
+        LocalDateTime.of(2000, 5, 3, 12, 4, 0 + sourceId.toInt()),
       )
       eventDataRepository.save(eventData)
     }

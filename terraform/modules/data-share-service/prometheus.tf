@@ -1,5 +1,9 @@
 resource "aws_prometheus_workspace" "prometheus" {
   alias = "${var.environment}-prometheus"
+
+  logging_configuration {
+    log_group_arn = "${aws_cloudwatch_log_group.prometheus_logs.arn}:*"
+  }
 }
 
 resource "random_password" "prometheus_username" {
@@ -53,5 +57,20 @@ alertmanager_config: |
       - topic_arn: ${aws_sns_topic.sns_alarm_topic.arn}
         sigv4:
           region: eu-west-2
+EOF
+}
+
+resource "aws_prometheus_rule_group_namespace" "test" {
+  name         = "test"
+  workspace_id = aws_prometheus_workspace.prometheus.id
+  data         = <<EOF
+groups:
+  - name: test
+    rules:
+    - alert: Test Alarm
+      expr: sum by(eventType) (EVENT_ACTION_EventPublished_total{eventType="DEATH_NOTIFICATION"}) > 40
+      for: 1m
+      annotations:
+        summary: Test Alarm
 EOF
 }

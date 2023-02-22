@@ -21,6 +21,12 @@ resource "aws_cognito_user_pool" "pool" {
     email_subject        = "Verify access to Grafana"
     email_message        = "Click the link below to verify access to Grafana \n {####}"
   }
+
+  email_configuration {
+    email_sending_account = "COGNITO_DEFAULT"
+  }
+
+  auto_verified_attributes = ["email"]
 }
 
 resource "aws_cognito_user_pool_domain" "domain" {

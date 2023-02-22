@@ -42,6 +42,17 @@ data "aws_iam_policy_document" "sns_access" {
 
       values = [data.aws_caller_identity.current.account_id]
     }
+  }
+  statement {
+    actions = [
+      "SNS:Publish",
+    ]
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    resources = [aws_sns_topic.sns_alarm_topic.arn]
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"

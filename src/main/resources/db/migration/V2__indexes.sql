@@ -14,10 +14,12 @@ create index ed_acquirer_subscription_id_index
     on event_data (acquirer_subscription_id);
 
 create index ed_deleted_at_index
-    on event_data (deleted_at);
+    on event_data (deleted_at)
+    WHERE deleted_at is null;
 
 create index ed_polling_index
-    on event_data (when_created, acquirer_subscription_id, deleted_at);
+    on event_data (when_created, acquirer_subscription_id, deleted_at)
+    WHERE deleted_at is null;
 
 create index ss_supplier_id_index
     on supplier_subscription (supplier_id);

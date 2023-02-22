@@ -1,4 +1,4 @@
-FROM eclipse-temurin:19-jre-jammy AS builder
+FROM amazoncorretto:19-alpine AS builder
 
 WORKDIR /app
 

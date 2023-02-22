@@ -68,7 +68,7 @@ groups:
   - name: test
     rules:
     - alert: Test Alarm
-      expr: sum by(eventType) (EVENT_ACTION_EventPublished_total{eventType="DEATH_NOTIFICATION"}) > 40
+      expr: sum by(eventType) (EVENT_ACTION_EventPublished_total{eventType="DEATH_NOTIFICATION"}) > 1
       for: 1m
       annotations:
         summary: Test Alarm

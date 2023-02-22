@@ -14,7 +14,7 @@ COPY . .
 RUN ./gradlew clean assemble -Dorg.gradle.daemon=false
 
 FROM amazoncorretto:19-alpine
-LABEL maintainer="GDX Vison <info@gds.gov.uk>"
+LABEL maintainer="GDX Platform Team <gdx-dev-team@digital.cabinet-office.gov.uk>"
 
 RUN apk --no-cache upgrade
 

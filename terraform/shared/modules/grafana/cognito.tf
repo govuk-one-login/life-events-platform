@@ -25,6 +25,8 @@ resource "aws_cognito_user_pool" "pool" {
   email_configuration {
     email_sending_account = "COGNITO_DEFAULT"
   }
+
+  auto_verified_attributes = ["email"]
 }
 
 resource "aws_cognito_user_pool_domain" "domain" {

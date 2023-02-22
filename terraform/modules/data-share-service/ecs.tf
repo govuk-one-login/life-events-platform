@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SQS_QUEUES_PRISONEREVENT_ENABLED", "value" : var.prisoner_event_enabled },
         {
           "name" : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL",
-          "value" : "${local.gdx_api_base_url}/webjars/swagger-ui/oauth2-redirect.html"
+          "value" : "${local.gdx_api_base_url}/swagger-ui/oauth2-redirect.html"
         },
       ]
       secrets = [

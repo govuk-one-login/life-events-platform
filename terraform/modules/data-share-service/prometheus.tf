@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "grafana_prometheus_access" {
       "aps:GetAlertManagerStatus",
       "aps:ListAlertManagerAlertGroups",
       "aps:PutAlertManagerSilences",
-      "aps:DeleteAlertManagerSilences",
+      "aps:DeleteAlertManagerSilence",
     ]
     resources = [aws_prometheus_workspace.prometheus.arn]
     effect    = "Allow"

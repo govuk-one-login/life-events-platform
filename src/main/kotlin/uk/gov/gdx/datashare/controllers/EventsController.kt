@@ -18,6 +18,8 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.http.MediaType.TEXT_PLAIN_VALUE
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
@@ -128,7 +130,7 @@ class EventsController(
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
           Content(
-            mediaType = "application/json",
+            mediaType = APPLICATION_JSON_VALUE,
             schema = Schema(implementation = ErrorResponse::class),
           ),
         ],
@@ -294,14 +296,19 @@ class EventsController(
       ApiResponse(
         responseCode = "404",
         description = "Event with UUID cannot be found",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+        content = [
+          Content(
+            mediaType = APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
           Content(
-            mediaType = "application/json",
+            mediaType = APPLICATION_JSON_VALUE,
             schema = Schema(implementation = ErrorResponse::class),
           ),
         ],
@@ -328,7 +335,7 @@ class EventsController(
 
   @Tag(name = "01. Acquirer")
   @PreAuthorize("hasAnyAuthority('SCOPE_events/consume')")
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/{id}", produces = [TEXT_PLAIN_VALUE])
   @Operation(
     summary = "Event Delete API - Delete event data",
     description = "Mark an event as processed and prevent it from being returned from calls to /events",
@@ -336,16 +343,7 @@ class EventsController(
       ApiResponse(
         responseCode = "204",
         description = "Event deleted",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
+        content = [Content(mediaType = TEXT_PLAIN_VALUE)],
       ),
     ],
   )
@@ -361,28 +359,29 @@ class EventsController(
 
   @Tag(name = "02. Supplier")
   @PreAuthorize("hasAnyAuthority('SCOPE_events/publish')")
-  @PostMapping
+  @PostMapping(produces = [TEXT_PLAIN_VALUE])
   @Operation(
     summary = "Send events to GDS - The 'Source' of the event - this could be HMPO or DWP for example",
     description = "Scope is events/publish",
     responses = [
       ApiResponse(
         responseCode = "201",
-        description = "Data Accepted",
-
+        description = "Created",
+        content = [Content(mediaType = TEXT_PLAIN_VALUE)],
       ),
       ApiResponse(
         responseCode = "415",
         description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
         content = [
           Content(
-            mediaType = "application/json",
+            mediaType = APPLICATION_JSON_VALUE,
             schema = Schema(implementation = ErrorResponse::class),
           ),
         ],
       ),
     ],
   )
+  @ResponseStatus(HttpStatus.CREATED)
   fun publishEvent(
     @Schema(
       description = "Event Payload",

@@ -63,16 +63,6 @@ class BaseDataController(
         responseCode = "204",
         description = "Acquirer deleted",
       ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
     ],
   )
   fun deleteAcquirer(
@@ -118,16 +108,6 @@ class BaseDataController(
       ApiResponse(
         responseCode = "204",
         description = "Acquirer Subscription deleted",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
       ),
     ],
   )
@@ -175,16 +155,6 @@ class BaseDataController(
         responseCode = "204",
         description = "Event deleted",
       ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
     ],
   )
   fun deleteEvent(
@@ -231,16 +201,6 @@ class BaseDataController(
         responseCode = "204",
         description = "Supplier deleted",
       ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
     ],
   )
   fun deleteSupplier(
@@ -286,16 +246,6 @@ class BaseDataController(
       ApiResponse(
         responseCode = "204",
         description = "Supplier Subscription deleted",
-      ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
       ),
     ],
   )

@@ -400,9 +400,7 @@ class EventsController(
     )
     @RequestBody
     eventPayload: EventToPublish,
-  ) {
-    dataReceiverService.sendToDataProcessor(eventPayload)
-  }
+  ) = dataReceiverService.sendToDataProcessor(eventPayload)
 
   private fun eventLink(id: UUID): org.springframework.hateoas.Link =
     org.springframework.hateoas.Link.of(

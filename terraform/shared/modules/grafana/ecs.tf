@@ -47,6 +47,7 @@ resource "aws_ecs_task_definition" "grafana" {
         { "name" : "GF_AUTH_GENERIC_OAUTH_TOKEN_URL", "value" : "${local.auth_base_url}/oauth2/token" },
         { "name" : "GF_AUTH_GENERIC_OAUTH_API_URL", "value" : "${local.auth_base_url}/oauth2/userInfo" },
         { "name" : "GF_AUTH_SIGNOUT_REDIRECT_URL", "value" : "${local.auth_base_url}/logout?client_id=${aws_cognito_user_pool_client.grafana.id}&logout_uri=https://${aws_cloudfront_distribution.grafana.domain_name}/login" },
+        { "name" : "GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH", "value" : "(\"cognito:groups\" | contains([*], 'Admin') && 'Admin' || 'Viewer')" }
       ],
       logConfiguration : {
         logDriver : "awslogs",

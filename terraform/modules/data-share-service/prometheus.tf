@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "grafana_prometheus_access" {
       "aps:GetAlertManagerStatus",
       "aps:ListAlertManagerAlertGroups",
       "aps:PutAlertManagerSilences",
-      "aps:DeleteAlertManagerSilences",
+      "aps:DeleteAlertManagerSilence",
     ]
     resources = [aws_prometheus_workspace.prometheus.arn]
     effect    = "Allow"
@@ -68,7 +68,7 @@ groups:
   - name: test
     rules:
     - alert: Test Alarm
-      expr: sum by(eventType) (EVENT_ACTION_EventPublished_total{eventType="DEATH_NOTIFICATION"}) > 40
+      expr: sum by(eventType) (EVENT_ACTION_EventPublished_total{eventType="DEATH_NOTIFICATION"}) > 1
       for: 1m
       annotations:
         summary: Test Alarm

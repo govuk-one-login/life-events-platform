@@ -46,3 +46,8 @@ resource "aws_cognito_user_pool_client" "grafana" {
   logout_urls                          = ["https://${aws_cloudfront_distribution.grafana.domain_name}/login"]
   supported_identity_providers         = ["COGNITO"]
 }
+
+resource "aws_cognito_user_group" "main" {
+  name         = "Admin"
+  user_pool_id = aws_cognito_user_pool.pool.id
+}

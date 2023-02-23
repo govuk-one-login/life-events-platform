@@ -65,12 +65,12 @@ resource "aws_prometheus_rule_group_namespace" "test" {
   workspace_id = aws_prometheus_workspace.prometheus.id
   data         = <<EOF
 groups:
-  - name: test
+  - name: Events
     rules:
-    - alert: Test Alarm
-      expr: sum by(eventType) (EVENT_ACTION_EventPublished_total{eventType="DEATH_NOTIFICATION"}) > 1
-      for: 1m
+    - alert: Growing Unconsumed Events
+      expr: sum(UnconsumedEvents) > 500
+      for: 5m
       annotations:
-        summary: Test Alarm
+        summary: Over 500 unconsumed events in database
 EOF
 }

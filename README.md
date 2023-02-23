@@ -2,9 +2,9 @@
 
 A proof of concept to explore cross governmental data sharing in an event driven way, to simplify data acquisition and sharing.
 
-## API Contracts
-
-API documentation can be found [here](https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html)
+## Documentation
+Techdocs for this service are available [here](https://alphagov.github.io/gdx-data-share-poc/).
+There are also [Swagger docs](https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html).
 
 ## Running the service
 

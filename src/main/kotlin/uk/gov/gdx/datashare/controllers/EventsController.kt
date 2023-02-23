@@ -345,16 +345,6 @@ class EventsController(
         description = "Event deleted",
         content = [Content(mediaType = TEXT_PLAIN_VALUE)],
       ),
-      ApiResponse(
-        responseCode = "406",
-        description = "Not able to process the request because the header “Accept” does not match with any of the content types this endpoint can handle",
-        content = [
-          Content(
-            mediaType = APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
     ],
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)

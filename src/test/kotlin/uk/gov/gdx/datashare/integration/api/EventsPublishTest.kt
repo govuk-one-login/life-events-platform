@@ -13,7 +13,7 @@ class EventsPublishTest : SqsIntegrationTestBase() {
       .bodyValue(mapOf("eventType" to "DEATH_NOTIFICATION", "id" to "123456789"))
       .exchange()
       .expectStatus()
-      .isOk
+      .isCreated
   }
 
   @Test

@@ -92,6 +92,7 @@ management:
         http:
           server.requests: true
           client.requests: true
+          DATA_PROCESSING.TimeFromCreationToDeletion: true
 
 prometheus:
   user:

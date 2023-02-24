@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -16,6 +17,7 @@ import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.helpers.getHistogramTimer
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.repositories.*
@@ -37,7 +39,8 @@ class EventDataServiceTest {
   private val underTest: EventDataService
 
   init {
-    every { meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion", *anyVararg()) }.returns(
+    mockkStatic(::getHistogramTimer)
+    every { getHistogramTimer(any(), "DATA_PROCESSING.TimeFromCreationToDeletion") }.returns(
       dataCreationToDeletionTimer,
     )
     every { dataCreationToDeletionTimer.record(any<Duration>()) }.returns(Unit)

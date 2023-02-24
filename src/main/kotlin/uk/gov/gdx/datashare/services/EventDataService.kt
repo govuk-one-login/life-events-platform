@@ -2,7 +2,6 @@ package uk.gov.gdx.datashare.services
 
 import com.amazonaws.xray.spring.aop.XRayEnabled
 import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,6 +12,7 @@ import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.helpers.getHistogramTimer
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
 import uk.gov.gdx.datashare.repositories.*
@@ -32,9 +32,7 @@ class EventDataService(
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
   private val enrichmentServices: List<EnrichmentService>,
 ) {
-  private val dataProcessingTimer = Timer.builder("DATA_PROCESSING.TimeFromCreationToDeletion")
-    .publishPercentileHistogram()
-    .register(meterRegistry)
+  private val dataProcessingTimer = getHistogramTimer(meterRegistry, "DATA_PROCESSING.TimeFromCreationToDeletion")
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)

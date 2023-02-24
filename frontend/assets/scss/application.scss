@@ -1,0 +1,7 @@
+$govuk-global-styles: true;
+$path: "/assets/images/";
+
+$govuk-page-width: 1170px;
+
+@import 'govuk/all';
+@import 'assets/scss/local';

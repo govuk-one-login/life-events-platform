@@ -12,6 +12,7 @@ import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.helpers.getHistogramTimer
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
 import uk.gov.gdx.datashare.repositories.*
@@ -31,6 +32,7 @@ class EventDataService(
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
   private val enrichmentServices: List<EnrichmentService>,
 ) {
+  private val dataProcessingTimer = getHistogramTimer(meterRegistry, "DATA_PROCESSING.TimeFromCreationToDeletion")
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -118,8 +120,7 @@ class EventDataService(
       "acquirerSubscription",
       event.acquirerSubscriptionId.toString(),
     ).increment()
-    meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
-      .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
+    dataProcessingTimer.record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
     return mapEventNotification(event, acquirerSubscription, emptyList(), false)
   }
 

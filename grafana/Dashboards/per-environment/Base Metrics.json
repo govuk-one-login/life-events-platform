@@ -117,8 +117,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 18,
-        "w": 7,
+        "h": 10,
+        "w": 12,
         "x": 0,
         "y": 0
       },
@@ -144,12 +144,118 @@
           "editorMode": "builder",
           "expr": "sum by(uri, method) (increase(http_server_requests_seconds_count{uri=~\"/events.*\"}[5m]))",
           "interval": "5m",
-          "legendFormat": "__auto",
+          "legendFormat": "{{uri}} - {{method}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Server requests by method and URI",
+      "title": "Server requests by URI and method",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS_- DEV}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_- DEV}"
+          },
+          "editorMode": "builder",
+          "expr": "sum(increase(EVENT_ACTION_EventPublished_total[1m]))",
+          "interval": "1m",
+          "legendFormat": "Event published",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_- DEV}"
+          },
+          "editorMode": "builder",
+          "expr": "sum(increase(EVENT_ACTION_EventDeleted_total[1m]))",
+          "hide": false,
+          "interval": "1m",
+          "legendFormat": "Event deleted",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Event actions",
       "type": "timeseries"
     }
   ],
@@ -165,7 +271,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Requests - DEV",
+  "title": "Base Metrics",
   "uid": "jt9MBe1Vk",
   "version": 3,
   "weekStart": ""

@@ -18,3 +18,29 @@ updates:
       interval: daily
     commit-message:
       prefix: "GPC-NONE"
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "GPC-NONE"
+  - package-ecosystem: docker
+    directory: "/prometheus"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "GPC-NONE"
+  - package-ecosystem: docker
+    directory: "/grafana"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "GPC-NONE"
+    labels:
+      - "action-required"
+  - package-ecosystem: bundler
+    directory: "/techdocs"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "GPC-NONE"

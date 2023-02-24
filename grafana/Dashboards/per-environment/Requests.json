@@ -142,7 +142,7 @@
             "uid": "${DS_PROMETHEUS_- DEV}"
           },
           "editorMode": "builder",
-          "expr": "sum by(uri, method) (delta(http_server_requests_seconds_count{uri=~\"/events.*\"}[5m]))",
+          "expr": "sum by(uri, method) (increase(http_server_requests_seconds_count{uri=~\"/events.*\"}[5m]))",
           "interval": "5m",
           "legendFormat": "__auto",
           "range": true,

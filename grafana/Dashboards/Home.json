@@ -15,8 +15,6 @@
       "uid": "_VtpBe1Vz",
       "kind": 1,
       "model": {
-        "type": "timeseries",
-        "title": "Server requests by method and URI - DEV",
         "datasource": {
           "type": "prometheus",
           "uid": "E4sYzjJVk"
@@ -93,13 +91,15 @@
               "uid": "E4sYzjJVk"
             },
             "editorMode": "builder",
-            "expr": "sum by(uri, method) (delta(http_server_requests_seconds_count{uri=~\"/events.*\"}[5m]))",
+            "expr": "sum by(uri, method) (increase(http_server_requests_seconds_count{uri=~\"/events.*\"}[5m]))",
             "interval": "5m",
             "legendFormat": "__auto",
             "range": true,
             "refId": "A"
           }
-        ]
+        ],
+        "title": "Server requests by method and URI - DEV",
+        "type": "timeseries"
       }
     }
   },
@@ -243,6 +243,6 @@
   "timezone": "browser",
   "title": "Home",
   "uid": "XqTTB6J4z",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

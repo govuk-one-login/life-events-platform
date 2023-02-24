@@ -218,7 +218,7 @@ class EventsController(
     summary = "Get Specific Event API - Get event data",
     description = "<h3>Event Types</h3> " +
       "<h4>Death Notifications</h4>" +
-      " <p>The <samp>event_data</samp> object for a death notification takes the following json structure: " +
+      " <p>The `event_data` object for a death notification takes the following json structure: " +
       "<pre>" +
       "{\n" +
       "\"registrationDate\": \"2023-01-23\"," +
@@ -235,10 +235,10 @@ class EventsController(
       "\"address\": \"101 Address Street, A Town, Postcode\"\n" +
       "}" +
       "</pre></p>" +
-      "<p><b>Mandatory Fields</b>:registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
-      "<p><b>Gender Types:</b>: Male, Female, Indeterminate</p>" +
+      "<p><b>Mandatory Fields:</b> registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
+      "<p><b>Gender Types:</b> Male, Female, Indeterminate</p>" +
       "<h4>Person has been sent to prison</h4>" +
-      "<p>The <samp>event_data</samp> object for a prisoner received notification takes the following json structure:" +
+      "<p>The `event_data` object for a prisoner received notification takes the following json structure:" +
       "<pre>" +
       "{\n" +
       "\"prisonerNumber\": \"A1234DB\",\n" +
@@ -249,7 +249,7 @@ class EventsController(
       "\"dateOfBirth\": \"1972-02-20\"\n" +
       "}" +
       "</pre></p>" +
-      "<p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, gender, dateOfBirth</p>",
+      "<p><b>Mandatory Fields:</b> prisonerNumber, firstName, lastName, gender, dateOfBirth</p>",
     responses = [
       ApiResponse(
         responseCode = "200",

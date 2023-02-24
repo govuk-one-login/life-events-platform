@@ -69,47 +69,6 @@ module "metrics_dashboard" {
   metric_namespace = local.metric_namespace
   widgets = [
     {
-      title  = "Old API calls",
-      period = local.metric_period,
-      stat   = "Sum",
-      metrics = [
-        { name = "API_CALLS.IngestedEvents.count" },
-        { name = "API_CALLS.CallsToLev.count" },
-        { name = "API_CALLS.ResponsesFromLev.count" },
-        { name = "API_CALLS.CallsToHmrc.count" },
-        { name = "API_CALLS.ResponsesFromHmrc.count" },
-        { name = "API_CALLS.CallsToPoll.count" },
-        { name = "API_CALLS.CallsToEnrich.count" },
-      ]
-    },
-    {
-      title  = "Event API calls",
-      period = local.metric_period,
-      stat   = "Sum",
-      metrics = [
-        {
-          name       = "http.server.requests.count",
-          dimensions = local.publish_event_dimensions,
-          attributes = { label = "PublishEvent" }
-        },
-        {
-          name       = "http.server.requests.count",
-          dimensions = local.get_event_dimensions,
-          attributes = { label = "GetEvent" }
-        },
-        {
-          name       = "http.server.requests.count",
-          dimensions = local.get_events_dimensions,
-          attributes = { label = "GetEvents" }
-        },
-        {
-          name       = "http.server.requests.count",
-          dimensions = local.delete_event_dimensions,
-          attributes = { label = "DeleteEvent" }
-        },
-      ]
-    },
-    {
       title  = "Data enrichment calls",
       period = local.metric_period,
       stat   = "Sum",
@@ -142,27 +101,6 @@ module "metrics_dashboard" {
           name       = "DATA_PROCESSING.TimeFromCreationToDeletion.avg",
           attributes = { label = "Data creation to deletion time" }
         },
-      ]
-    },
-    {
-      title  = "Event actions",
-      period = local.metric_period,
-      stat   = "Sum",
-      metrics = [
-        {
-          attributes = {
-            expression = "SUM(SEARCH('{${local.metric_namespace},eventType} MetricName=\"EVENT_ACTION.EventPublished.count\"', 'Sum', 300))"
-            color      = local.metric_colours.green
-            label      = "Ingress events published"
-          }
-        },
-        {
-          attributes = {
-            expression = "SUM(SEARCH('{${local.metric_namespace},consumerSubscription,eventType} MetricName=\"EVENT_ACTION.EventDeleted.count\"', 'Sum', 300))"
-            color      = local.metric_colours.red
-            label      = "Egress events deleted"
-          }
-        }
       ]
     }
   ]

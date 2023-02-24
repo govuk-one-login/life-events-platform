@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.services
 
 import com.amazonaws.xray.spring.aop.XRayEnabled
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -31,6 +32,9 @@ class EventDataService(
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
   private val enrichmentServices: List<EnrichmentService>,
 ) {
+  private val dataProcessingTimer = Timer.builder("DATA_PROCESSING.TimeFromCreationToDeletion")
+    .publishPercentileHistogram()
+    .register(meterRegistry)
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -118,8 +122,7 @@ class EventDataService(
       "acquirerSubscription",
       event.acquirerSubscriptionId.toString(),
     ).increment()
-    meterRegistry.timer("DATA_PROCESSING.TimeFromCreationToDeletion")
-      .record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
+    dataProcessingTimer.record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
     return mapEventNotification(event, acquirerSubscription, emptyList(), false)
   }
 

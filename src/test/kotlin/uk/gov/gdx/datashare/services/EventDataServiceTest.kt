@@ -40,7 +40,7 @@ class EventDataServiceTest {
 
   init {
     mockkStatic(::getHistogramTimer)
-    every { getHistogramTimer(any(), "DATA_PROCESSING.TimeFromCreationToDeletion") }.returns(
+    every { getHistogramTimer(meterRegistry, "DATA_PROCESSING.TimeFromCreationToDeletion") }.returns(
       dataCreationToDeletionTimer,
     )
     every { dataCreationToDeletionTimer.record(any<Duration>()) }.returns(Unit)

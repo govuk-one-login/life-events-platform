@@ -212,6 +212,120 @@
       "gridPos": {
         "h": 10,
         "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_- DEV}"
+          },
+          "editorMode": "builder",
+          "expr": "sum(increase(http_server_requests_seconds_count{uri=\"/events/{id}\", method=\"GET\"}[1m]))",
+          "interval": "1m",
+          "legendFormat": "Get event from GDX",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_- DEV}"
+          },
+          "editorMode": "builder",
+          "expr": "sum by(outcome) (increase(http_client_requests_seconds_count{uri=\"/v1/registration/death/{id}\"}[1m]))",
+          "hide": false,
+          "interval": "1m",
+          "legendFormat": "Get details from LEV - Outcome = {{outcome}}",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_- DEV}"
+          },
+          "hide": false,
+          "refId": "C"
+        }
+      ],
+      "title": "Data enrichment calls",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS_- DEV}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
         "x": 0,
         "y": 10
       },
@@ -273,6 +387,6 @@
   "timezone": "",
   "title": "Base Metrics",
   "uid": "jt9MBe1Vk",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }

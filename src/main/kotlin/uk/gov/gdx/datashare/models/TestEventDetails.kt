@@ -1,5 +1,5 @@
 package uk.gov.gdx.datashare.models
 
-data class TestEvent(
+data class TestEventDetails(
   val testField: String? = null,
-)
+) : EventDetails

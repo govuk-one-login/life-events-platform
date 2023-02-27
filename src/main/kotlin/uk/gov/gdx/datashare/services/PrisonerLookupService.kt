@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
-import uk.gov.gdx.datashare.enums.Gender
 import uk.gov.gdx.datashare.models.PrisonerDetails
-import uk.gov.gdx.datashare.models.PrisonerRecord
 
 @Service
 @XRayEnabled
@@ -32,25 +30,6 @@ class PrisonerLookupService(
   ): PrisonerDetails? {
     val allEnrichedData = prisonerApiService.findPrisonerById(dataId)
 
-    return allEnrichedData?.let { mapPrisonerRecord(it, enrichmentFields) }
-  }
-
-  private fun mapPrisonerRecord(
-    prisonerRecord: PrisonerRecord,
-    ef: List<EnrichmentField>,
-  ): PrisonerDetails {
-    val gender = when (prisonerRecord.gender) {
-      "Female" -> Gender.FEMALE
-      "Male" -> Gender.MALE
-      else -> Gender.INDETERMINATE
-    }
-    return PrisonerDetails(
-      prisonerNumber = if (ef.contains(EnrichmentField.PRISONER_NUMBER)) prisonerRecord.prisonerNumber else null,
-      firstName = if (ef.contains(EnrichmentField.FIRST_NAME)) prisonerRecord.firstName else null,
-      middleNames = if (ef.contains(EnrichmentField.MIDDLE_NAMES)) prisonerRecord.middleNames else null,
-      lastName = if (ef.contains(EnrichmentField.LAST_NAME)) prisonerRecord.lastName else null,
-      gender = if (ef.contains(EnrichmentField.GENDER)) gender else null,
-      dateOfBirth = if (ef.contains(EnrichmentField.DATE_OF_BIRTH)) prisonerRecord.dateOfBirth else null,
-    )
+    return allEnrichedData?.let { PrisonerDetails.from(enrichmentFields, it) }
   }
 }

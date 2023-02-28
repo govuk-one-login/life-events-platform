@@ -48,7 +48,7 @@ sequenceDiagram
     HMPO->>-GDX: Return death certificate details
     GDX->>-Pension Service: Supply pension number
 ```
-
+Note, these users of all senses are entirely hypothetical at this point in time, none of this is necessarily real!
 ## Consequences
 
 Our schema for "data an acquirer is interested in" will need to be extended to include data that needs additional

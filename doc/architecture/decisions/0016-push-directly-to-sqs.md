@@ -1,5 +1,5 @@
 # 16. Push events directly to SQS
-[Next >>](9999-end.md)
+[Next >>](0017-mutual-tls.md)
 
 Date: 2023-02-23
 
@@ -43,5 +43,5 @@ without requiring e.g. terraform changes to onboard or offboard an acquirer.
 
 Defining the core service around AWS increases vendor lock-in.
 
-[Next >>](9999-end.md)
+[Next >>](0017-mutual-tls.md)
 

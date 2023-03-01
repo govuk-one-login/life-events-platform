@@ -13,29 +13,21 @@ import org.springframework.data.convert.ReadingConverter
 import org.springframework.data.convert.WritingConverter
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
-import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
-import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Event Api Audit")
-class EventApiAudit(
+class AcquirerEventAudit(
   @Id
   @Column("id")
-  @Schema(description = "Audit ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val auditId: UUID = UUID.randomUUID(),
 
-  @Schema(description = "Oauth ID of client making call", required = true, example = "alskd987", maxLength = 50, pattern = CLIENT_ID_REGEX)
-  val oauthClientId: String,
-  @Schema(description = "URL", required = true, example = "https://d33v84mi0vopmk.cloudfront.net/events")
-  val url: String,
-  @Schema(description = "METHOD", required = true, example = "GET")
-  val requestMethod: String,
-  @Schema(description = "Data of event(s)", required = true, example = "{\"data\":[]}")
+  val oauthClientId: String?,
+  val url: String?,
+  val requestMethod: String?,
+  val queueName: String?,
   val payload: Payload,
-
-  @Schema(description = "When audit log created", required = true)
   val whenCreated: LocalDateTime,
 
   @Transient

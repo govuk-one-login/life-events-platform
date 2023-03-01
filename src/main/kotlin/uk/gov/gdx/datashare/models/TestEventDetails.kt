@@ -1,5 +1,13 @@
 package uk.gov.gdx.datashare.models
 
-data class TestEventDetails(
+import uk.gov.gdx.datashare.enums.EnrichmentField
+
+class TestEventDetails(
   val testField: String? = null,
-) : EventDetails
+) : EventDetails {
+  override fun maskedCopy(enrichmentFields: List<EnrichmentField>): EventDetails {
+    return TestEventDetails(
+      testField = testField
+    )
+  }
+}

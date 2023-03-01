@@ -140,8 +140,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
       "sqs:GetQueueAttributes",
     ]
     resources = [
-      module.data_processor_queue.queue_arn,
-      module.data_processor_queue.dead_letter_queue_arn,
+      module.supplier_event_queue.queue_arn,
+      module.supplier_event_queue.dead_letter_queue_arn,
       "arn:aws:sqs:eu-west-2:${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}:${data.aws_ssm_parameter.prisoner_event_queue_name.value}",
       "arn:aws:sqs:eu-west-2:${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}:${data.aws_ssm_parameter.prisoner_event_dlq_name.value}",
     ]
@@ -154,8 +154,8 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
       "kms:Decrypt"
     ]
     resources = [
-      module.data_processor_queue.queue_kms_key_arn,
-      module.data_processor_queue.dead_letter_queue_kms_key_arn,
+      module.supplier_event_queue.queue_kms_key_arn,
+      module.supplier_event_queue.dead_letter_queue_kms_key_arn,
     ]
     effect = "Allow"
   }

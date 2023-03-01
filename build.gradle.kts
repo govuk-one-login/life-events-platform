@@ -37,6 +37,7 @@ dependencies {
 
   //  AWS dependencies for SNS, SQS etc
   implementation(platform("software.amazon.awssdk:bom:2.20.14"))
+  implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")

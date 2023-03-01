@@ -12,31 +12,35 @@ import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CognitoClientResponse
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
-import uk.gov.gdx.datashare.repositories.EventData
-import uk.gov.gdx.datashare.repositories.EventDataRepository
+import uk.gov.gdx.datashare.repositories.AcquirerEvent
+import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.services.AdminService
 import java.util.*
 
 class AdminControllerTest {
-  private val eventDataRepository = mockk<EventDataRepository>()
+  private val acquirerEventRepository = mockk<AcquirerEventRepository>()
   private val adminService = mockk<AdminService>()
 
-  private val underTest = AdminController(eventDataRepository, adminService)
+  private val underTest = AdminController(acquirerEventRepository, adminService)
 
   @Test
   fun `getEvents gets events`() {
     val events = listOf(
-      EventData(
+      AcquirerEvent(
         acquirerSubscriptionId = UUID.randomUUID(),
         dataId = "HMPO",
+        supplierEventId = UUID.randomUUID(),
+        eventTime = null,
       ),
-      EventData(
+      AcquirerEvent(
         acquirerSubscriptionId = UUID.randomUUID(),
         dataId = "HMPO",
+        supplierEventId = UUID.randomUUID(),
+        eventTime = null,
       ),
     )
 
-    every { eventDataRepository.findAll() }.returns(events)
+    every { acquirerEventRepository.findAll() }.returns(events)
 
     val eventsOutput = underTest.getEvents()
 

@@ -53,8 +53,11 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
         { "name" : "SPRING_DATASOURCE_USERNAME", "value" : var.db_username },
 
-        { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUENAME", "value" : module.data_processor_queue.queue_name },
-        { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQNAME", "value" : module.data_processor_queue.dead_letter_queue_name },
+        { "name" : "SQS_QUEUES_SUPPLIEREVENT_QUEUENAME", "value" : module.supplier_event_queue.queue_name },
+        { "name" : "SQS_QUEUES_SUPPLIEREVENT_DLQNAME", "value" : module.supplier_event_queue.dead_letter_queue_name },
+
+        { "name" : "SQS_QUEUES_ACQUIREREVENT_QUEUENAME", "value" : module.acquirer_event_queue.queue_name },
+        { "name" : "SQS_QUEUES_ACQUIREREVENT_DLQNAME", "value" : module.acquirer_event_queue.dead_letter_queue_name },
 
         { "name" : "SQS_QUEUES_PRISONEREVENT_ENABLED", "value" : var.prisoner_event_enabled },
         {

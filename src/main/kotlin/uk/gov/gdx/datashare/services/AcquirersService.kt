@@ -122,4 +122,9 @@ class AcquirersService(
       )
     }
   }
+
+  fun getEnrichmentFieldsForAcquirerSubscription(acquirerSubscription: AcquirerSubscription): List<EnrichmentField> {
+    return acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(acquirerSubscription.id)
+      .map { it.enrichmentField }
+  }
 }

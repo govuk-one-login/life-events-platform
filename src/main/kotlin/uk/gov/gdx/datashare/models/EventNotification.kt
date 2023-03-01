@@ -81,7 +81,9 @@ data class EventNotification(
   val eventData: EventDetails? = null,
 )
 
-interface EventDetails
+interface EventDetails {
+  fun maskedCopy(enrichmentFields: List<EnrichmentField>): EventDetails
+}
 
 interface EventDetailsCompanionObject<T, U> {
   fun from(enrichmentFields: List<EnrichmentField>, data: U): T

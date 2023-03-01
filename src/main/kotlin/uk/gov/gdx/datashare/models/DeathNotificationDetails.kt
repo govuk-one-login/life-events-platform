@@ -81,6 +81,24 @@ data class DeathNotificationDetails(
       }
     }
   }
+
+  override fun maskedCopy(enrichmentFields: List<EnrichmentField>): DeathNotificationDetails {
+    return DeathNotificationDetails(
+      enrichmentFields = enrichmentFields,
+      registrationDate = if (enrichmentFields.contains(EnrichmentField.REGISTRATION_DATE)) registrationDate else null,
+      firstNames = if (enrichmentFields.contains(EnrichmentField.FIRST_NAMES)) firstNames else null,
+      lastName = if (enrichmentFields.contains(EnrichmentField.LAST_NAME)) lastName else null,
+      sex = if (enrichmentFields.contains(EnrichmentField.SEX)) sex else null,
+      dateOfDeath = if (enrichmentFields.contains(EnrichmentField.DATE_OF_DEATH)) dateOfDeath else null,
+      dateOfBirth = if (enrichmentFields.contains(EnrichmentField.DATE_OF_BIRTH)) dateOfBirth else null,
+      birthPlace = if (enrichmentFields.contains(EnrichmentField.BIRTH_PLACE)) birthPlace else null,
+      deathPlace = if (enrichmentFields.contains(EnrichmentField.DEATH_PLACE)) deathPlace else null,
+      maidenName = if (enrichmentFields.contains(EnrichmentField.MAIDEN_NAME)) maidenName else null,
+      occupation = if (enrichmentFields.contains(EnrichmentField.OCCUPATION)) occupation else null,
+      retired = if (enrichmentFields.contains(EnrichmentField.RETIRED)) retired else null,
+      address = if (enrichmentFields.contains(EnrichmentField.ADDRESS)) address else null,
+    )
+  }
 }
 
 class DeathNotificationDetailsSerializer :

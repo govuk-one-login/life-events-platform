@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
+import uk.gov.gdx.datashare.enums.RegExConstants.SQS_QUEUE_NAME_REGEX
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Acquirer Subscription Request")
@@ -36,4 +37,15 @@ data class AcquirerSubRequest(
     example = "false",
   )
   val enrichmentFieldsIncludedInPoll: Boolean = false,
+  @Schema(
+    description = "SQS queue name to receive events for this client. If present, events are sent to this queue instead of being made available via the API",
+    required = false,
+    example = "acquirer-queue",
+    maxLength = 80,
+  )
+  @get:Pattern(
+    regexp = SQS_QUEUE_NAME_REGEX,
+    message = "Value must be between 1 and 80 characters and contain alphanumeric characters, hyphens and underscores only. It may end in `.fifo`"
+  )
+  val queueName: String? = null,
 )

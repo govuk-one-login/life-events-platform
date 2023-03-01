@@ -25,7 +25,7 @@ class DeathNotificationService(
     val citizenDeathId = dataId.toInt()
     return levApiService
       .findDeathById(citizenDeathId)
-      .map { DeathNotificationDetails.fromLevDeathRecord(enrichmentFields, it) }
       .first()
+      .let { DeathNotificationDetails.from(enrichmentFields, it) }
   }
 }

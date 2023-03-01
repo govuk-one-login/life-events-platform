@@ -13,6 +13,7 @@ import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.helpers.getHistogramTimer
+import uk.gov.gdx.datashare.models.EventDetails
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
 import uk.gov.gdx.datashare.repositories.*
@@ -145,7 +146,7 @@ class EventDataService(
     subscription: AcquirerSubscription,
     event: EventData,
     enrichmentFieldNames: List<EnrichmentField>,
-  ): Any? {
+  ): EventDetails? {
     return enrichmentServices.single { p -> p.accepts(subscription.eventType) }
       .process(subscription.eventType, event.dataId, enrichmentFieldNames)
   }

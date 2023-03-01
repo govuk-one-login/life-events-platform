@@ -25,6 +25,9 @@ API Gateway doesn't support CRLs natively, which might need a custom lambda to m
 we need a way to feed back the nature of the certificate to the upstream service, see AWS [blog](
 https://aws.amazon.com/blogs/compute/propagating-valid-mtls-client-certificate-identity-to-downstream-services-using-amazon-api-gateway/).
 
+Cloudflare offer a similar mTLS product to AWS API Gateway, but it doesn't appear to be significantly easier to
+integrate against.
+
 ## Decision
 
 For now, don't implement mTLS, when appropriate we should
@@ -36,6 +39,10 @@ For now, don't implement mTLS, when appropriate we should
 We should ensure this configuration can be managed at an environment level to facilitate easy onboarding for clients
 avoiding mTLS if not required. Additionally, we'll want to issue certs etc in response to an API call to speed up
 onboarding clients and giving them easy access to trial ideas.
+
+We'll need to understand what needs suppliers and acquirers have, and whether mTLS provides a meaningful difference to the security posture
+of the system before implementing it, for example, is a Certificate-Bound Access Token required to add value, or is the combination of a
+Bearer Token and mTLS sufficient.
 
 ## Impact
 

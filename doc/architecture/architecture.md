@@ -7,7 +7,6 @@ A current state view of the overall system architecture and services used in AWS
 
 ![](architecture.drawio.svg)
 
-
 ## Data Flows
 
 The overall flows this sytem supports are
@@ -20,8 +19,6 @@ sequenceDiagram
     HMPO ->> GDX: Notification of death
 
     DWP->>+GDX: Get list of events that haven't been consumed
-    GDX-->>HMPO: Optionally enrich event (first name, last name etc) - if `enrichmentFieldsIncludedInPoll` is set
-    HMPO-->>GDX: Return enriched event
     GDX->>-DWP: Return events
 
     DWP->>+GDX: Request individual events
@@ -43,5 +40,8 @@ We also have a mock consumer running as
 
 ## Load/Volumes
 
-We're currently working with a limited data set of notifications of death. Using ONS data, we've worked out what an "average" day looks like, and are targetting ~3,000 notifications a day. 
-We're currently working with one data acquirer, and one data supplier, as well as na internal mock acquirer, so the total data volumes are relatively low currently.
+We're currently working with a limited data set of notifications of death.
+Using ONS data, we've worked out what an "average" day looks like, and are targetting ~3,000 notifications a day.
+
+We're currently working with one data acquirer, and one data supplier, as well as an internal mock acquirer,
+so the total data volumes are relatively low currently.

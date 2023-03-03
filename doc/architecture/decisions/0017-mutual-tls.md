@@ -1,5 +1,5 @@
 # 17. mutual TLS (mTLS)
-[Next >>](9999-end.md)
+[Next >>](0018-data-flows.md)
 
 Date: 2023-02-28
 
@@ -49,5 +49,5 @@ Bearer Token and mTLS sufficient.
 - all client calls will be authenticated with mTLS in addition to the OIDC / Cognito auth
 - this doesn't cover queues and related other outputs, only the API surface
 
-[Next >>](9999-end.md)
+[Next >>](0018-data-flows.md)
 

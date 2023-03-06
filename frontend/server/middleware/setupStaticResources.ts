@@ -1,13 +1,13 @@
 import path from 'path'
 import express, { Router } from 'express'
 
+import config from '../config'
 
 export default function setUpStaticResources(): Router {
     const router = express.Router()
 
     //  Static Resources Configuration
-    const cacheControl = { maxAge: 20000 }
-
+    const cacheControl = { maxAge: config.staticResourceCacheDuration * 1000 }
     Array.of(
         '/assets',
         '/assets/stylesheets',

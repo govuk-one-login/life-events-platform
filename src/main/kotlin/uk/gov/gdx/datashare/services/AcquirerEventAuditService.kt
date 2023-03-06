@@ -8,12 +8,12 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.sha256
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.repositories.EventApiAudit
-import uk.gov.gdx.datashare.repositories.EventApiAuditRepository
+import uk.gov.gdx.datashare.repositories.AcquirerEventAudit
+import uk.gov.gdx.datashare.repositories.AcquirerEventAuditRepository
 
 @Service
-class EventApiAuditService(
-  private val eventApiAuditRepository: EventApiAuditRepository,
+class AcquirerEventAuditService(
+  private val acquirerEventAuditRepository: AcquirerEventAuditRepository,
   private val dateTimeHandler: DateTimeHandler,
   private val authenticationFacade: AuthenticationFacade,
   private val objectMapper: ObjectMapper,
@@ -21,27 +21,30 @@ class EventApiAuditService(
   fun auditEventApiCall(eventNotification: EventNotification) { auditEventApiCall(listOf(eventNotification)) }
 
   fun auditEventApiCall(eventNotifications: List<EventNotification>) {
-    val auditData = EventApiAudit.Payload(
-      data = eventNotifications.map {
-        EventApiAudit.Data(
-          eventId = it.eventId,
-          sourceId = it.sourceId,
-          hashedEventData = objectMapper.writeValueAsString(it.eventData).sha256(),
-        )
-      },
-    )
+    val auditData = auditDataFromEventNotifications(eventNotifications)
     val request = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes).request
 
-    val eventApiAudit = EventApiAudit(
+    val acquirerEventAudit = AcquirerEventAudit(
       oauthClientId = authenticationFacade.getUsername(),
       requestMethod = request.method,
       url = request.queryString?.let {
         "${request.requestURL}?${request.queryString}"
       } ?: request.requestURL.toString(),
       payload = auditData,
-      whenCreated = dateTimeHandler.now(),
+      createdAt = dateTimeHandler.now(),
     )
 
-    eventApiAuditRepository.save(eventApiAudit)
+    acquirerEventAuditRepository.save(acquirerEventAudit)
   }
+
+  private fun auditDataFromEventNotifications(eventNotifications: List<EventNotification>) =
+    AcquirerEventAudit.Payload(
+      data = eventNotifications.map {
+        AcquirerEventAudit.Data(
+          eventId = it.eventId,
+          sourceId = it.sourceId,
+          hashedEventData = objectMapper.writeValueAsString(it.eventData).sha256(),
+        )
+      },
+    )
 }

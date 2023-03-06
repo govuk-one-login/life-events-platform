@@ -6,10 +6,7 @@ import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.TypeMismatchException
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.FORBIDDEN
-import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
-import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -17,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ServerWebInputException
+import java.util.*
 
 @RestControllerAdvice
 class ApiExceptionHandler {
@@ -260,26 +258,22 @@ class ApiExceptionHandler {
   }
 }
 
-class SupplierConfigException(message: String) :
-  Exception(message)
-class SupplierPermissionException(message: String) :
-  Exception(message)
-class UnknownDatasetException(message: String) :
-  Exception(message)
-class EventNotFoundException(message: String) :
-  Exception(message)
-class AcquirerSubscriptionNotFoundException(message: String) :
-  Exception(message)
-class SupplierSubscriptionNotFoundException(message: String) :
-  Exception(message)
-class NoDataFoundException(message: String) :
-  Exception(message)
+class SupplierConfigException(message: String) : Exception(message)
+class SupplierPermissionException(message: String) : Exception(message)
+class UnknownDatasetException(message: String) : Exception(message)
+class EventNotFoundException(message: String) : Exception(message)
+class AcquirerSubscriptionNotFoundException(message: String) : Exception(message) {
+  constructor(id: UUID) : this("No acquirer subscription found with id $id")
+}
+class SupplierSubscriptionNotFoundException(message: String) : Exception(message) {
+  constructor(id: UUID) : this("No subscriber found with id $id")
+}
+class NoDataFoundException(message: String) : Exception(message)
 
 class ListOfDataNotFoundException(dataType: String, ids: Collection<Long>) :
   Exception("No $dataType found for ID(s) $ids")
 
-class DataIntegrityException(message: String) :
-  Exception(message)
+class DataIntegrityException(message: String) : Exception(message)
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Error Response")

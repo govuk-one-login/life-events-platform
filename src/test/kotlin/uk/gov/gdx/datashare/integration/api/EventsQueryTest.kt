@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import uk.gov.gdx.datashare.enums.EventType
-import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
-import uk.gov.gdx.datashare.repositories.EventData
-import uk.gov.gdx.datashare.repositories.EventDataRepository
+import uk.gov.gdx.datashare.repositories.*
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.MockIntegrationTestBase
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.wiremock.mockLevApi
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.wiremock.stubLevApiDeath
@@ -33,10 +31,16 @@ class EventsQueryTest : MockIntegrationTestBase() {
   lateinit var mvc: MockMvc
 
   @Autowired
-  private lateinit var eventDataRepository: EventDataRepository
+  private lateinit var acquirerEventRepository: AcquirerEventRepository
 
   @Autowired
   private lateinit var acquirerSubscriptionRepository: AcquirerSubscriptionRepository
+
+  @Autowired
+  private lateinit var supplierEventRepository: SupplierEventRepository
+
+  @Autowired
+  private lateinit var supplierSubscriptionRepository: SupplierSubscriptionRepository
 
   @Test
   fun `getEvents returns death notification events in the correct format`() {
@@ -91,14 +95,27 @@ class EventsQueryTest : MockIntegrationTestBase() {
       DWP_EVENT_RECEIVER,
       listOf(EventType.DEATH_NOTIFICATION),
     ).first()
-    val eventData = EventData(
-      eventId,
-      acquirerSubscription.acquirerSubscriptionId,
-      "1234",
-      LocalDateTime.of(2000, 5, 3, 12, 4, 3),
-      LocalDateTime.of(2000, 5, 3, 12, 4, 3),
+    val supplierSubscription = supplierSubscriptionRepository.findFirstByEventType(EventType.DEATH_NOTIFICATION)
+
+    val timestamp = LocalDateTime.of(2000, 5, 3, 12, 4, 3)
+
+    val supplierEvent = SupplierEvent(
+      supplierSubscriptionId = supplierSubscription!!.supplierSubscriptionId,
+      eventTime = timestamp,
+      dataId = "1234",
+      createdAt = timestamp,
     )
-    eventDataRepository.save(eventData)
+    supplierEventRepository.save(supplierEvent)
+
+    val acquirerEvent = AcquirerEvent(
+      id = eventId,
+      supplierEventId = supplierEvent.id,
+      acquirerSubscriptionId = acquirerSubscription.acquirerSubscriptionId,
+      dataId = "1234",
+      eventTime = timestamp,
+      createdAt = timestamp,
+    )
+    acquirerEventRepository.save(acquirerEvent)
   }
 
   private fun thereAreFiveEvents() {
@@ -106,16 +123,27 @@ class EventsQueryTest : MockIntegrationTestBase() {
       DWP_EVENT_RECEIVER,
       listOf(EventType.DEATH_NOTIFICATION),
     ).first()
-    listOf("1", "2", "3", "4", "5").map { sourceId ->
+    val supplierSubscription = supplierSubscriptionRepository.findFirstByEventType(EventType.DEATH_NOTIFICATION)
+    listOf("1", "2", "3", "4", "5").map { dataId ->
+      val eventTime = LocalDateTime.of(2000, 5, 3, 12, 4, 3 + dataId.toInt())
 
-      val eventData = EventData(
-        UUID.randomUUID(),
-        acquirerSubscription.acquirerSubscriptionId,
-        sourceId,
-        LocalDateTime.of(2000, 5, 3, 12, 4, 3 + sourceId.toInt()),
-        LocalDateTime.of(2000, 5, 3, 12, 4, 0 + sourceId.toInt()),
+      val supplierEvent = SupplierEvent(
+        supplierSubscriptionId = supplierSubscription!!.supplierSubscriptionId,
+        eventTime = eventTime,
+        dataId = dataId,
+        createdAt = eventTime,
       )
-      eventDataRepository.save(eventData)
+      supplierEventRepository.save(supplierEvent)
+
+      val acquirerEvent = AcquirerEvent(
+        id = UUID.randomUUID(),
+        supplierEventId = supplierEvent.id,
+        acquirerSubscriptionId = acquirerSubscription.acquirerSubscriptionId,
+        dataId = dataId,
+        eventTime = eventTime,
+        createdAt = eventTime,
+      )
+      acquirerEventRepository.save(acquirerEvent)
     }
   }
 }

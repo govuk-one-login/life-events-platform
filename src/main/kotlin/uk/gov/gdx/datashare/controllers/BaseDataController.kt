@@ -21,7 +21,7 @@ import java.util.*
 class BaseDataController(
   private val acquirerRepository: AcquirerRepository,
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
-  private val eventDataRepository: EventDataRepository,
+  private val acquirerEventRepository: AcquirerEventRepository,
   private val supplierRepository: SupplierRepository,
   private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
 ) : BaseApiController() {
@@ -128,7 +128,7 @@ class BaseDataController(
         content = [
           Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = EventData::class)),
+            array = ArraySchema(schema = Schema(implementation = AcquirerEvent::class)),
           ),
         ],
       ),
@@ -144,7 +144,7 @@ class BaseDataController(
       ),
     ],
   )
-  fun getEvents() = eventDataRepository.findAll().toList()
+  fun getEvents() = acquirerEventRepository.findAll().toList()
 
   @DeleteMapping("/events/{id}")
   @Operation(
@@ -161,7 +161,7 @@ class BaseDataController(
     @Schema(description = "Event ID", required = true, pattern = UUID_REGEX)
     @PathVariable
     id: UUID,
-  ) = eventDataRepository.deleteById(id)
+  ) = acquirerEventRepository.deleteById(id)
 
   @GetMapping("/suppliers")
   @Operation(

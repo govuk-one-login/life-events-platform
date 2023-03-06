@@ -7,21 +7,23 @@ import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.EventToPublish
+import uk.gov.gdx.datashare.repositories.SupplierEvent
 import uk.gov.gdx.datashare.repositories.SupplierSubscription
 import uk.gov.gdx.datashare.repositories.SupplierSubscriptionRepository
-import uk.gov.gdx.datashare.services.*
+import uk.gov.gdx.datashare.services.EventAcceptorService
+import uk.gov.gdx.datashare.services.PrisonerEventMessageProcessor
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 class PrisonerEventMessageProcessorTest {
   private val objectMapper = JacksonConfiguration().objectMapper()
-  private val dataReceiverService = mockk<DataReceiverService>()
+  private val eventAcceptorService = mockk<EventAcceptorService>()
   private val supplierSubscriptionRepository = mockk<SupplierSubscriptionRepository>()
 
   private val underTest: PrisonerEventMessageProcessor = PrisonerEventMessageProcessor(
     objectMapper,
-    dataReceiverService,
+    eventAcceptorService,
     supplierSubscriptionRepository,
   )
 
@@ -52,16 +54,16 @@ class PrisonerEventMessageProcessorTest {
     val clientId = supplierSubscriptions[0].clientId
 
     every {
-      dataReceiverService.sendToDataProcessor(
+      eventAcceptorService.acceptEvent(
         eventPayload,
         clientId,
       )
-    }.answers { }
+    }.answers { mockk<SupplierEvent>() }
 
     underTest.onPrisonerEventMessage("/messages/prisonerReceived.json".readResourceAsText())
 
     verify(exactly = 1) {
-      dataReceiverService.sendToDataProcessor(
+      eventAcceptorService.acceptEvent(
         eventPayload,
         clientId,
       )
@@ -79,7 +81,7 @@ class PrisonerEventMessageProcessorTest {
     }
 
     verify(exactly = 0) {
-      dataReceiverService.sendToDataProcessor(
+      eventAcceptorService.acceptEvent(
         any(),
         any(),
       )

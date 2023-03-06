@@ -21,6 +21,7 @@ class AcquirerEventAudit(
   val oauthClientId: String?,
   val url: String?,
   val requestMethod: String?,
+  val queueName: String?,
   val payload: Payload,
   val createdAt: LocalDateTime,
 

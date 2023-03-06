@@ -19,6 +19,7 @@ data class AcquirerSubscription(
   val oauthClientId: String? = null,
   val eventType: EventType,
   val enrichmentFieldsIncludedInPoll: Boolean = false,
+  val queueName: String? = null,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
 
   @Transient

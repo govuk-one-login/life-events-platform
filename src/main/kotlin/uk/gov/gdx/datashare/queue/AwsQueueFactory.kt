@@ -41,7 +41,7 @@ class AwsQueueFactory(
       null
     }
 
-  private fun getOrDefaultSqsClient(queueId: String, queueConfig: SqsProperties.QueueConfig, sqsProperties: SqsProperties, sqsDlqClient: SqsClient?): SqsClient =
+  fun getOrDefaultSqsClient(queueId: String, queueConfig: SqsProperties.QueueConfig, sqsProperties: SqsProperties, sqsDlqClient: SqsClient?): SqsClient =
     getOrDefaultBean("$queueId-sqs-client") {
       createSqsClient(queueId, queueConfig, sqsProperties, sqsDlqClient)
     }

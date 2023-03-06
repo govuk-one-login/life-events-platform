@@ -58,6 +58,6 @@ abstract class IntegrationTestBase : TestBase() {
 
   @BeforeEach
   fun clean() {
-    JdbcTestUtils.deleteFromTables(jdbcTemplate, "event_data", "event_api_audit")
+    JdbcTestUtils.deleteFromTables(jdbcTemplate, "acquirer_event", "acquirer_event_audit", "supplier_event")
   }
 }

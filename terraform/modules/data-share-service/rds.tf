@@ -79,7 +79,13 @@ resource "aws_db_subnet_group" "rds_postgres_cluster" {
 resource "aws_kms_key" "rds_backup" {
   provider = aws.eu-west-1
 
-  description = "Encryption key for automated RDS backups in ${var.environment}}"
+  description         = "Encryption key for automated RDS backups in ${var.environment}}"
+  enable_key_rotation = true
+}
+
+resource "aws_kms_alias" "log_key_alias" {
+  name          = "alias/${var.environment}/rds-backup-key"
+  target_key_id = aws_kms_key.rds_backup.arn
 }
 
 resource "aws_db_instance_automated_backups_replication" "rds_backup" {

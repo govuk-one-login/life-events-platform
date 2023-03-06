@@ -1,6 +1,6 @@
 const production = process.env.NODE_ENV === 'production'
 
-function get<T>(name: string, fallback: T, options = { requireInProduction: false }): T | string {
+function get<T>(name: string, fallback: T, options = {requireInProduction: false}): T | string {
     if (process.env[name]) {
         return process.env[name]
     }
@@ -10,7 +10,7 @@ function get<T>(name: string, fallback: T, options = { requireInProduction: fals
     throw new Error(`Missing env var ${name}`)
 }
 
-const requiredInProduction = { requireInProduction: true }
+const requiredInProduction = {requireInProduction: true}
 
 export class AgentConfig {
     timeout: number
@@ -33,7 +33,7 @@ export default {
     staticResourceCacheDuration: 20,
     apis: {
         gdxDataSharePoc: {
-            url: get('GDX_DATA_SHARE_URL', 'http://127.0.0.1:63459', requiredInProduction),
+            url: get('GDX_DATA_SHARE_URL', 'http://127.0.0.1:8080', requiredInProduction),
             timeout: {
                 response: Number(get('GDX_DATA_SHARE_TIMEOUT_RESPONSE', 10000)),
                 deadline: Number(get('GDX_DATA_SHARE_TIMEOUT_DEADLINE', 10000)),

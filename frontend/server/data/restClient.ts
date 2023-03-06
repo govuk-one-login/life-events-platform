@@ -1,8 +1,8 @@
 import superagent from 'superagent'
-import Agent, { HttpsAgent } from 'agentkeepalive'
+import Agent, {HttpsAgent} from 'agentkeepalive'
 
 import sanitiseError from '../sanitisedError'
-import { ApiConfig } from '../config'
+import {ApiConfig} from '../config'
 
 interface GetRequest {
     path?: string
@@ -35,45 +35,49 @@ export default class RestClient {
         return this.config.timeout
     }
 
-    async get({ path = null, query = '', headers = {}, responseType = '', raw = false }: GetRequest): Promise<unknown> {
-        try {
-            const result = await superagent
-                .get(`${this.apiUrl()}${path}`)
-                .agent(this.agent)
-                .query(query)
-                .auth(this.token, { type: 'bearer' })
-                .set(headers)
-                .responseType(responseType)
-                .timeout(this.timeoutConfig())
-
-            return raw ? result : result.body
-        } catch (error) {
-            const sanitisedError = sanitiseError(error)
-            throw sanitisedError
-        }
+    async get(
+        {
+            path = null,
+            query = '',
+            headers = {},
+            responseType = '',
+            raw = false
+        }: GetRequest): Promise<superagent.Response | unknown> {
+        const request = superagent
+            .get(`${this.apiUrl()}${path}`)
+            .query(query)
+        return await this.makeRequest(request, headers, responseType, raw)
     }
 
-    async post({
-                   path = null,
-                   headers = {},
-                   responseType = '',
-                   data = {},
-                   raw = false,
-               }: PostRequest = {}): Promise<unknown> {
+    async post(
+        {
+            path = null,
+            headers = {},
+            responseType = '',
+            data = {},
+            raw = false,
+        }: PostRequest = {}): Promise<superagent.Response | unknown> {
+        const request = superagent
+            .post(`${this.apiUrl()}${path}`)
+            .send(data)
+        return await this.makeRequest(request, headers, responseType, raw)
+    }
+
+    async makeRequest(
+        request: superagent.SuperAgentRequest,
+        headers = {},
+        responseType: string,
+        raw: boolean): Promise<superagent.Response | unknown> {
         try {
-            const result = await superagent
-                .post(`${this.apiUrl()}${path}`)
-                .send(data)
-                .agent(this.agent)
-                .auth(this.token, { type: 'bearer' })
+            const result = await request.agent(this.agent)
+                .auth(this.token, {type: "bearer"})
                 .set(headers)
                 .responseType(responseType)
                 .timeout(this.timeoutConfig())
 
             return raw ? result : result.body
         } catch (error) {
-            const sanitisedError = sanitiseError(error)
-            throw sanitisedError
+            throw sanitiseError(error)
         }
     }
 }

@@ -8,7 +8,7 @@
     "compile-sass": "sass --quiet-deps --no-source-map --load-path=node_modules/govuk-frontend --load-path=. assets/scss/application.scss:./assets/stylesheets/application.css --style compressed",
     "watch-ts": "tsc -w",
     "watch-views": "nodemon --watch server/views -e html,njk -x npm run copy-views",
-    "watch-node": "set DEBUG=gov-starter-server* & nodemon --watch dist/ dist/server.js",
+    "watch-node": "cross-env DEBUG=gov-starter-server* & nodemon --watch dist/ dist/server.js",
     "watch-sass": "npm run compile-sass -- --watch",
     "build": "npm run compile-sass && tsc && npm run copy-views",
     "start": "node $NODE_OPTIONS dist/server.js",
@@ -35,6 +35,7 @@
     "@types/nunjucks": "^3.2.2",
     "@types/superagent": "^4.1.16",
     "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
     "nodemon": "^2.0.20",
     "sass": "^1.58.3",
     "typescript": "^4.9.5"

@@ -11,7 +11,7 @@ resource "random_password" "rds_password" {
 resource "aws_rds_cluster" "rds_postgres_cluster" {
   cluster_identifier                  = "${var.environment}-rds-db"
   engine                              = "aurora-postgresql"
-  availability_zones                  = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+  availability_zones                  = data.aws_availability_zones.available.all_availability_zones
   database_name                       = "${var.environment}rdsdb"
   master_username                     = random_string.rds_username.result
   master_password                     = random_password.rds_password.result
@@ -74,4 +74,17 @@ resource "aws_security_group" "rds_postgres_cluster" {
 resource "aws_db_subnet_group" "rds_postgres_cluster" {
   name       = "${var.environment}-rds-postgres-cluster-subnet"
   subnet_ids = module.vpc.private_subnet_ids
+}
+
+resource "aws_kms_key" "rds_backup" {
+  provider = aws.eu-west-1
+
+  description = "Encryption key for automated RDS backups in ${var.environment}}"
+}
+
+resource "aws_db_instance_automated_backups_replication" "rds_backup" {
+  provider = aws.eu-west-1
+
+  source_db_instance_arn = aws_rds_cluster_instance.db_aurora.arn
+  kms_key_id             = aws_kms_key.rds_backup.arn
 }

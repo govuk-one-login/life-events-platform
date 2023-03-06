@@ -11,7 +11,7 @@ resource "random_password" "rds_password" {
 resource "aws_rds_cluster" "rds_postgres_cluster" {
   cluster_identifier                  = "${var.environment}-rds-db"
   engine                              = "aurora-postgresql"
-  availability_zones                  = data.aws_availability_zones.available.all_availability_zones
+  availability_zones                  = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
   database_name                       = "${var.environment}rdsdb"
   master_username                     = random_string.rds_username.result
   master_password                     = random_password.rds_password.result
@@ -83,7 +83,7 @@ resource "aws_kms_key" "rds_backup" {
   enable_key_rotation = true
 }
 
-resource "aws_kms_alias" "log_key_alias" {
+resource "aws_kms_alias" "rds_backup_key_alias" {
   name          = "alias/${var.environment}/rds-backup-key"
   target_key_id = aws_kms_key.rds_backup.arn
 }

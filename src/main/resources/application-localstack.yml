@@ -1,9 +1,12 @@
 sqs:
   provider: localstack
   queues:
-    dataprocessor:
-      queueName: dataprocessor-queue
-      dlqName: dataprocessor-dlq
+    supplierevent:
+      queueName: supplier-event-queue
+      dlqName: supplier-event-dlq
+    acquirerevent:
+      queueName: acquirer-event-queue
+      dlqName: acquirer-event-dlq
     prisonerevent:
       queueName: prisoner-event-queue
       dlqName: prisoner-event-dlq

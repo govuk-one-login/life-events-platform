@@ -40,12 +40,12 @@ data class PrisonerDetails(
       with(data) {
         return PrisonerDetails(
           enrichmentFields = enrichmentFields,
-          prisonerNumber = if (enrichmentFields.contains(EnrichmentField.PRISONER_NUMBER)) this.prisonerNumber else null,
-          firstName = if (enrichmentFields.contains(EnrichmentField.FIRST_NAME)) this.firstName else null,
-          middleNames = if (enrichmentFields.contains(EnrichmentField.MIDDLE_NAMES)) this.middleNames else null,
-          lastName = if (enrichmentFields.contains(EnrichmentField.LAST_NAME)) this.lastName else null,
-          gender = if (enrichmentFields.contains(EnrichmentField.GENDER)) Gender.parse(this.gender) else null,
-          dateOfBirth = if (enrichmentFields.contains(EnrichmentField.DATE_OF_BIRTH)) this.dateOfBirth else null,
+          prisonerNumber = if (enrichmentFields.contains(EnrichmentField.PRISONER_NUMBER)) prisonerNumber else null,
+          firstName = if (enrichmentFields.contains(EnrichmentField.FIRST_NAME)) firstName else null,
+          middleNames = if (enrichmentFields.contains(EnrichmentField.MIDDLE_NAMES)) middleNames else null,
+          lastName = if (enrichmentFields.contains(EnrichmentField.LAST_NAME)) lastName else null,
+          gender = if (enrichmentFields.contains(EnrichmentField.GENDER)) Gender.parse(gender) else null,
+          dateOfBirth = if (enrichmentFields.contains(EnrichmentField.DATE_OF_BIRTH)) dateOfBirth else null,
         )
       }
     }

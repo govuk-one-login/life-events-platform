@@ -17,10 +17,12 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   verification_message_template {
-    default_email_option = "CONFIRM_WITH_LINK"
-    email_subject        = "Verify access to Grafana"
-    email_message        = "Click the link below to verify access to Grafana \n {####}"
+    default_email_option  = "CONFIRM_WITH_LINK"
+    email_subject_by_link = "Verify access to Grafana"
+    email_message_by_link = "Click the link below to verify access to Grafana \n {##Click Here##}"
   }
+
+  email_verification_message = ""
 
   email_configuration {
     email_sending_account = "COGNITO_DEFAULT"

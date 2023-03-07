@@ -14,8 +14,8 @@ import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
-import uk.gov.gdx.datashare.repositories.EventData
-import uk.gov.gdx.datashare.repositories.EventDataRepository
+import uk.gov.gdx.datashare.repositories.AcquirerEvent
+import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.services.AdminService
 
 @RestController
@@ -23,7 +23,7 @@ import uk.gov.gdx.datashare.services.AdminService
 @PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Tag(name = "13. Admin")
 class AdminController(
-  private val eventDataRepository: EventDataRepository,
+  private val acquirerEventRepository: AcquirerEventRepository,
   private val adminService: AdminService,
 ) : BaseApiController() {
   @GetMapping("/events")
@@ -37,7 +37,7 @@ class AdminController(
         content = [
           Content(
             mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = EventData::class)),
+            array = ArraySchema(schema = Schema(implementation = AcquirerEvent::class)),
           ),
         ],
       ),
@@ -53,7 +53,7 @@ class AdminController(
       ),
     ],
   )
-  fun getEvents() = eventDataRepository.findAll().toList()
+  fun getEvents() = acquirerEventRepository.findAll().toList()
 
   @PostMapping("/cognitoClients")
   @Operation(

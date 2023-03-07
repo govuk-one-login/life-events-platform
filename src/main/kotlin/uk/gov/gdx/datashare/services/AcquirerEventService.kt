@@ -16,7 +16,10 @@ import uk.gov.gdx.datashare.helpers.getHistogramTimer
 import uk.gov.gdx.datashare.models.EventDetails
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.Events
-import uk.gov.gdx.datashare.repositories.*
+import uk.gov.gdx.datashare.repositories.AcquirerEvent
+import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
+import uk.gov.gdx.datashare.repositories.AcquirerSubscription
+import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
@@ -24,14 +27,14 @@ import java.util.*
 @Service
 @Transactional
 @XRayEnabled
-class EventDataService(
+class AcquirerEventService(
   private val authenticationFacade: AuthenticationFacade,
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
-  private val eventDataRepository: EventDataRepository,
+  private val acquirerEventRepository: AcquirerEventRepository,
   private val dateTimeHandler: DateTimeHandler,
   private val meterRegistry: MeterRegistry,
-  private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
   private val enrichmentServices: List<EnrichmentService>,
+  private val acquirersService: AcquirersService,
 ) {
   private val dataProcessingTimer = getHistogramTimer(meterRegistry, "DATA_PROCESSING.TimeFromCreationToDeletion")
 
@@ -43,11 +46,16 @@ class EventDataService(
     id: UUID,
   ): EventNotification {
     val clientId = authenticationFacade.getUsername()
-    val event = eventDataRepository.findByClientIdAndId(clientId, id)
+    val event = acquirerEventRepository.findByClientIdAndId(clientId, id)
       ?: throw EventNotFoundException("Event $id not found for polling client $clientId")
     val acquirerSubscription = acquirerSubscriptionRepository.findByEventId(id)
       ?: throw AcquirerSubscriptionNotFoundException("Acquirer subscription not found for event $id")
-    val enrichmentFieldNames = enrichmentFieldNamesForAcquirerSubscription(acquirerSubscription)
+
+    return buildEnrichedEventNotification(event, acquirerSubscription)
+  }
+
+  fun buildEnrichedEventNotification(event: AcquirerEvent, acquirerSubscription: AcquirerSubscription): EventNotification {
+    val enrichmentFieldNames = acquirersService.getEnrichmentFieldsForAcquirerSubscription(acquirerSubscription)
 
     return mapEventNotification(
       event,
@@ -80,10 +88,10 @@ class EventDataService(
     val acquirerSubscriptionIdMap = acquirerSubscriptions.toList().associateBy({ it.id }, { it })
     val acquirerSubscriptionEnrichmentFieldsById = acquirerSubscriptions.toList().associateBy(
       { it.id },
-      { enrichmentFieldNamesForAcquirerSubscription(it) },
+      { acquirersService.getEnrichmentFieldsForAcquirerSubscription(it) },
     )
 
-    val events = eventDataRepository.findPageByAcquirerSubscriptions(
+    val events = acquirerEventRepository.findPageByAcquirerSubscriptions(
       acquirerSubscriptionIdMap.keys.toList(),
       startTime,
       endTime,
@@ -97,7 +105,7 @@ class EventDataService(
       mapEventNotification(event, subscription, enrichmentFieldNames, subscription.enrichmentFieldsIncludedInPoll)
     }
 
-    val eventsCount = eventDataRepository.countByAcquirerSubscriptions(
+    val eventsCount = acquirerEventRepository.countByAcquirerSubscriptions(
       acquirerSubscriptionIdMap.keys.toList(),
       startTime,
       endTime,
@@ -108,12 +116,12 @@ class EventDataService(
 
   fun deleteEvent(id: UUID): EventNotification {
     val callbackClientId = authenticationFacade.getUsername()
-    val event = eventDataRepository.findByClientIdAndId(callbackClientId, id)
+    val event = acquirerEventRepository.findByClientIdAndId(callbackClientId, id)
       ?: throw EventNotFoundException("Event $id not found for callback client $callbackClientId")
     val acquirerSubscription = acquirerSubscriptionRepository.findByEventId(id)
       ?: throw AcquirerSubscriptionNotFoundException("Acquirer subscription not found for event $id")
 
-    eventDataRepository.softDeleteById(event.id, dateTimeHandler.now())
+    acquirerEventRepository.softDeleteById(event.id, dateTimeHandler.now())
     meterRegistry.counter(
       "EVENT_ACTION.EventDeleted",
       "eventType",
@@ -121,12 +129,12 @@ class EventDataService(
       "acquirerSubscription",
       event.acquirerSubscriptionId.toString(),
     ).increment()
-    dataProcessingTimer.record(Duration.between(event.whenCreated, dateTimeHandler.now()).abs())
+    dataProcessingTimer.record(Duration.between(event.createdAt, dateTimeHandler.now()).abs())
     return mapEventNotification(event, acquirerSubscription, emptyList(), false)
   }
 
   private fun mapEventNotification(
-    event: EventData,
+    event: AcquirerEvent,
     subscription: AcquirerSubscription,
     enrichmentFieldNames: List<EnrichmentField>,
     includeData: Boolean = false,
@@ -138,19 +146,16 @@ class EventDataService(
       sourceId = if (EnrichmentField.SOURCE_ID in enrichmentFieldNames) event.dataId else null,
       dataIncluded = if (!callbackEvent) includeData else null,
       enrichmentFields = if (!callbackEvent) enrichmentFieldNames else null,
-      eventData = if (includeData) callbackAndEnrichData(subscription, event, enrichmentFieldNames) else null,
+      eventData = if (includeData) callbackAndEnrichData(subscription.eventType, event.dataId, enrichmentFieldNames) else null,
     )
   }
 
   private fun callbackAndEnrichData(
-    subscription: AcquirerSubscription,
-    event: EventData,
+    eventType: EventType,
+    dataId: String,
     enrichmentFieldNames: List<EnrichmentField>,
   ): EventDetails? {
-    return enrichmentServices.single { p -> p.accepts(subscription.eventType) }
-      .process(subscription.eventType, event.dataId, enrichmentFieldNames)
+    return enrichmentServices.single { p -> p.accepts(eventType) }
+      .process(eventType, dataId, enrichmentFieldNames)
   }
-
-  private fun enrichmentFieldNamesForAcquirerSubscription(it: AcquirerSubscription) =
-    acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(it.id).map { it.enrichmentField }
 }

@@ -20,26 +20,23 @@ import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.helpers.getHistogramTimer
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.repositories.AcquirerEvent
-import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
-import uk.gov.gdx.datashare.repositories.AcquirerSubscription
-import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
+import uk.gov.gdx.datashare.repositories.*
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 
-class AcquirerEventServiceTest {
+class EventDataServiceTest {
   private val authenticationFacade = mockk<AuthenticationFacade>()
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
-  private val acquirerEventRepository = mockk<AcquirerEventRepository>()
+  private val eventDataRepository = mockk<EventDataRepository>()
   private val deathNotificationService = mockk<DeathNotificationService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val dataCreationToDeletionTimer = mockk<Timer>()
   private val eventDeletedCounter = mockk<Counter>()
-  private val acquirersService = mockk<AcquirersService>()
+  private val acquirerSubscriptionEnrichmentFieldRepository = mockk<AcquirerSubscriptionEnrichmentFieldRepository>()
 
-  private val underTest: AcquirerEventService
+  private val underTest: EventDataService
 
   init {
     mockkStatic(::getHistogramTimer)
@@ -54,17 +51,17 @@ class AcquirerEventServiceTest {
       )
     }.returns(eventDeletedCounter)
     every { eventDeletedCounter.increment() }.returns(Unit)
-    underTest = AcquirerEventService(
+    underTest = EventDataService(
       authenticationFacade,
       acquirerSubscriptionRepository,
-      acquirerEventRepository,
+      eventDataRepository,
       dateTimeHandler,
       meterRegistry,
+      acquirerSubscriptionEnrichmentFieldRepository,
       listOf(
         deathNotificationService,
         TestEventEnrichmentService(),
       ),
-      acquirersService,
     )
   }
 
@@ -88,7 +85,7 @@ class AcquirerEventServiceTest {
       address = deathNotificationSubscription.id.toString(),
     )
 
-    every { acquirerEventRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
+    every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
     every { acquirerSubscriptionRepository.findByEventId(event.id) }.returns(deathNotificationSubscription)
     every {
       deathNotificationService.process(
@@ -98,7 +95,9 @@ class AcquirerEventServiceTest {
       )
     }.returns(deathNotificationDetails)
     every { deathNotificationService.accepts(eventType = EventType.DEATH_NOTIFICATION) }.returns(true)
-    every { acquirersService.getEnrichmentFieldsForAcquirerSubscription(any()) }.returns(subscriptionEnrichmentFields)
+    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventOutput = underTest.getEvent(event.id)
 
@@ -117,7 +116,7 @@ class AcquirerEventServiceTest {
   fun `getEvent for event that does not exist for client, throws`() {
     val event = deathEvents.first()
 
-    every { acquirerEventRepository.findByClientIdAndId(clientId, event.id) }.returns(null)
+    every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(null)
 
     val exception = assertThrows<EventNotFoundException> { underTest.getEvent(event.id) }
 
@@ -128,7 +127,7 @@ class AcquirerEventServiceTest {
   fun `getEvent for subscription that does not exist for client, throws`() {
     val event = deathEvents.first()
 
-    every { acquirerEventRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
+    every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
     every { acquirerSubscriptionRepository.findByEventId(event.id) }.returns(null)
 
     val exception = assertThrows<AcquirerSubscriptionNotFoundException> { underTest.getEvent(event.id) }
@@ -156,7 +155,7 @@ class AcquirerEventServiceTest {
     every { acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(clientId, eventTypes) }
       .returns(listOf(deathNotificationSubscription))
     every {
-      acquirerEventRepository.findPageByAcquirerSubscriptions(
+      eventDataRepository.findPageByAcquirerSubscriptions(
         listOf(deathNotificationSubscription.id),
         startTime,
         endTime,
@@ -165,7 +164,7 @@ class AcquirerEventServiceTest {
       )
     }.returns(deathEvents)
     every {
-      acquirerEventRepository.countByAcquirerSubscriptions(
+      eventDataRepository.countByAcquirerSubscriptions(
         listOf(deathNotificationSubscription.id),
         startTime,
         endTime,
@@ -179,7 +178,9 @@ class AcquirerEventServiceTest {
       )
     }.returns(deathNotificationDetails)
     every { deathNotificationService.accepts(eventType = EventType.DEATH_NOTIFICATION) }.returns(true)
-    every { acquirersService.getEnrichmentFieldsForAcquirerSubscription(any()) }.returns(subscriptionEnrichmentFields)
+    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -219,7 +220,7 @@ class AcquirerEventServiceTest {
     every { acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(clientId, eventTypes) }
       .returns(listOf(deathNotificationSubscription))
     every {
-      acquirerEventRepository.findPageByAcquirerSubscriptions(
+      eventDataRepository.findPageByAcquirerSubscriptions(
         listOf(deathNotificationSubscription.id),
         startTime,
         endTime,
@@ -228,7 +229,7 @@ class AcquirerEventServiceTest {
       )
     }.returns(deathEvents)
     every {
-      acquirerEventRepository.countByAcquirerSubscriptions(
+      eventDataRepository.countByAcquirerSubscriptions(
         listOf(deathNotificationSubscription.id),
         startTime,
         endTime,
@@ -242,7 +243,9 @@ class AcquirerEventServiceTest {
       )
     }.returns(deathNotificationDetails)
     every { deathNotificationService.accepts(eventType = EventType.DEATH_NOTIFICATION) }.returns(true)
-    every { acquirersService.getEnrichmentFieldsForAcquirerSubscription(any()) }.returns(subscriptionEnrichmentFields)
+    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -270,7 +273,7 @@ class AcquirerEventServiceTest {
     every { acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(clientId, eventTypes) }
       .returns(listOf(thinDeathNotificationSubscription))
     every {
-      acquirerEventRepository.findPageByAcquirerSubscriptions(
+      eventDataRepository.findPageByAcquirerSubscriptions(
         listOf(thinDeathNotificationSubscription.id),
         startTime,
         endTime,
@@ -279,13 +282,15 @@ class AcquirerEventServiceTest {
       )
     }.returns(thinDeathEvents)
     every {
-      acquirerEventRepository.countByAcquirerSubscriptions(
+      eventDataRepository.countByAcquirerSubscriptions(
         listOf(thinDeathNotificationSubscription.id),
         startTime,
         endTime,
       )
     }.returns(thinDeathEvents.count())
-    every { acquirersService.getEnrichmentFieldsForAcquirerSubscription(any()) }.returns(subscriptionEnrichmentFields)
+    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
@@ -327,7 +332,7 @@ class AcquirerEventServiceTest {
     every { acquirerSubscriptionRepository.findAllByOauthClientId(clientId) }
       .returns(listOf(deathNotificationSubscription))
     every {
-      acquirerEventRepository.findPageByAcquirerSubscriptions(
+      eventDataRepository.findPageByAcquirerSubscriptions(
         listOf(deathNotificationSubscription.id),
         fallbackStartTime,
         fallbackEndTime,
@@ -336,7 +341,7 @@ class AcquirerEventServiceTest {
       )
     }.returns(extraDeathEvents)
     every {
-      acquirerEventRepository.countByAcquirerSubscriptions(
+      eventDataRepository.countByAcquirerSubscriptions(
         listOf(deathNotificationSubscription.id),
         fallbackStartTime,
         fallbackEndTime,
@@ -350,7 +355,9 @@ class AcquirerEventServiceTest {
       )
     }.returns(deathNotificationDetails)
     every { deathNotificationService.accepts(eventType = EventType.DEATH_NOTIFICATION) }.returns(true)
-    every { acquirersService.getEnrichmentFieldsForAcquirerSubscription(any()) }.returns(subscriptionEnrichmentFields)
+    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
     val eventStatusOutput = underTest.getEvents(null, null, null, 0, 10)
 
@@ -371,32 +378,32 @@ class AcquirerEventServiceTest {
 
   @Test
   fun `deleteEvent deletes event`() {
-    val event = AcquirerEvent(
+    val event = EventData(
       acquirerSubscriptionId = UUID.randomUUID(),
       dataId = "HMPO",
-      supplierEventId = UUID.randomUUID(),
-      eventTime = null,
     )
     val now = LocalDateTime.now()
-    every { acquirerEventRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
+    every { eventDataRepository.findByClientIdAndId(clientId, event.id) }.returns(event)
     every { acquirerSubscriptionRepository.findByEventId(event.id) }.returns(
       deathNotificationSubscription,
     )
     every { dateTimeHandler.now() }.returns(now)
-    every { acquirersService.getEnrichmentFieldsForAcquirerSubscription(any()) }.returns(subscriptionEnrichmentFields)
+    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(any()) }.returns(
+      deathNotificationEnrichmentFields,
+    )
 
-    every { acquirerEventRepository.softDeleteById(event.id, now) }.returns(Unit)
+    every { eventDataRepository.softDeleteById(event.id, now) }.returns(Unit)
 
     underTest.deleteEvent(event.id)
 
-    verify(exactly = 1) { acquirerEventRepository.softDeleteById(event.id, now) }
+    verify(exactly = 1) { eventDataRepository.softDeleteById(event.id, now) }
     verify(exactly = 1) { eventDeletedCounter.increment() }
   }
 
   @Test
   fun `deleteEvent throws if event not found for client`() {
     val eventId = UUID.randomUUID()
-    every { acquirerEventRepository.findByClientIdAndId(clientId, eventId) }.returns(null)
+    every { eventDataRepository.findByClientIdAndId(clientId, eventId) }.returns(null)
 
     val exception = assertThrows<EventNotFoundException> {
       underTest.deleteEvent(eventId)
@@ -404,7 +411,7 @@ class AcquirerEventServiceTest {
 
     assertThat(exception.message).isEqualTo("Event $eventId not found for callback client $clientId")
 
-    verify(exactly = 0) { acquirerEventRepository.softDeleteById(any(), any()) }
+    verify(exactly = 0) { eventDataRepository.softDeleteById(any(), any()) }
     verify(exactly = 0) { eventDeletedCounter.increment() }
   }
 
@@ -426,17 +433,21 @@ class AcquirerEventServiceTest {
   private val deathEvents = getEvents(4, deathNotificationSubscription.id)
   private val thinDeathEvents = getEvents(4, thinDeathNotificationSubscription.id)
   private val extraDeathEvents = getEvents(10, deathNotificationSubscription.id)
+  private val deathNotificationEnrichmentFields = subscriptionEnrichmentFields.map {
+    AcquirerSubscriptionEnrichmentField(
+      acquirerSubscriptionId = deathNotificationSubscription.id,
+      enrichmentField = it,
+    )
+  }
 
   private fun getEvents(
     count: Int,
     subscriptionId: UUID = UUID.randomUUID(),
-  ): List<AcquirerEvent> =
+  ): List<EventData> =
     List(count) {
-      AcquirerEvent(
+      EventData(
         acquirerSubscriptionId = subscriptionId,
         dataId = "HMPO",
-        supplierEventId = UUID.randomUUID(),
-        eventTime = null,
       )
     }
 }

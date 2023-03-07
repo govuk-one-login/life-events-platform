@@ -20,13 +20,11 @@ class SqsIntegrationTestBase : IntegrationTestBase() {
   @Autowired
   lateinit var webTestClient: WebTestClient
 
-  protected val supplierEventQueue by lazy { awsQueueService.findByQueueId("supplierevent") as AwsQueue }
-  protected val acquirerEventQueue by lazy { awsQueueService.findByQueueId("acquirerevent") as AwsQueue }
+  protected val dataProcessorQueue by lazy { awsQueueService.findByQueueId("dataprocessor") as AwsQueue }
 
   @BeforeEach
   fun cleanQueue() {
-    supplierEventQueue.sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(supplierEventQueue.queueUrl).build())
-    acquirerEventQueue.sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(acquirerEventQueue.queueUrl).build())
+    dataProcessorQueue.sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(dataProcessorQueue.queueUrl).build())
   }
 
   companion object {

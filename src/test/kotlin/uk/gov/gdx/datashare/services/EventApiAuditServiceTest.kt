@@ -18,21 +18,21 @@ import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.Sex
 import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.repositories.AcquirerEventAudit
-import uk.gov.gdx.datashare.repositories.AcquirerEventAuditRepository
-import uk.gov.gdx.datashare.services.AcquirerEventAuditService
+import uk.gov.gdx.datashare.repositories.EventApiAudit
+import uk.gov.gdx.datashare.repositories.EventApiAuditRepository
+import uk.gov.gdx.datashare.services.EventApiAuditService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-class AcquirerEventAuditServiceTest {
-  private val acquirerEventAuditRepository = mockk<AcquirerEventAuditRepository>()
+class EventApiAuditServiceTest {
+  private val eventApiAuditRepository = mockk<EventApiAuditRepository>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
   private val authenticationFacade = mockk<AuthenticationFacade>()
   private val objectMapper = JacksonConfiguration().objectMapper()
 
-  private val underTest = AcquirerEventAuditService(
-    acquirerEventAuditRepository,
+  private val underTest = EventApiAuditService(
+    eventApiAuditRepository,
     dateTimeHandler,
     authenticationFacade,
     objectMapper,
@@ -89,37 +89,37 @@ class AcquirerEventAuditServiceTest {
 
     every { authenticationFacade.getUsername() }.returns(oauthClientId)
     every { dateTimeHandler.now() }.returns(now)
-    every { acquirerEventAuditRepository.save(any()) }.returns(
-      AcquirerEventAudit(
+    every { eventApiAuditRepository.save(any()) }.returns(
+      EventApiAudit(
         oauthClientId = oauthClientId,
         requestMethod = "",
         url = "",
-        payload = AcquirerEventAudit.Payload(data = emptyList()),
-        createdAt = now,
+        payload = EventApiAudit.Payload(data = emptyList()),
+        whenCreated = now,
       ),
     )
 
     underTest.auditEventApiCall(listOf(eventNotification1, eventNotification2))
 
     verify(exactly = 1) {
-      acquirerEventAuditRepository.save(
+      eventApiAuditRepository.save(
         withArg {
           assertThat(it.oauthClientId).isEqualTo(oauthClientId)
           assertThat(it.requestMethod).isEqualTo("GET")
           assertThat(it.url).isEqualTo("http://localhost/events")
           assertThat(it.payload.data).contains(
-            AcquirerEventAudit.Data(
+            EventApiAudit.Data(
               eventId = eventNotification1.eventId,
               sourceId = eventNotification1.sourceId,
               hashedEventData = hashedEventData1,
             ),
-            AcquirerEventAudit.Data(
+            EventApiAudit.Data(
               eventId = eventNotification2.eventId,
               sourceId = eventNotification2.sourceId,
               hashedEventData = hashedEventData2,
             ),
           )
-          assertThat(it.createdAt).isEqualTo(now)
+          assertThat(it.whenCreated).isEqualTo(now)
         },
       )
     }

@@ -8,12 +8,12 @@ import uk.gov.gdx.datashare.config.AuthenticationFacade
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.sha256
 import uk.gov.gdx.datashare.models.EventNotification
-import uk.gov.gdx.datashare.repositories.AcquirerEventAudit
-import uk.gov.gdx.datashare.repositories.AcquirerEventAuditRepository
+import uk.gov.gdx.datashare.repositories.EventApiAudit
+import uk.gov.gdx.datashare.repositories.EventApiAuditRepository
 
 @Service
-class AcquirerEventAuditService(
-  private val acquirerEventAuditRepository: AcquirerEventAuditRepository,
+class EventApiAuditService(
+  private val eventApiAuditRepository: EventApiAuditRepository,
   private val dateTimeHandler: DateTimeHandler,
   private val authenticationFacade: AuthenticationFacade,
   private val objectMapper: ObjectMapper,
@@ -21,30 +21,27 @@ class AcquirerEventAuditService(
   fun auditEventApiCall(eventNotification: EventNotification) { auditEventApiCall(listOf(eventNotification)) }
 
   fun auditEventApiCall(eventNotifications: List<EventNotification>) {
-    val auditData = auditDataFromEventNotifications(eventNotifications)
-    val request = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes).request
-
-    val acquirerEventAudit = AcquirerEventAudit(
-      oauthClientId = authenticationFacade.getUsername(),
-      requestMethod = request.method,
-      url = request.queryString?.let {
-        "${request.requestURL}?${request.queryString}"
-      } ?: request.requestURL.toString(),
-      payload = auditData,
-      createdAt = dateTimeHandler.now(),
-    )
-
-    acquirerEventAuditRepository.save(acquirerEventAudit)
-  }
-
-  private fun auditDataFromEventNotifications(eventNotifications: List<EventNotification>) =
-    AcquirerEventAudit.Payload(
+    val auditData = EventApiAudit.Payload(
       data = eventNotifications.map {
-        AcquirerEventAudit.Data(
+        EventApiAudit.Data(
           eventId = it.eventId,
           sourceId = it.sourceId,
           hashedEventData = objectMapper.writeValueAsString(it.eventData).sha256(),
         )
       },
     )
+    val request = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes).request
+
+    val eventApiAudit = EventApiAudit(
+      oauthClientId = authenticationFacade.getUsername(),
+      requestMethod = request.method,
+      url = request.queryString?.let {
+        "${request.requestURL}?${request.queryString}"
+      } ?: request.requestURL.toString(),
+      payload = auditData,
+      whenCreated = dateTimeHandler.now(),
+    )
+
+    eventApiAuditRepository.save(eventApiAudit)
+  }
 }

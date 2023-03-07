@@ -9,10 +9,8 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.integration.IntegrationTestBase
 import uk.gov.gdx.datashare.queue.AwsQueueService
-import uk.gov.gdx.datashare.services.AcquirerEventProcessor
-import uk.gov.gdx.datashare.services.EventAcceptorService
+import uk.gov.gdx.datashare.services.DataProcessor
 import uk.gov.gdx.datashare.services.PrisonerEventMessageProcessor
-import uk.gov.gdx.datashare.services.SupplierEventProcessor
 import java.util.*
 
 /**
@@ -31,15 +29,7 @@ import java.util.*
 abstract class MockIntegrationTestBase : IntegrationTestBase() {
   @MockBean
   @Suppress("unused")
-  private lateinit var eventAcceptorService: EventAcceptorService
-
-  @MockBean
-  @Suppress("unused")
-  private lateinit var supplierEventProcessor: SupplierEventProcessor
-
-  @MockBean
-  @Suppress("unused")
-  private lateinit var acquirerEventProcessor: AcquirerEventProcessor
+  private lateinit var dataProcessor: DataProcessor
 
   @MockBean
   @Suppress("unused")

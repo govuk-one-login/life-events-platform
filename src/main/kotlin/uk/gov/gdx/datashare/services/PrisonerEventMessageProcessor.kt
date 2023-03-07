@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter
 @ConditionalOnProperty(name = ["api.base.prisoner-event.enabled"], havingValue = "true")
 class PrisonerEventMessageProcessor(
   private val objectMapper: ObjectMapper,
-  private val eventAcceptorService: EventAcceptorService,
+  private val dataReceiverService: DataReceiverService,
   private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
 ) {
   companion object {
@@ -45,7 +45,7 @@ class PrisonerEventMessageProcessor(
     // find a supplier with a defined name
     supplierSubscriptionRepository.findFirstByEventType(EventType.ENTERED_PRISON)
       ?.let {
-        eventAcceptorService.acceptEvent(
+        dataReceiverService.sendToDataProcessor(
           EventToPublish(
             EventType.ENTERED_PRISON,
             LocalDateTime.parse(hmppsDomainEvent.occurredAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME),

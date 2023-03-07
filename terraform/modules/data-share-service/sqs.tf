@@ -1,11 +1,5 @@
-module "supplier_event_queue" {
+module "data_processor_queue" {
   source      = "../sqs"
-  queue_name  = "${var.environment}-gdx-data-share-supplier-events"
-  environment = var.environment
-}
-
-module "acquirer_event_queue" {
-  source      = "../sqs"
-  queue_name  = "${var.environment}-gdx-data-share-acquirer-events"
+  queue_name  = "${var.environment}-gdx-data-share-poc-data-processor-queue"
   environment = var.environment
 }

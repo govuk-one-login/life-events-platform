@@ -14,7 +14,6 @@ import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.EventToPublish
 import uk.gov.gdx.datashare.models.Events
-import uk.gov.gdx.datashare.repositories.SupplierEvent
 import uk.gov.gdx.datashare.services.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,11 +21,11 @@ import java.util.*
 import java.util.stream.Stream
 
 class EventsControllerTest {
-  private val acquirerEventService = mockk<AcquirerEventService>()
-  private val acquirerEventAuditService = mockk<AcquirerEventAuditService>()
-  private val eventAcceptorService = mockk<EventAcceptorService>()
+  private val eventDataService = mockk<EventDataService>()
+  private val eventApiAuditService = mockk<EventApiAuditService>()
+  private val dataReceiverService = mockk<DataReceiverService>()
 
-  private val underTest = EventsController(acquirerEventService, acquirerEventAuditService, eventAcceptorService)
+  private val underTest = EventsController(eventDataService, eventApiAuditService, dataReceiverService)
 
   @ParameterizedTest
   @MethodSource("provideLocalDateTimes")
@@ -58,15 +57,15 @@ class EventsControllerTest {
       ),
     )
 
-    every { acquirerEventService.getEvents(eventTypes, startTime, endTime, 0, 10) }.returns(Events(events.count(), events))
-    every { acquirerEventAuditService.auditEventApiCall(events) }.returns(Unit)
+    every { eventDataService.getEvents(eventTypes, startTime, endTime, 0, 10) }.returns(Events(events.count(), events))
+    every { eventApiAuditService.auditEventApiCall(events) }.returns(Unit)
 
     val eventsOutput = underTest.getEvents(eventTypes, startTime, endTime, 0, 10)
 
     assertThat(eventsOutput.content).hasSize(2)
     assertThat(eventsOutput.content.map { it.content }).isEqualTo(events)
     assertThat(eventsOutput.metadata?.totalElements).isEqualTo(2)
-    verify(exactly = 1) { acquirerEventAuditService.auditEventApiCall(events) }
+    verify(exactly = 1) { eventApiAuditService.auditEventApiCall(events) }
   }
 
   @Test
@@ -91,13 +90,13 @@ class EventsControllerTest {
       ),
     )
 
-    every { acquirerEventService.getEvent(event.eventId) }.returns(event)
-    every { acquirerEventAuditService.auditEventApiCall(event) }.returns(Unit)
+    every { eventDataService.getEvent(event.eventId) }.returns(event)
+    every { eventApiAuditService.auditEventApiCall(event) }.returns(Unit)
 
     val eventOutput = underTest.getEvent(event.eventId)
 
     assertThat(eventOutput?.content).isEqualTo(event)
-    verify(exactly = 1) { acquirerEventAuditService.auditEventApiCall(event) }
+    verify(exactly = 1) { eventApiAuditService.auditEventApiCall(event) }
   }
 
   @Test
@@ -109,13 +108,13 @@ class EventsControllerTest {
       eventData = null,
     )
 
-    every { acquirerEventService.deleteEvent(event.eventId) }.returns(event)
-    every { acquirerEventAuditService.auditEventApiCall(event) }.returns(Unit)
+    every { eventDataService.deleteEvent(event.eventId) }.returns(event)
+    every { eventApiAuditService.auditEventApiCall(event) }.returns(Unit)
 
     underTest.deleteEvent(event.eventId)
 
-    verify(exactly = 1) { acquirerEventService.deleteEvent(event.eventId) }
-    verify(exactly = 1) { acquirerEventAuditService.auditEventApiCall(event) }
+    verify(exactly = 1) { eventDataService.deleteEvent(event.eventId) }
+    verify(exactly = 1) { eventApiAuditService.auditEventApiCall(event) }
   }
 
   @Test
@@ -123,11 +122,11 @@ class EventsControllerTest {
     val eventId = UUID.randomUUID()
 
     try {
-      every { acquirerEventService.getEvent(any()) }.throws(EventNotFoundException("Event Not Found"))
+      every { eventDataService.getEvent(any()) }.throws(EventNotFoundException("Event Not Found"))
     } catch (e: EventNotFoundException) {
       underTest.getEvent(eventId)
 
-      verify(exactly = 1) { acquirerEventService.getEvent(eventId) }
+      verify(exactly = 1) { eventDataService.getEvent(eventId) }
     }
   }
 
@@ -138,13 +137,12 @@ class EventsControllerTest {
       eventTime = LocalDateTime.now(),
       id = "123456789",
     )
-    val supplierEvent = mockk<SupplierEvent>()
 
-    every { eventAcceptorService.acceptEvent(any()) }.returns(supplierEvent)
+    every { dataReceiverService.sendToDataProcessor(any()) }.returns(Unit)
 
     underTest.publishEvent(event)
 
-    verify(exactly = 1) { eventAcceptorService.acceptEvent(event) }
+    verify(exactly = 1) { dataReceiverService.sendToDataProcessor(event) }
   }
 
   companion object {

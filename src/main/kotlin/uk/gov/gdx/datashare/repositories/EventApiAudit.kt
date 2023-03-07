@@ -1,6 +1,9 @@
 package uk.gov.gdx.datashare.repositories
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.swagger.v3.oas.annotations.media.Schema
 import org.postgresql.util.PGobject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.convert.converter.Converter
@@ -10,26 +13,39 @@ import org.springframework.data.convert.ReadingConverter
 import org.springframework.data.convert.WritingConverter
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
+import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
+import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
-class AcquirerEventAudit(
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Event Api Audit")
+class EventApiAudit(
   @Id
   @Column("id")
+  @Schema(description = "Audit ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val auditId: UUID = UUID.randomUUID(),
 
-  val oauthClientId: String?,
-  val url: String?,
-  val requestMethod: String?,
+  @Schema(description = "Oauth ID of client making call", required = true, example = "alskd987", maxLength = 50, pattern = CLIENT_ID_REGEX)
+  val oauthClientId: String,
+  @Schema(description = "URL", required = true, example = "https://d33v84mi0vopmk.cloudfront.net/events")
+  val url: String,
+  @Schema(description = "METHOD", required = true, example = "GET")
+  val requestMethod: String,
+  @Schema(description = "Data of event(s)", required = true, example = "{\"data\":[]}")
   val payload: Payload,
-  val createdAt: LocalDateTime,
+
+  @Schema(description = "When audit log created", required = true)
+  val whenCreated: LocalDateTime,
 
   @Transient
   @Value("false")
+  @JsonIgnore
   val new: Boolean = true,
 
 ) : Persistable<UUID> {
 
+  @JsonIgnore
   override fun getId(): UUID = auditId
 
   override fun isNew(): Boolean = new

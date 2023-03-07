@@ -22,8 +22,6 @@ resource "aws_cognito_user_pool" "pool" {
     email_message_by_link = "Click the link below to verify access to Grafana \n {##Click Here##}"
   }
 
-  email_verification_message = ""
-
   email_configuration {
     email_sending_account = "COGNITO_DEFAULT"
   }

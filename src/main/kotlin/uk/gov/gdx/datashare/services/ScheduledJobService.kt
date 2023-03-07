@@ -14,7 +14,7 @@ class ScheduledJobService(
   private val acquirerEventRepository: AcquirerEventRepository,
   meterRegistry: MeterRegistry,
 ) {
-  private val gauge = meterRegistry.gauge("UnconsumedEvents", AtomicInteger(0))
+  private val gauge = meterRegistry.gauge("UnconsumedEvents", AtomicInteger(acquirerEventRepository.countByDeletedAtIsNull()))
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
   @SchedulerLock(name = "countUnconsumedEvents", lockAtMostFor = "3m", lockAtLeastFor = "3m")

@@ -13,7 +13,3 @@ module "vpc" {
     Environment = var.environment
   }
 }
-
-data "aws_availability_zones" "available" {
-  state = "available"
-}

@@ -84,6 +84,7 @@ module "data-share-service" {
   providers = {
     aws           = aws
     aws.us-east-1 = aws.us-east-1
+    aws.eu-west-1 = aws.eu-west-1
   }
   environment                 = local.env
   region                      = data.aws_region.current.name

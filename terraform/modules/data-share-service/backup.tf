@@ -64,7 +64,7 @@ resource "aws_backup_plan" "rds" {
   rule {
     rule_name         = "${var.environment}-rds-backup-rule"
     target_vault_name = module.main_vault.name
-    schedule          = "cron(0 4-7 * * ? *)"
+    schedule          = "cron(0 4 * * ? *)"
 
     lifecycle {
       delete_after = 14

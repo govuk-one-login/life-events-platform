@@ -56,7 +56,7 @@ jobs:
           trivy-config: trivy.yaml
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::776473272850:role/dev-github-oidc-deploy
           role-session-name: push-image

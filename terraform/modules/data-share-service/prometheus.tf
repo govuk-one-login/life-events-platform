@@ -68,7 +68,7 @@ groups:
   - name: Events
     rules:
     - alert: Growing Unconsumed Events
-      expr: sum(UnconsumedEvents) > 500000
+      expr: max(UnconsumedEvents) > 500000
       for: 5m
       annotations:
         summary: Over 500000 unconsumed events in database

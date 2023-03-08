@@ -2,7 +2,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-  id("org.springframework.boot") version "3.0.3"
+  id("org.springframework.boot") version "3.0.4"
   id("io.spring.dependency-management") version "1.1.0"
   id("org.jmailen.kotlinter") version "3.13.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
@@ -36,7 +36,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.11"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.18"))
+  implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
@@ -77,8 +78,8 @@ dependencies {
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
   implementation("io.opentelemetry:opentelemetry-api:1.23.1")
 
-  implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.1.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.2")
 
@@ -91,7 +92,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.414") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.421") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

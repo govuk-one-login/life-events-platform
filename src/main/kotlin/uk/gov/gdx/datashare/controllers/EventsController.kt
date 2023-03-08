@@ -37,9 +37,9 @@ import java.util.*
 @RestController
 @RequestMapping("/events", produces = [JSON_API_VALUE])
 class EventsController(
-  private val eventDataService: EventDataService,
-  private val eventApiAuditService: EventApiAuditService,
-  private val dataReceiverService: DataReceiverService,
+  private val acquirerEventService: AcquirerEventService,
+  private val acquirerEventAuditService: AcquirerEventAuditService,
+  private val eventAcceptorService: EventAcceptorService,
 ) : BaseApiController() {
   companion object {
     private const val DEFAULT_PAGE_SIZE = 100
@@ -196,8 +196,8 @@ class EventsController(
     pageSize: Int,
     pageNumber: Int,
   ): PagedModel<EntityModel<EventNotification>> {
-    val events = eventDataService.getEvents(eventTypes, startTime, endTime, pageNumber, pageSize)
-    eventApiAuditService.auditEventApiCall(events.eventModels)
+    val events = acquirerEventService.getEvents(eventTypes, startTime, endTime, pageNumber, pageSize)
+    acquirerEventAuditService.auditEventApiCall(events.eventModels)
     val linkBuilder =
       eventsLink(eventTypes, startTime, endTime, pageNumber, pageSize).toUriComponentsBuilder().scheme("https")
     val pageMetadata = PagedModel.PageMetadata(pageSize.toLong(), pageNumber.toLong(), events.count.toLong())
@@ -218,7 +218,7 @@ class EventsController(
     summary = "Get Specific Event API - Get event data",
     description = "<h3>Event Types</h3> " +
       "<h4>Death Notifications</h4>" +
-      " <p>The <samp>event_data</samp> object for a death notification takes the following json structure: " +
+      " <p>The `event_data` object for a death notification takes the following json structure: " +
       "<pre>" +
       "{\n" +
       "\"registrationDate\": \"2023-01-23\"," +
@@ -235,10 +235,10 @@ class EventsController(
       "\"address\": \"101 Address Street, A Town, Postcode\"\n" +
       "}" +
       "</pre></p>" +
-      "<p><b>Mandatory Fields</b>:registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
-      "<p><b>Gender Types:</b>: Male, Female, Indeterminate</p>" +
+      "<p><b>Mandatory Fields:</b> registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
+      "<p><b>Gender Types:</b> Male, Female, Indeterminate</p>" +
       "<h4>Person has been sent to prison</h4>" +
-      "<p>The <samp>event_data</samp> object for a prisoner received notification takes the following json structure:" +
+      "<p>The `event_data` object for a prisoner received notification takes the following json structure:" +
       "<pre>" +
       "{\n" +
       "\"prisonerNumber\": \"A1234DB\",\n" +
@@ -249,7 +249,7 @@ class EventsController(
       "\"dateOfBirth\": \"1972-02-20\"\n" +
       "}" +
       "</pre></p>" +
-      "<p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, gender, dateOfBirth</p>",
+      "<p><b>Mandatory Fields:</b> prisonerNumber, firstName, lastName, gender, dateOfBirth</p>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -320,8 +320,8 @@ class EventsController(
     @PathVariable
     id: UUID,
   ): EntityModel<EventNotification>? = run {
-    eventDataService.getEvent(id).let {
-      eventApiAuditService.auditEventApiCall(it)
+    acquirerEventService.getEvent(id).let {
+      acquirerEventAuditService.auditEventApiCall(it)
       EntityModel.of(
         it,
         eventLink(id),
@@ -353,8 +353,8 @@ class EventsController(
     @PathVariable
     id: UUID,
   ) {
-    val eventNotification = eventDataService.deleteEvent(id)
-    eventApiAuditService.auditEventApiCall(eventNotification)
+    val eventNotification = acquirerEventService.deleteEvent(id)
+    acquirerEventAuditService.auditEventApiCall(eventNotification)
   }
 
   @Tag(name = "02. Supplier")
@@ -390,7 +390,9 @@ class EventsController(
     )
     @RequestBody
     eventPayload: EventToPublish,
-  ) = dataReceiverService.sendToDataProcessor(eventPayload)
+  ) {
+    eventAcceptorService.acceptEvent(eventPayload)
+  }
 
   private fun eventLink(id: UUID): org.springframework.hateoas.Link =
     org.springframework.hateoas.Link.of(

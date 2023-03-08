@@ -1,6 +1,6 @@
 # 15. Monitoring
 
-[Next >>](9999-end.md)
+[Next >>](0016-push-directly-to-sqs.md)
 
 Date: 2023-02-23
 
@@ -59,21 +59,21 @@ The system as described above ends up looking like the below:
 
 ```mermaid
 flowchart TB
-    subgraph Env1 [Environment 1]
-        subgraph A1 [ECS Task A]
+    subgraph Env1 ["Environment 1"]
+        subgraph A1 ["ECS Task A"]
             GDXB1[GDX]-->ADOTA1[ADOT]
         end
-        subgraph B1 [ECS Task B]
+        subgraph B1 ["ECS Task B"]
             GDXA1[GDX]-->ADOTB1[ADOT]
         end
         ADOTA1 --> AMP1
         ADOTB1 --> AMP1
     end
-    subgraph Env2 [Environment 2]
-        subgraph A2 [ECS Task A]
+    subgraph Env2 ["Environment 2"]
+        subgraph A2 ["ECS Task A"]
             GDXB2[GDX]-->ADOTA2[ADOT]
         end
-        subgraph B2 [ECS Task B]
+        subgraph B2 ["ECS Task B"]
             GDXA2[GDX]-->ADOTB2[ADOT]
         end
         ADOTA2 --> AMP2
@@ -97,5 +97,5 @@ The major risks here are the maintenance of the self-hosted Grafana instance tha
 We expect this to be low risk and cost, as we expect any major breaking updates to require our input for AMG anyway, and
 for minor updates the maintenance should be trivial.
 
-[Next >>](9999-end.md)
+[Next >>](0016-push-directly-to-sqs.md)
 

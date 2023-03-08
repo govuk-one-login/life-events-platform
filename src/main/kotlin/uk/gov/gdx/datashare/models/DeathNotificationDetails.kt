@@ -16,6 +16,7 @@ import java.time.LocalDate
 @JsonSerialize(using = DeathNotificationDetailsSerializer::class)
 data class DeathNotificationDetails(
   val enrichmentFields: List<EnrichmentField>,
+
   @Schema(description = "Date the death was registered", required = true, example = "2022-01-05", type = "date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   val registrationDate: LocalDate? = null,
@@ -58,13 +59,10 @@ data class DeathNotificationDetails(
 
   @Schema(description = "Whether the deceased was retired", required = false, example = "false")
   val retired: Boolean? = null,
-) {
-  companion object {
-    fun fromLevDeathRecord(
-      enrichmentFields: List<EnrichmentField>,
-      levDeathRecord: LevDeathRecord,
-    ): DeathNotificationDetails {
-      with(levDeathRecord) {
+) : EventDetails {
+  companion object : EventDetailsCompanionObject<DeathNotificationDetails, LevDeathRecord> {
+    override fun from(enrichmentFields: List<EnrichmentField>, data: LevDeathRecord): DeathNotificationDetails {
+      with(data) {
         return DeathNotificationDetails(
           enrichmentFields = enrichmentFields,
           registrationDate = if (enrichmentFields.contains(EnrichmentField.REGISTRATION_DATE)) date else null,

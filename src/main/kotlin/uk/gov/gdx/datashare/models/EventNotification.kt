@@ -78,5 +78,11 @@ data class EventNotification(
       "      <p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, sex, dateOfBirth</p>",
     required = false,
   )
-  val eventData: Any? = null,
+  val eventData: EventDetails? = null,
 )
+
+interface EventDetails
+
+interface EventDetailsCompanionObject<T, U> {
+  fun from(enrichmentFields: List<EnrichmentField>, data: U): T
+}

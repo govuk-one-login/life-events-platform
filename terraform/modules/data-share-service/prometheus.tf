@@ -60,17 +60,17 @@ alertmanager_config: |
 EOF
 }
 
-resource "aws_prometheus_rule_group_namespace" "test" {
-  name         = "test"
+resource "aws_prometheus_rule_group_namespace" "alerts" {
+  name         = var.environment
   workspace_id = aws_prometheus_workspace.prometheus.id
   data         = <<EOF
 groups:
   - name: Events
     rules:
     - alert: Growing Unconsumed Events
-      expr: sum(UnconsumedEvents) > 500
+      expr: sum(UnconsumedEvents) > 500000
       for: 5m
       annotations:
-        summary: Over 500 unconsumed events in database
+        summary: Over 500000 unconsumed events in database
 EOF
 }

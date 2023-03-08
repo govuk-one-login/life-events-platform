@@ -57,7 +57,7 @@ class DeathNotificationDetailsTest {
       EnrichmentField.ADDRESS,
     )
 
-    val deathNotificationDetails = DeathNotificationDetails.fromLevDeathRecord(enrichmentFields, levDeathRecord)
+    val deathNotificationDetails = DeathNotificationDetails.from(enrichmentFields, levDeathRecord)
 
     with(deathNotificationDetails) {
       assertThat(registrationDate).isEqualTo(expectedRegistrationDate)
@@ -96,7 +96,7 @@ class DeathNotificationDetailsTest {
     )
     val enrichmentFieldNames = emptyList<EnrichmentField>()
 
-    val deathNotificationDetails = DeathNotificationDetails.fromLevDeathRecord(enrichmentFieldNames, levDeathRecord)
+    val deathNotificationDetails = DeathNotificationDetails.from(enrichmentFieldNames, levDeathRecord)
 
     with(deathNotificationDetails) {
       assertThat(registrationDate).isNull()

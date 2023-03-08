@@ -53,8 +53,11 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
         { "name" : "SPRING_DATASOURCE_USERNAME", "value" : var.db_username },
 
-        { "name" : "SQS_QUEUES_DATAPROCESSOR_QUEUENAME", "value" : module.data_processor_queue.queue_name },
-        { "name" : "SQS_QUEUES_DATAPROCESSOR_DLQNAME", "value" : module.data_processor_queue.dead_letter_queue_name },
+        { "name" : "SQS_QUEUES_SUPPLIEREVENT_QUEUENAME", "value" : module.supplier_event_queue.queue_name },
+        { "name" : "SQS_QUEUES_SUPPLIEREVENT_DLQNAME", "value" : module.supplier_event_queue.dead_letter_queue_name },
+
+        { "name" : "SQS_QUEUES_ACQUIREREVENT_QUEUENAME", "value" : module.acquirer_event_queue.queue_name },
+        { "name" : "SQS_QUEUES_ACQUIREREVENT_DLQNAME", "value" : module.acquirer_event_queue.dead_letter_queue_name },
 
         { "name" : "SQS_QUEUES_PRISONEREVENT_ENABLED", "value" : var.prisoner_event_enabled },
         {
@@ -111,7 +114,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
     },
     {
       name : "adot-collector",
-      image : "${var.ecr_url}/prometheus-adot:eaef8f64a2c1db698d31419fd2c5b181bb8c37dd5c8c50749b753819443d48a9",
+      image : "${var.ecr_url}/prometheus-adot:f9215a1fd3be16144552e1e9dbc9688125ba3f7f2d858ee597885a6f93a10904",
       essential : true,
       logConfiguration : {
         logDriver : "awslogs",

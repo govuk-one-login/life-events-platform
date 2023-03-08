@@ -54,7 +54,7 @@ jobs:
           branch: ${{ matrix.env }}-mutex-terraform-locking
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::776473272850:role/${{ matrix.env }}-github-oidc-deploy
           role-session-name: deploy-terraform

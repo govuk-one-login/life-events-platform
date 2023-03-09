@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 from http.client import HTTPResponse
 from typing import Literal
-from urllib import request
+from urllib import request, error
 
 import boto3
 
@@ -42,6 +42,15 @@ def lambda_handler(event, _context):
         delete_event(auth_token, events[0]["id"])
 
         put_lifecycle_event_hook(event, "Succeeded")
+    except error.HTTPError as http_error:
+        status_code = http_error.code
+        reason = http_error.reason
+        headers = http_error.headers
+        logger.error(f"## Deploy hook failed with HTTP Error")
+        logger.error(f"## Status: {status_code}")
+        logger.error(f"## Reason: {reason}")
+        logger.error(f"## Headers: {headers}")
+        raise
     except:
         put_lifecycle_event_hook(event, "Failed")
         raise

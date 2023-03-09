@@ -30,6 +30,7 @@ delay_in_seconds = 5
 
 
 def lambda_handler(event, _context):
+    time.sleep(10)
     logger.info(f"## EVENT: {event}")
     logger.info(f"## TIME: {datetime.now()}")
 

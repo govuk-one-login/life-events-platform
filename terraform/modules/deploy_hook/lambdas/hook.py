@@ -50,6 +50,7 @@ def lambda_handler(event, _context):
         logger.error(f"## Status: {status_code}")
         logger.error(f"## Reason: {reason}")
         logger.error(f"## Headers: {headers}")
+        put_lifecycle_event_hook(event, "Failed")
         raise
     except:
         put_lifecycle_event_hook(event, "Failed")

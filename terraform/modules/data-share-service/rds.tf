@@ -34,8 +34,8 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   }
 }
 
-resource "aws_rds_cluster_instance" "db_aurora" {
-  identifier         = "${var.environment}-rds-db"
+resource "aws_rds_cluster_instance" "db_aurora-az1" {
+  identifier         = "${var.environment}-rds-db-az1"
   cluster_identifier = aws_rds_cluster.rds_postgres_cluster.id
   instance_class     = "db.serverless"
   engine             = aws_rds_cluster.rds_postgres_cluster.engine
@@ -43,6 +43,21 @@ resource "aws_rds_cluster_instance" "db_aurora" {
 
   performance_insights_enabled    = true
   performance_insights_kms_key_id = aws_kms_key.rds_key.arn
+
+  auto_minor_version_upgrade = true
+}
+
+resource "aws_rds_cluster_instance" "db_aurora_az2" {
+  identifier         = "${var.environment}-rds-db-az2"
+  cluster_identifier = aws_rds_cluster.rds_postgres_cluster.id
+  instance_class     = "db.serverless"
+  engine             = aws_rds_cluster.rds_postgres_cluster.engine
+  engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
+
+  performance_insights_enabled    = true
+  performance_insights_kms_key_id = aws_kms_key.rds_key.arn
+
+  auto_minor_version_upgrade = true
 }
 
 resource "aws_security_group" "rds_postgres_cluster" {

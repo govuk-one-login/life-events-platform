@@ -1,4 +1,4 @@
-# GDX Data Share Platform PoC
+# GDX Data Share Platform
 
 A proof of concept to explore cross governmental data sharing in an event driven way, to simplify data acquisition and sharing.
 

@@ -1,3 +1,24 @@
+locals {
+  http_requests = {
+    post_event = {
+      method = "POST",
+      uri    = "/events"
+    },
+    get_event = {
+      method = "GET",
+      uri    = "/events/{id}"
+    },
+    get_events = {
+      method = "GET",
+      uri    = "/events"
+    },
+    delete_event = {
+      method = "DELETE",
+      uri    = "/events/{id}"
+    }
+  }
+}
+
 resource "aws_prometheus_workspace" "prometheus" {
   alias = "${var.environment}-prometheus"
 
@@ -65,12 +86,11 @@ resource "aws_prometheus_rule_group_namespace" "alerts" {
   workspace_id = aws_prometheus_workspace.prometheus.id
   data         = <<EOF
 groups:
-  - name: Events
+  - name: records
     rules:
-    - alert: Growing Unconsumed Events
-      expr: max(UnconsumedEvents) > 500000
-      for: 5m
-      annotations:
-        summary: Over 500000 unconsumed events in database
+${local.metric_rules}
+  - name: alerts
+    rules:
+${local.alert_rules}
 EOF
 }

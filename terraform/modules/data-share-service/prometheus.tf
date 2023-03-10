@@ -86,9 +86,11 @@ resource "aws_prometheus_rule_group_namespace" "alerts" {
   workspace_id = aws_prometheus_workspace.prometheus.id
   data         = <<EOF
 groups:
-  - name: alerts
+  - name: records
     rules:
 ${local.metric_rules}
+  - name: alerts
+    rules:
 ${local.alert_rules}
 EOF
 }

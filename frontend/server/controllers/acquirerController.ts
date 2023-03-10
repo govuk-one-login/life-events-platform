@@ -1,11 +1,12 @@
-import type { Request, Response } from 'express'
+import type {Request, Response} from 'express'
 import GdxDataShareClient from "../data/gdxDataShareClient";
 
 export default class AcquirerController {
-    constructor(private readonly gdxDataShareClient: GdxDataShareClient) {}
+    constructor(private readonly gdxDataShareClient: GdxDataShareClient) {
+    }
 
     async get(req: Request, res: Response): Promise<void> {
-        res.render('/pages/addAcquirerForm')
+        res.render('pages/addAcquirerForm')
     }
 
     async post(req: Request, res: Response): Promise<void> {
@@ -22,6 +23,6 @@ export default class AcquirerController {
         res.locals.clientId = acquirerResponse.clientId;
         res.locals.clientSecret = acquirerResponse.clientSecret;
 
-        res.render('/pages/success')
+        res.render('pages/success')
     }
 }

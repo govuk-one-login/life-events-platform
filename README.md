@@ -1,6 +1,6 @@
 # GDX Data Share Platform
 
-A proof of concept to explore cross governmental data sharing in an event driven way, to simplify data acquisition and sharing.
+Cross governmental data sharing platform, to simplify data acquisition and sharing in an event driven way.
 
 ## Documentation
 Techdocs for this service are available [here](https://alphagov.github.io/gdx-data-share-poc/).

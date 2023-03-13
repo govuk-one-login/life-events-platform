@@ -41,6 +41,8 @@ resource "aws_rds_cluster_instance" "db_aurora-az1" {
   engine             = aws_rds_cluster.rds_postgres_cluster.engine
   engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
 
+  monitoring_interval = 30
+
   performance_insights_enabled    = true
   performance_insights_kms_key_id = aws_kms_key.rds_key.arn
 
@@ -53,6 +55,8 @@ resource "aws_rds_cluster_instance" "db_aurora_az2" {
   instance_class     = "db.serverless"
   engine             = aws_rds_cluster.rds_postgres_cluster.engine
   engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
+
+  monitoring_interval = 30
 
   performance_insights_enabled    = true
   performance_insights_kms_key_id = aws_kms_key.rds_key.arn

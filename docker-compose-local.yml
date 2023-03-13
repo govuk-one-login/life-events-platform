@@ -44,7 +44,7 @@ services:
       - '--storage.tsdb.path=/prometheus'
 
   datashare-db:
-    image: postgres:13.7
+    image: postgres:14.6
     networks:
       - gds
     container_name: datashare-db

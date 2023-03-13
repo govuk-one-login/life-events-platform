@@ -1,7 +1,6 @@
 package uk.gov.gdx.datashare.controllers
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -11,11 +10,8 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import uk.gov.gdx.datashare.config.ErrorResponse
-import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
-import uk.gov.gdx.datashare.repositories.AcquirerEvent
-import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.services.AdminService
 
 @RestController
@@ -23,68 +19,8 @@ import uk.gov.gdx.datashare.services.AdminService
 @PreAuthorize("hasAnyAuthority('SCOPE_events/admin')")
 @Tag(name = "13. Admin")
 class AdminController(
-  private val acquirerEventRepository: AcquirerEventRepository,
   private val adminService: AdminService,
 ) : BaseApiController() {
-  @GetMapping("/events")
-  @Operation(
-    summary = "Get Events",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Event",
-        content = [
-          Content(
-            mediaType = "application/json",
-            array = ArraySchema(schema = Schema(implementation = AcquirerEvent::class)),
-          ),
-        ],
-      ),
-      ApiResponse(
-        responseCode = "415",
-        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-    ],
-  )
-  fun getEvents() = acquirerEventRepository.findAll().toList()
-
-  @PostMapping("/cognitoClients")
-  @Operation(
-    summary = "Create cognito client",
-    description = "Need scope of events/admin",
-    responses = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Cognito client details",
-      ),
-      ApiResponse(
-        responseCode = "415",
-        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
-        content = [
-          Content(
-            mediaType = "application/json",
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-    ],
-  )
-  fun createCognitoClient(
-    @Schema(
-      required = true,
-      implementation = CognitoClientRequest::class,
-    )
-    @RequestBody
-    cognitoClientRequest: CognitoClientRequest,
-  ) = adminService.createCognitoClient(cognitoClientRequest)
-
   @PostMapping("/acquirer")
   @Operation(
     summary = "Create acquirer",

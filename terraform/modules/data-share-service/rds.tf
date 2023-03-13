@@ -34,6 +34,31 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   }
 }
 
+data "aws_iam_policy_document" "rds_enhanced_monitoring_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["monitoring.rds.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "rds_enhanced_monitoring" {
+  name               = "${var.environment}-rds-enhanced-monitoring"
+  assume_role_policy = data.aws_iam_policy_document.rds_enhanced_monitoring_assume_role.json
+}
+
+data "aws_iam_policy" "rds_enhanced_monitoring" {
+  name = "AmazonRDSEnhancedMonitoringRole"
+}
+
+resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
+  role       = aws_iam_role.rds_enhanced_monitoring.name
+  policy_arn = data.aws_iam_policy.rds_enhanced_monitoring.arn
+}
+
 resource "aws_rds_cluster_instance" "db_aurora-az1" {
   identifier         = "${var.environment}-rds-db-az1"
   cluster_identifier = aws_rds_cluster.rds_postgres_cluster.id
@@ -42,6 +67,7 @@ resource "aws_rds_cluster_instance" "db_aurora-az1" {
   engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
 
   monitoring_interval = 30
+  monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
 
   performance_insights_enabled    = true
   performance_insights_kms_key_id = aws_kms_key.rds_key.arn
@@ -57,6 +83,7 @@ resource "aws_rds_cluster_instance" "db_aurora_az2" {
   engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
 
   monitoring_interval = 30
+  monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
 
   performance_insights_enabled    = true
   performance_insights_kms_key_id = aws_kms_key.rds_key.arn

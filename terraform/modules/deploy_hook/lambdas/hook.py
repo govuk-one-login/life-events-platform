@@ -38,6 +38,7 @@ def lambda_handler(event, _context):
         auth_token = get_auth_token(auth_url, client_id, client_secret)
 
         post_event(auth_token)
+        time.sleep(20)
         events = get_events(auth_token)
         get_event(auth_token, events[0]["id"])
         delete_event(auth_token, events[0]["id"])

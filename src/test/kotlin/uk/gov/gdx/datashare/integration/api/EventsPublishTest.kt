@@ -6,7 +6,7 @@ import java.util.*
 
 class EventsPublishTest : SqsIntegrationTestBase() {
   @Test
-  fun `Events successfully publishes event`() {
+  fun `Returns 201 for valid supplier for publish event`() {
     webTestClient.post()
       .uri("/events")
       .headers(setAuthorisation("len", listOf(""), listOf("events/publish")))
@@ -17,7 +17,7 @@ class EventsPublishTest : SqsIntegrationTestBase() {
   }
 
   @Test
-  fun `403 returns on non valid supplier`() {
+  fun `Returns 403 for non valid supplier for publish event`() {
     webTestClient.post()
       .uri("/events")
       .headers(setAuthorisation("bad-supplier", listOf(""), listOf("events/publish")))
@@ -28,7 +28,48 @@ class EventsPublishTest : SqsIntegrationTestBase() {
   }
 
   @Test
-  fun `404 returns on event not found`() {
+  fun `Returns 403 for non valid scope for publish event`() {
+    webTestClient.post()
+      .uri("/events")
+      .headers(setAuthorisation("len", listOf(""), listOf("events/consume")))
+      .bodyValue(mapOf("eventType" to "DEATH_NOTIFICATION", "id" to "123456789"))
+      .exchange()
+      .expectStatus()
+      .isForbidden
+  }
+
+  @Test
+  fun `Returns 403 for non valid scope for delete event`() {
+    webTestClient.delete()
+      .uri("/events/" + UUID.randomUUID())
+      .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/publish")))
+      .exchange()
+      .expectStatus()
+      .isForbidden
+  }
+
+  @Test
+  fun `Returns 404 on event not found for delete event`() {
+    webTestClient.delete()
+      .uri("/events/" + UUID.randomUUID())
+      .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/consume")))
+      .exchange()
+      .expectStatus()
+      .isNotFound
+  }
+
+  @Test
+  fun `Returns 403 for non valid scope for get event`() {
+    webTestClient.get()
+      .uri("/events/" + UUID.randomUUID())
+      .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/publish")))
+      .exchange()
+      .expectStatus()
+      .isForbidden
+  }
+
+  @Test
+  fun `Returns 404 on event not found for get event`() {
     webTestClient.get()
       .uri("/events/" + UUID.randomUUID())
       .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/consume")))
@@ -38,12 +79,12 @@ class EventsPublishTest : SqsIntegrationTestBase() {
   }
 
   @Test
-  fun `404 returns on event not found for deletion`() {
-    webTestClient.delete()
-      .uri("/events/" + UUID.randomUUID())
-      .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/consume")))
+  fun `Returns 403 for non valid scope for get events`() {
+    webTestClient.get()
+      .uri("/events")
+      .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/publish")))
       .exchange()
       .expectStatus()
-      .isNotFound
+      .isForbidden
   }
 }

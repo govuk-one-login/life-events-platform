@@ -66,9 +66,6 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-  implementation("org.apache.commons:commons-lang3")
-  implementation("org.apache.commons:commons-text:1.10.0")
-
   implementation("io.micrometer:micrometer-core:1.10.4")
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
   implementation("io.opentelemetry:opentelemetry-api:1.24.0")
@@ -80,8 +77,6 @@ dependencies {
 
   implementation("org.javers:javers-spring:6.11.0")
   implementation("org.javers:javers-persistence-sql:6.11.0")
-
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   // test containers
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))

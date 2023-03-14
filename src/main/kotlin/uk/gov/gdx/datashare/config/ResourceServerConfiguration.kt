@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -12,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 class ResourceServerConfiguration {
   @Autowired
   fun configureGlobal(
@@ -32,21 +34,20 @@ class ResourceServerConfiguration {
   fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
     return http
       .csrf { it.disable() } // csrf not needed on a rest api
-      .authorizeHttpRequests { requests ->
-        requests
-          .requestMatchers("/prometheus").hasRole("ACTUATOR").and().httpBasic()
-        requests
-          .requestMatchers(
-            "/favicon.ico",
-            "/health/**",
-            "/info",
-            "/v3/api-docs/**",
-            "/v3/api-docs.yaml",
-            "/swagger-ui/**",
-            "/swagger-ui.html",
-            "/metrics/**",
-          ).permitAll()
-          .anyRequest().authenticated()
+      .authorizeHttpRequests { it ->
+        it.requestMatchers(
+          "/favicon.ico",
+          "/health/**",
+          "/info",
+          "/v3/api-docs/**",
+          "/v3/api-docs.yaml",
+          "/swagger-ui/**",
+          "/swagger-ui.html",
+          "/metrics/**",
+        )
+          .permitAll()
+        it.requestMatchers("/prometheus").hasRole("ACTUATOR").and().httpBasic()
+        it.anyRequest().authenticated()
       }
       .oauth2ResourceServer { it.jwt() }
       .build()

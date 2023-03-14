@@ -68,10 +68,6 @@ dependencies {
 
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.10.0")
-  implementation("commons-codec:commons-codec")
-  implementation("commons-net:commons-net:3.9.0")
-
-  implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
   implementation("io.micrometer:micrometer-core:1.10.4")
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
@@ -96,7 +92,6 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.assertj:assertj-core:3.24.2")
-  testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.12")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")

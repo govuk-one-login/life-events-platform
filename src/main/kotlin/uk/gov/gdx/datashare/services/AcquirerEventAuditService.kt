@@ -32,6 +32,21 @@ class AcquirerEventAuditService(
       } ?: request.requestURL.toString(),
       payload = auditData,
       createdAt = dateTimeHandler.now(),
+      queueName = null,
+    )
+
+    acquirerEventAuditRepository.save(acquirerEventAudit)
+  }
+
+  fun auditQueuedEventMessage(eventNotification: EventNotification, queueName: String) {
+    val auditData = auditDataFromEventNotifications(listOf(eventNotification))
+    val acquirerEventAudit = AcquirerEventAudit(
+      oauthClientId = null,
+      requestMethod = null,
+      url = null,
+      payload = auditData,
+      createdAt = dateTimeHandler.now(),
+      queueName = queueName,
     )
 
     acquirerEventAuditRepository.save(acquirerEventAudit)

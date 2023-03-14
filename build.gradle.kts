@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.21"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.23"))
   implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
@@ -75,12 +75,12 @@ dependencies {
 
   implementation("io.micrometer:micrometer-core:1.10.4")
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
-  implementation("io.opentelemetry:opentelemetry-api:1.23.1")
+  implementation("io.opentelemetry:opentelemetry-api:1.24.0")
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
 
-  implementation("com.toedter:spring-hateoas-jsonapi:2.0.2")
+  implementation("com.toedter:spring-hateoas-jsonapi:2.0.3")
 
   implementation("org.javers:javers-spring:6.11.0")
   implementation("org.javers:javers-persistence-sql:6.11.0")
@@ -91,7 +91,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.424") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.426") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

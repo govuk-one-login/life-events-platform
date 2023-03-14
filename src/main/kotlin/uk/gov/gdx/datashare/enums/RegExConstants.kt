@@ -9,4 +9,5 @@ object RegExConstants {
   const val CLIENT_NAME_REGEX = "^[a-z0-9+=,.@-]*\$"
   const val CLIENT_SECRET_REGEX = "^[a-zA-Z0-9]{1,80}\$"
   const val SOURCE_ID_REGEX = "^[A-Za-z0-9+=,.@-_]*\$"
+  const val SQS_QUEUE_NAME_REGEX = "^acq_(([A-Za-z0-9_-]{1,71}\\.fifo)|([A-Za-z0-9_-]{1,76}))\$"
 }

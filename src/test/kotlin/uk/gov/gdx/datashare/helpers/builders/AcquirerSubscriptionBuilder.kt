@@ -22,6 +22,7 @@ data class AcquirerSubscriptionBuilder(
       oauthClientId = oauthClientId,
       eventType = eventType,
       enrichmentFieldsIncludedInPoll = enrichmentFieldsIncludedInPoll,
+      queueName = queueName,
       whenCreated = whenCreated,
       new = new,
     )

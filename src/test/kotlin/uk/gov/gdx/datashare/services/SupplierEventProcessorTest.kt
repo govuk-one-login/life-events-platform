@@ -53,6 +53,7 @@ class SupplierEventProcessorTest {
       AcquirerSubscription(
         acquirerId = UUID.randomUUID(),
         eventType = supplierSubscription.eventType,
+        queueName = "queuename",
       ),
       AcquirerSubscription(
         acquirerId = UUID.randomUUID(),

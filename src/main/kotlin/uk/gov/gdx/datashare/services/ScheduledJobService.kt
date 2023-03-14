@@ -20,7 +20,6 @@ class ScheduledJobService(
   @SchedulerLock(name = "countUnconsumedEvents", lockAtMostFor = "3m", lockAtLeastFor = "3m")
   fun countUnconsumedEvents() {
     LockAssert.assertLocked()
-    AcquirerEventService.log.debug("Looking for unconsumed events")
     val unconsumedEventsCount = acquirerEventRepository.countByDeletedAtIsNull()
     gauge!!.set(unconsumedEventsCount)
   }

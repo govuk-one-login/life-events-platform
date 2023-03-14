@@ -31,20 +31,6 @@ End;
 $$;
 
 DELETE
-FROM supplier_event
-WHERE supplier_subscription_id IN
-      (SELECT id
-       FROM supplier_subscription
-       WHERE supplier_id IN (
-                             getIdFromSupplierName('HMPO'),
-                             getIdFromSupplierName('HMPPS')
-           ));
-
-DELETE
-FROM supplier_subscription
-WHERE supplier_id IN (getIdFromSupplierName('HMPO'), getIdFromSupplierName('HMPPS'));
-
-DELETE
 FROM acquirer_event
 WHERE acquirer_subscription_id IN
       (SELECT id
@@ -61,6 +47,20 @@ WHERE acquirer_subscription_id IN
 DELETE
 FROM acquirer_subscription
 WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'prisoner-check');
+
+DELETE
+FROM supplier_event
+WHERE supplier_subscription_id IN
+      (SELECT id
+       FROM supplier_subscription
+       WHERE supplier_id IN (
+                             getIdFromSupplierName('HMPO'),
+                             getIdFromSupplierName('HMPPS')
+           ));
+
+DELETE
+FROM supplier_subscription
+WHERE supplier_id IN (getIdFromSupplierName('HMPO'), getIdFromSupplierName('HMPPS'));
 
 DELETE
 FROM acquirer

@@ -21,8 +21,8 @@ interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, 
 
   @Query(
     "SELECT asub.* FROM acquirer_subscription asub " +
-      "JOIN event_data ed ON asub.id = ed.acquirer_subscription_id " +
-      "WHERE ed.id = :id ",
+      "JOIN acquirer_event ae ON asub.id = ae.acquirer_subscription_id " +
+      "WHERE ae.id = :id ",
   )
   fun findByEventId(id: UUID): AcquirerSubscription?
 

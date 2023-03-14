@@ -96,6 +96,7 @@ class AcquirerEventAuditServiceTest {
         url = "",
         payload = AcquirerEventAudit.Payload(data = emptyList()),
         createdAt = now,
+        queueName = null,
       ),
     )
 

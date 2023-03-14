@@ -31,11 +31,21 @@ End;
 $$;
 
 DELETE
+FROM supplier_event
+WHERE supplier_subscription_id IN
+      (SELECT id
+       FROM supplier_subscription
+       WHERE supplier_id IN (
+                             getIdFromSupplierName('HMPO'),
+                             getIdFromSupplierName('HMPPS')
+           ));
+
+DELETE
 FROM supplier_subscription
 WHERE supplier_id IN (getIdFromSupplierName('HMPO'), getIdFromSupplierName('HMPPS'));
 
 DELETE
-FROM event_data
+FROM acquirer_event
 WHERE acquirer_subscription_id IN
       (SELECT id
        FROM acquirer_subscription

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.integration.SqsIntegrationTestBase
 import java.util.*
 
-class EventsPublishTest : SqsIntegrationTestBase() {
+class EventsControllerTest : SqsIntegrationTestBase() {
   @Test
   fun `Returns 201 for valid supplier for publish event`() {
     webTestClient.post()

@@ -74,6 +74,7 @@ class SupplierEventProcessor(
         SendMessageBatchRequestEntry.builder()
           .id(it.id.toString())
           .messageBody(it.toJson())
+          .delaySeconds(10)
           .build()
       }
 

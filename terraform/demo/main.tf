@@ -104,5 +104,7 @@ module "data-share-service" {
   prisoner_search_url    = ""
   hmpps_auth_url         = ""
 
-  grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
+  grafana_task_role_name      = data.terraform_remote_state.shared.outputs.grafana_task_role_name
+  top_level_route53_zone_id   = data.terraform_remote_state.shared.outputs.route53_zone_id
+  top_level_route53_zone_name = data.terraform_remote_state.shared.outputs.route53_zone_name
 }

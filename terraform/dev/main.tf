@@ -99,7 +99,9 @@ module "data-share-service" {
   prisoner_search_url    = "https://prisoner-offender-search-dev.prison.service.justice.gov.uk"
   hmpps_auth_url         = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
 
-  grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
+  grafana_task_role_name      = data.terraform_remote_state.shared.outputs.grafana_task_role_name
+  top_level_route53_zone_id   = data.terraform_remote_state.shared.outputs.route53_zone_id
+  top_level_route53_zone_name = data.terraform_remote_state.shared.outputs.route53_zone_name
 }
 
 module "len" {

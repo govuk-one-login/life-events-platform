@@ -90,3 +90,7 @@ module "github_iam" {
   environment = local.env
   account_id  = data.aws_caller_identity.current.account_id
 }
+
+resource "aws_route53_zone" "zone" {
+  name = "share-life-events.service.gov.uk"
+}

@@ -46,6 +46,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\Outcomes:\n    Code: ${{ steps.trivy-code.outcome }}\n    Infra: ${{ steps.trivy-infra.outcome }}"
+          slack-message: "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\nOutcomes:\n    Code: ${{ steps.trivy-code.outcome }}\n    Infra: ${{ steps.trivy-infra.outcome }}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

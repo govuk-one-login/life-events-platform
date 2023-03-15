@@ -1,0 +1,51 @@
+name: Run scheduled Trivy scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and tag image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          push: false
+          tags: ${{ github.ref_name }}:latest
+          load: true
+          cache-to: type=gha
+          cache-from: type=gha
+
+      - name: Run Trivy vulnerabilities for code scanner
+        id: trivy-code
+        uses: aquasecurity/trivy-action@master
+        continue-on-error: true
+        with:
+          image-ref: ${{ github.ref_name }}:latest
+          trivy-config: trivy.yaml
+
+      - name: Run Trivy vulnerabilities for infrastructure scanner
+        id: trivy-infra
+        uses: aquasecurity/trivy-action@master
+        continue-on-error: true
+        with:
+          scan-type: config
+          trivy-config: trivy.yaml
+
+      - name: Send failure message to Slack
+        if: {{ steps.plan.trivy-code.exitcode }} == 1 || {{ steps.plan.trivy-infra.exitcode }} == 1
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          env:
+            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

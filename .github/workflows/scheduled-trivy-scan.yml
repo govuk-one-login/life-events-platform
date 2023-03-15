@@ -42,10 +42,10 @@ jobs:
           trivy-config: trivy.yaml
 
       - name: Send failure message to Slack
-        if: ${{ steps.plan.trivy-code.exitcode }} == 1 || ${{ steps.plan.trivy-infra.exitcode }} == 1
+        if: ${{ steps.trivy-code.exitcode }} == 1 || ${{ steps.trivy-infra.exitcode }} == 1
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          slack-message: "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\nExit codes:\n    Infra: ${{ steps.trivy-infra.exitcode }}\n    Code: ${{ steps.trivy-code.exitcode }}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

@@ -1,5 +1,5 @@
 resource "aws_route53_zone" "zone" {
-  name = "${var.environment}.share-life-events.service.gov.uk"
+  name = "${var.environment}.${var.top_level_route53_zone_name}"
 }
 
 resource "aws_acm_certificate" "hosted_zone" {
@@ -21,7 +21,7 @@ resource "aws_route53_record" "cloudfront" {
 
 resource "aws_route53_record" "subdomain" {
   zone_id = var.top_level_route53_zone_id
-  name    = var.top_level_route53_zone_name
+  name    = aws_route53_zone.zone.name
   type    = "NS"
   ttl     = 30
 

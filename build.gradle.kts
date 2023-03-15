@@ -66,7 +66,7 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-  implementation("io.micrometer:micrometer-core:1.10.4")
+  implementation("io.micrometer:micrometer-core:1.10.5")
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
   implementation("io.opentelemetry:opentelemetry-api:1.24.0")
 

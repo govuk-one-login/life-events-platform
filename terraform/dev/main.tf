@@ -130,3 +130,8 @@ module "consumer" {
   lev_api_url                 = "https://${module.lev_api.service_url}"
   schedule                    = "cron(0,30 9-18 ? * MON-FRI *)"
 }
+
+module "securityhub" {
+  source = "../modules/security_hub"
+  region = data.aws_region.current.name
+}

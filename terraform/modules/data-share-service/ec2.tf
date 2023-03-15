@@ -13,7 +13,7 @@ data "aws_ami" "amazon_linux" {
 
 resource "aws_instance" "rds_bastion_host" {
   ami                         = data.aws_ami.amazon_linux.id
-  instance_type               = "t3a.micro"
+  instance_type               = "t3a.nano"
   subnet_id                   = module.vpc.private_subnet_ids[0]
   associate_public_ip_address = false
   vpc_security_group_ids      = [aws_security_group.rds_bastion_host_sg.id]
@@ -35,19 +35,19 @@ resource "aws_security_group" "rds_bastion_host_sg" {
   description = "For bastion host access to GDX Data Share PoC Service RDS instances"
   vpc_id      = module.vpc.vpc_id
 
-  ingress {
-    protocol    = "-1"
-    from_port   = 0
-    to_port     = 0
-    self        = true
-    description = "Allow ingress to members of security group"
+  egress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "To reach VPC endpoints"
   }
 
   egress {
-    protocol    = "-1"
-    from_port   = 0
-    to_port     = 0
-    cidr_blocks = [var.vpc_cidr]
+    protocol    = "tcp"
+    from_port   = 5432
+    to_port     = 5432
+    cidr_blocks = ["0.0.0.0/0"]
     description = "Allow egress for RDS bastion"
   }
 
@@ -62,13 +62,22 @@ resource "aws_iam_role" "rds_bastion_access_role" {
   assume_role_policy = data.aws_iam_policy_document.rds_bastion_access_policy.json
 }
 
-data "aws_iam_policy" "rds_bastion_access_policy" {
+data "aws_iam_policy" "rds_bastion_access_ssm_policy" {
   name = "AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy_attachment" "rds_bastion_access" {
+data "aws_iam_policy" "rds_bastion_access_ec2_policy" {
+  name = "EC2InstanceConnect"
+}
+
+resource "aws_iam_role_policy_attachment" "rds_bastion_access_ssm" {
   role       = aws_iam_role.rds_bastion_access_role.name
-  policy_arn = data.aws_iam_policy.rds_bastion_access_policy.arn
+  policy_arn = data.aws_iam_policy.rds_bastion_access_ssm_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "rds_bastion_access_ec2" {
+  role       = aws_iam_role.rds_bastion_access_role.name
+  policy_arn = data.aws_iam_policy.rds_bastion_access_ec2_policy.arn
 }
 
 data "aws_iam_policy_document" "rds_bastion_access_policy" {

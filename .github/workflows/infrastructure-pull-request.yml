@@ -73,5 +73,5 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -input=false
+        run: terraform plan -input=false -var-file=../tfvars/non-prod/${{ matrix.env }}.tfvars
 

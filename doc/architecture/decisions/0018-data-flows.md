@@ -1,6 +1,6 @@
 # 18. Data flows
 
-[Next >>](9999-end.md)
+[Next >>](0019-vulnerability-scanning.md)
 
 Date: 2023-02-28
 
@@ -55,5 +55,5 @@ Our schema for "data an acquirer is interested in" will need to be extended to i
 external retrieval, as well as a different source of data entirely, which may stretch the definition of
 `DEATH_NOTIFICATION` - is a notification with `pensionNumber` the same as one with `drivingLicenseNumber`?
 
-[Next >>](9999-end.md)
+[Next >>](0019-vulnerability-scanning.md)
 

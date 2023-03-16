@@ -1,5 +1,12 @@
 locals {
   env = "shared"
+  default_tags = {
+    Product     = "Government Data Exchange"
+    Environment = local.env
+    Owner       = "gdx-dev-team@digital.cabinet-office.gov.uk"
+    Source      = "terraform"
+    Repository  = "https://github.com/alphagov/gdx-data-share-poc"
+  }
 }
 
 terraform {
@@ -24,11 +31,7 @@ provider "aws" {
   alias  = "eu-west-2"
   region = "eu-west-2"
   default_tags {
-    tags = {
-      source      = "terraform"
-      repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = local.env
-    }
+    tags = local.default_tags
   }
 }
 
@@ -36,11 +39,7 @@ provider "aws" {
   alias  = "us-east-1"
   region = "us-east-1"
   default_tags {
-    tags = {
-      source      = "terraform"
-      repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = local.env
-    }
+    tags = local.default_tags
   }
 }
 

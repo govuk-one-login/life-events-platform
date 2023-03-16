@@ -18,8 +18,11 @@ provider "aws" {
   region = "eu-west-2"
   default_tags {
     tags = {
-      source     = "terraform"
-      repository = "https://github.com/alphagov/gdx-data-share-poc"
+      Product     = "Government Data Exchange"
+      Environment = "bootstrap"
+      Owner       = "gdx-dev-team@digital.cabinet-office.gov.uk"
+      Source      = "terraform"
+      Repository  = "https://github.com/alphagov/gdx-data-share-poc"
     }
   }
 }

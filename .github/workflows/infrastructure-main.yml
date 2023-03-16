@@ -84,4 +84,4 @@ jobs:
 
       - name: Terraform Apply
         if: steps.plan.outputs.exitcode == 2
-        run: terraform apply -auto-approve -input=false -var-file=../tfvars/non-prod/${{ matrix.env }}.tfvars plan.tfplan
+        run: terraform apply -auto-approve -input=false plan.tfplan

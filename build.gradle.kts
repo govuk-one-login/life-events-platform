@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter
 plugins {
   id("org.springframework.boot") version "3.0.4"
   id("io.spring.dependency-management") version "1.1.0"
-  id("org.jmailen.kotlinter") version "3.13.0"
+  id("org.jmailen.kotlinter") version "3.14.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   kotlin("jvm") version "1.8.10"
   kotlin("plugin.spring") version "1.8.10"
@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.23"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.24"))
   implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
@@ -66,8 +66,8 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-  implementation("io.micrometer:micrometer-core:1.10.4")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.10.4")
+  implementation("io.micrometer:micrometer-core:1.10.5")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
   implementation("io.opentelemetry:opentelemetry-api:1.24.0")
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
@@ -82,7 +82,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.426") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.427") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

@@ -50,6 +50,8 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+data "aws_region" "current" {}
+
 #tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 module "vpc" {
   source = "git::https://github.com/Softwire/terraform-vpc-aws?ref=24b5808095f54de6909ae03c9b0ccc21a735c6c3"
@@ -67,7 +69,6 @@ module "vpc" {
     Environment = local.env
   }
 }
-
 
 module "grafana" {
   source = "./modules/grafana"
@@ -89,4 +90,9 @@ module "github_iam" {
   source      = "../modules/github_env_iam"
   environment = local.env
   account_id  = data.aws_caller_identity.current.account_id
+}
+
+module "securityhub" {
+  source = "../modules/security_hub"
+  region = data.aws_region.current.name
 }

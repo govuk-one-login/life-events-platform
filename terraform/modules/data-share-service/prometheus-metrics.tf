@@ -28,7 +28,7 @@ EOF
        quantile(0.5,
          label_replace(
            avg_over_time(http_requests:${k}:rate5m[4h] offset 166h)
-           + http_requests:${k}:rate5m:avg_over_time_1w - job:http_requests:rate5m:avg_over_time_1w offset 1w
+           + http_requests:${k}:rate5m:avg_over_time_1w - http_requests:${k}:rate5m:avg_over_time_1w offset 1w
            , "offset", "1w", "", "")
          or
          label_replace(

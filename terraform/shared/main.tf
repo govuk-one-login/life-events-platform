@@ -92,6 +92,6 @@ module "github_iam" {
 }
 
 module "securityhub" {
-  source = "../modules/security_hub"
+  source = "./modules/security_hub"
   region = data.aws_region.current.name
 }

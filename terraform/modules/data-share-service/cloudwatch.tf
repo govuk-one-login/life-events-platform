@@ -23,20 +23,6 @@ resource "aws_cloudwatch_log_group" "prometheus_logs" {
   kms_key_id = aws_kms_key.log_key.arn
 }
 
-module "request_alarm_dashboard" {
-  source           = "../cloudwatch_alarm_dashboard"
-  region           = var.region
-  dashboard_name   = "${var.environment}-request-alarm-dashboard"
-  metric_namespace = local.metric_namespace
-  widgets = [
-    for alarm in module.error_rate_alarms :
-    {
-      title  = alarm.alarm_description,
-      alarms = [alarm.alarm_arn]
-    }
-  ]
-}
-
 module "internal_alarm_dashboard" {
   source           = "../cloudwatch_alarm_dashboard"
   region           = var.region
@@ -50,10 +36,6 @@ module "internal_alarm_dashboard" {
     {
       title  = aws_cloudwatch_metric_alarm.queue_process_error_number.alarm_description,
       alarms = [aws_cloudwatch_metric_alarm.queue_process_error_number.arn]
-    },
-    {
-      title  = aws_cloudwatch_metric_alarm.unconsumed_events.alarm_description,
-      alarms = [aws_cloudwatch_metric_alarm.unconsumed_events.arn]
     },
   ]
 }

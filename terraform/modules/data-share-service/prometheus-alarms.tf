@@ -24,7 +24,37 @@ EOF
         summary: Over 500000 unconsumed events in database
 EOF
   ]
-  alerts = concat(local.anomaly_alerts, local.events_alerts)
+
+  error_rate_alerts = [
+    for k, v in local.http_requests :
+    <<EOF
+    - alert: Error rate exceeded 10% for endpoint ${k}
+      expr: >
+        (
+          sum(rate(http_server_requests_seconds_count{uri="${v.uri}", method="${v.method}", outcome!="SUCCESS"}[5m])) /
+          sum(rate(http_server_requests_seconds_count{uri="${v.uri}", method="${v.method}"}[5m]))
+        ) > 0.1
+      for: 5m
+      annotations:
+        summary: Error rate exceeded 10% for over 5m for 5m for endpoint ${k}
+EOF
+  ]
+
+  lev_error_Rate_alert = [
+    <<EOF
+    - alert: Error rate exceeded 10% for LEV death records
+      expr: >
+        (
+          sum(rate(http_client_requests_seconds_count{uri="/v1/registration/death/{id}", outcome!="SUCCESS"}[5m])) /
+          sum(rate(http_client_requests_seconds_count{uri="/v1/registration/death/{id}"}[5m]))
+        ) > 0.1
+      for: 5m
+      annotations:
+        summary: Error rate exceeded 10% for over 5m for 5m for LEV death records
+EOF
+  ]
+
+  alerts = concat(local.anomaly_alerts, local.events_alerts, local.error_rate_alerts)
 
   alert_rules = join("\n", local.alerts)
 }

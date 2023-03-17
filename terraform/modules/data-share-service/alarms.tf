@@ -1,13 +1,19 @@
 locals {
   alarm_prefix = "${var.environment}-gdx"
+  queues = {
+    supplier-events = "Supplier events queue"
+    acquirer-events = "Acquirer events queue"
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "queue_process_error_rate" {
-  alarm_name          = "${local.alarm_prefix}-queue-process-error-rate"
+  for_each = local.queues
+
+  alarm_name          = "${local.alarm_prefix}-${each.key}-queue-process-error-rate"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "2"
   threshold           = "10"
-  alarm_description   = "Queue processor error rate"
+  alarm_description   = "${each.value} processor error rate"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [aws_sns_topic.sns_alarm_topic.arn]
   ok_actions          = [aws_sns_topic.sns_alarm_topic.arn]
@@ -28,7 +34,7 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_rate" {
       stat        = "Sum"
 
       dimensions = {
-        QueueName = "${var.environment}-gdx-data-share-poc-data-processor-queue-dlq"
+        QueueName = "${var.environment}-gdx-data-share-${each.key}-dlq"
       }
     }
   }
@@ -42,18 +48,20 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_rate" {
       stat        = "Sum"
 
       dimensions = {
-        QueueName = "${var.environment}-gdx-data-share-poc-data-processor-queue"
+        QueueName = "${var.environment}-gdx-data-share-${each.key}"
       }
     }
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "queue_process_error_number" {
-  alarm_name          = "${local.alarm_prefix}-queue-process-error-number"
+  for_each = local.queues
+
+  alarm_name          = "${local.alarm_prefix}-${each.key}-queue-process-error-number"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   threshold           = "1"
-  alarm_description   = "Events added to dead letter queue"
+  alarm_description   = "Events added to ${each.value} dead letter queue"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [aws_sns_topic.sns_alarm_topic.arn]
   ok_actions          = [aws_sns_topic.sns_alarm_topic.arn]
@@ -64,6 +72,6 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_number" {
   statistic   = "Sum"
 
   dimensions = {
-    QueueName = "${var.environment}-gdx-data-share-poc-data-processor-queue-dlq"
+    QueueName = "${var.environment}-gdx-data-share-${each.key}-dlq"
   }
 }

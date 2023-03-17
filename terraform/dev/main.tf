@@ -1,5 +1,12 @@
 locals {
   env = "dev"
+  default_tags = {
+    Product     = "Government Data Exchange"
+    Environment = local.env
+    Owner       = "gdx-dev-team@digital.cabinet-office.gov.uk"
+    Source      = "terraform"
+    Repository  = "https://github.com/alphagov/gdx-data-share-poc"
+  }
 }
 
 terraform {
@@ -23,11 +30,7 @@ terraform {
 provider "aws" {
   region = "eu-west-2"
   default_tags {
-    tags = {
-      source      = "terraform"
-      repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = local.env
-    }
+    tags = local.default_tags
   }
 }
 
@@ -35,11 +38,7 @@ provider "aws" {
   region = "eu-west-1"
   alias  = "eu-west-1"
   default_tags {
-    tags = {
-      source      = "terraform"
-      repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = local.env
-    }
+    tags = local.default_tags
   }
 }
 
@@ -47,11 +46,7 @@ provider "aws" {
   alias  = "us-east-1"
   region = "us-east-1"
   default_tags {
-    tags = {
-      source      = "terraform"
-      repository  = "https://github.com/alphagov/gdx-data-share-poc"
-      environment = local.env
-    }
+    tags = local.default_tags
   }
 }
 
@@ -92,12 +87,9 @@ module "data-share-service" {
   vpc_cidr                    = "10.158.0.0/20"
   lev_url                     = module.lev_api.service_url
   db_username                 = "ecs_dev_db"
-  externally_allowed_cidrs = [
-    "82.163.115.96/27", "87.224.105.240/29", "87.224.105.248/29", "31.221.86.176/28", "167.98.33.80/28", # Softwire
-  ]
-  prisoner_event_enabled = "true"
-  prisoner_search_url    = "https://prisoner-offender-search-dev.prison.service.justice.gov.uk"
-  hmpps_auth_url         = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
+  prisoner_event_enabled      = "true"
+  prisoner_search_url         = "https://prisoner-offender-search-dev.prison.service.justice.gov.uk"
+  hmpps_auth_url              = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
 
   grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
 }

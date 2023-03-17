@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.24"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.26"))
   implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
@@ -59,9 +59,9 @@ dependencies {
   implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:1.0.1")
   implementation("org.postgresql:postgresql:42.5.4")
 
-  implementation("org.springdoc:springdoc-openapi-starter-common:2.0.3")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.3")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.0.3")
+  implementation("org.springdoc:springdoc-openapi-starter-common:2.0.4")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.0.4")
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -75,14 +75,14 @@ dependencies {
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.3")
 
-  implementation("org.javers:javers-spring:6.11.0")
-  implementation("org.javers:javers-persistence-sql:6.11.0")
+  implementation("org.javers:javers-spring:6.12.0")
+  implementation("org.javers:javers-persistence-sql:6.12.0")
 
   // test containers
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.427") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.429") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

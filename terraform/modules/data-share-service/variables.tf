@@ -6,9 +6,6 @@ variable "vpc_cidr" {}
 variable "lev_url" {}
 
 variable "db_username" {}
-variable "externally_allowed_cidrs" {
-  type = list(string)
-}
 
 variable "prisoner_event_enabled" {}
 variable "prisoner_search_url" {}

@@ -96,7 +96,7 @@ data "aws_iam_policy_document" "rds_bastion_access_policy" {
 }
 
 resource "aws_iam_instance_profile" "rds_bastion_instance_profile" {
-  name = "ec2_rds"
+  name = "${var.environment}-ec2_rds"
   role = aws_iam_role.rds_bastion_access_role.name
 }
 

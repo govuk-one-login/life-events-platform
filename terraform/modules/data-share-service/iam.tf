@@ -163,6 +163,56 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
     ]
     effect = "Allow"
   }
+
+  statement {
+    sid     = "manage-acquirer-queues"
+    actions = [
+      "sqs:AddPermission",
+      "sqs:CreateQueue",
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:ListQueueTags",
+      "sqs:SendMessage",
+      "sqs:SetQueueAttributes",
+      "sqs:TagQueue"
+    ]
+    resources = ["arn:aws:sqs:eu-west-2:${data.aws_caller_identity.current.account_id}:acq_${var.environment}_*"]
+    effect    = "Allow"
+  }
+
+  statement {
+    sid     = "tag-untagged-keys"
+    actions = [
+      "kms:TagResource"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+    condition {
+      test     = "Null"
+      values   = ["true"]
+      variable = "aws:ResourceTag/Usage"
+    }
+    condition {
+      test     = "StringEquals"
+      values   = ["${var.environment}-acquirer-queue"]
+      variable = "aws:RequestTag/Usage"
+    }
+  }
+
+  statement {
+    sid     = "use-tagged-keys"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
+    resources = ["*"]
+    effect = "Allow"
+    condition {
+      test     = "StringEquals"
+      values   = ["${var.environment}-acquirer-queue"]
+      variable = "aws:ResourceTag/Usage"
+    }
+  }
 }
 
 resource "aws_iam_policy" "ecs_task_sqs_access" {
@@ -177,7 +227,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {
 
 data "aws_iam_policy_document" "ecs_task_rds_access" {
   statement {
-    actions = ["rds-db:connect"]
+    actions   = ["rds-db:connect"]
     resources = [
       "arn:aws:rds-db:${var.region}:${data.aws_caller_identity.current.account_id}:dbuser:${aws_rds_cluster.rds_postgres_cluster.cluster_resource_id}/${var.db_username}"
     ]
@@ -197,7 +247,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_rds_access" {
 
 data "aws_iam_policy_document" "ecs_task_cognito_access" {
   statement {
-    actions = ["cognito-idp:CreateUserPoolClient"]
+    actions   = ["cognito-idp:CreateUserPoolClient"]
     resources = [
       module.cognito.user_pool_arn
     ]

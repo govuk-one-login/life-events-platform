@@ -97,3 +97,7 @@ module "securityhub" {
   account_id = data.aws_caller_identity.current.account_id
   rules      = var.security_rules
 }
+
+module "ecr" {
+  source = "./modules/ecr"
+}

@@ -25,8 +25,9 @@ resource "aws_ecr_repository" "prometheus-adot" {
 }
 
 resource "aws_kms_key" "ecr_key" {
-  description         = "Key used to encrypt ECR repository"
-  enable_key_rotation = true
+  description                        = "Key used to encrypt ECR repository"
+  enable_key_rotation                = true
+  bypass_policy_lockout_safety_check = false
 }
 
 resource "aws_kms_alias" "ecr_key_alias" {

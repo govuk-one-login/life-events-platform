@@ -48,7 +48,7 @@ resource "aws_security_group" "rds_bastion_host_sg" {
     from_port   = 443
     to_port     = 443
     cidr_blocks = [module.vpc.private_cidr_blocks[0]]
-    description = "Allow egress inside subnet"
+    description = "Allow egress inside subnet to hit SSM privatelink endpoint"
   }
 
   lifecycle {

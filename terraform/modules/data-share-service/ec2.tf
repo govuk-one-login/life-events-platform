@@ -106,7 +106,7 @@ resource "aws_eip" "rds_bastion_ip" {
 
 resource "aws_security_group" "rds_bastion_host_vpc_endpoint_sg" {
   name_prefix = "${var.environment}-rds-bastion-vpc-endpoint-"
-  description = "For access to the subnet which the bastion host for GDX Data Share PoC Service RDS instances lies in"
+  description = "For access from the subnet which the bastion host for GDX Data Share PoC Service RDS instances lies in"
   vpc_id      = module.vpc.vpc_id
 
   ingress {

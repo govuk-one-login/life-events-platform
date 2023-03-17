@@ -28,7 +28,7 @@ resource "aws_iam_role" "ecs_task" {
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
 }
 
-data "aws_iam_policy_document" "ecs_task_cloudwatch_access" {
+data "aws_iam_policy_document" "ecs_task_cloudwatch_logging_access" {
   statement {
     actions = [
       "logs:CreateLogGroup",
@@ -41,14 +41,14 @@ data "aws_iam_policy_document" "ecs_task_cloudwatch_access" {
   }
 }
 
-resource "aws_iam_policy" "ecs_task_cloudwatch_access" {
-  name   = "grafana-ecs-task-cloudwatch-access-policy"
-  policy = data.aws_iam_policy_document.ecs_task_cloudwatch_access.json
+resource "aws_iam_policy" "ecs_task_cloudwatch_logging_access" {
+  name   = "grafana-ecs-task-cloudwatch-logging-access-policy"
+  policy = data.aws_iam_policy_document.ecs_task_cloudwatch_logging_access.json
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
+resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_logging_access" {
   role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.ecs_task_cloudwatch_access.arn
+  policy_arn = aws_iam_policy.ecs_task_cloudwatch_logging_access.arn
 }
 
 data "aws_iam_policy_document" "ecs_efs_access" {
@@ -69,4 +69,88 @@ resource "aws_iam_policy" "ecs_efs_access" {
 resource "aws_iam_role_policy_attachment" "ecs_task_efs_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_efs_access.arn
+}
+
+data "aws_iam_policy_document" "xray_access" {
+  statement {
+    actions = [
+      "xray:BatchGetTraces",
+      "xray:GetTraceSummaries",
+      "xray:GetTraceGraph",
+      "xray:GetGroups",
+      "xray:GetTimeSeriesServiceStatistics",
+      "xray:GetInsightSummaries",
+      "xray:GetInsight",
+      "xray:GetServiceGraph",
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "xray_access" {
+  name   = "grafana-ecs-xray-access-policy"
+  policy = data.aws_iam_policy_document.xray_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_xray_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.xray_access.arn
+}
+
+data "aws_iam_policy_document" "cloudwatch_access" {
+  statement {
+    sid = "AllowReadingMetricsFromCloudWatch"
+    actions = [
+      "cloudwatch:DescribeAlarmsForMetric",
+      "cloudwatch:DescribeAlarmHistory",
+      "cloudwatch:DescribeAlarms",
+      "cloudwatch:ListMetrics",
+      "cloudwatch:GetMetricData",
+      "cloudwatch:GetInsightRuleReport"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    sid = "AllowReadingLogsFromCloudWatch"
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:GetLogGroupFields",
+      "logs:StartQuery",
+      "logs:StopQuery",
+      "logs:GetQueryResults",
+      "logs:GetLogEvents"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    sid = "AllowReadingTagsInstancesRegionsFromEC2"
+    actions = [
+      "ec2:DescribeTags",
+      "ec2:DescribeInstances",
+      "ec2:DescribeRegions"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
+    sid = "AllowReadingResourcesForTags"
+    actions = [
+      "tag:GetResources"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "cloudwatch_access" {
+  name   = "grafana-ecs-cloudwatch-access-policy"
+  policy = data.aws_iam_policy_document.cloudwatch_access.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.cloudwatch_access.arn
 }

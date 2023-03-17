@@ -78,3 +78,5 @@ xray-tracing:
 
 cognito:
   enabled: false
+
+task-role-arn: arn:aws:iam::776473272850:role/dev-task-role

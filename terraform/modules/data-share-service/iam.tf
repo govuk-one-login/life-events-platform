@@ -165,7 +165,7 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
   }
 
   statement {
-    sid     = "manage-acquirer-queues"
+    sid = "manage-acquirer-queues"
     actions = [
       "sqs:AddPermission",
       "sqs:CreateQueue",
@@ -181,7 +181,7 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
   }
 
   statement {
-    sid     = "tag-untagged-keys"
+    sid = "tag-untagged-keys"
     actions = [
       "kms:TagResource"
     ]
@@ -200,13 +200,13 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
   }
 
   statement {
-    sid     = "use-tagged-keys"
+    sid = "use-tagged-keys"
     actions = [
       "kms:Decrypt",
       "kms:GenerateDataKey"
     ]
     resources = ["*"]
-    effect = "Allow"
+    effect    = "Allow"
     condition {
       test     = "StringEquals"
       values   = ["${var.environment}-acquirer-queue"]
@@ -227,7 +227,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {
 
 data "aws_iam_policy_document" "ecs_task_rds_access" {
   statement {
-    actions   = ["rds-db:connect"]
+    actions = ["rds-db:connect"]
     resources = [
       "arn:aws:rds-db:${var.region}:${data.aws_caller_identity.current.account_id}:dbuser:${aws_rds_cluster.rds_postgres_cluster.cluster_resource_id}/${var.db_username}"
     ]
@@ -247,7 +247,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_rds_access" {
 
 data "aws_iam_policy_document" "ecs_task_cognito_access" {
   statement {
-    actions   = ["cognito-idp:CreateUserPoolClient"]
+    actions = ["cognito-idp:CreateUserPoolClient"]
     resources = [
       module.cognito.user_pool_arn
     ]

@@ -139,13 +139,6 @@ data "aws_iam_policy_document" "cloudwatch_access" {
     effect = "Allow"
   }
   statement {
-    sid = "AllowReadingLogsFromCloudWatchSensitive"
-    actions = [
-    ]
-    resources = ["arn:aws:logs:${var.region}:${var.account_id}:*"]
-    effect    = "Allow"
-  }
-  statement {
     sid = "AllowReadingTagsInstancesRegionsFromEC2"
     actions = [
       "ec2:DescribeTags",

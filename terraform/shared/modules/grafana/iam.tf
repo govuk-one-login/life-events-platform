@@ -100,29 +100,49 @@ resource "aws_iam_role_policy_attachment" "ecs_task_xray_access" {
 
 data "aws_iam_policy_document" "cloudwatch_access" {
   statement {
-    sid = "AllowReadingMetricsFromCloudWatch"
+    sid = "AllowReadingMetricsFromCloudWatchNeedAnyResource"
     actions = [
-      "cloudwatch:DescribeAlarmsForMetric",
-      "cloudwatch:DescribeAlarmHistory",
-      "cloudwatch:DescribeAlarms",
       "cloudwatch:ListMetrics",
-      "cloudwatch:GetMetricData",
-      "cloudwatch:GetInsightRuleReport"
     ]
     resources = ["*"]
     effect    = "Allow"
   }
   statement {
+    sid = "AllowReadingMetricsFromCloudWatch"
+    actions = [
+      "cloudwatch:DescribeAlarms",
+      "cloudwatch:DescribeAlarmHistory",
+      "cloudwatch:GetInsightRuleReport",
+      "cloudwatch:GetMetricData",
+      "cloudwatch:DescribeAlarmsForMetric",
+    ]
+    resources = [
+      "arn:aws:cloudwatch:${var.region}:${var.account_id}:alarm:*",
+      "arn:aws:cloudwatch:${var.region}:${var.account_id}:insight-rule/*",
+    ]
+    effect = "Allow"
+  }
+  statement {
     sid = "AllowReadingLogsFromCloudWatch"
     actions = [
-      "logs:DescribeLogGroups",
       "logs:GetLogGroupFields",
+      "logs:DescribeLogGroups",
+      "logs:GetLogEvents",
       "logs:StartQuery",
       "logs:StopQuery",
-      "logs:GetQueryResults",
-      "logs:GetLogEvents"
+      "logs:GetQueryResults"
     ]
-    resources = ["*"]
+    resources = [
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group:*",
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group:*:log-stream:*"
+    ]
+    effect = "Allow"
+  }
+  statement {
+    sid = "AllowReadingLogsFromCloudWatchSensitive"
+    actions = [
+    ]
+    resources = ["arn:aws:logs:${var.region}:${var.account_id}:*"]
     effect    = "Allow"
   }
   statement {

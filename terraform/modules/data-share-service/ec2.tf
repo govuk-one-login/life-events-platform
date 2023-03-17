@@ -37,18 +37,18 @@ resource "aws_security_group" "rds_bastion_host_sg" {
 
   egress {
     protocol    = "tcp"
-    from_port   = 443
-    to_port     = 443
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "To reach VPC endpoints"
+    from_port   = 5432
+    to_port     = 5432
+    cidr_blocks = [var.vpc_cidr]
+    description = "Allow egress for RDS bastion"
   }
 
   egress {
     protocol    = "tcp"
-    from_port   = 5432
-    to_port     = 5432
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow egress for RDS bastion"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = [module.vpc.private_cidr_blocks[0]]
+    description = "Allow egress inside subnet"
   }
 
   lifecycle {
@@ -102,4 +102,49 @@ resource "aws_iam_instance_profile" "rds_bastion_instance_profile" {
 
 resource "aws_eip" "rds_bastion_ip" {
   instance = aws_instance.rds_bastion_host.id
+}
+
+resource "aws_security_group" "rds_bastion_host_vpc_endpoint_sg" {
+  name_prefix = "${var.environment}-rds-bastion-vpc-endpoint-"
+  description = "For access to the subnet which the bastion host for GDX Data Share PoC Service RDS instances lies in"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = [var.vpc_cidr]
+    description = "To access Systems Manager endpoints"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_vpc_endpoint" "rds_bastion_vpc_endpoint_ssm" {
+  vpc_id              = module.vpc.vpc_id
+  service_name        = "com.amazonaws.eu-west-2.ssm"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [module.vpc.private_subnet_ids[0]]
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.rds_bastion_host_vpc_endpoint_sg.id]
+}
+
+resource "aws_vpc_endpoint" "rds_bastion_vpc_endpoint_ssm_messages" {
+  vpc_id              = module.vpc.vpc_id
+  service_name        = "com.amazonaws.eu-west-2.ssmmessages"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [module.vpc.private_subnet_ids[0]]
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.rds_bastion_host_vpc_endpoint_sg.id]
+}
+
+resource "aws_vpc_endpoint" "rds_bastion_vpc_endpoint_ec2_messages" {
+  vpc_id              = module.vpc.vpc_id
+  service_name        = "com.amazonaws.eu-west-2.ec2messages"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [module.vpc.private_subnet_ids[0]]
+  private_dns_enabled = true
+  security_group_ids  = [aws_security_group.rds_bastion_host_vpc_endpoint_sg.id]
 }

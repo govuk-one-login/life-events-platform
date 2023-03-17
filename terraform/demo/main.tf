@@ -65,10 +65,6 @@ data "terraform_remote_state" "shared" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-module "ecr" {
-  source = "../modules/ecr"
-}
-
 module "lev_api" {
   source = "../modules/lev_api"
   providers = {

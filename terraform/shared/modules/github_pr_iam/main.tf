@@ -61,8 +61,8 @@ resource "aws_iam_policy" "github_oidc_pull_request_state" {
 }
 
 resource "aws_iam_role_policy_attachment" "github_oidc_pull_request_state" {
-  role       = aws_iam_role.github_oidc_pull_request[0].name
-  policy_arn = aws_iam_policy.github_oidc_pull_request_state[0].arn
+  role       = aws_iam_role.github_oidc_pull_request.name
+  policy_arn = aws_iam_policy.github_oidc_pull_request_state.arn
 }
 
 data "aws_iam_policy" "github_oidc_pull_request_readonly" {
@@ -70,7 +70,7 @@ data "aws_iam_policy" "github_oidc_pull_request_readonly" {
 }
 
 resource "aws_iam_role_policy_attachment" "github_oidc_pull_request_readonly" {
-  role       = aws_iam_role.github_oidc_pull_request[0].name
+  role       = aws_iam_role.github_oidc_pull_request.name
   policy_arn = data.aws_iam_policy.github_oidc_pull_request_readonly.arn
 }
 

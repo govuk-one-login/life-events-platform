@@ -114,7 +114,7 @@ resource "aws_security_group" "rds_bastion_host_vpc_endpoint_sg" {
     from_port   = 443
     to_port     = 443
     cidr_blocks = [var.vpc_cidr]
-    description = "To access Systems Manager endpoints"
+    description = "To access Systems Manager endpoints from bastion host"
   }
 
   lifecycle {

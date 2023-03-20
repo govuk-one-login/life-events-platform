@@ -100,10 +100,6 @@ resource "aws_iam_instance_profile" "rds_bastion_instance_profile" {
   role = aws_iam_role.rds_bastion_access_role.name
 }
 
-resource "aws_eip" "rds_bastion_ip" {
-  instance = aws_instance.rds_bastion_host.id
-}
-
 resource "aws_security_group" "rds_bastion_host_vpc_endpoint_sg" {
   name_prefix = "${var.environment}-rds-bastion-vpc-endpoint-"
   description = "For access from the subnet which the bastion host for GDX Data Share PoC Service RDS instances lies in"

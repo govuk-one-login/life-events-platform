@@ -20,7 +20,7 @@ jobs:
   validate-terraform:
     strategy:
       matrix:
-        env: [dev, demo]
+        env: [dev, demo, shared]
     name: Validate ${{ matrix.env }} Terraform
     runs-on: ubuntu-latest
     steps:

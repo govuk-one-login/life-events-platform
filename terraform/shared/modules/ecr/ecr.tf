@@ -47,7 +47,7 @@ resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
         },
         {
             "rulePriority": 3,
-            "description": "Expire untagged images older than 14 days",
+            "description": "Expire any other images older than 14 days",
             "selection": {
                 "tagStatus": "any",
                 "countType": "sinceImagePushed",

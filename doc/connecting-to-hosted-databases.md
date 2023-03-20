@@ -7,6 +7,9 @@ connect to this EC2 instance via AWS Systems Manager Session Manager.
 
 ## SSM tunneling
 
+You must have the Session Manager plugin installed for the AWS CLI. It can be
+downloaded [here](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
+.
 To make a connection to the EC2 instances, run the script for the relevant environment in the scripts folder in the root
 directory. These are also set up as run configurations in IntelliJ.
 This will open up a connection to `localhost:5433` for the dev environment, or `localhost:5434` for the demo
@@ -26,24 +29,3 @@ normal.
 - `cd` into `./terraform/{environment}` and run `terraform show -json > state.json` to dump out a state file.
 - Open this file in IntelliJ or another IDE and format it. Search for `rds_username` and `rds_password`.
 - Delete the state.json file from earlier
-
-## Connecting to the EC2 instance via the AWS console
-
-It's also possible to connect to the database via the AWS console. Log into the console, and go to the EC2 console.
-Choose instances, and select the instance you would like to connect to. At the top, click the connect button, and go to
-the Session Manager tab. Click connect and it should open a terminal.
-
-If this is the first time the bastion has been used in this way, you will need to install psql with
-
-```shell
-sudo yum install postgresql
-```
-
-You can then connect to the database with
-
-```shell
-psql -h<host> -U<username> -d<database>
-```
-
-The host and database name can be found from the RDS section of the AWS console, while the username and password (
-entered interactively) can be found as `rds_username` and `rds_password` as above.

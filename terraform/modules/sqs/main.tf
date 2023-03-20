@@ -11,8 +11,9 @@ resource "aws_kms_alias" "sqs_key_alias" {
 }
 
 resource "aws_sqs_queue" "queue" {
-  name              = var.queue_name
-  kms_master_key_id = aws_kms_key.sqs_key.arn
+  name                      = var.queue_name
+  kms_master_key_id         = aws_kms_key.sqs_key.arn
+  message_retention_seconds = var.message_retention_seconds
 }
 
 resource "aws_kms_key" "dead_letter_queue_kms_key" {
@@ -28,6 +29,10 @@ resource "aws_kms_alias" "dead_letter_queue_kms_key_alias" {
 resource "aws_sqs_queue" "dead_letter_queue" {
   name              = "${var.queue_name}-dlq"
   kms_master_key_id = aws_kms_key.dead_letter_queue_kms_key.arn
+  message_retention_seconds = (var.dlq_message_retention_seconds != null ?
+    var.dlq_message_retention_seconds :
+    min(2 * var.message_retention_seconds, 1209600) # cap at 14 days
+  )
 }
 
 resource "aws_sqs_queue_redrive_policy" "queue" {

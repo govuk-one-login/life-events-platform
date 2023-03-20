@@ -11,6 +11,43 @@ resource "aws_ecr_repository" "gdx_data_share_poc" {
   }
 }
 
+resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
+  repository = aws_ecr_repository.gdx_data_share_poc.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 3 tagged images",
+            "selection": {
+                "tagStatus": "tagged",
+                "tagPrefixList": ["dev", "demo", "prod"],
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+            },
+            "action": {
+                "type": "expire"
+            }
+        },
+        {
+            "rulePriority": 2,
+            "description": "Expire untagged images older than 14 days",
+            "selection": {
+                "tagStatus": "untagged",
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": 14
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
+
 resource "aws_ecr_repository" "prometheus-adot" {
   name = "prometheus-adot"
 

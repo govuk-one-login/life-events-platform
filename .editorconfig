@@ -34,7 +34,7 @@ indent_style = space
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-trim_trailing_whitespace = false
+trim_trailing_whitespace = true
 continuation_indent_size = 8
 
 
@@ -49,7 +49,6 @@ indent_size = 2
 
 # The below is from the GDS Way
 # https://gds-way.cloudapps.digital/manuals/programming-languages/editorconfig
-# Copy into project root and rename to .editorconfig
 
 [*.scss]
 indent_size = 2

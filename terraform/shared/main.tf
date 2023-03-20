@@ -106,3 +106,7 @@ module "securityhub" {
 module "ecr" {
   source = "./modules/ecr"
 }
+
+module "s3_policy" {
+  source = "./modules/s3_policy"
+}

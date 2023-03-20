@@ -11,6 +11,8 @@ resource "aws_ecr_repository" "gdx_data_share_poc" {
   }
 }
 
+# Policies are non obvious, please look here before making any changes
+# https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_examples.html
 resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
   repository = aws_ecr_repository.gdx_data_share_poc.name
 
@@ -19,10 +21,10 @@ resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
     "rules": [
         {
             "rulePriority": 1,
-            "description": "Keep last 3 tagged images",
+            "description": "Keep last 3 tagged dev images",
             "selection": {
                 "tagStatus": "tagged",
-                "tagPrefixList": ["dev", "demo", "prod"],
+                "tagPrefixList": ["demo"],
                 "countType": "imageCountMoreThan",
                 "countNumber": 3
             },
@@ -32,9 +34,22 @@ resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
         },
         {
             "rulePriority": 2,
+            "description": "Keep last 3 tagged demo images",
+            "selection": {
+                "tagStatus": "tagged",
+                "tagPrefixList": ["dev"],
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+            },
+            "action": {
+                "type": "expire"
+            }
+        },
+        {
+            "rulePriority": 3,
             "description": "Expire untagged images older than 14 days",
             "selection": {
-                "tagStatus": "untagged",
+                "tagStatus": "any",
                 "countType": "sinceImagePushed",
                 "countUnit": "days",
                 "countNumber": 14

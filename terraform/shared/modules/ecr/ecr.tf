@@ -1,4 +1,3 @@
-#tfsec:ignore:aws-ecr-enforce-immutable-repository
 resource "aws_ecr_repository" "gdx_data_share_poc" {
   name = "gdx-data-share-poc"
 
@@ -9,6 +8,7 @@ resource "aws_ecr_repository" "gdx_data_share_poc" {
     encryption_type = "KMS"
     kms_key         = aws_kms_key.ecr_key.arn
   }
+  image_tag_mutability = "IMMUTABLE"
 }
 
 # Policies are non obvious, please look here before making any changes
@@ -21,7 +21,7 @@ resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
     "rules": [
         {
             "rulePriority": 1,
-            "description": "Keep last 3 tagged dev images",
+            "description": "Keep last 3 tagged demo images",
             "selection": {
                 "tagStatus": "tagged",
                 "tagPrefixList": ["demo"],
@@ -34,7 +34,7 @@ resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
         },
         {
             "rulePriority": 2,
-            "description": "Keep last 3 tagged demo images",
+            "description": "Keep last 3 tagged dev images",
             "selection": {
                 "tagStatus": "tagged",
                 "tagPrefixList": ["dev"],

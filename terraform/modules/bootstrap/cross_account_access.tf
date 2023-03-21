@@ -7,7 +7,6 @@ data "aws_iam_policy_document" "cross_account_access" {
 
     actions = [
       "s3:GetObject",
-      "s3:ListObject",
       "s3:ListBucket",
     ]
 

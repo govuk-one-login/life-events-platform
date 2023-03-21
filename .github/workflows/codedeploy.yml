@@ -58,7 +58,7 @@ jobs:
 
       - name: Get current datetime as output
         id: datetime
-        run: echo "::set-output name=date::$(datetime +'%Y-%m-%dT%H.%M.%S')"
+        run: echo "datetime=$(date +'%Y-%m-%dT%H.%M.%S')" >> $GITHUB_OUTPUT
 
       - name: Add tag for ${{ inputs.environment }} environment
         uses: abronin/ecr-retag-action@v1

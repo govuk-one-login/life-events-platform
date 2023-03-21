@@ -66,3 +66,37 @@ resource "aws_s3_bucket_acl" "cloudfront_logs_bucket_grants" {
     }
   }
 }
+
+data "aws_iam_policy_document" "deny_insecure_transport" {
+  statement {
+    sid    = "DenyInsecureTransport"
+    effect = "Deny"
+
+    actions = [
+      "s3:*",
+    ]
+
+    resources = [
+      aws_s3_bucket.cloudfront_logs_bucket.arn,
+      "${aws_s3_bucket.cloudfront_logs_bucket.arn}/*",
+    ]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values = [
+        "false"
+      ]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "deny_insecure_transport" {
+  bucket = aws_s3_bucket.cloudfront_logs_bucket.id
+  policy = data.aws_iam_policy_document.deny_insecure_transport.json
+}

@@ -11,14 +11,6 @@ resource "aws_s3_bucket" "cloudfront_logs_bucket" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "cloudfront_logs_bucket_public_access" {
-  bucket                  = aws_s3_bucket.cloudfront_logs_bucket.id
-  block_public_acls       = true
-  block_public_policy     = true
-  restrict_public_buckets = true
-  ignore_public_acls      = true
-}
-
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudfront_logs_bucket_encryption" {
   bucket = aws_s3_bucket.cloudfront_logs_bucket.bucket
 

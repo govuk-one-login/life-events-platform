@@ -36,7 +36,19 @@ jobs:
     needs: tf-fmt
     strategy:
       matrix:
-        env: [dev, demo, shared]
+        include:
+          - env: dev
+            account: non-prod
+            account_number: 776473272850
+          - env: demo
+            account: non-prod
+            account_number: 776473272850
+          - env: shared
+            account: non-prod
+            account_number: 776473272850
+          - env: prod
+            account: prod
+            account_number: 255773200490
       fail-fast: false
     name: Deploy ${{ matrix.env }} Terraform
     runs-on: ubuntu-latest
@@ -51,12 +63,12 @@ jobs:
       - name: Set up mutex
         uses: ben-z/gh-action-mutex@v1.0-alpha-7
         with:
-          branch: ${{ matrix.env }}-mutex-terraform-locking
+          branch: ${{ matrix.env }}-${{ matrix.account }}-mutex-terraform-locking
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::776473272850:role/${{ matrix.env }}-github-oidc-deploy
+          role-to-assume: arn:aws:iam::${{ matrix.account_number }}:role/${{ matrix.env }}-github-oidc-deploy
           role-session-name: deploy-terraform
           aws-region: eu-west-2
           mask-aws-account-id: false
@@ -76,7 +88,7 @@ jobs:
         # Terraform's "detailed-exitcode" codes are: 0 for "no changes", 1 for errors, 2 for "valid changes"
         # Output a plan even though we don't use it here - we need the printed output to be the same as in the apply job below
         # We don't save the plan as an artefact as it's sensitive and this repo is public
-        run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan -var-file=../tfvars/non-prod/${{ matrix.env }}.tfvars
+        run: terraform plan -no-color -input=false -detailed-exitcode -out=plan.tfplan -var-file=../tfvars/${{ matrix.account }}/${{ matrix.env }}.tfvars
         continue-on-error: true
 
       - name: Fail job if plan failed

@@ -37,9 +37,21 @@ jobs:
   validate-terraform:
     strategy:
       matrix:
-        env: [dev, demo, shared]
+        include:
+          - env: dev
+            account: non-prod
+            account_number: 776473272850
+          - env: demo
+            account: non-prod
+            account_number: 776473272850
+          - env: shared
+            account: non-prod
+            account_number: 776473272850
+          - env: prod
+            account: prod
+            account_number: 255773200490
       fail-fast: false
-    name: Validate ${{ matrix.env }} Terraform
+    name: Validate ${{ matrix.account }} ${{ matrix.env }} Terraform
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -51,12 +63,12 @@ jobs:
       - name: Set up mutex
         uses: ben-z/gh-action-mutex@v1.0-alpha-7
         with:
-          branch: ${{ matrix.env }}-mutex-terraform-locking
+          branch: ${{ matrix.env }}-${{ matrix.account }}-mutex-terraform-locking
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::776473272850:role/github-oidc-pull-request
+          role-to-assume: arn:aws:iam::${{ matrix.account_number }}:role/github-oidc-pull-request
           role-session-name: validate-terraform
           aws-region: eu-west-2
           mask-aws-account-id: false
@@ -73,5 +85,5 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -input=false -var-file=../tfvars/non-prod/${{ matrix.env }}.tfvars
+        run: terraform plan -input=false -var-file=../tfvars/${{ matrix.account }}/${{ matrix.env }}.tfvars
 

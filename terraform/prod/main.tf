@@ -26,3 +26,16 @@ terraform {
     encrypt        = true
   }
 }
+
+provider "aws" {
+  region = "eu-west-2"
+  default_tags {
+    tags = local.default_tags
+  }
+}
+
+module "route53" {
+  source = "../modules/route53"
+
+  hosted_zone_name = "share-life-events.service.gov.uk"
+}

@@ -20,17 +20,9 @@ jobs:
   validate-terraform:
     strategy:
       matrix:
-        include:
-          - env: dev
-            account: non-prod
-          - env: demo
-            account: non-prod
-          - env: shared
-            account: non-prod
-          - env: prod
-            account: prod
+        env: [dev, demo, shared, prod]
       fail-fast: false
-    name: Validate ${{ matrix.account }} ${{ matrix.env }} Terraform
+    name: Validate ${{ matrix.env }} Terraform
     runs-on: ubuntu-latest
     steps:
       - run: 'echo "No build required"'

@@ -20,7 +20,8 @@ jobs:
   validate-terraform:
     strategy:
       matrix:
-        env: [dev, demo, shared]
+        env: [dev, demo, shared, prod]
+      fail-fast: false
     name: Validate ${{ matrix.env }} Terraform
     runs-on: ubuntu-latest
     steps:

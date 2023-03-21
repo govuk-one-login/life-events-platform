@@ -37,7 +37,15 @@ jobs:
   validate-terraform:
     strategy:
       matrix:
-        env: [dev, demo, shared]
+        include:
+          - env: dev
+            account_number: 776473272850
+          - env: demo
+            account_number: 776473272850
+          - env: shared
+            account_number: 776473272850
+          - env: prod
+            account_number: 255773200490
       fail-fast: false
     name: Validate ${{ matrix.env }} Terraform
     runs-on: ubuntu-latest
@@ -56,7 +64,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::776473272850:role/github-oidc-pull-request
+          role-to-assume: arn:aws:iam::${{ matrix.account_number }}:role/github-oidc-pull-request
           role-session-name: validate-terraform
           aws-region: eu-west-2
           mask-aws-account-id: false
@@ -73,5 +81,5 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -input=false -var-file=../tfvars/non-prod/${{ matrix.env }}.tfvars
+        run: terraform plan -input=false
 

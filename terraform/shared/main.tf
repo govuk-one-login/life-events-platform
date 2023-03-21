@@ -70,7 +70,7 @@ module "vpc" {
 }
 
 module "grafana" {
-  source = "./modules/grafana"
+  source = "../modules/grafana"
   providers = {
     aws           = aws
     aws.us-east-1 = aws.us-east-1
@@ -86,16 +86,16 @@ module "grafana" {
 }
 
 module "securityhub" {
-  source     = "./modules/security_hub"
+  source     = "../modules/security_hub"
   region     = data.aws_region.current.name
   account_id = data.aws_caller_identity.current.account_id
   rules      = var.security_rules
 }
 
 module "ecr" {
-  source = "./modules/ecr"
+  source = "../modules/ecr"
 }
 
 module "s3_policy" {
-  source = "./modules/s3_policy"
+  source = "../modules/s3_policy"
 }

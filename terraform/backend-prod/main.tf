@@ -40,4 +40,6 @@ module "github_iam" {
   account_id                = data.aws_caller_identity.current.account_id
   environments              = ["prod"]
   terraform_lock_table_name = "gdx-data-share-lock"
+
+  cross_account_bucket = "gdx-data-share-poc-tfstate"
 }

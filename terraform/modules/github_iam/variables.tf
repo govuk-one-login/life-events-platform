@@ -7,3 +7,7 @@ variable "environments" {
 variable "terraform_lock_table_name" {
   type = string
 }
+variable "cross_account_bucket" {
+  type    = string
+  default = ""
+}

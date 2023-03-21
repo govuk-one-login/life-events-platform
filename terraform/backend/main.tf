@@ -33,6 +33,11 @@ module "bootstrap" {
   source               = "../modules/bootstrap"
   s3_bucket_name       = "gdx-data-share-poc-tfstate"
   dynamo_db_table_name = "gdx-data-share-poc-lock"
+
+  cross_account_arns = [
+    "arn:aws:iam::255773200490:user/prod-github-oidc-deploy",
+    "arn:aws:iam::255773200490:user/github-oidc-pull-request"
+  ]
 }
 
 module "github_iam" {

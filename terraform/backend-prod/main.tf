@@ -5,13 +5,13 @@ terraform {
       version = "~> 4.0"
     }
   }
-  #  backend "s3" {
-  #    bucket         = "gdx-data-share-tfstate"
-  #    key            = "terraform.tfstate"
-  #    region         = "eu-west-2"
-  #    dynamodb_table = "gdx-data-share-lock"
-  #    encrypt        = true
-  #  }
+  backend "s3" {
+    bucket         = "gdx-data-share-tfstate"
+    key            = "terraform.tfstate"
+    region         = "eu-west-2"
+    dynamodb_table = "gdx-data-share-lock"
+    encrypt        = true
+  }
 }
 
 provider "aws" {

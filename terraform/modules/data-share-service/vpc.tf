@@ -9,12 +9,23 @@ module "vpc" {
   # At least two availability zones are required in order to set up a load balancer, so that the
   # infrastructure is kept consistent with other environments which use multiple availability zones.
   availability_zones = data.aws_availability_zones.available.zone_ids
-
-  tags_default = {
-    Environment = var.environment
-  }
 }
 
 data "aws_availability_zones" "available" {
   state = "available"
+}
+
+resource "aws_flow_log" "flow_logs" {
+  traffic_type = "ALL"
+  vpc_id       = module.vpc.vpc_id
+
+  log_destination_type = "s3"
+  log_destination      = module.flow_logs_s3.arn
+}
+
+module "flow_logs_s3" {
+  source = "../s3"
+
+  environment = var.environment
+  name        = "vpc-flow-logs"
 }

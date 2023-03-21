@@ -63,10 +63,21 @@ module "vpc" {
   availability_zones = data.aws_availability_zones.available.zone_ids
 
   enable_dns_hostnames = "true"
+}
 
-  tags_default = {
-    Environment = local.env
-  }
+resource "aws_flow_log" "flow_logs" {
+  traffic_type = "ALL"
+  vpc_id       = module.vpc.vpc_id
+
+  log_destination_type = "s3"
+  log_destination      = module.flow_logs_s3.arn
+}
+
+module "flow_logs_s3" {
+  source = "../modules/s3"
+
+  environment = local.env
+  name        = "vpc-flow-logs"
 }
 
 module "grafana" {

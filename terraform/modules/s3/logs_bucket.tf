@@ -65,5 +65,5 @@ data "aws_iam_policy_document" "log_bucket_deny_insecure_transport" {
 
 resource "aws_s3_bucket_policy" "log_bucket_deny_insecure_transport" {
   bucket = aws_s3_bucket.log_bucket.id
-  policy = data.aws_iam_policy_document.deny_insecure_transport.json
+  policy = data.aws_iam_policy_document.log_bucket_deny_insecure_transport.json
 }

@@ -3,7 +3,10 @@ resource "aws_route53_zone" "zone" {
 }
 
 resource "aws_route53_record" "subdomains" {
-  for_each = toset(var.subdomains)
+  for_each = {
+    for index, subdomain in var.subdomains :
+    index => subdomain
+  }
 
   zone_id = aws_route53_zone.zone.id
   name    = each.value.name

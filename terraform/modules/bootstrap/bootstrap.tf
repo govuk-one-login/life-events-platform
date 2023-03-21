@@ -16,7 +16,7 @@ resource "aws_s3_bucket_acl" "state_bucket" {
 resource "aws_s3_bucket_versioning" "state_bucket" {
   bucket = aws_s3_bucket.state_bucket.id
   versioning_configuration {
-    status     = "Enabled"
+    status = "Enabled"
   }
 }
 

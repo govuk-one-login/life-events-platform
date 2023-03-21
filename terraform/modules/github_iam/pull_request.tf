@@ -32,7 +32,7 @@ resource "aws_iam_role" "github_oidc_pull_request" {
 }
 
 data "aws_dynamodb_table" "terraform_lock" {
-  name = "gdx-data-share-poc-lock"
+  name = var.terraform_lock_table_name
 }
 
 data "aws_iam_policy_document" "github_oidc_pull_request_state" {
@@ -72,12 +72,4 @@ data "aws_iam_policy" "github_oidc_pull_request_readonly" {
 resource "aws_iam_role_policy_attachment" "github_oidc_pull_request_readonly" {
   role       = aws_iam_role.github_oidc_pull_request.name
   policy_arn = data.aws_iam_policy.github_oidc_pull_request_readonly.arn
-}
-
-resource "aws_iam_openid_connect_provider" "github_oidc" {
-  url = "https://token.actions.githubusercontent.com"
-
-  client_id_list = ["sts.amazonaws.com"]
-
-  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
 }

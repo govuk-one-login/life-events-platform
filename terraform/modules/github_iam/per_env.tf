@@ -1,4 +1,10 @@
+locals {
+  environments = toset(var.environments)
+}
+
 data "aws_iam_policy_document" "github_oidc_environment_assume" {
+  for_each = local.environments
+
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
@@ -17,15 +23,17 @@ data "aws_iam_policy_document" "github_oidc_environment_assume" {
 
     condition {
       test     = "StringEquals"
-      values   = ["repo:alphagov/gdx-data-share-poc:environment:${var.environment}"]
+      values   = ["repo:alphagov/gdx-data-share-poc:environment:${each.value}"]
       variable = "token.actions.githubusercontent.com:sub"
     }
   }
 }
 
 resource "aws_iam_role" "github_oidc_environment" {
-  name               = "${var.environment}-github-oidc-deploy"
-  assume_role_policy = data.aws_iam_policy_document.github_oidc_environment_assume.json
+  for_each = local.environments
+
+  name               = "${each.value}-github-oidc-deploy"
+  assume_role_policy = data.aws_iam_policy_document.github_oidc_environment_assume[each.key].json
 }
 
 data "aws_iam_policy" "github_oidc_environment" {
@@ -33,6 +41,8 @@ data "aws_iam_policy" "github_oidc_environment" {
 }
 
 resource "aws_iam_role_policy_attachment" "github_oidc_environment" {
-  role       = aws_iam_role.github_oidc_environment.name
+  for_each = local.environments
+
+  role       = aws_iam_role.github_oidc_environment[each.key].name
   policy_arn = data.aws_iam_policy.github_oidc_environment.arn
 }

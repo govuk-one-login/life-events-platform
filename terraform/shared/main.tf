@@ -85,17 +85,6 @@ module "grafana" {
   vpc_cidr           = "10.158.32.0/20"
 }
 
-module "github_env_iam" {
-  source      = "../modules/github_env_iam"
-  environment = local.env
-  account_id  = data.aws_caller_identity.current.account_id
-}
-
-module "github_pr_iam" {
-  source     = "./modules/github_pr_iam"
-  account_id = data.aws_caller_identity.current.account_id
-}
-
 module "securityhub" {
   source     = "./modules/security_hub"
   region     = data.aws_region.current.name

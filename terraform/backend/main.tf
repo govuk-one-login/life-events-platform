@@ -27,8 +27,17 @@ provider "aws" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 module "bootstrap" {
   source               = "../modules/bootstrap"
   s3_bucket_name       = "gdx-data-share-poc-tfstate"
   dynamo_db_table_name = "gdx-data-share-poc-lock"
+}
+
+module "github_iam" {
+  source                    = "../modules/github_iam"
+  account_id                = data.aws_caller_identity.current.account_id
+  environments              = ["dev", "demo", "shared"]
+  terraform_lock_table_name = "gdx-data-share-poc-lock"
 }

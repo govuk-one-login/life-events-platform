@@ -122,3 +122,9 @@ module "consumer" {
   lev_api_url                 = "https://${module.lev_api.service_url}"
   schedule                    = "cron(0,30 9-18 ? * MON-FRI *)"
 }
+
+module "route53" {
+  source = "../modules/route53"
+
+  hosted_zone_name = "dev.share-life-events.service.gov.uk"
+}

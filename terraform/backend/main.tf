@@ -35,8 +35,8 @@ module "bootstrap" {
   dynamo_db_table_name = "gdx-data-share-poc-lock"
 
   cross_account_arns = [
-    "arn:aws:iam::255773200490:user/prod-github-oidc-deploy",
-    "arn:aws:iam::255773200490:user/github-oidc-pull-request"
+    "arn:aws:iam::255773200490:role/prod-github-oidc-deploy",
+    "arn:aws:iam::255773200490:role/github-oidc-pull-request"
   ]
 }
 

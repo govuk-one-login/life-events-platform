@@ -7,3 +7,7 @@ AVD-DS-0026
 
 # Root user is needed in Adot.Dockerfile
 AVD-DS-0002
+
+# SnakeYAML Dependency flagged, but not exposed
+# remove when dependencies are updated - GPC-256
+CVE-2022-1471

@@ -63,14 +63,25 @@ module "vpc" {
   availability_zones = data.aws_availability_zones.available.zone_ids
 
   enable_dns_hostnames = "true"
+}
 
-  tags_default = {
-    Environment = local.env
-  }
+resource "aws_flow_log" "flow_logs" {
+  traffic_type = "ALL"
+  vpc_id       = module.vpc.vpc_id
+
+  log_destination_type = "s3"
+  log_destination      = module.flow_logs_s3.arn
+}
+
+module "flow_logs_s3" {
+  source = "../modules/s3"
+
+  environment = local.env
+  name        = "vpc-flow-logs"
 }
 
 module "grafana" {
-  source = "./modules/grafana"
+  source = "../modules/grafana"
   providers = {
     aws           = aws
     aws.us-east-1 = aws.us-east-1
@@ -85,19 +96,26 @@ module "grafana" {
   vpc_cidr           = "10.158.32.0/20"
 }
 
-module "github_iam" {
-  source      = "../modules/github_env_iam"
-  environment = local.env
-  account_id  = data.aws_caller_identity.current.account_id
-}
-
 module "securityhub" {
-  source     = "./modules/security_hub"
+  source     = "../modules/security_hub"
   region     = data.aws_region.current.name
   account_id = data.aws_caller_identity.current.account_id
-  rules      = var.security_rules
+  rules = [
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"
+      disabled_reason = "For our development account we do not need to enforce this"
+    },
+    {
+      rule            = "cis-aws-foundations-benchmark/v/1.4.0/1.6"
+      disabled_reason = "For our development account we do not need to enforce this"
+    }
+  ]
 }
 
 module "ecr" {
-  source = "./modules/ecr"
+  source = "../modules/ecr"
+}
+
+module "s3_policy" {
+  source = "../modules/s3_policy"
 }

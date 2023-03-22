@@ -56,12 +56,16 @@ jobs:
           aws-region: eu-west-2
           mask-aws-account-id: false
 
+      - name: Get current datetime as output
+        id: datetime
+        run: echo "datetime=$(date +'%Y-%m-%dT%H.%M.%S')" >> $GITHUB_OUTPUT
+
       - name: Add tag for ${{ inputs.environment }} environment
         uses: abronin/ecr-retag-action@v1
         with:
           repository: gdx-data-share-poc
           tag: ${{ github.sha }}
-          new-tags: ${{ inputs.environment }}
+          new-tags: ${{ inputs.environment }}-${{ steps.datetime.outputs.datetime }}
 
       - name: Set ECS task definition
         id: task-definition

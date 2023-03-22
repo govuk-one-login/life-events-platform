@@ -35,7 +35,7 @@ resource "aws_config_delivery_channel" "config" {
 }
 
 module "config_s3" {
-  source      = "../../../modules/s3"
+  source      = "../s3"
   environment = "shared"
   name        = "config"
 }

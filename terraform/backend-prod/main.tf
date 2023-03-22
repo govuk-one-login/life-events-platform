@@ -6,10 +6,10 @@ terraform {
     }
   }
   backend "s3" {
-    bucket         = "gdx-data-share-poc-tfstate"
+    bucket         = "gdx-data-share-tfstate"
     key            = "terraform.tfstate"
     region         = "eu-west-2"
-    dynamodb_table = "gdx-data-share-poc-lock"
+    dynamodb_table = "gdx-data-share-lock"
     encrypt        = true
   }
 }
@@ -19,7 +19,7 @@ provider "aws" {
   default_tags {
     tags = {
       Product     = "Government Data Exchange"
-      Environment = "bootstrap"
+      Environment = "bootstrap-prod"
       Owner       = "gdx-dev-team@digital.cabinet-office.gov.uk"
       Source      = "terraform"
       Repository  = "https://github.com/alphagov/gdx-data-share-poc"
@@ -31,18 +31,13 @@ data "aws_caller_identity" "current" {}
 
 module "bootstrap" {
   source               = "../modules/bootstrap"
-  s3_bucket_name       = "gdx-data-share-poc-tfstate"
-  dynamo_db_table_name = "gdx-data-share-poc-lock"
-
-  cross_account_arns = [
-    "arn:aws:iam::255773200490:role/prod-github-oidc-deploy",
-    "arn:aws:iam::255773200490:role/github-oidc-pull-request"
-  ]
+  s3_bucket_name       = "gdx-data-share-tfstate"
+  dynamo_db_table_name = "gdx-data-share-lock"
 }
 
 module "github_iam" {
   source                    = "../modules/github_iam"
   account_id                = data.aws_caller_identity.current.account_id
-  environments              = ["dev", "demo", "shared"]
-  terraform_lock_table_name = "gdx-data-share-poc-lock"
+  environments              = ["prod"]
+  terraform_lock_table_name = "gdx-data-share-lock"
 }

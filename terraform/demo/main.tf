@@ -94,3 +94,9 @@ module "data-share-service" {
 
   grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
 }
+
+module "route53" {
+  source = "../modules/route53"
+
+  hosted_zone_name = "demo.share-life-events.service.gov.uk"
+}

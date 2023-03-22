@@ -1,4 +1,3 @@
-#tfsec:ignore:aws-ecr-enforce-immutable-repository
 resource "aws_ecr_repository" "gdx_data_share_poc" {
   name = "gdx-data-share-poc"
 
@@ -9,6 +8,59 @@ resource "aws_ecr_repository" "gdx_data_share_poc" {
     encryption_type = "KMS"
     kms_key         = aws_kms_key.ecr_key.arn
   }
+  image_tag_mutability = "IMMUTABLE"
+}
+
+# Policies are non obvious, please look here before making any changes
+# https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_examples.html
+resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
+  repository = aws_ecr_repository.gdx_data_share_poc.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 3 tagged demo images",
+            "selection": {
+                "tagStatus": "tagged",
+                "tagPrefixList": ["demo"],
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+            },
+            "action": {
+                "type": "expire"
+            }
+        },
+        {
+            "rulePriority": 2,
+            "description": "Keep last 3 tagged dev images",
+            "selection": {
+                "tagStatus": "tagged",
+                "tagPrefixList": ["dev"],
+                "countType": "imageCountMoreThan",
+                "countNumber": 3
+            },
+            "action": {
+                "type": "expire"
+            }
+        },
+        {
+            "rulePriority": 3,
+            "description": "Expire any other images older than 14 days",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": 14
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
 }
 
 resource "aws_ecr_repository" "prometheus-adot" {

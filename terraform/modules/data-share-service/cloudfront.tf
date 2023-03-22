@@ -73,3 +73,8 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
 
   web_acl_id = aws_wafv2_web_acl.gdx_data_share_poc.arn
 }
+
+resource "aws_shield_protection" "gdx_data_share_poc" {
+  name         = "${var.environment} - GDX DataShare CloudFront"
+  resource_arn = aws_cloudfront_distribution.gdx_data_share_poc.arn
+}

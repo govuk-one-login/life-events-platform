@@ -4,13 +4,13 @@
 - All infra is managed through Terraform
 
 ## Bootstrapping
-- to spin up a new environment, it's necessary to
+- to spin up a new environment in a new AWS account, it's necessary to
     - create an S3 store for state
     - create a DynamoDB table for locks
 - this can be done manually, but can also be done by using the bootstrap module.
 
 To bootstrap with the module, create a new root terraform file (e.g. `main.tf`), reference the AWS provider and the `bootstrap` module with a unique S3 bucket and DynamboDB table, and then run it.
-When the S3 bucket has been created, reference this in teh backend config, e.g.
+When the S3 bucket has been created, reference this in the backend config, e.g.
 ```
 terraform {
   required_providers {
@@ -29,9 +29,10 @@ terraform {
 }
 ```
 
-To run automatically, this also requires an IAM user/role, and this should be configured in GitHub actions to create the environment variables `AWS_SECRET_ACCESS_KEY` and `AWS_ACCESS_KEY_ID`.
+To enable GitHub to deploy, we also use the backend bootstrap module to configure an IAM role and federation. 
+This needs to be disabled initially when creating the
 
-This infrastructure is configured in the `backend` directory of terraform config.
+This infrastructure is configured in the `backend` directory of terraform config, and the `backend-prod` folder.
 
 ## Creating a new hosted environment
 
@@ -42,6 +43,7 @@ This infrastructure is configured in the `backend` directory of terraform config
 - Add to GitHub actions, particularly [infrastructure-main.yml](.github/workflows/infrastructure-main.yml)
 - Validate credentials and access
 - Set up GitHub Environment rules for the relevant environment to prevent or allow automatic deploys
+- If Shield Advanced is required in the environment, this needs to be enabled manually first within the account
 
 ### Database
 

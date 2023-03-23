@@ -1,3 +1,8 @@
+## AWS SDK
+# These are not issues as access to the target S3 bucket is not available to anyone other than AWS
 CVE-2020-8911
+CVE-2020-8912
 
+## Prometheus
+# The latest version of the aws-otel-collector is yet to update Prometheus to fix this vulnerability
 CVE-2019-3826

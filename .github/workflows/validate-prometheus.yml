@@ -10,7 +10,8 @@ on:
       - "prometheus/Dockerfile"
 
 jobs:
-  trivy:
+  validate-prometheus:
+    name: Validate Prometheus
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

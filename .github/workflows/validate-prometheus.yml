@@ -34,5 +34,5 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ github.ref_name }}:latest
-          trivyignores: .trivyignore, ./prometheus/.trivyignore
+          trivyignores: '.trivyignore, ./prometheus/.trivyignore'
           exit-code: 1

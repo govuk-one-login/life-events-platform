@@ -31,7 +31,6 @@ jobs:
           load: true
           cache-to: type=gha
           cache-from: type=gha
-          build-args: BUILD_NUMBER=${{ steps.gitversion.outputs.majorMinorPatch }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master

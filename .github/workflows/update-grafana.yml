@@ -72,4 +72,3 @@ jobs:
           docker tag ${{ github.ref_name }}:latest $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}
           docker push $IMAGE:latest
-

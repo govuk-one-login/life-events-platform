@@ -109,13 +109,32 @@ resource "aws_ecr_pull_through_cache_rule" "quay" {
   upstream_registry_url = "quay.io"
 }
 
-#these images are hosted and provided externally so we don't enforce scanning or immutable tags
-#tfsec:ignore:aws-ecr-enforce-immutable-repository tfsec:ignore:aws-ecr-enable-image-scans
+resource "aws_ecr_pull_through_cache_rule" "ecr-public" {
+  ecr_repository_prefix = "ecr-public"
+  upstream_registry_url = "public.ecr.aws"
+}
+
+# These images are hosted and provided externally so we don't enforce immutable tags
+#tfsec:ignore:aws-ecr-enforce-immutable-repository
+resource "aws_ecr_repository" "aws-xray-daemon" {
+  name = "ecr-public/xray/aws-xray-daemon"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  encryption_configuration {
+    encryption_type = "KMS"
+    kms_key         = aws_kms_key.ecr_key.arn
+  }
+}
+
+# These images are hosted and provided externally so we don't enforce immutable tags
+#tfsec:ignore:aws-ecr-enforce-immutable-repository
 resource "aws_ecr_repository" "lev_api" {
   name = "quay/ukhomeofficedigital/lev-api"
 
   image_scanning_configuration {
-    scan_on_push = false
+    scan_on_push = true
   }
   encryption_configuration {
     encryption_type = "KMS"

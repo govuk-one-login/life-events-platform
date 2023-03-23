@@ -60,3 +60,7 @@ jobs:
           docker tag ${{ github.ref_name }}:latest $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}
           docker push $IMAGE:latest
+
+      - name: Force redeployment of Grafana instance
+        run: |
+          aws ecs update-service --force-new-deployment --service grafana --cluster grafana

@@ -1,0 +1,16 @@
+name: Validate Prometheus
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - "prometheus/Dockerfile"
+  merge_group:
+    paths-ignore:
+      - "prometheus/Dockerfile"
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'

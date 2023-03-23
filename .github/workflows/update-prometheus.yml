@@ -70,4 +70,3 @@ jobs:
         run: |
           docker tag ${{ github.ref_name }}:latest $IMAGE:${{ github.sha }}
           docker push $IMAGE:${{ github.sha }}
-

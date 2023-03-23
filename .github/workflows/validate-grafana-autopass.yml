@@ -10,7 +10,8 @@ on:
       - "grafana/Dockerfile"
 
 jobs:
-  trivy:
+  validate-grafana:
+    name: Validate Grafana
     runs-on: ubuntu-latest
     steps:
       - run: 'echo "No build required"'

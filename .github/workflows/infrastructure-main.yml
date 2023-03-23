@@ -32,6 +32,12 @@ jobs:
       - name: Check formatting of all Terraform files
         run: terraform fmt -check -diff -recursive
 
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          trivy-config: trivy.yaml
+
   deploy-terraform:
     needs: tf-fmt
     strategy:

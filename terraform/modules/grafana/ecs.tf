@@ -23,7 +23,7 @@ resource "aws_ecs_task_definition" "grafana" {
   container_definitions = jsonencode([
     {
       name  = "grafana",
-      image = "grafana/grafana-enterprise:9.4.3",
+      image = "${var.ecr_url}/grafana:latest",
       portMappings = [{
         containerPort : 3000,
         hostPort : 3000,

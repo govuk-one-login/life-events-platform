@@ -76,6 +76,20 @@ resource "aws_ecr_repository" "prometheus-adot" {
   image_tag_mutability = "IMMUTABLE"
 }
 
+# We use grafana:latest to allow our task definition to always pull our most up to date version, so the tag must be mutables
+#tfsec:ignore:aws-ecr-enforce-immutable-repository
+resource "aws_ecr_repository" "grafana" {
+  name = "grafana"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  encryption_configuration {
+    encryption_type = "KMS"
+    kms_key         = aws_kms_key.ecr_key.arn
+  }
+}
+
 resource "aws_kms_key" "ecr_key" {
   description                        = "Key used to encrypt ECR repository"
   enable_key_rotation                = true

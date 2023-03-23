@@ -97,7 +97,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
     },
     {
       name : "xray-daemon",
-      image : "amazon/aws-xray-daemon"
+      image : "${var.ecr_url}/ecr-public/xray/aws-xray-daemon:3.3.6",
       cpu : 32,
       memoryReservation : 256,
       portMappings : [

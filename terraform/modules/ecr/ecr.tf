@@ -115,6 +115,7 @@ resource "aws_ecr_pull_through_cache_rule" "ecr-public" {
 }
 
 # These images are hosted and provided externally so we don't enforce immutable tags
+#tfsec:ignore:aws-ecr-enforce-immutable-repository
 resource "aws_ecr_repository" "aws-xray-daemon" {
   name = "ecr-public/xray/aws-xray-daemon"
 

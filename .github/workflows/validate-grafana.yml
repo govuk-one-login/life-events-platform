@@ -34,4 +34,5 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ github.ref_name }}:latest
-          trivy-config: trivy.yaml
+          exit-code: 1
+          trivyignores: grafana/.trivyignore

@@ -1,0 +1,4 @@
+## AWS SDK
+# These are not issues as access to the target S3 bucket is not available to anyone other than AWS
+CVE-2020-8911
+CVE-2020-8912

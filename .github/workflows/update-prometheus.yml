@@ -43,7 +43,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::776473272850:role/dev-github-oidc-deploy
-          role-session-name: push-image
+          role-session-name: push-prometheus-image
           aws-region: eu-west-2
           mask-aws-account-id: false
 

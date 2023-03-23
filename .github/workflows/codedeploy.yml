@@ -45,6 +45,8 @@ jobs:
           echo "codedeploy_application=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "codedeploy_deployment_group=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
 
+          echo "prometheus_container_name=prometheus-adot" >> $GITHUB_OUTPUT
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -84,6 +86,20 @@ jobs:
           task-definition: ${{ steps.vars.outputs.ecs_task_definition_filepath }}
           container-name: ${{ steps.vars.outputs.ecs_task_definition }}
           image: ${{ inputs.image }}
+
+      - name: Get the most recent prometheus image ID
+        id: prometheus-adot-image
+        run: |
+          IMAGE=$(aws ecr describe-images --repository-name ${{ steps.vars.outputs.prometheus_container_name }} --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq --raw-output)
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+
+      - name: Fill in the prometheus image ID in the Amazon ECS task definition
+        id: update-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.vars.outputs.ecs_task_definition_filepath }}
+          container-name: ${{ steps.vars.outputs.prometheus_container_name }}
+          image: ${{ steps.prometheus-adot-image.outputs.image }}
 
       - name: Set appspec.json values
         id: appspec

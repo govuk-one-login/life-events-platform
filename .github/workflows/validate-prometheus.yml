@@ -35,3 +35,4 @@ jobs:
         with:
           image-ref: ${{ github.ref_name }}:latest
           trivy-config: trivy.yaml
+          trivyignores: .trivyignore, prometheus/.trivyignore

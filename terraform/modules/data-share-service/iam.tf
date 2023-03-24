@@ -55,7 +55,7 @@ data "aws_iam_policy_document" "ecs_task_execution_pull_through" {
       "ecr:BatchImportUpstreamImage"
     ]
     effect    = "Allow"
-    resources = ["${var.ecr_url}/ecr-public/xray/aws-xray-daemon"]
+    resources = ["arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/ecr-public/xray/aws-xray-daemon"]
   }
 }
 

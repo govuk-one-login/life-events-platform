@@ -75,7 +75,7 @@ dependencies {
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.4")
 
-  implementation("org.javers:javers-spring:6.12.0")
+  implementation("org.javers:javers-spring:6.13.0")
   implementation("org.javers:javers-persistence-sql:6.12.0")
 
   // test containers

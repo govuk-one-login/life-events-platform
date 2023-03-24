@@ -76,6 +76,20 @@ resource "aws_ecr_repository" "prometheus-adot" {
   image_tag_mutability = "IMMUTABLE"
 }
 
+# We use grafana:latest to allow our task definition to always pull our most up to date version, so the tag must be mutables
+#tfsec:ignore:aws-ecr-enforce-immutable-repository
+resource "aws_ecr_repository" "grafana" {
+  name = "grafana"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  encryption_configuration {
+    encryption_type = "KMS"
+    kms_key         = aws_kms_key.ecr_key.arn
+  }
+}
+
 resource "aws_kms_key" "ecr_key" {
   description                        = "Key used to encrypt ECR repository"
   enable_key_rotation                = true
@@ -88,17 +102,12 @@ resource "aws_kms_alias" "ecr_key_alias" {
 }
 
 resource "aws_ecr_registry_scanning_configuration" "ecr_scanning_configuration" {
-  scan_type = "BASIC"
+  scan_type = "ENHANCED"
 
   rule {
-    scan_frequency = "SCAN_ON_PUSH"
+    scan_frequency = "CONTINUOUS_SCAN"
     repository_filter {
-      filter      = aws_ecr_repository.gdx_data_share_poc.name
-      filter_type = "WILDCARD"
-    }
-
-    repository_filter {
-      filter      = aws_ecr_repository.prometheus-adot.name
+      filter      = "*"
       filter_type = "WILDCARD"
     }
   }
@@ -109,13 +118,32 @@ resource "aws_ecr_pull_through_cache_rule" "quay" {
   upstream_registry_url = "quay.io"
 }
 
-#these images are hosted and provided externally so we don't enforce scanning or immutable tags
-#tfsec:ignore:aws-ecr-enforce-immutable-repository tfsec:ignore:aws-ecr-enable-image-scans
+resource "aws_ecr_pull_through_cache_rule" "ecr-public" {
+  ecr_repository_prefix = "ecr-public"
+  upstream_registry_url = "public.ecr.aws"
+}
+
+# These images are hosted and provided externally so we don't enforce immutable tags
+#tfsec:ignore:aws-ecr-enforce-immutable-repository
+resource "aws_ecr_repository" "aws-xray-daemon" {
+  name = "ecr-public/xray/aws-xray-daemon"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  encryption_configuration {
+    encryption_type = "KMS"
+    kms_key         = aws_kms_key.ecr_key.arn
+  }
+}
+
+# These images are hosted and provided externally so we don't enforce immutable tags
+#tfsec:ignore:aws-ecr-enforce-immutable-repository
 resource "aws_ecr_repository" "lev_api" {
   name = "quay/ukhomeofficedigital/lev-api"
 
   image_scanning_configuration {
-    scan_on_push = false
+    scan_on_push = true
   }
   encryption_configuration {
     encryption_type = "KMS"

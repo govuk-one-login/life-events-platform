@@ -74,6 +74,12 @@ module "lev_api" {
   ecr_url     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
 }
 
+module "route53" {
+  source = "../modules/route53"
+
+  hosted_zone_name = "dev.share-life-events.service.gov.uk"
+}
+
 module "data-share-service" {
   source = "../modules/data-share-service"
   providers = {
@@ -92,6 +98,9 @@ module "data-share-service" {
   hmpps_auth_url              = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
 
   grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
+
+  hosted_zone_id   = module.route53.zone_id
+  hosted_zone_name = module.route53.name
 }
 
 module "len" {
@@ -121,10 +130,4 @@ module "consumer" {
   consumer_client_secret      = module.data-share-service.consumer_client_secret
   lev_api_url                 = "https://${module.lev_api.service_url}"
   schedule                    = "cron(0,30 9-18 ? * MON-FRI *)"
-}
-
-module "route53" {
-  source = "../modules/route53"
-
-  hosted_zone_name = "dev.share-life-events.service.gov.uk"
 }

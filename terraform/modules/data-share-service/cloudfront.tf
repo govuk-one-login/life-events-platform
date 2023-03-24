@@ -78,3 +78,14 @@ resource "aws_shield_protection" "gdx_data_share_poc" {
   name         = "${var.environment} - GDX DataShare CloudFront"
   resource_arn = aws_cloudfront_distribution.gdx_data_share_poc.arn
 }
+
+resource "aws_route53_record" "cloudfront" {
+  zone_id = var.hosted_zone_id
+  name    = var.hosted_zone_name
+  type    = "A"
+  alias {
+    name                   = aws_cloudfront_distribution.gdx_data_share_poc.domain_name
+    zone_id                = aws_cloudfront_distribution.gdx_data_share_poc.hosted_zone_id
+    evaluate_target_health = false
+  }
+}

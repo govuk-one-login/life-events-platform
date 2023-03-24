@@ -45,6 +45,8 @@ jobs:
           echo "codedeploy_application=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "codedeploy_deployment_group=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
 
+          echo "prometheus_container_name=prometheus-adot" >> $GITHUB_OUTPUT
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -67,6 +69,12 @@ jobs:
           tag: ${{ github.sha }}
           new-tags: ${{ inputs.environment }}-${{ steps.datetime.outputs.datetime }}
 
+      - name: Get the most recent prometheus image ID
+        id: prometheus-adot-image
+        run: |
+          IMAGE=$(aws ecr describe-images --repository-name ${{ steps.vars.outputs.prometheus_container_name }} --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq --raw-output)
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          
       - name: Set ECS task definition
         id: task-definition
         env:
@@ -76,6 +84,14 @@ jobs:
         run: |
           mkdir -p $ECS_TASK_DEFINITION_DIRECTORY
           aws ecs describe-task-definition --task-definition "$ECS_TASK_DEFINITION" | jq '.taskDefinition' > $ECS_TASK_DEFINITION_FILEPATH
+
+      - name: Fill in the prometheus image ID in the Amazon ECS task definition
+        id: update-task-def-for-prometheus
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.vars.outputs.ecs_task_definition_filepath }}
+          container-name: ${{ steps.vars.outputs.prometheus_container_name }}
+          image: ${{ steps.prometheus-adot-image.outputs.image }}
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: update-task-def

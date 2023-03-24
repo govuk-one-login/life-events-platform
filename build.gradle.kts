@@ -2,7 +2,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-  id("org.springframework.boot") version "3.0.4"
+  id("org.springframework.boot") version "3.0.5"
   id("io.spring.dependency-management") version "1.1.0"
   id("org.jmailen.kotlinter") version "3.14.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.29"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.31"))
   implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
@@ -75,14 +75,14 @@ dependencies {
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.4")
 
-  implementation("org.javers:javers-spring:6.12.0")
+  implementation("org.javers:javers-spring:6.13.0")
   implementation("org.javers:javers-persistence-sql:6.12.0")
 
   // test containers
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.432") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.433") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

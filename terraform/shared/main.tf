@@ -94,6 +94,8 @@ module "grafana" {
   public_subnet_ids  = module.vpc.public_subnet_ids
   private_subnet_ids = module.vpc.private_subnet_ids
   vpc_cidr           = "10.158.32.0/20"
+
+  ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
 }
 
 module "securityhub" {

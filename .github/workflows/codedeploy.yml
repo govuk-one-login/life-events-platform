@@ -34,8 +34,6 @@ jobs:
           echo "codedeploy_appspec_filepath=.aws/appspec.json" >> $GITHUB_OUTPUT
           echo "codedeploy_appspec_template_filepath=ci/appspec-template.json" >> $GITHUB_OUTPUT
 
-          echo "ecs_task_definition_filepath=.aws/task-definition.json" >> $GITHUB_OUTPUT
-
           echo "ecs_task_definition=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "ecs_service=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "ecs_cluster=$ENVIRONMENT" >> $GITHUB_OUTPUT

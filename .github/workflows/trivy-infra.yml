@@ -1,12 +1,6 @@
 name: Trivy Infrastructure scan
 
 on:
-  push:
-    branches:
-      - "main"
-    paths:
-      - "terraform/**"
-      - ".github/workflows/**"
   pull_request:
     paths:
       - "terraform/**"

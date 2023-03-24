@@ -49,6 +49,26 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_ssm" {
   policy_arn = aws_iam_policy.ecs_task_execution_ssm.arn
 }
 
+data "aws_iam_policy_document" "ecs_task_execution_pull_through" {
+  statement {
+    actions = [
+      "ecr:BatchImportUpstreamImage"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_execution_pull_through" {
+  name   = "${var.environment}-ecs-task-execution-pull-through"
+  policy = data.aws_iam_policy_document.ecs_task_execution_pull_through.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_pull_through" {
+  role       = aws_iam_role.ecs_task_execution.name
+  policy_arn = aws_iam_policy.ecs_task_execution_pull_through.arn
+}
+
 resource "aws_iam_role" "ecs_task" {
   name               = "${var.environment}-task-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json

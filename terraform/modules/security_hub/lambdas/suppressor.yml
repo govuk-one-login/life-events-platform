@@ -1,0 +1,9 @@
+Inspector:
+    key: Title
+    status: FindingProviderFields.Severity.Label
+Firewall Manager:
+    key: Title
+    status: Compliance.Status
+Security Hub:
+    key: Title
+    status: Compliance.Status

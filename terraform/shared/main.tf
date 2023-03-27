@@ -99,9 +99,11 @@ module "grafana" {
 }
 
 module "securityhub" {
-  source     = "../modules/security_hub"
-  region     = data.aws_region.current.name
-  account_id = data.aws_caller_identity.current.account_id
+  source = "../modules/security_hub"
+
+  region      = data.aws_region.current.name
+  environment = local.env
+  account_id  = data.aws_caller_identity.current.account_id
   rules = [
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"

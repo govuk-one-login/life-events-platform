@@ -1,0 +1,11 @@
+Suppressions:
+  "CVE-2022-1471 - org.yaml:snakeyaml":
+    - action: SUPPRESSED
+      rules:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/*
+      notes: gdx-image-CVE-2022-1471
+  "ECS containers should be limited to read-only access to root filesystems":
+    - action: SUPPRESSED
+      rules:
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/grafana:*
+      notes: grafana-root-file-system-access-allowed

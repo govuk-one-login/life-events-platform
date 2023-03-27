@@ -23,6 +23,8 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     }
   }
 
+  aliases = [var.hosted_zone_name]
+
   logging_config {
     include_cookies = false
     bucket          = "${aws_s3_bucket.cloudfront_logs_bucket.bucket}.s3.amazonaws.com"
@@ -68,7 +70,9 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate_validation.hosted_zone.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   web_acl_id = aws_wafv2_web_acl.gdx_data_share_poc.arn
@@ -88,4 +92,38 @@ resource "aws_route53_record" "cloudfront" {
     zone_id                = aws_cloudfront_distribution.gdx_data_share_poc.hosted_zone_id
     evaluate_target_health = false
   }
+}
+
+resource "aws_acm_certificate" "hosted_zone" {
+  provider = aws.us-east-1
+
+  domain_name       = var.hosted_zone_name
+  validation_method = "DNS"
+}
+
+resource "aws_route53_record" "cert_validation" {
+  provider = aws.us-east-1
+
+  for_each = {
+    for dvo in aws_acm_certificate.hosted_zone.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = var.hosted_zone_id
+}
+
+resource "aws_acm_certificate_validation" "hosted_zone" {
+  provider = aws.us-east-1
+
+  certificate_arn         = aws_acm_certificate.hosted_zone.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+
 }

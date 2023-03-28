@@ -140,6 +140,7 @@ resource "aws_ecs_service" "gdx_data_share_poc" {
   cluster                           = aws_ecs_cluster.main.id
   task_definition                   = aws_ecs_task_definition.gdx_data_share_poc.arn
   launch_type                       = "FARGATE"
+  platform_version                  = "LATEST"
   desired_count                     = 2
   health_check_grace_period_seconds = 120
 

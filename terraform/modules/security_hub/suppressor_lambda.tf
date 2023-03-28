@@ -41,7 +41,25 @@ resource "aws_iam_role" "securityhub_suppressor" {
   assume_role_policy = data.aws_iam_policy_document.securityhub_suppressor_assume_policy.json
 }
 
+data "aws_iam_policy_document" "lambda_key_policy" {
+  statement {
+    sid = "LambdaKMSAccess"
+    actions = [
+      "kms:Decrypt",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*"
+    ]
+    effect = "Allow"
+    resources = [
+      aws_kms_key.security_hub_findings.arn
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "lambda_security_hub_suppressor" {
+  source_policy_documents = [data.aws_iam_policy_document.lambda_key_policy.json]
+
   statement {
     sid = "TrustEventsToStoreLogEvent"
     actions = [
@@ -84,20 +102,6 @@ data "aws_iam_policy_document" "lambda_security_hub_suppressor" {
     ]
     resources = [
       "arn:aws:securityhub:${var.region}:${var.account_id}:hub/default"
-    ]
-  }
-
-  statement {
-    sid = "LambdaKMSAccess"
-    actions = [
-      "kms:Decrypt",
-      "kms:Encrypt",
-      "kms:GenerateDataKey*",
-      "kms:ReEncrypt*"
-    ]
-    effect = "Allow"
-    resources = [
-      aws_kms_key.security_hub_findings.arn
     ]
   }
 }

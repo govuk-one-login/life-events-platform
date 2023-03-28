@@ -1,5 +1,1 @@
 aws-lambda-powertools
-pylint-gitlab
-pyyaml
-jmespath
-yamllint

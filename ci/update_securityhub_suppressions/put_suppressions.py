@@ -23,8 +23,7 @@ for suppression_id in suppressions.get("Suppressions", {}):
                 "L": [
                     {
                         "M": {
-                            "action": {"S": item["action"]},
-                            "rules": {"SS": item["rules"]},
+                            "resources": {"SS": item["resources"]},
                             "notes": {"S": item["notes"]}
                         }
                     }

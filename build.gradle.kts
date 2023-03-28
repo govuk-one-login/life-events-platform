@@ -78,6 +78,8 @@ dependencies {
   implementation("org.javers:javers-spring:6.13.0")
   implementation("org.javers:javers-persistence-sql:6.13.0")
 
+  implementation("net.logstash.logback:logstash-logback-encoder:7.3")
+
   // test containers
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")

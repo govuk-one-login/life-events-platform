@@ -19,10 +19,10 @@ jobs:
       - name: Git clone the repository
         uses: actions/checkout@v2
 
-      - name: Install Python 3.8
+      - name: Install Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
 
       - name: Install required packages
         run: cd $SCRIPT_DIR && pip install -r requirements.txt

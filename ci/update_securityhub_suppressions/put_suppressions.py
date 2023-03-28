@@ -4,7 +4,7 @@ import boto3
 import os
 import yaml
 
-table_name = os.environ.get("SUPPRESSIONS_TABLE_NAME", "securityhub-suppression-list")
+table_name = "securityhub-suppression-list"
 
 with open("suppressions.yml") as f:
     suppressions = yaml.safe_load(f.read())

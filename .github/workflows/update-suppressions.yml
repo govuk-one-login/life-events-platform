@@ -15,6 +15,9 @@ on:
 jobs:
   upsert-suppresions-dynamo-db-table:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ci/update_securityhub_suppressions
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v2
@@ -25,7 +28,7 @@ jobs:
           python-version: 3.9
 
       - name: Install required packages
-        run: cd $SCRIPT_DIR && pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -36,4 +39,4 @@ jobs:
           mask-aws-account-id: false
 
       - name: Upsert entries in DynamoDB table
-        run: cd $SCRIPT_DIR && python put_suppressions.py
+        run: python put_suppressions.py

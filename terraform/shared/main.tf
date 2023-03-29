@@ -125,3 +125,19 @@ module "s3_policy" {
 module "iam_policy" {
   source = "../modules/iam_policy"
 }
+
+locals {
+  gdx_dev_team = [
+    "carly.gilson",
+    "ethan.mills",
+    "oliver.levett",
+    "oskar.williams"
+  ]
+}
+
+module "iam_user_roles" {
+  source = "../modules/iam_user_roles"
+
+  admin_users = local.gdx_dev_team
+  read_only_users = local.gdx_dev_team
+}

@@ -95,7 +95,7 @@ resource "aws_ecs_service" "grafana" {
   cluster                           = aws_ecs_cluster.grafana.id
   task_definition                   = aws_ecs_task_definition.grafana.arn
   launch_type                       = "FARGATE"
-  platform_version                  = "LATEST"
+  platform_version                  = "1.4.0"
   desired_count                     = 1
   health_check_grace_period_seconds = 120
 

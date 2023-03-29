@@ -10,8 +10,8 @@ connect to this EC2 instance via AWS Systems Manager Session Manager.
 You must have the Session Manager plugin installed for the AWS CLI. It can be
 downloaded [here](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
 .
-To make a connection to the EC2 instances, run the script for the relevant environment in the scripts folder in the root
-directory. These are also set up as run configurations in IntelliJ.
+To make a connection to the EC2 instances, run the script (PowerShell or bash) for the relevant environment in the
+scripts folder in the root directory. These are also set up as run configurations in IntelliJ.
 This will open up a connection to `localhost:5433` for the dev environment, or `localhost:5434` for the demo
 environment.
 

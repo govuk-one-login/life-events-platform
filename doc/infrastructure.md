@@ -65,4 +65,4 @@ e.g. `terraform/dev/main.tf` > `module "data-share-service"` > `db_username`
 
 ## Creating a new AWS user
 
-When a new AWS user is created, they should be added to the `all_users` group on AWS to enforce MFA.
+When a new AWS user is created, they should be added to the `mfa_enforced` group on AWS to enforce MFA.

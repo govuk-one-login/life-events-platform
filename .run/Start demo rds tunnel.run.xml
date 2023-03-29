@@ -14,4 +14,8 @@
     <envs />
     <method v="2" />
   </configuration>
+  <configuration default="false" name="Start demo rds tunnel" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="C:\Users\cargil\Work\gdx\gdx-data-share-poc\scripts\start_demo_rds_tunnel.ps1" workingDirectory="C:\Users\cargil" executablePath="$PROJECT_DIR$/../../../../../WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe">
+    <envs />
+    <method v="2" />
+  </configuration>
 </component>

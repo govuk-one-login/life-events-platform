@@ -52,16 +52,14 @@ This infrastructure is configured in the `backend` directory of terraform config
 ### Database
 
 Once the infrastructure has been created using terraform, a database user needs to be created.
-Connect to the RDS cluster using the bastion ([instructions](./connecting-to-hosted-databases.md)) and create the user:
+Connect to the RDS cluster using SSM ([instructions](./connecting-to-hosted-databases.md)) and create the user by
+running `create_application_user.sql` in the `scripts` folder.
 
-```psql
-CREATE USER <username> WITH LOGIN;
-GRANT rds_iam TO <username>;
-GRANT rds_superuser TO <username>;
-```
+The `<username>` needs to be set as a module variable in terraform,
+e.g. `terraform/dev/main.tf` > `module "data-share-service"` > `db_username`.
 
-The `<username>` needs to be set as a module varible in terraform,
-e.g. `terraform/dev/main.tf` > `module "data-share-service"` > `db_username`
+Once the application has been set up, run `remove_audit_delete_permissions.sql` with the username that has just been set
+up.
 
 ## Creating a new AWS user
 

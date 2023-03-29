@@ -60,3 +60,7 @@ e.g. `terraform/dev/main.tf` > `module "data-share-service"` > `db_username`.
 
 Once the application has been set up, run `remove_audit_delete_permissions.sql` with the username that has just been set
 up.
+
+## Creating a new AWS user
+
+When a new AWS user is created, they should be added to the `mfa_enforced` group on AWS to enforce MFA.

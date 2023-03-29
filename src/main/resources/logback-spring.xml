@@ -16,9 +16,7 @@
 
     <springProfile name="!(dev || stdout)">
         <appender name="logAppender" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <Pattern>${LOG_PATTERN}</Pattern>
-            </encoder>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
         </appender>
     </springProfile>
 

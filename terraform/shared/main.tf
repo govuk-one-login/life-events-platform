@@ -121,3 +121,7 @@ module "ecr" {
 module "s3_policy" {
   source = "../modules/s3_policy"
 }
+
+module "iam_policy" {
+  source = "../modules/iam_policy"
+}

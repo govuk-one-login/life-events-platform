@@ -16,3 +16,4 @@ CVE-2022-1471
 # We do not use the functionality that is required for this exploit, remove when fix is
 # released - GPC-267
 CVE-2023-0464
+CVE-2023-0465

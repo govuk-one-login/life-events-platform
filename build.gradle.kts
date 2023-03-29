@@ -90,7 +90,7 @@ dependencies {
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.assertj:assertj-core:3.24.2")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.12")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.13")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")

@@ -99,9 +99,11 @@ module "grafana" {
 }
 
 module "securityhub" {
-  source     = "../modules/security_hub"
-  region     = data.aws_region.current.name
-  account_id = data.aws_caller_identity.current.account_id
+  source = "../modules/security_hub"
+
+  region      = data.aws_region.current.name
+  environment = local.env
+  account_id  = data.aws_caller_identity.current.account_id
   rules = [
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"
@@ -124,4 +126,20 @@ module "s3_policy" {
 
 module "iam_policy" {
   source = "../modules/iam_policy"
+}
+
+locals {
+  gdx_dev_team = [
+    "carly.gilson",
+    "ethan.mills",
+    "oliver.levett",
+    "oskar.williams"
+  ]
+}
+
+module "iam_user_roles" {
+  source = "../modules/iam_user_roles"
+
+  admin_users     = local.gdx_dev_team
+  read_only_users = local.gdx_dev_team
 }

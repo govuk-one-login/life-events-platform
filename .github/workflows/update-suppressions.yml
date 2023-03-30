@@ -1,0 +1,42 @@
+name: Upsert Security Hub suppression entries in DynamoDB table
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "ci/update_securityhub_suppressions/**"
+
+jobs:
+  upsert-suppresions-dynamo-db-table:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ci/update_securityhub_suppressions
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v2
+
+      - name: Install Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install required packages
+        run: pip install -r requirements.txt
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::776473272850:role/shared-github-oidc-deploy
+          role-session-name: update-suppressions
+          aws-region: eu-west-2
+          mask-aws-account-id: false
+
+      - name: Upsert entries in DynamoDB table
+        run: python put_suppressions.py

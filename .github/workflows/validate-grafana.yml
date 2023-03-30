@@ -35,4 +35,4 @@ jobs:
         with:
           image-ref: ${{ github.ref_name }}:latest
           exit-code: 1
-          trivyignores: .trivyignore,grafana/.trivyignore
+          trivyignores: grafana/.trivyignore

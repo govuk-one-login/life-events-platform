@@ -138,6 +138,6 @@ locals {
 module "iam_user_roles" {
   source = "../modules/iam_user_roles"
 
-  admin_users = local.gdx_dev_team
+  admin_users     = local.gdx_dev_team
   read_only_users = local.gdx_dev_team
 }

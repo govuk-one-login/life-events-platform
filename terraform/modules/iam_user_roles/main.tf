@@ -1,6 +1,6 @@
 locals {
-  admin_users     = tomap(var.admin_users)
-  read_only_users = tomap(var.read_only_users)
+  admin_users     = toset(var.admin_users)
+  read_only_users = toset(var.read_only_users)
 }
 
 data "aws_iam_policy" "admin_policy" {

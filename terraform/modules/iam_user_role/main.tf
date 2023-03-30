@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
 }
 
 resource "aws_iam_role" "role" {
-  name               = "${var.username}-{var.role_suffix}"
+  name               = "${var.username}-${var.role_suffix}"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 

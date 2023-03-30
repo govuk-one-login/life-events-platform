@@ -4,15 +4,18 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "prometheus/Dockerfile"
+      - "prometheus/**"
   merge_group:
     paths:
-      - "prometheus/Dockerfile"
+      - "prometheus/**"
 
 jobs:
   validate-prometheus:
     name: Validate Prometheus
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: prometheus
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,7 +26,7 @@ jobs:
       - name: Build and tag image
         uses: docker/build-push-action@v4
         with:
-          context: ./prometheus
+          context: .
           push: false
           tags: ${{ github.ref_name }}:latest
           load: true
@@ -35,4 +38,4 @@ jobs:
         with:
           image-ref: ${{ github.ref_name }}:latest
           exit-code: 1
-          trivyignores: .trivyignore,prometheus/.trivyignore
+          trivyignores: .trivyignore

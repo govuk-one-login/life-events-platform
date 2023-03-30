@@ -13,9 +13,6 @@ jobs:
   validate-prometheus:
     name: Validate Prometheus
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: prometheus
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,9 +23,9 @@ jobs:
       - name: Build and tag image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: prometheus/.
           push: false
-          tags: ${{ github.ref_name }}:latest
+          tags: ${{ github.ref_name }}-prometheus:latest
           load: true
           cache-to: type=gha
           cache-from: type=gha
@@ -36,6 +33,6 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ github.ref_name }}:latest
+          image-ref: ${{ github.ref_name }}-prometheus:latest
           exit-code: 1
           trivyignores: prometheus/.trivyignore

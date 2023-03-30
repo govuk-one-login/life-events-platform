@@ -13,5 +13,8 @@ CVE-2019-3826
 CVE-2022-41723
 GHSA-vvpx-j8f3-3w6h
 
-# OpenSSL issue that is disabled by default and in our functionality
+# This is an issue in the OS image alpine 3.17.2 that has been solved in 3.17.3, but grafana isn't there yet
+# We do not use the functionality that is required for this exploit
+CVE-2023-0464
+CVE-2023-0465
 CVE-2023-0466

@@ -15,7 +15,7 @@ on:
 jobs:
   build-prometheus-image:
     name: Build Docker image and push to ECR
-    environment: dev
+    environment: shared
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

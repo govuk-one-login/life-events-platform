@@ -13,7 +13,7 @@ on:
 jobs:
   build-image:
     name: Build Docker image and push to ECR
-    environment: dev
+    environment: shared
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.push-image.outputs.image }}

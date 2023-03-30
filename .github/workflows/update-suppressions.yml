@@ -14,6 +14,7 @@ on:
 
 jobs:
   upsert-suppresions-dynamo-db-table:
+    environment: shared
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -33,7 +34,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::776473272850:role/shared-github-oidc-deploy
+          role-to-assume: arn:aws:iam::776473272850:role/${{ inputs.environment }}-github-oidc-deploy
           role-session-name: update-suppressions
           aws-region: eu-west-2
           mask-aws-account-id: false

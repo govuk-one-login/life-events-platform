@@ -12,3 +12,6 @@ CVE-2019-3826
 # This denial of service is not largely impactful on our metric dashboarding service
 CVE-2022-41723
 GHSA-vvpx-j8f3-3w6h
+
+# OpenSSL issue that is disabled by default and in our functionality
+CVE-2023-0466

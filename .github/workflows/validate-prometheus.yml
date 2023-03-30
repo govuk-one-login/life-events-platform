@@ -38,5 +38,4 @@ jobs:
         with:
           image-ref: ${{ github.ref_name }}:latest
           exit-code: 1
-          trivyignores: .trivyignore
-          trivy-config:
+          trivyignores: prometheus/.trivyignore

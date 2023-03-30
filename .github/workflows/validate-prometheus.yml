@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "prometheus/Dockerfile"
+      - "prometheus/**"
   merge_group:
     paths:
-      - "prometheus/Dockerfile"
+      - "prometheus/**"
 
 jobs:
   validate-prometheus:
@@ -35,4 +35,4 @@ jobs:
         with:
           image-ref: ${{ github.ref_name }}:latest
           exit-code: 1
-          trivyignores: .trivyignore,prometheus/.trivyignore
+          trivyignores: prometheus/.trivyignore

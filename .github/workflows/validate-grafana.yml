@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "grafana/Dockerfile"
+      - "grafana/**"
   merge_group:
     paths:
-      - "grafana/Dockerfile"
+      - "grafana/**"
 
 jobs:
   validate-grafana:

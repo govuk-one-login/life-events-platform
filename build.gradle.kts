@@ -75,7 +75,7 @@ dependencies {
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.4")
 
-  implementation("org.javers:javers-spring:6.13.0")
+  implementation("org.javers:javers-spring:6.14.0")
   implementation("org.javers:javers-persistence-sql:6.13.0")
 
   implementation("net.logstash.logback:logstash-logback-encoder:7.3")
@@ -84,7 +84,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.438") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.439") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

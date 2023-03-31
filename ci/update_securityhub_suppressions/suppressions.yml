@@ -24,4 +24,7 @@ Suppressions:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GDX-292
-
+  "s3-bucket-replication-enabled-conformance-pack-7wkwquwdu":
+    - resources:
+        - .*
+      notes: GDX-301

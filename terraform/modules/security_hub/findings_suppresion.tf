@@ -62,7 +62,7 @@ resource "aws_dynamodb_table" "suppressor_dynamodb_table" {
 
 resource "aws_cloudwatch_event_rule" "securityhub_events_suppressor_failed_events" {
   name        = "securityhub-events-suppressor"
-  description = "EventBridge Rule that detects Security Hub events with compliance status as not successful, and workflow status as new or notified"
+  description = "EventBridge Rule that detects Security Hub events with compliance status as not successful or the event has vulnerabilities as it is an Inspector event, and workflow status as new or notified"
 
   event_pattern = <<EOF
 {
@@ -70,9 +70,16 @@ resource "aws_cloudwatch_event_rule" "securityhub_events_suppressor_failed_event
   "detail-type": ["Security Hub Findings - Imported"],
   "detail": {
     "findings": {
-      "Compliance": {
-        "Status": [{"anything-but": ["PASSED", "NOT_AVAILABLE"]}]
-      },
+      "$or": [
+        {
+          "Compliance": {
+            "Status": [{"anything-but": ["PASSED", "NOT_AVAILABLE"]}]
+          }
+        },
+        {
+          "Vulnerabilities": [ { "exists": true } ]
+        }
+      ],
       "Workflow": {
         "Status": ["NEW", "NOTIFIED"]
       }

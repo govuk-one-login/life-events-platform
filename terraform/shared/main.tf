@@ -53,10 +53,36 @@ data "aws_region" "current" {}
 
 #tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 module "vpc" {
-  source = "git::https://github.com/Softwire/terraform-vpc-aws?ref=24b5808095f54de6909ae03c9b0ccc21a735c6c3"
+  source = "git::https://github.com/Softwire/terraform-vpc-aws?ref=9e9accca08cfa417b265f5c7d9a0c169eb36c57c"
 
   name_prefix = "shared-"
   vpc_cidr    = "10.158.32.0/20"
+  acl_ingress_private = [
+    {
+      rule_no    = 1
+      from_port  = 22
+      to_port    = 22
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = "tcp"
+    },
+    {
+      rule_no    = 2
+      from_port  = 3389
+      to_port    = 3389
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = "tcp"
+    },
+    {
+      rule_no    = 100
+      from_port  = 0
+      to_port    = 0
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = -1
+    }
+  ]
 
   # At least two availability zones are required in order to set up a load balancer, so that the
   # infrastructure is kept consistent with other environments which use multiple availability zones.
@@ -67,6 +93,10 @@ module "vpc" {
 
 resource "aws_default_security_group" "default_security_group" {
   vpc_id = module.vpc.vpc_id
+}
+
+resource "aws_default_network_acl" "default_network_acl" {
+  default_network_acl_id = module.vpc.default_network_acl_id
 }
 
 resource "aws_flow_log" "flow_logs" {

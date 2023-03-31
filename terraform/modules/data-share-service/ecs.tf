@@ -24,11 +24,13 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
     {
       name  = "${var.environment}-gdx-data-share-poc",
       image = "${var.ecr_url}/gdx-data-share-poc:${var.environment}",
-      portMappings = [{
-        containerPort : 8080,
-        hostPort : 8080,
-        protocol : "tcp",
-      }],
+      portMappings = [
+        {
+          containerPort : 8080,
+          hostPort : 8080,
+          protocol : "tcp",
+        }
+      ],
       environment = [
         { "name" : "ENVIRONMENT", "value" : var.environment },
 
@@ -66,11 +68,22 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         },
       ]
       secrets = [
-        { "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_ID", "valueFrom" : aws_ssm_parameter.prisoner_search_api_client_id.arn },
-        { "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_SECRET", "valueFrom" : aws_ssm_parameter.prisoner_search_api_client_secret.arn },
-        { "name" : "SQS_QUEUES_PRISONEREVENT_QUEUENAME", "valueFrom" : aws_ssm_parameter.prisoner_event_queue_name.arn },
+        {
+          "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_ID",
+          "valueFrom" : aws_ssm_parameter.prisoner_search_api_client_id.arn
+        },
+        {
+          "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_SECRET",
+          "valueFrom" : aws_ssm_parameter.prisoner_search_api_client_secret.arn
+        },
+        {
+          "name" : "SQS_QUEUES_PRISONEREVENT_QUEUENAME", "valueFrom" : aws_ssm_parameter.prisoner_event_queue_name.arn
+        },
         { "name" : "SQS_QUEUES_PRISONEREVENT_DLQNAME", "valueFrom" : aws_ssm_parameter.prisoner_event_dlq_name.arn },
-        { "name" : "SQS_QUEUES_PRISONEREVENT_AWSACCOUNTID", "valueFrom" : aws_ssm_parameter.prisoner_event_aws_account_id.arn },
+        {
+          "name" : "SQS_QUEUES_PRISONEREVENT_AWSACCOUNTID",
+          "valueFrom" : aws_ssm_parameter.prisoner_event_aws_account_id.arn
+        },
         { "name" : "API_BASE_LEV_API_CLIENT_NAME", "valueFrom" : aws_ssm_parameter.lev_api_client_name.arn },
         { "name" : "API_BASE_LEV_API_CLIENT_USER", "valueFrom" : aws_ssm_parameter.lev_api_client_user.arn },
       ]
@@ -94,6 +107,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       volumesFrom : [],
       essential : true,
       cpu : 0,
+      readonlyRootFileSystem : true,
     },
     {
       name : "xray-daemon",
@@ -128,7 +142,10 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       environment = [
         { "name" : "PROMETHEUS_USERNAME", "value" : random_password.prometheus_username.result },
         { "name" : "PROMETHEUS_PASSWORD", "value" : random_password.prometheus_password.result },
-        { "name" : "AWS_PROMETHEUS_ENDPOINT", "value" : "${aws_prometheus_workspace.prometheus.prometheus_endpoint}api/v1/remote_write" },
+        {
+          "name" : "AWS_PROMETHEUS_ENDPOINT",
+          "value" : "${aws_prometheus_workspace.prometheus.prometheus_endpoint}api/v1/remote_write"
+        },
         { "name" : "AWS_REGION", "value" : var.region },
       ]
     },

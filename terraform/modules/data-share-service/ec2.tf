@@ -144,3 +144,7 @@ resource "aws_vpc_endpoint" "rds_bastion_vpc_endpoint_ec2_messages" {
   private_dns_enabled = true
   security_group_ids  = [aws_security_group.rds_bastion_host_vpc_endpoint_sg.id]
 }
+
+resource "aws_default_security_group" "default_security_group" {
+  vpc_id = module.vpc.vpc_id
+}

@@ -1,0 +1,27 @@
+Suppressions:
+  "CVE-2022-1471 - org.yaml:snakeyaml":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GDX-294
+  "GHSA-mjmj-j48q-9wg2 - org.yaml:snakeyaml":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GDX-294
+  "CVE-2023-0464 - openssl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GDX-293
+  "CVE-2023-0465 - openssl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GDX-293
+  "CVE-2019-3826 - github.com/prometheus/prometheus":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GDX-292
+

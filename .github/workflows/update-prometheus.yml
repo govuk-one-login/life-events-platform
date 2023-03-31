@@ -15,7 +15,7 @@ on:
 jobs:
   build-prometheus-image:
     name: Build Docker image and push to ECR
-    environment: dev
+    environment: shared
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -41,12 +41,12 @@ jobs:
         with:
           image-ref: ${{ github.ref_name }}:latest
           exit-code: 1
-          trivyignores: .trivyignore,prometheus/.trivyignore
+          trivyignores: prometheus/.trivyignore
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::776473272850:role/dev-github-oidc-deploy
+          role-to-assume: arn:aws:iam::776473272850:role/shared-github-oidc-deploy
           role-session-name: push-prometheus-image
           aws-region: eu-west-2
           mask-aws-account-id: false

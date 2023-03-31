@@ -1,4 +1,4 @@
-FROM amazoncorretto:19-alpine AS builder
+FROM amazoncorretto:19.0.2-alpine3.17 AS builder
 
 WORKDIR /app
 

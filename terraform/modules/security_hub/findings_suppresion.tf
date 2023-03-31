@@ -70,16 +70,6 @@ resource "aws_cloudwatch_event_rule" "securityhub_events_suppressor_failed_event
   "detail-type": ["Security Hub Findings - Imported"],
   "detail": {
     "findings": {
-      "$or": [
-        {
-          "Compliance": {
-            "Status": [{"anything-but": ["PASSED", "NOT_AVAILABLE"]}]
-          }
-        },
-        {
-          "Vulnerabilities": [ { "exists": true } ]
-        }
-      ],
       "Workflow": {
         "Status": ["NEW", "NOTIFIED"]
       }

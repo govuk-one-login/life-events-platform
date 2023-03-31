@@ -47,31 +47,3 @@ resource "aws_cognito_user_pool_client" "admin" {
   callback_urls                        = [var.callback_url]
   supported_identity_providers         = ["COGNITO"]
 }
-
-resource "aws_cognito_user_pool_client" "events_publish" {
-  name                                 = "${var.environment}-events-publish"
-  user_pool_id                         = aws_cognito_user_pool.pool.id
-  allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_flows                  = ["implicit"]
-  allowed_oauth_scopes                 = ["${local.identifier}/${local.scope_publish}"]
-  generate_secret                      = true
-  explicit_auth_flows                  = ["ADMIN_NO_SRP_AUTH"]
-  callback_urls                        = [var.callback_url]
-  supported_identity_providers         = ["COGNITO"]
-
-  depends_on = [aws_cognito_resource_server.events]
-}
-
-resource "aws_cognito_user_pool_client" "events_consume" {
-  name                                 = "${var.environment}-events-consume"
-  user_pool_id                         = aws_cognito_user_pool.pool.id
-  allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_flows                  = ["implicit"]
-  allowed_oauth_scopes                 = ["${local.identifier}/${local.scope_consume}"]
-  generate_secret                      = true
-  explicit_auth_flows                  = ["ADMIN_NO_SRP_AUTH"]
-  callback_urls                        = [var.callback_url]
-  supported_identity_providers         = ["COGNITO"]
-
-  depends_on = [aws_cognito_resource_server.events]
-}

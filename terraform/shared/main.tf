@@ -65,6 +65,10 @@ module "vpc" {
   enable_dns_hostnames = "true"
 }
 
+resource "aws_default_security_group" "default_security_group" {
+  vpc_id = module.vpc.vpc_id
+}
+
 resource "aws_flow_log" "flow_logs" {
   traffic_type = "ALL"
   vpc_id       = module.vpc.vpc_id

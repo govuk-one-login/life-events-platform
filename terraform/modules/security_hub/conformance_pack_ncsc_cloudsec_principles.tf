@@ -5,7 +5,7 @@ resource "aws_config_conformance_pack" "ncsc_cloudsec_principles" {
   depends_on = [aws_config_configuration_recorder.config]
 
   template_body = <<EOT
-  Parameters:
+Parameters:
   AccessKeysRotatedParamMaxAccessKeyAge:
     Default: '90'
     Type: String

@@ -15,7 +15,7 @@ resource "aws_rds_cluster" "lev_rds_postgres_cluster" {
   master_username    = random_string.rds_username.result
   master_password    = random_password.rds_password.result
 
-  backup_retention_period = 5
+  backup_retention_period = 7
   preferred_backup_window = "07:00-09:00"
 
   kms_key_id          = aws_kms_key.rds_lev_key.arn

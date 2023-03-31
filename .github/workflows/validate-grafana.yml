@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "grafana/Dockerfile"
+      - "grafana/**"
   merge_group:
     paths:
-      - "grafana/Dockerfile"
+      - "grafana/**"
 
 jobs:
   validate-grafana:
@@ -35,4 +35,4 @@ jobs:
         with:
           image-ref: ${{ github.ref_name }}:latest
           exit-code: 1
-          trivyignores: .trivyignore,grafana/.trivyignore
+          trivyignores: grafana/.trivyignore

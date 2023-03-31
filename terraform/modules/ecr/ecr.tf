@@ -34,12 +34,12 @@ resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
         },
         {
             "rulePriority": 2,
-            "description": "Keep last 3 tagged dev images",
+            "description": "Keep last 20 tagged dev images",
             "selection": {
                 "tagStatus": "tagged",
                 "tagPrefixList": ["dev"],
                 "countType": "imageCountMoreThan",
-                "countNumber": 3
+                "countNumber": 20
             },
             "action": {
                 "type": "expire"

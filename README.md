@@ -26,10 +26,11 @@ For running locally against docker instances of the following services:
 
 The service is deployed to AWS, accessible through
 
-| environment | url                                                   |
-|-------------|-------------------------------------------------------|
-| dev         | https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html |
-| demo        | https://d2w5ifs4ir0pe.cloudfront.net/swagger-ui.html  |
+| environment | url                                                                  |
+|-------------|----------------------------------------------------------------------|
+| dev         | https://dev.share-life-events.service.gov.uk/swagger-ui/index.html   |
+| demo        | https://demo.share-life-events.service.gov.uk/swagger-ui/index.html  |
+| prod        | https://share-life-events.service.gov.uk/swagger-ui/index.html       |
 
 ## Architecture
 

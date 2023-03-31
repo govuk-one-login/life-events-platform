@@ -9,7 +9,8 @@
           "LoadBalancerInfo": {
             "ContainerName": "your-container-name",
             "ContainerPort": "your-container-port"
-          }
+          },
+          "PlatformVersion": "LATEST"
         }
       }
     }

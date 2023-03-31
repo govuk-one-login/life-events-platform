@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.31"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.35"))
   implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
   implementation("software.amazon.awssdk:rds")
@@ -75,20 +75,22 @@ dependencies {
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.4")
 
-  implementation("org.javers:javers-spring:6.13.0")
-  implementation("org.javers:javers-persistence-sql:6.12.0")
+  implementation("org.javers:javers-spring:6.14.0")
+  implementation("org.javers:javers-persistence-sql:6.14.0")
+
+  implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
   // test containers
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.17.6"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.433") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.439") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.assertj:assertj-core:3.24.2")
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.12")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.13")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")

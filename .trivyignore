@@ -11,8 +11,3 @@ AVD-DS-0002
 # SnakeYAML Dependency flagged, but not exposed
 # remove when dependencies are updated - GPC-256
 CVE-2022-1471
-
-# This is an issue in the OS image amazoncorretto:19-alpine that has not been solved yet
-# We do not use the functionality that is required for this exploit, remove when fix is
-# released - GPC-267
-CVE-2023-0464

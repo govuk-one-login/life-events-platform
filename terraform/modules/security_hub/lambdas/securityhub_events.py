@@ -47,7 +47,7 @@ def suppress_finding(finding):
         table.get_item(Key={"title": title}).get('Item', {}).get('data', {})
     ))
 
-    if len(suppression_rules):
+    if len(suppression_rules) == 0:
         logger.warning(f'No rules found for title: {title}')
         return None
 

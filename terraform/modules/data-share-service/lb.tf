@@ -4,7 +4,7 @@
 resource "aws_lb" "load_balancer" {
   name                       = "${var.environment}-lb"
   load_balancer_type         = "application"
-  subnets                    = module.vpc.public_subnet_ids
+  subnets                    = module.vpc_new.public_subnet_ids
   security_groups            = [aws_security_group.lb.id]
   drop_invalid_header_fields = true
 }
@@ -86,7 +86,7 @@ resource "aws_lb_target_group" "green" {
   port        = 8080
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = module.vpc_new.vpc_id
 
   health_check {
     path = "/health"
@@ -102,7 +102,7 @@ resource "aws_lb_target_group" "blue" {
   port        = 8080
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = module.vpc_new.vpc_id
 
   health_check {
     path = "/health"

@@ -51,67 +51,38 @@ data "aws_availability_zones" "available" {
 
 data "aws_region" "current" {}
 
-#tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
-module "vpc" {
-  source = "git::https://github.com/Softwire/terraform-vpc-aws?ref=9e9accca08cfa417b265f5c7d9a0c169eb36c57c"
-
-  name_prefix = "shared-"
-  vpc_cidr    = "10.158.32.0/20"
-  acl_ingress_private = [
-    {
-      rule_no    = 1
-      from_port  = 22
-      to_port    = 22
-      cidr_block = "0.0.0.0/0"
-      action     = "DENY"
-      protocol   = "tcp"
-    },
-    {
-      rule_no    = 2
-      from_port  = 3389
-      to_port    = 3389
-      cidr_block = "0.0.0.0/0"
-      action     = "DENY"
-      protocol   = "tcp"
-    },
-    {
-      rule_no    = 100
-      from_port  = 0
-      to_port    = 0
-      cidr_block = "0.0.0.0/0"
-      action     = "ALLOW"
-      protocol   = -1
-    }
-  ]
-
-  # At least two availability zones are required in order to set up a load balancer, so that the
-  # infrastructure is kept consistent with other environments which use multiple availability zones.
-  availability_zones = data.aws_availability_zones.available.zone_ids
-
-  enable_dns_hostnames = "true"
+moved {
+  from = module.vpc
+  to   = module.vpc_new.module.vpc
 }
 
-resource "aws_default_security_group" "default_security_group" {
-  vpc_id = module.vpc.vpc_id
+moved {
+  from = module.flow_logs_s3
+  to   = module.vpc_new.module.flow_logs_s3
 }
 
-resource "aws_default_network_acl" "default_network_acl" {
-  default_network_acl_id = module.vpc.default_network_acl_id
+moved {
+  from = aws_flow_log.flow_logs
+  to   = module.vpc_new.aws_flow_log.flow_logs
 }
 
-resource "aws_flow_log" "flow_logs" {
-  traffic_type = "ALL"
-  vpc_id       = module.vpc.vpc_id
-
-  log_destination_type = "s3"
-  log_destination      = module.flow_logs_s3.arn
+moved {
+  from = aws_default_security_group.default_security_group
+  to   = module.vpc_new.aws_default_security_group.default_security_group
 }
 
-module "flow_logs_s3" {
-  source = "../modules/s3"
+moved {
+  from = aws_default_network_acl.default_network_acl
+  to   = module.vpc_new.aws_default_network_acl.default_network_acl
+}
+
+module "vpc_new" {
+  source = "../modules/vpc"
 
   environment = local.env
-  name        = "vpc-flow-logs"
+  account_id  = data.aws_caller_identity.current.account_id
+  name_prefix = "${local.env}-"
+  vpc_cidr    = "10.158.32.0/20"
 }
 
 module "grafana" {
@@ -124,9 +95,9 @@ module "grafana" {
   region     = "eu-west-2"
   account_id = data.aws_caller_identity.current.account_id
 
-  vpc_id             = module.vpc.vpc_id
-  public_subnet_ids  = module.vpc.public_subnet_ids
-  private_subnet_ids = module.vpc.private_subnet_ids
+  vpc_id             = module.vpc_new.vpc_id
+  public_subnet_ids  = module.vpc_new.public_subnet_ids
+  private_subnet_ids = module.vpc_new.private_subnet_ids
   vpc_cidr           = "10.158.32.0/20"
 
   ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"

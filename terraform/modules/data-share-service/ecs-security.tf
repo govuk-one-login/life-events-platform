@@ -1,7 +1,7 @@
 resource "aws_security_group" "ecs_tasks" {
   name        = "${var.environment}-ecs-tasks"
   description = "For GDX Data Share PoC Service ECS tasks, inbound access from GDX LB only"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = module.vpc_new.vpc_id
 
   lifecycle {
     create_before_destroy = true

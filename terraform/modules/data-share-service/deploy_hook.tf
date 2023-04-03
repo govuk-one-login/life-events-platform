@@ -6,7 +6,7 @@ module "deploy_hook" {
   codedeploy_arn              = aws_codedeploy_deployment_group.gdx_data_share_poc.arn
 
   security_group_id = aws_security_group.lambda.id
-  subnet_ids        = module.vpc.private_subnet_ids
+  subnet_ids        = module.vpc_new.private_subnet_ids
 
   test_gdx_url     = "http://${aws_lb.load_balancer.dns_name}:8080"
   test_auth_header = random_password.test_auth_header.result
@@ -18,7 +18,7 @@ module "deploy_hook" {
 resource "aws_security_group" "lambda" {
   name        = "${var.environment}-deploy-hook-lambda"
   description = "Egress rules for lambda"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = module.vpc_new.vpc_id
 
   lifecycle {
     create_before_destroy = true

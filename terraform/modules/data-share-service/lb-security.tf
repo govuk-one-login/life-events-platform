@@ -1,7 +1,7 @@
 resource "aws_security_group" "lb" {
   name        = "${var.environment}-lb"
   description = "Allow access to GDX data share POC LB from Cloudfront"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = module.vpc_new.vpc_id
 
   lifecycle {
     create_before_destroy = true
@@ -30,7 +30,7 @@ resource "aws_security_group_rule" "lb_test" {
   to_port           = 8080
   description       = "LB ingress rule for tests"
   security_group_id = aws_security_group.lb.id
-  cidr_blocks       = [for ip in module.vpc.nat_gateway_public_eips : "${ip}/32"]
+  cidr_blocks       = [for ip in module.vpc_new.nat_gateway_public_eips : "${ip}/32"]
 }
 
 resource "aws_security_group_rule" "lb_egress" {

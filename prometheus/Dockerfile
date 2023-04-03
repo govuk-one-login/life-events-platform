@@ -23,6 +23,8 @@ COPY --from=base /healthcheck /healthcheck
 COPY adot-config.template.yaml /etc/ecs/adot-config.template.yaml
 COPY start_collector.sh /etc/ecs/start_collector.sh
 
+RUN chmod +x /etc/ecs/start_collector.sh
+
 EXPOSE 2000/tcp
 EXPOSE 4317/tcp
 EXPOSE 55681/tcp

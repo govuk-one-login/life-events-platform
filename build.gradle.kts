@@ -10,7 +10,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.0"
   id("org.jmailen.kotlinter") version "3.14.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
-  kotlin("jvm") version "1.8.10"
+  kotlin("jvm") version "1.8.20"
   kotlin("plugin.spring") version "1.8.20"
   id("com.netflix.nebula.jakartaee-migration") version "0.2.0"
 }

@@ -67,9 +67,7 @@ module "flow_logs_s3" {
 
   environment = var.environment
   name        = "vpc-flow-logs"
-
-  kms_key_policy_json = data.aws_iam_policy_document.kms_flow_logs_policy.json
-  allow_logs          = true
+  allow_logs  = true
 }
 
 data "aws_iam_policy_document" "kms_flow_logs_policy" {

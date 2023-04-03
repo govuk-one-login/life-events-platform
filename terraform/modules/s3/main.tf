@@ -18,26 +18,14 @@ resource "aws_s3_bucket_versioning" "bucket" {
   }
 }
 
-resource "aws_kms_key" "bucket" {
-  enable_key_rotation = true
-  description         = "Key used to encrypt state bucket"
-
-  policy = var.kms_key_policy_json
-}
-
-resource "aws_kms_alias" "bucket_alias" {
-  name          = "alias/${var.environment}/${var.name}-bucket-key"
-  target_key_id = aws_kms_key.bucket.arn
-}
-
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket" {
   bucket = aws_s3_bucket.bucket.bucket
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.bucket.arn
-      sse_algorithm     = "aws:kms"
+      sse_algorithm = "aws:kms"
     }
+    bucket_key_enabled = true
   }
 }
 

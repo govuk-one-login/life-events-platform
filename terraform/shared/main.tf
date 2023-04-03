@@ -51,7 +51,17 @@ data "aws_availability_zones" "available" {
 
 data "aws_region" "current" {}
 
-module "vpc" {
+moved {
+  from = module.vpc
+  to   = module.vpc_new.module.vpc
+}
+
+moved {
+  from = module.flow_logs_s3
+  to   = module.vpc_new.module.flow_logs_s3
+}
+
+module "vpc_new" {
   source = "../modules/vpc"
 
   environment = local.env
@@ -70,9 +80,9 @@ module "grafana" {
   region     = "eu-west-2"
   account_id = data.aws_caller_identity.current.account_id
 
-  vpc_id             = module.vpc.vpc_id
-  public_subnet_ids  = module.vpc.public_subnet_ids
-  private_subnet_ids = module.vpc.private_subnet_ids
+  vpc_id             = module.vpc_new.vpc_id
+  public_subnet_ids  = module.vpc_new.public_subnet_ids
+  private_subnet_ids = module.vpc_new.private_subnet_ids
   vpc_cidr           = "10.158.32.0/20"
 
   ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"

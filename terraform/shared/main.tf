@@ -88,12 +88,24 @@ module "securityhub" {
   rules = [
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"
-      disabled_reason = "For our development account we do not need to enforce this"
+      disabled_reason = "For this GDS created account this is not possible to enforce"
     },
     {
       rule            = "cis-aws-foundations-benchmark/v/1.4.0/1.6"
-      disabled_reason = "For our development account we do not need to enforce this"
-    }
+      disabled_reason = "For this GDS created account this is not possible to enforce"
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECS.5"
+      disabled_reason = "Our ECS containers need write access to the root filesystem."
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECS.10"
+      disabled_reason = "Our ECS containers run on the latest fargate versions, as shown in the ci appspec template, however Security Hub is not picking this up."
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECR.2"
+      disabled_reason = "For grafana our tags needs to be mutable so that our latest and deployed version tracks the most recent, lev-api and aws-xray-daemon are both pull through repos so we cannot enforce immutable tags."
+    },
   ]
 }
 

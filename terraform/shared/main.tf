@@ -61,11 +61,6 @@ module "vpc" {
   vpc_cidr    = "10.158.32.0/20"
 }
 
-moved {
-  from = module.vpc_new
-  to   = module.vpc
-}
-
 module "grafana" {
   source = "../modules/grafana"
   providers = {

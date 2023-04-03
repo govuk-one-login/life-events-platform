@@ -51,38 +51,18 @@ data "aws_availability_zones" "available" {
 
 data "aws_region" "current" {}
 
-moved {
-  from = module.vpc
-  to   = module.vpc_new.module.vpc
-}
-
-moved {
-  from = module.flow_logs_s3
-  to   = module.vpc_new.module.flow_logs_s3
-}
-
-moved {
-  from = aws_flow_log.flow_logs
-  to   = module.vpc_new.aws_flow_log.flow_logs
-}
-
-moved {
-  from = aws_default_security_group.default_security_group
-  to   = module.vpc_new.aws_default_security_group.default_security_group
-}
-
-moved {
-  from = aws_default_network_acl.default_network_acl
-  to   = module.vpc_new.aws_default_network_acl.default_network_acl
-}
-
-module "vpc_new" {
+module "vpc" {
   source = "../modules/vpc"
 
   environment = local.env
   account_id  = data.aws_caller_identity.current.account_id
   name_prefix = "${local.env}-"
   vpc_cidr    = "10.158.32.0/20"
+}
+
+moved {
+  from = module.vpc_new
+  to   = module.vpc
 }
 
 module "grafana" {
@@ -95,9 +75,9 @@ module "grafana" {
   region     = "eu-west-2"
   account_id = data.aws_caller_identity.current.account_id
 
-  vpc_id             = module.vpc_new.vpc_id
-  public_subnet_ids  = module.vpc_new.public_subnet_ids
-  private_subnet_ids = module.vpc_new.private_subnet_ids
+  vpc_id             = module.vpc.vpc_id
+  public_subnet_ids  = module.vpc.public_subnet_ids
+  private_subnet_ids = module.vpc.private_subnet_ids
   vpc_cidr           = "10.158.32.0/20"
 
   ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"

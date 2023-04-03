@@ -20,6 +20,19 @@ resource "aws_s3_bucket_versioning" "state_bucket" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
+  bucket = aws_s3_bucket.state_bucket.id
+
+  rule {
+    id = "${aws_s3_bucket.state_bucket.bucket}-lifecycle-rule"
+    noncurrent_version_transition {
+      noncurrent_days = 10
+      storage_class   = "GLACIER"
+    }
+    status = "Enabled"
+  }
+}
+
 resource "aws_kms_key" "state_bucket" {
   enable_key_rotation = true
   description         = "Key used to encrypt state bucket"

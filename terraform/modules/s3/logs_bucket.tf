@@ -34,6 +34,19 @@ resource "aws_s3_bucket_public_access_block" "log_bucket" {
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
+  bucket = aws_s3_bucket.log_bucket.id
+
+  rule {
+    id = "${aws_s3_bucket.log_bucket.bucket}-lifecycle-rule"
+    noncurrent_version_transition { //should this be non concurrent?
+      noncurrent_days = 180
+      storage_class   = "INTELLIGENT_TIERING"
+    }
+    status = "Enabled"
+  }
+}
+
 data "aws_iam_policy_document" "log_bucket_deny_insecure_transport" {
   statement {
     sid    = "DenyInsecureTransport"

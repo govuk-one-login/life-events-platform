@@ -61,6 +61,21 @@ moved {
   to   = module.vpc_new.module.flow_logs_s3
 }
 
+moved {
+  from = aws_flow_log.flow_logs
+  to   = module.vpc_new.aws_flow_log.flow_logs
+}
+
+moved {
+  from = aws_default_security_group.default_security_group
+  to   = module.vpc_new.aws_default_security_group.default_security_group
+}
+
+moved {
+  from = aws_default_network_acl.default_network_acl
+  to   = module.vpc_new.aws_default_network_acl.default_network_acl
+}
+
 module "vpc_new" {
   source = "../modules/vpc"
 

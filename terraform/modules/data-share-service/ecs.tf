@@ -107,7 +107,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       volumesFrom : [],
       essential : true,
       cpu : 0,
-      readonlyRootFileSystem : true,
     },
     {
       name : "xray-daemon",
@@ -125,7 +124,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       volumesFrom : [],
       essential : true,
       environment : [],
-      readonlyRootFileSystem : true,
     },
     {
       name : "adot-collector",

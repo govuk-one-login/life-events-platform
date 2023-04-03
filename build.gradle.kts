@@ -98,7 +98,7 @@ dependencies {
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
-  testImplementation("com.approvaltests:approvaltests:18.5.0")
+  testImplementation("com.approvaltests:approvaltests:18.6.0")
   testImplementation("com.google.code.gson:gson:2.10.1") // Needed for JsonApprovals
 }
 

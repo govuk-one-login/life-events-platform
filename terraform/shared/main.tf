@@ -56,6 +56,7 @@ module "vpc" {
 
   environment = local.env
   account_id  = data.aws_caller_identity.current.account_id
+  region      = data.aws_region.current.name
   name_prefix = "${local.env}-"
   vpc_cidr    = "10.158.32.0/20"
 }
@@ -72,7 +73,7 @@ module "grafana" {
     aws.us-east-1 = aws.us-east-1
   }
 
-  region     = "eu-west-2"
+  region     = data.aws_region.current.name
   account_id = data.aws_caller_identity.current.account_id
 
   vpc_id             = module.vpc.vpc_id

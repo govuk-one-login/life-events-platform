@@ -149,7 +149,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         },
         { "name" : "AWS_REGION", "value" : var.region },
       ],
-      readonlyRootFileSystem : true,
     },
   ])
 }

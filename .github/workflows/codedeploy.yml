@@ -13,6 +13,9 @@ on:
       image:
         required: true
         type: string
+      registry:
+        required: true
+        type: string
 
 concurrency:
   group: application-pipeline-${{ inputs.environment }}
@@ -72,8 +75,8 @@ jobs:
       - name: Get the most recent prometheus image ID
         id: prometheus-adot-image
         run: |
-          IMAGE=$(aws ecr describe-images --repository-name ${{ steps.vars.outputs.prometheus_image_name }} --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq --raw-output)
-          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          IMAGE_TAG=$(aws ecr describe-images --repository-name ${{ steps.vars.outputs.prometheus_image_name }} --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq --raw-output)
+          echo "image=${{ inputs.registry }}/${{ steps.vars.outputs.prometheus_image_name }}:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Set ECS task definition
         id: task-definition

@@ -30,6 +30,7 @@ jobs:
     with:
       environment: dev
       image: ${{ needs.build-and-push-image.outputs.image }}
+      registry: ${{ needs.build-and-push-image.outputs.registry }}
 
   deploy-demo:
     name: Deploy demo environment
@@ -38,4 +39,5 @@ jobs:
     with:
       environment: demo
       image: ${{ needs.build-and-push-image.outputs.image }}
+      registry: ${{ needs.build-and-push-image.outputs.registry }}
 

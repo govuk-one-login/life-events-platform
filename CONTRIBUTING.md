@@ -2,13 +2,13 @@
 
 ## Onboarding as a developer
 
-- request access for GitHub and AWS Console 
+- request access for GitHub and AWS Console
 - make sure MFA is enabled on AWS Console account
 
 ## Local Development Setup
 
 Requirements
-- Java 19 (Coretto recommended) for local running, test running
+- Java 20 (Coretto recommended) for local running, test running
 
 Generally, development is easier with
 - IntelliJ

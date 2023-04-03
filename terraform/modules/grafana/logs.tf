@@ -43,4 +43,17 @@ data "aws_iam_policy_document" "kms_log_key_policy" {
     ]
     resources = ["*"]
   }
+  statement {
+    sid    = "Allow CloudFront to use the key to deliver logs"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+    actions = [
+      "kms:GenerateDataKey*",
+      "kms:Decrypt"
+    ]
+    resources = ["*"]
+  }
 }

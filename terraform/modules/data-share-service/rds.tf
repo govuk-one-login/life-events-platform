@@ -95,7 +95,7 @@ resource "aws_rds_cluster_instance" "db_aurora_az2" {
 resource "aws_security_group" "rds_postgres_cluster" {
   name_prefix = "${var.environment}-rds-postgres-cluster-"
   description = "For RDS cluster, inbound access from ECS or bastion host only"
-  vpc_id      = module.vpc_new.vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     protocol        = "tcp"
@@ -120,5 +120,5 @@ resource "aws_security_group" "rds_postgres_cluster" {
 
 resource "aws_db_subnet_group" "rds_postgres_cluster" {
   name       = "${var.environment}-rds-postgres-cluster-subnet"
-  subnet_ids = module.vpc_new.private_subnet_ids
+  subnet_ids = module.vpc.private_subnet_ids
 }

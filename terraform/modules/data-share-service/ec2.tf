@@ -14,7 +14,7 @@ data "aws_ami" "amazon_linux" {
 resource "aws_instance" "rds_bastion_host" {
   ami                         = data.aws_ami.amazon_linux.id
   instance_type               = "t3a.nano"
-  subnet_id                   = module.vpc_new.private_subnet_ids[0]
+  subnet_id                   = module.vpc.private_subnet_ids[0]
   associate_public_ip_address = false
   vpc_security_group_ids      = [aws_security_group.rds_bastion_host_sg.id]
   iam_instance_profile        = aws_iam_instance_profile.rds_bastion_instance_profile.name
@@ -33,7 +33,7 @@ resource "aws_instance" "rds_bastion_host" {
 resource "aws_security_group" "rds_bastion_host_sg" {
   name_prefix = "${var.environment}-rds-bastion-"
   description = "For bastion host access to GDX Data Share PoC Service RDS instances"
-  vpc_id      = module.vpc_new.vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   egress {
     protocol    = "tcp"
@@ -47,7 +47,7 @@ resource "aws_security_group" "rds_bastion_host_sg" {
     protocol    = "tcp"
     from_port   = 443
     to_port     = 443
-    cidr_blocks = [module.vpc_new.private_cidr_blocks[0]]
+    cidr_blocks = [module.vpc.private_cidr_blocks[0]]
     description = "Allow egress inside subnet to hit SSM privatelink endpoint"
   }
 
@@ -103,7 +103,7 @@ resource "aws_iam_instance_profile" "rds_bastion_instance_profile" {
 resource "aws_security_group" "rds_bastion_host_vpc_endpoint_sg" {
   name_prefix = "${var.environment}-rds-bastion-vpc-endpoint-"
   description = "For access from the subnet which the bastion host for GDX Data Share PoC Service RDS instances lies in"
-  vpc_id      = module.vpc_new.vpc_id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     protocol    = "tcp"
@@ -119,28 +119,28 @@ resource "aws_security_group" "rds_bastion_host_vpc_endpoint_sg" {
 }
 
 resource "aws_vpc_endpoint" "rds_bastion_vpc_endpoint_ssm" {
-  vpc_id              = module.vpc_new.vpc_id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.eu-west-2.ssm"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [module.vpc_new.private_subnet_ids[0]]
+  subnet_ids          = [module.vpc.private_subnet_ids[0]]
   private_dns_enabled = true
   security_group_ids  = [aws_security_group.rds_bastion_host_vpc_endpoint_sg.id]
 }
 
 resource "aws_vpc_endpoint" "rds_bastion_vpc_endpoint_ssm_messages" {
-  vpc_id              = module.vpc_new.vpc_id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.eu-west-2.ssmmessages"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [module.vpc_new.private_subnet_ids[0]]
+  subnet_ids          = [module.vpc.private_subnet_ids[0]]
   private_dns_enabled = true
   security_group_ids  = [aws_security_group.rds_bastion_host_vpc_endpoint_sg.id]
 }
 
 resource "aws_vpc_endpoint" "rds_bastion_vpc_endpoint_ec2_messages" {
-  vpc_id              = module.vpc_new.vpc_id
+  vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.eu-west-2.ec2messages"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [module.vpc_new.private_subnet_ids[0]]
+  subnet_ids          = [module.vpc.private_subnet_ids[0]]
   private_dns_enabled = true
   security_group_ids  = [aws_security_group.rds_bastion_host_vpc_endpoint_sg.id]
 }

@@ -74,8 +74,8 @@ module "flow_logs_s3" {
 
 data "aws_iam_policy_document" "kms_flow_logs_policy" {
   statement {
-    effect = "Allow"
     sid    = "Enable IAM User Permissions"
+    effect = "Allow"
     principals {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${var.account_id}:root"]
@@ -83,24 +83,36 @@ data "aws_iam_policy_document" "kms_flow_logs_policy" {
     actions   = ["kms:*"]
     resources = ["*"]
   }
+
   statement {
     effect = "Allow"
     principals {
       type        = "Service"
-      identifiers = ["vpc-flow-logs.amazonaws.com"]
+      identifiers = ["delivery.logs.amazonaws.com"]
     }
     actions = [
-      "kms:Encrypt*",
-      "kms:Decrypt*",
+      "kms:Encrypt",
+      "kms:Decrypt",
       "kms:ReEncrypt*",
       "kms:GenerateDataKey*",
-      "kms:Describe*"
+      "kms:DescribeKey",
     ]
     resources = ["*"]
-    condition {
-      test     = "StringEquals"
-      variable = "aws:SourceAccount"
-      values   = [var.account_id]
+  }
+
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${var.region}.amazonaws.com"]
     }
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+    resources = ["*"]
   }
 }

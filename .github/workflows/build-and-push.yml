@@ -9,6 +9,8 @@ on:
     outputs:
       image:
         value: ${{ jobs.build-image.outputs.image }}
+      registry:
+        value: ${{ jobs.build-image.outputs.registry }}
 
 jobs:
   build-image:
@@ -17,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.push-image.outputs.image }}
+      registry: ${{ steps.login-ecr.outputs.registry }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

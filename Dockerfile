@@ -13,7 +13,7 @@ ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 COPY . .
 RUN ./gradlew clean assemble -Dorg.gradle.daemon=false
 
-FROM amazoncorretto:20-alpine
+FROM amazoncorretto:20.0.0-alpine3.17
 LABEL maintainer="GDX Platform Team <gdx-dev-team@digital.cabinet-office.gov.uk>"
 
 RUN apk --no-cache upgrade

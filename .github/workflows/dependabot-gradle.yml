@@ -6,7 +6,7 @@ on:
 
 jobs:
   update-gradle-lock:
-    if: ${{ github.event.label.name == 'dependabot-gradle' }}
+    if: ${{ github.event.label.name == "dependabot-gradle" && github.event.head_commit.message != "GPC-NONE: Automatically update gradle.lockfile" }}
     name: Fix gradle lockfile for dependabot
     runs-on: ubuntu-latest
     permissions:
@@ -14,12 +14,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
 
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: corretto
-          java-version: 19
+          java-version: 20
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -30,4 +32,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "GPC-NONE: Automatically update gradle.lockfile"
-          file_pattern: '*.kt'
+          file_pattern: 'gradle.lockfile'

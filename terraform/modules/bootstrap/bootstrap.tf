@@ -94,7 +94,16 @@ data "aws_iam_policy_document" "deny_insecure_transport" {
   }
 }
 
-resource "aws_s3_bucket_policy" "deny_insecure_transport" {
+data "aws_iam_policy_document" "bucket_policy" {
+  source_policy_documents = length(var.cross_account_arns) == 0 ? [
+    data.aws_iam_policy_document.deny_insecure_transport.json
+    ] : [
+    data.aws_iam_policy_document.deny_insecure_transport.json,
+    data.aws_iam_policy_document.cross_account_access.json
+  ]
+}
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.state_bucket.id
-  policy = data.aws_iam_policy_document.deny_insecure_transport.json
+  policy = data.aws_iam_policy_document.bucket_policy.json
 }

@@ -65,8 +65,8 @@ resource "aws_flow_log" "flow_logs" {
 module "flow_logs_s3" {
   source = "../s3"
 
-  environment = var.environment
-  name        = "vpc-flow-logs"
+  environment     = var.environment
+  name            = "vpc-flow-logs"
   expiration_days = 180
 
   kms_key_policy_json = data.aws_iam_policy_document.kms_flow_logs_policy.json

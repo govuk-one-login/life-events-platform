@@ -29,6 +29,8 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   db_subnet_group_name            = aws_db_subnet_group.rds_postgres_cluster.name
   enabled_cloudwatch_logs_exports = ["postgresql"]
 
+  deletion_protection = true
+
   serverlessv2_scaling_configuration {
     min_capacity = 0.5
     max_capacity = 2.0

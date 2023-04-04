@@ -39,8 +39,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
 
   rule {
     id = "${aws_s3_bucket.log_bucket.bucket}-lifecycle-rule"
-    noncurrent_version_transition { //should this be non concurrent?
-      noncurrent_days = 180
+    transition {
+      days = 180
       storage_class   = "INTELLIGENT_TIERING"
     }
     status = "Enabled"

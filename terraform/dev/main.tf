@@ -131,3 +131,7 @@ module "consumer" {
   lev_api_url                 = "https://${module.lev_api.service_url}"
   schedule                    = "cron(0,30 9-18 ? * MON-FRI *)"
 }
+
+module "dwp_dev" {
+  source = "../modules/dwp_dev"
+}

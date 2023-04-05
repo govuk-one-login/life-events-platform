@@ -195,6 +195,64 @@ resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {
   policy_arn = aws_iam_policy.ecs_task_sqs_access.arn
 }
 
+data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
+  statement {
+    sid = "manage-acquirer-queues"
+    actions = [
+      "sqs:AddPermission",
+      "sqs:CreateQueue",
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:ListQueueTags",
+      "sqs:SendMessage",
+      "sqs:SetQueueAttributes",
+      "sqs:TagQueue"
+    ]
+    resources = ["arn:aws:sqs:${var.region}:${data.aws_caller_identity.current.account_id}:acq_${var.environment}_*"]
+    effect    = "Allow"
+  }
+
+  statement {
+    sid = "create-new-keys"
+    actions = [
+      "kms:CreateKey"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+    condition {
+      test     = "StringEquals"
+      values   = ["SYMMETRIC_DEFAULT"]
+      variable = "kms:KeySpec"
+    }
+    condition {
+      test     = "StringEquals"
+      values   = ["ENCRYPT_DECRYPT"]
+      variable = "kms:KeyUsage"
+    }
+  }
+  statement {
+    # This allows an alias to be created, but does not allow it to be attached to a key. The key policy must grant
+    # CreateAlias permission, so the application can only alias keys it creates
+    sid = "create-alias"
+    actions = [
+      "kms:CreateAlias"
+    ]
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:alias/${var.environment}-acq-queue-*"]
+
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_manage_acquirer_queues" {
+  name   = "${var.environment}-ecs-task-manage-acquirer-queues"
+  policy = data.aws_iam_policy_document.ecs_task_manage_acquirer_queues.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_manage_acquirer_queues" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_manage_acquirer_queues.arn
+}
+
 data "aws_iam_policy_document" "ecs_task_rds_access" {
   statement {
     actions = ["rds-db:connect"]

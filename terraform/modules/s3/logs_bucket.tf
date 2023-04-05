@@ -34,7 +34,7 @@ resource "aws_s3_bucket_public_access_block" "log_bucket" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
+resource "aws_s3_bucket_lifecycle_configuration" "log_bucket_lifecycle" {
   bucket = aws_s3_bucket.log_bucket.id
 
   rule {

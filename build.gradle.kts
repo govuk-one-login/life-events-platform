@@ -65,7 +65,7 @@ dependencies {
 
   implementation("org.springdoc:springdoc-openapi-starter-common:2.1.0")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.0.4")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.1.0")
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

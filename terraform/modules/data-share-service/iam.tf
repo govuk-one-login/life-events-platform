@@ -197,7 +197,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {
 
 data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
   statement {
-    sid = "manage-acquirer-queues"
+    sid = "manageAcquirerQueues"
     actions = [
       "sqs:AddPermission",
       "sqs:CreateQueue",
@@ -213,7 +213,7 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
   }
 
   statement {
-    sid = "create-new-keys"
+    sid = "createNewKeys"
     actions = [
       "kms:CreateKey"
     ]
@@ -233,7 +233,7 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
   statement {
     # This allows an alias to be created, but does not allow it to be attached to a key. The key policy must grant
     # CreateAlias permission, so the application can only alias keys it creates
-    sid = "create-alias"
+    sid = "createAlias"
     actions = [
       "kms:CreateAlias"
     ]

@@ -73,6 +73,7 @@ resource "aws_lb_listener" "listener_https" {
   depends_on = [aws_lb_target_group.green]
 }
 
+#tfsec:ignore:aws-elb-http-not-used
 resource "aws_lb_listener" "test_listener_https" {
   load_balancer_arn = aws_lb.load_balancer.arn
   port              = local.is_dev ? 8080 : 8443

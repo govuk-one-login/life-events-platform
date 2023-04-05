@@ -1,12 +1,12 @@
-name: Fix gradle lockfile for dependabot
+name: Fix gradle lockfile
 
 on:
   pull_request:
-    types: [ labeled ]
+    paths:
+      - "build.gradle.kts"
 
 jobs:
   update-gradle-lock:
-    if: ${{ github.event.label.name == 'dependabot-gradle' }}
     name: Fix gradle lockfile for dependabot
     runs-on: ubuntu-latest
     permissions:

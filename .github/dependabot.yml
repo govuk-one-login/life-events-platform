@@ -6,9 +6,6 @@ updates:
       interval: daily
     commit-message:
       prefix: "GPC-NONE"
-    labels:
-      - "dependencies"
-      - "dependabot-gradle"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:

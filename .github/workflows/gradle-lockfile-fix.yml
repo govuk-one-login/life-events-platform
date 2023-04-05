@@ -9,11 +9,13 @@ jobs:
   update-gradle-lock:
     name: Fix gradle lockfile for dependabot
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.SLACK_CHANNEL_ID }}
+          token: ${{ secrets.PAT }}
 
       - name: Setup Java
         uses: actions/setup-java@v3

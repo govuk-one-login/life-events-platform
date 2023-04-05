@@ -11,7 +11,6 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     origin_id   = "${var.environment}-gdx-data-share-poc-lb"
 
     custom_origin_config {
-      # Required but irrelevant - we do not use HTTP to talk to LB
       http_port              = 80
       https_port             = 443
       origin_protocol_policy = local.is_dev ? "http-only" : "https-only"

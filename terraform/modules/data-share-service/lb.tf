@@ -73,6 +73,11 @@ resource "aws_lb_listener" "listener_https" {
   depends_on = [aws_lb_target_group.green]
 }
 
+moved {
+  from = aws_lb_listener.listener_http
+  to   = aws_lb_listener.listener_https
+}
+
 #tfsec:ignore:aws-elb-http-not-used
 resource "aws_lb_listener" "test_listener_https" {
   load_balancer_arn = aws_lb.load_balancer.arn
@@ -95,6 +100,11 @@ resource "aws_lb_listener" "test_listener_https" {
   }
 
   depends_on = [aws_lb_target_group.blue]
+}
+
+moved {
+  from = aws_lb_listener.test_listener_http
+  to   = aws_lb_listener.test_listener_https
 }
 
 resource "random_password" "test_auth_header" {

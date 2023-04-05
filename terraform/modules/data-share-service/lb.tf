@@ -1,3 +1,9 @@
+locals {
+  # Adding HTTPS between cloudfront and load balancers breaks the cloudfront assigned domain name
+  # DWP are using this URL on dev, so we only want to turn on HTTPS for demo for now
+  is_dev = var.environment == "dev"
+}
+
 # We want the load balancer available to our cloudfront distribution, it is locked down from the wider internet with
 # security group rules
 #tfsec:ignore:aws-elb-alb-not-public
@@ -15,12 +21,45 @@ resource "random_id" "http_sufix" {
   byte_length = 2
 }
 
-#TODO-https://github.com/alphagov/gdx-data-share-poc/issues/20: When we have our own route53 we can lock this to HTTPS
+resource "aws_acm_certificate" "acm_lb_certificate" {
+  domain_name       = var.hosted_zone_name
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route53_record" "lb_cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.acm_lb_certificate.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = var.hosted_zone_id
+}
+
+resource "aws_acm_certificate_validation" "acm_lb_certificate_validation" {
+  certificate_arn         = aws_acm_certificate.acm_lb_certificate.arn
+  validation_record_fqdns = [for record in aws_route53_record.lb_cert_validation : record.fqdn]
+}
+
 #tfsec:ignore:aws-elb-http-not-used
-resource "aws_lb_listener" "listener_http" {
+resource "aws_lb_listener" "listener_https" {
   load_balancer_arn = aws_lb.load_balancer.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = local.is_dev ? 80 : 443
+  protocol          = local.is_dev ? "HTTP" : "HTTPS"
+  ssl_policy        = local.is_dev ? null : "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = local.is_dev ? null : aws_acm_certificate_validation.acm_lb_certificate_validation.certificate_arn
+
 
   default_action {
     type             = "forward"
@@ -34,11 +73,18 @@ resource "aws_lb_listener" "listener_http" {
   depends_on = [aws_lb_target_group.green]
 }
 
+moved {
+  from = aws_lb_listener.listener_http
+  to   = aws_lb_listener.listener_https
+}
+
 #tfsec:ignore:aws-elb-http-not-used
-resource "aws_lb_listener" "test_listener_http" {
+resource "aws_lb_listener" "test_listener_https" {
   load_balancer_arn = aws_lb.load_balancer.arn
-  port              = 8080
-  protocol          = "HTTP"
+  port              = local.is_dev ? 8080 : 8443
+  protocol          = local.is_dev ? "HTTP" : "HTTPS"
+  ssl_policy        = local.is_dev ? null : "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = local.is_dev ? null : aws_acm_certificate_validation.acm_lb_certificate_validation.certificate_arn
 
   default_action {
     type = "fixed-response"
@@ -56,13 +102,18 @@ resource "aws_lb_listener" "test_listener_http" {
   depends_on = [aws_lb_target_group.blue]
 }
 
+moved {
+  from = aws_lb_listener.test_listener_http
+  to   = aws_lb_listener.test_listener_https
+}
+
 resource "random_password" "test_auth_header" {
   length  = 64
   special = false
 }
 
 resource "aws_lb_listener_rule" "protected_test_forward" {
-  listener_arn = aws_lb_listener.test_listener_http.arn
+  listener_arn = aws_lb_listener.test_listener_https.arn
   priority     = 100
 
   action {

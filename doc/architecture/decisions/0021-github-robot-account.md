@@ -1,6 +1,6 @@
 # 21. GitHub robot account
 
-[Next >>](9999-end.md)
+[Next >>](0022-allow-application-to-manage-acquirer-queues.md)
 
 Date: 2023-04-04
 
@@ -35,5 +35,4 @@ managed.
 As an additional benefit we can now have the auto formatting actions use this PAT as well, allowing for the contributors
 not needing to recommit any changes it makes like they currently do (normally through squashing).
 
-[Next >>](9999-end.md)
-
+[Next >>](0022-allow-application-to-manage-acquirer-queues.md)

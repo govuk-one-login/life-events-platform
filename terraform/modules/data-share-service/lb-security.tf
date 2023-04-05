@@ -15,8 +15,8 @@ data "aws_ec2_managed_prefix_list" "cloudfront" {
 resource "aws_security_group_rule" "lb_cloudfront" {
   type              = "ingress"
   protocol          = "tcp"
-  from_port         = 80
-  to_port           = 80
+  from_port         = local.is_dev ? 80 : 443
+  to_port           = local.is_dev ? 80 : 443
   description       = "LB ingress rule for cloudfront"
   security_group_id = aws_security_group.lb.id
   prefix_list_ids   = [data.aws_ec2_managed_prefix_list.cloudfront.id]
@@ -26,8 +26,8 @@ resource "aws_security_group_rule" "lb_cloudfront" {
 resource "aws_security_group_rule" "lb_test" {
   type              = "ingress"
   protocol          = "tcp"
-  from_port         = 8080
-  to_port           = 8080
+  from_port         = local.is_dev ? 8080 : 8443
+  to_port           = local.is_dev ? 8080 : 8443
   description       = "LB ingress rule for tests"
   security_group_id = aws_security_group.lb.id
   cidr_blocks       = [for ip in module.vpc.nat_gateway_public_eips : "${ip}/32"]

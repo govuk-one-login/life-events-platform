@@ -2,7 +2,6 @@ locals {
   gdx_api_base_url = "https://${aws_cloudfront_distribution.gdx_data_share_poc.domain_name}"
 }
 
-#TODO-https://github.com/alphagov/gdx-data-share-poc/issues/20: When we have our own route53 we can specify certs and not use default
 #tfsec:ignore:aws-cloudfront-use-secure-tls-policy
 resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
   provider = aws.us-east-1
@@ -12,11 +11,11 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     origin_id   = "${var.environment}-gdx-data-share-poc-lb"
 
     custom_origin_config {
+      # Required but irrelevant - we do not use HTTP to talk to LB
       http_port              = 80
       https_port             = 443
-      origin_protocol_policy = "http-only"
-      # Required but irrelevant - we do not use HTTPS to talk to LB
-      origin_ssl_protocols = ["TLSv1.2"]
+      origin_protocol_policy = local.is_dev ? "http-only" : "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
       # AWS enforce a maximum of 60s, but we can request more if desired.
       # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginResponseTimeout
       origin_read_timeout = 60

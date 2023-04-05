@@ -27,7 +27,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
     id = "${aws_s3_bucket.state_bucket.bucket}-lifecycle-rule"
     noncurrent_version_transition {
       noncurrent_days = 10
-      storage_class   = "GLACIER"
+      storage_class   = "INTELLIGENT_TIERING"
     }
     status = "Enabled"
   }

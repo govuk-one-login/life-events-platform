@@ -117,31 +117,6 @@ module "policies" {
   source = "../modules/policies"
 }
 
-moved {
-  from = module.s3_policy.aws_s3_account_public_access_block.block_public_access
-  to   = module.policies.aws_s3_account_public_access_block.block_public_access
-}
-
-moved {
-  from = module.iam_policy.aws_iam_group.mfa_enforced
-  to   = module.policies.aws_iam_group.mfa_enforced
-}
-
-moved {
-  from = module.iam_policy.aws_iam_policy_document.enforce_mfa
-  to   = module.policies.aws_iam_policy_document.enforce_mfa
-}
-
-moved {
-  from = module.iam_policy.aws_iam_policy.enforce_mfa
-  to   = module.policies.aws_iam_policy.enforce_mfa
-}
-
-moved {
-  from = module.iam_policy.aws_iam_group_policy_attachment.enforce_mfa
-  to   = module.policies.aws_iam_group_policy_attachment.enforce_mfa
-}
-
 locals {
   gdx_dev_team = [
     "carly.gilson",

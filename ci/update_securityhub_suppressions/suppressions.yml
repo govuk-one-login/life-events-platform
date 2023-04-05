@@ -2,26 +2,94 @@ Suppressions:
   "CVE-2022-1471 - org.yaml:snakeyaml":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GDX-294
+      notes: GPC-294
   "GHSA-mjmj-j48q-9wg2 - org.yaml:snakeyaml":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GDX-294
+      notes: GPC-294
+  "IN1-JAVA-ORGYAML-3152153 - org.yaml:snakeyaml":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-294
   "CVE-2023-0464 - openssl":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GDX-293
+      notes: GPC-293
   "CVE-2023-0465 - openssl":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GDX-293
+      notes: GPC-293
   "CVE-2019-3826 - github.com/prometheus/prometheus":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GDX-292
-
+      notes: GPC-292
+  "IN1-GOLANG-GITHUBCOMPROMETHEUSPROMETHEUSWEBUI-174127 - github.com/prometheus/prometheus":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-292
+  "CVE-2023-27561 - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-330
+  "GHSA-vpvm-3wq2-2wvm - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-330
+  "IN1-GOLANG-GITHUBCOMOPENCONTAINERSRUNCLIBCONTAINER-3339620 - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-330
+  "CVE-2020-29582 - org.jetbrains.kotlin:kotlin-stdlib":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-331
+  "IN1-JAVA-ORGJETBRAINSKOTLIN-2393744 - org.jetbrains.kotlin:kotlin-stdlib":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-331
+  "IN1-JAVA-IONETTY-1042268 - io.netty:netty-handler":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-332
+  "CVE-2023-28642 - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-333
+  "GHSA-g2j6-57v7-gm8c - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-333
+  "IN1-GOLANG-GITHUBCOMOPENCONTAINERSRUNCLIBCONTAINER-5296696 - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-333
+  "CVE-2021-21317 - github.com/ua-parser/uap-go":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-334
+  "IN1-GOLANG-GITHUBCOMUAPARSERUAPGOUAPARSER-1298048 - github.com/ua-parser/uap-go":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-334
+  "CVE-2023-25809 - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-335
+  "GHSA-m8cg-xc2p-r3fc - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-335
+  "IN1-GOLANG-GITHUBCOMOPENCONTAINERSRUNCLIBCONTAINER-5294661 - github.com/opencontainers/runc":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-335
+  "s3-bucket-replication-enabled-conformance-pack-7wkwquwdu":
+    - resources:
+        - .*
+      notes: GPC-301

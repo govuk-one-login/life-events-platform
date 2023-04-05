@@ -13,6 +13,9 @@ on:
       image:
         required: true
         type: string
+      registry:
+        required: true
+        type: string
 
 concurrency:
   group: application-pipeline-${{ inputs.environment }}
@@ -35,6 +38,7 @@ jobs:
           echo "codedeploy_appspec_template_filepath=ci/appspec-template.json" >> $GITHUB_OUTPUT
 
           echo "ecs_task_definition=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
+          echo "ecs_container_name=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "ecs_service=$ENVIRONMENT-gdx-data-share-poc" >> $GITHUB_OUTPUT
           echo "ecs_cluster=$ENVIRONMENT" >> $GITHUB_OUTPUT
 
@@ -71,8 +75,8 @@ jobs:
       - name: Get the most recent prometheus image ID
         id: prometheus-adot-image
         run: |
-          IMAGE=$(aws ecr describe-images --repository-name ${{ steps.vars.outputs.prometheus_image_name }} --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq --raw-output)
-          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          IMAGE_TAG=$(aws ecr describe-images --repository-name ${{ steps.vars.outputs.prometheus_image_name }} --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq --raw-output)
+          echo "image=${{ inputs.registry }}/${{ steps.vars.outputs.prometheus_image_name }}:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Set ECS task definition
         id: task-definition
@@ -96,8 +100,8 @@ jobs:
         id: update-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ steps.vars.outputs.ecs_task_definition_filepath }}
-          container-name: ${{ steps.vars.outputs.ecs_task_definition }}
+          task-definition: ${{ steps.update-task-def-for-prometheus.outputs.task-definition }}
+          container-name: ${{ steps.vars.outputs.ecs_container_name }}
           image: ${{ inputs.image }}
 
       - name: Set appspec.json values

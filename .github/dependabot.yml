@@ -6,6 +6,9 @@ updates:
       interval: daily
     commit-message:
       prefix: "GPC-NONE"
+    labels:
+      - "dependencies"
+      - "dependabot-gradle"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
@@ -30,16 +33,12 @@ updates:
       interval: daily
     commit-message:
       prefix: "GPC-NONE"
-    labels:
-      - "action-required"
   - package-ecosystem: docker
     directory: "/grafana"
     schedule:
       interval: daily
     commit-message:
       prefix: "GPC-NONE"
-    labels:
-      - "action-required"
   - package-ecosystem: bundler
     directory: "/techdocs"
     schedule:

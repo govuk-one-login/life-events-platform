@@ -12,7 +12,7 @@ plugins {
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   kotlin("jvm") version "1.8.10"
   kotlin("plugin.spring") version "1.8.10"
-  id("com.netflix.nebula.jakartaee-migration") version "0.1.9"
+  id("com.netflix.nebula.jakartaee-migration") version "0.2.0"
 }
 
 jakartaeeMigration {
@@ -42,7 +42,7 @@ dependencies {
   //  AWS dependencies for SNS, SQS etc
   implementation(platform("software.amazon.awssdk:bom:2.20.35"))
   implementation("software.amazon.awssdk:sqs")
-  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.0.3")
+  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.1.1")
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:ssm")
@@ -98,12 +98,12 @@ dependencies {
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.4")
-  testImplementation("com.approvaltests:approvaltests:18.5.0")
+  testImplementation("com.approvaltests:approvaltests:18.6.0")
   testImplementation("com.google.code.gson:gson:2.10.1") // Needed for JsonApprovals
 }
 
 java {
-  toolchain.languageVersion.set(JavaLanguageVersion.of(19))
+  toolchain.languageVersion.set(JavaLanguageVersion.of(20))
 }
 repositories {
   mavenCentral()

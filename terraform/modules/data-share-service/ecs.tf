@@ -107,7 +107,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
       volumesFrom : [],
       essential : true,
       cpu : 0,
-      readonlyRootFileSystem : true,
     },
     {
       name : "xray-daemon",
@@ -147,7 +146,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
           "value" : "${aws_prometheus_workspace.prometheus.prometheus_endpoint}api/v1/remote_write"
         },
         { "name" : "AWS_REGION", "value" : var.region },
-      ]
+      ],
     },
   ])
 }

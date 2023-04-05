@@ -51,67 +51,14 @@ data "aws_availability_zones" "available" {
 
 data "aws_region" "current" {}
 
-#tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 module "vpc" {
-  source = "git::https://github.com/Softwire/terraform-vpc-aws?ref=9e9accca08cfa417b265f5c7d9a0c169eb36c57c"
-
-  name_prefix = "shared-"
-  vpc_cidr    = "10.158.32.0/20"
-  acl_ingress_private = [
-    {
-      rule_no    = 1
-      from_port  = 22
-      to_port    = 22
-      cidr_block = "0.0.0.0/0"
-      action     = "DENY"
-      protocol   = "tcp"
-    },
-    {
-      rule_no    = 2
-      from_port  = 3389
-      to_port    = 3389
-      cidr_block = "0.0.0.0/0"
-      action     = "DENY"
-      protocol   = "tcp"
-    },
-    {
-      rule_no    = 100
-      from_port  = 0
-      to_port    = 0
-      cidr_block = "0.0.0.0/0"
-      action     = "ALLOW"
-      protocol   = -1
-    }
-  ]
-
-  # At least two availability zones are required in order to set up a load balancer, so that the
-  # infrastructure is kept consistent with other environments which use multiple availability zones.
-  availability_zones = data.aws_availability_zones.available.zone_ids
-
-  enable_dns_hostnames = "true"
-}
-
-resource "aws_default_security_group" "default_security_group" {
-  vpc_id = module.vpc.vpc_id
-}
-
-resource "aws_default_network_acl" "default_network_acl" {
-  default_network_acl_id = module.vpc.default_network_acl_id
-}
-
-resource "aws_flow_log" "flow_logs" {
-  traffic_type = "ALL"
-  vpc_id       = module.vpc.vpc_id
-
-  log_destination_type = "s3"
-  log_destination      = module.flow_logs_s3.arn
-}
-
-module "flow_logs_s3" {
-  source = "../modules/s3"
+  source = "../modules/vpc"
 
   environment = local.env
-  name        = "vpc-flow-logs"
+  account_id  = data.aws_caller_identity.current.account_id
+  region      = data.aws_region.current.name
+  name_prefix = "${local.env}-"
+  vpc_cidr    = "10.158.32.0/20"
 }
 
 module "grafana" {
@@ -121,7 +68,7 @@ module "grafana" {
     aws.us-east-1 = aws.us-east-1
   }
 
-  region     = "eu-west-2"
+  region     = data.aws_region.current.name
   account_id = data.aws_caller_identity.current.account_id
 
   vpc_id             = module.vpc.vpc_id
@@ -141,12 +88,24 @@ module "securityhub" {
   rules = [
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"
-      disabled_reason = "For our development account we do not need to enforce this"
+      disabled_reason = "For this GDS created account this is not possible to enforce"
     },
     {
       rule            = "cis-aws-foundations-benchmark/v/1.4.0/1.6"
-      disabled_reason = "For our development account we do not need to enforce this"
-    }
+      disabled_reason = "For this GDS created account this is not possible to enforce"
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECS.5"
+      disabled_reason = "Our ECS containers need write access to the root filesystem."
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECS.10"
+      disabled_reason = "Our ECS containers run on the latest fargate versions, as shown in the ci appspec template, however Security Hub is not picking this up."
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECR.2"
+      disabled_reason = "For grafana our tags needs to be mutable so that our latest and deployed version tracks the most recent, lev-api and aws-xray-daemon are both pull through repos so we cannot enforce immutable tags."
+    },
   ]
 }
 
@@ -154,12 +113,33 @@ module "ecr" {
   source = "../modules/ecr"
 }
 
-module "s3_policy" {
-  source = "../modules/s3_policy"
+module "policies" {
+  source = "../modules/policies"
 }
 
-module "iam_policy" {
-  source = "../modules/iam_policy"
+moved {
+  from = module.s3_policy.aws_s3_account_public_access_block.block_public_access
+  to   = module.policies.aws_s3_account_public_access_block.block_public_access
+}
+
+moved {
+  from = module.iam_policy.aws_iam_group.mfa_enforced
+  to   = module.policies.aws_iam_group.mfa_enforced
+}
+
+moved {
+  from = module.iam_policy.aws_iam_policy_document.enforce_mfa
+  to   = module.policies.aws_iam_policy_document.enforce_mfa
+}
+
+moved {
+  from = module.iam_policy.aws_iam_policy.enforce_mfa
+  to   = module.policies.aws_iam_policy.enforce_mfa
+}
+
+moved {
+  from = module.iam_policy.aws_iam_group_policy_attachment.enforce_mfa
+  to   = module.policies.aws_iam_group_policy_attachment.enforce_mfa
 }
 
 locals {

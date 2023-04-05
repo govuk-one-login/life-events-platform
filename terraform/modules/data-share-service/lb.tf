@@ -7,6 +7,7 @@ resource "aws_lb" "load_balancer" {
   subnets                    = module.vpc.public_subnet_ids
   security_groups            = [aws_security_group.lb.id]
   drop_invalid_header_fields = true
+  enable_deletion_protection = true
 }
 
 # We would use name_prefix, but it has a length limit of 6 characters

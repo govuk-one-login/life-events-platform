@@ -21,6 +21,8 @@ resource "aws_s3_bucket_versioning" "bucket" {
 resource "aws_kms_key" "bucket" {
   enable_key_rotation = true
   description         = "Key used to encrypt state bucket"
+
+  policy = var.kms_key_policy_json
 }
 
 resource "aws_kms_alias" "bucket_alias" {
@@ -68,7 +70,33 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
   restrict_public_buckets = true
 }
 
-data "aws_iam_policy_document" "deny_insecure_transport" {
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+data "aws_iam_policy_document" "bucket_flow_logs_policy" {
+  statement {
+    sid    = "Allow logs"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+    actions = [
+      "s3:PutObject",
+      "s3:GetBucketAcl",
+      "s3:ListBucket"
+    ]
+
+    resources = [
+      aws_s3_bucket.bucket.arn,
+      "${aws_s3_bucket.bucket.arn}/*",
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "bucket_policy" {
+  source_policy_documents = [var.allow_logs ? data.aws_iam_policy_document.bucket_flow_logs_policy.json : ""]
+
   statement {
     sid    = "DenyInsecureTransport"
     effect = "Deny"
@@ -99,5 +127,5 @@ data "aws_iam_policy_document" "deny_insecure_transport" {
 
 resource "aws_s3_bucket_policy" "deny_insecure_transport" {
   bucket = aws_s3_bucket.bucket.id
-  policy = data.aws_iam_policy_document.deny_insecure_transport.json
+  policy = data.aws_iam_policy_document.bucket_policy.json
 }

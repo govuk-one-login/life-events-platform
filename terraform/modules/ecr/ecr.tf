@@ -63,6 +63,35 @@ resource "aws_ecr_lifecycle_policy" "gdx_data_share_poc" {
 EOF
 }
 
+resource "aws_ecr_lifecycle_policy" "default_policies" {
+  for_each = toset([
+    aws_ecr_repository.aws-xray-daemon.name,
+    aws_ecr_repository.grafana.name,
+    aws_ecr_repository.lev_api.name,
+    aws_ecr_repository.prometheus-adot.name
+  ])
+  repository = each.value
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 20 images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 20
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
+
 resource "aws_ecr_repository" "prometheus-adot" {
   name = "prometheus-adot"
 

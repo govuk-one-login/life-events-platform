@@ -15,7 +15,7 @@ management:
 
 spring:
   datasource:
-    url: jdbc:aws-wrapper:postgresql://localhost:5432/datashare?sslmode=disable
+    url: jdbc:aws-wrapper:postgresql://localhost:5432/datashare?sslmode=disable&wrapperPlugins=
     username: datashare
     password: datashare
 

@@ -10,9 +10,10 @@ The best outcome here is that we extend our test coverage and have a more robust
 
 ## Upgrading JDK
 The JDK version is specified in:
- - the dockerfile
+ - the dockerfile (twice)
  - build.gradle.kts (twice)
  - test workflow
  - kotlin lint workflow
  - api lint workflow
+ - kotlin lockfile workflow
  - Contributing documentation

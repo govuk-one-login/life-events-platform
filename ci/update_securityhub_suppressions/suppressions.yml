@@ -13,16 +13,24 @@ Suppressions:
       notes: GPC-294
   "CVE-2023-0464 - openssl":
     - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-293
   "CVE-2023-0465 - openssl":
     - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-293
+  "CVE-2023-0466 - openssl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-293
+  "CVE-2022-41723 - golang.org/x/net":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-295
+  "GHSA-vvpx-j8f3-3w6h - golang.org/x/net":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-295
   "CVE-2019-3826 - github.com/prometheus/prometheus":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
@@ -34,10 +42,6 @@ Suppressions:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-292
   "CVE-2023-27561 - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-330
-  "GHSA-vpvm-3wq2-2wvm - github.com/opencontainers/runc":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-330
@@ -57,18 +61,6 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-332
-  "CVE-2023-28642 - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-333
-  "GHSA-g2j6-57v7-gm8c - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-333
-  "IN1-GOLANG-GITHUBCOMOPENCONTAINERSRUNCLIBCONTAINER-5296696 - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-333
   "CVE-2021-21317 - github.com/ua-parser/uap-go":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
@@ -77,19 +69,31 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
       notes: GPC-334
-  "CVE-2023-25809 - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-335
-  "GHSA-m8cg-xc2p-r3fc - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-335
-  "IN1-GOLANG-GITHUBCOMOPENCONTAINERSRUNCLIBCONTAINER-5294661 - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-335
   "s3-bucket-replication-enabled-conformance-pack-7wkwquwdu":
     - resources:
         - .*
       notes: GPC-301
+  "CVE-2023-28840 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "CVE-2023-28841 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "CVE-2023-28842 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "GHSA-232p-vwff-86mp - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "GHSA-33pg-m6jh-5237 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "GHSA-6wrf-mxfj-pf5p - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337

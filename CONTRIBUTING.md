@@ -8,7 +8,7 @@
 ## Local Development Setup
 
 Requirements
-- Java 20 (Coretto recommended) for local running, test running
+- Java 17 (Coretto recommended) for local running, test running
 
 Generally, development is easier with
 - IntelliJ

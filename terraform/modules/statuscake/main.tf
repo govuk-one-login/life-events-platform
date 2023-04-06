@@ -1,15 +1,3 @@
-terraform {
-  required_providers {
-    statuscake = {
-      source  = "StatusCakeDev/statuscake"
-      version = ">= 2.1.0"
-    }
-  }
-}
-
-provider "statuscake" {
-  api_token = var.api_token
-}
 
 resource "statuscake_contact_group" "gdx_platform_team" {
   name = "GDX Platform"

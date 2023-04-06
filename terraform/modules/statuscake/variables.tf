@@ -1,9 +1,9 @@
 variable "environment" {
 }
 
-variable "service_name" {
+variable "ping_url" {
 }
 
-variable "statuscake_alerts" {
-  description = "Define Statuscake alerts with the attributes below"
+variable "api_token" {
 }
+

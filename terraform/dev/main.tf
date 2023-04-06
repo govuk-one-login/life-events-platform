@@ -50,10 +50,6 @@ provider "aws" {
   }
 }
 
-provider "statuscake" {
-  api_token = var.statuscake_api_token
-}
-
 data "terraform_remote_state" "shared" {
   backend = "s3"
 

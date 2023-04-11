@@ -97,3 +97,15 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-337
+  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411355 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411364 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411366 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337

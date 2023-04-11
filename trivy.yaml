@@ -1,6 +1,7 @@
 scan:
   skip-dirs:
     - lev-data/
+    - terraform/*/.terraform/
 
 exit-code: 1
 

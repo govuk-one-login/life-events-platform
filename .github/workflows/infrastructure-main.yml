@@ -33,7 +33,7 @@ jobs:
         run: terraform fmt -check -diff -recursive
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.9.2
         with:
           scan-type: config
           trivy-config: trivy.yaml

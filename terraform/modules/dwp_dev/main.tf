@@ -44,6 +44,7 @@ resource "aws_iam_policy" "dwp_user_access" {
   name   = "dwp-dev-sqs-access"
 }
 
+# We ignore MFA as this group will only include service accounts for access to SQS
 #tfsec:ignore:aws-iam-enforce-mfa
 resource "aws_iam_group" "dwp_dev" {
   name = "dwp-dev"

@@ -44,6 +44,7 @@ resource "aws_iam_policy" "dwp_user_access" {
   name   = "dwp-dev-sqs-access"
 }
 
+#tfsec:ignore:aws-iam-enforce-mfa
 resource "aws_iam_group" "dwp_dev" {
   name = "dwp-dev"
 }

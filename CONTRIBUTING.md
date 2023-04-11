@@ -17,7 +17,7 @@ and these instructions are based on that
 
 For a new configuration
 
-![image](https://user-images.githubusercontent.com/8627917/208089984-cfbc5048-702b-40da-a05a-e3d0e0e9e89f.png)
+![](./doc/contributing-setup.png)
 
 - From run/debug configurations, create a new Spring Boot configuration
 - under "Runs on" select "Docker Compose" under "Create New Target"

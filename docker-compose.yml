@@ -23,7 +23,7 @@ services:
       - API_BASE_URL_OAUTH=http://oauth2:8080/issuer1
       - API_BASE_URL_LEV=http://lev-api:8080
       - API_BASE_URL_DATA_RECEIVER=http://gdx-data-share-poc:8080
-      - SPRING_DATASOURCE_URL=jdbc:aws-wrapper:postgresql://datashare-db:5432/datashare?sslmode=disable&wrapperPlugins=
+      - SPRING_DATASOURCE_URL=jdbc:aws-wrapper:postgresql://datashare-db:5432/datashare?sslmode=disable&wrapperPlugins=%22%22
     links:
       - localstack:egress.localstack
       - localstack:dev-ingress-archive-gdx-data-share-poc.localstack

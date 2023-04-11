@@ -4,7 +4,6 @@ module "dwp_dev_queue" {
   queue_name  = "acq_dev_dwp-dev"
 }
 
-#tfsec:ignore:aws-iam-no-user-attached-policies
 resource "aws_iam_user" "dwp_dev_user" {
   name = "dwp-dev"
 }
@@ -45,7 +44,16 @@ resource "aws_iam_policy" "dwp_user_access" {
   name   = "dwp-dev-sqs-access"
 }
 
-resource "aws_iam_user_policy_attachment" "dwp_user_access" {
+resource "aws_iam_group" "dwp_dev" {
+  name = "dwp-dev"
+}
+
+resource "aws_iam_user_group_membership" "dwp_dev" {
+  user = aws_iam_user.dwp_dev_user.name
+  groups = [aws_iam_group.dwp_dev.name]
+}
+
+resource "aws_iam_group_policy_attachment" "dwp_group_access" {
   policy_arn = aws_iam_policy.dwp_user_access.arn
-  user       = aws_iam_user.dwp_dev_user.name
+  group      = aws_iam_group.dwp_dev.name
 }

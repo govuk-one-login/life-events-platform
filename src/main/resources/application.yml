@@ -112,9 +112,3 @@ cognito:
 
 xray-tracing:
   enabled: true
-
-com:
-  amazonaws:
-    xray:
-      strategy:
-        contextMissingStrategy: IGNORE_ERROR

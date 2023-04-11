@@ -105,6 +105,10 @@ module "securityhub" {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/ECR.2"
       disabled_reason = "For grafana our tags needs to be mutable so that our latest and deployed version tracks the most recent, lev-api and aws-xray-daemon are both pull through repos so we cannot enforce immutable tags."
     },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/EC2.10"
+      disabled_reason = "GPC-315: We only use EC2 as bastions for access to our RDS, so we do not need to configure VPC endpoints for EC2."
+    },
   ]
 }
 

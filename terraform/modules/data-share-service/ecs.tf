@@ -66,6 +66,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
           "name" : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL",
           "value" : "${local.gdx_api_base_url}/swagger-ui/oauth2-redirect.html"
         },
+        { "name" : "AWS_XRAY_CONTEXT_MISSING", "value" : "IGNORE_ERROR" },
       ]
       secrets = [
         {

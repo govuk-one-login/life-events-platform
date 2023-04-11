@@ -72,7 +72,7 @@ dependencies {
 
   implementation("io.micrometer:micrometer-core:1.10.6")
   implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
-  implementation("io.opentelemetry:opentelemetry-api:1.24.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.25.0")
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")

@@ -1,5 +1,3 @@
-# Disable S3 bucket logging as this is the only bucket, revisit when there's more underlying infra/monitoring set up
-#tfsec:ignore:aws-s3-enable-bucket-logging
 resource "aws_s3_bucket" "state_bucket" {
   bucket = var.s3_bucket_name
 

@@ -49,7 +49,7 @@ resource "aws_iam_group" "dwp_dev" {
 }
 
 resource "aws_iam_user_group_membership" "dwp_dev" {
-  user = aws_iam_user.dwp_dev_user.name
+  user   = aws_iam_user.dwp_dev_user.name
   groups = [aws_iam_group.dwp_dev.name]
 }
 

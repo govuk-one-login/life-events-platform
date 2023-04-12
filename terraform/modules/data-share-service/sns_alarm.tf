@@ -10,5 +10,6 @@ module "sns" {
   name                = "gdx-alarms"
   notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
 
-  prometheus_arn = aws_prometheus_workspace.prometheus.arn
+  prometheus_arn        = aws_prometheus_workspace.prometheus.arn
+  allow_s3_notification = true
 }

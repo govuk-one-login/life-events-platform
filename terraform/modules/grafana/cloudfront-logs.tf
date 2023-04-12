@@ -98,3 +98,14 @@ resource "aws_s3_bucket_policy" "deny_insecure_transport" {
   bucket = aws_s3_bucket.cloudfront_logs_bucket.id
   policy = data.aws_iam_policy_document.deny_insecure_transport.json
 }
+
+resource "aws_s3_bucket_notification" "cloudfront_bucket_notification" {
+  bucket = aws_s3_bucket.cloudfront_logs_bucket.id
+
+  topic {
+    topic_arn     = var.sns_topic_arn
+    events        = ["s3:ObjectRemoved:Delete"]
+    filter_prefix = "AWSLogs/"
+    filter_suffix = ".log"
+  }
+}

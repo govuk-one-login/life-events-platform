@@ -45,6 +45,7 @@ module "config_s3" {
   environment     = "shared"
   name            = "config"
   expiration_days = 180
+  sns_arn         = var.sns_topic_an
 }
 
 data "aws_iam_policy_document" "config_s3" {

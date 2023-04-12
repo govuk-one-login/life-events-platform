@@ -50,6 +50,17 @@ data "aws_availability_zones" "available" {
 
 data "aws_region" "current" {}
 
+module "sns" {
+  source = "../modules/sns"
+
+  account_id          = data.aws_caller_identity.current.account_id
+  environment         = local.env
+  name                = "sns"
+  notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
+
+  allow_s3_notification = true
+}
+
 module "vpc" {
   source = "../modules/vpc"
 
@@ -58,6 +69,8 @@ module "vpc" {
   region      = data.aws_region.current.name
   name_prefix = "${local.env}-"
   vpc_cidr    = "10.158.32.0/20"
+
+  sns_topic_arn = module.sns.topic_arn
 }
 
 module "grafana" {
@@ -75,15 +88,18 @@ module "grafana" {
   private_subnet_ids = module.vpc.private_subnet_ids
   vpc_cidr           = "10.158.32.0/20"
 
-  ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
+  ecr_url       = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
+  sns_topic_arn = module.sns.topic_arn
 }
 
 module "securityhub" {
   source = "../modules/security_hub"
 
-  region      = data.aws_region.current.name
-  environment = local.env
-  account_id  = data.aws_caller_identity.current.account_id
+  region        = data.aws_region.current.name
+  environment   = local.env
+  account_id    = data.aws_caller_identity.current.account_id
+  sns_topic_arn = module.sns.topic_arn
+
   rules = [
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"

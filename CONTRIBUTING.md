@@ -37,7 +37,7 @@ The files will then look like this:
 
 .aws/credentials
 
-```
+```ini
 [gds]
 aws_access_key_id = [gds-users access key id]
 aws_secret_access_key = [gds-users secret access key]
@@ -45,7 +45,7 @@ aws_secret_access_key = [gds-users secret access key]
 
 .aws/config
 
-```
+```ini
 [profile gds]
 region = eu-west-2
 

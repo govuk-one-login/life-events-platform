@@ -15,8 +15,8 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_rate" {
   threshold           = "10"
   alarm_description   = "${each.value} processor error rate"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_sns_topic.sns_alarm_topic.arn]
-  ok_actions          = [aws_sns_topic.sns_alarm_topic.arn]
+  alarm_actions       = [module.sns.topic_arn]
+  ok_actions          = [module.sns.topic_arn]
 
   metric_query {
     id          = "error_rate"
@@ -63,8 +63,8 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_number" {
   threshold           = "1"
   alarm_description   = "Events added to ${each.value} dead letter queue"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_sns_topic.sns_alarm_topic.arn]
-  ok_actions          = [aws_sns_topic.sns_alarm_topic.arn]
+  alarm_actions       = [module.sns.topic_arn]
+  ok_actions          = [module.sns.topic_arn]
 
   metric_name = "NumberOfMessagesReceived"
   namespace   = "AWS/SQS"

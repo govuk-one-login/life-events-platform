@@ -124,3 +124,7 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
+  "ec2-instance-detailed-monitoring-enabled-conformance-pack-7wkwquwdu":
+    - resources:
+        - arn:aws:ec2:eu-west-2:776473272850:instance/.*
+      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have detailed monitoring

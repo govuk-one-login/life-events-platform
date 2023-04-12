@@ -44,8 +44,8 @@ moved {
 }
 
 resource "aws_wafv2_web_acl" "load_balancer" {
-  name     = "grafana-load-balancer"
-  scope    = "REGIONAL"
+  name  = "grafana-load-balancer"
+  scope = "REGIONAL"
 
   default_action {
     allow {}

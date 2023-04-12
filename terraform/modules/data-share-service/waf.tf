@@ -207,8 +207,8 @@ moved {
 }
 
 resource "aws_wafv2_web_acl" "load_balancer" {
-  name     = "${var.environment}-load-balancer"
-  scope    = "REGIONAL"
+  name  = "${var.environment}-load-balancer"
+  scope = "REGIONAL"
 
   default_action {
     allow {}

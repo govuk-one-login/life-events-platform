@@ -13,7 +13,7 @@ variable "notification_emails" {
 
 variable "prometheus_arn" {
   type    = string
-  default = null
+  default = ""
 }
 variable "allow_s3_notification" {
   type    = bool

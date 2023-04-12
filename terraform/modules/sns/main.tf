@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "kms_s3_access" {
 }
 
 locals {
-  kms_prometheus_policy = var.prometheus_arn != null ? [data.aws_iam_policy_document.kms_prometheus_access.json] : []
+  kms_prometheus_policy = var.prometheus_arn != "" ? [data.aws_iam_policy_document.kms_prometheus_access.json] : []
   kms_s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.kms_s3_access.json] : []
   kms_source_policies   = concat(local.kms_prometheus_policy, local.kms_s3_policy)
 }
@@ -124,7 +124,7 @@ data "aws_iam_policy_document" "s3_access" {
 }
 
 locals {
-  prometheus_policy = var.prometheus_arn != null ? [data.aws_iam_policy_document.prometheus_access.json] : []
+  prometheus_policy = var.prometheus_arn != "" ? [data.aws_iam_policy_document.prometheus_access.json] : []
   s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.s3_access.json] : []
   source_policies   = concat(local.prometheus_policy, local.s3_policy)
 }

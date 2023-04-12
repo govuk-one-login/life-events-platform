@@ -24,13 +24,13 @@ resource "aws_lb" "load_balancer" {
 module "lb_access_logs" {
   source = "../s3"
 
+  account_id      = data.aws_caller_identity.current.account_id
+  region          = var.region
   environment     = var.environment
   name            = "lb-access-logs"
   expiration_days = 180
 
-  allow_logs = true
-  account_id = data.aws_caller_identity.current.account_id
-  region     = var.region
+  use_kms = false
 }
 
 # We would use name_prefix, but it has a length limit of 6 characters

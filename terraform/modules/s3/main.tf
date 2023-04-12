@@ -18,70 +18,13 @@ resource "aws_s3_bucket_versioning" "bucket" {
   }
 }
 
-resource "aws_kms_key" "bucket" {
-  enable_key_rotation = true
-  description         = "Key used to encrypt state bucket"
-
-  policy = var.allow_logs ? data.aws_iam_policy_document.kms_logs_policy.json : ""
-}
-
-data "aws_iam_policy_document" "kms_logs_policy" {
-  statement {
-    sid    = "Enable IAM User Permissions"
-    effect = "Allow"
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${var.account_id}:root"]
-    }
-    actions   = ["kms:*"]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["delivery.logs.amazonaws.com"]
-    }
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["logs.${var.region}.amazonaws.com"]
-    }
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-    ]
-    resources = ["*"]
-  }
-}
-
-resource "aws_kms_alias" "bucket_alias" {
-  name          = "alias/${var.environment}/${var.name}-bucket-key"
-  target_key_id = aws_kms_key.bucket.arn
-}
-
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket" {
   bucket = aws_s3_bucket.bucket.bucket
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.bucket.arn
-      sse_algorithm     = "aws:kms"
+      kms_master_key_id = var.use_kms ? aws_kms_key.bucket[0].arn : null
+      sse_algorithm     = var.use_kms ? "aws:kms" : "AES256"
     }
   }
 }
@@ -118,9 +61,9 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-data "aws_iam_policy_document" "bucket_flow_logs_policy" {
+data "aws_iam_policy_document" "bucket_policy" {
   statement {
-    sid    = "Allow logs"
+    sid    = "Allow delivery logs"
     effect = "Allow"
     principals {
       type        = "Service"
@@ -137,10 +80,25 @@ data "aws_iam_policy_document" "bucket_flow_logs_policy" {
       "${aws_s3_bucket.bucket.arn}/*",
     ]
   }
-}
 
-data "aws_iam_policy_document" "bucket_policy" {
-  source_policy_documents = [var.allow_logs ? data.aws_iam_policy_document.bucket_flow_logs_policy.json : ""]
+  statement {
+    sid    = "Allow LB logs"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::652711504416:root"]
+    }
+    actions = [
+      "s3:PutObject",
+      "s3:GetBucketAcl",
+      "s3:ListBucket"
+    ]
+
+    resources = [
+      aws_s3_bucket.bucket.arn,
+      "${aws_s3_bucket.bucket.arn}/*",
+    ]
+  }
 
   statement {
     sid    = "DenyInsecureTransport"

@@ -67,14 +67,14 @@ resource "aws_backup_plan" "rds" {
     schedule          = "cron(0 4 * * ? *)"
 
     lifecycle {
-      delete_after = 14
+      delete_after = 35
     }
 
     copy_action {
       destination_vault_arn = module.cross_region_vault.arn
 
       lifecycle {
-        delete_after = 14
+        delete_after = 35
       }
     }
   }

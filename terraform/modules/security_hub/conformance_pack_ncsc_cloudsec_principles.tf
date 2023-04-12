@@ -4,12 +4,6 @@ resource "aws_config_conformance_pack" "ncsc_cloudsec_principles" {
 
   depends_on = [aws_config_configuration_recorder.config]
 
-  # RequiredRetentionDays for the backup-recovery-point-minimum-retention-check (in the template it is not set)
-  input_parameter {
-    parameter_name  = "requiredRetentionDays"
-    parameter_value = "14"
-  }
-
   template_body = <<EOT
 Parameters:
   AccessKeysRotatedParamMaxAccessKeyAge:

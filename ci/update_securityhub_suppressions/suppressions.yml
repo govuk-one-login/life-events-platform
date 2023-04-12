@@ -154,3 +154,14 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
+  "s3-default-encryption-kms-conformance-pack-7wkwquwdu":
+    - resources:
+        - arn:aws:s3:::gdx-vision-dev-tfstate
+        - arn:aws:s3:::gdx-vision-dev-tfstate-logs
+        - arn:aws:s3:::grafana-lb-access-logs-gdx-data-share-poc
+        - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::dev-lb-access-logs-gdx-data-share-poc
+        - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-lb-access-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
+      notes: LB access log buckets cannot be encrypted with KMS, only Amazon S3 managed keys, due to AWS not allowing it. The gdx-vision-dev-tfstate buckets are not configured in our terraform and are encrypted with Amazon S3 managed keys as well.

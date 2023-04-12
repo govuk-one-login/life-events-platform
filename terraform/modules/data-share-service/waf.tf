@@ -34,7 +34,7 @@ resource "aws_wafv2_ip_set" "blocked_ipset" {
   addresses          = local.blocked_ips
 }
 
-resource "aws_wafv2_web_acl" "gdx_data_share_poc" {
+resource "aws_wafv2_web_acl" "cloudfront" {
   name     = local.waf_acl_name
   scope    = "CLOUDFRONT"
   provider = aws.us-east-1 # To work with CloudFront, you must also specify the region us-east-1 (N. Virginia) on the AWS provider
@@ -198,4 +198,30 @@ resource "aws_wafv2_web_acl" "gdx_data_share_poc" {
   depends_on = [
     aws_wafv2_ip_set.blocked_ipset
   ]
+}
+
+
+moved {
+  from = aws_wafv2_web_acl.gdx_data_share_poc
+  to   = aws_wafv2_web_acl.cloudfront
+}
+
+resource "aws_wafv2_web_acl" "load_balancer" {
+  name     = "${var.environment}-load-balancer"
+  scope    = "REGIONAL"
+
+  default_action {
+    allow {}
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "${var.environment}-load-balancer"
+    sampled_requests_enabled   = true
+  }
+}
+
+resource "aws_wafv2_web_acl_association" "waf_load_balancer" {
+  resource_arn = aws_lb.load_balancer.arn
+  web_acl_arn  = aws_wafv2_web_acl.load_balancer.arn
 }

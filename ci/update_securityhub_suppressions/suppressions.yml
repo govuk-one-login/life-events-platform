@@ -124,3 +124,33 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
+  "s3-bucket-logging-enabled-conformance-pack-7wkwquwdu":
+    - resources:
+        - arn:aws:s3:::gdx-vision-dev-tfstate-logs
+        - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
+        - arn:aws:s3:::shared-config-logs-gdx-data-share-poc
+        - arn:aws:s3:::grafana-cloudfront-logs
+        - arn:aws:s3:::dev-cloudfront-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-cloudfront-logs-gdx-data-share-poc
+        - arn:aws:s3:::shared-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::dev-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
+      notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
+  "s3-bucket-logging-enabled-conformance-pack-flegfck3w":
+    - resources:
+        - arn:aws:s3:::gdx-vision-dev-tfstate-logs
+        - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
+        - arn:aws:s3:::shared-config-logs-gdx-data-share-poc
+        - arn:aws:s3:::grafana-cloudfront-logs
+        - arn:aws:s3:::dev-cloudfront-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-cloudfront-logs-gdx-data-share-poc
+        - arn:aws:s3:::shared-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::dev-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
+      notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets

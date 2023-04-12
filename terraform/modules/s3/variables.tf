@@ -1,19 +1,21 @@
-variable "environment" {}
-variable "name" {}
+variable "account_id" {
+  type = string
+}
+variable "region" {
+  type = string
+}
+variable "environment" {
+  type = string
+}
+variable "name" {
+  type = string
+}
 variable "expiration_days" {
   type    = number
   default = null
 }
 
-variable "allow_logs" {
+variable "use_kms" {
   type    = bool
-  default = false
-}
-variable "account_id" {
-  type    = string
-  default = ""
-}
-variable "region" {
-  type    = string
-  default = ""
+  default = true
 }

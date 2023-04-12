@@ -18,13 +18,13 @@ resource "aws_lb" "load_balancer" {
 module "lb_access_logs" {
   source = "../s3"
 
+  account_id      = var.account_id
+  region          = var.region
   environment     = "grafana"
   name            = "lb-access-logs"
   expiration_days = 180
 
-  allow_logs = true
-  account_id = var.account_id
-  region     = var.region
+  use_kms = false
 }
 
 #tfsec:ignore:aws-elb-http-not-used

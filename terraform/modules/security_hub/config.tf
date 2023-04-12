@@ -39,6 +39,8 @@ resource "aws_config_delivery_channel" "config" {
 
 module "config_s3" {
   source      = "../s3"
+  account_id  = var.account_id
+  region      = var.region
   environment = "shared"
   name        = "config"
 }

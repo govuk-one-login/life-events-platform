@@ -75,7 +75,7 @@ alertmanager_config: |
   receivers:
     - name: 'default'
       sns_configs:
-      - topic_arn: ${aws_sns_topic.sns_alarm_topic.arn}
+      - topic_arn: ${module.sns.topic_arn}
         sigv4:
           region: eu-west-2
 EOF

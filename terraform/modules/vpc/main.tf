@@ -65,11 +65,9 @@ resource "aws_flow_log" "flow_logs" {
 module "flow_logs_s3" {
   source = "../s3"
 
+  account_id      = var.account_id
+  region          = var.region
   environment     = var.environment
   name            = "vpc-flow-logs"
   expiration_days = 180
-
-  allow_logs = true
-  account_id = var.account_id
-  region     = var.region
 }

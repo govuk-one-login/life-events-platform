@@ -69,51 +69,7 @@ module "flow_logs_s3" {
   name            = "vpc-flow-logs"
   expiration_days = 180
 
-  kms_key_policy_json = data.aws_iam_policy_document.kms_flow_logs_policy.json
-  allow_logs          = true
-}
-
-data "aws_iam_policy_document" "kms_flow_logs_policy" {
-  statement {
-    sid    = "Enable IAM User Permissions"
-    effect = "Allow"
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${var.account_id}:root"]
-    }
-    actions   = ["kms:*"]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["delivery.logs.amazonaws.com"]
-    }
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["logs.${var.region}.amazonaws.com"]
-    }
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-    ]
-    resources = ["*"]
-  }
+  allow_logs = true
+  account_id = var.account_id
+  region     = var.region
 }

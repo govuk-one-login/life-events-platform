@@ -200,3 +200,13 @@ Suppressions:
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-07592b2b3857a4f3a
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-012c9ebc7c6d3869e
       notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have detailed monitoring
+  "Application Load Balancer should be configured to redirect all HTTP requests to HTTPS":
+    - resources:
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
+      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
+  "alb-http-to-https-redirection-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
+      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.

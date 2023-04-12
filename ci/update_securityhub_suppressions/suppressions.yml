@@ -97,3 +97,27 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-337
+  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411355 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411364 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411366 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "S3 bucket server access logging should be enabled":
+    - resources:
+        - arn:aws:s3:::gdx-vision-dev-tfstate-logs
+        - arn:aws:s3:::shared-config-logs-gdx-data-share-poc
+        - arn:aws:s3:::shared-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::grafana-cloudfront-logs
+        - arn:aws:s3:::dev-cloudfront-logs-gdx-data-share-poc
+        - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
+        - arn:aws:s3:::demo-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::dev-vpc-flow-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::demo-cloudfront-logs-gdx-data-share-poc
+      notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets

@@ -1,5 +1,3 @@
-# Disable S3 bucket logging as this is the only bucket, revisit when there's more underlying infra/monitoring set up
-#tfsec:ignore:aws-s3-enable-bucket-logging
 resource "aws_s3_bucket" "state_bucket" {
   bucket = var.s3_bucket_name
 
@@ -52,6 +50,13 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "state_bucket" {
       sse_algorithm     = "aws:kms"
     }
   }
+}
+
+resource "aws_s3_bucket_logging" "bucket_logging" {
+  bucket = aws_s3_bucket.state_bucket.id
+
+  target_bucket = aws_s3_bucket.log_bucket.id
+  target_prefix = "log/"
 }
 
 resource "aws_s3_bucket_public_access_block" "state_bucket" {

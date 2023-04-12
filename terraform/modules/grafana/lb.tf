@@ -8,6 +8,23 @@ resource "aws_lb" "load_balancer" {
   security_groups            = [aws_security_group.lb.id]
   drop_invalid_header_fields = true
   enable_deletion_protection = true
+
+  access_logs {
+    bucket  = module.lb_access_logs.id
+    enabled = true
+  }
+}
+
+module "lb_access_logs" {
+  source = "../s3"
+
+  environment     = "grafana"
+  name            = "lb-access-logs"
+  expiration_days = 180
+
+  allow_logs = true
+  account_id = var.account_id
+  region     = var.region
 }
 
 #tfsec:ignore:aws-elb-http-not-used

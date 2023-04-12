@@ -14,6 +14,23 @@ resource "aws_lb" "load_balancer" {
   security_groups            = [aws_security_group.lb.id]
   drop_invalid_header_fields = true
   enable_deletion_protection = true
+
+  access_logs {
+    bucket  = module.lb_access_logs.id
+    enabled = true
+  }
+}
+
+module "lb_access_logs" {
+  source = "../s3"
+
+  environment     = var.environment
+  name            = "lb-access-logs"
+  expiration_days = 180
+
+  allow_logs = true
+  account_id = data.aws_caller_identity.current.account_id
+  region     = var.region
 }
 
 # We would use name_prefix, but it has a length limit of 6 characters

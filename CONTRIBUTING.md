@@ -8,8 +8,14 @@
 ### AWS access
 
 In order for access to the AWS console or to perform any terraform manually, you will need to ask GDS for a `gds-users`
-account [here](https://docs.publishing.service.gov.uk/manual/get-started.html#8-get-aws-access). Once you have
-a `gds-users` IAM user, you will need to set up a role for you to assume, this involves going
+account, using the [Request an AWS account form](https://gds-request-an-aws-account.cloudapps.digital).
+
+Select __Request user access__ to request access to the GDS AWS account and complete the form.
+
+After submitting the form, you should receive an email to say your account creation is in progress, and later another
+email saying the work has been completed.
+
+Once you have a `gds-users` IAM user, you will need to set up a role for you to assume, this involves going
 into `terraform/shared/main.tf` and updating the relevant list with your name. After the next terraform apply, you will
 have an account that you can assume role into.
 

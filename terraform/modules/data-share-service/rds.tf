@@ -21,9 +21,10 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   backup_retention_period = 7
   preferred_backup_window = "07:00-09:00"
 
-  kms_key_id          = aws_kms_key.rds_key.arn
-  storage_encrypted   = true
-  skip_final_snapshot = true
+  kms_key_id            = aws_kms_key.rds_key.arn
+  storage_encrypted     = true
+  skip_final_snapshot   = true
+  copy_tags_to_snapshot = true
 
   vpc_security_group_ids          = [aws_security_group.rds_postgres_cluster.id]
   db_subnet_group_name            = aws_db_subnet_group.rds_postgres_cluster.name

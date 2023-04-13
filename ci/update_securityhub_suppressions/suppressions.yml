@@ -212,3 +212,14 @@ Suppressions:
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
       notes: This table is just used to hold lock and does not need to be backed up
+  "Application Load Balancer should be configured to redirect all HTTP requests to HTTPS":
+    - resources:
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
+      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
+  "alb-http-to-https-redirection-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
+      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
+

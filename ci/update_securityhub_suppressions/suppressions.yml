@@ -69,7 +69,7 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
       notes: GPC-334
-  "s3-bucket-replication-enabled-conformance-pack-7wkwquwdu":
+  "s3-bucket-replication-enabled-conformance-pack-1dpd692bc":
     - resources:
         - .*
       notes: GPC-301
@@ -124,7 +124,7 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
-  "s3-bucket-logging-enabled-conformance-pack-7wkwquwdu":
+  "s3-bucket-logging-enabled-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
         - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
@@ -154,7 +154,7 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
-  "s3-bucket-versioning-enabled-conformance-pack-7wkwquwdu":
+  "s3-bucket-versioning-enabled-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
         - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
@@ -184,7 +184,7 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
-  "s3-default-encryption-kms-conformance-pack-7wkwquwdu":
+  "s3-default-encryption-kms-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs

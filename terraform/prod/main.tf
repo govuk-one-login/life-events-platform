@@ -1,5 +1,6 @@
 locals {
-  env = "prod"
+  env      = "prod"
+  host_url = "share-life-events.service.gov.uk"
   default_tags = {
     Product     = "Government Data Exchange"
     Environment = local.env
@@ -61,7 +62,7 @@ data "terraform_remote_state" "demo" {
 module "route53" {
   source = "../modules/route53"
 
-  hosted_zone_name = "share-life-events.service.gov.uk"
+  hosted_zone_name = local.host_url
 
   subdomains = [
     {

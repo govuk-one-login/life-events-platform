@@ -41,3 +41,6 @@ variable "hosted_zone_id" {
 variable "hosted_zone_name" {
   type = string
 }
+variable "ping_check_url" {
+  type = string
+}

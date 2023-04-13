@@ -12,7 +12,7 @@ plugins {
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   kotlin("jvm") version "1.8.20"
   kotlin("plugin.spring") version "1.8.20"
-  id("com.netflix.nebula.jakartaee-migration") version "0.2.0"
+  id("com.netflix.nebula.jakartaee-migration") version "0.3.0"
 }
 
 jakartaeeMigration {
@@ -40,7 +40,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.43"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.45"))
   implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.1.1")
   implementation("software.amazon.awssdk:rds")
@@ -88,7 +88,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.18.0"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.446") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.448") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

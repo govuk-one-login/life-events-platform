@@ -95,7 +95,7 @@ resource "aws_ssm_parameter" "prisoner_event_aws_account_id" {
 }
 
 resource "aws_ssm_parameter" "statuscake_api_key" {
-  name  = "statuscake-api-key"
+  name  = "${var.environment}-statuscake-api-key"
   type  = "SecureString"
   value = "secretvalue"
 

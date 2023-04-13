@@ -38,11 +38,6 @@ resource "aws_wafv2_web_acl" "cloudfront" {
   }
 }
 
-moved {
-  from = aws_wafv2_web_acl.gdx_data_share_poc
-  to   = aws_wafv2_web_acl.cloudfront
-}
-
 resource "aws_wafv2_web_acl" "load_balancer" {
   name  = "grafana-load-balancer"
   scope = "REGIONAL"

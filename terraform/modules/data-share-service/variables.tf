@@ -38,3 +38,6 @@ variable "grafana_task_role_name" {
 variable "hosted_zone_id" {
   type = string
 }
+variable "hosted_zone_name" {
+  type = string
+}

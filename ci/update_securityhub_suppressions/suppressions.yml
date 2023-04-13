@@ -222,4 +222,7 @@ Suppressions:
         - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
         - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
       notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
-
+  "iam-user-mfa-enabled":
+    - resources:
+        - arn:aws:iam::776473272850:user/dwp-dev
+      notes: MFA is not enabled as this user is only a service account for access to SQS

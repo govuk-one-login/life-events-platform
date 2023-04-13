@@ -69,7 +69,7 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
       notes: GPC-334
-  "s3-bucket-replication-enabled-conformance-pack-7wkwquwdu":
+  "s3-bucket-replication-enabled-conformance-pack-1dpd692bc":
     - resources:
         - .*
       notes: GPC-301
@@ -124,7 +124,7 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
-  "s3-bucket-logging-enabled-conformance-pack-7wkwquwdu":
+  "s3-bucket-logging-enabled-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
         - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
@@ -154,7 +154,7 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
-  "s3-bucket-versioning-enabled-conformance-pack-7wkwquwdu":
+  "s3-bucket-versioning-enabled-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
         - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
@@ -184,7 +184,7 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
-  "s3-default-encryption-kms-conformance-pack-7wkwquwdu":
+  "s3-default-encryption-kms-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
@@ -195,3 +195,31 @@ Suppressions:
         - arn:aws:s3:::demo-lb-access-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: LB access log buckets cannot be encrypted with KMS, only Amazon S3 managed keys, due to AWS not allowing it. The gdx-vision-dev-tfstate buckets are not configured in our terraform and are encrypted with Amazon S3 managed keys as well.
+  "ec2-instance-detailed-monitoring-enabled-conformance-pack-7wkwquwdu":
+    - resources:
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-07592b2b3857a4f3a
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-012c9ebc7c6d3869e
+      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have detailed monitoring
+  "dynamodb-table-encrypted-kms-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
+      notes: This table is just used to hold lock and does not need encryption
+  "dynamodb-in-backup-plan-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
+      notes: This table is just used to hold lock and does not need to be backed up
+  "DynamoDB tables should have point-in-time recovery enabled":
+    - resources:
+        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
+      notes: This table is just used to hold lock and does not need to be backed up
+  "Application Load Balancer should be configured to redirect all HTTP requests to HTTPS":
+    - resources:
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
+      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
+  "alb-http-to-https-redirection-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
+      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
+

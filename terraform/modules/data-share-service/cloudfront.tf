@@ -73,7 +73,7 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
     minimum_protocol_version = "TLSv1.2_2021"
   }
 
-  web_acl_id = aws_wafv2_web_acl.gdx_data_share_poc.arn
+  web_acl_id = aws_wafv2_web_acl.cloudfront.arn
 }
 
 resource "aws_shield_protection" "gdx_data_share_poc" {

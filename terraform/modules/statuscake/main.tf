@@ -1,4 +1,3 @@
-
 resource "statuscake_contact_group" "gdx_platform_team" {
   name = "GDX Platform"
 
@@ -7,8 +6,8 @@ resource "statuscake_contact_group" "gdx_platform_team" {
   ]
 }
 
-resource "statuscake_uptime_check" "gdx_platform_dev" {
-  name           = var.environment
+resource "statuscake_uptime_check" "uptime_check" {
+  name           = var.env_url_pair.key
   check_interval = 30
   confirmation   = 1
   trigger_rate   = 0
@@ -32,7 +31,6 @@ resource "statuscake_uptime_check" "gdx_platform_dev" {
   }
 
   monitored_resource {
-    address = var.ping_url
+    address = var.env_url_pair.value
   }
 }
-

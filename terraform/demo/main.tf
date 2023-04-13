@@ -1,6 +1,5 @@
 locals {
-  env      = "demo"
-  host_url = "demo.share-life-events.service.gov.uk"
+  env = "demo"
   default_tags = {
     Product     = "Government Data Exchange"
     Environment = local.env
@@ -78,7 +77,7 @@ module "lev_api" {
 module "route53" {
   source = "../modules/route53"
 
-  hosted_zone_name = local.host_url
+  hosted_zone_name = "demo.share-life-events.service.gov.uk"
 }
 
 module "data-share-service" {
@@ -103,5 +102,4 @@ module "data-share-service" {
 
   hosted_zone_id   = module.route53.zone_id
   hosted_zone_name = module.route53.name
-  ping_check_url   = "https://${local.host_url}/health/ping"
 }

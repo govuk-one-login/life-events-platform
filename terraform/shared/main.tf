@@ -17,6 +17,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.0"
     }
+    statuscake = {
+      source  = "StatusCakeDev/statuscake"
+      version = ">= 2.1.0"
+    }
   }
   backend "s3" {
     bucket         = "gdx-data-share-poc-tfstate"

@@ -44,6 +44,7 @@ module "config_s3" {
   region          = var.region
   environment     = "shared"
   name            = "config"
+  suffix          = "gdx-data-share-poc"
   expiration_days = 180
   sns_arn         = var.s3_event_notification_sns_topic_arn
 }

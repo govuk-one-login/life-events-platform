@@ -1,5 +1,10 @@
+locals {
+  bucket_name     = "${var.environment}${var.environment == "" ? "" : "-"}${var.name}${var.suffix == "" ? "" : "-"}${var.suffix}"
+  log_bucket_name = "${var.environment}${var.environment == "" ? "" : "-"}${var.name}-logs${var.suffix == "" ? "" : "-"}${var.suffix}"
+}
+
 resource "aws_s3_bucket" "bucket" {
-  bucket = "${var.environment}-${var.name}-gdx-data-share-poc"
+  bucket = local.bucket_name
 
   lifecycle {
     prevent_destroy = true
@@ -39,15 +44,29 @@ resource "aws_s3_bucket_logging" "bucket_logging" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
-  count  = var.expiration_days == null ? 0 : 1
+  count  = var.expiration_days == null && var.tiering_noncurrent_days == null ? 0 : 1
   bucket = aws_s3_bucket.bucket.id
 
-  rule {
-    id = "${aws_s3_bucket.bucket.bucket}-lifecycle-rule"
-    expiration {
-      days = var.expiration_days
+  dynamic "rule" {
+    for_each = var.expiration_days == null ? toset([]) : toset([var.expiration_days])
+    content {
+      id = "${aws_s3_bucket.bucket.bucket}-lifecycle-rule"
+      expiration {
+        days = rule.value
+      }
+      status = "Enabled"
     }
-    status = "Enabled"
+  }
+  dynamic "rule" {
+    for_each = var.tiering_noncurrent_days == null ? toset([]) : toset([var.tiering_noncurrent_days])
+    content {
+      id = "${aws_s3_bucket.bucket.bucket}-lifecycle-rule"
+      noncurrent_version_transition {
+        noncurrent_days = rule.value
+        storage_class   = "INTELLIGENT_TIERING"
+      }
+      status = "Enabled"
+    }
   }
 }
 
@@ -63,7 +82,28 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+data "aws_iam_policy_document" "cross_account_access" {
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = var.cross_account_arns
+    }
+
+    actions = [
+      "s3:GetObject",
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      aws_s3_bucket.bucket.arn,
+      "${aws_s3_bucket.bucket.arn}/*",
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "bucket_policy" {
+  source_policy_documents = [length(var.cross_account_arns) != 0 ? data.aws_iam_policy_document.cross_account_access.json : ""]
+
   statement {
     sid    = "Allow delivery logs"
     effect = "Allow"

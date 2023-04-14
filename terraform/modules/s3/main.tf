@@ -1,9 +1,5 @@
 resource "aws_s3_bucket" "bucket" {
   bucket = "${var.environment}-${var.name}-gdx-data-share-poc"
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_s3_bucket_acl" "bucket_acl" {
@@ -30,9 +26,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket" {
 }
 
 resource "aws_s3_bucket_logging" "bucket_logging" {
+  count = var.add_log_bucket ? 1 : 0
+
   bucket = aws_s3_bucket.bucket.id
 
-  target_bucket = aws_s3_bucket.log_bucket.id
+  target_bucket = aws_s3_bucket.log_bucket[0].id
   target_prefix = "log/"
 }
 

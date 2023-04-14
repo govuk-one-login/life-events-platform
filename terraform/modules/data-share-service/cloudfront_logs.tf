@@ -1,12 +1,14 @@
+data "aws_canonical_user_id" "current" {}
+
 # This is the logging bucket, it doesn't need logs or versioning
 #tfsec:ignore:aws-s3-enable-bucket-logging
 #tfsec:ignore:aws-s3-enable-versioning
 module "cloudfront_logs_bucket" {
   source = "../s3"
 
-  account_id      = var.account_id
+  account_id      = data.aws_caller_identity.current.account_id
   region          = var.region
-  environment     = grafana
+  environment     = var.environment
   name            = "cloudfront-logs"
   expiration_days = 180
 

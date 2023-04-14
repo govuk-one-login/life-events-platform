@@ -88,17 +88,17 @@ module "grafana" {
   private_subnet_ids = module.vpc.private_subnet_ids
   vpc_cidr           = "10.158.32.0/20"
 
-  ecr_url       = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
-  
+  ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
+
   s3_event_notification_sns_topic_arn = module.sns.topic_arn
 }
 
 module "securityhub" {
   source = "../modules/security_hub"
 
-  region        = data.aws_region.current.name
-  environment   = local.env
-  account_id    = data.aws_caller_identity.current.account_id
+  region      = data.aws_region.current.name
+  environment = local.env
+  account_id  = data.aws_caller_identity.current.account_id
 
   s3_event_notification_sns_topic_arn = module.sns.topic_arn
 

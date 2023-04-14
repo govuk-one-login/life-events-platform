@@ -71,6 +71,8 @@ module "vpc" {
   vpc_cidr    = "10.158.32.0/20"
 
   sns_topic_arn = module.sns.topic_arn
+
+  depends_on = [module.sns]
 }
 
 module "grafana" {
@@ -91,6 +93,8 @@ module "grafana" {
   ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
 
   s3_event_notification_sns_topic_arn = module.sns.topic_arn
+
+  depends_on = [module.sns]
 }
 
 module "securityhub" {
@@ -128,6 +132,8 @@ module "securityhub" {
       disabled_reason = "GPC-315: We only use EC2 as bastions for access to our RDS, so we do not need to configure VPC endpoints for EC2."
     },
   ]
+
+  depends_on = [module.sns]
 }
 
 module "ecr" {

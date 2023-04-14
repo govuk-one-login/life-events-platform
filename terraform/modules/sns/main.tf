@@ -1,6 +1,6 @@
-data "aws_iam_policy_document" "kms_prometheus_access" {
+data "aws_iam_policy_document" "kms_arns_access" {
   statement {
-    sid = "Prometheus SNS KMS Access"
+    sid = "ARN SNS KMS Access"
     actions = [
       "kms:GenerateDataKey",
       "kms:Decrypt"
@@ -15,13 +15,41 @@ data "aws_iam_policy_document" "kms_prometheus_access" {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
 
-      values = [var.prometheus_arn]
+      values = var.arns_which_can_publish
     }
   }
 }
 
+data "aws_iam_policy_document" "kms_s3_access" {
+  statement {
+    sid = "S3 SNS KMS Access"
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["s3.amazonaws.com"]
+    }
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceAccount"
+
+      values = [var.account_id]
+    }
+  }
+}
+
+locals {
+  kms_prometheus_policy = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.kms_arns_access.json] : []
+  kms_s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.kms_s3_access.json] : []
+  kms_source_policies   = concat(local.kms_prometheus_policy, local.kms_s3_policy)
+}
+
 data "aws_iam_policy_document" "kms_access" {
-  source_policy_documents = [var.prometheus_arn != null ? data.aws_iam_policy_document.kms_prometheus_access.json : ""]
+  source_policy_documents = local.kms_source_policies
 
   statement {
     sid = "SNS KMS Access"
@@ -53,9 +81,9 @@ resource "aws_sns_topic" "sns_topic" {
   kms_master_key_id = aws_kms_key.sns_key.arn
 }
 
-data "aws_iam_policy_document" "prometheus_access" {
+data "aws_iam_policy_document" "arns_access" {
   statement {
-    sid = "Prometheus SNS Access"
+    sid = "ARN SNS Access"
     actions = [
       "SNS:Publish",
     ]
@@ -69,13 +97,40 @@ data "aws_iam_policy_document" "prometheus_access" {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
 
-      values = [var.prometheus_arn]
+      values = var.arns_which_can_publish
     }
   }
 }
 
+data "aws_iam_policy_document" "s3_access" {
+  statement {
+    sid = "S3 SNS Access"
+    actions = [
+      "SNS:Publish",
+    ]
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["s3.amazonaws.com"]
+    }
+    resources = ["arn:aws:sns:*:*:s3-event-notification-topic"]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceAccount"
+
+      values = [var.account_id]
+    }
+  }
+}
+
+locals {
+  prometheus_policy = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.arns_access.json] : []
+  s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.s3_access.json] : []
+  source_policies   = concat(local.prometheus_policy, local.s3_policy)
+}
+
 data "aws_iam_policy_document" "sns_access" {
-  source_policy_documents = [var.prometheus_arn != null ? data.aws_iam_policy_document.prometheus_access.json : ""]
+  source_policy_documents = local.source_policies
 
   statement {
     actions = [

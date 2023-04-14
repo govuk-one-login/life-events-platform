@@ -25,6 +25,8 @@ module "lb_access_logs" {
   expiration_days = 180
 
   use_kms = false
+
+  sns_arn = var.s3_event_notification_sns_topic_arn
 }
 
 #tfsec:ignore:aws-elb-http-not-used

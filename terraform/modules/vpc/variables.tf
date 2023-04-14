@@ -14,3 +14,6 @@ variable "name_prefix" {
 variable "vpc_cidr" {
   type = string
 }
+variable "sns_topic_arn" {
+  type = string
+}

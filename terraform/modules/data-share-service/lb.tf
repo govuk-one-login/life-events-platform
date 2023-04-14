@@ -31,6 +31,8 @@ module "lb_access_logs" {
   expiration_days = 180
 
   use_kms = false
+
+  sns_arn = module.sns.topic_arn
 }
 
 # We would use name_prefix, but it has a length limit of 6 characters

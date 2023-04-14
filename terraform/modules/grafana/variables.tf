@@ -21,3 +21,7 @@ variable "vpc_cidr" {
 variable "ecr_url" {
   type = string
 }
+
+variable "s3_event_notification_sns_topic_arn" {
+  type = string
+}

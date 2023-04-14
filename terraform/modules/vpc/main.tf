@@ -70,4 +70,6 @@ module "flow_logs_s3" {
   environment     = var.environment
   name            = "vpc-flow-logs"
   expiration_days = 180
+
+  sns_arn = var.sns_topic_arn
 }

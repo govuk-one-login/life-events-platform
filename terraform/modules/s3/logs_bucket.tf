@@ -11,21 +11,11 @@ resource "aws_s3_bucket" "log_bucket" {
   }
 }
 
-moved {
-  from = aws_s3_bucket.log_bucket
-  to   = aws_s3_bucket.log_bucket[0]
-}
-
 resource "aws_s3_bucket_acl" "log_bucket_acl" {
   count = var.add_log_bucket ? 1 : 0
 
   bucket = aws_s3_bucket.log_bucket[0].id
   acl    = "log-delivery-write"
-}
-
-moved {
-  from = aws_s3_bucket_acl.log_bucket_acl
-  to   = aws_s3_bucket_acl.log_bucket_acl[0]
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {
@@ -41,11 +31,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {
   }
 }
 
-moved {
-  from = aws_s3_bucket_server_side_encryption_configuration.log_bucket
-  to   = aws_s3_bucket_server_side_encryption_configuration.log_bucket[0]
-}
-
 resource "aws_s3_bucket_public_access_block" "log_bucket" {
   count = var.add_log_bucket ? 1 : 0
 
@@ -55,11 +40,6 @@ resource "aws_s3_bucket_public_access_block" "log_bucket" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-moved {
-  from = aws_s3_bucket_public_access_block.log_bucket
-  to   = aws_s3_bucket_public_access_block.log_bucket[0]
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "log_bucket_lifecycle" {
@@ -75,11 +55,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "log_bucket_lifecycle" {
     }
     status = "Enabled"
   }
-}
-
-moved {
-  from = aws_s3_bucket_lifecycle_configuration.log_bucket_lifecycle
-  to   = aws_s3_bucket_lifecycle_configuration.log_bucket_lifecycle[0]
 }
 
 data "aws_iam_policy_document" "log_bucket_deny_insecure_transport" {
@@ -113,21 +88,11 @@ data "aws_iam_policy_document" "log_bucket_deny_insecure_transport" {
   }
 }
 
-moved {
-  from = data.aws_iam_policy_document.log_bucket_deny_insecure_transport
-  to   = data.aws_iam_policy_document.log_bucket_deny_insecure_transport[0]
-}
-
 resource "aws_s3_bucket_policy" "log_bucket_deny_insecure_transport" {
   count = var.add_log_bucket ? 1 : 0
 
   bucket = aws_s3_bucket.log_bucket[0].id
   policy = data.aws_iam_policy_document.log_bucket_deny_insecure_transport[0].json
-}
-
-moved {
-  from = aws_s3_bucket_policy.log_bucket_deny_insecure_transport
-  to   = aws_s3_bucket_policy.log_bucket_deny_insecure_transport[0]
 }
 
 resource "aws_s3_bucket_notification" "log_bucket_notification" {
@@ -141,9 +106,4 @@ resource "aws_s3_bucket_notification" "log_bucket_notification" {
     filter_prefix = "AWSLogs/"
     filter_suffix = ".log"
   }
-}
-
-moved {
-  from = aws_s3_bucket_notification.log_bucket_notification
-  to   = aws_s3_bucket_notification.log_bucket_notification[0]
 }

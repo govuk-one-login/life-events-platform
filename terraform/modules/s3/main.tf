@@ -1,5 +1,9 @@
 resource "aws_s3_bucket" "bucket" {
   bucket = "${var.environment}-${var.name}-gdx-data-share-poc"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_s3_bucket_acl" "bucket_acl" {

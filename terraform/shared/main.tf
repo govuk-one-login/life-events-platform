@@ -17,6 +17,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.0"
     }
+    statuscake = {
+      source  = "StatusCakeDev/statuscake"
+      version = ">= 2.1.0"
+    }
   }
   backend "s3" {
     bucket         = "gdx-data-share-poc-tfstate"
@@ -50,6 +54,17 @@ data "aws_availability_zones" "available" {
 
 data "aws_region" "current" {}
 
+module "sns" {
+  source = "../modules/sns"
+
+  account_id          = data.aws_caller_identity.current.account_id
+  environment         = local.env
+  name                = "sns"
+  notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
+
+  allow_s3_notification = true
+}
+
 module "vpc" {
   source = "../modules/vpc"
 
@@ -58,6 +73,10 @@ module "vpc" {
   region      = data.aws_region.current.name
   name_prefix = "${local.env}-"
   vpc_cidr    = "10.158.32.0/20"
+
+  sns_topic_arn = module.sns.topic_arn
+
+  depends_on = [module.sns]
 }
 
 module "grafana" {
@@ -76,6 +95,10 @@ module "grafana" {
   vpc_cidr           = "10.158.32.0/20"
 
   ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
+
+  s3_event_notification_sns_topic_arn = module.sns.topic_arn
+
+  depends_on = [module.sns]
 }
 
 module "securityhub" {
@@ -84,6 +107,9 @@ module "securityhub" {
   region      = data.aws_region.current.name
   environment = local.env
   account_id  = data.aws_caller_identity.current.account_id
+
+  s3_event_notification_sns_topic_arn = module.sns.topic_arn
+
   rules = [
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"
@@ -110,6 +136,8 @@ module "securityhub" {
       disabled_reason = "GPC-315: We only use EC2 as bastions for access to our RDS, so we do not need to configure VPC endpoints for EC2."
     },
   ]
+
+  depends_on = [module.sns]
 }
 
 module "ecr" {
@@ -134,4 +162,12 @@ module "iam_user_roles" {
 
   admin_users     = local.gdx_dev_team
   read_only_users = local.gdx_dev_team
+}
+
+module "statuscake" {
+  source = "../modules/statuscake"
+  env_url_pair = {
+    dev  = "https://dev.share-life-events.service.gov.uk/health/ping"
+    demo = "https://demo.share-life-events.service.gov.uk/health/ping"
+  }
 }

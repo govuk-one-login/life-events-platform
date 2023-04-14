@@ -19,3 +19,7 @@ variable "use_kms" {
   type    = bool
   default = true
 }
+
+variable "sns_arn" {
+  type = string
+}

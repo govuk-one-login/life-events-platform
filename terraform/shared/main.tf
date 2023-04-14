@@ -89,7 +89,8 @@ module "grafana" {
   vpc_cidr           = "10.158.32.0/20"
 
   ecr_url       = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
-  sns_topic_arn = module.sns.topic_arn
+  
+  s3_event_notification_sns_topic_arn = module.sns.topic_arn
 }
 
 module "securityhub" {
@@ -98,7 +99,8 @@ module "securityhub" {
   region        = data.aws_region.current.name
   environment   = local.env
   account_id    = data.aws_caller_identity.current.account_id
-  sns_topic_arn = module.sns.topic_arn
+
+  s3_event_notification_sns_topic_arn = module.sns.topic_arn
 
   rules = [
     {

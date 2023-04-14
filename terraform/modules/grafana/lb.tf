@@ -26,7 +26,7 @@ module "lb_access_logs" {
 
   use_kms = false
 
-  sns_arn = var.sns_topic_arn
+  sns_arn = var.s3_event_notification_sns_topic_arn
 }
 
 #tfsec:ignore:aws-elb-http-not-used

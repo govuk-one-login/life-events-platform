@@ -103,7 +103,7 @@ resource "aws_s3_bucket_notification" "cloudfront_bucket_notification" {
   bucket = aws_s3_bucket.cloudfront_logs_bucket.id
 
   topic {
-    topic_arn     = var.sns_topic_arn
+    topic_arn     = var.s3_event_notification_sns_topic_arn
     events        = ["s3:ObjectRemoved:Delete"]
     filter_prefix = "AWSLogs/"
     filter_suffix = ".log"

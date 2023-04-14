@@ -22,6 +22,6 @@ variable "ecr_url" {
   type = string
 }
 
-variable "sns_topic_arn" {
+variable "s3_event_notification_sns_topic_arn" {
   type = string
 }

@@ -1,3 +1,7 @@
+provider "statuscake" {
+  api_token = var.statuscake_api_key
+}
+
 resource "statuscake_contact_group" "gdx_platform_team" {
   name = "GDX Platform"
 

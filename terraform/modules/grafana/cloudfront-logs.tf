@@ -12,9 +12,7 @@ module "cloudfront_logs_bucket" {
 
   add_log_bucket = false
 
-  sns_arn = module.sns.topic_arn
-
-  depends_on = [module.sns]
+  sns_arn = var.s3_event_notification_sns_topic_arn
 }
 
 moved {

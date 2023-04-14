@@ -17,6 +17,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.0"
     }
+    statuscake = {
+      source  = "StatusCakeDev/statuscake"
+      version = ">= 2.1.0"
+    }
   }
   backend "s3" {
     bucket         = "gdx-data-share-poc-tfstate"
@@ -158,4 +162,12 @@ module "iam_user_roles" {
 
   admin_users     = local.gdx_dev_team
   read_only_users = local.gdx_dev_team
+}
+
+module "statuscake" {
+  source = "../modules/statuscake"
+  env_url_pair = {
+    dev  = "https://dev.share-life-events.service.gov.uk/health/ping"
+    demo = "https://demo.share-life-events.service.gov.uk/health/ping"
+  }
 }

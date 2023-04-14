@@ -113,7 +113,7 @@ data "aws_iam_policy_document" "s3_access" {
       type        = "Service"
       identifiers = ["s3.amazonaws.com"]
     }
-    resources = ["arn:aws:sns:*:*:s3-event-notification-topic"]
+    resources = [aws_sns_topic.sns_topic.arn]
     condition {
       test     = "StringEquals"
       variable = "aws:ResourceAccount"

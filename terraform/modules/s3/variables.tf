@@ -15,6 +15,11 @@ variable "expiration_days" {
   default = null
 }
 
+variable "add_log_bucket" {
+  type    = bool
+  default = true
+}
+
 variable "use_kms" {
   type    = bool
   default = true

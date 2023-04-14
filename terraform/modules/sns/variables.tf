@@ -11,9 +11,9 @@ variable "notification_emails" {
   type = list(string)
 }
 
-variable "prometheus_arn" {
-  type    = string
-  default = ""
+variable "arns_which_can_publish" {
+  type    = list(string)
+  default = []
 }
 variable "allow_s3_notification" {
   type    = bool

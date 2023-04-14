@@ -157,3 +157,11 @@ module "iam_user_roles" {
   admin_users     = local.gdx_dev_team
   read_only_users = local.gdx_dev_team
 }
+
+#module "statuscake" {
+#  source      = "../modules/statuscake"
+#  env_url_pair =  {
+#    "dev" = "https://dev.share-life-events.service.gov.uk/health/ping"
+#    "demo" = "https://demo.share-life-events.service.gov.uk/health/ping"
+#  }
+#}

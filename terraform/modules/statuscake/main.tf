@@ -1,5 +1,9 @@
+data "aws_ssm_parameter" "statuscake_api_key" {
+  name = aws_ssm_parameter.statuscake_api_key.name
+}
+
 provider "statuscake" {
-  api_token = var.statuscake_api_key
+  api_token = data.aws_ssm_parameter.statuscake_api_key.value
 }
 
 resource "statuscake_contact_group" "gdx_platform_team" {

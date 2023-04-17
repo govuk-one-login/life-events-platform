@@ -20,7 +20,7 @@ module "lb_access_logs" {
 
   account_id      = var.account_id
   region          = var.region
-  prefix     = "grafana"
+  prefix          = "grafana"
   name            = "lb-access-logs"
   suffix          = "gdx-data-share-poc"
   expiration_days = 180

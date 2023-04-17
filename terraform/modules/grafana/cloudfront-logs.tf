@@ -6,7 +6,7 @@ module "cloudfront_logs_bucket" {
 
   account_id      = var.account_id
   region          = var.region
-  environment     = "grafana"
+  prefix     = "grafana"
   name            = "cloudfront-logs"
   suffix          = "gdx-data-share-poc"
   expiration_days = 180

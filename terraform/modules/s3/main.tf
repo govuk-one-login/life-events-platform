@@ -1,6 +1,6 @@
 locals {
-  bucket_name     = "${var.environment}${var.environment == "" ? "" : "-"}${var.name}${var.suffix == "" ? "" : "-"}${var.suffix}"
-  log_bucket_name = "${var.environment}${var.environment == "" ? "" : "-"}${var.name}-logs${var.suffix == "" ? "" : "-"}${var.suffix}"
+  bucket_name     = "${var.prefix}${var.prefix == "" ? "" : "-"}${var.name}${var.suffix == "" ? "" : "-"}${var.suffix}"
+  log_bucket_name = "${var.prefix}${var.prefix == "" ? "" : "-"}${var.name}-logs${var.suffix == "" ? "" : "-"}${var.suffix}"
 }
 
 resource "aws_s3_bucket" "bucket" {

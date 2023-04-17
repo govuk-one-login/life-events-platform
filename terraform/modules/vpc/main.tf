@@ -67,7 +67,7 @@ module "flow_logs_s3" {
 
   account_id      = var.account_id
   region          = var.region
-  environment     = var.environment
+  prefix     = var.environment
   name            = "vpc-flow-logs"
   suffix          = "gdx-data-share-poc"
   expiration_days = 180

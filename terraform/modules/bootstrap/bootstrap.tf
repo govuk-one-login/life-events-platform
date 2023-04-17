@@ -9,6 +9,11 @@ module "state_bucket" {
 
   sns_arn = module.sns.topic_arn
 
+  cross_account_arns = [
+    "arn:aws:iam::255773200490:role/prod-github-oidc-deploy",
+    "arn:aws:iam::255773200490:role/github-oidc-pull-request"
+  ]
+
   depends_on = [module.sns]
 }
 

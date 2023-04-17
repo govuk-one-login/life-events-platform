@@ -230,6 +230,7 @@ module "waf_lb_logs_bucket" {
   region          = var.region
   prefix          = "aws-waf-logs-${var.environment}"
   name            = "load-balancer"
+  suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
   add_log_bucket = false

@@ -226,6 +226,11 @@ Suppressions:
     - resources:
         - arn:aws:iam::776473272850:user/dwp-dev
       notes: MFA is not enabled as this user is only a service account for access to SQS
+  "S3 buckets should have event notifications enabled":
+    - resources:
+        - arn:aws:s3:::gdx-vision-dev-tfstate
+        - arn:aws:s3:::gdx-vision-dev-tfstate-logs
+      notes: The gdx-vision-dev-tfstate buckets are not configured in our terraform and the state won't change, so we are not adding event notifications to it.
   "CloudFormation stacks should be integrated with Simple Notification Service (SNS)":
     - resources:
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4

@@ -105,7 +105,7 @@ data "aws_iam_policy_document" "cross_account_access" {
 
 data "aws_iam_policy_document" "cloudtrail_access" {
   statement {
-    sid = "Allow cloudtrail logs"
+    sid    = "Allow cloudtrail logs"
     effect = "Allow"
     principals {
       type        = "Service"
@@ -127,8 +127,8 @@ data "aws_iam_policy_document" "cloudtrail_access" {
 
 locals {
   cross_account_policy = length(var.cross_account_arns) != 0 ? [data.aws_iam_policy_document.cross_account_access.json] : []
-  cloudtrail_policy         = var.allow_cloudtrail_logs ? [data.aws_iam_policy_document.cloudtrail_access.json] : []
-  source_policies   = concat(local.cross_account_policy, local.cloudtrail_policy)
+  cloudtrail_policy    = var.allow_cloudtrail_logs ? [data.aws_iam_policy_document.cloudtrail_access.json] : []
+  source_policies      = concat(local.cross_account_policy, local.cloudtrail_policy)
 }
 
 data "aws_iam_policy_document" "bucket_policy" {

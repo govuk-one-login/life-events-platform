@@ -1,6 +1,6 @@
 data "aws_iam_policy_document" "cloudtrail_kms_access" {
   statement {
-    sid = "Allow cloudtrail logs"
+    sid    = "Allow cloudtrail logs"
     effect = "Allow"
     principals {
       type        = "Service"

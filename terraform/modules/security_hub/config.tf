@@ -32,7 +32,7 @@ resource "aws_config_configuration_recorder_status" "config" {
 
 resource "aws_config_delivery_channel" "config" {
   name           = "config-delivery-channel"
-  s3_bucket_name = module.config_s3.name
+  s3_bucket_name = module.config_s3.id
   s3_kms_key_arn = module.config_s3.kms_arn
   depends_on     = [aws_config_configuration_recorder.config]
 }

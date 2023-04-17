@@ -4,7 +4,7 @@ variable "account_id" {
 variable "region" {
   type = string
 }
-variable "environment" {
+variable "prefix" {
   type    = string
   default = ""
 }

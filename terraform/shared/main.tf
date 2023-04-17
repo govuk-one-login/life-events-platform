@@ -61,8 +61,6 @@ module "sns" {
   environment         = local.env
   name                = "sns"
   notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
-
-  allow_s3_notification = true
 }
 
 module "vpc" {

@@ -22,6 +22,7 @@ module "lb_access_logs" {
   region          = var.region
   environment     = "grafana"
   name            = "lb-access-logs"
+  suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
   use_kms = false

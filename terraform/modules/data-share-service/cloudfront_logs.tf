@@ -10,6 +10,7 @@ module "cloudfront_logs_bucket" {
   region          = var.region
   environment     = var.environment
   name            = "cloudfront-logs"
+  suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
   add_log_bucket = false

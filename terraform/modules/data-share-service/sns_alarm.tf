@@ -11,5 +11,4 @@ module "sns" {
   notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
 
   arns_which_can_publish = [aws_prometheus_workspace.prometheus.arn]
-  allow_s3_notification  = true
 }

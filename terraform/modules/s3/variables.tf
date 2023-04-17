@@ -5,12 +5,21 @@ variable "region" {
   type = string
 }
 variable "environment" {
-  type = string
+  type    = string
+  default = ""
 }
 variable "name" {
   type = string
 }
+variable "suffix" {
+  type    = string
+  default = ""
+}
 variable "expiration_days" {
+  type    = number
+  default = null
+}
+variable "tiering_noncurrent_days" {
   type    = number
   default = null
 }
@@ -27,4 +36,9 @@ variable "use_kms" {
 
 variable "sns_arn" {
   type = string
+}
+
+variable "cross_account_arns" {
+  type    = list(string)
+  default = []
 }

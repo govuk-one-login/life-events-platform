@@ -16,6 +16,15 @@ resource "aws_efs_access_point" "grafana" {
     gid = 0
     uid = 0
   }
+
+  root_directory {
+    path = "/config"
+    creation_info {
+      owner_gid   = 0
+      owner_uid   = 0
+      permissions = "0700"
+    }
+  }
 }
 
 resource "aws_security_group" "efs" {

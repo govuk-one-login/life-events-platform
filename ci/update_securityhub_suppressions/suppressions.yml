@@ -226,3 +226,8 @@ Suppressions:
     - resources:
         - arn:aws:iam::776473272850:user/dwp-dev
       notes: MFA is not enabled as this user is only a service account for access to SQS
+  "CloudFormation stacks should be integrated with Simple Notification Service (SNS)":
+    - resources:
+        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4
+        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-1dpd692bc/189a3600-d93f-11ed-a33e-06ce375c57d6
+      notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS

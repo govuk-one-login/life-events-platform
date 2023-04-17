@@ -109,6 +109,14 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-337
+  "CVE-2023-20863 - org.springframework:spring-expression":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-343
+  "IN1-JAVA-ORGSPRINGFRAMEWORK-5422217 - org.springframework:spring-expression":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-343
   "S3 bucket server access logging should be enabled":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs

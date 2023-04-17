@@ -61,22 +61,24 @@ resource "aws_wafv2_web_acl_association" "waf_load_balancer" {
 # This is the logging bucket, it doesn't need logs or versioning
 #tfsec:ignore:aws-s3-enable-bucket-logging
 #tfsec:ignore:aws-s3-enable-versioning
-module "waf_lb_logs_bucket" {
-  source = "../s3"
+#module "waf_lb_logs_bucket" {
+#  source = "../s3"
+#
+#  account_id      = var.account_id
+#  region          = var.region
+#  environment     = "grafana"
+#  name            = "waf-lb-logs"
+#  expiration_days = 180
+#
+#  add_log_bucket = false
+#
+#  sns_arn = var.s3_event_notification_sns_topic_arn
+#}
 
-  account_id      = var.account_id
-  region          = var.region
-  environment     = "grafana"
-  name            = "waf-lb-logs"
-  expiration_days = 180
-
-  add_log_bucket = false
-
-  sns_arn = var.s3_event_notification_sns_topic_arn
-}
-
-resource "aws_wafv2_web_acl_logging_configuration" "load_balancer" {
-  log_destination_configs = [module.waf_lb_logs_bucket.arn]
-  resource_arn            = aws_wafv2_web_acl.load_balancer.arn
-}
+#resource "aws_wafv2_web_acl_logging_configuration" "load_balancer" {
+#  log_destination_configs = [module.waf_lb_logs_bucket.arn]
+#  resource_arn            = aws_wafv2_web_acl.load_balancer.arn
+#
+#  depends_on = [module.waf_lb_logs_bucket]
+#}
 

@@ -169,3 +169,13 @@ module "statuscake" {
     demo = "https://demo.share-life-events.service.gov.uk/health/ping"
   }
 }
+
+module "cloudtrail" {
+  source = "../modules/cloudtrail"
+
+  account_id  = data.aws_caller_identity.current.account_id
+  region      = data.aws_region.current.name
+  environment = local.env
+
+  s3_event_notification_sns_topic_arn = module.sns.topic_arn
+}

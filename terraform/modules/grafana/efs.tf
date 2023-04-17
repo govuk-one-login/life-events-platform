@@ -37,3 +37,11 @@ resource "aws_security_group_rule" "efs_ingress" {
   description              = "EFS task ingress rule, allow access from ECS"
   security_group_id        = aws_security_group.efs.id
 }
+
+resource "aws_efs_backup_policy" "automatic_backup_policy" {
+  file_system_id = aws_efs_file_system.grafana.id
+
+  backup_policy {
+    status = "ENABLED"
+  }
+}

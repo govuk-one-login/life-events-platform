@@ -1,7 +1,7 @@
 module "state_bucket" {
   source = "../s3"
 
-  account_id = data.aws_caller_identity.current.arn
+  account_id = data.aws_caller_identity.current.account_id
   region     = data.aws_region.current.name
   name       = var.s3_bucket_name
 
@@ -15,7 +15,7 @@ module "state_bucket" {
 module "sns" {
   source = "../sns"
 
-  account_id          = data.aws_caller_identity.current.arn
+  account_id          = data.aws_caller_identity.current.account_id
   environment         = "bootstrap"
   name                = "sns"
   notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]

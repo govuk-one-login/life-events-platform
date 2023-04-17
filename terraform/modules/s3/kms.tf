@@ -56,6 +56,6 @@ resource "aws_kms_key" "bucket" {
 resource "aws_kms_alias" "bucket_alias" {
   count = var.use_kms ? 1 : 0
 
-  name          = "alias/${var.environment}/${var.name}-bucket-key"
+  name          = "alias/${var.prefix}${var.prefix == "" ? "" : "/"}${var.name}-bucket-key"
   target_key_id = aws_kms_key.bucket[0].arn
 }

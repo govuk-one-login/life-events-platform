@@ -17,5 +17,5 @@ variable "arns_which_can_publish" {
 }
 variable "allow_s3_notification" {
   type    = bool
-  default = false
+  default = true
 }

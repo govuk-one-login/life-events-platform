@@ -109,6 +109,14 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-337
+  "CVE-2023-20863 - org.springframework:spring-expression":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-343
+  "IN1-JAVA-ORGSPRINGFRAMEWORK-5422217 - org.springframework:spring-expression":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-343
   "S3 bucket server access logging should be enabled":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
@@ -123,6 +131,9 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-1dpd692bc":
     - resources:
@@ -138,6 +149,9 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-flegfck3w":
     - resources:
@@ -153,6 +167,9 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-versioning-enabled-conformance-pack-1dpd692bc":
     - resources:
@@ -168,6 +185,9 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
   "s3-bucket-versioning-enabled-conformance-pack-flegfck3w":
     - resources:
@@ -183,6 +203,9 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
   "s3-default-encryption-kms-conformance-pack-1dpd692bc":
     - resources:
@@ -226,3 +249,13 @@ Suppressions:
     - resources:
         - arn:aws:iam::776473272850:user/dwp-dev
       notes: MFA is not enabled as this user is only a service account for access to SQS
+  "S3 buckets should have event notifications enabled":
+    - resources:
+        - arn:aws:s3:::gdx-vision-dev-tfstate
+        - arn:aws:s3:::gdx-vision-dev-tfstate-logs
+      notes: The gdx-vision-dev-tfstate buckets are not configured in our terraform and the state won't change, so we are not adding event notifications to it.
+  "CloudFormation stacks should be integrated with Simple Notification Service (SNS)":
+    - resources:
+        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4
+        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-1dpd692bc/189a3600-d93f-11ed-a33e-06ce375c57d6
+      notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS

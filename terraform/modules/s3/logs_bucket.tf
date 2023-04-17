@@ -4,7 +4,7 @@
 resource "aws_s3_bucket" "log_bucket" {
   count = var.add_log_bucket ? 1 : 0
 
-  bucket = "${var.environment}-${var.name}-logs-gdx-data-share-poc"
+  bucket = local.log_bucket_name
 
   lifecycle {
     prevent_destroy = true

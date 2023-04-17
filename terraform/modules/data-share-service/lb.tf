@@ -26,8 +26,9 @@ module "lb_access_logs" {
 
   account_id      = data.aws_caller_identity.current.account_id
   region          = var.region
-  environment     = var.environment
+  prefix          = var.environment
   name            = "lb-access-logs"
+  suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
   use_kms = false

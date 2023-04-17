@@ -8,8 +8,9 @@ module "cloudfront_logs_bucket" {
 
   account_id      = data.aws_caller_identity.current.account_id
   region          = var.region
-  environment     = var.environment
+  prefix          = var.environment
   name            = "cloudfront-logs"
+  suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
   add_log_bucket = false

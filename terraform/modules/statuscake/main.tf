@@ -17,8 +17,9 @@ resource "statuscake_contact_group" "gdx_platform_team" {
 resource "statuscake_uptime_check" "uptime_check" {
   for_each = var.env_url_pair
 
-  name           = each.key
-  check_interval = 30
+  name = each.key
+  # We are on a free plan of statuscake, so 5 mins is the shortest check interval we are allowed
+  check_interval = 300
   confirmation   = 1
   trigger_rate   = 0
   regions        = ["london", "dublin"]

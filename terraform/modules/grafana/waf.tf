@@ -66,8 +66,9 @@ module "waf_lb_logs_bucket" {
 
   account_id      = var.account_id
   region          = var.region
-  environment     = "grafana"
-  name            = "waf-lb-logs"
+  prefix          = "aws-waf-logs-grafana"
+  name            = "load-balancer"
+  suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
   add_log_bucket = false
@@ -78,5 +79,7 @@ module "waf_lb_logs_bucket" {
 resource "aws_wafv2_web_acl_logging_configuration" "load_balancer" {
   log_destination_configs = [module.waf_lb_logs_bucket.arn]
   resource_arn            = aws_wafv2_web_acl.load_balancer.arn
+
+  depends_on = [module.waf_lb_logs_bucket]
 }
 

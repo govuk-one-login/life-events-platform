@@ -1,71 +1,109 @@
-resource "aws_s3_bucket" "state_bucket" {
-  bucket = var.s3_bucket_name
+module "state_bucket" {
+  source = "../s3"
 
-  lifecycle {
-    prevent_destroy = true
-  }
+  account_id = data.aws_caller_identity.current.account_id
+  region     = data.aws_region.current.name
+  name       = var.s3_bucket_name
+
+  tiering_noncurrent_days = 10
+
+  sns_arn = module.sns.topic_arn
+
+  cross_account_arns = [
+    "arn:aws:iam::255773200490:role/prod-github-oidc-deploy",
+    "arn:aws:iam::255773200490:role/github-oidc-pull-request"
+  ]
+
+  depends_on = [module.sns]
 }
 
-resource "aws_s3_bucket_acl" "state_bucket" {
-  bucket = aws_s3_bucket.state_bucket.id
-  acl    = "private"
+module "sns" {
+  source = "../sns"
+
+  account_id          = data.aws_caller_identity.current.account_id
+  environment         = "bootstrap"
+  name                = "sns"
+  notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
 }
 
-resource "aws_s3_bucket_versioning" "state_bucket" {
-  bucket = aws_s3_bucket.state_bucket.id
-  versioning_configuration {
-    status = "Enabled"
-  }
+moved {
+  from = aws_kms_key.state_bucket
+  to   = module.state_bucket.aws_kms_key.bucket[0]
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle" {
-  bucket = aws_s3_bucket.state_bucket.id
-
-  rule {
-    id = "${aws_s3_bucket.state_bucket.bucket}-lifecycle-rule"
-    noncurrent_version_transition {
-      noncurrent_days = 10
-      storage_class   = "INTELLIGENT_TIERING"
-    }
-    status = "Enabled"
-  }
+moved {
+  from = aws_kms_alias.state_bucket_key_alias
+  to   = module.state_bucket.aws_kms_alias.bucket_alias[0]
 }
 
-resource "aws_kms_key" "state_bucket" {
-  enable_key_rotation = true
-  description         = "Key used to encrypt state bucket"
+moved {
+  from = aws_s3_bucket.state_bucket
+  to   = module.state_bucket.aws_s3_bucket.bucket
 }
 
-resource "aws_kms_alias" "state_bucket_key_alias" {
-  name          = "alias/state-bucket-key"
-  target_key_id = aws_kms_key.state_bucket.arn
+moved {
+  from = aws_s3_bucket.log_bucket
+  to   = module.state_bucket.aws_s3_bucket.log_bucket[0]
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "state_bucket" {
-  bucket = aws_s3_bucket.state_bucket.bucket
-
-  rule {
-    apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.state_bucket.arn
-      sse_algorithm     = "aws:kms"
-    }
-  }
+moved {
+  from = aws_s3_bucket_acl.state_bucket
+  to   = module.state_bucket.aws_s3_bucket_acl.bucket_acl
 }
 
-resource "aws_s3_bucket_logging" "bucket_logging" {
-  bucket = aws_s3_bucket.state_bucket.id
-
-  target_bucket = aws_s3_bucket.log_bucket.id
-  target_prefix = "log/"
+moved {
+  from = aws_s3_bucket_acl.log_bucket_acl
+  to   = module.state_bucket.aws_s3_bucket_acl.log_bucket_acl[0]
 }
 
-resource "aws_s3_bucket_public_access_block" "state_bucket" {
-  bucket = aws_s3_bucket.state_bucket.id
+moved {
+  from = aws_s3_bucket_versioning.state_bucket
+  to   = module.state_bucket.aws_s3_bucket_versioning.bucket
+}
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+moved {
+  from = aws_s3_bucket_lifecycle_configuration.bucket_lifecycle
+  to   = module.state_bucket.aws_s3_bucket_lifecycle_configuration.bucket_lifecycle[0]
+}
+
+moved {
+  from = aws_s3_bucket_lifecycle_configuration.log_bucket_lifecycle
+  to   = module.state_bucket.aws_s3_bucket_lifecycle_configuration.log_bucket_lifecycle[0]
+}
+
+moved {
+  from = aws_s3_bucket_server_side_encryption_configuration.state_bucket
+  to   = module.state_bucket.aws_s3_bucket_server_side_encryption_configuration.bucket
+}
+
+moved {
+  from = aws_s3_bucket_server_side_encryption_configuration.log_bucket
+  to   = module.state_bucket.aws_s3_bucket_server_side_encryption_configuration.log_bucket[0]
+}
+
+moved {
+  from = aws_s3_bucket_logging.bucket_logging
+  to   = module.state_bucket.aws_s3_bucket_logging.bucket_logging[0]
+}
+
+moved {
+  from = aws_s3_bucket_public_access_block.state_bucket
+  to   = module.state_bucket.aws_s3_bucket_public_access_block.bucket
+}
+
+moved {
+  from = aws_s3_bucket_public_access_block.log_bucket
+  to   = module.state_bucket.aws_s3_bucket_public_access_block.log_bucket[0]
+}
+
+moved {
+  from = aws_s3_bucket_policy.bucket_policy
+  to   = module.state_bucket.aws_s3_bucket_policy.deny_insecure_transport
+}
+
+moved {
+  from = aws_s3_bucket_policy.log_bucket_deny_insecure_transport
+  to   = module.state_bucket.aws_s3_bucket_policy.log_bucket_deny_insecure_transport[0]
 }
 
 # we're not storing anything sensitive in DynamoDB, just using it for locking, so encryption is unecessary
@@ -81,47 +119,4 @@ resource "aws_dynamodb_table" "tf_lock_state" {
     name = "LockID"
     type = "S"
   }
-}
-
-data "aws_iam_policy_document" "deny_insecure_transport" {
-  statement {
-    sid    = "DenyInsecureTransport"
-    effect = "Deny"
-
-    actions = [
-      "s3:*",
-    ]
-
-    resources = [
-      aws_s3_bucket.state_bucket.arn,
-      "${aws_s3_bucket.state_bucket.arn}/*",
-    ]
-
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values = [
-        "false"
-      ]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "bucket_policy" {
-  source_policy_documents = length(var.cross_account_arns) == 0 ? [
-    data.aws_iam_policy_document.deny_insecure_transport.json
-    ] : [
-    data.aws_iam_policy_document.deny_insecure_transport.json,
-    data.aws_iam_policy_document.cross_account_access.json
-  ]
-}
-
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.state_bucket.id
-  policy = data.aws_iam_policy_document.bucket_policy.json
 }

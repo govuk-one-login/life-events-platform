@@ -18,6 +18,9 @@ resource "aws_instance" "rds_bastion_host" {
   associate_public_ip_address = false
   vpc_security_group_ids      = [aws_security_group.rds_bastion_host_sg.id]
   iam_instance_profile        = aws_iam_instance_profile.rds_bastion_instance_profile.name
+
+  monitoring = true
+
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"

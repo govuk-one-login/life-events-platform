@@ -15,6 +15,10 @@ data "aws_iam_policy" "security_hub_read_only_policy" {
   name = "AWSSecurityHubReadOnlyAccess"
 }
 
+data "aws_iam_policy" "support_access_policy" {
+  name = "AWSSupportAccess"
+}
+
 module "admin_roles" {
   for_each = local.admin_users
 
@@ -32,6 +36,7 @@ module "read_only_roles" {
   username    = each.value
   policy_arns = [
     data.aws_iam_policy.read_only_policy.arn,
-    data.aws_iam_policy.security_hub_read_only_policy.arn
+    data.aws_iam_policy.security_hub_read_only_policy.arn,
+    data.aws_iam_policy.support_access_policy.arn
   ]
 }

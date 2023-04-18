@@ -228,6 +228,11 @@ Suppressions:
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-07592b2b3857a4f3a
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-012c9ebc7c6d3869e
       notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have detailed monitoring
+  "ebs-in-backup-plan-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-031a25f49d5a6fcf2
+        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0d011510caddeabab
+      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have the volumes be backed up
   "dynamodb-table-encrypted-kms-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock

@@ -308,3 +308,7 @@ Suppressions:
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/application/metrics
       notes: These log groups are controlled by AWS
+  "root-account-hardware-mfa-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: For this GDS created account this is not possible to enforce

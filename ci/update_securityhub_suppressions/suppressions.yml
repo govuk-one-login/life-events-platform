@@ -298,3 +298,13 @@ Suppressions:
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-events
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-len
       notes: These log groups are controlled by AWS, are temporary logs for the running of our prometheus and grafana, or they are for our fakes, which we do not need to retain for 365 days.
+  "cloudwatch-log-group-encrypted-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/rds/cluster/dev-rds-db/postgresql
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/rds/cluster/demo-rds-db/postgresql
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/grafana/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/dev/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/application/metrics
+      notes: These log groups are controlled by AWS

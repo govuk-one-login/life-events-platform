@@ -264,3 +264,23 @@ Suppressions:
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-1dpd692bc/189a3600-d93f-11ed-a33e-06ce375c57d6
       notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS
+  "CloudTrail trails should be integrated with Amazon CloudWatch Logs":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "CloudTrail should have encryption at-rest enabled":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-encryption-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-flegfck3w":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it

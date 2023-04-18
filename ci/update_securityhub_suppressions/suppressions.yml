@@ -134,6 +134,7 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-1dpd692bc":
     - resources:
@@ -152,6 +153,7 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-flegfck3w":
     - resources:
@@ -170,6 +172,7 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-versioning-enabled-conformance-pack-1dpd692bc":
     - resources:
@@ -188,6 +191,7 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
   "s3-bucket-versioning-enabled-conformance-pack-flegfck3w":
     - resources:
@@ -206,6 +210,7 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
   "s3-default-encryption-kms-conformance-pack-1dpd692bc":
     - resources:

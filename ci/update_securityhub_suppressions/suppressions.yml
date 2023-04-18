@@ -308,3 +308,13 @@ Suppressions:
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/application/metrics
       notes: These log groups are controlled by AWS
+  "iam-no-inline-policy-check-conformance-pack-flegfck3w":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
+  "iam-no-inline-policy-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy

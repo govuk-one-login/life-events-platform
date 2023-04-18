@@ -10,7 +10,7 @@ module "bucket" {
 
   allow_cloudtrail_logs = true
 
-  sns_arn = var.s3_event_notification_sns_topic_arn
+  sns_arn = var.sns_topic_arn
 }
 
 resource "aws_cloudtrail" "cloudtrail" {

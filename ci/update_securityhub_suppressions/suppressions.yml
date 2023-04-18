@@ -235,7 +235,8 @@ Suppressions:
   "dynamodb-in-backup-plan-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
-      notes: This table is just used to hold lock and does not need to be backed up
+        - arn:aws:dynamodb:eu-west-2:776473272850:table/securityhub-suppression-list
+      notes: These tables are either just used to hold lock or are replicated in our code and so do not need to be backed up
   "DynamoDB tables should have point-in-time recovery enabled":
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock

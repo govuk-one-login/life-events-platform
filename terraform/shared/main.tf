@@ -180,5 +180,5 @@ module "cloudtrail" {
   environment                 = local.env
   cloudwatch_retention_period = 30
 
-  s3_event_notification_sns_topic_arn = module.sns.topic_arn
+  sns_topic_arn = module.sns.topic_arn
 }

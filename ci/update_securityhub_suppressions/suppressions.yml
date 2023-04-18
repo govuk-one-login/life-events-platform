@@ -264,3 +264,17 @@ Suppressions:
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-1dpd692bc/189a3600-d93f-11ed-a33e-06ce375c57d6
       notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS
+  "cw-loggroup-retention-period-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/grafana/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/dev/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/grafana-ecs-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/dev-gdx-data-share-poc-prometheus-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/demo-gdx-data-share-poc-prometheus-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-delete-event
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-event
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-events
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-len
+      notes: These log groups are controlled by AWS, are temporary logs for the running of our prometheus and grafana, or they are for our fakes, which we do not need to retain for 365 days.

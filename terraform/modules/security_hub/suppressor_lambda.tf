@@ -19,7 +19,7 @@ module "lambda_function_suppressor" {
 
   create_role = false
 
-  cloudwatch_logs_retention_in_days = 7
+  cloudwatch_logs_retention_in_days = var.lambda_cloudwatch_retention_days
   cloudwatch_logs_kms_key_id        = aws_kms_key.security_hub_findings.arn
 
   source_path = "${path.module}/lambdas/"

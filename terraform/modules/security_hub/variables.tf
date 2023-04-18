@@ -13,3 +13,6 @@ variable "rules" {
 variable "s3_event_notification_sns_topic_arn" {
   type = string
 }
+variable "lambda_cloudwatch_retention_days" {
+  type = number
+}

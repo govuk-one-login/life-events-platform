@@ -213,13 +213,13 @@ resource "aws_wafv2_web_acl" "load_balancer" {
       block {}
     }
 
-    name = "SqlInjectionMatch"
+    name     = "SqlInjectionMatch"
     priority = 1
 
     statement {
       sqli_match_statement {
         text_transformation {
-          type = "URL_DECODE"
+          type     = "URL_DECODE"
           priority = 1
         }
 

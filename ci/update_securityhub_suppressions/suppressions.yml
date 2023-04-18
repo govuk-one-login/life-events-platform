@@ -308,3 +308,9 @@ Suppressions:
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/application/metrics
       notes: These log groups are controlled by AWS
+  "ecs-containers-readonly-access-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/grafana:*
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/dev-gdx-data-share-poc:*
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/demo-gdx-data-share-poc:*
+      notes: These task definitions need write access to the filesystem

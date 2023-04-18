@@ -28,6 +28,10 @@ variable "add_log_bucket" {
   type    = bool
   default = true
 }
+variable "allow_cloudtrail_logs" {
+  type    = bool
+  default = false
+}
 
 variable "use_kms" {
   type    = bool

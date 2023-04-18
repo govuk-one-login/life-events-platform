@@ -1,4 +1,25 @@
+data "aws_iam_policy_document" "cloudtrail_kms_access" {
+  statement {
+    sid    = "Allow cloudtrail logs"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+    resources = ["*"]
+  }
+}
+
 data "aws_iam_policy_document" "kms_policy" {
+  source_policy_documents = [var.allow_cloudtrail_logs != 0 ? data.aws_iam_policy_document.cloudtrail_kms_access.json : ""]
+
   statement {
     sid    = "Enable IAM User Permissions"
     effect = "Allow"

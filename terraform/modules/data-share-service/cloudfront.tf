@@ -25,7 +25,7 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
 
   logging_config {
     include_cookies = false
-    bucket          = "${module.cloudfront_logs_bucket.name}.s3.amazonaws.com"
+    bucket          = "${module.cloudfront_logs_bucket.id}.s3.amazonaws.com"
     prefix          = var.environment
   }
 

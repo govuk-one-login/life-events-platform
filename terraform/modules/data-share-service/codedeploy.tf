@@ -87,6 +87,8 @@ resource "aws_iam_role_policy_attachment" "ecs_codedeploy" {
   policy_arn = data.aws_iam_policy.codedeploy_for_ecs.arn
 }
 
+# This is necessary for the codedeploy to run
+#tfsec:ignore:aws-iam-filer-passrole-access
 data "aws_iam_policy_document" "passrole_codedeploy_policy" {
   statement {
     effect = "Allow"

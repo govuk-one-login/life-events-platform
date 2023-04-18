@@ -180,9 +180,3 @@ module "cloudtrail" {
 
   sns_topic_arn = module.sns.topic_arn
 }
-
-module "support_role" {
-  source = "../modules/support_role"
-
-  account_id = data.aws_caller_identity.current.account_id
-}

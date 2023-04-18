@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "cloudtrail_cloudwatch_logs" {
       "logs:PutLogEvents",
     ]
 
-    resources = ["${aws_cloudwatch_log_group.cloudtrail.arn}:*"]
+    resources = ["${aws_cloudwatch_log_group.cloudtrail.arn}:${var.account_id}_CloudTrail_${var.region}*"]
   }
 }
 

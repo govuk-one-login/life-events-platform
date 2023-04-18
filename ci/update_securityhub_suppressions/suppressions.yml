@@ -284,3 +284,17 @@ Suppressions:
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cw-loggroup-retention-period-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/grafana/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/dev/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/grafana-ecs-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/dev-gdx-data-share-poc-prometheus-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/demo-gdx-data-share-poc-prometheus-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-delete-event
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-event
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-events
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-len
+      notes: These log groups are controlled by AWS, are temporary logs for the running of our prometheus and grafana, or they are for our fakes, which we do not need to retain for 365 days.

@@ -108,6 +108,8 @@ module "securityhub" {
 
   s3_event_notification_sns_topic_arn = module.sns.topic_arn
 
+  lambda_cloudwatch_retention_days = 365
+
   rules = [
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"

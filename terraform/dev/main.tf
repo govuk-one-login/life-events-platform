@@ -89,7 +89,7 @@ module "data-share-service" {
   environment                 = local.env
   region                      = data.aws_region.current.name
   ecr_url                     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
-  cloudwatch_retention_period = 30
+  cloudwatch_retention_period = 365
   vpc_cidr                    = "10.158.0.0/20"
   lev_url                     = module.lev_api.service_url
   db_username                 = "ecs_dev_db"

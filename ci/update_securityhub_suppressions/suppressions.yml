@@ -1,4 +1,5 @@
 Suppressions:
+  # Inspector findings
   "CVE-2022-1471 - org.yaml:snakeyaml":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
@@ -69,10 +70,6 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
       notes: GPC-334
-  "s3-bucket-replication-enabled-conformance-pack-1dpd692bc":
-    - resources:
-        - .*
-      notes: GPC-301
   "CVE-2023-28840 - github.com/docker/docker":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
@@ -121,6 +118,151 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-343
+
+  # Security Hub
+
+  ## ALB
+  "Application Load Balancer should be configured to redirect all HTTP requests to HTTPS":
+    - resources:
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
+      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
+  "alb-http-to-https-redirection-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
+        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
+      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
+
+
+  ## CloudFormation
+  "CloudFormation stacks should be integrated with Simple Notification Service (SNS)":
+    - resources:
+        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4
+        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-1dpd692bc/189a3600-d93f-11ed-a33e-06ce375c57d6
+      notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS
+
+  ## CloudTrail
+  "CloudTrail trails should be integrated with Amazon CloudWatch Logs":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-flegfck3w":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "CloudTrail should have encryption at-rest enabled":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-encryption-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+
+  ## Cloudwatch
+  "cw-loggroup-retention-period-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/grafana/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/dev/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/grafana-ecs-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/dev-gdx-data-share-poc-prometheus-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/demo-gdx-data-share-poc-prometheus-logs
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-delete-event
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-event
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-events
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-len
+      notes: These log groups are controlled by AWS, are temporary logs for the running of our prometheus and grafana, or they are for our fakes, which we do not need to retain for 365 days.
+  "cloudwatch-log-group-encrypted-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/rds/cluster/dev-rds-db/postgresql
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/rds/cluster/demo-rds-db/postgresql
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/grafana/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/dev/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
+        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/application/metrics
+      notes: These log groups are controlled by AWS
+
+  ## EBS
+  "ebs-in-backup-plan-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-031a25f49d5a6fcf2
+        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0d011510caddeabab
+      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have the volumes be backed up
+
+  ## ECS
+  "ecs-containers-readonly-access-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/grafana:*
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/dev-gdx-data-share-poc:*
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/demo-gdx-data-share-poc:*
+      notes: These task definitions need write access to the filesystem
+
+  ## EC2
+  "ec2-instance-detailed-monitoring-enabled-conformance-pack-7wkwquwdu":
+    - resources:
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-06a25372cb2a320bf
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-05591d8e2373a6e64
+      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have detailed monitoring
+
+  ## DynamoDB
+  "DynamoDB tables should have point-in-time recovery enabled":
+    - resources:
+        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
+      notes: This table is just used to hold lock and does not need to be backed up
+  "dynamodb-in-backup-plan-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
+        - arn:aws:dynamodb:eu-west-2:776473272850:table/securityhub-suppression-list
+      notes: These tables are either just used to hold lock or are replicated in our code and so do not need to be backed up
+  "dynamodb-table-encrypted-kms-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
+      notes: This table is just used to hold lock and does not need encryption
+
+  ## IAM
+  "iam-no-inline-policy-check-conformance-pack-flegfck3w":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
+  "iam-no-inline-policy-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
+  "iam-user-mfa-enabled":
+    - resources:
+        - arn:aws:iam::776473272850:user/dwp-dev
+      notes: MFA is not enabled as this user is only a service account for access to SQS
+
+  ## Root account
+  "root-account-hardware-mfa-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: For this GDS created account this is not possible to enforce
+
+  ## SNS
+  "Logging of delivery status should be enabled for notification messages sent to a topic":
+    - resources:
+        - arn:aws:sns:eu-west-2:776473272850:bootstrap-sns
+        - arn:aws:sns:eu-west-2:776473272850:shared-sns
+        - arn:aws:sns:eu-west-2:776473272850:dev-gdx-alarms
+        - arn:aws:sns:eu-west-2:776473272850:demo-gdx-alarms
+      notes: These are currently only notifying very rarely and to one email address, so we are not adding logging for these
+
+  ## S3
+  "S3 buckets should have event notifications enabled":
+    - resources:
+        - arn:aws:s3:::gdx-vision-dev-tfstate
+        - arn:aws:s3:::gdx-vision-dev-tfstate-logs
+      notes: The gdx-vision-dev-tfstate buckets are not configured in our terraform and the state won't change, so we are not adding event notifications to it.
   "S3 bucket server access logging should be enabled":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
@@ -178,6 +320,10 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
+  "s3-bucket-replication-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - .*
+      notes: GPC-301
   "s3-bucket-versioning-enabled-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
@@ -227,121 +373,3 @@ Suppressions:
         - arn:aws:s3:::demo-lb-access-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
       notes: LB access log buckets cannot be encrypted with KMS, only Amazon S3 managed keys, due to AWS not allowing it. The gdx-vision-dev-tfstate buckets are not configured in our terraform and are encrypted with Amazon S3 managed keys as well.
-  "ec2-instance-detailed-monitoring-enabled-conformance-pack-7wkwquwdu":
-    - resources:
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-06a25372cb2a320bf
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-05591d8e2373a6e64
-      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have detailed monitoring
-  "ebs-in-backup-plan-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-031a25f49d5a6fcf2
-        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0d011510caddeabab
-      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have the volumes be backed up
-  "dynamodb-table-encrypted-kms-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
-      notes: This table is just used to hold lock and does not need encryption
-  "dynamodb-in-backup-plan-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
-        - arn:aws:dynamodb:eu-west-2:776473272850:table/securityhub-suppression-list
-      notes: These tables are either just used to hold lock or are replicated in our code and so do not need to be backed up
-  "DynamoDB tables should have point-in-time recovery enabled":
-    - resources:
-        - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
-      notes: This table is just used to hold lock and does not need to be backed up
-  "Application Load Balancer should be configured to redirect all HTTP requests to HTTPS":
-    - resources:
-        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
-        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
-      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
-  "alb-http-to-https-redirection-check-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
-        - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
-      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
-  "iam-user-mfa-enabled":
-    - resources:
-        - arn:aws:iam::776473272850:user/dwp-dev
-      notes: MFA is not enabled as this user is only a service account for access to SQS
-  "S3 buckets should have event notifications enabled":
-    - resources:
-        - arn:aws:s3:::gdx-vision-dev-tfstate
-        - arn:aws:s3:::gdx-vision-dev-tfstate-logs
-      notes: The gdx-vision-dev-tfstate buckets are not configured in our terraform and the state won't change, so we are not adding event notifications to it.
-  "CloudFormation stacks should be integrated with Simple Notification Service (SNS)":
-    - resources:
-        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4
-        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-1dpd692bc/189a3600-d93f-11ed-a33e-06ce375c57d6
-      notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS
-  "CloudTrail trails should be integrated with Amazon CloudWatch Logs":
-    - resources:
-        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
-      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
-  "CloudTrail should have encryption at-rest enabled":
-    - resources:
-        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
-      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
-  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
-      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
-  "cloud-trail-encryption-enabled-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
-      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
-  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-flegfck3w":
-    - resources:
-        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
-      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
-  "cw-loggroup-retention-period-check-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/grafana/performance
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/dev/performance
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
-        - arn:aws:logs:eu-west-2:776473272850:loggroup/grafana-ecs-logs
-        - arn:aws:logs:eu-west-2:776473272850:loggroup/dev-gdx-data-share-poc-prometheus-logs
-        - arn:aws:logs:eu-west-2:776473272850:loggroup/demo-gdx-data-share-poc-prometheus-logs
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-delete-event
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-event
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-events
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-len
-      notes: These log groups are controlled by AWS, are temporary logs for the running of our prometheus and grafana, or they are for our fakes, which we do not need to retain for 365 days.
-  "cloudwatch-log-group-encrypted-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/rds/cluster/dev-rds-db/postgresql
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/rds/cluster/demo-rds-db/postgresql
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/grafana/performance
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/dev/performance
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
-        - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/application/metrics
-      notes: These log groups are controlled by AWS
-  "root-account-hardware-mfa-enabled-conformance-pack-1dpd692bc":
-    - resources:
-        - AWS::::Account:776473272850
-      notes: For this GDS created account this is not possible to enforce
-  "ecs-containers-readonly-access-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:ecs:eu-west-2:776473272850:task-definition/grafana:*
-        - arn:aws:ecs:eu-west-2:776473272850:task-definition/dev-gdx-data-share-poc:*
-        - arn:aws:ecs:eu-west-2:776473272850:task-definition/demo-gdx-data-share-poc:*
-      notes: These task definitions need write access to the filesystem
-  "iam-no-inline-policy-check-conformance-pack-flegfck3w":
-    - resources:
-        - arn:aws:iam::776473272850:role/dev-task-role
-        - arn:aws:iam::776473272850:role/GDSSecurityAudit
-      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
-  "iam-no-inline-policy-check-conformance-pack-1dpd692bc":
-    - resources:
-        - arn:aws:iam::776473272850:role/dev-task-role
-        - arn:aws:iam::776473272850:role/GDSSecurityAudit
-      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
-  "Logging of delivery status should be enabled for notification messages sent to a topic":
-    - resources:
-        - arn:aws:sns:eu-west-2:776473272850:bootstrap-sns
-        - arn:aws:sns:eu-west-2:776473272850:shared-sns
-        - arn:aws:sns:eu-west-2:776473272850:dev-gdx-alarms
-        - arn:aws:sns:eu-west-2:776473272850:demo-gdx-alarms
-      notes: These are currently only notifying very rarely and to one email address, so we are not adding logging for these

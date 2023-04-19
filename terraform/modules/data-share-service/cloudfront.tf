@@ -7,7 +7,7 @@ resource "aws_cloudfront_distribution" "gdx_data_share_poc" {
   provider = aws.us-east-1
 
   origin {
-    domain_name = aws_lb.load_balancer.dns_name
+    domain_name = aws_lb.network_load_balancer.dns_name
     origin_id   = "${var.environment}-gdx-data-share-poc-lb"
 
     custom_origin_config {

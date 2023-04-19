@@ -9,9 +9,6 @@ variable "subnet_ids" {
 }
 
 variable "test_gdx_url" {}
-variable "test_auth_header" {
-  sensitive = true
-}
 variable "auth_url" {}
 variable "client_id" {}
 variable "client_secret" {}

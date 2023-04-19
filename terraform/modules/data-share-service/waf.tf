@@ -272,7 +272,7 @@ resource "aws_wafv2_web_acl" "load_balancer" {
 }
 
 resource "aws_wafv2_web_acl_association" "waf_load_balancer" {
-  resource_arn = aws_lb.load_balancer.arn
+  resource_arn = aws_lb.network_load_balancer.arn
   web_acl_arn  = aws_wafv2_web_acl.load_balancer.arn
 }
 

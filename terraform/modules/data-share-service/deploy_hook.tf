@@ -8,11 +8,10 @@ module "deploy_hook" {
   security_group_id = aws_security_group.lambda.id
   subnet_ids        = module.vpc.private_subnet_ids
 
-  test_gdx_url     = local.is_dev ? "http://${aws_lb.load_balancer.dns_name}:8080" : "https://${aws_lb.load_balancer.dns_name}:8443"
-  test_auth_header = random_password.test_auth_header.result
-  auth_url         = module.cognito.token_auth_url
-  client_id        = module.cognito.deploy_hook_client_id
-  client_secret    = module.cognito.deploy_hook_client_secret
+  test_gdx_url  = "http://${aws_lb.load_balancer.dns_name}:8080"
+  auth_url      = module.cognito.token_auth_url
+  client_id     = module.cognito.deploy_hook_client_id
+  client_secret = module.cognito.deploy_hook_client_secret
 }
 
 resource "aws_security_group" "lambda" {
@@ -36,13 +35,12 @@ resource "aws_security_group_rule" "lambda_https" {
   security_group_id = aws_security_group.lambda.id
 }
 
-#tfsec:ignore:aws-ec2-no-public-egress-sgr
 resource "aws_security_group_rule" "lambda_test" {
-  type              = "egress"
-  protocol          = "tcp"
-  from_port         = local.is_dev ? 8080 : 8443
-  to_port           = local.is_dev ? 8080 : 8443
-  cidr_blocks       = ["0.0.0.0/0"]
-  description       = "Lambda security group egress rule for connecting to test GDX port"
-  security_group_id = aws_security_group.lambda.id
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 8080
+  to_port                  = 8080
+  description              = "Lambda security group egress rule for connecting to test GDX port"
+  security_group_id        = aws_security_group.lambda.id
+  source_security_group_id = aws_security_group.lb.id
 }

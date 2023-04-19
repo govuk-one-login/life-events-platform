@@ -45,7 +45,7 @@ resource "aws_wafv2_web_acl" "load_balancer" {
   default_action {
     allow {}
   }
-  
+
   rule {
     action {
       block {}

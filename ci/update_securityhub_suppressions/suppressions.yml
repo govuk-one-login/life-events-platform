@@ -225,8 +225,8 @@ Suppressions:
       notes: LB access log buckets cannot be encrypted with KMS, only Amazon S3 managed keys, due to AWS not allowing it. The gdx-vision-dev-tfstate buckets are not configured in our terraform and are encrypted with Amazon S3 managed keys as well.
   "ec2-instance-detailed-monitoring-enabled-conformance-pack-7wkwquwdu":
     - resources:
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-07592b2b3857a4f3a
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-012c9ebc7c6d3869e
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-06a25372cb2a320bf
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-05591d8e2373a6e64
       notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have detailed monitoring
   "dynamodb-table-encrypted-kms-conformance-pack-1dpd692bc":
     - resources:
@@ -308,6 +308,16 @@ Suppressions:
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/demo/performance
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/application/metrics
       notes: These log groups are controlled by AWS
+  "root-account-hardware-mfa-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: For this GDS created account this is not possible to enforce
+  "ecs-containers-readonly-access-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/grafana:*
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/dev-gdx-data-share-poc:*
+        - arn:aws:ecs:eu-west-2:776473272850:task-definition/demo-gdx-data-share-poc:*
+      notes: These task definitions need write access to the filesystem
   "iam-no-inline-policy-check-conformance-pack-flegfck3w":
     - resources:
         - arn:aws:iam::776473272850:role/dev-task-role

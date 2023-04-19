@@ -40,8 +40,8 @@ resource "aws_security_group_rule" "lambda_https" {
 resource "aws_security_group_rule" "lambda_test" {
   type              = "egress"
   protocol          = "tcp"
-  from_port         = 8080
-  to_port           = 8080
+  from_port         = local.is_dev ? 8080 : 8433
+  to_port           = local.is_dev ? 8080 : 8433
   cidr_blocks       = ["0.0.0.0/0"]
   description       = "Lambda security group egress rule for connecting to test GDX port"
   security_group_id = aws_security_group.lambda.id

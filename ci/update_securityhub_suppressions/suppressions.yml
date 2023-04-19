@@ -113,6 +113,10 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-343
+  "CVE-2023-20863 - org.springframework:spring-core, org.springframework:spring-expression":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-343
   "IN1-JAVA-ORGSPRINGFRAMEWORK-5422217 - org.springframework:spring-expression":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*

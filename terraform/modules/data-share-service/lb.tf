@@ -140,6 +140,9 @@ resource "aws_lb_target_group" "blue" {
   }
 }
 
+# We want the network load balancer available to our cloudfront distribution, it is locked down from the wider internet
+# with security group rules
+#tfsec:ignore:aws-elb-alb-not-public
 resource "aws_lb" "network_load_balancer" {
   name                       = "${var.environment}-nlb"
   load_balancer_type         = "network"

@@ -37,8 +37,8 @@ resource "aws_security_group" "rds_bastion_host_sg" {
 
   egress {
     protocol    = "tcp"
-    from_port   = 5432
-    to_port     = 5432
+    from_port   = 45678
+    to_port     = 45678
     cidr_blocks = [var.vpc_cidr]
     description = "Allow egress for RDS bastion"
   }

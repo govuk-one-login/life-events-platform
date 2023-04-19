@@ -6,4 +6,4 @@ aws ssm start-session `
     --region eu-west-2 `
     --target $EC2_INSTANCE `
     --document-name AWS-StartPortForwardingSessionToRemoteHost `
-    --parameters "host=dev-rds-db.cluster-chfyfnfoqhf6.eu-west-2.rds.amazonaws.com,portNumber=5432,localPortNumber=5434"
+    --parameters "host=dev-rds-db.cluster-chfyfnfoqhf6.eu-west-2.rds.amazonaws.com,portNumber=45678,localPortNumber=5434"

@@ -32,8 +32,8 @@ resource "aws_security_group_rule" "ecs_tasks_https_egress" {
 resource "aws_security_group_rule" "ecs_tasks_rds_egress" {
   type                     = "egress"
   protocol                 = "tcp"
-  from_port                = 5432
-  to_port                  = 5432
+  from_port                = 45678
+  to_port                  = 45678
   source_security_group_id = aws_security_group.rds_postgres_cluster.id
   description              = "ECS task egress rule to RDS"
   security_group_id        = aws_security_group.ecs_tasks.id

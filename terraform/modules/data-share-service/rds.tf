@@ -17,6 +17,7 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   master_username                     = random_string.rds_username.result
   master_password                     = random_password.rds_password.result
   iam_database_authentication_enabled = true
+  port                                = 45678
 
   backup_retention_period = 7
   preferred_backup_window = "07:00-09:00"
@@ -102,16 +103,16 @@ resource "aws_security_group" "rds_postgres_cluster" {
 
   ingress {
     protocol        = "tcp"
-    from_port       = 5432
-    to_port         = 5432
+    from_port       = 45678
+    to_port         = 45678
     security_groups = [aws_security_group.ecs_tasks.id, aws_security_group.rds_bastion_host_sg.id]
     description     = "ECS task ingress rule, allow access from ECS tasks or bastion host only"
   }
 
   egress {
     protocol        = "tcp"
-    from_port       = 5432
-    to_port         = 5432
+    from_port       = 45678
+    to_port         = 45678
     security_groups = [aws_security_group.ecs_tasks.id, aws_security_group.rds_bastion_host_sg.id]
     description     = "ECS task egress rule, allow access to ECS tasks or bastion host only"
   }

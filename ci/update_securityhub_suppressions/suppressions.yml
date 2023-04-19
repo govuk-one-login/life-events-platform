@@ -324,3 +324,13 @@ Suppressions:
         - arn:aws:ecs:eu-west-2:776473272850:task-definition/dev-gdx-data-share-poc:*
         - arn:aws:ecs:eu-west-2:776473272850:task-definition/demo-gdx-data-share-poc:*
       notes: These task definitions need write access to the filesystem
+  "iam-no-inline-policy-check-conformance-pack-flegfck3w":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
+  "iam-no-inline-policy-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy

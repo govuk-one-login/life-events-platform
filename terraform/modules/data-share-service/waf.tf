@@ -213,7 +213,7 @@ resource "aws_wafv2_web_acl" "load_balancer" {
       block {}
     }
 
-    name     = "SqlInjectionMatch"
+    name     = "SqlInjectionMatchQuery"
     priority = 1
 
     statement {
@@ -231,7 +231,35 @@ resource "aws_wafv2_web_acl" "load_balancer" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "SQLInjection"
+      metric_name                = "SQLInjectionQuery"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    action {
+      block {}
+    }
+
+    name     = "SqlInjectionMatchBody"
+    priority = 2
+
+    statement {
+      sqli_match_statement {
+        text_transformation {
+          type     = "NONE"
+          priority = 1
+        }
+
+        field_to_match {
+          body {}
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "SQLInjectionBody"
       sampled_requests_enabled   = true
     }
   }

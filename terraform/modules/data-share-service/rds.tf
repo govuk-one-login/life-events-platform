@@ -17,6 +17,7 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   master_username                     = random_string.rds_username.result
   master_password                     = random_password.rds_password.result
   iam_database_authentication_enabled = true
+  port = 45678
 
   backup_retention_period = 7
   preferred_backup_window = "07:00-09:00"
@@ -69,7 +70,6 @@ resource "aws_rds_cluster_instance" "db_aurora-az1" {
   instance_class     = "db.serverless"
   engine             = aws_rds_cluster.rds_postgres_cluster.engine
   engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
-  port               = 45678
 
   monitoring_interval = 30
   monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
@@ -86,7 +86,6 @@ resource "aws_rds_cluster_instance" "db_aurora_az2" {
   instance_class     = "db.serverless"
   engine             = aws_rds_cluster.rds_postgres_cluster.engine
   engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
-  port               = 45678
 
   monitoring_interval = 30
   monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn

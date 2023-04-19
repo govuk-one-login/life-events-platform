@@ -17,7 +17,7 @@ resource "aws_rds_cluster" "rds_postgres_cluster" {
   master_username                     = random_string.rds_username.result
   master_password                     = random_password.rds_password.result
   iam_database_authentication_enabled = true
-  port = 45678
+  port                                = 45678
 
   backup_retention_period = 7
   preferred_backup_window = "07:00-09:00"

@@ -48,7 +48,7 @@ This infrastructure is configured in the `backend` directory of terraform config
 - Validate credentials and access
 - Set up GitHub Environment rules for the relevant environment to prevent or allow automatic deploys
 - If Shield Advanced is required in the environment, this needs to be enabled manually first within the account
-
+- Take note of the two-step processing when creating the API secret for [StatusCake](./architecture/decisions/0023-statuscake-health-check.md)
 ### Database
 
 Once the infrastructure has been created using terraform, a database user needs to be created.

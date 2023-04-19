@@ -69,6 +69,7 @@ resource "aws_rds_cluster_instance" "db_aurora-az1" {
   instance_class     = "db.serverless"
   engine             = aws_rds_cluster.rds_postgres_cluster.engine
   engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
+  port = 45678
 
   monitoring_interval = 30
   monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
@@ -85,6 +86,7 @@ resource "aws_rds_cluster_instance" "db_aurora_az2" {
   instance_class     = "db.serverless"
   engine             = aws_rds_cluster.rds_postgres_cluster.engine
   engine_version     = aws_rds_cluster.rds_postgres_cluster.engine_version
+  port = 45678
 
   monitoring_interval = 30
   monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
@@ -102,16 +104,16 @@ resource "aws_security_group" "rds_postgres_cluster" {
 
   ingress {
     protocol        = "tcp"
-    from_port       = 5432
-    to_port         = 5432
+    from_port       = 45678
+    to_port         = 45678
     security_groups = [aws_security_group.ecs_tasks.id, aws_security_group.rds_bastion_host_sg.id]
     description     = "ECS task ingress rule, allow access from ECS tasks or bastion host only"
   }
 
   egress {
     protocol        = "tcp"
-    from_port       = 5432
-    to_port         = 5432
+    from_port       = 45678
+    to_port         = 45678
     security_groups = [aws_security_group.ecs_tasks.id, aws_security_group.rds_bastion_host_sg.id]
     description     = "ECS task egress rule, allow access to ECS tasks or bastion host only"
   }

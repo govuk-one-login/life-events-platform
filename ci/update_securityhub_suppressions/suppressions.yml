@@ -109,7 +109,7 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-337
-  "CVE-2023-20863 - org.springframework:spring-expression":
+  "CVE-2023-20863 - org.springframework:spring-expression, org.springframework:spring-core":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-343

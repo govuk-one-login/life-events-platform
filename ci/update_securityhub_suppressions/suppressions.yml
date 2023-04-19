@@ -338,3 +338,10 @@ Suppressions:
         - arn:aws:iam::776473272850:role/dev-task-role
         - arn:aws:iam::776473272850:role/GDSSecurityAudit
       notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
+  "Logging of delivery status should be enabled for notification messages sent to a topic":
+    - resources:
+        - arn:aws:sns:eu-west-2:776473272850:bootstrap-sns
+        - arn:aws:sns:eu-west-2:776473272850:shared-sns
+        - arn:aws:sns:eu-west-2:776473272850:dev-gdx-alarms
+        - arn:aws:sns:eu-west-2:776473272850:demo-gdx-alarms
+      notes: These are currently only notifying very rarely and to one email address, so we are not adding logging for these

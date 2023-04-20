@@ -126,13 +126,18 @@ Suppressions:
     - resources:
         - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
         - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
-      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
+      notes: >
+        Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default
+        cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for
+        incoming traffic.
   "alb-http-to-https-redirection-check-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
         - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
-      notes: Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for incoming traffic.
-
+      notes: >
+        Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default
+        cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for
+        incoming traffic.
 
   ## CloudFormation
   "CloudFormation stacks should be integrated with Simple Notification Service (SNS)":
@@ -177,7 +182,9 @@ Suppressions:
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-event
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-get-events
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/lambda/dev-len
-      notes: These log groups are controlled by AWS, are temporary logs for the running of our prometheus and grafana, or they are for our fakes, which we do not need to retain for 365 days.
+      notes: >
+        These log groups are controlled by AWS, are temporary logs for the running of our prometheus and grafana, or
+        they are for our fakes, which we do not need to retain for 365 days.
   "cloudwatch-log-group-encrypted-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
@@ -194,7 +201,9 @@ Suppressions:
     - resources:
         - arn:aws:ec2:eu-west-2:776473272850:volume/vol-031a25f49d5a6fcf2
         - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0d011510caddeabab
-      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have the volumes be backed up
+      notes: >
+        We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have the
+        volumes be backed up
 
   ## ECS
   "ecs-containers-readonly-access-conformance-pack-1dpd692bc":
@@ -209,7 +218,9 @@ Suppressions:
     - resources:
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-06a25372cb2a320bf
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-05591d8e2373a6e64
-      notes: We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have detailed monitoring
+      notes: >
+        We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have
+        detailed monitoring
 
   ## DynamoDB
   "DynamoDB tables should have point-in-time recovery enabled":
@@ -220,7 +231,8 @@ Suppressions:
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
         - arn:aws:dynamodb:eu-west-2:776473272850:table/securityhub-suppression-list
-      notes: These tables are either just used to hold lock or are replicated in our code and so do not need to be backed up
+      notes: >
+        These tables are either just used to hold lock or are replicated in our code and so do not need to be backed up
   "dynamodb-table-encrypted-kms-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
@@ -231,12 +243,16 @@ Suppressions:
     - resources:
         - arn:aws:iam::776473272850:role/dev-task-role
         - arn:aws:iam::776473272850:role/GDSSecurityAudit
-      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
+      notes: >
+        The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the
+        GDSSecurityAudit is set up by the org with inline policy
   "iam-no-inline-policy-check-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:iam::776473272850:role/dev-task-role
         - arn:aws:iam::776473272850:role/GDSSecurityAudit
-      notes: The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit is set up by the org with inline policy
+      notes: >
+        The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit
+        is set up by the org with inline policy
   "iam-user-mfa-enabled":
     - resources:
         - arn:aws:iam::776473272850:user/dwp-dev
@@ -255,14 +271,17 @@ Suppressions:
         - arn:aws:sns:eu-west-2:776473272850:shared-sns
         - arn:aws:sns:eu-west-2:776473272850:dev-gdx-alarms
         - arn:aws:sns:eu-west-2:776473272850:demo-gdx-alarms
-      notes: These are currently only notifying very rarely and to one email address, so we are not adding logging for these
+      notes: >
+        These are currently only notifying very rarely and to one email address, so we are not adding logging for these
 
   ## S3
   "S3 buckets should have event notifications enabled":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
-      notes: The gdx-vision-dev-tfstate buckets are not configured in our terraform and the state won't change, so we are not adding event notifications to it.
+      notes: >
+        The gdx-vision-dev-tfstate buckets are not configured in our terraform and the state won't change, so we are
+        not adding event notifications to it.
   "S3 bucket server access logging should be enabled":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
@@ -372,4 +391,7 @@ Suppressions:
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
-      notes: LB access log buckets cannot be encrypted with KMS, only Amazon S3 managed keys, due to AWS not allowing it. The gdx-vision-dev-tfstate buckets are not configured in our terraform and are encrypted with Amazon S3 managed keys as well.
+      notes: >
+        LB access log buckets cannot be encrypted with KMS, only Amazon S3 managed keys, due to AWS not allowing it.
+        The gdx-vision-dev-tfstate buckets are not configured in our terraform and are encrypted with Amazon S3
+        managed keys as well.

@@ -205,7 +205,7 @@ Suppressions:
       notes: These task definitions need write access to the filesystem
 
   ## EC2
-  "ec2-instance-detailed-monitoring-enabled-conformance-pack-7wkwquwdu":
+  "ec2-instance-detailed-monitoring-enabled-conformance-pack-1dpd692bc":
     - resources:
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-06a25372cb2a320bf
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-05591d8e2373a6e64

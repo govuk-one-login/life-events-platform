@@ -11,7 +11,7 @@ Proposed
 ## Context
 
 We've been exploring possible ways to ingest data, either through a LEN/LEV style API driven approach, or by receiving
-a flat file and ingesting that into the Data Exchange platform. 
+a flat file and ingesting that into the Data Exchange platform.
 We currently have access to example flat files, and building out a proof of concept of this approach gives us some ability
 to explore and understand the risks/complexities of the approach.
 We also need to consider the wider guiding principles of the platform around minimising duration of storage, privacy by design, security and resilience.
@@ -32,40 +32,7 @@ The proposed pipeline of data is to
 4. When an event is processed by a downstream consumer, the platform can request enrichment from the temporary store
 5. When all consumers have processed the event, the Platform can notify the temporary store to delete
 
-```mermaid
-graph LR
-    A[S3] -->|New File Event| B(Step Function)
-    B -->|Split, Transform| C(DynamoDB)
-    B --> |Delete file on ingestion| A
-    
-    E -->|On enrichment|F(Callback Lambda)
-    F -->|Enrich event| C
-    
-    E -->|On all consumers consuming| G(Delete event Lambda)
-    C -->|New row event| D(Stream into API Lambda) -->|Call platform API| E(Platform)
-    G-->|Delete from DynamoDB|C
-```
-
-
-```mermaid
-sequenceDiagram
-    participant S3
-    participant Step Function
-    participant DynamoDB
-    participant Callback Lambda
-    participant Stream into API Lambda
-    participant Delete event Lambda
-    participant Platform
-
-    S3 ->> Step Function: New file event
-    Step Function ->> DynamoDB: Split, transform
-    DynamoDB ->> Stream into API Lambda: New row event
-    Stream into API Lambda ->> Platform: Call platform API
-    Platform ->> Callback Lambda: On enrichment
-    Callback Lambda ->> DynamoDB: Enrich event
-    Platform ->> Delete event Lambda: On all consumers consuming
-    Delete event Lambda ->> DynamoDB: Delete from DynamoDB
-```
+![Image](flat_file_ingestion_poc.svg)
 
 ### Alternatives
 AWS Glue/Athena provide a mechanism to query over flat files within an S3 bucket, but this doesn't natively support XML, so there would be a transform stage given the files we know about, and the deletion/minimising of data isn't easily natively supported, so this approach would add additional complexity rather than reducing it.

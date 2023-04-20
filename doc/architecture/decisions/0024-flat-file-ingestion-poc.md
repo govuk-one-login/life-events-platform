@@ -45,6 +45,27 @@ graph LR
     G-->|Delete from DynamoDB|C
 ```
 
+
+```mermaid
+sequenceDiagram
+    participant S3
+    participant Step Function
+    participant DynamoDB
+    participant Callback Lambda
+    participant Stream into API Lambda
+    participant Delete event Lambda
+    participant Platform
+
+    S3 ->> Step Function: New file event
+    Step Function ->> DynamoDB: Split, transform
+    DynamoDB ->> Stream into API Lambda: New row event
+    Stream into API Lambda ->> Platform: Call platform API
+    Platform ->> Callback Lambda: On enrichment
+    Callback Lambda ->> DynamoDB: Enrich event
+    Platform ->> Delete event Lambda: On all consumers consuming
+    Delete event Lambda ->> DynamoDB: Delete from DynamoDB
+```
+
 ### Alternatives
 AWS Glue/Athena provide a mechanism to query over flat files within an S3 bucket, but this doesn't natively support XML, so there would be a transform stage given the files we know about, and the deletion/minimising of data isn't easily natively supported, so this approach would add additional complexity rather than reducing it.
 

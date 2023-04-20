@@ -25,14 +25,20 @@ From what we know about the GRO files as a potential source, the data arrives as
 The proposed pipeline of data is to
 1. recieve a file into an S3 bucket through an as-yet undefined mechanism
 2. on receipt, this triggers a Step Function, which
-  - maps the flat file into individual events
-  - transforms the event format into one we can process later
-  - inserts individual entries into DynamoDB
+    - maps the flat file into individual events
+    - transforms the event format into one we can process later
+    - inserts individual entries into DynamoDB
+    - deletes the original source file
 3. New rows in DynamoDB trigger a lamdbda which calls the existing API with a minimal event
 4. When an event is processed by a downstream consumer, the platform can request enrichment from the temporary store
-5. When all consumers have processed the event, the Platform can notify the temporary store to delete
+5. As soon as all consumers have processed the event, the Platform can notify the temporary store to delete
 
 ![Image](flat_file_ingestion_poc.svg)
+
+The mechnasims by which downstream consumers are retrieving the data are unaffected
+by this discussion. There are two current mechansisms to consume
+- the API, where the transformed data will be removed when the `DELETE` call has been recieved by the service
+- the SQS integration, where the transformed data will be removed when it is placed on the queue, and persisted until consumed by the acquiring service
 
 ### Alternatives
 AWS Glue/Athena provide a mechanism to query over flat files within an S3 bucket, but this doesn't natively support XML, so there would be a transform stage given the files we know about, and the deletion/minimising of data isn't easily natively supported, so this approach would add additional complexity rather than reducing it.

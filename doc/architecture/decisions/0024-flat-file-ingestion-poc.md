@@ -13,7 +13,8 @@ Proposed
 We've been exploring possible ways to ingest data, either through a LEN/LEV style API driven approach, or by receiving
 a flat file and ingesting that into the Data Exchange platform. 
 We currently have access to example flat files, and building out a proof of concept of this approach gives us some ability
-to explore and understand the risks/complexities of the approach. 
+to explore and understand the risks/complexities of the approach.
+We also need to consider the wider guiding principles of the platform around minimising duration of storage, privacy by design, security and resilience.
 This work is intended as a proof of concept/provocation piece, rather than as a definite approach or an indication of
 future direction.
 

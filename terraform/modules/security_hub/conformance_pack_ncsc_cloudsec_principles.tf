@@ -4,6 +4,11 @@ resource "aws_config_conformance_pack" "ncsc_cloudsec_principles" {
 
   depends_on = [aws_config_configuration_recorder.config]
 
+  input_parameter {
+    parameter_name  = "InternetGatewayAuthorizedVpcOnlyParamAuthorizedVpcIds"
+    parameter_value = "vpc-0a0f4ddcc01f39200,vpc-01154f06711c3e604,vpc-0597c2eb5fe606c2a"
+  }
+
   template_body = <<EOT
 Parameters:
   AccessKeysRotatedParamMaxAccessKeyAge:
@@ -62,6 +67,9 @@ Parameters:
     Type: String
   IamUserUnusedCredentialsCheckParamMaxCredentialUsageAge:
     Default: '90'
+    Type: String
+  InternetGatewayAuthorizedVpcOnlyParamAuthorizedVpcIds:
+    Default: 'temp'
     Type: String
   RedshiftClusterConfigurationCheckParamClusterDbEncrypted:
     Default: 'TRUE'
@@ -861,6 +869,12 @@ Resources:
   InternetGatewayAuthorizedVpcOnly:
     Properties:
       ConfigRuleName: internet-gateway-authorized-vpc-only
+      InputParameters:
+        AuthorizedVpcIds:
+          Fn::If:
+          - internetGatewayAuthorizedVpcOnlyParamAuthorizedVpcIds
+          - Ref: InternetGatewayAuthorizedVpcOnlyParamAuthorizedVpcIds
+          - Ref: AWS::NoValue
       Scope:
         ComplianceResourceTypes:
         - AWS::EC2::InternetGateway
@@ -1517,6 +1531,11 @@ Conditions:
     - Fn::Equals:
       - ''
       - Ref: IamUserUnusedCredentialsCheckParamMaxCredentialUsageAge
+  internetGatewayAuthorizedVpcOnlyParamAuthorizedVpcIds:
+    Fn::Not:
+    - Fn::Equals:
+      - ''
+      - Ref: InternetGatewayAuthorizedVpcOnlyParamAuthorizedVpcIds
   redshiftClusterConfigurationCheckParamClusterDbEncrypted:
     Fn::Not:
     - Fn::Equals:

@@ -3,8 +3,9 @@
 
 provider "registry.terraform.io/hashicorp/aws" {
   version     = "4.63.0"
-  constraints = "~> 4.0, >= 4.63.0"
+  constraints = "~> 4.0, >= 4.54.0"
   hashes = [
+    "h1:hjeUAdMasigK3e4cr2BDqYA4qn/PmwL8N4WzW5JqPW4=",
     "h1:rYAzJXE8nZcDQfHBa/1CCmOeWco5opIzfWDPgOhgsY8=",
     "zh:0162a9b61f45deed9fcc4a3c4a90341904b0c1c864b2226c8c6df14a87671d86",
     "zh:230db13f43ced8e9dcb7966c32a2b11cff0708b639083cfc92bdb6cb92902c86",
@@ -91,6 +92,7 @@ provider "registry.terraform.io/statuscakedev/statuscake" {
   version     = "2.1.0"
   constraints = ">= 2.1.0"
   hashes = [
+    "h1:XZE4T04VF1RvuN53YJgzOkCxD9nb8yetaavLHZh21oI=",
     "h1:eLBXGDSLG9/r5R/0GRBXgCY7rza0+u1YckytVU9GTos=",
     "zh:00cd46ce1502f0df61eb1f1aa6cac07399f20e48c89033dd53314b733762252d",
     "zh:0fddb98d450ae9ad8daa25b1fec5c1e8c6c6487560d52da57b0e71e2531025e9",

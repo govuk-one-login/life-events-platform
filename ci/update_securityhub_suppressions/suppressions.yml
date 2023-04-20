@@ -258,6 +258,32 @@ Suppressions:
         - arn:aws:iam::776473272850:user/dwp-dev
       notes: MFA is not enabled as this user is only a service account for access to SQS
 
+  ## Lambda
+  "lambda-dlq-check-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:lambda:eu-west-2:776473272850:function:shared-securityhub-suppressor
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-len
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-get-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-get-events
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-delete-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-codedeploy-before-traffic-hook
+        - arn:aws:lambda:eu-west-2:776473272850:function:demo-codedeploy-before-traffic-hook
+      notes: >
+        These Lambdas are either: test proxies, that will only access our systems over the public internet; codedeploy
+        smoke testing lambdas; or a suppressor that only accesses AWS services for suppressions. We have logging for all
+        of these lambdas and do not need them to retry. For the smoke testing lambdas it would be better for them not to
+        retry so that we are aware as quickly as possible about errors.
+  "lambda-inside-vpc-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:lambda:eu-west-2:776473272850:function:shared-securityhub-suppressor
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-len
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-get-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-get-events
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-delete-event
+      notes: >
+        These Lambdas are either: test proxies, that will only access our systems over the public internet; or a
+        suppressor that only accesses AWS services for suppressions. They have no access to our actual system.
+
   ## Root account
   "root-account-hardware-mfa-enabled-conformance-pack-1dpd692bc":
     - resources:

@@ -299,6 +299,22 @@ Suppressions:
         - AWS::::Account:776473272850
       notes: For this GDS created account this is not possible to enforce
 
+  ## Route table
+  "no-unrestricted-route-to-igw-conformance-pack-1dpd692bc":
+    - resources:
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-08a2f7a0bf2df9842
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-05b4bd5d39c50c5e6
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-0d607fb643eaca54a
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-0cde1e6cdcfd8c991
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-0abbdf580498a7e51
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-017780cc6f783a5ad
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-0677f8aecaad36d48
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-00a77b006055ead8c
+        - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-05cd75d59cee12b70
+      notes: >
+        These are the route tables that correspond to our public subnets. For our public subnets we need the default
+        access to the IGW that this rule restricts. Our private subnets do not have this.
+
   ## SNS
   "Logging of delivery status should be enabled for notification messages sent to a topic":
     - resources:

@@ -243,7 +243,7 @@ Suppressions:
     - resources:
         - arn:aws:guardduty:eu-west-2:776473272850:finding/08c2f228a655979b64861aca2cabe58c
         - arn:aws:guardduty:eu-west-2:776473272850:finding/40c2f229a4b5730c7469b2d0edf79822
-      notest: >
+      notes: >
         These are old GuardDuty findings for resources that no longer exist. At our account level we cannot archive
         them, so we have to suppress the findings here.
 

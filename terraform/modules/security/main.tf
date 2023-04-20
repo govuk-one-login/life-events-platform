@@ -1,0 +1,48 @@
+terraform {
+  required_providers {
+    aws = {
+      source                = "hashicorp/aws"
+      version               = "~> 4.0"
+      configuration_aliases = [aws.us-east-1]
+    }
+  }
+}
+
+resource "aws_securityhub_finding_aggregator" "securityhub" {
+  depends_on   = [module.securityhub_local]
+  linking_mode = "ALL_REGIONS"
+}
+
+module "securityhub_local" {
+  source = "../securityhub"
+
+  config_role_arn   = aws_iam_role.config.arn
+  config_s3_id      = module.config_s3.id
+  config_s3_kms_arn = module.config_s3.kms_arn
+}
+
+moved {
+  from = aws_securityhub_account.securityhub
+  to   = module.securityhub_local.aws_securityhub_account.securityhub
+}
+
+moved {
+  from = aws_securityhub_standards_subscription.cis
+  to   = module.securityhub_local.aws_securityhub_standards_subscription.cis
+}
+
+moved {
+  from = aws_securityhub_standards_subscription.aws_foundational_security
+  to   = module.securityhub_local.aws_securityhub_standards_subscription.aws_foundational_security
+}
+
+module "securityhub_global" {
+  source = "../securityhub"
+  providers = {
+    aws = aws.us-east-1
+  }
+
+  config_role_arn   = aws_iam_role.config.arn
+  config_s3_id      = module.config_s3.id
+  config_s3_kms_arn = module.config_s3.kms_arn
+}

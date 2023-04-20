@@ -99,8 +99,12 @@ module "grafana" {
   depends_on = [module.sns]
 }
 
-module "securityhub" {
-  source = "../modules/security_hub"
+module "security" {
+  source = "../modules/security"
+  providers = {
+    aws           = aws
+    aws.us-east-1 = aws.us-east-1
+  }
 
   region      = data.aws_region.current.name
   environment = local.env
@@ -138,6 +142,11 @@ module "securityhub" {
   ]
 
   depends_on = [module.sns]
+}
+
+moved {
+  from = module.securityhub
+  to   = module.security
 }
 
 module "ecr" {

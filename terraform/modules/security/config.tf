@@ -16,25 +16,29 @@ resource "aws_iam_role" "config" {
   assume_role_policy = data.aws_iam_policy_document.config_assume_role.json
 }
 
-resource "aws_config_configuration_recorder" "config" {
-  name     = "config-recorder"
-  role_arn = aws_iam_role.config.arn
-  recording_group {
-    include_global_resource_types = true
-  }
+moved {
+  from = aws_config_configuration_recorder.config
+  to   = module.securityhub_local.aws_config_configuration_recorder.config
 }
 
-resource "aws_config_configuration_recorder_status" "config" {
-  name       = aws_config_configuration_recorder.config.name
-  is_enabled = true
-  depends_on = [aws_config_delivery_channel.config]
+moved {
+  from = aws_config_configuration_recorder_status.config
+  to   = module.securityhub_local.aws_config_configuration_recorder_status.config
 }
 
-resource "aws_config_delivery_channel" "config" {
-  name           = "config-delivery-channel"
-  s3_bucket_name = module.config_s3.id
-  s3_kms_key_arn = module.config_s3.kms_arn
-  depends_on     = [aws_config_configuration_recorder.config]
+moved {
+  from = aws_config_delivery_channel.config
+  to   = module.securityhub_local.aws_config_delivery_channel.config
+}
+
+moved {
+  from = aws_config_conformance_pack.cis_1_4
+  to   = module.securityhub_local.aws_config_conformance_pack.cis_1_4
+}
+
+moved {
+  from = aws_config_conformance_pack.ncsc_cloudsec_principles
+  to   = module.securityhub_local.aws_config_conformance_pack.ncsc_cloudsec_principles
 }
 
 module "config_s3" {

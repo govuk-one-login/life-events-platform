@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import time
+import ssl
 from datetime import datetime
 from http.client import HTTPResponse
 from typing import Literal
@@ -13,6 +14,10 @@ from common import get_auth_token
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
+ctx = ssl.create_default_context()
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
 
 test_gdx_url = os.environ["test_gdx_url"]
 test_auth_header = os.environ["test_auth_header"]
@@ -86,7 +91,7 @@ def post_event(auth_token: str):
         }
     )
     logger.info(f"## Posting test event")
-    request.urlopen(event_request).read()
+    request.urlopen(event_request, context=ctx).read()
     logger.info(f"## Successfully posted test event")
 
 
@@ -121,7 +126,7 @@ def delete_event(auth_token: str, event_id: str):
         },
         method="DELETE"
     )
-    request.urlopen(event_request)
+    request.urlopen(event_request, context=ctx)
     logger.info(f"## Successfully deleted event {event_id}")
 
 
@@ -134,5 +139,5 @@ def get_data(auth_token: str, url: str):
             "Accept": "application/vnd.api+json"
         }
     )
-    response: HTTPResponse = request.urlopen(event_request)
+    response: HTTPResponse = request.urlopen(event_request, context=ctx)
     return json.loads(response.read())

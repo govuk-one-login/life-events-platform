@@ -1,6 +1,6 @@
 # 23. Deployment of StatusCake - terraform approach
 
-[Next >>](9999-end.md)
+[Next >>](0024-flat-file-ingestion-poc.md)
 
 Date: 2023-04-17
 
@@ -58,4 +58,4 @@ The health check page on the application is under `/health/ping` and returns a 2
 ## Consequences
 The integration of this service is two-step which greats a slightly manual process but will only be a one-off event.
 
-[Next >>](9999-end.md)
+[Next >>](0024-flat-file-ingestion-poc.md)

@@ -1,17 +1,42 @@
 Suppressions:
   # Inspector findings
+
+  ## Base
+  "CVE-2019-3826 - github.com/prometheus/prometheus":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-292
+
+  ## GDX
   "CVE-2022-1471 - org.yaml:snakeyaml":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-294
-  "GHSA-mjmj-j48q-9wg2 - org.yaml:snakeyaml":
+  "IN1-JAVA-IONETTY-1042268 - io.netty:netty-handler":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GPC-294
-  "IN1-JAVA-ORGYAML-3152153 - org.yaml:snakeyaml":
+      notes: GPC-332
+
+  ## Prometheus
+  "CVE-2023-27561 - github.com/opencontainers/runc":
     - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GPC-294
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-330
+  "CVE-2023-28840 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "CVE-2023-28841 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+  "CVE-2023-28842 - github.com/docker/docker":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-337
+
+  ## Grafana
   "CVE-2023-0464 - openssl":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
@@ -28,96 +53,10 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
       notes: GPC-295
-  "GHSA-vvpx-j8f3-3w6h - golang.org/x/net":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
-      notes: GPC-295
-  "CVE-2019-3826 - github.com/prometheus/prometheus":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-292
-  "IN1-GOLANG-GITHUBCOMPROMETHEUSPROMETHEUSWEBUI-174127 - github.com/prometheus/prometheus":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-292
-  "CVE-2023-27561 - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-330
-  "IN1-GOLANG-GITHUBCOMOPENCONTAINERSRUNCLIBCONTAINER-3339620 - github.com/opencontainers/runc":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-330
-  "CVE-2020-29582 - org.jetbrains.kotlin:kotlin-stdlib":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GPC-331
-  "IN1-JAVA-ORGJETBRAINSKOTLIN-2393744 - org.jetbrains.kotlin:kotlin-stdlib":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GPC-331
-  "IN1-JAVA-IONETTY-1042268 - io.netty:netty-handler":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GPC-332
   "CVE-2021-21317 - github.com/ua-parser/uap-go":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
       notes: GPC-334
-  "IN1-GOLANG-GITHUBCOMUAPARSERUAPGOUAPARSER-1298048 - github.com/ua-parser/uap-go":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
-      notes: GPC-334
-  "CVE-2023-28840 - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "CVE-2023-28841 - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "CVE-2023-28842 - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "GHSA-232p-vwff-86mp - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "GHSA-33pg-m6jh-5237 - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "GHSA-6wrf-mxfj-pf5p - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411355 - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411364 - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "IN1-GOLANG-GITHUBCOMDOCKERDOCKER-5411366 - github.com/docker/docker":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
-      notes: GPC-337
-  "CVE-2023-20863 - org.springframework:spring-expression, org.springframework:spring-core":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GPC-343
-  "CVE-2023-20863 - org.springframework:spring-core, org.springframework:spring-expression":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GPC-343
-  "IN1-JAVA-ORGSPRINGFRAMEWORK-5422217 - org.springframework:spring-expression":
-    - resources:
-        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
-      notes: GPC-343
 
   # Security Hub
 

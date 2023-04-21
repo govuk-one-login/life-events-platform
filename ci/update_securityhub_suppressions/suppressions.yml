@@ -159,11 +159,23 @@ Suppressions:
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-fmudmre8n":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-ddmf23yhn":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
   "CloudTrail should have encryption at-rest enabled":
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
   "cloud-trail-encryption-enabled-conformance-pack-ikljqduwd":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-encryption-enabled-conformance-pack-ddmf23yhn":
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
@@ -252,6 +264,12 @@ Suppressions:
       notes: >
         These are old GuardDuty findings for resources that no longer exist. At our account level we cannot archive
         them, so we have to suppress the findings here.
+  "guardduty-non-archived-findings-conformance-pack-ddmf23yhn":
+    - resources:
+        - arn:aws:guardduty:eu-west-2:776473272850:finding/00c33c7480de79950ac0d30a2137a504
+      notes: >
+        These are old GuardDuty findings for resources that no longer exist. At our account level we cannot archive
+        them, so we have to suppress the findings here.
 
   ## IAM
   "iam-no-inline-policy-check-conformance-pack-flegfck3w":
@@ -268,7 +286,25 @@ Suppressions:
       notes: >
         The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit
         is set up by the org with inline policy
-  "iam-user-mfa-enabled":
+  "iam-no-inline-policy-check-conformance-pack-fmudmre8n":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: >
+        The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit
+        is set up by the org with inline policy
+  "iam-no-inline-policy-check-conformance-pack-ddmf23yhn":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: >
+        The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit
+        is set up by the org with inline policy
+  "iam-user-mfa-enabled-conformance-pack-ikljqduwd":
+    - resources:
+        - arn:aws:iam::776473272850:user/dwp-dev
+      notes: MFA is not enabled as this user is only a service account for access to SQS
+  "iam-user-mfa-enabled-conformance-pack-ddmf23yhn":
     - resources:
         - arn:aws:iam::776473272850:user/dwp-dev
       notes: MFA is not enabled as this user is only a service account for access to SQS
@@ -301,6 +337,10 @@ Suppressions:
 
   ## Root account
   "root-account-hardware-mfa-enabled-conformance-pack-ikljqduwd":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: For this GDS created account this is not possible to enforce
+  "root-account-hardware-mfa-enabled-conformance-pack-ddmf23yhn":
     - resources:
         - AWS::::Account:776473272850
       notes: For this GDS created account this is not possible to enforce

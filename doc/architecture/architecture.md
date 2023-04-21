@@ -7,28 +7,6 @@ A current state view of the overall system architecture and services used in AWS
 
 ![](img/architecture.drawio.svg)
 
-## Data Flows
-
-The overall flows this sytem supports are
-```mermaid
-sequenceDiagram
-    participant DWP
-    participant GDX
-    participant HMPO
-
-    HMPO ->> GDX: Notification of death
-
-    DWP->>+GDX: Get list of events that haven't been consumed
-    GDX->>-DWP: Return events
-
-    DWP->>+GDX: Request individual events
-    GDX-->>HMPO: Enrich event (first name, last name etc)
-    HMPO-->>GDX: Return enriched event
-    GDX->>-DWP: Return enriched Events
-
-    DWP->>GDX: Mark event as consumed
-```
-
 ## Stubs/additional services
 
 We currently have a fake version of the supplier side (HMPO), running as
@@ -48,8 +26,14 @@ so the total data volumes are relatively low currently.
 
 ## Event flow
 Events flow through the system as shown in the diagram below.
+
 ![flow.drawio.svg](img/event-flow.drawio.svg)
 
 Each supplier event may result in several acquirer events as the system fans out. These are decoupled from each other early
 in the process, and queues are used to provide resiliency. Each supplier event is given an ID, which can be linked to
 audit information.
+
+## Data flow
+The data flow is illustrated below.
+
+![data-flow.drawio.svg](img/data-flow.drawio.svg)

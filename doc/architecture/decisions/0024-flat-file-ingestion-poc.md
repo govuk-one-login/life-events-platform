@@ -49,4 +49,10 @@ There are significant privacy and IA risks with taking ownership of data and tra
 - minimise data storage, and rely on external parties to provide the data in a consistent format
 - avoid making decisions on data, e.g. pass each event through rather than trying to collate/combine events
 
+As part of these changes, we'll need to implement a few new features including
+- Step Function to transform and ingest data, suggestion is to use TypeScript over Python as a well supported language within
+  GDS, and as this maps more closely to core functionality that something similar to this may go live, than the other lambdas we have in Python which are intended purely as test harnesses.
+- Event/callback when all consumers have consumed a given event, set up as SNS
+- Lambdas for posting and retrieving data to/from the API, as well as deleting data when consumed
+
 [Next >>](9999-end.md)

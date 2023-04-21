@@ -21,21 +21,6 @@ module "securityhub_local" {
   config_s3_kms_arn = module.config_s3.kms_arn
 }
 
-moved {
-  from = aws_securityhub_account.securityhub
-  to   = module.securityhub_local.aws_securityhub_account.securityhub
-}
-
-moved {
-  from = aws_securityhub_standards_subscription.cis
-  to   = module.securityhub_local.aws_securityhub_standards_subscription.cis
-}
-
-moved {
-  from = aws_securityhub_standards_subscription.aws_foundational_security
-  to   = module.securityhub_local.aws_securityhub_standards_subscription.aws_foundational_security
-}
-
 module "securityhub_global" {
   source = "../securityhub"
   providers = {

@@ -33,8 +33,8 @@ resource "aws_ecs_task_definition" "grafana" {
         { "name" : "AWS_SDK_LOAD_CONFIG", "value" : "true" },
         { "name" : "GF_AUTH_SIGV4_AUTH_ENABLED", "value" : "true" },
 
-        { "name" : "GF_SERVER_DOMAIN", "value" : aws_cloudfront_distribution.grafana.domain_name },
-        { "name" : "GF_SERVER_ROOT_URL", "value" : "https://${aws_cloudfront_distribution.grafana.domain_name}" },
+        { "name" : "GF_SERVER_DOMAIN", "value" : var.hosted_zone_name },
+        { "name" : "GF_SERVER_ROOT_URL", "value" : "https://${var.hosted_zone_name}" },
         { "name" : "GF_SESSION_COOKIE_SECURE", "value" : "true" },
         { "name" : "GF_SESSION_COOKIE_SAMESITE", "value" : "lax" },
         { "name" : "GF_AUTH_GENERIC_OAUTH_ENABLED", "value" : "true" },
@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "grafana" {
         { "name" : "GF_AUTH_GENERIC_OAUTH_AUTH_URL", "value" : "${local.auth_base_url}/oauth2/authorize" },
         { "name" : "GF_AUTH_GENERIC_OAUTH_TOKEN_URL", "value" : "${local.auth_base_url}/oauth2/token" },
         { "name" : "GF_AUTH_GENERIC_OAUTH_API_URL", "value" : "${local.auth_base_url}/oauth2/userInfo" },
-        { "name" : "GF_AUTH_SIGNOUT_REDIRECT_URL", "value" : "${local.auth_base_url}/logout?client_id=${aws_cognito_user_pool_client.grafana.id}&logout_uri=https://${aws_cloudfront_distribution.grafana.domain_name}/login" },
+        { "name" : "GF_AUTH_SIGNOUT_REDIRECT_URL", "value" : "${local.auth_base_url}/logout?client_id=${aws_cognito_user_pool_client.grafana.id}&logout_uri=https://${var.hosted_zone_name}/login" },
         { "name" : "GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH", "value" : "(\"cognito:groups\" | contains([*], 'Admin') && 'Admin' || 'Viewer')" }
       ],
       logConfiguration : {

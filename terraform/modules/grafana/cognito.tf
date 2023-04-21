@@ -21,7 +21,7 @@ resource "aws_cognito_user_pool" "pool" {
 
     invite_message_template {
       email_subject = "Your temporary password for GDX Grafana"
-      email_message = "Your username is {username} and temporary password is {####}. \n Please go to https://${aws_cloudfront_distribution.grafana.domain_name}/login/generic_oauth to login and click the `Sign in with Cognito` button."
+      email_message = "Your username is {username} and temporary password is {####}. \n Please go to https://${var.hosted_zone_name}/login/generic_oauth to login and click the `Sign in with Cognito` button."
       sms_message   = "Your username is {username} and temporary password is {####}."
     }
   }
@@ -52,8 +52,8 @@ resource "aws_cognito_user_pool_client" "grafana" {
   allowed_oauth_scopes                 = ["email", "openid", "profile", "aws.cognito.signin.user.admin"]
   generate_secret                      = true
   explicit_auth_flows                  = ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_ADMIN_USER_PASSWORD_AUTH"]
-  callback_urls                        = ["https://${aws_cloudfront_distribution.grafana.domain_name}/login/generic_oauth"]
-  logout_urls                          = ["https://${aws_cloudfront_distribution.grafana.domain_name}/login"]
+  callback_urls                        = ["https://${var.hosted_zone_name}/login/generic_oauth"]
+  logout_urls                          = ["https://${var.hosted_zone_name}/login"]
   supported_identity_providers         = ["COGNITO"]
 }
 

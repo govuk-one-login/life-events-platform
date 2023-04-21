@@ -25,3 +25,10 @@ variable "ecr_url" {
 variable "s3_event_notification_sns_topic_arn" {
   type = string
 }
+
+variable "hosted_zone_id" {
+  type = string
+}
+variable "hosted_zone_name" {
+  type = string
+}

@@ -77,6 +77,12 @@ module "vpc" {
   depends_on = [module.sns]
 }
 
+module "route53" {
+  source = "../modules/route53"
+
+  hosted_zone_name = "non-prod-grafana.share-life-events.service.gov.uk"
+}
+
 module "grafana" {
   source = "../modules/grafana"
   providers = {
@@ -95,6 +101,9 @@ module "grafana" {
   ecr_url = "${data.aws_caller_identity.current.account_id}.dkr.ecr.eu-west-2.amazonaws.com"
 
   s3_event_notification_sns_topic_arn = module.sns.topic_arn
+
+  hosted_zone_id   = module.route53.zone_id
+  hosted_zone_name = module.route53.name
 
   depends_on = [module.sns]
 }

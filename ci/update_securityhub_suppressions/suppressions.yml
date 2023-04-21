@@ -130,7 +130,7 @@ Suppressions:
         Our dev grafana and our dev instances currently run without HTTP at the ALB level as they use the default
         cloudfront certificate for their cloudfronts, and the ALBs are restricted to the cloudfront IP range for
         incoming traffic.
-  "alb-http-to-https-redirection-check-conformance-pack-1dpd692bc":
+  "alb-http-to-https-redirection-check-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/dev-lb/2d4096d1e596b185
         - arn:aws:elasticloadbalancing:eu-west-2:776473272850:loadbalancer/app/grafana-lb/c42cd2a900b31e76
@@ -143,7 +143,7 @@ Suppressions:
   "CloudFormation stacks should be integrated with Simple Notification Service (SNS)":
     - resources:
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4
-        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-1dpd692bc/189a3600-d93f-11ed-a33e-06ce375c57d6
+        - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-ikljqduwd/56654800-df96-11ed-8373-0a8dfb4270be
       notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS
 
   ## CloudTrail
@@ -151,7 +151,7 @@ Suppressions:
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
-  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-1dpd692bc":
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
@@ -163,7 +163,7 @@ Suppressions:
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
-  "cloud-trail-encryption-enabled-conformance-pack-1dpd692bc":
+  "cloud-trail-encryption-enabled-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
@@ -175,7 +175,7 @@ Suppressions:
         we already have alerting based on the S3 buckets having items deleted.
 
   ## Cloudwatch
-  "cw-loggroup-retention-period-check-conformance-pack-1dpd692bc":
+  "cw-loggroup-retention-period-check-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/ecs/containerinsights/grafana/performance
@@ -191,7 +191,7 @@ Suppressions:
       notes: >
         These log groups are controlled by AWS, are temporary logs for the running of our prometheus and grafana, or
         they are for our fakes, which we do not need to retain for 365 days.
-  "cloudwatch-log-group-encrypted-conformance-pack-1dpd692bc":
+  "cloudwatch-log-group-encrypted-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:logs:eu-west-2:776473272850:loggroup/RDSOSMetrics
         - arn:aws:logs:eu-west-2:776473272850:loggroup//aws/rds/cluster/dev-rds-db/postgresql
@@ -203,7 +203,7 @@ Suppressions:
       notes: These log groups are controlled by AWS
 
   ## EBS
-  "ebs-in-backup-plan-conformance-pack-1dpd692bc":
+  "ebs-in-backup-plan-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:ec2:eu-west-2:776473272850:volume/vol-031a25f49d5a6fcf2
         - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0d011510caddeabab
@@ -212,7 +212,7 @@ Suppressions:
         volumes be backed up
 
   ## ECS
-  "ecs-containers-readonly-access-conformance-pack-1dpd692bc":
+  "ecs-containers-readonly-access-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:ecs:eu-west-2:776473272850:task-definition/grafana:*
         - arn:aws:ecs:eu-west-2:776473272850:task-definition/dev-gdx-data-share-poc:*
@@ -220,7 +220,7 @@ Suppressions:
       notes: These task definitions need write access to the filesystem
 
   ## EC2
-  "ec2-instance-detailed-monitoring-enabled-conformance-pack-1dpd692bc":
+  "ec2-instance-detailed-monitoring-enabled-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-06a25372cb2a320bf
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-05591d8e2373a6e64
@@ -233,19 +233,19 @@ Suppressions:
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
       notes: This table is just used to hold lock and does not need to be backed up
-  "dynamodb-in-backup-plan-conformance-pack-1dpd692bc":
+  "dynamodb-in-backup-plan-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
         - arn:aws:dynamodb:eu-west-2:776473272850:table/securityhub-suppression-list
       notes: >
         These tables are either just used to hold lock or are replicated in our code and so do not need to be backed up
-  "dynamodb-table-encrypted-kms-conformance-pack-1dpd692bc":
+  "dynamodb-table-encrypted-kms-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:dynamodb:eu-west-2:776473272850:table/gdx-data-share-poc-lock
       notes: This table is just used to hold lock and does not need encryption
 
   # GuardDuty
-  "guardduty-non-archived-findings-conformance-pack-1dpd692bc":
+  "guardduty-non-archived-findings-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:guardduty:eu-west-2:776473272850:finding/08c2f228a655979b64861aca2cabe58c
         - arn:aws:guardduty:eu-west-2:776473272850:finding/40c2f229a4b5730c7469b2d0edf79822
@@ -261,7 +261,7 @@ Suppressions:
       notes: >
         The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the
         GDSSecurityAudit is set up by the org with inline policy
-  "iam-no-inline-policy-check-conformance-pack-1dpd692bc":
+  "iam-no-inline-policy-check-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:iam::776473272850:role/dev-task-role
         - arn:aws:iam::776473272850:role/GDSSecurityAudit
@@ -274,7 +274,7 @@ Suppressions:
       notes: MFA is not enabled as this user is only a service account for access to SQS
 
   ## Lambda
-  "lambda-dlq-check-conformance-pack-1dpd692bc":
+  "lambda-dlq-check-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:lambda:eu-west-2:776473272850:function:shared-securityhub-suppressor
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-len
@@ -288,7 +288,7 @@ Suppressions:
         smoke testing lambdas; or a suppressor that only accesses AWS services for suppressions. We have logging for all
         of these lambdas and do not need them to retry. For the smoke testing lambdas it would be better for them not to
         retry so that we are aware as quickly as possible about errors.
-  "lambda-inside-vpc-conformance-pack-1dpd692bc":
+  "lambda-inside-vpc-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:lambda:eu-west-2:776473272850:function:shared-securityhub-suppressor
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-len
@@ -300,13 +300,13 @@ Suppressions:
         suppressor that only accesses AWS services for suppressions. They have no access to our actual system.
 
   ## Root account
-  "root-account-hardware-mfa-enabled-conformance-pack-1dpd692bc":
+  "root-account-hardware-mfa-enabled-conformance-pack-ikljqduwd":
     - resources:
         - AWS::::Account:776473272850
       notes: For this GDS created account this is not possible to enforce
 
   ## Route table
-  "no-unrestricted-route-to-igw-conformance-pack-1dpd692bc":
+  "no-unrestricted-route-to-igw-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-08a2f7a0bf2df9842
         - arn:aws:ec2:eu-west-2:776473272850:route-table/rtb-05b4bd5d39c50c5e6
@@ -358,7 +358,7 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
-  "s3-bucket-logging-enabled-conformance-pack-1dpd692bc":
+  "s3-bucket-logging-enabled-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
         - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
@@ -396,11 +396,11 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
-  "s3-bucket-replication-enabled-conformance-pack-1dpd692bc":
+  "s3-bucket-replication-enabled-conformance-pack-ikljqduwd":
     - resources:
         - .*
       notes: GPC-301
-  "s3-bucket-versioning-enabled-conformance-pack-1dpd692bc":
+  "s3-bucket-versioning-enabled-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
         - arn:aws:s3:::gdx-data-share-poc-tfstate-logs
@@ -438,7 +438,7 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
-  "s3-default-encryption-kms-conformance-pack-1dpd692bc":
+  "s3-default-encryption-kms-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs

@@ -11,9 +11,3 @@ AVD-DS-0002
 # SnakeYAML Dependency flagged, but not exposed
 # remove when dependencies are updated - GPC-256
 CVE-2022-1471
-
-# GPC-343: A patch will be released on 20/04/2023
-CVE-2023-20863
-
-# GPC-353: We do not run on ARM and this is a difficult to expose vulnerability.
-CVE-2023-1255

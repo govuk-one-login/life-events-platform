@@ -3,9 +3,6 @@
 CVE-2020-8911
 CVE-2020-8912
 
-# GPC-330: This is not an issue for us as an attacker does not have access to spawn two containers with custom volume-mount configurations and be able to run custom images
-CVE-2023-27561
-
 ## Prometheus
 # The latest version of the aws-otel-collector is yet to update Prometheus to fix this vulnerability
 CVE-2019-3826

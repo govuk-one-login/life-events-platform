@@ -146,6 +146,24 @@ Suppressions:
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-ikljqduwd/56654800-df96-11ed-8373-0a8dfb4270be
       notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS
 
+  ## CloudFront
+  "CloudFront distributions should encrypt traffic to custom origins":
+    - resources:
+        - arn:aws:cloudfront::776473272850:distribution/E3MFKD45BHJ1GI
+      notes: >
+        Our dev environment is currently not encrypting to the origin in order to not break current DWP integration,
+        however this will be updated to match Demo environment when DWP stop using the API. The traffic to the custom
+        origin is restricted to go to our ALB and our ALBs only accept traffic from CloudFront so this traffic is only
+        decrypted inside our flows.
+  "CloudFront distributions should have a default root object configured":
+    - resources:
+        - arn:aws:cloudfront::776473272850:distribution/EZWVTIPBB1MZU
+        - arn:aws:cloudfront::776473272850:distribution/E3MFKD45BHJ1GI
+        - arn:aws:cloudfront::776473272850:distribution/E1MHGTSEICECWX
+      notes: >
+        We do not use default root objects, as our CloudFronts direct all traffic through to the ALB and then to the
+        servers, so default root objects don't make sense.
+
   ## CloudTrail
   "CloudTrail trails should be integrated with Amazon CloudWatch Logs":
     - resources:
@@ -371,6 +389,14 @@ Suppressions:
         These are currently only notifying very rarely and to one email address, so we are not adding logging for these
 
   ## S3
+  "Ensure the S3 bucket used to store CloudTrail logs is not publicly accessible":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: The bucket is not publicly accessible, but the us-east-1 AWS Config is unable to check this
+  "Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: The bucket is has access logging, but the us-east-1 AWS Config is unable to check this
   "S3 buckets should have event notifications enabled":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate

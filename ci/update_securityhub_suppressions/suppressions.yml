@@ -167,6 +167,12 @@ Suppressions:
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloudtrail-s3-dataevents-enabled-conformance-pack-1dpd692bc":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: >
+        Our S3 buckets are only used for logging or tf state, so we do not need to add the data events to cloudtrail as
+        we already have alerting based on the S3 buckets having items deleted.
 
   ## Cloudwatch
   "cw-loggroup-retention-period-check-conformance-pack-1dpd692bc":

@@ -266,10 +266,9 @@ Suppressions:
         them, so we have to suppress the findings here.
   "guardduty-non-archived-findings-conformance-pack-ddmf23yhn":
     - resources:
-        - arn:aws:guardduty:eu-west-2:776473272850:finding/00c33c7480de79950ac0d30a2137a504
+        - arn:aws:guardduty:us-east-1:776473272850:finding/00c33c7480de79950ac0d30a2137a504
       notes: >
-        These are old GuardDuty findings for resources that no longer exist. At our account level we cannot archive
-        them, so we have to suppress the findings here.
+        These are old GuardDuty findings for anomalous user actions that were ok.
 
   ## IAM
   "iam-no-inline-policy-check-conformance-pack-flegfck3w":

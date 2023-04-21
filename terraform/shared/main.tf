@@ -154,6 +154,11 @@ module "ecr" {
 }
 
 module "policies" {
+  providers = {
+    aws           = aws
+    aws.us-east-1 = aws.us-east-1
+  }
+
   source = "../modules/policies"
 }
 

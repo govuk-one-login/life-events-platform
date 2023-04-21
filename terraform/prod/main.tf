@@ -58,6 +58,18 @@ data "terraform_remote_state" "demo" {
   }
 }
 
+data "terraform_remote_state" "shared" {
+  backend = "s3"
+
+  config = {
+    bucket         = "gdx-data-share-poc-tfstate"
+    key            = "terraform-shared.tfstate"
+    region         = "eu-west-2"
+    dynamodb_table = "gdx-data-share-poc-lock"
+    encrypt        = true
+  }
+}
+
 module "route53" {
   source = "../modules/route53"
 
@@ -71,6 +83,10 @@ module "route53" {
     {
       name         = data.terraform_remote_state.demo.outputs.hosted_zone_name
       name_servers = data.terraform_remote_state.demo.outputs.hosted_zone_name_servers
+    },
+    {
+      name         = data.terraform_remote_state.shared.outputs.hosted_zone_name
+      name_servers = data.terraform_remote_state.shared.outputs.hosted_zone_name_servers
     }
   ]
 }

@@ -9,14 +9,15 @@ resource "aws_cloudfront_distribution" "grafana" {
     custom_origin_config {
       http_port              = 80
       https_port             = 443
-      origin_protocol_policy = "http-only"
-      # Required but irrelevant - we do not use HTTPS to talk to LB
-      origin_ssl_protocols = ["TLSv1.2"]
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
       # AWS enforce a maximum of 60s, but we can request more if desired.
       # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesOriginResponseTimeout
       origin_read_timeout = 60
     }
   }
+
+  aliases = [var.hosted_zone_name]
 
   logging_config {
     include_cookies = false
@@ -63,8 +64,59 @@ resource "aws_cloudfront_distribution" "grafana" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate_validation.hosted_zone.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 
   web_acl_id = aws_wafv2_web_acl.cloudfront.arn
+}
+
+resource "aws_shield_protection" "grafana" {
+  name         = "Grafana CloudFront"
+  resource_arn = aws_cloudfront_distribution.grafana.arn
+}
+
+resource "aws_route53_record" "cloudfront" {
+  zone_id = var.hosted_zone_id
+  name    = var.hosted_zone_name
+  type    = "A"
+  alias {
+    name                   = aws_cloudfront_distribution.grafana.domain_name
+    zone_id                = aws_cloudfront_distribution.grafana.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_acm_certificate" "hosted_zone" {
+  provider = aws.us-east-1
+
+  domain_name       = var.hosted_zone_name
+  validation_method = "DNS"
+}
+
+resource "aws_route53_record" "cert_validation" {
+  provider = aws.us-east-1
+
+  for_each = {
+    for dvo in aws_acm_certificate.hosted_zone.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = var.hosted_zone_id
+}
+
+resource "aws_acm_certificate_validation" "hosted_zone" {
+  provider = aws.us-east-1
+
+  certificate_arn         = aws_acm_certificate.hosted_zone.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }

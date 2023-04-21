@@ -144,11 +144,6 @@ module "security" {
   depends_on = [module.sns]
 }
 
-moved {
-  from = module.securityhub
-  to   = module.security
-}
-
 module "ecr" {
   source = "../modules/ecr"
 }

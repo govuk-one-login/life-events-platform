@@ -16,31 +16,6 @@ resource "aws_iam_role" "config" {
   assume_role_policy = data.aws_iam_policy_document.config_assume_role.json
 }
 
-moved {
-  from = aws_config_configuration_recorder.config
-  to   = module.securityhub_local.aws_config_configuration_recorder.config
-}
-
-moved {
-  from = aws_config_configuration_recorder_status.config
-  to   = module.securityhub_local.aws_config_configuration_recorder_status.config
-}
-
-moved {
-  from = aws_config_delivery_channel.config
-  to   = module.securityhub_local.aws_config_delivery_channel.config
-}
-
-moved {
-  from = aws_config_conformance_pack.cis_1_4
-  to   = module.securityhub_local.aws_config_conformance_pack.cis_1_4
-}
-
-moved {
-  from = aws_config_conformance_pack.ncsc_cloudsec_principles
-  to   = module.securityhub_local.aws_config_conformance_pack.ncsc_cloudsec_principles
-}
-
 module "config_s3" {
   source = "../s3"
 

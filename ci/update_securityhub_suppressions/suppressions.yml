@@ -85,6 +85,24 @@ Suppressions:
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-ikljqduwd/56654800-df96-11ed-8373-0a8dfb4270be
       notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS
 
+  ## CloudFront
+  "CloudFront distributions should encrypt traffic to custom origins":
+    - resources:
+        - arn:aws:cloudfront::776473272850:distribution/E3MFKD45BHJ1GI
+      notes: >
+        Our dev environment is currently not encrypting to the origin in order to not break current DWP integration,
+        however this will be updated to match Demo environment when DWP stop using the API. The traffic to the custom
+        origin is restricted to go to our ALB and our ALBs only accept traffic from CloudFront so this traffic is only
+        decrypted inside our flows.
+  "CloudFront distributions should have a default root object configured":
+    - resources:
+        - arn:aws:cloudfront::776473272850:distribution/EZWVTIPBB1MZU
+        - arn:aws:cloudfront::776473272850:distribution/E3MFKD45BHJ1GI
+        - arn:aws:cloudfront::776473272850:distribution/E1MHGTSEICECWX
+      notes: >
+        We do not use default root objects, as our CloudFronts direct all traffic through to the ALB and then to the
+        servers, so default root objects don't make sense.
+
   ## CloudTrail
   "CloudTrail trails should be integrated with Amazon CloudWatch Logs":
     - resources:
@@ -98,11 +116,23 @@ Suppressions:
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-fmudmre8n":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-cloud-watch-logs-enabled-conformance-pack-ddmf23yhn":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
   "CloudTrail should have encryption at-rest enabled":
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
   "cloud-trail-encryption-enabled-conformance-pack-ikljqduwd":
+    - resources:
+        - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
+      notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
+  "cloud-trail-encryption-enabled-conformance-pack-ddmf23yhn":
     - resources:
         - arn:aws:cloudtrail:eu-west-2:988997429095:trail/co-org
       notes: This cloudtrail trail is controlled by the organisation and we cannot edit it
@@ -191,6 +221,11 @@ Suppressions:
       notes: >
         These are old GuardDuty findings for resources that no longer exist. At our account level we cannot archive
         them, so we have to suppress the findings here.
+  "guardduty-non-archived-findings-conformance-pack-ddmf23yhn":
+    - resources:
+        - arn:aws:guardduty:us-east-1:776473272850:finding/00c33c7480de79950ac0d30a2137a504
+      notes: >
+        These are old GuardDuty findings for anomalous user actions that were ok.
 
   ## IAM
   "iam-no-inline-policy-check-conformance-pack-flegfck3w":
@@ -207,7 +242,25 @@ Suppressions:
       notes: >
         The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit
         is set up by the org with inline policy
-  "iam-user-mfa-enabled":
+  "iam-no-inline-policy-check-conformance-pack-fmudmre8n":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: >
+        The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit
+        is set up by the org with inline policy
+  "iam-no-inline-policy-check-conformance-pack-ddmf23yhn":
+    - resources:
+        - arn:aws:iam::776473272850:role/dev-task-role
+        - arn:aws:iam::776473272850:role/GDSSecurityAudit
+      notes: >
+        The dev-task-role requires an inline policy for the moment to help with DWP dev work, and the GDSSecurityAudit
+        is set up by the org with inline policy
+  "iam-user-mfa-enabled-conformance-pack-ikljqduwd":
+    - resources:
+        - arn:aws:iam::776473272850:user/dwp-dev
+      notes: MFA is not enabled as this user is only a service account for access to SQS
+  "iam-user-mfa-enabled-conformance-pack-ddmf23yhn":
     - resources:
         - arn:aws:iam::776473272850:user/dwp-dev
       notes: MFA is not enabled as this user is only a service account for access to SQS
@@ -243,6 +296,10 @@ Suppressions:
     - resources:
         - AWS::::Account:776473272850
       notes: For this GDS created account this is not possible to enforce
+  "root-account-hardware-mfa-enabled-conformance-pack-ddmf23yhn":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: For this GDS created account this is not possible to enforce
 
   ## Route table
   "no-unrestricted-route-to-igw-conformance-pack-ikljqduwd":
@@ -271,6 +328,14 @@ Suppressions:
         These are currently only notifying very rarely and to one email address, so we are not adding logging for these
 
   ## S3
+  "Ensure the S3 bucket used to store CloudTrail logs is not publicly accessible":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: The bucket is not publicly accessible, but the us-east-1 AWS Config is unable to check this
+  "Ensure S3 bucket access logging is enabled on the CloudTrail S3 bucket":
+    - resources:
+        - AWS::::Account:776473272850
+      notes: The bucket is has access logging, but the us-east-1 AWS Config is unable to check this
   "S3 buckets should have event notifications enabled":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate

@@ -61,7 +61,6 @@ resource "aws_acm_certificate_validation" "acm_lb_certificate_validation" {
   validation_record_fqdns = [for record in aws_route53_record.lb_cert_validation : record.fqdn]
 }
 
-#tfsec:ignore:aws-elb-http-not-used
 resource "aws_lb_listener" "listener_http" {
   load_balancer_arn = aws_lb.load_balancer.arn
   port              = 443
@@ -113,8 +112,8 @@ data "aws_ec2_managed_prefix_list" "cloudfront" {
 resource "aws_security_group_rule" "lb_cloudfront" {
   type              = "ingress"
   protocol          = "tcp"
-  from_port         = 80
-  to_port           = 80
+  from_port         = 443
+  to_port           = 443
   description       = "LB ingress rule for cloudfront"
   security_group_id = aws_security_group.lb.id
   prefix_list_ids   = [data.aws_ec2_managed_prefix_list.cloudfront.id]

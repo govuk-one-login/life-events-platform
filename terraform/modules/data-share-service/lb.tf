@@ -32,6 +32,7 @@ module "lb_access_logs" {
   expiration_days = 180
 
   use_kms = false
+  allow_lb_logs = true
 
   sns_arn = module.sns.topic_arn
 

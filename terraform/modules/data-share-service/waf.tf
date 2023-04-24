@@ -290,6 +290,7 @@ module "waf_lb_logs_bucket" {
   expiration_days = 180
 
   add_log_bucket = false
+  allow_delivery_logs = true
 
   sns_arn = module.sns.topic_arn
 

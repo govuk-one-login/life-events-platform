@@ -11,7 +11,8 @@ module "cloudfront_logs_bucket" {
   suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
-  add_log_bucket = false
+  add_log_bucket      = false
+  object_writer_owner = true
 
   sns_arn = var.s3_event_notification_sns_topic_arn
 }

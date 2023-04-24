@@ -129,14 +129,6 @@ module "security" {
       disabled_reason = "For this GDS created account this is not possible to enforce"
     },
     {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/CloudFront.1"
-      disabled_reason = "We do not use default root objects, as our CloudFronts direct all traffic through to the ALB and then to the servers, so default root objects don't make sense."
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/CloudFront.4"
-      disabled_reason = "Origin failover is not something we want with our system, as there is no useful static page for our API."
-    },
-    {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/ECS.5"
       disabled_reason = "Our ECS containers need write access to the root filesystem."
     },
@@ -151,6 +143,24 @@ module "security" {
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/EC2.10"
       disabled_reason = "GPC-315: We only use EC2 as bastions for access to our RDS, so we do not need to configure VPC endpoints for EC2."
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"
+      disabled_reason = "For this GDS created account this is not possible to enforce"
+    },
+  ]
+  global_rules = [
+    {
+      rule            = "cis-aws-foundations-benchmark/v/1.4.0/1.6"
+      disabled_reason = "For this GDS created account this is not possible to enforce"
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/CloudFront.1"
+      disabled_reason = "We do not use default root objects, as our CloudFronts direct all traffic through to the ALB and then to the servers, so default root objects don't make sense."
+    },
+    {
+      rule            = "aws-foundational-security-best-practices/v/1.0.0/CloudFront.4"
+      disabled_reason = "Origin failover is not something we want with our system, as there is no useful static page for our API."
     },
     {
       rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"

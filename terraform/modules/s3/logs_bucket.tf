@@ -72,8 +72,8 @@ data "aws_iam_policy_document" "log_bucket_deny_insecure_transport" {
     ]
 
     resources = [
-      aws_s3_bucket.bucket.arn,
-      "${aws_s3_bucket.bucket.arn}/*",
+      aws_s3_bucket.log_bucket[0].arn,
+      "${aws_s3_bucket.log_bucket[0].arn}/*",
     ]
   }
 
@@ -89,8 +89,8 @@ data "aws_iam_policy_document" "log_bucket_deny_insecure_transport" {
     ]
 
     resources = [
-      aws_s3_bucket.bucket.arn,
-      "${aws_s3_bucket.bucket.arn}/*",
+      aws_s3_bucket.log_bucket[0].arn,
+      "${aws_s3_bucket.log_bucket[0].arn}/*",
     ]
     condition {
       test     = "Bool"

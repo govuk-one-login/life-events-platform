@@ -139,3 +139,30 @@ resource "aws_wafv2_web_acl_logging_configuration" "load_balancer" {
   depends_on = [module.waf_lb_logs_bucket]
 }
 
+# This is the logging bucket, it doesn't need logs or versioning
+#tfsec:ignore:aws-s3-enable-bucket-logging
+#tfsec:ignore:aws-s3-enable-versioning
+module "waf_cloudfront_logs_bucket" {
+  source = "../s3"
+
+  account_id      = var.account_id
+  region          = var.region
+  prefix          = "aws-waf-logs-grafana"
+  name            = "cloudfront"
+  suffix          = "gdx-data-share-poc"
+  expiration_days = 180
+
+  add_log_bucket = false
+
+  sns_arn = var.s3_event_notification_sns_topic_arn
+}
+
+resource "aws_wafv2_web_acl_logging_configuration" "cloudfront" {
+  provider = aws.us-east-1
+
+  log_destination_configs = [module.waf_cloudfront_logs_bucket.arn]
+  resource_arn            = aws_wafv2_web_acl.cloudfront.arn
+
+  depends_on = [module.waf_cloudfront_logs_bucket]
+}
+

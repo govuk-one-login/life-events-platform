@@ -71,9 +71,24 @@ resource "aws_iam_role_policy_attachment" "ecs_task_efs_access" {
   policy_arn = aws_iam_policy.ecs_efs_access.arn
 }
 
-data "aws_iam_policy_document" "xray_access" {
+data "aws_iam_policy_document" "query_aws_policy" {
   statement {
+    sid = "Allow access to read any resource for EC2, Cloudwatch, Logs, Tags, and Xray"
+    effect    = "Allow"
     actions = [
+      "ec2:DescribeTags",
+      "ec2:DescribeInstances",
+      "ec2:DescribeRegions",
+
+      "cloudwatch:ListMetrics",
+      "cloudwatch:GetMetricData",
+      "cloudwatch:DescribeAlarmsForMetric",
+
+      "logs:StopQuery",
+      "logs:GetQueryResults",
+
+      "tag:GetResources",
+
       "xray:BatchGetTraces",
       "xray:GetTraceSummaries",
       "xray:GetTraceGraph",
@@ -84,86 +99,41 @@ data "aws_iam_policy_document" "xray_access" {
       "xray:GetServiceGraph",
     ]
     resources = ["*"]
-    effect    = "Allow"
-  }
-}
-
-resource "aws_iam_policy" "xray_access" {
-  name   = "grafana-ecs-xray-access-policy"
-  policy = data.aws_iam_policy_document.xray_access.json
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_xray_access" {
-  role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.xray_access.arn
-}
-
-data "aws_iam_policy_document" "cloudwatch_access" {
-  statement {
-    sid = "AllowReadingMetricsFromCloudWatchNeedAnyResource"
-    actions = [
-      "cloudwatch:ListMetrics",
-    ]
-    resources = ["*"]
-    effect    = "Allow"
   }
   statement {
-    sid = "AllowReadingMetricsFromCloudWatch"
+    sid = "Allow access to reading alarms"
+    effect = "Allow"
     actions = [
       "cloudwatch:DescribeAlarms",
       "cloudwatch:DescribeAlarmHistory",
       "cloudwatch:GetInsightRuleReport",
-      "cloudwatch:GetMetricData",
-      "cloudwatch:DescribeAlarmsForMetric",
     ]
     resources = [
-      "arn:aws:cloudwatch:${var.region}:${var.account_id}:alarm:*",
-      "arn:aws:cloudwatch:${var.region}:${var.account_id}:insight-rule/*",
+      "arn:aws:cloudwatch:*:${var.account_id}:alarm:*",
+      "arn:aws:cloudwatch:*:${var.account_id}:insight-rule/*",
     ]
-    effect = "Allow"
   }
   statement {
-    sid = "AllowReadingLogsFromCloudWatch"
+    sid = "Allow access to reading logs and querying"
+    effect = "Allow"
     actions = [
       "logs:GetLogGroupFields",
       "logs:DescribeLogGroups",
       "logs:GetLogEvents",
       "logs:StartQuery",
-      "logs:StopQuery",
-      "logs:GetQueryResults"
     ]
     resources = [
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group:*",
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group:*:log-stream:*"
+      "arn:aws:logs:*:${var.account_id}:log-group:*",
     ]
-    effect = "Allow"
-  }
-  statement {
-    sid = "AllowReadingTagsInstancesRegionsFromEC2"
-    actions = [
-      "ec2:DescribeTags",
-      "ec2:DescribeInstances",
-      "ec2:DescribeRegions"
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
-  statement {
-    sid = "AllowReadingResourcesForTags"
-    actions = [
-      "tag:GetResources"
-    ]
-    resources = ["*"]
-    effect    = "Allow"
   }
 }
 
-resource "aws_iam_policy" "cloudwatch_access" {
-  name   = "grafana-ecs-cloudwatch-access-policy"
-  policy = data.aws_iam_policy_document.cloudwatch_access.json
+resource "aws_iam_policy" "query_aws_policy" {
+  name   = "grafana-query-aws-policy"
+  policy = data.aws_iam_policy_document.query_aws_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch_access" {
+resource "aws_iam_role_policy_attachment" "query_aws_access" {
   role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.cloudwatch_access.arn
+  policy_arn = aws_iam_policy.query_aws_policy.arn
 }

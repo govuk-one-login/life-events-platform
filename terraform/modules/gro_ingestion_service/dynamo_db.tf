@@ -1,3 +1,4 @@
+#tfsec:ignore:aws-dynamodb-enable-recovery
 resource "aws_dynamodb_table" "gor_ingestion" {
   name             = "${var.environment}_gro_ingestion"
   billing_mode     = "PAY_PER_REQUEST"

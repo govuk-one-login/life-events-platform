@@ -12,6 +12,11 @@ resource "aws_dynamodb_table" "gor_ingestion" {
   }
 
   attribute {
+    name = "RegistrationId"
+    type = "S"
+  }
+
+  attribute {
     name = "FirstForename"
     type = "S"
   }

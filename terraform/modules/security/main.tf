@@ -37,7 +37,7 @@ module "securityhub_global" {
   config_s3_id      = module.config_s3.id
   config_s3_kms_arn = module.config_s3.kms_arn
 
-  rules = var.rules
+  rules = var.global_rules
 }
 
 moved {

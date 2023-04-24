@@ -359,9 +359,12 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-ikljqduwd":
@@ -378,9 +381,12 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-flegfck3w":
@@ -397,9 +403,12 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-replication-enabled-conformance-pack-ikljqduwd":
@@ -420,9 +429,12 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
   "s3-bucket-versioning-enabled-conformance-pack-flegfck3w":
@@ -439,9 +451,12 @@ Suppressions:
         - arn:aws:s3:::grafana-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-lb-access-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::demo-lb-access-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::aws-waf-logs-shared-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-dev-load-balancer-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-load-balancer-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-grafana-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
+        - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not need versioning on them as only new items will be added
   "s3-default-encryption-kms-conformance-pack-ikljqduwd":

@@ -104,6 +104,13 @@ Suppressions:
       notes: >
         We do not use default root objects, as our CloudFronts direct all traffic through to the ALB and then to the
         servers, so default root objects don't make sense.
+  "CloudFront distributions should have origin failover configured":
+    - resources:
+        - arn:aws:cloudfront::776473272850:distribution/EZWVTIPBB1MZU
+        - arn:aws:cloudfront::776473272850:distribution/E3MFKD45BHJ1GI
+        - arn:aws:cloudfront::776473272850:distribution/E1MHGTSEICECWX
+      notes: >
+        Origin failover is not something we want with our system, as there is no useful static page for our API.
 
   ## CloudTrail
   "CloudTrail trails should be integrated with Amazon CloudWatch Logs":

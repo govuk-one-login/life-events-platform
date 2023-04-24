@@ -15,4 +15,6 @@ module "gro_bucket" {
   allow_versioning        = false
 
   sns_arn = module.sns.topic_arn
+
+  depends_on = [module.sns]
 }

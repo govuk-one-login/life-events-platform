@@ -73,7 +73,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_efs_access" {
 
 data "aws_iam_policy_document" "query_aws_policy" {
   statement {
-    sid    = "Allow access to read any resource for EC2, Cloudwatch, Logs, Tags, and Xray"
+    sid    = "Allow access to read any resource for EC2 Cloudwatch Logs Tags and Xray"
     effect = "Allow"
     actions = [
       "ec2:DescribeTags",

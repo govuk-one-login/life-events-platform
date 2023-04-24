@@ -14,7 +14,7 @@ resource "aws_s3_bucket" "bucket" {
 resource "aws_s3_bucket_versioning" "bucket" {
   bucket = aws_s3_bucket.bucket.id
   versioning_configuration {
-    status = "Enabled"
+    status = var.allow_versioning ? "Enabled" : "Disabled"
   }
 }
 
@@ -79,6 +79,7 @@ data "aws_region" "current" {}
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = aws_s3_bucket.bucket.id
+  count  = var.notify_bucket_deletions ? 1 : 0
 
   topic {
     topic_arn     = var.sns_arn

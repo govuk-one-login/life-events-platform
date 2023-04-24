@@ -103,3 +103,10 @@ module "data-share-service" {
   hosted_zone_id   = module.route53.zone_id
   hosted_zone_name = module.route53.name
 }
+
+module "gro_ingestion_service" {
+  source = "../modules/gro_ingestion_service"
+
+  environment = local.env
+  region      = data.aws_region.current.name
+}

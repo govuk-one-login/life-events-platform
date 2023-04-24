@@ -63,3 +63,13 @@ variable "cross_account_arns" {
   type    = list(string)
   default = []
 }
+
+variable "allow_versioning" {
+  type    = bool
+  default = true
+}
+
+variable "notify_bucket_deletions" {
+  type    = bool
+  default = true
+}

@@ -135,3 +135,10 @@ module "consumer" {
 module "dwp_dev" {
   source = "../modules/dwp_dev"
 }
+
+module "gro_ingestion_service" {
+  source = "../modules/gro_ingestion_service"
+
+  environment = local.env
+  region      = data.aws_region.current.name
+}

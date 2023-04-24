@@ -136,7 +136,6 @@ module "dwp_dev" {
   source = "../modules/dwp_dev"
 }
 
-
 module "gro_ingestion_service" {
   source = "../modules/gro_ingestion_service"
 

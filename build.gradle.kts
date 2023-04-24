@@ -12,11 +12,6 @@ plugins {
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   kotlin("jvm") version "1.8.20"
   kotlin("plugin.spring") version "1.8.20"
-  id("com.netflix.nebula.jakartaee-migration") version "0.6.2"
-}
-
-jakartaeeMigration {
-  migrate()
 }
 
 openApi {
@@ -93,7 +88,9 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.assertj:assertj-core:3.24.2")
-  testImplementation("io.jsonwebtoken:jjwt:0.9.1")
+  testImplementation("io.jsonwebtoken:jjwt-api:0.11.5")
+  testRuntimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+  testRuntimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.13")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")

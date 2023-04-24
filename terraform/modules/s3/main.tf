@@ -11,11 +11,6 @@ resource "aws_s3_bucket" "bucket" {
   }
 }
 
-resource "aws_s3_bucket_acl" "bucket_acl" {
-  bucket = aws_s3_bucket.bucket.id
-  acl    = "private"
-}
-
 resource "aws_s3_bucket_versioning" "bucket" {
   bucket = aws_s3_bucket.bucket.id
   versioning_configuration {
@@ -213,5 +208,13 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     events        = ["s3:ObjectRemoved:Delete"]
     filter_prefix = "AWSLogs/"
     filter_suffix = ".log"
+  }
+}
+
+resource "aws_s3_bucket_ownership_controls" "cloudfront" {
+  bucket = aws_s3_bucket.bucket.id
+
+  rule {
+    object_ownership = var.object_writer_owner ? "ObjectWriter" : "BucketOwnerEnforced"
   }
 }

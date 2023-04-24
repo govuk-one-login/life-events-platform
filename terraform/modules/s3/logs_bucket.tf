@@ -107,3 +107,13 @@ resource "aws_s3_bucket_notification" "log_bucket_notification" {
     filter_suffix = ".log"
   }
 }
+
+resource "aws_s3_bucket_ownership_controls" "log_bucket" {
+  count = var.add_log_bucket ? 1 : 0
+
+  bucket = aws_s3_bucket.log_bucket[0].id
+
+  rule {
+    object_ownership = "ObjectWriter"
+  }
+}

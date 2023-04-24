@@ -42,6 +42,11 @@ variable "sns_arn" {
   type = string
 }
 
+variable "object_writer_owner" {
+  type    = bool
+  default = false
+}
+
 variable "cross_account_arns" {
   type    = list(string)
   default = []

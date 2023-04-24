@@ -127,7 +127,7 @@ module "waf_lb_logs_bucket" {
   suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
-  add_log_bucket = false
+  add_log_bucket      = false
   allow_delivery_logs = true
 
   sns_arn = var.s3_event_notification_sns_topic_arn

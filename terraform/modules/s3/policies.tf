@@ -110,7 +110,7 @@ locals {
   delivery_log_policy  = var.allow_delivery_logs ? [data.aws_iam_policy_document.delivery_log_access_policy.json] : []
   lb_policy            = var.allow_lb_logs ? [data.aws_iam_policy_document.lb_access_policy.json] : []
   config_policy        = var.allow_config_logs ? [data.aws_iam_policy_document.config_access_policy.json] : []
-  source_policies      = concat(
+  source_policies = concat(
     local.cross_account_policy,
     local.cloudtrail_policy,
     local.delivery_log_policy,

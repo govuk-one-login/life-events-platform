@@ -50,10 +50,10 @@ data "aws_iam_policy_document" "config_kms_access_policy" {
 }
 
 locals {
-  cloudtrail_kms_policy    = var.allow_cloudtrail_logs ? [data.aws_iam_policy_document.cloudtrail_kms_access_policy.json] : []
-  delivery_log_kms_policy  = var.allow_delivery_logs ? [data.aws_iam_policy_document.delivery_log_kms_access_policy.json] : []
-  config_kms_policy        = var.allow_config_logs ? [data.aws_iam_policy_document.config_kms_access_policy.json] : []
-  source_kms_policies  = concat(
+  cloudtrail_kms_policy   = var.allow_cloudtrail_logs ? [data.aws_iam_policy_document.cloudtrail_kms_access_policy.json] : []
+  delivery_log_kms_policy = var.allow_delivery_logs ? [data.aws_iam_policy_document.delivery_log_kms_access_policy.json] : []
+  config_kms_policy       = var.allow_config_logs ? [data.aws_iam_policy_document.config_kms_access_policy.json] : []
+  source_kms_policies = concat(
     local.cloudtrail_kms_policy,
     local.delivery_log_kms_policy,
     local.config_kms_policy

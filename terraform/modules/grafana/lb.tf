@@ -25,7 +25,7 @@ module "lb_access_logs" {
   suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
-  use_kms = false
+  use_kms       = false
   allow_lb_logs = true
 
   sns_arn = var.s3_event_notification_sns_topic_arn

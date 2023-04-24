@@ -333,6 +333,8 @@ Suppressions:
         - arn:aws:sns:eu-west-2:776473272850:shared-sns
         - arn:aws:sns:eu-west-2:776473272850:dev-gdx-alarms
         - arn:aws:sns:eu-west-2:776473272850:demo-gdx-alarms
+        - arn:aws:sns:eu-west-2:776473272850:dev-gdx-gro-sns
+        - arn:aws:sns:eu-west-2:776473272850:demo-gdx-gro-sns
       notes: >
         These are currently only notifying very rarely and to one email address, so we are not adding logging for these
 
@@ -349,12 +351,12 @@ Suppressions:
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
-        - arn:aws:s3:::gdx-gro-poc-data
-        - arn:aws:s3:::gdx-gro-poc-data
+        - arn:aws:s3:::dev-data-gdx-gro-poc
+        - arn:aws:s3:::demo-data-gdx-gro-poc
       notes: >
         The gdx-vision-dev-tfstate buckets are not configured in our terraform and the state won't change, so we are
         not adding event notifications to it.
-        The gdx-gro-poc-data bucket will only be holding data for a short amount of time so we do not want deletion
+        The data-gdx-gro-poc buckets will only be holding data for a short amount of time so we do not want deletion
         notifications.
 
   "S3 bucket server access logging should be enabled":
@@ -378,7 +380,8 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::gdx-gro-poc-data-logs
+        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
+        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-ikljqduwd":
     - resources:
@@ -401,7 +404,8 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::gdx-gro-poc-data-logs
+        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
+        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-flegfck3w":
     - resources:
@@ -424,7 +428,8 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::gdx-gro-poc-data-logs
+        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
+        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-replication-enabled-conformance-pack-ikljqduwd":
     - resources:
@@ -451,11 +456,13 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::gdx-gro-poc-data-logs
-        - arn:aws:s3:::gdx-gro-poc-data
+        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
+        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
+        - arn:aws:s3:::demo-data-gdx-gro-poc
+        - arn:aws:s3:::demo-data-gdx-gro-poc
       notes: >
         For log buckets, we do not need versioning on them as only new items will be added.
-        For gdx-gro-poc-data, we are only holding data for a short time so do not want versioning.
+        For the data-gdx-gro-poc buckets, we are only holding data for a short time so do not want versioning.
   "s3-bucket-versioning-enabled-conformance-pack-flegfck3w":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate-logs
@@ -477,11 +484,13 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::gdx-gro-poc-data-logs
-        - arn:aws:s3:::gdx-gro-poc-data
+        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
+        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
+        - arn:aws:s3:::dev-data-gdx-gro-poc
+        - arn:aws:s3:::demo-data-gdx-gro-poc
       notes: >
         For log buckets, we do not need versioning on them as only new items will be added.
-        For gdx-gro-poc-data, we are only holding data for a short time so do not want versioning.
+        For the data-gdx-gro-poc buckets, we are only holding data for a short time so do not want versioning.
   "s3-default-encryption-kms-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:s3:::gdx-vision-dev-tfstate

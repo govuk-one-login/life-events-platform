@@ -81,7 +81,7 @@ module "route53" {
 }
 
 module "data-share-service" {
-  source = "../modules/data-share-service"
+  source = "../modules/data_share_service"
   providers = {
     aws.us-east-1 = aws.us-east-1
     aws.eu-west-1 = aws.eu-west-1

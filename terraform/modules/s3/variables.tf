@@ -65,11 +65,11 @@ variable "cross_account_arns" {
 }
 
 variable "allow_versioning" {
-  type = bool
+  type    = bool
   default = true
 }
 
 variable "notify_bucket_deletions" {
-  type = bool
+  type    = bool
   default = true
 }

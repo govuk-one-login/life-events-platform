@@ -16,6 +16,8 @@ resource "aws_s3_bucket_acl" "log_bucket_acl" {
 
   bucket = aws_s3_bucket.log_bucket[0].id
   acl    = "log-delivery-write"
+
+  depends_on = [aws_s3_bucket_ownership_controls.log_bucket[0]]
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {

@@ -32,6 +32,18 @@ variable "allow_cloudtrail_logs" {
   type    = bool
   default = false
 }
+variable "allow_delivery_logs" {
+  type    = bool
+  default = false
+}
+variable "allow_lb_logs" {
+  type    = bool
+  default = false
+}
+variable "allow_config_logs" {
+  type    = bool
+  default = false
+}
 
 variable "use_kms" {
   type    = bool

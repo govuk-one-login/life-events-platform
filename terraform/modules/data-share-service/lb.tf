@@ -31,7 +31,8 @@ module "lb_access_logs" {
   suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
-  use_kms = false
+  use_kms       = false
+  allow_lb_logs = true
 
   sns_arn = module.sns.topic_arn
 

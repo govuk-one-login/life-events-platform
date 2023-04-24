@@ -26,6 +26,8 @@ module "config_s3" {
   suffix          = "gdx-data-share-poc"
   expiration_days = 180
   sns_arn         = var.s3_event_notification_sns_topic_arn
+
+  allow_config_logs = true
 }
 
 data "aws_iam_policy_document" "config_s3" {

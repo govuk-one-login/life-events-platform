@@ -72,5 +72,7 @@ module "flow_logs_s3" {
   suffix          = "gdx-data-share-poc"
   expiration_days = 180
 
+  allow_delivery_logs = true
+
   sns_arn = var.sns_topic_arn
 }

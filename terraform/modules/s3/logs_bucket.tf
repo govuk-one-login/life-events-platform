@@ -61,23 +61,37 @@ data "aws_iam_policy_document" "log_bucket_deny_insecure_transport" {
   count = var.add_log_bucket ? 1 : 0
 
   statement {
-    sid    = "DenyInsecureTransport"
-    effect = "Deny"
+    sid    = "Allow S3 logs"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["logging.s3.amazonaws.com"]
+    }
+    actions = [
+      "s3:PutObject",
+    ]
 
+    resources = [
+      aws_s3_bucket.bucket.arn,
+      "${aws_s3_bucket.bucket.arn}/*",
+    ]
+  }
+
+  statement {
+    sid    = "Deny Insecure Transport"
+    effect = "Deny"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
     actions = [
       "s3:*",
     ]
 
     resources = [
-      aws_s3_bucket.log_bucket[0].arn,
-      "${aws_s3_bucket.log_bucket[0].arn}/*",
+      aws_s3_bucket.bucket.arn,
+      "${aws_s3_bucket.bucket.arn}/*",
     ]
-
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-
     condition {
       test     = "Bool"
       variable = "aws:SecureTransport"

@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "gor_ingestion" {
-  name             = "gro_ingestion"
+  name             = "${var.environment}_gro_ingestion"
   billing_mode     = "PAY_PER_REQUEST"
   hash_key         = "hash"
   stream_enabled   = true

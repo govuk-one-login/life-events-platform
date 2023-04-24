@@ -2,7 +2,7 @@ locals {
   anomaly_alerts = [
     for k, v in local.http_requests :
     <<EOF
-    - alert: ${var.environment}:  Anomalous traffic for endpoint ${k}
+    - alert: ${var.environment}  Anomalous traffic for endpoint ${k}
       expr: >
        abs(
          (
@@ -11,24 +11,24 @@ locals {
        ) > 2
       for: 5m
       annotations:
-        summary: ${var.environment}: Absolute z score is greater than 2 based on seasonal predictions for endpoint ${k}
+        summary: ${var.environment} Absolute z score is greater than 2 based on seasonal predictions for endpoint ${k}
 EOF
   ]
 
   events_alerts = [
     <<EOF
-    - alert: ${var.environment}: Growing Unconsumed Events
+    - alert: ${var.environment} Growing Unconsumed Events
       expr: max(UnconsumedEvents) > 500000
       for: 5m
       annotations:
-        summary: ${var.environment}: Over 500000 unconsumed events in database
+        summary: ${var.environment} Over 500000 unconsumed events in database
 EOF
   ]
 
   error_rate_alerts = [
     for k, v in local.http_requests :
     <<EOF
-    - alert: ${var.environment}: Error rate exceeded 10% for endpoint ${k}
+    - alert: ${var.environment} Error rate exceeded 10% for endpoint ${k}
       expr: >
         (
           sum(rate(http_server_requests_seconds_count{uri="${v.uri}", method="${v.method}", outcome!="SUCCESS"}[5m])) /
@@ -36,13 +36,13 @@ EOF
         ) > 0.1
       for: 5m
       annotations:
-        summary: ${var.environment}: Error rate exceeded 10% for over 5m for 5m for endpoint ${k}
+        summary: ${var.environment} Error rate exceeded 10% for over 5m for 5m for endpoint ${k}
 EOF
   ]
 
   lev_error_Rate_alert = [
     <<EOF
-    - alert: ${var.environment}: Error rate exceeded 10% for LEV death records
+    - alert: ${var.environment} Error rate exceeded 10% for LEV death records
       expr: >
         (
           sum(rate(http_client_requests_seconds_count{uri="/v1/registration/death/{id}", outcome!="SUCCESS"}[5m])) /
@@ -50,7 +50,7 @@ EOF
         ) > 0.1
       for: 5m
       annotations:
-        summary: ${var.environment}: Error rate exceeded 10% for over 5m for 5m for LEV death records
+        summary: ${var.environment} Error rate exceeded 10% for over 5m for 5m for LEV death records
 EOF
   ]
 

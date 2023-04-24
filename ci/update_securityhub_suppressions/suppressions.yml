@@ -455,9 +455,9 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
         - arn:aws:s3:::dev-data-gdx-gro-poc-logs
-        - arn:aws:s3:::demo-data-gdx-gro-poc
+        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
+        - arn:aws:s3:::dev-data-gdx-gro-poc
         - arn:aws:s3:::demo-data-gdx-gro-poc
       notes: >
         For log buckets, we do not need versioning on them as only new items will be added.

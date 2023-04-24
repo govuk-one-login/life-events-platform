@@ -83,6 +83,8 @@ Suppressions:
     - resources:
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-flegfck3w/f00d9c80-c413-11ed-a55a-065b088965e4
         - arn:aws:cloudformation:eu-west-2:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-ikljqduwd/56654800-df96-11ed-8373-0a8dfb4270be
+        - arn:aws:cloudformation:us-east-1:776473272850:stack/awsconfigconforms-cis-1-4-conformance-pack-fmudmre8n/fc0070a0-e031-11ed-aa61-0ec9605a0fb7
+        - arn:aws:cloudformation:us-east-1:776473272850:stack/awsconfigconforms-ncsc-cloudsec-principles-conformance-pack-ddmf23yhn/fd22a980-e031-11ed-aa61-0ec9605a0fb7
       notes: These cloudformation stacks are managed by Config conformance packs and we cannot give them SNS
 
   ## CloudFront

@@ -302,3 +302,32 @@ resource "aws_wafv2_web_acl_logging_configuration" "load_balancer" {
 
   depends_on = [module.waf_lb_logs_bucket]
 }
+
+# This is the logging bucket, it doesn't need logs or versioning
+#tfsec:ignore:aws-s3-enable-bucket-logging
+#tfsec:ignore:aws-s3-enable-versioning
+module "waf_cloudfront_logs_bucket" {
+  source = "../s3"
+
+  account_id      = data.aws_caller_identity.current.account_id
+  region          = var.region
+  prefix          = "aws-waf-logs-${var.environment}"
+  name            = "cloudfront"
+  suffix          = "gdx-data-share-poc"
+  expiration_days = 180
+
+  add_log_bucket = false
+
+  sns_arn = module.sns.topic_arn
+
+  depends_on = [module.sns]
+}
+
+resource "aws_wafv2_web_acl_logging_configuration" "cloudfront" {
+  provider = aws.us-east-1
+
+  log_destination_configs = [module.waf_cloudfront_logs_bucket.arn]
+  resource_arn            = aws_wafv2_web_acl.cloudfront.arn
+
+  depends_on = [module.waf_cloudfront_logs_bucket]
+}

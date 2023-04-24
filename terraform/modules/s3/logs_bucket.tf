@@ -62,7 +62,7 @@ data "aws_iam_policy_document" "log_bucket_deny_insecure_transport" {
 
   statement {
     sid    = "Allow S3 logs"
-    effect = "Deny"
+    effect = "Allow"
     principals {
       type        = "Service"
       identifiers = ["logging.s3.amazonaws.com"]

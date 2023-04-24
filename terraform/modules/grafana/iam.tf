@@ -73,8 +73,8 @@ resource "aws_iam_role_policy_attachment" "ecs_task_efs_access" {
 
 data "aws_iam_policy_document" "query_aws_policy" {
   statement {
-    sid = "Allow access to read any resource for EC2, Cloudwatch, Logs, Tags, and Xray"
-    effect    = "Allow"
+    sid    = "Allow access to read any resource for EC2, Cloudwatch, Logs, Tags, and Xray"
+    effect = "Allow"
     actions = [
       "ec2:DescribeTags",
       "ec2:DescribeInstances",
@@ -101,7 +101,7 @@ data "aws_iam_policy_document" "query_aws_policy" {
     resources = ["*"]
   }
   statement {
-    sid = "Allow access to reading alarms"
+    sid    = "Allow access to reading alarms"
     effect = "Allow"
     actions = [
       "cloudwatch:DescribeAlarms",
@@ -114,7 +114,7 @@ data "aws_iam_policy_document" "query_aws_policy" {
     ]
   }
   statement {
-    sid = "Allow access to reading logs and querying"
+    sid    = "Allow access to reading logs and querying"
     effect = "Allow"
     actions = [
       "logs:GetLogGroupFields",

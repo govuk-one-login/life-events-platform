@@ -458,7 +458,7 @@ Suppressions:
         - arn:aws:s3:::demo-data-gdx-gro-poc-logs
         - arn:aws:s3:::dev-data-gdx-gro-poc-logs
         - arn:aws:s3:::demo-data-gdx-gro-poc
-        - arn:aws:s3:::demo-data-gdx-gro-poc
+        - arn:aws:s3:::dev-data-gdx-gro-poc
       notes: >
         For log buckets, we do not need versioning on them as only new items will be added.
         For the data-gdx-gro-poc buckets, we are only holding data for a short time so do not want versioning.

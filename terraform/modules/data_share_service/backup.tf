@@ -41,20 +41,21 @@ resource "aws_iam_role_policy_attachment" "backup_service_policy" {
 
 resource "aws_backup_region_settings" "region_settings" {
   resource_type_opt_in_preference = {
-    "Aurora"          = true
-    "CloudFormation"  = false
-    "DocumentDB"      = false
-    "DynamoDB"        = true
-    "EBS"             = true
-    "EC2"             = true
-    "EFS"             = true
-    "FSx"             = false
-    "Neptune"         = false
-    "RDS"             = true
-    "Redshift"        = false
-    "S3"              = false
-    "Storage Gateway" = true
-    "VirtualMachine"  = false
+    "Aurora"                 = true
+    "CloudFormation"         = false
+    "DocumentDB"             = false
+    "DynamoDB"               = true
+    "EBS"                    = true
+    "EC2"                    = true
+    "EFS"                    = true
+    "FSx"                    = false
+    "Neptune"                = false
+    "RDS"                    = true
+    "Redshift"               = false
+    "SAP HANA on Amazon EC2" = false
+    "S3"                     = false
+    "Storage Gateway"        = true
+    "VirtualMachine"         = false
   }
 }
 

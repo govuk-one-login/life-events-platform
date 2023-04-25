@@ -1,6 +1,6 @@
-import {DynamoDBRecord, DynamoDBStreamEvent, Handler} from "aws-lambda";
-import {mapToEventRecord} from "../models/EventRecord";
-import {request} from "https";
+import {DynamoDBRecord, DynamoDBStreamEvent, Handler} from "aws-lambda"
+import {mapToEventRecord} from "../models/EventRecord"
+import {request} from "https"
 
 const apiUrl = process.env.API_URL
 const options = {
@@ -11,7 +11,7 @@ const options = {
     headers: {
         "Content-Type": "application/json",
     },
-};
+}
 
 const publishRecord = async (record: DynamoDBRecord) => {
     if (record.eventName !== "INSERT" || !record.dynamodb?.NewImage) {
@@ -27,31 +27,31 @@ const publishRecord = async (record: DynamoDBRecord) => {
 
     return new Promise((resolve, reject) => {
         const req = request(options, res => {
-            res.setEncoding("utf8");
-            let responseBody = "";
+            res.setEncoding("utf8")
+            let responseBody = ""
 
             res.on("data", (chunk) => {
-                responseBody += chunk;
-            });
+                responseBody += chunk
+            })
 
             res.on("end", () => {
                 try {
-                    resolve(JSON.parse(responseBody));
+                    resolve(JSON.parse(responseBody))
                 } catch (err) {
-                    reject(err);
+                    reject(err)
                 }
-            });
+            })
         })
         req.on("error", err => {
-            reject(err);
-        });
+            reject(err)
+        })
 
         req.write(event)
-        req.end();
+        req.end()
     })
 }
 
 export const handler: Handler = async (event: DynamoDBStreamEvent) => {
     console.log(`Streaming ${event.Records.filter(r => r.eventName === "INSERT").length} events`)
     await Promise.all(event.Records.map(publishRecord))
-};
+}

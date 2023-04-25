@@ -15,6 +15,11 @@ resource "aws_dynamodb_table" "gro_ingestion" {
     enabled     = true
     kms_key_arn = aws_kms_key.gro_ingestion.arn
   }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
 }
 
 resource "aws_kms_key" "gro_ingestion" {

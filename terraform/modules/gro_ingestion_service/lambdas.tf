@@ -44,8 +44,8 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  for_each = local.functions
-  name     = "ServiceRoleForLambda-${each.value}"
+  for_each           = local.functions
+  name               = "ServiceRoleForLambda-${each.value}"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 }
 
@@ -54,16 +54,16 @@ resource "aws_lambda_function" "lambda-function" {
   filename      = data.archive_file.lambda-function-source.output_path
   function_name = "${var.environment}-gro-ingestion-lambda-function-${each.value}"
 
-  handler     = "index.handler"
-  runtime     = local.lambda_runtime
-  role        = aws_iam_role.lambda_role[each.value].arn
-  timeout     = 10
+  handler = "index.handler"
+  runtime = local.lambda_runtime
+  role    = aws_iam_role.lambda_role[each.value].arn
+  timeout = 10
 
   source_code_hash = data.archive_file.lambda-function-source.output_sha
 
   environment {
     variables = {
-      "FUNCTION_NAME"       = each.value
+      "FUNCTION_NAME" = each.value
     }
   }
 }

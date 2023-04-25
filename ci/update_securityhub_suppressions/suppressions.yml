@@ -222,8 +222,8 @@ Suppressions:
   ## EC2
   "ec2-instance-detailed-monitoring-enabled-conformance-pack-ikljqduwd":
     - resources:
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-06a25372cb2a320bf
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-05591d8e2373a6e64
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-00eb37b5e5291c721
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-0d0783b9d07be1873
       notes: >
         We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have
         detailed monitoring

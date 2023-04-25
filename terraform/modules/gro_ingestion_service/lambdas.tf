@@ -3,19 +3,18 @@ locals {
   functions = toset([
     for file in fileset("${path.module}/lambdas/src/functions", "*.function.ts") : lower(replace(split(".", split("/", file)[length(split("/", file)) - 1])[0], "[^a-zA-Z0-9]", "-"))
   ])
-  temporary_build_prefix = "${path.module}/tmp/${var.environment}"
 }
 
 data "archive_file" "typescript-source" {
   type        = "zip"
   source_dir  = "${path.module}/lambdas/src"
-  output_path = "${local.temporary_build_prefix}/typescript-source.zip"
+  output_path = "zip/typescript-source.zip"
 }
 
 data "archive_file" "lambda-function-source" {
   type        = "zip"
   source_dir  = "${path.module}/lambdas/dist"
-  output_path = "${local.temporary_build_prefix}/lambda-function-source.zip"
+  output_path = "zip/lambda-function-source.zip"
   depends_on  = [null_resource.lambda-function-source-builder]
 }
 

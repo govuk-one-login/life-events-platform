@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
 
 resource "aws_iam_role" "lambda_role" {
   for_each           = local.functions
-  name               = "ServiceRoleForLambda-${each.value}"
+  name               = "${var.environment}-gro-ingestion-lambda-function-${each.value}"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 }
 

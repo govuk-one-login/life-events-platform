@@ -1,0 +1,25 @@
+{
+  "name": "gro-ingestion-lambda",
+  "version": "0.0.1",
+  "description": "GRO Ingestion Lambda",
+  "author": "gdx-dev-team@digital.cabinet-office.gov.uk",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.114",
+    "@types/es-aggregate-error": "^1.0.2",
+    "@types/estree": "^1.0.1",
+    "@types/node": "^18.16.0",
+    "@types/urijs": "^1.19.19",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@types/json-schema": "^7.0.11"
+  }
+}

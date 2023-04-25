@@ -35,7 +35,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.50"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.51"))
   implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.1.1")
   implementation("software.amazon.awssdk:rds")

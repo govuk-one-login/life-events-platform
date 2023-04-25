@@ -5,30 +5,29 @@ locals {
   ])
 }
 
-data "archive_file" "typescript-source" {
+data "archive_file" "typescript_source" {
   type        = "zip"
   source_dir  = "${path.module}/lambdas/src"
   output_path = "zip/typescript-source.zip"
 }
 
-data "archive_file" "lambda-function-source" {
+data "archive_file" "lambda_function_source" {
   type        = "zip"
   source_dir  = "${path.module}/lambdas/dist"
   output_path = "zip/lambda-function-source.zip"
-  depends_on  = [null_resource.lambda-function-source-builder]
+  depends_on  = [null_resource.lambda_function_source_builder]
 }
 
-resource "null_resource" "lambda-function-source-builder" {
+resource "null_resource" "lambda_function_source_builder" {
   provisioner "local-exec" {
     working_dir = "${path.module}/lambdas"
     command     = <<EOT
-      npm i
+      npm ci
       npm run build
     EOT
   }
   triggers = {
-    lambda-function-md5 = data.archive_file.typescript-source.output_md5
-    file_dist           = fileexists("${path.module}/lambdas/dist/index.js") ? "${path.module}/lambdas/dist/index.js" : timestamp()
+    source_code_md5 = data.archive_file.typescript_source.output_md5
   }
 }
 
@@ -51,7 +50,7 @@ resource "aws_iam_role" "lambda_role" {
 
 resource "aws_lambda_function" "lambda-function" {
   for_each      = local.functions
-  filename      = data.archive_file.lambda-function-source.output_path
+  filename      = data.archive_file.lambda_function_source.output_path
   function_name = "${var.environment}-gro-ingestion-lambda-function-${each.value}"
 
   handler = "index.handler"
@@ -59,7 +58,7 @@ resource "aws_lambda_function" "lambda-function" {
   role    = aws_iam_role.lambda_role[each.value].arn
   timeout = 10
 
-  source_code_hash = data.archive_file.lambda-function-source.output_sha
+  source_code_hash = data.archive_file.lambda_function_source.output_sha
 
   environment {
     variables = {

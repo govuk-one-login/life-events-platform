@@ -379,8 +379,8 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
-        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
+        - arn:aws:s3:::dev-data-logs-gdx-gro-poc
+        - arn:aws:s3:::demo-data-logs-gdx-gro-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-ikljqduwd":
     - resources:
@@ -403,8 +403,8 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
-        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
+        - arn:aws:s3:::dev-data-logs-gdx-gro-poc
+        - arn:aws:s3:::demo-data-logs-gdx-gro-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-flegfck3w":
     - resources:
@@ -427,8 +427,8 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
-        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
+        - arn:aws:s3:::dev-data-logs-gdx-gro-poc
+        - arn:aws:s3:::demo-data-logs-gdx-gro-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-replication-enabled-conformance-pack-ikljqduwd":
     - resources:
@@ -455,8 +455,8 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
-        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
+        - arn:aws:s3:::dev-data-logs-gdx-gro-poc
+        - arn:aws:s3:::demo-data-logs-gdx-gro-poc
         - arn:aws:s3:::dev-data-gdx-gro-poc
         - arn:aws:s3:::demo-data-gdx-gro-poc
       notes: >
@@ -483,8 +483,8 @@ Suppressions:
         - arn:aws:s3:::aws-waf-logs-dev-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::aws-waf-logs-demo-cloudfront-gdx-data-share-poc
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
-        - arn:aws:s3:::dev-data-gdx-gro-poc-logs
-        - arn:aws:s3:::demo-data-gdx-gro-poc-logs
+        - arn:aws:s3:::dev-data-logs-gdx-gro-poc
+        - arn:aws:s3:::demo-data-logs-gdx-gro-poc
         - arn:aws:s3:::dev-data-gdx-gro-poc
         - arn:aws:s3:::demo-data-gdx-gro-poc
       notes: >

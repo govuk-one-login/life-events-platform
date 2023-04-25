@@ -16,14 +16,14 @@ jobs:
         working-directory: terraform
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3   
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.3.2
+          terraform_version: 1.4.5
 
       - name: Check formatting of all Terraform files
         run: terraform fmt -recursive

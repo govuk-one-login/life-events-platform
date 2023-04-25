@@ -28,6 +28,7 @@ resource "null_resource" "lambda_function_source_builder" {
   }
   triggers = {
     source_code_md5 = data.archive_file.typescript_source.output_md5
+    file_dist       = fileexists("${path.module}/sources/dist/index.js") ? "${path.module}/sources/dist/index.js" : timestamp()
   }
 }
 

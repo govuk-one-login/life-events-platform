@@ -49,11 +49,6 @@ resource "aws_iam_role" "lambda_role" {
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 }
 
-moved {
-  from = aws_lambda_function.lambda-function
-  to   = aws_lambda_function.lambda_function
-}
-
 resource "aws_lambda_function" "lambda_function" {
   for_each      = local.functions
   filename      = data.archive_file.lambda_function_source.output_path

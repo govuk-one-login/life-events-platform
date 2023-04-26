@@ -57,15 +57,10 @@ export const handler: Handler = async (event: DynamoDBStreamEvent) => {
         .map(convertToEvent)
 
     console.log(`Publishing ${publishEvents.length} events`)
-    const firstAttempts = await Promise.allSettled(publishEvents.map(publishEvent))
-    const failedEvents = firstAttempts.filter((a): a is PromiseRejectedResult => a.status === "rejected")
+    const results = await Promise.allSettled(publishEvents.map(publishEvent))
+    const failedEvents = results.filter((r): r is PromiseRejectedResult => r.status === "rejected")
     if (failedEvents.length > 0) {
-        console.log(`Failed to publish ${failedEvents.length} events, retrying`)
-        const secondAttempts = await Promise.allSettled(failedEvents.map(c => publishEvent(c.reason.event)))
-        const failedSecondEvents = secondAttempts.filter((a): a is PromiseRejectedResult => a.status === "rejected")
-        if (failedSecondEvents.length > 0) {
-            throw new Error(`Failed to publish ${failedSecondEvents.length} events`)
-        }
+        throw new Error(`Failed to publish ${failedEvents.length} events`)
     }
 
     console.log("Succeeded publishing events")

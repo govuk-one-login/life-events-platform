@@ -290,6 +290,8 @@ Suppressions:
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-delete-event
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-codedeploy-before-traffic-hook
         - arn:aws:lambda:eu-west-2:776473272850:function:demo-codedeploy-before-traffic-hook
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-publish-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-publish-event
       notes: >
         These Lambdas are either: test proxies, that will only access our systems over the public internet; codedeploy
         smoke testing lambdas; or a suppressor that only accesses AWS services for suppressions. We have logging for all
@@ -302,6 +304,8 @@ Suppressions:
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-get-event
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-get-events
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-delete-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-publish-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-publish-event
       notes: >
         These Lambdas are either: test proxies, that will only access our systems over the public internet; or a
         suppressor that only accesses AWS services for suppressions. They have no access to our actual system.

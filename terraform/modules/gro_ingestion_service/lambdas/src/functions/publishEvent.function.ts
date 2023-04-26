@@ -4,7 +4,7 @@ import { request, RequestOptions } from "https"
 import { PublishEvent } from "../models/PublishEvent"
 import { AttributeValue } from "aws-lambda/trigger/dynamodb-stream"
 
-const apiUrl = process.env.API_URL
+const gdxUrl = process.env.GDX_URL
 const authUrl = process.env.AUTH_URL
 const clientId = process.env.CLIENT_ID
 const clientSecret = process.env.CLIENT_SECRET
@@ -68,7 +68,7 @@ const publishEvent = async (event: PublishEvent, accessToken: string) => {
     const eventData = JSON.stringify(event)
 
     const options: RequestOptions = {
-        hostname: apiUrl,
+        hostname: gdxUrl,
         path: "/events",
         method: "POST",
         port: 443,

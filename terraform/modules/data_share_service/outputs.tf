@@ -16,3 +16,10 @@ output "consumer_client_id" {
 output "consumer_client_secret" {
   value = module.cognito.consumer_client_secret
 }
+
+output "gro_ingestion_client_id" {
+  value = module.cognito.gro_ingestion_client_id
+}
+output "gro_ingestion_client_secret" {
+  value = module.cognito.gro_ingestion_client_secret
+}

@@ -109,4 +109,9 @@ module "gro_ingestion_service" {
 
   environment = local.env
   region      = data.aws_region.current.name
+
+  gdx_url                     = module.data-share-service.gdx_url
+  auth_url                    = module.data-share-service.token_auth_url
+  publisher_client_id          = module.data-share-service.gro_ingestion_client_id
+  publisher_client_secret      = module.data-share-service.gro_ingestion_client_secret
 }

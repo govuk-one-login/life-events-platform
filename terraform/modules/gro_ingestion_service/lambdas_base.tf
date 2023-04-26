@@ -1,8 +1,5 @@
 locals {
   lambda_runtime = "nodejs18.x"
-  functions = toset([
-    for file in fileset("${path.module}/lambdas/src/functions", "*.function.ts") : lower(replace(split(".", split("/", file)[length(split("/", file)) - 1])[0], "[^a-zA-Z0-9]", "-"))
-  ])
 }
 
 data "archive_file" "typescript_source" {
@@ -42,6 +39,7 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
     actions = ["sts:AssumeRole"]
   }
 }
+<<<<<<< main:terraform/modules/gro_ingestion_service/lambdas.tf
 
 resource "aws_iam_role" "lambda_role" {
   for_each           = local.functions
@@ -67,3 +65,5 @@ resource "aws_lambda_function" "lambda_function" {
     }
   }
 }
+=======
+>>>>>>> GPC-349: Add infrastructure setup in:terraform/modules/gro_ingestion_service/lambdas_base.tf

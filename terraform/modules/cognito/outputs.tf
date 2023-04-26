@@ -50,6 +50,14 @@ output "consumer_client_secret" {
   value = module.example_consumer.client_secret
 }
 
+output "gro_ingestion_client_id" {
+  value = module.gro_ingestion.client_id
+}
+
+output "gro_ingestion_client_secret" {
+  value = module.gro_ingestion.client_secret
+}
+
 output "deploy_hook_client_id" {
   value = module.deploy_hook.client_id
 }

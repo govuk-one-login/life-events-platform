@@ -4,7 +4,7 @@ resource "aws_dynamodb_table" "gro_ingestion" {
   billing_mode     = "PAY_PER_REQUEST"
   hash_key         = "hash"
   stream_enabled   = true
-  stream_view_type = "KEYS_ONLY"
+  stream_view_type = "NEW_IMAGE"
 
   attribute {
     name = "hash"

@@ -80,7 +80,12 @@ module "route53" {
   hosted_zone_name = "dev.share-life-events.service.gov.uk"
 }
 
-module "data-share-service" {
+moved {
+  from = module.data-share-service
+  to   = module.data_share_service
+}
+
+module "data_share_service" {
   source = "../modules/data_share_service"
   providers = {
     aws.us-east-1 = aws.us-east-1
@@ -109,10 +114,10 @@ module "len" {
   region                      = data.aws_region.current.name
   schedule                    = "cron(* 9-18 ? * MON-FRI *)"
   cloudwatch_retention_period = 30
-  gdx_url                     = module.data-share-service.gdx_url
-  auth_url                    = module.data-share-service.token_auth_url
-  len_client_id               = module.data-share-service.len_client_id
-  len_client_secret           = module.data-share-service.len_client_secret
+  gdx_url                     = module.data_share_service.gdx_url
+  auth_url                    = module.data_share_service.token_auth_url
+  len_client_id               = module.data_share_service.len_client_id
+  len_client_secret           = module.data_share_service.len_client_secret
   lev_rds_db_username         = module.lev_api.lev_rds_db_username
   lev_rds_db_password         = module.lev_api.lev_rds_db_password
   lev_rds_db_name             = module.lev_api.lev_rds_db_name
@@ -124,10 +129,10 @@ module "consumer" {
   environment                 = local.env
   region                      = data.aws_region.current.name
   cloudwatch_retention_period = 30
-  gdx_url                     = module.data-share-service.gdx_url
-  auth_url                    = module.data-share-service.token_auth_url
-  consumer_client_id          = module.data-share-service.consumer_client_id
-  consumer_client_secret      = module.data-share-service.consumer_client_secret
+  gdx_url                     = module.data_share_service.gdx_url
+  auth_url                    = module.data_share_service.token_auth_url
+  consumer_client_id          = module.data_share_service.consumer_client_id
+  consumer_client_secret      = module.data_share_service.consumer_client_secret
   lev_api_url                 = "https://${module.lev_api.service_url}"
   schedule                    = "cron(0,30 9-18 ? * MON-FRI *)"
 }

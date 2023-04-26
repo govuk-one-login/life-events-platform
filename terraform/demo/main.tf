@@ -80,7 +80,12 @@ module "route53" {
   hosted_zone_name = "demo.share-life-events.service.gov.uk"
 }
 
-module "data-share-service" {
+moved {
+  from = module.data-share-service
+  to   = module.data_share_service
+}
+
+module "data_share_service" {
   source = "../modules/data_share_service"
   providers = {
     aws.us-east-1 = aws.us-east-1

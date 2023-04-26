@@ -1,6 +1,6 @@
 resource "aws_lambda_event_source_mapping" "dynamo_stream" {
   event_source_arn = aws_dynamodb_table.gro_ingestion.stream_arn
-  function_name = aws_lambda_function.publish_event_lambda.function_name
+  function_name    = aws_lambda_function.publish_event_lambda.function_name
   filter_criteria {
     filter {
       pattern = "{ \"eventName\": [ \"INSERT\" ] }"
@@ -19,7 +19,7 @@ resource "aws_lambda_function" "publish_event_lambda" {
 
   handler = "index.handler"
   runtime = local.lambda_runtime
-  role    = aws_iam_role.publish_event_lambda
+  role    = aws_iam_role.publish_event_lambda.arn
   timeout = 10
 
   source_code_hash = data.archive_file.lambda_function_source.output_sha
@@ -27,9 +27,9 @@ resource "aws_lambda_function" "publish_event_lambda" {
   environment {
     variables = {
       "FUNCTION_NAME" = "publishEvent"
-      "GDX_URL" = var.gdx_url
-      "AUTH_URL" = var.auth_url
-      "CLIENT_ID" = var.publisher_client_id
+      "GDX_URL"       = var.gdx_url
+      "AUTH_URL"      = var.auth_url
+      "CLIENT_ID"     = var.publisher_client_id
       "CLIENT_SECRET" = var.publisher_client_secret
     }
   }

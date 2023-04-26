@@ -39,31 +39,3 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
     actions = ["sts:AssumeRole"]
   }
 }
-<<<<<<< main:terraform/modules/gro_ingestion_service/lambdas.tf
-
-resource "aws_iam_role" "lambda_role" {
-  for_each           = local.functions
-  name               = "${var.environment}-gro-ingestion-lambda-function-${each.value}"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
-}
-
-resource "aws_lambda_function" "lambda_function" {
-  for_each      = local.functions
-  filename      = data.archive_file.lambda_function_source.output_path
-  function_name = "${var.environment}-gro-ingestion-lambda-function-${each.value}"
-
-  handler = "index.handler"
-  runtime = local.lambda_runtime
-  role    = aws_iam_role.lambda_role[each.value].arn
-  timeout = 10
-
-  source_code_hash = data.archive_file.lambda_function_source.output_sha
-
-  environment {
-    variables = {
-      "FUNCTION_NAME" = each.value
-    }
-  }
-}
-=======
->>>>>>> GPC-349: Add infrastructure setup in:terraform/modules/gro_ingestion_service/lambdas_base.tf

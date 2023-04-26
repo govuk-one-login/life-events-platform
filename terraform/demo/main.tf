@@ -80,11 +80,6 @@ module "route53" {
   hosted_zone_name = "demo.share-life-events.service.gov.uk"
 }
 
-moved {
-  from = module.data-share-service
-  to   = module.data_share_service
-}
-
 module "data_share_service" {
   source = "../modules/data_share_service"
   providers = {

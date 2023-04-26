@@ -39,8 +39,3 @@ module "securityhub_global" {
 
   rules = var.global_rules
 }
-
-moved {
-  from = aws_securityhub_standards_control.controls
-  to   = module.securityhub_local.aws_securityhub_standards_control.controls
-}

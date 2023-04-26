@@ -205,8 +205,8 @@ Suppressions:
   ## EBS
   "ebs-in-backup-plan-conformance-pack-ikljqduwd":
     - resources:
-        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-031a25f49d5a6fcf2
-        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0d011510caddeabab
+        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0dcf5147cd17583df
+        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-09cd56b781f85cef6
       notes: >
         We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have the
         volumes be backed up

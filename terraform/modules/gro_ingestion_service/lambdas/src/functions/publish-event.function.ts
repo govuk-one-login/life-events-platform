@@ -51,7 +51,6 @@ const publishEvent = async (event: PublishEvent) => new Promise((resolve, reject
 
 export const handler: Handler = async (event: DynamoDBStreamEvent) => {
     const publishEvents = event.Records
-        .filter(r => r.eventName === "INSERT")
         .filter(r => r.dynamodb?.NewImage)
         .map(r => r.dynamodb?.NewImage)
         .map(convertToEvent)

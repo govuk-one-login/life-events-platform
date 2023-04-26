@@ -1,4 +1,4 @@
-import {AttributeValue} from "aws-lambda/trigger/dynamodb-stream"
+import { AttributeValue } from "aws-lambda/trigger/dynamodb-stream"
 
 export interface EventRecord {
     hash: string

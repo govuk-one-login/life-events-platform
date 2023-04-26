@@ -33,4 +33,7 @@ resource "aws_lambda_function" "publish_event_lambda" {
       "CLIENT_SECRET" = var.publisher_client_secret
     }
   }
+  tracing_config {
+    mode = "Active"
+  }
 }

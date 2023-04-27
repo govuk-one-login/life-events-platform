@@ -11,7 +11,7 @@ variable "environment" {
 variable "gdx_url" {
   type = string
 }
-variable "auth_base_url" {
+variable "auth_url" {
   type = string
 }
 variable "publisher_client_id" {

@@ -1,6 +1,7 @@
 resource "aws_lambda_event_source_mapping" "dynamo_stream" {
-  event_source_arn = aws_dynamodb_table.gro_ingestion.stream_arn
-  function_name    = aws_lambda_function.publish_event_lambda.function_name
+  event_source_arn  = aws_dynamodb_table.gro_ingestion.stream_arn
+  function_name     = aws_lambda_function.publish_event_lambda.function_name
+  starting_position = "LATEST"
   filter_criteria {
     filter {
       pattern = "{ \"eventName\": [ \"INSERT\" ] }"
@@ -11,6 +12,68 @@ resource "aws_lambda_event_source_mapping" "dynamo_stream" {
 resource "aws_iam_role" "publish_event_lambda" {
   name               = "${var.environment}-gro-ingestion-lambda-function-publish-event"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
+}
+
+data "aws_iam_policy_document" "publish_event_lambda" {
+  statement {
+    sid = "LambdaKMSAccess"
+    actions = [
+      "kms:Decrypt",
+      "kms:Encrypt",
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyPair",
+      "kms:ReEncryptFrom",
+      "kms:ReEncryptTo"
+    ]
+    effect = "Allow"
+    resources = [
+      aws_kms_key.gro_ingestion.arn
+    ]
+  }
+
+  statement {
+    sid = "TrustEventsToStoreLogEvent"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogStreams",
+      "logs:PutLogEvents"
+    ]
+    resources = ["arn:aws:logs:${var.region}:${var.account_id}:log-group:*"]
+  }
+
+  statement {
+    sid = "DynamoDBGetItemAccess"
+    actions = [
+      "dynamodb:GetItem"
+    ]
+    resources = [
+      aws_dynamodb_table.gro_ingestion.arn
+    ]
+  }
+
+  statement {
+    sid = "DynamoDBStreamsAccess"
+    actions = [
+      "dynamodb:DescribeStream",
+      "dynamodb:GetRecords",
+      "dynamodb:GetShardIterator",
+      "dynamodb:ListStreams"
+    ]
+    resources = [
+      aws_dynamodb_table.gro_ingestion.stream_arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "publish_event_lambda" {
+  name   = "${var.environment}-gro-ingestion-lambda-function-publish-event"
+  policy = data.aws_iam_policy_document.publish_event_lambda.json
+}
+
+resource "aws_iam_role_policy_attachment" "publish_event_lambda" {
+  policy_arn = aws_iam_policy.publish_event_lambda.arn
+  role       = aws_iam_role.publish_event_lambda.name
 }
 
 resource "aws_lambda_function" "publish_event_lambda" {

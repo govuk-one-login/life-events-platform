@@ -5,13 +5,13 @@ locals {
 data "archive_file" "typescript_source" {
   type        = "zip"
   source_dir  = "${path.module}/lambdas/src"
-  output_path = "zip/typescript-source.zip"
+  output_path = "${path.module}/zip/typescript-source.zip"
 }
 
 data "archive_file" "lambda_function_source" {
   type        = "zip"
   source_dir  = "${path.module}/lambdas/dist"
-  output_path = "zip/lambda-function-source.zip"
+  output_path = "${path.module}/zip/lambda-function-source.zip"
   depends_on  = [null_resource.lambda_function_source_builder]
 }
 
@@ -25,7 +25,7 @@ resource "null_resource" "lambda_function_source_builder" {
   }
   triggers = {
     source_code_md5 = data.archive_file.typescript_source.output_md5
-    file_dist       = fileexists("${path.module}/sources/dist/index.js") ? "${path.module}/sources/dist/index.js" : timestamp()
+    file_dist       = fileexists("${path.module}/lambdas/dist/index.js") ? "${path.module}/lambdas/dist/index.js" : timestamp()
   }
 }
 

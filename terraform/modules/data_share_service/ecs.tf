@@ -38,7 +38,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
 
         { "name" : "API_BASE_URL_LEV", "value" : "https://${var.lev_url}" },
         { "name" : "API_BASE_URL_ISSUER_URI", "value" : "https://${module.cognito.issuer_domain}" },
-        { "name" : "API_BASE_URL_OAUTH", "value" : module.cognito.base_auth_url },
+        { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },
 
         { "name" : "API_BASE_PRISONER_EVENT_ENABLED", "value" : var.prisoner_event_enabled },
         { "name" : "API_BASE_URL_PRISONER_SEARCH", "value" : var.prisoner_search_url },

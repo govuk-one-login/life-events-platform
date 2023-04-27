@@ -35,33 +35,41 @@ output "admin_scope" {
 }
 
 output "len_client_id" {
-  value = module.len_mock.client_id
+  value     = module.len_mock.client_id
+  sensitive = true
 }
 
 output "len_client_secret" {
-  value = module.len_mock.client_secret
+  value     = module.len_mock.client_secret
+  sensitive = true
 }
 
 output "consumer_client_id" {
-  value = module.example_consumer.client_id
+  value     = module.example_consumer.client_id
+  sensitive = true
 }
 
 output "consumer_client_secret" {
-  value = module.example_consumer.client_secret
+  value     = module.example_consumer.client_secret
+  sensitive = true
 }
 
 output "gro_ingestion_client_id" {
-  value = module.gro_ingestion.client_id
+  value     = module.gro_ingestion.client_id
+  sensitive = true
 }
 
 output "gro_ingestion_client_secret" {
-  value = module.gro_ingestion.client_secret
+  value     = module.gro_ingestion.client_secret
+  sensitive = true
 }
 
 output "deploy_hook_client_id" {
-  value = module.deploy_hook.client_id
+  value     = module.deploy_hook.client_id
+  sensitive = true
 }
 
 output "deploy_hook_client_secret" {
-  value = module.deploy_hook.client_secret
+  value     = module.deploy_hook.client_secret
+  sensitive = true
 }

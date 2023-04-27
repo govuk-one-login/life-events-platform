@@ -1,4 +1,4 @@
-import {EventRecord} from "./EventRecord";
+import { EventRecord } from "./EventRecord"
 
 export interface EnrichEventResponse {
     statusCode: number,

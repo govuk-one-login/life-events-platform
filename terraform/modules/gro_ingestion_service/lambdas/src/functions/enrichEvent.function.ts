@@ -1,12 +1,12 @@
-import {Handler} from "aws-lambda"
-import {DocumentClient} from "aws-sdk/clients/dynamodb"
-import {mapToEventRecord} from "../models/EventRecord";
-import {EnrichEventRequest} from "../models/EnrichEventRequest";
-import {EnrichEventResponse} from "../models/EnrichEventResponse";
+import { Handler } from "aws-lambda"
+import { DocumentClient } from "aws-sdk/clients/dynamodb"
+import { mapToEventRecord } from "../models/EventRecord"
+import { EnrichEventRequest } from "../models/EnrichEventRequest"
+import { EnrichEventResponse } from "../models/EnrichEventResponse"
 
 const tableName = process.env.TABLE_NAME ?? ""
 
-const dynamo = new DocumentClient({apiVersion: '2012-08-10'})
+const dynamo = new DocumentClient({ apiVersion: "2012-08-10" })
 
 export const handler: Handler = async (event: EnrichEventRequest, context, callback): Promise<EnrichEventResponse> => {
 
@@ -15,20 +15,34 @@ export const handler: Handler = async (event: EnrichEventRequest, context, callb
             hash: event.id
         },
         TableName: tableName
-    };
+    }
 
     const result = await dynamo.get(params).promise()
 
     if (!result.Item) {
-        console.log(`Record with hash ${event.id} not found`)
+        const logParams = {
+            hash: event.id,
+            error: `Record with hash ${event.id} not found`,
+        }
+        console.error("Failed to enrich event", logParams)
         return {
             statusCode: 404
         }
     }
 
-    return {
-        statusCode: 200,
-        event: mapToEventRecord(result.Item)
+    let eventRecord = mapToEventRecord(result.Item)
+
+    const logParams = {
+        hash: eventRecord.hash,
+        RegistrationId: eventRecord?.RegistrationId,
+        EventTime: eventRecord?.EventTime,
+        error: null,
     }
 
+    console.log("Successfully enriched event", logParams)
+
+    return {
+        statusCode: 200,
+        event: eventRecord
+    }
 }

@@ -76,6 +76,11 @@ resource "aws_iam_role_policy_attachment" "publish_event_lambda" {
   role       = aws_iam_role.publish_event_lambda.name
 }
 
+resource "aws_iam_role_policy_attachment" "publish_event_lambda_xray_access" {
+  policy_arn = data.aws_iam_policy.xray_access.arn
+  role       = aws_iam_role.publish_event_lambda.name
+}
+
 resource "aws_lambda_function" "publish_event_lambda" {
   filename      = data.archive_file.lambda_function_source.output_path
   function_name = "${var.environment}-gro-ingestion-lambda-function-publish-event"
@@ -91,7 +96,7 @@ resource "aws_lambda_function" "publish_event_lambda" {
     variables = {
       "FUNCTION_NAME" = "publishEvent"
       "GDX_URL"       = var.gdx_url
-      "AUTH_URL"      = var.auth_url
+      "AUTH_BASE_URL" = var.auth_base_url
       "CLIENT_ID"     = var.publisher_client_id
       "CLIENT_SECRET" = var.publisher_client_secret
     }

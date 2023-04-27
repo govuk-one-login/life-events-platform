@@ -1,13 +1,13 @@
 locals {
-  auth_domain = "${aws_cognito_user_pool.pool.domain}.auth.${var.region}.amazoncognito.com"
+  base_auth_url = "https://${aws_cognito_user_pool.pool.domain}.auth.${var.region}.amazoncognito.com"
 }
 
-output "auth_domain" {
-  value = local.auth_domain
+output "base_auth_url" {
+  value = local.base_auth_url
 }
 
 output "token_auth_url" {
-  value = "https://${local.auth_domain}/oauth2/token"
+  value = "${local.base_auth_url}/oauth2/token"
 }
 
 output "issuer_domain" {

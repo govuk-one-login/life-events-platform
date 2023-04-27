@@ -5,7 +5,7 @@ import { PublishEvent } from "../models/PublishEvent"
 import { AttributeValue } from "aws-lambda/trigger/dynamodb-stream"
 
 const gdxUrl = process.env.GDX_URL
-const authUrl = process.env.AUTH_URL
+const authBaseUrl = process.env.AUTH_BASE_URL
 const clientId = process.env.CLIENT_ID
 const clientSecret = process.env.CLIENT_SECRET
 
@@ -42,7 +42,8 @@ const getAccessToken = async () => {
     })
 
     const authOptions: RequestOptions = {
-        path: authUrl,
+        hostname: authBaseUrl,
+        path: "/oauth2/token",
         method: "POST",
         port: 443,
         headers: {

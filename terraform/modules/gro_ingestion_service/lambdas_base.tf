@@ -39,3 +39,7 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
     actions = ["sts:AssumeRole"]
   }
 }
+
+data "aws_iam_policy" "xray_access" {
+  name = "AWSXRayDaemonWriteAccess"
+}

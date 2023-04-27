@@ -1,6 +1,9 @@
 output "gdx_url" {
   value = local.gdx_api_base_url
 }
+output "base_auth_url" {
+  value = module.cognito.base_auth_url
+}
 output "token_auth_url" {
   value = module.cognito.token_auth_url
 }

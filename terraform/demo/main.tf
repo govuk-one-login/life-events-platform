@@ -112,7 +112,7 @@ module "gro_ingestion_service" {
   account_id  = data.aws_caller_identity.current.account_id
 
   gdx_url                 = module.data_share_service.gdx_url
-  auth_url                = module.data_share_service.token_auth_url
+  auth_base_url           = module.data_share_service.base_auth_url
   publisher_client_id     = module.data_share_service.gro_ingestion_client_id
   publisher_client_secret = module.data_share_service.gro_ingestion_client_secret
 }

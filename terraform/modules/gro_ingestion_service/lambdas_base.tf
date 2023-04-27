@@ -1,8 +1,5 @@
 locals {
   lambda_runtime = "nodejs18.x"
-  functions = toset([
-    for file in fileset("${path.module}/lambdas/src/functions", "*.function.ts") : lower(replace(split(".", split("/", file)[length(split("/", file)) - 1])[0], "[^a-zA-Z0-9]", "-"))
-  ])
 }
 
 data "archive_file" "typescript_source" {
@@ -40,30 +37,5 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
       identifiers = ["lambda.amazonaws.com"]
     }
     actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role" "lambda_role" {
-  for_each           = local.functions
-  name               = "${var.environment}-gro-ingestion-lambda-function-${each.value}"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
-}
-
-resource "aws_lambda_function" "lambda_function" {
-  for_each      = local.functions
-  filename      = data.archive_file.lambda_function_source.output_path
-  function_name = "${var.environment}-gro-ingestion-lambda-function-${each.value}"
-
-  handler = "index.handler"
-  runtime = local.lambda_runtime
-  role    = aws_iam_role.lambda_role[each.value].arn
-  timeout = 10
-
-  source_code_hash = data.archive_file.lambda_function_source.output_sha
-
-  environment {
-    variables = {
-      "FUNCTION_NAME" = each.value
-    }
   }
 }

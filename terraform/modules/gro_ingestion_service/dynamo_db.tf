@@ -21,13 +21,3 @@ resource "aws_dynamodb_table" "gro_ingestion" {
     enabled        = true
   }
 }
-
-resource "aws_kms_key" "gro_ingestion" {
-  description         = "Encryption key for GRO ingestion"
-  enable_key_rotation = true
-}
-
-resource "aws_kms_alias" "gro_ingestion" {
-  name          = "alias/${var.environment}/gro-ingestion-key"
-  target_key_id = aws_kms_key.gro_ingestion.arn
-}

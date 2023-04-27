@@ -32,17 +32,6 @@ data "aws_iam_policy_document" "publish_event_lambda" {
   }
 
   statement {
-    sid = "TrustEventsToStoreLogEvent"
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:DescribeLogStreams",
-      "logs:PutLogEvents"
-    ]
-    resources = ["arn:aws:logs:${var.region}:${var.account_id}:log-group:*"]
-  }
-
-  statement {
     sid = "DynamoDBGetItemAccess"
     actions = [
       "dynamodb:GetItem"
@@ -78,6 +67,11 @@ resource "aws_iam_role_policy_attachment" "publish_event_lambda" {
 
 resource "aws_iam_role_policy_attachment" "publish_event_lambda_xray_access" {
   policy_arn = data.aws_iam_policy.xray_access.arn
+  role       = aws_iam_role.publish_event_lambda.name
+}
+
+resource "aws_iam_role_policy_attachment" "publish_event_lambda_logs_access" {
+  policy_arn = aws_iam_policy.log_policy.arn
   role       = aws_iam_role.publish_event_lambda.name
 }
 

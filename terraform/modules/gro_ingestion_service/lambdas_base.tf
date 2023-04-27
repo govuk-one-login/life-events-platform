@@ -43,3 +43,20 @@ data "aws_iam_policy_document" "lambda_assume_policy" {
 data "aws_iam_policy" "xray_access" {
   name = "AWSXRayDaemonWriteAccess"
 }
+
+data "aws_iam_policy_document" "log_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:AssociateKmsKey"
+    ]
+    resources = ["arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:*"]
+  }
+}
+
+resource "aws_iam_policy" "log_policy" {
+  name   = "${var.environment}-gro-ingestion-lambda-function-log-policy"
+  policy = data.aws_iam_policy_document.log_policy.json
+}

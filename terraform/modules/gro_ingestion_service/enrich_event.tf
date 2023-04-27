@@ -52,6 +52,13 @@ resource "aws_iam_role_policy_attachment" "enrich_event_lambda_xray_access" {
   role       = aws_iam_role.enrich_event_lambda.name
 }
 
+resource "aws_cloudwatch_log_group" "enrich_event_log" {
+  name              = "/aws/lambda/${aws_lambda_function.enrich_event_lambda.function_name}"
+  retention_in_days = var.cloudwatch_retention_period
+
+  kms_key_id = aws_kms_key.gro_ingestion.arn
+}
+
 resource "aws_lambda_function" "enrich_event_lambda" {
   filename      = data.archive_file.lambda_function_source.output_path
   function_name = "${var.environment}-gro-ingestion-lambda-function-enrich-event"

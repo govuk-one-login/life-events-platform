@@ -20,3 +20,8 @@ variable "publisher_client_id" {
 variable "publisher_client_secret" {
   type = string
 }
+
+variable "cloudwatch_retention_period" {
+  type    = number
+  default = 365
+}

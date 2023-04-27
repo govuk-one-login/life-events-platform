@@ -141,6 +141,7 @@ module "gro_ingestion_service" {
 
   environment = local.env
   region      = data.aws_region.current.name
+  account_id  = data.aws_caller_identity.current.account_id
 
   gdx_url                 = module.data_share_service.gdx_url
   auth_url                = module.data_share_service.token_auth_url

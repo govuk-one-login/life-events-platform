@@ -39,7 +39,7 @@
       "**/*.spec.ts"
     ],
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.ts?$": "ts-jest"
     },
     "collectCoverageFrom": [
       "**/*.ts"

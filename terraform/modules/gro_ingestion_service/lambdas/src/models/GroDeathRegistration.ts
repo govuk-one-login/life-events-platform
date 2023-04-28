@@ -1,4 +1,5 @@
-import { AttributeValue } from "@aws-sdk/client-dynamodb"
+import hash from "object-hash"
+import { EventRecord } from "./EventRecord"
 
 export interface GroDeathRegistration {
     RegistrationId: string,
@@ -44,25 +45,24 @@ export interface GroDeathRegistration {
     },
 }
 
-
-export const mapToDynamoDbItem = (deathRecord: GroDeathRegistration, hash: string): { [key: string]: AttributeValue } => {
+export const mapToEventRecord = (deathRecord: GroDeathRegistration): EventRecord => {
     return {
-        hash: { S: hash },
-        RegistrationId: { S: deathRecord.RegistrationId },
-        EventTime: { S: deathRecord.RecordUpdateDateTime },
-        DateOfDeath: { S: deathRecord.DeceasedDeathDate.PersonDeathDate },
-        VerificationLevel: { S: deathRecord.DeceasedDeathDate.VerificationLevel },
-        PartialMonthOfDeath: { S: deathRecord.PartialMonthOfDeath },
-        PartialYearOfDeath: { S: deathRecord.PartialYearOfDeath },
-        FirstForename: { S: deathRecord.DeceasedName.PersonGivenName },
-        Surname: { S: deathRecord.DeceasedName.PersonFamilyName },
-        MaidenSurname: { S: deathRecord.DeceasedMaidenName },
-        Sex: { S: deathRecord.DeceasedGender === "1" ? "M" : "F" },
-        DateOfBirth: { S: deathRecord.DeceasedBirthDate.PersonBirthDate },
-        AddressLine1: { S: deathRecord.DeceasedAddress.Flat },
-        AddressLine2: { S: deathRecord.DeceasedAddress.Building },
-        AddressLine3: { S: deathRecord.DeceasedAddress.Building },
-        AddressLine4: { S: deathRecord.DeceasedAddress.Line.join("\n") },
-        Postcode: { S: deathRecord.DeceasedAddress.Postcode },
+        hash: hash(deathRecord),
+        RegistrationId: deathRecord.RegistrationId,
+        EventTime: deathRecord.RecordUpdateDateTime,
+        DateOfDeath: deathRecord.DeceasedDeathDate.PersonDeathDate,
+        VerificationLevel: deathRecord.DeceasedDeathDate.VerificationLevel,
+        PartialMonthOfDeath: deathRecord.PartialMonthOfDeath,
+        PartialYearOfDeath: deathRecord.PartialYearOfDeath,
+        FirstForename: deathRecord.DeceasedName.PersonGivenName,
+        Surname: deathRecord.DeceasedName.PersonFamilyName,
+        MaidenSurname: deathRecord.DeceasedMaidenName,
+        Sex: deathRecord.DeceasedGender === "1" ? "M" : "F",
+        DateOfBirth: deathRecord.DeceasedBirthDate.PersonBirthDate,
+        AddressLine1: deathRecord.DeceasedAddress.Flat,
+        AddressLine2: deathRecord.DeceasedAddress.Building,
+        AddressLine3: deathRecord.DeceasedAddress.Building,
+        AddressLine4: deathRecord.DeceasedAddress.Line.join("\n"),
+        Postcode: deathRecord.DeceasedAddress.Postcode,
     }
 }

@@ -24,5 +24,17 @@ const parseGroXml = (groXml: string): GroXmlFile => {
 export const handler: Handler = async (event: S3Event) => {
     const groFile = await getGroFile(event)
 
-    return { deathRegistrations: parseGroXml(groFile ?? "").deathRegistrationGroup }
+    if (!groXml) {
+        const logParams = {
+            fileKey: event.Records[0].s3.object.key,
+            error: `File with key ${event.Records[0].s3.object.key} not found`,
+        }
+        console.error("Failed to insert records into DynamoDB", logParams)
+        return {
+            statusCode: 404,
+        }
+    }
+
+    const groJson = parser.parse(groXml)
+    return { deathRegistrations: groJson.deathRegistrationGroup }
 }

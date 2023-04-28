@@ -1,4 +1,5 @@
-import { AttributeValue } from "aws-lambda/trigger/dynamodb-stream"
+import { AttributeValue as LambdaAttributeValue } from "aws-lambda/trigger/dynamodb-stream"
+import { AttributeValue } from "@aws-sdk/client-dynamodb"
 
 export interface EventRecord {
     hash: string
@@ -23,6 +24,31 @@ export interface EventRecord {
 }
 
 export const mapToEventRecord = (image: { [key: string]: AttributeValue }): EventRecord => {
+    return {
+        hash: image["hash"].S ?? "",
+        RegistrationId: image["RegistrationId"].S ?? "",
+        EventTime: image["EventTime"].S ?? "",
+        DateOfDeath: image["DateOfDeath"].S ?? "",
+        VerificationLevel: image["VerificationLevel"].S ?? "",
+        PartialMonthOfDeath: image["PartialMonthOfDeath"].S ?? "",
+        PartialYearOfDeath: image["PartialYearOfDeath"].S ?? "",
+        FirstForename: image["FirstForename"].S ?? "",
+        Surname: image["Surname"].S ?? "",
+        MaidenSurname: image["MaidenSurname"].S ?? "",
+        Sex: image["Sex"].S ?? "",
+        DateOfBirth: image["DateOfBirth"].S ?? "",
+        AddressLine1: image["AddressLine1"].S ?? "",
+        AddressLine2: image["AddressLine2"].S ?? "",
+        AddressLine3: image["AddressLine3"].S ?? "",
+        AddressLine4: image["AddressLine4"].S ?? "",
+        Postcode: image["Postcode"].S ?? "",
+    }
+}
+
+// AWS AttributeValue types from aws-lambda and @aws-sdk are not consistent, so we need two mappers
+// See https://github.com/DefinitelyTyped/DefinitelyTyped/issues/51331
+
+export const mapLambdaEventToEventRecord = (image: { [key: string]: LambdaAttributeValue }): EventRecord => {
     return {
         hash: image["hash"].S ?? "",
         RegistrationId: image["RegistrationId"].S ?? "",

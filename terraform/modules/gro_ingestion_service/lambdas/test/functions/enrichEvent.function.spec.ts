@@ -1,69 +1,17 @@
-import { expect, describe } from "@jest/globals"
-import { EnrichEventRequest } from "../../src/models/EnrichEventRequest"
+import { describe, expect } from "@jest/globals"
+import { EventRequest } from "../../src/models/EventRequest"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
 import { handler } from "../../src/functions/enrichEvent.function"
 import { awsSdkPromiseResponse, DocumentClient } from "../__mocks__/aws-sdk/clients/dynamodb"
+import { dbItem } from "./dbItem"
 
 const db = new DocumentClient()
 
-describe("Unit test for app handler", function () {
+describe("Unit test for enrich event handler", function () {
     test("verifies successful response", async () => {
-        const item = {
-            hash: {
-                S: "abc",
-            },
-            RegistrationId: {
-                S: "111",
-            },
-            EventTime: {
-                S: "2023-01-11",
-            },
-            DateOfDeath: {
-                S: "2023-01-01",
-            },
-            FirstForename: {
-                S: "Forename",
-            },
-            Surname: {
-                S: "Surname",
-            },
-            Sex: {
-                S: "Male",
-            },
-            MaidenSurname: {
-                S: null,
-            },
-            DateOfBirth: {
-                S: "1945-01-02",
-            },
-            AddressLine1: {
-                S: "1 Death Lane",
-            },
-            AddressLine2: {
-                S: null,
-            },
-            AddressLine3: {
-                S: null,
-            },
-            AddressLine4: {
-                S: null,
-            },
-            PartialMonthOfDeath: {
-                S: "Jan",
-            },
-            PartialYearOfDeath: {
-                S: "2023",
-            },
-            Postcode: {
-                S: "S11 9GH",
-            },
-            VerificationLevel: {
-                S: null,
-            },
-        }
-        awsSdkPromiseResponse.mockReturnValueOnce(Promise.resolve({ Item: item }))
+        awsSdkPromiseResponse.mockReturnValueOnce(Promise.resolve({ Item: dbItem }))
 
-        const event: EnrichEventRequest = {
+        const event: EventRequest = {
             id: "hash1",
         }
 
@@ -91,6 +39,21 @@ describe("Unit test for app handler", function () {
                 VerificationLevel: "",
             },
             statusCode: 200,
+        })
+    })
+
+    test("verifies failure response", async () => {
+        awsSdkPromiseResponse.mockReturnValueOnce(Promise.resolve({ Item: null }))
+
+        const event: EventRequest = {
+            id: "hash1",
+        }
+
+        const result: EnrichEventResponse = await handler(event)
+
+        expect(db.get).toHaveBeenCalledWith({ TableName: "", Key: { hash: event.id } })
+        expect(result).toEqual({
+            statusCode: 404,
         })
     })
 })

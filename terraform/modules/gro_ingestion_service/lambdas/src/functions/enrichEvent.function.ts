@@ -1,13 +1,13 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb"
 import { mapToEventRecord } from "../models/EventRecord"
-import { EnrichEventRequest } from "../models/EnrichEventRequest"
+import { EventRequest } from "../models/EventRequest"
 import { EnrichEventResponse } from "../models/EnrichEventResponse"
 
 const tableName = process.env.TABLE_NAME ?? ""
 
 const dynamo = new DocumentClient({ apiVersion: "2012-08-10" })
 
-export const handler = async (event: EnrichEventRequest): Promise<EnrichEventResponse> => {
+export const handler = async (event: EventRequest): Promise<EnrichEventResponse> => {
     const params: DocumentClient.GetItemInput = {
         Key: {
             hash: event.id,

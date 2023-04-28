@@ -1,5 +1,5 @@
 import { DynamoDBStreamEvent, Handler } from "aws-lambda"
-import { mapToEventRecord } from "../models/EventRecord"
+import { mapLambdaEventToEventRecord } from "../models/EventRecord"
 import { request, RequestOptions } from "https"
 import { PublishEvent } from "../models/PublishEvent"
 
@@ -73,7 +73,7 @@ const publishEvent = async (event: PublishEvent, accessToken: string) => {
 export const handler: Handler = async (event: DynamoDBStreamEvent) => {
     const eventRecords = event.Records.filter(r => r.dynamodb?.NewImage)
         .map(r => r.dynamodb?.NewImage)
-        .map(mapToEventRecord)
+        .map(mapLambdaEventToEventRecord)
     const publishEvents = eventRecords.map(
         (r): PublishEvent => ({
             eventType: "DEATH_NOTIFICATION",

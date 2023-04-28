@@ -1,21 +1,25 @@
-import { DocumentClient } from "aws-sdk/clients/dynamodb"
 import { mapToEventRecord } from "../models/EventRecord"
 import { EnrichEventRequest } from "../models/EnrichEventRequest"
 import { EnrichEventResponse } from "../models/EnrichEventResponse"
+import { DynamoDBClient, GetItemCommand, GetItemInput } from "@aws-sdk/client-dynamodb"
 
 const tableName = process.env.TABLE_NAME ?? ""
 
-const dynamo = new DocumentClient({ apiVersion: "2012-08-10" })
+const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })
 
 export const handler = async (event: EnrichEventRequest): Promise<EnrichEventResponse> => {
-    const params: DocumentClient.GetItemInput = {
+
+    const params: GetItemInput = {
         Key: {
-            hash: event.id,
+            hash: {
+                S: event.id,
+            }
         },
         TableName: tableName,
     }
 
-    const result = await dynamo.get(params).promise()
+    const command = new GetItemCommand(params)
+    const result = await dynamo.send(command)
 
     if (!result.Item) {
         const logParams = {

@@ -1,5 +1,4 @@
 export const awsSdkPromiseResponse = jest.fn().mockReturnValue(Promise.resolve(true))
-export const awsSdkPromiseErrorResponse = jest.fn().mockReturnValue(Promise.resolve(true))
 
 const getFn = jest.fn().mockImplementation(() => ({ promise: awsSdkPromiseResponse }))
 

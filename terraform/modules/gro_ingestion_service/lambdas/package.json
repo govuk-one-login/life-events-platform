@@ -10,8 +10,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext=.js,.ts",
-    "pretest": "npm run lint",
+    "lint": "eslint . --ext=.ts",
     "test": "jest --coverage"
   },
   "dependencies": {

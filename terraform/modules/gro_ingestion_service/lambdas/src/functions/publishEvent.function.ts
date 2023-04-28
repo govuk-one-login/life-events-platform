@@ -10,11 +10,11 @@ const clientSecret = process.env.CLIENT_SECRET
 
 const makeRequest = async (url: string, options: RequestOptions, requestData: string): Promise<object> =>
     new Promise((resolve, reject) => {
-        const req = request(url, options, (res) => {
+        const req = request(url, options, res => {
             res.setEncoding("utf8")
             let responseBody = ""
 
-            res.on("data", (chunk) => {
+            res.on("data", chunk => {
                 responseBody += chunk
             })
 
@@ -26,7 +26,7 @@ const makeRequest = async (url: string, options: RequestOptions, requestData: st
                 }
             })
         })
-        req.on("error", (err) => {
+        req.on("error", err => {
             reject(err)
         })
 
@@ -66,30 +66,30 @@ const publishEvent = async (event: PublishEvent, accessToken: string) => {
     }
 
     return await makeRequest(gdxUrl, options, eventData)
-        .then((response) => ({ success: true, result: response, event }))
-        .catch((error) => ({ success: false, result: error, event }))
+        .then(response => ({ success: true, result: response, event }))
+        .catch(error => ({ success: false, result: error, event }))
 }
 
 export const handler: Handler = async (event: DynamoDBStreamEvent) => {
-    const eventRecords = event.Records.filter((r) => r.dynamodb?.NewImage)
-        .map((r) => r.dynamodb?.NewImage)
+    const eventRecords = event.Records.filter(r => r.dynamodb?.NewImage)
+        .map(r => r.dynamodb?.NewImage)
         .map(mapToEventRecord)
     const publishEvents = eventRecords.map(
         (r): PublishEvent => ({
             eventType: "DEATH_NOTIFICATION",
             eventTime: r.EventTime,
             id: r.hash,
-        })
+        }),
     )
 
     const accessToken = await getAccessToken()
 
     console.log(`Publishing ${publishEvents.length} events`)
-    const results = await Promise.all(publishEvents.map((e) => publishEvent(e, accessToken)))
+    const results = await Promise.all(publishEvents.map(e => publishEvent(e, accessToken)))
 
     let failedCount = 0
     results.forEach(({ success, result, event }) => {
-        const eventRecord = eventRecords.find((r) => r.hash === event.id)
+        const eventRecord = eventRecords.find(r => r.hash === event.id)
         const logParams = {
             hash: eventRecord?.hash,
             RegistrationId: eventRecord?.RegistrationId,

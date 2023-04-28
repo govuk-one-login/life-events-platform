@@ -1,6 +1,6 @@
 import { EventRecord } from "./EventRecord"
 
 export interface EnrichEventResponse {
-    statusCode: number,
+    statusCode: number
     event?: EventRecord
 }

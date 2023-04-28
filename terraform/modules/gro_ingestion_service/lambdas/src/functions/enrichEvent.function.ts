@@ -1,4 +1,3 @@
-import { Handler } from "aws-lambda"
 import { DocumentClient } from "aws-sdk/clients/dynamodb"
 import { mapToEventRecord } from "../models/EventRecord"
 import { EnrichEventRequest } from "../models/EnrichEventRequest"
@@ -8,13 +7,12 @@ const tableName = process.env.TABLE_NAME ?? ""
 
 const dynamo = new DocumentClient({ apiVersion: "2012-08-10" })
 
-export const handler: Handler = async (event: EnrichEventRequest, context, callback): Promise<EnrichEventResponse> => {
-
+export const handler = async (event: EnrichEventRequest): Promise<EnrichEventResponse> => {
     const params: DocumentClient.GetItemInput = {
         Key: {
-            hash: event.id
+            hash: event.id,
         },
-        TableName: tableName
+        TableName: tableName,
     }
 
     const result = await dynamo.get(params).promise()
@@ -26,11 +24,11 @@ export const handler: Handler = async (event: EnrichEventRequest, context, callb
         }
         console.error("Failed to enrich event", logParams)
         return {
-            statusCode: 404
+            statusCode: 404,
         }
     }
 
-    let eventRecord = mapToEventRecord(result.Item)
+    const eventRecord = mapToEventRecord(result.Item)
 
     const logParams = {
         hash: eventRecord.hash,
@@ -43,6 +41,6 @@ export const handler: Handler = async (event: EnrichEventRequest, context, callb
 
     return {
         statusCode: 200,
-        event: eventRecord
+        event: eventRecord,
     }
 }

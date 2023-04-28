@@ -290,6 +290,8 @@ Suppressions:
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-delete-event
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-codedeploy-before-traffic-hook
         - arn:aws:lambda:eu-west-2:776473272850:function:demo-codedeploy-before-traffic-hook
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-enrich-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-enrich-event
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-publish-event
         - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-publish-event
       notes: >
@@ -304,6 +306,8 @@ Suppressions:
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-get-event
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-get-events
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-delete-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-enrich-event
+        - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-enrich-event
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-publish-event
         - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-publish-event
       notes: >

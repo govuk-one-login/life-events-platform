@@ -3,6 +3,7 @@ import { GroDeathRegistrationEvent } from "../models/GroDeathRegistrationEvent"
 import hash from "object-hash"
 import { GroDeathRegistration, mapToDynamoDbItem } from "../models/GroDeathRegistration"
 import { Handler } from "aws-lambda"
+import { marshall } from "@aws-sdk/util-dynamodb"
 
 const tableName = process.env.TABLE_NAME
 
@@ -16,7 +17,7 @@ const pushRecord = async (record: PutItemCommandInput) => {
 const generateRecord = (deathRegistration: GroDeathRegistration): PutItemCommandInput => {
     const eventHash = hash(deathRegistration)
     return {
-        Item: mapToDynamoDbItem(deathRegistration, eventHash),
+        Item: marshall(eventRecord),
         TableName: tableName,
     }
 }

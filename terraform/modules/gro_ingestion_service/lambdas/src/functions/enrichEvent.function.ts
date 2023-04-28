@@ -3,17 +3,16 @@ import { mapToEventRecord } from "../models/EventRecord"
 import { EnrichEventRequest } from "../models/EnrichEventRequest"
 import { EnrichEventResponse } from "../models/EnrichEventResponse"
 
-const tableName: string = process.env.TABLE_NAME ?? ""
+const tableName = process.env.TABLE_NAME ?? ""
 
-const dynamo: DocumentClient = new DocumentClient({ apiVersion: "2012-08-10" })
+const dynamo = new DocumentClient({ apiVersion: "2012-08-10" })
 
 export const handler = async (event: EnrichEventRequest): Promise<EnrichEventResponse> => {
-
     const params: DocumentClient.GetItemInput = {
         Key: {
-            hash: event.id
+            hash: event.id,
         },
-        TableName: tableName
+        TableName: tableName,
     }
 
     const result = await dynamo.get(params).promise()
@@ -25,7 +24,7 @@ export const handler = async (event: EnrichEventRequest): Promise<EnrichEventRes
         }
         console.error("Failed to enrich event", logParams)
         return {
-            statusCode: 404
+            statusCode: 404,
         }
     }
 
@@ -42,6 +41,6 @@ export const handler = async (event: EnrichEventRequest): Promise<EnrichEventRes
 
     return {
         statusCode: 200,
-        event: eventRecord
+        event: eventRecord,
     }
 }

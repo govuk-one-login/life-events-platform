@@ -8,43 +8,44 @@ const authUrl = process.env.AUTH_URL ?? ""
 const clientId = process.env.CLIENT_ID
 const clientSecret = process.env.CLIENT_SECRET
 
-const makeRequest = async (url: string, options: RequestOptions, requestData: string): Promise<object> => new Promise((resolve, reject) => {
-    const req = request(url, options, res => {
-        res.setEncoding("utf8")
-        let responseBody = ""
+const makeRequest = async (url: string, options: RequestOptions, requestData: string): Promise<object> =>
+    new Promise((resolve, reject) => {
+        const req = request(url, options, (res) => {
+            res.setEncoding("utf8")
+            let responseBody = ""
 
-        res.on("data", (chunk) => {
-            responseBody += chunk
+            res.on("data", (chunk) => {
+                responseBody += chunk
+            })
+
+            res.on("end", () => {
+                try {
+                    resolve(JSON.parse(responseBody))
+                } catch (err) {
+                    reject({ err, statusCode: res.statusCode, responseBody: responseBody })
+                }
+            })
+        })
+        req.on("error", (err) => {
+            reject(err)
         })
 
-        res.on("end", () => {
-            try {
-                resolve(JSON.parse(responseBody))
-            } catch (err) {
-                reject({ err, statusCode: res.statusCode, responseBody: responseBody })
-            }
-        })
+        req.write(requestData)
+        req.end()
     })
-    req.on("error", err => {
-        reject(err)
-    })
-
-    req.write(requestData)
-    req.end()
-})
 
 const getAccessToken = async () => {
     const authRequest = JSON.stringify({
         grant_type: "client_credentials",
         client_id: clientId,
-        client_secret: clientSecret
+        client_secret: clientSecret,
     })
 
     const authOptions: RequestOptions = {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            "Content-Length": authRequest.length
+            "Content-Length": authRequest.length,
         },
     }
 
@@ -58,36 +59,37 @@ const publishEvent = async (event: PublishEvent, accessToken: string) => {
     const options: RequestOptions = {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json; charset=utf-8",
-            "Content-Length": eventData.length
+            "Content-Length": eventData.length,
         },
     }
 
     return await makeRequest(gdxUrl, options, eventData)
-        .then(response => ({ success: true, result: response, event }))
-        .catch(error => ({ success: false, result: error, event }))
+        .then((response) => ({ success: true, result: response, event }))
+        .catch((error) => ({ success: false, result: error, event }))
 }
 
 export const handler: Handler = async (event: DynamoDBStreamEvent) => {
-    const eventRecords = event.Records
-        .filter(r => r.dynamodb?.NewImage)
-        .map(r => r.dynamodb?.NewImage)
+    const eventRecords = event.Records.filter((r) => r.dynamodb?.NewImage)
+        .map((r) => r.dynamodb?.NewImage)
         .map(mapToEventRecord)
-    const publishEvents = eventRecords.map((r): PublishEvent => ({
-        eventType: "DEATH_NOTIFICATION",
-        eventTime: r.EventTime,
-        id: r.hash
-    }))
+    const publishEvents = eventRecords.map(
+        (r): PublishEvent => ({
+            eventType: "DEATH_NOTIFICATION",
+            eventTime: r.EventTime,
+            id: r.hash,
+        })
+    )
 
     const accessToken = await getAccessToken()
 
     console.log(`Publishing ${publishEvents.length} events`)
-    const results = await Promise.all(publishEvents.map(e => publishEvent(e, accessToken)))
+    const results = await Promise.all(publishEvents.map((e) => publishEvent(e, accessToken)))
 
     let failedCount = 0
     results.forEach(({ success, result, event }) => {
-        const eventRecord = eventRecords.find(r => r.hash === event.id)
+        const eventRecord = eventRecords.find((r) => r.hash === event.id)
         const logParams = {
             hash: eventRecord?.hash,
             RegistrationId: eventRecord?.RegistrationId,

@@ -34,9 +34,6 @@
     "typescript": "5.0.4"
   },
   "jest": {
-    "roots": [
-      "<rootDir>"
-    ],
     "testEnvironment": "node",
     "testMatch": [
       "**/*.spec.ts"
@@ -45,11 +42,7 @@
       "^.+\\.tsx?$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.ts",
-      "!**/*.d.ts",
-      "!cdk.out/**/*",
-      "!bin/**/*",
-      "!webpack.config.ts"
+      "**/*.ts"
     ]
   }
 }

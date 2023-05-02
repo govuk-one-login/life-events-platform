@@ -66,6 +66,7 @@ module "read_only_roles" {
   policy_arns = [
     data.aws_iam_policy.read_only_policy.arn,
     data.aws_iam_policy.security_hub_read_only_policy.arn,
-    data.aws_iam_policy.support_access_policy.arn
+    data.aws_iam_policy.support_access_policy.arn,
+    aws_iam_policy.terraform_plan_policy.arn
   ]
 }

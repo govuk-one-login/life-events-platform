@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "terraform_plan_policy" {
 }
 
 resource "aws_iam_policy" "terraform_plan_policy" {
-  name = "readonly-terraform-plan-policy"
+  name   = "readonly-terraform-plan-policy"
   policy = data.aws_iam_policy_document.terraform_plan_policy.json
 }
 

@@ -200,7 +200,7 @@ module "iam_user_roles" {
   read_only_users = local.gdx_dev_team
 
   terraform_lock_table_name = "gdx-data-share-poc-lock"
-  account_id = data.aws_caller_identity.current.account_id
+  account_id                = data.aws_caller_identity.current.account_id
 }
 
 module "statuscake" {

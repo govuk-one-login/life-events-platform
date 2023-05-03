@@ -1,9 +1,10 @@
-import { DynamoDBStreamEvent, Handler } from "aws-lambda"
-import { EventRecord } from "../models/EventRecord"
-import { request, RequestOptions } from "https"
-import { PublishEvent } from "../models/PublishEvent"
-import { unmarshall } from "@aws-sdk/util-dynamodb"
 import { AttributeValue } from "@aws-sdk/client-dynamodb"
+import { unmarshall } from "@aws-sdk/util-dynamodb"
+import { DynamoDBStreamEvent, Handler } from "aws-lambda"
+import { request, RequestOptions } from "https"
+
+import { EventRecord } from "../models/EventRecord"
+import { PublishEvent } from "../models/PublishEvent"
 
 const gdxUrl = process.env.GDX_URL ?? ""
 const authUrl = process.env.AUTH_URL ?? ""

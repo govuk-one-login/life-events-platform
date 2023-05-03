@@ -1,9 +1,9 @@
-import { expect, describe } from "@jest/globals"
+import { describe, expect } from "@jest/globals"
+
+import { handler } from "../../src/functions/enrichEvent.function"
 import { EventRequest } from "../../src/models/EventRequest"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
-import { handler } from "../../src/functions/enrichEvent.function"
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
-import { dbItem } from "../const/dbItem"
 
 const db = new DynamoDBClient()
 

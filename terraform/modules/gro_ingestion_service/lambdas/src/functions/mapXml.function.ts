@@ -1,8 +1,9 @@
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb"
-import { GroDeathRegistrationEvent } from "../models/GroDeathRegistrationEvent"
-import { GroDeathRegistration, mapToEventRecord } from "../models/GroDeathRegistration"
-import { Handler } from "aws-lambda"
 import { marshall } from "@aws-sdk/util-dynamodb"
+import { Handler } from "aws-lambda"
+
+import { GroDeathRegistration, mapToEventRecord } from "../models/GroDeathRegistration"
+import { GroDeathRegistrationEvent } from "../models/GroDeathRegistrationEvent"
 
 const tableName = process.env.TABLE_NAME
 

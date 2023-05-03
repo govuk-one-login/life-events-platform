@@ -10,8 +10,10 @@
   ],
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext=.ts",
-    "lintFix": "eslint . --ext=.ts --fix",
+    "eslint": "eslint . --ext=.ts",
+    "eslintFix": "eslint . --ext=.ts --fix",
+    "lint": "npm run eslint && npm run prettier",
+    "lintFix": "npm run eslintFix && npm run prettierFix",
     "prettier": "prettier --check .",
     "prettierFix": "prettier --write .",
     "test": "jest --coverage"

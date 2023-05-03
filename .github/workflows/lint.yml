@@ -1,0 +1,55 @@
+name: Automatically lint files
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  fmt:
+    name: Format files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: corretto
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.4.5
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Fix formatting of all Kotlin files
+        run: ./gradlew clean formatKotlin
+
+      - name: Fix formatting of all Terraform files
+        run: terraform fmt -recursive
+
+      - name: Install lambda node modules
+        working-directory: ./terraform/modules/gro_ingestion_service/lambdas
+        run: npm ci
+
+      - name: Lint lambda
+        working-directory: ./terraform/modules/gro_ingestion_service/lambdas
+        run: npm run lintFix
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "GPC-NONE: Automatically lint files"
+          file_pattern: '*.kt *.ts *.tf'

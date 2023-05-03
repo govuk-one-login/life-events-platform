@@ -1,7 +1,8 @@
-import { EventRequest } from "../models/EventRequest"
-import { DeleteEventResponse } from "../models/DeleteEventResponse"
-import { DynamoDBClient, DeleteItemCommand, DeleteItemInput } from "@aws-sdk/client-dynamodb"
+import { DeleteItemCommand, DeleteItemInput, DynamoDBClient } from "@aws-sdk/client-dynamodb"
 import { unmarshall } from "@aws-sdk/util-dynamodb"
+
+import { DeleteEventResponse } from "../models/DeleteEventResponse"
+import { EventRequest } from "../models/EventRequest"
 
 const tableName = process.env.TABLE_NAME ?? ""
 

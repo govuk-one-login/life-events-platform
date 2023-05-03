@@ -1,15 +1,15 @@
 import { describe, expect } from "@jest/globals"
 
 import { handler } from "../../src/functions/enrichEvent.function"
-import { EventRequest } from "../../src/models/EventRequest"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
+import { EventRequest } from "../../src/models/EventRequest"
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
+import { dbItem } from "../const/dbItem"
 
 const db = new DynamoDBClient()
 
 describe("Unit test for app handler", function () {
     test("verifies successful response", async () => {
-
         dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Item: dbItem }))
 
         const event: EventRequest = {

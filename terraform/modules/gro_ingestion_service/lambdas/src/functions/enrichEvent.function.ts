@@ -1,9 +1,9 @@
 import { DynamoDBClient, GetItemCommand, GetItemInput } from "@aws-sdk/client-dynamodb"
 import { unmarshall } from "@aws-sdk/util-dynamodb"
 
-import { EventRequest } from "../models/EventRequest"
 import { EnrichEventResponse } from "../models/EnrichEventResponse"
 import { EventRecord } from "../models/EventRecord"
+import { EventRequest } from "../models/EventRequest"
 
 const tableName = process.env.TABLE_NAME ?? ""
 

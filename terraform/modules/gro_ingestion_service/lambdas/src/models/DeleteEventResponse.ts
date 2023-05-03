@@ -1,4 +1,4 @@
 export interface DeleteEventResponse {
-    id: string,
+    id: string
     statusCode: number
 }

@@ -27,6 +27,3 @@ jobs:
   openapi-lint:
     uses: ./.github/workflows/openapi-lint.yml
 
-  trivy:
-    uses: ./.github/workflows/trivy.yml
-

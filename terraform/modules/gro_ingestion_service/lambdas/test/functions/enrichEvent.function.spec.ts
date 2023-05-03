@@ -2,7 +2,6 @@ import { describe, expect } from "@jest/globals"
 
 import { handler } from "../../src/functions/enrichEvent.function"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
-import { EventRequest } from "../../src/models/EventRequest"
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 import { dbItem } from "../const/dbItem"
 import { eventRequest } from "../const/eventRequest"

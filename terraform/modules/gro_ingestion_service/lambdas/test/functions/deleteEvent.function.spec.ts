@@ -1,5 +1,4 @@
 import { describe, expect } from "@jest/globals"
-
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 import { dbItem } from "../const/dbItem"
 import { DeleteEventResponse } from "../../src/models/DeleteEventResponse"

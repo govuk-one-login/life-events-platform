@@ -9,12 +9,11 @@ const tableName = process.env.TABLE_NAME ?? ""
 const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })
 
 export const handler = async (event: EventRequest): Promise<EnrichEventResponse> => {
-
     const params: GetItemInput = {
         Key: {
             hash: {
                 S: event.id,
-            }
+            },
         },
         TableName: tableName,
     }

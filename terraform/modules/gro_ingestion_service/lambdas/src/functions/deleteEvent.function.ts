@@ -8,47 +8,48 @@ const tableName = process.env.TABLE_NAME ?? ""
 const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })
 
 export const handler = async (event: EventRequest): Promise<DeleteEventResponse> => {
-
     const params: DeleteItemInput = {
         Key: {
             hash: {
                 S: event.id,
-            }
+            },
         },
         TableName: tableName,
         ReturnValues: "ALL_OLD",
     }
+
     try {
         const command = new DeleteItemCommand(params)
         const result = await dynamo.send(command)
 
-        let logParams = {
-            hash: event.id,
-            RegistrationId: "",
-            EventTime: "",
+        if (!result.Attributes) {
+            return logError({
+                hash: event.id,
+            })
         }
-        if (result.Attributes) {
-            const eventRecord = unmarshall(result.Attributes)
-            logParams = {
-                ...logParams,
-                RegistrationId: eventRecord?.RegistrationId,
-                EventTime: eventRecord?.EventTime,
-            }
+        const eventRecord = unmarshall(result.Attributes)
+        const logParams = {
+            hash: event.id,
+            RegistrationId: eventRecord?.RegistrationId,
+            EventTime: eventRecord?.EventTime,
         }
         console.log("Successfully deleted event", logParams)
         return {
             id: event.id,
-            statusCode: 204,
+            statusCode: 200,
         }
     } catch (err) {
-        const logParams = {
+        return logError({
             hash: event.id,
             error: err,
-        }
+        })
+    }
+
+    function logError(logParams) {
         console.error("Failed to delete event", logParams)
         return {
-            statusCode: 404,
             id: event.id,
+            statusCode: 404,
         }
     }
 }

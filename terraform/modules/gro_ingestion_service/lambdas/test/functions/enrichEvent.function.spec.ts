@@ -3,65 +3,14 @@ import { EventRequest } from "../../src/models/EventRequest"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
 import { handler } from "../../src/functions/enrichEvent.function"
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
+import { dbItem } from "../const/dbItem"
 
 const db = new DynamoDBClient()
 
 describe("Unit test for app handler", function () {
     test("verifies successful response", async () => {
-        const item = {
-            hash: {
-                S: "abc",
-            },
-            RegistrationId: {
-                S: "111",
-            },
-            EventTime: {
-                S: "2023-01-11",
-            },
-            DateOfDeath: {
-                S: "2023-01-01",
-            },
-            FirstForename: {
-                S: "Forename",
-            },
-            Surname: {
-                S: "Surname",
-            },
-            Sex: {
-                S: "Male",
-            },
-            MaidenSurname: {
-                S: "",
-            },
-            DateOfBirth: {
-                S: "1945-01-02",
-            },
-            AddressLine1: {
-                S: "1 Death Lane",
-            },
-            AddressLine2: {
-                S: "",
-            },
-            AddressLine3: {
-                S: "",
-            },
-            AddressLine4: {
-                S: "",
-            },
-            PartialMonthOfDeath: {
-                S: "Jan",
-            },
-            PartialYearOfDeath: {
-                S: "2023",
-            },
-            Postcode: {
-                S: "S11 9GH",
-            },
-            VerificationLevel: {
-                S: "",
-            },
-        }
-        dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Item: item }))
+
+        dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Item: dbItem }))
 
         const event: EventRequest = {
             id: "hash1",
@@ -93,14 +42,14 @@ describe("Unit test for app handler", function () {
                 Sex: "Male",
                 DateOfBirth: "1945-01-02",
                 AddressLine1: "1 Death Lane",
-                AddressLine2: "",
-                AddressLine3: "",
-                AddressLine4: "",
-                MaidenSurname: "",
+                AddressLine2: null,
+                AddressLine3: null,
+                AddressLine4: null,
+                MaidenSurname: null,
                 PartialMonthOfDeath: "Jan",
                 PartialYearOfDeath: "2023",
                 Postcode: "S11 9GH",
-                VerificationLevel: "",
+                VerificationLevel: null,
             },
             statusCode: 200,
         })

@@ -21,9 +21,10 @@ data "aws_iam_policy_document" "delete_event_lambda" {
   }
 
   statement {
-    sid = "DynamoDBGetItemAccess"
+    sid = "DynamoDBDeleteItemAccess"
     actions = [
-      "dynamodb:DeleteItem"
+      "dynamodb:DeleteItem",
+      "dynamodb:GetItem"
     ]
     resources = [
       aws_dynamodb_table.gro_ingestion.arn

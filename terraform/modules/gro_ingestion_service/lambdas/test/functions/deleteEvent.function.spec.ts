@@ -2,8 +2,7 @@ import { expect, describe } from "@jest/globals"
 import { EventRequest } from "../../src/models/EventRequest"
 import { DeleteEventResponse } from "../../src/models/DeleteEventResponse"
 import { handler } from "../../src/functions/deleteEvent.function"
-
-import { dbItem } from "./dbItem"
+import { dbItem } from "../const/dbItem"
 
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 
@@ -11,7 +10,7 @@ const db = new DynamoDBClient()
 
 describe("Unit test for delete event handler", function () {
     test("verifies successful response", async () => {
-        dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Item: dbItem }))
+        dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Attributes: dbItem }))
 
         const event: EventRequest = {
             id: "hash1",
@@ -34,7 +33,7 @@ describe("Unit test for delete event handler", function () {
         )
         expect(result).toEqual({
             id: event.id,
-            statusCode: 204,
+            statusCode: 200,
         })
     })
 

@@ -2,14 +2,16 @@ import { expect, describe } from "@jest/globals"
 import { EventRequest } from "../../src/models/EventRequest"
 import { DeleteEventResponse } from "../../src/models/DeleteEventResponse"
 import { handler } from "../../src/functions/deleteEvent.function"
-import { awsSdkPromiseResponse, DocumentClient } from "../__mocks__/aws-sdk/clients/dynamodb"
+
 import { dbItem } from "./dbItem"
 
-const db = new DocumentClient()
+import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
+
+const db = new DynamoDBClient()
 
 describe("Unit test for delete event handler", function () {
     test("verifies successful response", async () => {
-        awsSdkPromiseResponse.mockReturnValueOnce(Promise.resolve({ Attributes: dbItem }))
+        dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Item: dbItem }))
 
         const event: EventRequest = {
             id: "hash1",
@@ -17,11 +19,19 @@ describe("Unit test for delete event handler", function () {
 
         const result: DeleteEventResponse = await handler(event)
 
-        expect(db.delete).toHaveBeenCalledWith({
-            TableName: "",
-            Key: { hash: event.id },
-            ReturnValues: "ALL_OLD",
-        })
+        expect(db.send).toHaveBeenCalledWith(
+            expect.objectContaining({
+                input: {
+                    Key: {
+                        hash: {
+                            S: event.id,
+                        },
+                    },
+                    TableName: "",
+                    ReturnValues: "ALL_OLD",
+                },
+            }),
+        )
         expect(result).toEqual({
             id: event.id,
             statusCode: 204,
@@ -29,7 +39,7 @@ describe("Unit test for delete event handler", function () {
     })
 
     test("verifies delete failure response", async () => {
-        awsSdkPromiseResponse.mockImplementation(() => {
+        dynamoDbSendFn.mockImplementation(() => {
             throw new Error()
         })
 
@@ -39,11 +49,19 @@ describe("Unit test for delete event handler", function () {
 
         const result: DeleteEventResponse = await handler(event)
 
-        expect(db.delete).toHaveBeenCalledWith({
-            TableName: "",
-            Key: { hash: event.id },
-            ReturnValues: "ALL_OLD",
-        })
+        expect(db.send).toHaveBeenCalledWith(
+            expect.objectContaining({
+                input: {
+                    Key: {
+                        hash: {
+                            S: event.id,
+                        },
+                    },
+                    TableName: "",
+                    ReturnValues: "ALL_OLD",
+                },
+            }),
+        )
         expect(result).toEqual({
             id: event.id,
             statusCode: 404,

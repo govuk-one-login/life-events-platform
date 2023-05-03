@@ -1,5 +1,5 @@
 import { EventRecord } from "../models/EventRecord"
-import { EnrichEventRequest } from "../models/EnrichEventRequest"
+import { EventRequest } from "../models/EventRequest"
 import { EnrichEventResponse } from "../models/EnrichEventResponse"
 import { DynamoDBClient, GetItemCommand, GetItemInput } from "@aws-sdk/client-dynamodb"
 import { unmarshall } from "@aws-sdk/util-dynamodb"
@@ -8,7 +8,7 @@ const tableName = process.env.TABLE_NAME ?? ""
 
 const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })
 
-export const handler = async (event: EnrichEventRequest): Promise<EnrichEventResponse> => {
+export const handler = async (event: EventRequest): Promise<EnrichEventResponse> => {
 
     const params: GetItemInput = {
         Key: {

@@ -1,23 +1,26 @@
 import { EventRequest } from "../models/EventRequest"
 import { DeleteEventResponse } from "../models/DeleteEventResponse"
-import { mapToEventRecord } from "../models/EventRecord"
-import { DocumentClient } from "aws-sdk/clients/dynamodb"
+import { DynamoDBClient, DeleteItemCommand, DeleteItemInput } from "@aws-sdk/client-dynamodb"
+import { unmarshall } from "@aws-sdk/util-dynamodb"
 
 const tableName = process.env.TABLE_NAME ?? ""
 
-const dynamo = new DocumentClient({ apiVersion: "2012-08-10" })
+const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })
 
 export const handler = async (event: EventRequest): Promise<DeleteEventResponse> => {
-    const deleteRequest: DocumentClient.DeleteItemInput = {
+
+    const params: DeleteItemInput = {
         Key: {
-            hash: event.id,
+            hash: {
+                S: event.id,
+            }
         },
         TableName: tableName,
         ReturnValues: "ALL_OLD",
     }
-
     try {
-        const result = await dynamo.delete(deleteRequest).promise()
+        const command = new DeleteItemCommand(params)
+        const result = await dynamo.send(command)
 
         let logParams = {
             hash: event.id,
@@ -25,7 +28,7 @@ export const handler = async (event: EventRequest): Promise<DeleteEventResponse>
             EventTime: "",
         }
         if (result.Attributes) {
-            const eventRecord = mapToEventRecord(result.Attributes)
+            const eventRecord = unmarshall(result.Attributes)
             logParams = {
                 ...logParams,
                 RegistrationId: eventRecord?.RegistrationId,

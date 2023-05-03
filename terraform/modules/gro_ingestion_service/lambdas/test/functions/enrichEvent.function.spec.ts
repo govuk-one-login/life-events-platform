@@ -2,9 +2,12 @@ import { expect, describe } from "@jest/globals"
 import { EnrichEventRequest } from "../../src/models/EnrichEventRequest"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
 import { handler } from "../../src/functions/enrichEvent.function"
-import { awsSdkPromiseResponse, DocumentClient } from "../__mocks__/aws-sdk/clients/dynamodb"
+import {
+    DynamoDBClient,
+    dynamoDbSendFn
+} from "../__mocks__/@aws-sdk/client-dynamodb"
 
-const db = new DocumentClient()
+const db = new DynamoDBClient()
 
 describe("Unit test for app handler", function () {
     test("verifies successful response", async () => {
@@ -31,7 +34,7 @@ describe("Unit test for app handler", function () {
                 S: "Male",
             },
             MaidenSurname: {
-                S: null,
+                S: "",
             },
             DateOfBirth: {
                 S: "1945-01-02",
@@ -40,13 +43,13 @@ describe("Unit test for app handler", function () {
                 S: "1 Death Lane",
             },
             AddressLine2: {
-                S: null,
+                S: "",
             },
             AddressLine3: {
-                S: null,
+                S: "",
             },
             AddressLine4: {
-                S: null,
+                S: "",
             },
             PartialMonthOfDeath: {
                 S: "Jan",
@@ -58,10 +61,10 @@ describe("Unit test for app handler", function () {
                 S: "S11 9GH",
             },
             VerificationLevel: {
-                S: null,
+                S: "",
             },
         }
-        awsSdkPromiseResponse.mockReturnValueOnce(Promise.resolve({ Item: item }))
+        dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Item: item }))
 
         const event: EnrichEventRequest = {
             id: "hash1",
@@ -69,7 +72,17 @@ describe("Unit test for app handler", function () {
 
         const result: EnrichEventResponse = await handler(event)
 
-        expect(db.get).toHaveBeenCalledWith({ TableName: "", Key: { hash: event.id } })
+        expect(db.send).toHaveBeenCalledWith(expect.objectContaining({
+            input: {
+                Key: {
+                    hash: {
+                        S: event.id,
+                    }
+                },
+                TableName: "",
+            }
+        }))
+
         expect(result).toEqual({
             event: {
                 hash: "abc",

@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "compileTest": "tsc --noEmit",
     "eslint": "eslint . --ext=.ts",
     "eslintFix": "eslint . --ext=.ts --fix",
     "lint": "npm run eslint && npm run prettier",

@@ -22,4 +22,5 @@ jobs:
         working-directory: ./terraform/modules/gro_ingestion_service/lambdas
         run: |
           npm ci
+          npm run compileTest
           npm run test

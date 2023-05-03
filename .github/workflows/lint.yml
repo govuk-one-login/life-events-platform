@@ -44,13 +44,11 @@ jobs:
       - name: Fix formatting of all Terraform files
         run: terraform fmt -recursive
 
-      - name: Install lambda node modules
+      - name: Lint lambdas
         working-directory: ./terraform/modules/gro_ingestion_service/lambdas
-        run: npm ci
-
-      - name: Lint lambda
-        working-directory: ./terraform/modules/gro_ingestion_service/lambdas
-        run: npm run lintFix
+        run: |
+          npm ci
+          npm run lintFix
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:

@@ -1,10 +1,23 @@
 name: Run Trivy
 
 on:
-  workflow_call:
+  pull_request:
+  merge_group:
 
 jobs:
-  trivy:
+  validate-images:
+    matrix:
+      include:
+        - image: gdx
+          context: ./
+          trivyignore: .trivyignore
+        - image: prometheus
+          context: ./prometheus
+          trivyignore: prometheus/.trivyignore
+        - image: grafana
+          context: ./grafana
+          trivyignore: grafana/.trivyignore
+    name: Validate ${{ matrix.image }} image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -16,9 +29,9 @@ jobs:
       - name: Build and tag image
         uses: docker/build-push-action@v4
         with:
-          context: ./
+          context: ${{ matrix.context }}
           push: false
-          tags: ${{ github.ref_name }}:latest
+          tags: ${{ github.ref_name }}:${{ matrix.image }}
           load: true
           cache-to: type=gha
           cache-from: type=gha
@@ -27,4 +40,18 @@ jobs:
         uses: aquasecurity/trivy-action@0.10.0
         with:
           image-ref: ${{ github.ref_name }}:latest
+          trivy-config: trivy.yaml
+          trivyignores: ${{ matrix.trivyignore }}
+
+  validate-infra:
+    name: Validate infra code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.10.0
+        with:
+          scan-type: config
           trivy-config: trivy.yaml

@@ -19,6 +19,7 @@ jobs:
           - image: grafana
             context: ./grafana
             trivyignore: grafana/.trivyignore
+      fail-fast: false
     name: Validate ${{ matrix.image }} image
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +42,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.10.0
         with:
-          image-ref: ${{ github.ref_name }}:latest
+          image-ref: ${{ github.ref_name }}:${{ matrix.image }}
           trivy-config: trivy.yaml
           trivyignores: ${{ matrix.trivyignore }}
 

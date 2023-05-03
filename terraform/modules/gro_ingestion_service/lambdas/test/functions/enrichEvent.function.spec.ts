@@ -2,10 +2,7 @@ import { expect, describe } from "@jest/globals"
 import { EnrichEventRequest } from "../../src/models/EnrichEventRequest"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
 import { handler } from "../../src/functions/enrichEvent.function"
-import {
-    DynamoDBClient,
-    dynamoDbSendFn
-} from "../__mocks__/@aws-sdk/client-dynamodb"
+import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 
 const db = new DynamoDBClient()
 
@@ -72,16 +69,18 @@ describe("Unit test for app handler", function () {
 
         const result: EnrichEventResponse = await handler(event)
 
-        expect(db.send).toHaveBeenCalledWith(expect.objectContaining({
-            input: {
-                Key: {
-                    hash: {
-                        S: event.id,
-                    }
+        expect(db.send).toHaveBeenCalledWith(
+            expect.objectContaining({
+                input: {
+                    Key: {
+                        hash: {
+                            S: event.id,
+                        },
+                    },
+                    TableName: "",
                 },
-                TableName: "",
-            }
-        }))
+            }),
+        )
 
         expect(result).toEqual({
             event: {

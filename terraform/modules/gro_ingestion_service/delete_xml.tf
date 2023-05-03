@@ -72,10 +72,6 @@ resource "aws_lambda_function" "delete_xml_lambda" {
   environment {
     variables = {
       "FUNCTION_NAME" = "deleteXml"
-      "GDX_URL"       = var.gdx_url
-      "AUTH_URL"      = var.auth_url
-      "CLIENT_ID"     = var.publisher_client_id
-      "CLIENT_SECRET" = var.publisher_client_secret
     }
   }
   tracing_config {

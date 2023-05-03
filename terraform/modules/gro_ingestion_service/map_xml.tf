@@ -72,10 +72,7 @@ resource "aws_lambda_function" "map_xml_lambda" {
   environment {
     variables = {
       "FUNCTION_NAME" = "mapXml"
-      "GDX_URL"       = var.gdx_url
-      "AUTH_URL"      = var.auth_url
-      "CLIENT_ID"     = var.publisher_client_id
-      "CLIENT_SECRET" = var.publisher_client_secret
+      "TABLE_NAME"    = aws_dynamodb_table.gro_ingestion.name
     }
   }
   tracing_config {

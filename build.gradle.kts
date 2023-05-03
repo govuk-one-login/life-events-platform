@@ -35,7 +35,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.55"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.58"))
   implementation("software.amazon.awssdk:sqs")
   implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.1.1")
   implementation("software.amazon.awssdk:rds")
@@ -55,7 +55,7 @@ dependencies {
   runtimeOnly("org.flywaydb:flyway-core")
 
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
-  implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:1.0.2")
+  implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.0.0")
   implementation("org.postgresql:postgresql:42.6.0")
 
   implementation("org.springdoc:springdoc-openapi-starter-common:2.1.0")
@@ -83,7 +83,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.18.0"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.458") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.461") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

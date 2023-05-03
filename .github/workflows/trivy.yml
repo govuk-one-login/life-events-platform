@@ -7,17 +7,18 @@ on:
 
 jobs:
   validate-images:
-    matrix:
-      include:
-        - image: gdx
-          context: ./
-          trivyignore: .trivyignore
-        - image: prometheus
-          context: ./prometheus
-          trivyignore: prometheus/.trivyignore
-        - image: grafana
-          context: ./grafana
-          trivyignore: grafana/.trivyignore
+    strategy:
+      matrix:
+        include:
+          - image: gdx
+            context: ./
+            trivyignore: .trivyignore
+          - image: prometheus
+            context: ./prometheus
+            trivyignore: prometheus/.trivyignore
+          - image: grafana
+            context: ./grafana
+            trivyignore: grafana/.trivyignore
     name: Validate ${{ matrix.image }} image
     runs-on: ubuntu-latest
     steps:

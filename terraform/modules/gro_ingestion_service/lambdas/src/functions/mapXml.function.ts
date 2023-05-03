@@ -6,7 +6,7 @@ import { marshall } from "@aws-sdk/util-dynamodb"
 
 const tableName = process.env.TABLE_NAME
 
-const client = new DynamoDBClient({})
+const client = new DynamoDBClient({ apiVersion: "2012-08-10" })
 
 const pushRecord = async (record: PutItemCommandInput) => {
     const command = new PutItemCommand(record)

@@ -2,7 +2,7 @@ import { Handler, S3Event } from "aws-lambda"
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { XMLParser } from "fast-xml-parser"
 
-const client = new S3Client({})
+const client = new S3Client({ apiVersion: "2012-08-10" })
 const parser = new XMLParser()
 
 const getGroFile = async (event: S3Event) => {

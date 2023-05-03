@@ -1,6 +1,8 @@
+import { eventRequest } from "./eventRequest"
+
 export const dbItem = {
     hash: {
-        S: "abc",
+        S: eventRequest.id,
     },
     RegistrationId: {
         S: "111",

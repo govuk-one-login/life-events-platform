@@ -30,7 +30,7 @@ describe("Unit test for app handler", function () {
 
         expect(result).toEqual({
             event: {
-                hash: "abc",
+                hash: eventRequest.id,
                 RegistrationId: "111",
                 EventTime: "2023-01-11",
                 DateOfDeath: "2023-01-01",

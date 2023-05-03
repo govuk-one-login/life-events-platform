@@ -12,13 +12,13 @@ jobs:
         include:
           - image: gdx
             context: ./
-            trivyignore: .trivyignore
+            trivy-config: trivy.yaml
           - image: prometheus
             context: ./prometheus
-            trivyignore: prometheus/.trivyignore
+            trivy-config: prometheus/trivy.yaml
           - image: grafana
             context: ./grafana
-            trivyignore: grafana/.trivyignore
+            trivy-config: grafana/trivy.yaml
       fail-fast: false
     name: Validate ${{ matrix.image }} image
     runs-on: ubuntu-latest
@@ -43,8 +43,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.10.0
         with:
           image-ref: ${{ github.ref_name }}:${{ matrix.image }}
-          trivy-config: trivy.yaml
-          trivyignores: ${{ matrix.trivyignore }}
+          trivy-config: ${{ matrix.trivy-config }}
 
   validate-infra:
     name: Validate infra code

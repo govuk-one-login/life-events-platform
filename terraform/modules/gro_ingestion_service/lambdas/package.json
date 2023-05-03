@@ -41,7 +41,7 @@
       "^.+\\.ts?$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.ts"
+      "src/**/*.ts"
     ]
   },
   "devDependencies": {

@@ -23,7 +23,7 @@ export const dbItem = {
         S: "Male",
     },
     MaidenSurname: {
-        S: null,
+        S: "",
     },
     DateOfBirth: {
         S: "1945-01-02",
@@ -32,13 +32,13 @@ export const dbItem = {
         S: "1 Death Lane",
     },
     AddressLine2: {
-        S: null,
+        S: "",
     },
     AddressLine3: {
-        S: null,
+        S: "",
     },
     AddressLine4: {
-        S: null,
+        S: "",
     },
     PartialMonthOfDeath: {
         S: "Jan",
@@ -50,6 +50,6 @@ export const dbItem = {
         S: "S11 9GH",
     },
     VerificationLevel: {
-        S: null,
+        S: "",
     },
 }

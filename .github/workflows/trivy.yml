@@ -44,7 +44,7 @@ jobs:
         with:
           image-ref: ${{ github.ref_name }}:${{ matrix.image }}
           trivyignores: ${{ matrix.trivyignore }}
-          exitcode: 1
+          exit-code: 1
 
   validate-infra:
     name: Validate infra code
@@ -58,5 +58,5 @@ jobs:
         with:
           scan-type: config
           trivyignores: .trivyignore.docker
-          exitcode: 1
+          exit-code: 1
           skip-dirs: lev-data/

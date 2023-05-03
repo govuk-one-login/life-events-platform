@@ -1,4 +1,5 @@
 import hash from "object-hash"
+
 import { EventRecord } from "./EventRecord"
 
 export interface GroDeathRegistration {

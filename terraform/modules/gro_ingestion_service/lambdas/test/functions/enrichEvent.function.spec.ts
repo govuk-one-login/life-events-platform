@@ -5,6 +5,7 @@ import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
 import { EventRequest } from "../../src/models/EventRequest"
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 import { dbItem } from "../const/dbItem"
+import { eventRequest } from "../const/eventRequest"
 
 const db = new DynamoDBClient()
 
@@ -12,18 +13,14 @@ describe("Unit test for app handler", function () {
     test("verifies successful response", async () => {
         dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Item: dbItem }))
 
-        const event: EventRequest = {
-            id: "hash1",
-        }
-
-        const result: EnrichEventResponse = await handler(event)
+        const result: EnrichEventResponse = await handler(eventRequest)
 
         expect(db.send).toHaveBeenCalledWith(
             expect.objectContaining({
                 input: {
                     Key: {
                         hash: {
-                            S: event.id,
+                            S: eventRequest.id,
                         },
                     },
                     TableName: "",

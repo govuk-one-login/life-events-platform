@@ -11,6 +11,9 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint . --ext=.ts",
+    "lintFix": "eslint . --ext=.ts --fix",
+    "prettier": "prettier --check .",
+    "prettierFix": "prettier --write .",
     "test": "jest --coverage"
   },
   "dependencies": {

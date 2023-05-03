@@ -17,6 +17,3 @@ jobs:
 
   openapi-lint:
     uses: ./.github/workflows/openapi-lint-autopass.yml
-
-  trivy:
-    uses: ./.github/workflows/trivy-autopass.yml

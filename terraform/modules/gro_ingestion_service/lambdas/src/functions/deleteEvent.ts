@@ -59,6 +59,6 @@ const handler: Handler = async (event: EventRequest): Promise<DeleteEventRespons
 
 const lambdaFunction: LambdaFunction = {
     name: "deleteEvent",
-    handler: handler
+    handler: handler,
 }
 export default lambdaFunction

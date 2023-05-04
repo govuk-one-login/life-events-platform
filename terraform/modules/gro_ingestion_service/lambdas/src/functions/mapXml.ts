@@ -30,6 +30,6 @@ const handler: Handler = async (event: GroDeathRegistrationEvent) => {
 
 const lambdaFunction: LambdaFunction = {
     name: "mapXml",
-    handler: handler
+    handler: handler,
 }
 export default lambdaFunction

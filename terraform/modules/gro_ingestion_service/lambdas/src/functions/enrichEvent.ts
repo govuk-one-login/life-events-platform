@@ -54,6 +54,6 @@ const handler: Handler = async (event: EventRequest): Promise<EnrichEventRespons
 
 const lambdaFunction: LambdaFunction = {
     name: "enrichEvent",
-    handler: handler
+    handler: handler,
 }
 export default lambdaFunction

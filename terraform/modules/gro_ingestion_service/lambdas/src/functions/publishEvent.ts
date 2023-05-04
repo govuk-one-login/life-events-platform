@@ -119,6 +119,6 @@ const handler: Handler = async (event: DynamoDBStreamEvent) => {
 
 const lambdaFunction: LambdaFunction = {
     name: "publishEvent",
-    handler: handler
+    handler: handler,
 }
 export default lambdaFunction

@@ -1,6 +1,7 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { Handler, S3ObjectCreatedNotificationEvent } from "aws-lambda"
 import { XMLParser } from "fast-xml-parser"
+
 import { LambdaFunction } from "../models/LambdaFunction"
 
 const client = new S3Client({ apiVersion: "2012-08-10" })
@@ -40,6 +41,6 @@ const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) => {
 
 const lambdaFunction: LambdaFunction = {
     name: "splitXml",
-    handler: handler
+    handler: handler,
 }
 export default lambdaFunction

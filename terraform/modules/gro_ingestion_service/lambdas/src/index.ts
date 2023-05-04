@@ -11,14 +11,7 @@ import { LambdaFunction } from "./models/LambdaFunction"
 export const handler: Handler = async (event, context, callback) => {
     const functionName = process.env.FUNCTION_NAME ?? "-"
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const functions: LambdaFunction[] = [
-        deleteEvent,
-        deleteXml,
-        enrichEvent,
-        mapXml,
-        publishEvent,
-        splitXml,
-    ]
+    const functions: LambdaFunction[] = [deleteEvent, deleteXml, enrichEvent, mapXml, publishEvent, splitXml]
 
     const lambdaFunction = functions.find(f => f.name === `${functionName}`)
     if (!lambdaFunction) {

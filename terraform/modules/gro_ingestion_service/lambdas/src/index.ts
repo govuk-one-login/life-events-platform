@@ -13,7 +13,7 @@ export const handler: Handler = async (event, context, callback) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const functions: LambdaFunction[] = [deleteEvent, deleteXml, enrichEvent, mapXml, publishEvent, splitXml]
 
-    const lambdaFunction = functions.find(f => f.name === `${functionName}`)
+    const lambdaFunction = functions.find(f => f.name === functionName)
     if (!lambdaFunction) {
         throw Error(`Lambda function ${functionName} not found`)
     }

@@ -2,6 +2,7 @@ import { AttributeValue } from "@aws-sdk/client-dynamodb"
 import { unmarshall } from "@aws-sdk/util-dynamodb"
 import { DynamoDBStreamEvent, Handler } from "aws-lambda"
 import { request, RequestOptions } from "https"
+import * as querystring from "querystring"
 
 import { EventRecord } from "../models/EventRecord"
 import { LambdaFunction } from "../models/LambdaFunction"
@@ -12,7 +13,7 @@ const authUrl = process.env.AUTH_URL ?? ""
 const clientId = process.env.CLIENT_ID
 const clientSecret = process.env.CLIENT_SECRET
 
-const makeRequest = async (url: string, options: RequestOptions, requestData: string): Promise<object> =>
+const makeRequest = async (url: string, options: RequestOptions, requestData: string): Promise<{statusCode: number, responseBody: string}> =>
     new Promise((resolve, reject) => {
         const req = request(url, options, res => {
             res.setEncoding("utf8")
@@ -23,11 +24,10 @@ const makeRequest = async (url: string, options: RequestOptions, requestData: st
             })
 
             res.on("end", () => {
-                try {
-                    resolve(JSON.parse(responseBody))
-                } catch (err) {
-                    reject({ err, statusCode: res.statusCode, responseBody: responseBody })
+                if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+                    return reject({ statusCode: res.statusCode, responseBody: responseBody })
                 }
+                return resolve({ statusCode: res.statusCode, responseBody: responseBody })
             })
         })
         req.on("error", err => {
@@ -39,7 +39,7 @@ const makeRequest = async (url: string, options: RequestOptions, requestData: st
     })
 
 const getAccessToken = async () => {
-    const authRequest = JSON.stringify({
+    const authRequest = querystring.stringify({
         grant_type: "client_credentials",
         client_id: clientId,
         client_secret: clientSecret,
@@ -54,7 +54,8 @@ const getAccessToken = async () => {
     }
 
     const result = await makeRequest(authUrl, authOptions, authRequest)
-    return result["access_token"]
+    const response = JSON.parse(result.responseBody)
+    return response["access_token"]
 }
 
 const publishEvent = async (event: PublishEvent, accessToken: string) => {
@@ -67,6 +68,7 @@ const publishEvent = async (event: PublishEvent, accessToken: string) => {
             "Content-Type": "application/json; charset=utf-8",
             "Content-Length": eventData.length,
         },
+        path: "/events"
     }
 
     return await makeRequest(gdxUrl, options, eventData)

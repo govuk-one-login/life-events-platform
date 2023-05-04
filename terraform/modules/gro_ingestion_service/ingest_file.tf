@@ -24,7 +24,8 @@ resource "aws_sfn_state_machine" "stepfunction" {
             "Lambda.ServiceException",
             "Lambda.AWSLambdaException",
             "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
+            "Lambda.TooManyRequestsException",
+            "Lambda.Unknown"
           ],
           "IntervalSeconds": 2,
           "MaxAttempts": 6,
@@ -56,7 +57,8 @@ resource "aws_sfn_state_machine" "stepfunction" {
                   "Lambda.ServiceException",
                   "Lambda.AWSLambdaException",
                   "Lambda.SdkClientException",
-                  "Lambda.TooManyRequestsException"
+                  "Lambda.TooManyRequestsException",
+                  "Lambda.Unknown"
                 ],
                 "IntervalSeconds": 2,
                 "MaxAttempts": 6,
@@ -116,7 +118,8 @@ resource "aws_sfn_state_machine" "stepfunction" {
             "Lambda.ServiceException",
             "Lambda.AWSLambdaException",
             "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
+            "Lambda.TooManyRequestsException",
+            "Lambda.Unknown"
           ],
           "IntervalSeconds": 2,
           "MaxAttempts": 6,
@@ -199,7 +202,7 @@ resource "aws_s3_bucket_notification" "trigger_stepfunction" {
 
 resource "aws_cloudwatch_event_rule" "trigger_stepfunction" {
   name        = "${var.environment}-trigger-gro-ingestion-step-function"
-  description = "Capture each AWS Console Sign In"
+  description = "Trigger GRO ingestion stepfunction after file upload to S3 bucket"
 
   event_pattern = jsonencode({
     source      = ["aws.s3"]

@@ -1,28 +1,22 @@
 import { Handler } from "aws-lambda"
 
-import { handler as deleteEventHandler } from "./functions/deleteEvent.function"
-import { handler as deleteXmlHandler } from "./functions/deleteXml.function"
-import { handler as enrichEventHandler } from "./functions/enrichEvent.function"
-import { handler as mapXmlHandler } from "./functions/mapXml.function"
-import { handler as publishEventHandler } from "./functions/publishEvent.function"
-import { handler as splitXmlHandler } from "./functions/splitXml.function"
+import deleteEvent from "./functions/deleteEvent"
+import deleteXml from "./functions/deleteXml"
+import enrichEvent from "./functions/enrichEvent"
+import mapXml from "./functions/mapXml"
+import publishEvent from "./functions/publishEvent"
+import splitXml from "./functions/splitXml"
+import { LambdaFunction } from "./models/LambdaFunction"
 
 export const handler: Handler = async (event, context, callback) => {
     const functionName = process.env.FUNCTION_NAME ?? "-"
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const functions = [
-        deleteEventHandler,
-        deleteXmlHandler,
-        enrichEventHandler,
-        mapXmlHandler,
-        publishEventHandler,
-        splitXmlHandler,
-    ]
+    const functions: LambdaFunction[] = [deleteEvent, deleteXml, enrichEvent, mapXml, publishEvent, splitXml]
 
-    const lambdaFunction = functions.find(f => f.name === `${functionName}Handler`)
+    const lambdaFunction = functions.find(f => f.name === functionName)
     if (!lambdaFunction) {
         throw Error(`Lambda function ${functionName} not found`)
     }
 
-    return lambdaFunction(event, context, callback)
+    return lambdaFunction.handler(event, context, callback)
 }

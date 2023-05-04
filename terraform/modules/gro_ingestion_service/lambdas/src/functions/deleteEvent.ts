@@ -1,14 +1,16 @@
 import { DeleteItemCommand, DeleteItemInput, DynamoDBClient } from "@aws-sdk/client-dynamodb"
 import { unmarshall } from "@aws-sdk/util-dynamodb"
+import { Handler } from "aws-lambda"
 
 import { DeleteEventResponse } from "../models/DeleteEventResponse"
 import { EventRequest } from "../models/EventRequest"
+import { LambdaFunction } from "../models/LambdaFunction"
 
 const tableName = process.env.TABLE_NAME ?? ""
 
 const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })
 
-export const handler = async (event: EventRequest): Promise<DeleteEventResponse> => {
+const handler: Handler = async (event: EventRequest): Promise<DeleteEventResponse> => {
     const params: DeleteItemInput = {
         Key: {
             hash: {
@@ -54,3 +56,9 @@ export const handler = async (event: EventRequest): Promise<DeleteEventResponse>
         }
     }
 }
+
+const lambdaFunction: LambdaFunction = {
+    name: "deleteEvent",
+    handler: handler,
+}
+export default lambdaFunction

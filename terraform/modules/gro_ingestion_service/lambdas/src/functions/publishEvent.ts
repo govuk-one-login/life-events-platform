@@ -4,6 +4,7 @@ import { DynamoDBStreamEvent, Handler } from "aws-lambda"
 import { request, RequestOptions } from "https"
 
 import { EventRecord } from "../models/EventRecord"
+import { LambdaFunction } from "../models/LambdaFunction"
 import { PublishEvent } from "../models/PublishEvent"
 
 const gdxUrl = process.env.GDX_URL ?? ""
@@ -73,7 +74,7 @@ const publishEvent = async (event: PublishEvent, accessToken: string) => {
         .catch(error => ({ success: false, result: error, event }))
 }
 
-export const handler: Handler = async (event: DynamoDBStreamEvent) => {
+const handler: Handler = async (event: DynamoDBStreamEvent) => {
     const eventRecords = event.Records.filter(r => r.dynamodb?.NewImage)
         .map(r => r.dynamodb?.NewImage)
         .map(r => unmarshall(r as Record<string, AttributeValue>) as EventRecord)
@@ -115,3 +116,9 @@ export const handler: Handler = async (event: DynamoDBStreamEvent) => {
 
     console.log(`Succeeded publishing ${results.length} events`)
 }
+
+const lambdaFunction: LambdaFunction = {
+    name: "publishEvent",
+    handler: handler,
+}
+export default lambdaFunction

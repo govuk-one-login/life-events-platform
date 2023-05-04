@@ -4,6 +4,7 @@ import { Handler } from "aws-lambda"
 
 import { GroDeathRegistration, mapToEventRecord } from "../models/GroDeathRegistration"
 import { GroDeathRegistrationEvent } from "../models/GroDeathRegistrationEvent"
+import { LambdaFunction } from "../models/LambdaFunction"
 
 const tableName = process.env.TABLE_NAME
 
@@ -22,7 +23,13 @@ const generateRecord = (deathRegistration: GroDeathRegistration): PutItemCommand
     }
 }
 
-export const handler: Handler = async (event: GroDeathRegistrationEvent) => {
+const handler: Handler = async (event: GroDeathRegistrationEvent) => {
     const deathRecord = generateRecord(event.deathRegistration)
     await pushRecord(deathRecord)
 }
+
+const lambdaFunction: LambdaFunction = {
+    name: "mapXml",
+    handler: handler,
+}
+export default lambdaFunction

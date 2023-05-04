@@ -3,7 +3,7 @@ import hash from "object-hash"
 import { EventRecord } from "./EventRecord"
 
 export interface GroDeathRegistration {
-    RegistrationId: string
+    RegistrationID: string
     RegistrationType: string
     RecordLockedDateTime: string
     RecordUpdateDateTime: string
@@ -22,10 +22,10 @@ export interface GroDeathRegistration {
     }
     DeceasedAliasNameType: string
     DeceasedMaidenName: string
-    DeceasedGender: string
+    DeceasedGender: number
     DeceasedDeathDate: {
         PersonDeathDate: string
-        VerificationLevel: string
+        VerificationLevel: number
     }
     PartialMonthOfDeath: string
     PartialYearOfDeath: string
@@ -49,16 +49,16 @@ export interface GroDeathRegistration {
 export const mapToEventRecord = (deathRecord: GroDeathRegistration): EventRecord => {
     return {
         hash: hash(deathRecord),
-        RegistrationId: deathRecord.RegistrationId,
+        RegistrationId: deathRecord.RegistrationID,
         EventTime: deathRecord.RecordUpdateDateTime,
         DateOfDeath: deathRecord.DeceasedDeathDate.PersonDeathDate,
-        VerificationLevel: deathRecord.DeceasedDeathDate.VerificationLevel,
+        VerificationLevel: deathRecord.DeceasedDeathDate.VerificationLevel.toString(),
         PartialMonthOfDeath: deathRecord.PartialMonthOfDeath,
         PartialYearOfDeath: deathRecord.PartialYearOfDeath,
         FirstForename: deathRecord.DeceasedName.PersonGivenName,
         Surname: deathRecord.DeceasedName.PersonFamilyName,
         MaidenSurname: deathRecord.DeceasedMaidenName,
-        Sex: deathRecord.DeceasedGender === "1" ? "M" : "F",
+        Sex: deathRecord.DeceasedGender === 1 ? "M" : "F",
         DateOfBirth: deathRecord.DeceasedBirthDate.PersonBirthDate,
         AddressLine1: deathRecord.DeceasedAddress.Flat,
         AddressLine2: deathRecord.DeceasedAddress.Building,

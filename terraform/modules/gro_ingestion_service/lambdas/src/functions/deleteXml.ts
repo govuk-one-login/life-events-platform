@@ -1,14 +1,15 @@
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3"
-import { Handler, S3Event } from "aws-lambda"
+import { Handler, } from "aws-lambda"
+import { BucketObjectDetails } from "../models/BucketObjectDetails"
 
 import { LambdaFunction } from "../models/LambdaFunction"
 
 const client = new S3Client({ apiVersion: "2012-08-10" })
 
-const handler: Handler = async (event: S3Event) => {
+const handler: Handler = async (event: BucketObjectDetails) => {
     const deleteCommand = new DeleteObjectCommand({
-        Bucket: event.Records[0].s3.bucket.name,
-        Key: event.Records[0].s3.object.key,
+        Bucket: event.bucket,
+        Key: event.key,
     })
 
     await client.send(deleteCommand)

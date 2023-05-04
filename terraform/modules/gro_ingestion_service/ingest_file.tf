@@ -99,10 +99,16 @@ resource "aws_sfn_state_machine" "stepfunction" {
       "Type": "Task",
       "Resource": "arn:aws:states:::sns:publish",
       "Parameters": {
-        "Message.$": "$",
+        "Message": {
+          "Error.$": "$",
+          "Message": "Failed to ingest GRO file"
+        },
         "TopicArn": "${module.sns.topic_arn}"
       },
-      "End": true
+      "Next": "Fail"
+    },
+    "Fail": {
+      "Type": "Fail"
     },
     "Lambda DeleteXml": {
       "Type": "Task",
@@ -163,12 +169,43 @@ data "aws_iam_policy_document" "invoke_lambdas" {
 }
 
 resource "aws_iam_policy" "invoke_lambdas" {
-  name   = "${var.environment}-gro-ingestion-stepfunction-ingest-file"
+  name   = "${var.environment}-gro-ingestion-stepfunction-ingest-file-invoke-lambdas"
   policy = data.aws_iam_policy_document.invoke_lambdas.json
 }
 
 resource "aws_iam_role_policy_attachment" "stepfunction_invoke_consumer_lambdas" {
   policy_arn = aws_iam_policy.invoke_lambdas.arn
+  role       = aws_iam_role.stepfunction.name
+}
+
+data "aws_iam_policy_document" "sns_alert" {
+  statement {
+    effect  = "Allow"
+    actions = ["sns:Publish"]
+    resources = [
+      module.sns.topic_arn
+    ]
+  }
+
+  statement {
+    sid = "SNSKMSPolicy"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
+    resources = [
+      module.sns.kms_arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "sns_alert" {
+  name   = "${var.environment}-gro-ingestion-stepfunction-sns-alert"
+  policy = data.aws_iam_policy_document.sns_alert.json
+}
+
+resource "aws_iam_role_policy_attachment" "stepfunction_sns_alert" {
+  policy_arn = aws_iam_policy.sns_alert.arn
   role       = aws_iam_role.stepfunction.name
 }
 

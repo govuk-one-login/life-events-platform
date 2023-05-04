@@ -3,7 +3,6 @@ import { marshall } from "@aws-sdk/util-dynamodb"
 import { Handler } from "aws-lambda"
 
 import { GroDeathRegistration, mapToEventRecord } from "../models/GroDeathRegistration"
-import { GroDeathRegistrationEvent } from "../models/GroDeathRegistrationEvent"
 import { LambdaFunction } from "../models/LambdaFunction"
 
 const tableName = process.env.TABLE_NAME
@@ -18,13 +17,13 @@ const pushRecord = async (record: PutItemCommandInput) => {
 const generateRecord = (deathRegistration: GroDeathRegistration): PutItemCommandInput => {
     const eventRecord = mapToEventRecord(deathRegistration)
     return {
-        Item: marshall(eventRecord),
+        Item: marshall(eventRecord, {convertEmptyValues: false, removeUndefinedValues: false}),
         TableName: tableName,
     }
 }
 
-const handler: Handler = async (event: GroDeathRegistrationEvent) => {
-    const deathRecord = generateRecord(event.deathRegistration)
+const handler: Handler = async (event: GroDeathRegistration) => {
+    const deathRecord = generateRecord(event)
     await pushRecord(deathRecord)
 }
 

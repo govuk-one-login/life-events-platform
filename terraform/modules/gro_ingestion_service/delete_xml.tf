@@ -26,7 +26,18 @@ data "aws_iam_policy_document" "delete_xml_lambda" {
       "s3:DeleteObject"
     ]
     resources = [
-      module.gro_bucket.arn
+      "${module.gro_bucket.arn}/*",
+    ]
+  }
+
+  statement {
+    sid = "S3KMSPolicy"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
+    resources = [
+      module.gro_bucket.kms_arn
     ]
   }
 }

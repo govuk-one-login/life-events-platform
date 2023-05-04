@@ -18,7 +18,6 @@ const getGroFile = async (event: S3ObjectCreatedNotificationEvent) => {
 export const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) => {
     const groXml = await getGroFile(event)
 
-
     if (!groXml) {
         const logParams = {
             fileKey: event.detail.object.key,
@@ -34,6 +33,6 @@ export const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) 
     return {
         bucket: event.detail.bucket.name,
         key: event.detail.object.key,
-        deathRegistrations: groJson.deathRegistrationGroup
+        deathRegistrations: groJson.deathRegistrationGroup,
     }
 }

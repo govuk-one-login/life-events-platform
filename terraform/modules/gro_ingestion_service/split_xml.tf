@@ -27,7 +27,19 @@ data "aws_iam_policy_document" "split_xml_lambda" {
       "s3:ListBucket",
     ]
     resources = [
-      module.gro_bucket.arn
+      module.gro_bucket.arn,
+      "${module.gro_bucket.arn}/*",
+    ]
+  }
+
+  statement {
+    sid = "S3KMSPolicy"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
+    resources = [
+      module.gro_bucket.kms_arn
     ]
   }
 }

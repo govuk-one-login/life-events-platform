@@ -19,7 +19,7 @@ resource "null_resource" "lambda_function_source_builder" {
   provisioner "local-exec" {
     working_dir = "${path.module}/lambdas"
     command     = <<EOT
-      npm ci --production
+      npm ci --omit=dev
       npm run build
     EOT
   }

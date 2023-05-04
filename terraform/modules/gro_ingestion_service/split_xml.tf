@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "split_xml_lambda" {
 
 resource "aws_iam_policy" "split_xml_lambda" {
   name   = "${var.environment}-gro-ingestion-lambda-function-split-xml"
-  policy = data.aws_iam_policy_document.publish_event_lambda.json
+  policy = data.aws_iam_policy_document.split_xml_lambda.json
 }
 
 resource "aws_iam_role_policy_attachment" "split_xml_lambda" {
@@ -49,7 +49,7 @@ resource "aws_iam_role_policy_attachment" "split_xml_lambda_xray_access" {
 
 resource "aws_iam_role_policy_attachment" "split_xml_lambda_logs_access" {
   policy_arn = aws_iam_policy.log_policy.arn
-  role       = aws_iam_role.publish_event_lambda.name
+  role       = aws_iam_role.split_xml_lambda.name
 }
 
 resource "aws_cloudwatch_log_group" "split_xml_log" {
@@ -65,7 +65,7 @@ resource "aws_lambda_function" "split_xml_lambda" {
 
   handler = "index.handler"
   runtime = local.lambda_runtime
-  role    = aws_iam_role.publish_event_lambda.arn
+  role    = aws_iam_role.split_xml_lambda.arn
   timeout = 10
 
   source_code_hash = data.archive_file.lambda_function_source.output_sha

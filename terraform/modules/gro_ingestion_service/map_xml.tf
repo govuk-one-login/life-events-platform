@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "map_xml_lambda" {
 
 resource "aws_iam_policy" "map_xml_lambda" {
   name   = "${var.environment}-gro-ingestion-lambda-function-map-xml"
-  policy = data.aws_iam_policy_document.publish_event_lambda.json
+  policy = data.aws_iam_policy_document.map_xml_lambda.json
 }
 
 resource "aws_iam_role_policy_attachment" "map_xml_lambda" {
@@ -48,7 +48,7 @@ resource "aws_iam_role_policy_attachment" "map_xml_lambda_xray_access" {
 
 resource "aws_iam_role_policy_attachment" "map_xml_lambda_logs_access" {
   policy_arn = aws_iam_policy.log_policy.arn
-  role       = aws_iam_role.publish_event_lambda.name
+  role       = aws_iam_role.map_xml_lambda.name
 }
 
 resource "aws_cloudwatch_log_group" "map_xml_log" {
@@ -64,7 +64,7 @@ resource "aws_lambda_function" "map_xml_lambda" {
 
   handler = "index.handler"
   runtime = local.lambda_runtime
-  role    = aws_iam_role.publish_event_lambda.arn
+  role    = aws_iam_role.map_xml_lambda.arn
   timeout = 10
 
   source_code_hash = data.archive_file.lambda_function_source.output_sha

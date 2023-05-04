@@ -1,8 +1,9 @@
 import { describe, expect } from "@jest/globals"
 
-import { handler } from "../../src/functions/enrichEvent.function"
+import lambdaFunction from "../../src/functions/enrichEvent"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
+import { mockCallback, mockContext } from "../const/aws-lambda"
 import { dbItem } from "../const/dbItem"
 import { eventRequest } from "../const/eventRequest"
 
@@ -12,7 +13,7 @@ describe("Unit test for app handler", function () {
     test("verifies successful response", async () => {
         dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Item: dbItem }))
 
-        const result: EnrichEventResponse = await handler(eventRequest)
+        const result: EnrichEventResponse = await lambdaFunction.handler(eventRequest, mockContext, mockCallback)
 
         expect(db.send).toHaveBeenCalledWith(
             expect.objectContaining({

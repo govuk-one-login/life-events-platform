@@ -1,6 +1,7 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { Handler, S3ObjectCreatedNotificationEvent } from "aws-lambda"
 import { XMLParser } from "fast-xml-parser"
+import { LambdaFunction } from "../models/LambdaFunction"
 
 const client = new S3Client({ apiVersion: "2012-08-10" })
 const parser = new XMLParser()
@@ -15,7 +16,7 @@ const getGroFile = async (event: S3ObjectCreatedNotificationEvent) => {
     return groFileResponse.Body?.transformToString()
 }
 
-export const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) => {
+const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) => {
     const groXml = await getGroFile(event)
 
     if (!groXml) {
@@ -36,3 +37,9 @@ export const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) 
         deathRegistrations: groJson.deathRegistrationGroup,
     }
 }
+
+const lambdaFunction: LambdaFunction = {
+    name: "splitXml",
+    handler: handler
+}
+export default lambdaFunction

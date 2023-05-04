@@ -1,10 +1,10 @@
 import json
 import logging
-import math
 import os
 from datetime import datetime
 from random import randint
 from urllib import request
+
 import psycopg2
 
 from common import get_auth_token
@@ -49,11 +49,9 @@ def lambda_handler(event, context):
 
 
 def run_scheduled_job(auth_token: str):
-    now = datetime.now()
-    minutes_into_day = (now - now.replace(hour=9, minute=0, second=0)).total_seconds() / 60
-    number_of_events = math.floor((100 / (3 * math.pi)) * math.exp(-0.5 * (((minutes_into_day / 60) - 4.5) / 1.5) ** 2))
+    number_of_events = 5
 
-    for i in range(number_of_events):
+    for _i in range(number_of_events):
         post_event(auth_token)
 
 

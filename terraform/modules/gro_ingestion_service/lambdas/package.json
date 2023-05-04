@@ -9,7 +9,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node18 --sourcemap --external:@aws-sdk/*",
+    "compile": "tsc",
     "compileTest": "tsc --noEmit",
     "eslint": "eslint . --ext=.ts",
     "eslintFix": "eslint . --ext=.ts --fix",
@@ -29,6 +30,7 @@
     "@types/json-schema": "7.0.11",
     "@types/node": "18.16.0",
     "@types/urijs": "1.19.19",
+    "esbuild": "0.17.18",
     "fast-xml-parser": "4.2.2",
     "object-hash": "3.0.0",
     "typescript": "5.0.4"

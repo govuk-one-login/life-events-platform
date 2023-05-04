@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node18 --sourcemap --external:@aws-sdk/*",
+    "build": "esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node18 --external:@aws-sdk/*",
     "compile": "tsc",
     "compileTest": "tsc --noEmit",
     "eslint": "eslint . --ext=.ts",

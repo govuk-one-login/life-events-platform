@@ -17,7 +17,7 @@ const pushRecord = async (record: PutItemCommandInput) => {
 const generateRecord = (deathRegistration: GroDeathRegistration): PutItemCommandInput => {
     const eventRecord = mapToEventRecord(deathRegistration)
     return {
-        Item: marshall(eventRecord, {convertEmptyValues: false, removeUndefinedValues: false}),
+        Item: marshall(eventRecord, { convertEmptyValues: false, removeUndefinedValues: false }),
         TableName: tableName,
     }
 }

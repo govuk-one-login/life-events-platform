@@ -1,7 +1,7 @@
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3"
-import { Handler, } from "aws-lambda"
-import { BucketObjectDetails } from "../models/BucketObjectDetails"
+import { Handler } from "aws-lambda"
 
+import { BucketObjectDetails } from "../models/BucketObjectDetails"
 import { LambdaFunction } from "../models/LambdaFunction"
 
 const client = new S3Client({ apiVersion: "2012-08-10" })

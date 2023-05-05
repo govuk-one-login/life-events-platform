@@ -54,8 +54,10 @@ data "aws_iam_policy_document" "ecs_task_execution_pull_through" {
     actions = [
       "ecr:BatchImportUpstreamImage"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/ecr-public/xray/aws-xray-daemon"]
+    effect = "Allow"
+    resources = [
+      "arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/ecr-public/xray/aws-xray-daemon"
+    ]
   }
 }
 
@@ -237,8 +239,10 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
     actions = [
       "kms:CreateAlias"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:alias/${var.environment}-acq-queue-*"]
+    effect = "Allow"
+    resources = [
+      "arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:alias/${var.environment}-acq-queue-*"
+    ]
 
   }
 }
@@ -296,4 +300,31 @@ resource "aws_iam_role_policy_attachment" "ecs_task_cognito_access" {
 resource "aws_iam_role_policy_attachment" "ecs_task_xray_access" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
+data "aws_iam_policy_document" "ecs_task_publish_admin_alert" {
+  statement {
+    actions   = ["SNS:Publish"]
+    effect    = "Allow"
+    resources = [module.sns_admin_alerts.topic_arn]
+  }
+
+  statement {
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    effect    = "Allow"
+    resources = [module.sns_admin_alerts.kms_arn]
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_publish_admin_alert" {
+  name   = "${var.environment}-ecs_task_publish_admin_alert"
+  policy = data.aws_iam_policy_document.ecs_task_publish_admin_alert.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_publish_admin_alert" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_publish_admin_alert.arn
 }

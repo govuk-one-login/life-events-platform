@@ -67,6 +67,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
           "value" : "${local.gdx_api_base_url}/swagger-ui/oauth2-redirect.html"
         },
         { "name" : "AWS_XRAY_CONTEXT_MISSING", "value" : "IGNORE_ERROR" },
+        { "name" : "ADMIN_ACTION_ALERT_SNS_TOPIC_ARN", "value" : module.sns_admin_alerts.topic_arn },
       ]
       secrets = [
         {

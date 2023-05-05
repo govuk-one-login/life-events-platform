@@ -19,6 +19,7 @@ class AcquirersService(
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val acquirerRepository: AcquirerRepository,
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
+  private val adminActionAlertsService: AdminActionAlertsService,
 ) {
   fun getAcquirers() = acquirerRepository.findAll()
 
@@ -73,6 +74,15 @@ class AcquirersService(
     acquirerId: UUID,
     acquirerSubRequest: AcquirerSubRequest,
   ): AcquirerSubscriptionDto {
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Add acquirer subscription",
+        object {
+          val acquirerId = acquirerId
+          val acquirerSubRequest = acquirerSubRequest
+        },
+      ),
+    )
     with(acquirerSubRequest) {
       val acquirerSubscription = acquirerSubscriptionRepository.save(
         AcquirerSubscription(
@@ -93,6 +103,16 @@ class AcquirersService(
     subscriptionId: UUID,
     acquirerSubRequest: AcquirerSubRequest,
   ): AcquirerSubscriptionDto {
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Update acquirer subscription",
+        object {
+          val acquirerId = acquirerId
+          val subscriptionId = subscriptionId
+          val acquirerSubRequest = acquirerSubRequest
+        },
+      ),
+    )
     with(acquirerSubRequest) {
       val acquirerSubscription = acquirerSubscriptionRepository.save(
         acquirerSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
@@ -114,6 +134,7 @@ class AcquirersService(
   fun addAcquirer(
     acquirerRequest: AcquirerRequest,
   ): Acquirer {
+    adminActionAlertsService.noticeAction(AdminAction("Add acquirer", acquirerRequest))
     with(acquirerRequest) {
       return acquirerRepository.save(
         Acquirer(

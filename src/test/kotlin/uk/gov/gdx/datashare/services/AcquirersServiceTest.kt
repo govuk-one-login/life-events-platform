@@ -1,8 +1,6 @@
 package uk.gov.gdx.datashare.services
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,11 +17,13 @@ class AcquirersServiceTest {
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val acquirerRepository = mockk<AcquirerRepository>()
   private val acquirerSubscriptionEnrichmentFieldRepository = mockk<AcquirerSubscriptionEnrichmentFieldRepository>()
+  private val adminActionAlertsService = mockk<AdminActionAlertsService>()
 
   private val underTest = AcquirersService(
     acquirerSubscriptionRepository,
     acquirerRepository,
     acquirerSubscriptionEnrichmentFieldRepository,
+    adminActionAlertsService,
   )
 
   @Test
@@ -139,6 +139,7 @@ class AcquirersServiceTest {
     every {
       acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
     }.returns(allEnrichmentFields)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
 
     underTest.addAcquirerSubscription(acquirer.id, acquirerSubRequest)
     verify(exactly = 1) {
@@ -179,6 +180,7 @@ class AcquirersServiceTest {
     every {
       acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
     }.returns(allEnrichmentFields)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
 
     underTest.updateAcquirerSubscription(acquirer.id, acquirerSubscription.id, acquirerSubRequest)
 
@@ -211,6 +213,7 @@ class AcquirersServiceTest {
   @Test
   fun `updateAcquirerSubscription does not update subscription if subscription does not exist`() {
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(null)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
 
     val exception = assertThrows<AcquirerSubscriptionNotFoundException> {
       underTest.updateAcquirerSubscription(acquirer.id, acquirerSubscription.id, acquirerSubRequest)
@@ -223,6 +226,7 @@ class AcquirersServiceTest {
 
   @Test
   fun `addAcquirer adds acquirer`() {
+    every { adminActionAlertsService.noticeAction(any()) } just runs
     val acquirerRequest = AcquirerRequest(
       name = "Acquirer",
     )
@@ -235,6 +239,77 @@ class AcquirersServiceTest {
       acquirerRepository.save(
         withArg {
           assertThat(it.name).isEqualTo(acquirerRequest.name)
+        },
+      )
+    }
+  }
+
+  @Test
+  fun `addAcquirer action is noticed`() {
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+    val acquirerRequest = AcquirerRequest(
+      name = "Acquirer",
+    )
+
+    every { acquirerRepository.save(any()) }.returns(acquirer)
+
+    underTest.addAcquirer(acquirerRequest)
+
+    verify(exactly = 1) {
+      adminActionAlertsService.noticeAction(
+        withArg {
+          assertThat(it.name).isEqualTo("Add acquirer")
+          assertThat(it.details).isEqualTo(acquirerRequest)
+        },
+      )
+    }
+  }
+
+  @Test
+  fun `addAcquirerSubscription action is noticed`() {
+    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
+    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
+    every {
+      acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
+    }.returns(allEnrichmentFields)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+
+    underTest.addAcquirerSubscription(acquirer.id, acquirerSubRequest)
+
+    verify(exactly = 1) {
+      adminActionAlertsService.noticeAction(
+        withArg {
+          assertThat(it.name).isEqualTo("Add acquirer subscription")
+          assertThat(it.details.getProperty("acquirerId")).isEqualTo(acquirer.id)
+          assertThat(it.details.getProperty("acquirerSubRequest")).isEqualTo(acquirerSubRequest)
+        },
+      )
+    }
+  }
+
+  @Test
+  fun `updateAcquirerSubscription action is noticed`() {
+    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
+    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
+
+    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
+      Unit,
+    )
+    every {
+      acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
+    }.returns(allEnrichmentFields)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+
+    underTest.updateAcquirerSubscription(acquirer.id, acquirerSubscription.id, acquirerSubRequest)
+
+    verify(exactly = 1) {
+      adminActionAlertsService.noticeAction(
+        withArg {
+          assertThat(it.name).isEqualTo("Update acquirer subscription")
+          assertThat(it.details.getProperty("acquirerId")).isEqualTo(acquirer.id)
+          assertThat(it.details.getProperty("subscriptionId")).isEqualTo(acquirerSubscription.id)
+          assertThat(it.details.getProperty("acquirerSubRequest")).isEqualTo(acquirerSubRequest)
         },
       )
     }

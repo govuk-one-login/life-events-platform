@@ -1,8 +1,6 @@
 package uk.gov.gdx.datashare.services
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -20,8 +18,9 @@ import java.util.*
 class SuppliersServiceTest {
   private val supplierSubscriptionRepository = mockk<SupplierSubscriptionRepository>()
   private val supplierRepository = mockk<SupplierRepository>()
+  private val adminActionAlertsService = mockk<AdminActionAlertsService>()
 
-  private val underTest = SuppliersService(supplierSubscriptionRepository, supplierRepository)
+  private val underTest = SuppliersService(supplierSubscriptionRepository, supplierRepository, adminActionAlertsService)
 
   @Test
   fun `getSuppliers gets all suppliers`() {
@@ -98,7 +97,7 @@ class SuppliersServiceTest {
   @Test
   fun `addSupplierSubscription adds new subscription if supplier exists`() {
     every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
-
+    every { adminActionAlertsService.noticeAction(any()) } just runs
     underTest.addSupplierSubscription(supplier.id, supplierSubRequest)
 
     verify(exactly = 1) {
@@ -116,6 +115,7 @@ class SuppliersServiceTest {
   fun `updateSupplierSubscription updates subscription`() {
     every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.id) }.returns(supplierSubscription)
     every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
 
     underTest.updateSupplierSubscription(supplier.id, supplierSubscription.id, supplierSubRequest)
 
@@ -133,6 +133,7 @@ class SuppliersServiceTest {
   @Test
   fun `updateSupplierSubscription does not update subscription if subscription does not exist`() {
     every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.id) }.returns(null)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
     val exception = assertThrows<SupplierSubscriptionNotFoundException> {
       underTest.updateSupplierSubscription(supplier.id, supplierSubscription.id, supplierSubRequest)
     }
@@ -149,6 +150,7 @@ class SuppliersServiceTest {
     )
 
     every { supplierRepository.save(any()) }.returns(supplier)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
 
     underTest.addSupplier(supplierRequest)
 
@@ -156,6 +158,64 @@ class SuppliersServiceTest {
       supplierRepository.save(
         withArg {
           assertThat(it.name).isEqualTo(supplierRequest.name)
+        },
+      )
+    }
+  }
+
+  @Test
+  fun `addSupplier action is noticed`() {
+    val supplierRequest = SupplierRequest(
+      name = "Supplier",
+    )
+
+    every { supplierRepository.save(any()) }.returns(supplier)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+
+    underTest.addSupplier(supplierRequest)
+
+    verify(exactly = 1) {
+      adminActionAlertsService.noticeAction(
+        withArg {
+          assertThat(it.name).isEqualTo("Add supplier")
+          assertThat(it.details).isEqualTo(supplierRequest)
+        },
+      )
+    }
+  }
+
+  @Test
+  fun `updateSupplierSubscription action is noticed`() {
+    every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.id) }.returns(supplierSubscription)
+    every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+
+    underTest.updateSupplierSubscription(supplier.id, supplierSubscription.id, supplierSubRequest)
+
+    verify(exactly = 1) {
+      adminActionAlertsService.noticeAction(
+        withArg {
+          assertThat(it.name).isEqualTo("Update supplier subscription")
+          assertThat(it.details.getProperty("supplierId")).isEqualTo(supplier.id)
+          assertThat(it.details.getProperty("subscriptionId")).isEqualTo(supplierSubscription.id)
+          assertThat(it.details.getProperty("supplierSubRequest")).isEqualTo(supplierSubRequest)
+        },
+      )
+    }
+  }
+
+  @Test
+  fun `addSupplierSubscription action is noticed`() {
+    every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+    underTest.addSupplierSubscription(supplier.id, supplierSubRequest)
+
+    verify(exactly = 1) {
+      adminActionAlertsService.noticeAction(
+        withArg {
+          assertThat(it.name).isEqualTo("Add supplier subscription")
+          assertThat(it.details.getProperty("supplierId")).isEqualTo(supplier.id)
+          assertThat(it.details.getProperty("supplierSubRequest")).isEqualTo(supplierSubRequest)
         },
       )
     }

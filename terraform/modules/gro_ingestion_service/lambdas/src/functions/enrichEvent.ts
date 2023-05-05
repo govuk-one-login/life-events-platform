@@ -39,8 +39,8 @@ const handler: Handler = async (event: EventRequest): Promise<EnrichEventRespons
 
     const logParams = {
         hash: eventRecord.hash,
-        RegistrationId: eventRecord?.RegistrationId,
-        EventTime: eventRecord?.EventTime,
+        registrationId: eventRecord?.registrationId,
+        eventTime: eventRecord?.eventTime,
         error: null,
     }
 

@@ -1,21 +1,21 @@
 export interface EventRecord {
     hash: string
 
-    RegistrationId: string
-    EventTime: string
-    DateOfDeath: string
-    VerificationLevel: string
-    PartialMonthOfDeath: string
-    PartialYearOfDeath: string
+    registrationId: string
+    eventTime: string
+    dateOfDeath: string
+    verificationLevel: string
+    partialMonthOfDeath: string
+    partialYearOfDeath: string
 
-    FirstForename: string
-    Surname: string
-    MaidenSurname: string
-    Sex: string
-    DateOfBirth: string
-    AddressLine1: string
-    AddressLine2: string
-    AddressLine3: string
-    AddressLine4: string
-    Postcode: string
+    forenames: string
+    surname: string
+    maidenSurname: string
+    sex: string
+    dateOfBirth: string
+    addressLine1: string
+    addressLine2: string
+    addressLine3: string
+    addressLine4: string
+    postcode: string
 }

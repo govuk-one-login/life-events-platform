@@ -21,6 +21,7 @@ import java.util.*
 class SuppliersService(
   private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
   private val supplierRepository: SupplierRepository,
+  private val adminActionAlertsService: AdminActionAlertsService,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -37,6 +38,15 @@ class SuppliersService(
     supplierId: UUID,
     supplierSubRequest: SupplierSubRequest,
   ): SupplierSubscription {
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Add supplier subscription",
+        object {
+          val supplierId = supplierId
+          val supplierSubRequest = supplierSubRequest
+        },
+      ),
+    )
     with(supplierSubRequest) {
       return supplierSubscriptionRepository.save(
         SupplierSubscription(
@@ -53,6 +63,16 @@ class SuppliersService(
     subscriptionId: UUID,
     supplierSubRequest: SupplierSubRequest,
   ): SupplierSubscription {
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Update supplier subscription",
+        object {
+          val supplierId = supplierId
+          val subscriptionId = subscriptionId
+          val supplierSubRequest = supplierSubRequest
+        },
+      ),
+    )
     with(supplierSubRequest) {
       return supplierSubscriptionRepository.save(
         supplierSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
@@ -67,6 +87,7 @@ class SuppliersService(
   fun addSupplier(
     supplierRequest: SupplierRequest,
   ): Supplier {
+    adminActionAlertsService.noticeAction(AdminAction("Add supplier", supplierRequest))
     with(supplierRequest) {
       return supplierRepository.save(
         Supplier(

@@ -12,12 +12,11 @@ class AdminService(
   private val cognitoService: CognitoService,
   private val acquirersService: AcquirersService,
   private val suppliersService: SuppliersService,
+  private val adminActionAlertsService: AdminActionAlertsService,
 ) {
-  fun createCognitoClient(cognitoClientRequest: CognitoClientRequest) =
-    cognitoService.createUserPoolClient(cognitoClientRequest)
-
   @Transactional
   fun createAcquirer(createAcquirerRequest: CreateAcquirerRequest): CognitoClientResponse? {
+    adminActionAlertsService.noticeAction(AdminAction("Create Acquirer", createAcquirerRequest))
     val acquirer = acquirersService.addAcquirer(AcquirerRequest(createAcquirerRequest.clientName))
     return cognitoService.createUserPoolClient(
       CognitoClientRequest(createAcquirerRequest.clientName, listOf(CognitoClientType.ACQUIRER)),
@@ -38,6 +37,7 @@ class AdminService(
 
   @Transactional
   fun createSupplier(createSupplierRequest: CreateSupplierRequest): CognitoClientResponse? {
+    adminActionAlertsService.noticeAction(AdminAction("Create Supplier", createSupplierRequest))
     val supplier = suppliersService.addSupplier(SupplierRequest(createSupplierRequest.clientName))
     return cognitoService.createUserPoolClient(
       CognitoClientRequest(createSupplierRequest.clientName, listOf(CognitoClientType.SUPPLIER)),

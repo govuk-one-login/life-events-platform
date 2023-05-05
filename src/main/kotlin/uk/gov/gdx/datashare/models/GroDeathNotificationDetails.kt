@@ -8,8 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.format.annotation.DateTimeFormat
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.GroSex
-import uk.gov.gdx.datashare.enums.Sex
-import uk.gov.gdx.datashare.extensions.writeNullableBooleanField
 import uk.gov.gdx.datashare.extensions.writeNullableStringField
 import java.time.LocalDate
 

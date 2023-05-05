@@ -13,7 +13,11 @@ const authUrl = process.env.AUTH_URL ?? ""
 const clientId = process.env.CLIENT_ID
 const clientSecret = process.env.CLIENT_SECRET
 
-const makeRequest = async (url: string, options: RequestOptions, requestData: string): Promise<{statusCode: number, responseBody: string}> =>
+const makeRequest = async (
+    url: string,
+    options: RequestOptions,
+    requestData: string,
+): Promise<{ statusCode: number; responseBody: string }> =>
     new Promise((resolve, reject) => {
         const req = request(url, options, res => {
             res.setEncoding("utf8")
@@ -68,7 +72,7 @@ const publishEvent = async (event: PublishEvent, accessToken: string) => {
             "Content-Type": "application/json; charset=utf-8",
             "Content-Length": eventData.length,
         },
-        path: "/events"
+        path: "/events",
     }
 
     return await makeRequest(gdxUrl, options, eventData)

@@ -107,7 +107,7 @@ module "len" {
   source                      = "../modules/len"
   environment                 = local.env
   region                      = data.aws_region.current.name
-  schedule                    = "cron(* 9-18 ? * MON-FRI *)"
+  schedule                    = "rate(1 minute)"
   cloudwatch_retention_period = 30
   gdx_url                     = module.data_share_service.gdx_url
   auth_url                    = module.data_share_service.token_auth_url

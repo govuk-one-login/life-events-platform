@@ -9,3 +9,7 @@ resource "aws_ssm_parameter" "dwp_principal" {
     ]
   }
 }
+
+data "aws_ssm_parameter" "dwp_principal" {
+  name = "DWPPrincipal"
+}

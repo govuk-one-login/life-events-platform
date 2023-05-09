@@ -3,12 +3,10 @@ import { describe, expect } from "@jest/globals"
 import lambdaFunction from "../../src/functions/deleteEvent"
 import { config } from "../../src/helpers/config"
 import { DeleteEventResponse } from "../../src/models/DeleteEventResponse"
-import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
+import { dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 import { mockCallback, mockContext } from "../const/aws-lambda"
 import { dbItem } from "../const/dbItem"
 import { eventRequest } from "../const/eventRequest"
-
-const db = new DynamoDBClient()
 
 describe("Unit test for delete event handler", function () {
     test("verifies successful response", async () => {
@@ -16,7 +14,7 @@ describe("Unit test for delete event handler", function () {
 
         const result: DeleteEventResponse = await lambdaFunction.handler(eventRequest, mockContext, mockCallback)
 
-        expect(db.send).toHaveBeenCalledWith(
+        expect(dynamoDbSendFn).toHaveBeenCalledWith(
             expect.objectContaining({
                 input: {
                     Key: {
@@ -42,7 +40,7 @@ describe("Unit test for delete event handler", function () {
 
         const result: DeleteEventResponse = await lambdaFunction.handler(eventRequest, mockContext, mockCallback)
 
-        expect(db.send).toHaveBeenCalledWith(
+        expect(dynamoDbSendFn).toHaveBeenCalledWith(
             expect.objectContaining({
                 input: {
                     Key: {

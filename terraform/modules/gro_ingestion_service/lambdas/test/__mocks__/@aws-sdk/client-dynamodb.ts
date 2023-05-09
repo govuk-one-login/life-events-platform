@@ -1,6 +1,6 @@
-export { GetItemCommand, GetItemInput, DeleteItemInput, DeleteItemCommand } from "@aws-sdk/client-dynamodb"
+export * from "@aws-sdk/client-dynamodb"
 
-export const dynamoDbSendFn = jest.fn().mockReturnValue(Promise.resolve(true))
+export const dynamoDbSendFn = jest.fn()
 
 export class DynamoDBClient {
     send = dynamoDbSendFn

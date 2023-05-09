@@ -15,11 +15,11 @@ resource "aws_iam_access_key" "dwp_dev_access_key" {
 data "aws_iam_policy_document" "dwp_user_access" {
   statement {
     actions = [
-      "sqs:DeleteMessage",
-      "sqs:ReceiveMessage",
-      "sqs:GetQueueUrl",
       "sqs:ChangeMessageVisibility",
+      "sqs:DeleteMessage",
       "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:ReceiveMessage",
     ]
     resources = [
       module.dwp_dev_queue.queue_arn,
@@ -29,8 +29,8 @@ data "aws_iam_policy_document" "dwp_user_access" {
 
   statement {
     actions = [
+      "kms:Decrypt",
       "kms:GenerateDataKey",
-      "kms:Decrypt"
     ]
     resources = [
       module.dwp_dev_queue.queue_kms_key_arn,
@@ -58,4 +58,48 @@ resource "aws_iam_user_group_membership" "dwp_dev" {
 resource "aws_iam_group_policy_attachment" "dwp_group_access" {
   policy_arn = aws_iam_policy.dwp_user_access.arn
   group      = aws_iam_group.dwp_dev.name
+}
+
+data "aws_iam_policy_document" "dwp_queue_cross_account_access" {
+  statement {
+    actions = [
+      "sqs:ChangeMessageVisibility",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:ReceiveMessage",
+    ]
+    resources = [
+      module.dwp_dev_queue.queue_arn,
+    ]
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = [data.aws_ssm_parameter.dwp_principal.value]
+    }
+  }
+
+  statement {
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = [
+      module.dwp_dev_queue.queue_kms_key_arn,
+    ]
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = [data.aws_ssm_parameter.dwp_principal.value]
+    }
+  }
+}
+
+locals {
+  dwp_queue_cross_account_access_policy_json = sensitive(data.aws_iam_policy_document.dwp_queue_cross_account_access.json)
+}
+
+resource "aws_sqs_queue_policy" "dwp_queue_cross_account_access" {
+  policy    = local.dwp_queue_cross_account_access_policy_json
+  queue_url = module.dwp_dev_queue.queue_id
 }

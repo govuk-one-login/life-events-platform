@@ -365,6 +365,8 @@ Suppressions:
         - arn:aws:sns:eu-west-2:776473272850:demo-gdx-alarms
         - arn:aws:sns:eu-west-2:776473272850:dev-gdx-gro-sns
         - arn:aws:sns:eu-west-2:776473272850:demo-gdx-gro-sns
+        - arn:aws:sns:eu-west-2:776473272850:dev-gdx-admin-alerts
+        - arn:aws:sns:eu-west-2:776473272850:demo-gdx-admin-alerts
       notes: >
         These are currently only notifying very rarely and to one email address, so we are not adding logging for these
 

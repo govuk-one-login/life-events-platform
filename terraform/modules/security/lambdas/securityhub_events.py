@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass
-from datetime import datetime
-from re import search
+from datetime import datetime, timedelta
+from re import search, sub
 
 import boto3
 from aws_lambda_powertools import Logger
@@ -19,6 +19,31 @@ table = boto3.resource('dynamodb').Table(name=DYNAMODB_TABLE_NAME)
 class SuppressionRule:
     resources: [str]
     notes: str
+
+
+def find_matching_check_and_rule(finding, suppression_rules):
+    date_check_rules = r".*\[date_check (.*)\].*"
+    now = datetime.now()
+
+    for resource in finding.get('Resources', []):
+        resource_id = resource['Id']
+        for rule in suppression_rules:
+            for resource_check in rule.resources:
+                match = search(resource_check, resource_id)
+                if match:
+                    return resource_check, rule
+
+                date_match = search(date_check_rules, resource_check)
+                if date_match:
+                    mins_difference = int(date_match.group())
+                    date_to_check = now - timedelta(minutes=mins_difference)
+                    new_resource_check = sub(date_check_rules, resource_check, r"(.*)")
+                    new_match = search(new_resource_check, resource_id)
+                    if new_match:
+                        resource_date = datetime.strptime(new_match.group(), "%Y-%m-%d-%H-%M")
+                        if resource_date > date_to_check:
+                            return resource_check, rule
+    return None, None
 
 
 def suppress_in_securityhub(finding_id, product_arn, notes):
@@ -51,19 +76,16 @@ def suppress_finding(finding):
         logger.warning(f'No rules found for title: {title}')
         return None
 
-    for resource in finding.get('Resources', []):
-        resource_id = resource['Id']
-        for rule in suppression_rules:
-            for resource_check in rule.resources:
-                match = search(resource_check, resource_id)
-                if match:
-                    logger.info(
-                        f'Perform Suppression on finding {finding_id}, '
-                        f'matched resource check: {resource_check}, '
-                        f'with title: {title}'
-                    )
-                    suppress_in_securityhub(finding_id, product_arn, rule.notes)
-                    return finding_id
+    resource_check, rule = find_matching_check_and_rule(finding, suppression_rules)
+    if resource_check:
+        logger.info(
+            f'Perform Suppression on finding {finding_id}, '
+            f'matched resource check: {resource_check}, '
+            f'with title: {title}'
+        )
+        suppress_in_securityhub(finding_id, product_arn, rule.notes)
+        return finding_id
+
     return None
 
 

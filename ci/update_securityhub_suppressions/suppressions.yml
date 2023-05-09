@@ -330,6 +330,11 @@ Suppressions:
         These Lambdas are either: proxies, that will only access our systems over the public internet; or a
         suppressor that only accesses AWS services for suppressions. They have no access to our actual system.
 
+  ## RDS
+  "rds-snapshot-encrypted-conformance-pack-flegfck3w":
+    - resources:
+        - arn:aws:rds:eu-west-2:776473272850:dbclustersnapshot:rds:demo-rds-db-[date_check 10080]
+
   ## Root account
   "root-account-hardware-mfa-enabled-conformance-pack-ikljqduwd":
     - resources:

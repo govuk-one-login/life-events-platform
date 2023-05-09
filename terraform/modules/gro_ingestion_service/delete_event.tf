@@ -37,6 +37,11 @@ resource "aws_iam_policy" "delete_event_lambda" {
   policy = data.aws_iam_policy_document.delete_event_lambda.json
 }
 
+resource "aws_iam_role_policy_attachment" "delete_event_lambda" {
+  policy_arn = aws_iam_policy.delete_event_lambda.arn
+  role       = aws_iam_role.delete_event_lambda.name
+}
+
 resource "aws_iam_role_policy_attachment" "delete_event_lambda_xray_access" {
   policy_arn = data.aws_iam_policy.xray_access.arn
   role       = aws_iam_role.delete_event_lambda.name

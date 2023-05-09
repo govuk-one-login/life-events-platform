@@ -14,10 +14,6 @@ import java.time.LocalDate
 @Service
 @XRayEnabled
 class GroDeathNotificationService : EnrichmentService {
-  companion object {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
-  }
-
   override fun accepts(eventType: EventType): Boolean {
     return eventType == EventType.GRO_DEATH_NOTIFICATION
   }

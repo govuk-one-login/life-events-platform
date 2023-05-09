@@ -16,73 +16,68 @@ import java.time.LocalDate
 data class GroDeathNotificationDetails(
   val enrichmentFields: List<EnrichmentField>,
 
-  @Schema(description = "Registration ID of death record", required = true, example = "123456789")
+  @Schema(description = "Registration ID of death record", example = "123456789")
   val registrationId: String? = null,
 
-  @Schema(description = "Date the death was registered", required = true, example = "2022-01-05", type = "date")
+  @Schema(description = "Date the death was registered", example = "2022-01-05", type = "date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   val eventTime: LocalDate? = null,
 
-  @Schema(description = "Date the person died", required = true, example = "2021-12-31", type = "date")
+  @Schema(description = "Date the person died", example = "2021-12-31", type = "date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   val dateOfDeath: LocalDate? = null,
 
-  @Schema(description = "Verification level of this data", required = false, example = "1")
+  @Schema(description = "Verification level of this data", example = "1")
   val verificationLevel: String? = null,
 
-  @Schema(description = "Month the person died", required = false, example = "1")
+  @Schema(description = "Month the person died", example = "1")
   val partialMonthOfDeath: String? = null,
 
-  @Schema(description = "Year the person died", required = false, example = "2021")
+  @Schema(description = "Year the person died", example = "2021")
   val partialYearOfDeath: String? = null,
 
-  @Schema(description = "Forenames of the deceased", required = true, example = "Bob Burt")
+  @Schema(description = "Forenames of the deceased", example = "Bob Burt")
   val forenames: String? = null,
 
-  @Schema(description = "Surname of the deceased", required = true, example = "Smith")
+  @Schema(description = "Surname of the deceased", example = "Smith")
   val surname: String? = null,
 
-  @Schema(description = "Maiden name of the deceased", required = false, example = "Jane")
+  @Schema(description = "Maiden name of the deceased", example = "Jane")
   val maidenSurname: String? = null,
 
-  @Schema(description = "Sex of the deceased", required = true, example = "F")
+  @Schema(description = "Sex of the deceased", example = "F")
   val sex: GroSex? = null,
 
-  @Schema(description = "Date the deceased was born", required = false, example = "2001-12-31", type = "date")
+  @Schema(description = "Date the deceased was born", example = "2001-12-31", type = "date")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   val dateOfBirth: LocalDate? = null,
 
   @Schema(
     description = "The deceased's address line 1",
-    required = false,
     example = "888 Death House",
   )
   val addressLine1: String? = null,
 
   @Schema(
     description = "The deceased's address line 2",
-    required = false,
     example = "8 Death lane",
   )
   val addressLine2: String? = null,
 
   @Schema(
     description = "The deceased's address line 3",
-    required = false,
     example = "Deadington",
   )
   val addressLine3: String? = null,
 
   @Schema(
     description = "The deceased's address line 4",
-    required = false,
     example = "Deadshire",
   )
   val addressLine4: String? = null,
 
   @Schema(
     description = "The deceased's postcode",
-    required = false,
     example = "XX1 1XX",
   )
   val postcode: String? = null,

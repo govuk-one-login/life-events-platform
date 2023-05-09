@@ -44,6 +44,7 @@ data "aws_iam_policy_document" "grafana_prometheus_access" {
       "aps:GetSeries",
       "aps:QueryMetrics",
       "aps:ListRules",
+      "aps:ListAlerts",
       "aps:ListAlertManagerSilences",
       "aps:ListAlertManagerAlerts",
       "aps:GetAlertManagerStatus",

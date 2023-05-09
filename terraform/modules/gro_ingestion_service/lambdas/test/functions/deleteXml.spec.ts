@@ -9,18 +9,20 @@ describe("Unit test for delete xml handler", function () {
     test("verifies successful response", async () => {
         const bucketObjectDetails: BucketObjectDetails = {
             bucket: "test_bucket_name",
-            key: "test_key_id"
+            key: "test_key_id",
         }
 
         s3SendFn.mockReturnValueOnce(Promise.resolve())
 
         await lambdaFunction.handler(bucketObjectDetails, mockContext, mockCallback)
 
-        expect(s3SendFn).toHaveBeenCalledWith(expect.objectContaining({
-            input: {
-                Bucket: bucketObjectDetails.bucket,
-                Key: bucketObjectDetails.key,
-            }
-        }))
+        expect(s3SendFn).toHaveBeenCalledWith(
+            expect.objectContaining({
+                input: {
+                    Bucket: bucketObjectDetails.bucket,
+                    Key: bucketObjectDetails.key,
+                },
+            }),
+        )
     })
 })

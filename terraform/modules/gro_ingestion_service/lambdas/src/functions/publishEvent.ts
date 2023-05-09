@@ -1,52 +1,20 @@
 import { AttributeValue } from "@aws-sdk/client-dynamodb"
 import { unmarshall } from "@aws-sdk/util-dynamodb"
 import { DynamoDBStreamEvent, Handler } from "aws-lambda"
-import { request, RequestOptions } from "https"
+import { RequestOptions } from "https"
 import * as querystring from "querystring"
 
+import { config } from "../helpers/config"
+import { makeRequest } from "../helpers/https"
 import { EventRecord } from "../models/EventRecord"
 import { LambdaFunction } from "../models/LambdaFunction"
 import { PublishEvent } from "../models/PublishEvent"
 
-const gdxUrl = process.env.GDX_URL ?? ""
-const authUrl = process.env.AUTH_URL ?? ""
-const clientId = process.env.CLIENT_ID
-const clientSecret = process.env.CLIENT_SECRET
-
-const makeRequest = async (
-    url: string,
-    options: RequestOptions,
-    requestData: string,
-): Promise<{ statusCode: number; responseBody: string }> =>
-    new Promise((resolve, reject) => {
-        const req = request(url, options, res => {
-            res.setEncoding("utf8")
-            let responseBody = ""
-
-            res.on("data", chunk => {
-                responseBody += chunk
-            })
-
-            res.on("end", () => {
-                if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
-                    return reject({ statusCode: res.statusCode, responseBody: responseBody })
-                }
-                return resolve({ statusCode: res.statusCode, responseBody: responseBody })
-            })
-        })
-        req.on("error", err => {
-            reject(err)
-        })
-
-        req.write(requestData)
-        req.end()
-    })
-
 const getAccessToken = async () => {
     const authRequest = querystring.stringify({
         grant_type: "client_credentials",
-        client_id: clientId,
-        client_secret: clientSecret,
+        client_id: config.clientId,
+        client_secret: config.clientSecret,
     })
 
     const authOptions: RequestOptions = {
@@ -57,7 +25,7 @@ const getAccessToken = async () => {
         },
     }
 
-    const result = await makeRequest(authUrl, authOptions, authRequest)
+    const result = await makeRequest(config.authUrl, authOptions, authRequest)
     const response = JSON.parse(result.responseBody)
     return response["access_token"]
 }
@@ -75,7 +43,7 @@ const publishEvent = async (event: PublishEvent, accessToken: string) => {
         path: "/events",
     }
 
-    return await makeRequest(gdxUrl, options, eventData)
+    return await makeRequest(config.gdxUrl, options, eventData)
         .then(response => ({ success: true, result: response, event }))
         .catch(error => ({ success: false, result: error, event }))
 }

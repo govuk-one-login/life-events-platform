@@ -1,6 +1,7 @@
 import { describe, expect } from "@jest/globals"
 
 import lambdaFunction from "../../src/functions/enrichEvent"
+import { config } from "../../src/helpers/config"
 import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 import { mockCallback, mockContext } from "../const/aws-lambda"
@@ -23,7 +24,7 @@ describe("Unit test for app handler", function () {
                             S: eventRequest.id,
                         },
                     },
-                    TableName: "",
+                    TableName: config.tableName,
                 },
             }),
         )

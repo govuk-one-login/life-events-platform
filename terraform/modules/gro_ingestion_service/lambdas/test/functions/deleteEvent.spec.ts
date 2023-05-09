@@ -1,6 +1,7 @@
 import { describe, expect } from "@jest/globals"
 
 import lambdaFunction from "../../src/functions/deleteEvent"
+import { config } from "../../src/helpers/config"
 import { DeleteEventResponse } from "../../src/models/DeleteEventResponse"
 import { DynamoDBClient, dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 import { mockCallback, mockContext } from "../const/aws-lambda"
@@ -23,7 +24,7 @@ describe("Unit test for delete event handler", function () {
                             S: eventRequest.id,
                         },
                     },
-                    TableName: "",
+                    TableName: config.tableName,
                     ReturnValues: "ALL_OLD",
                 },
             }),
@@ -49,7 +50,7 @@ describe("Unit test for delete event handler", function () {
                             S: eventRequest.id,
                         },
                     },
-                    TableName: "",
+                    TableName: config.tableName,
                     ReturnValues: "ALL_OLD",
                 },
             }),

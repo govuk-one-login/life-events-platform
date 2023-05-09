@@ -36,6 +36,11 @@ resource "aws_iam_policy" "enrich_event_lambda" {
   policy = data.aws_iam_policy_document.enrich_event_lambda.json
 }
 
+resource "aws_iam_role_policy_attachment" "enrich_event_lambda" {
+  policy_arn = aws_iam_policy.enrich_event_lambda.arn
+  role       = aws_iam_role.enrich_event_lambda.name
+}
+
 resource "aws_iam_role_policy_attachment" "enrich_event_lambda_xray_access" {
   policy_arn = data.aws_iam_policy.xray_access.arn
   role       = aws_iam_role.enrich_event_lambda.name

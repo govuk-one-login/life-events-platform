@@ -2,12 +2,11 @@ import { DynamoDBClient, GetItemCommand, GetItemInput } from "@aws-sdk/client-dy
 import { unmarshall } from "@aws-sdk/util-dynamodb"
 import { Handler } from "aws-lambda"
 
+import { config } from "../helpers/config"
 import { EnrichEventResponse } from "../models/EnrichEventResponse"
 import { EventRecord } from "../models/EventRecord"
 import { EventRequest } from "../models/EventRequest"
 import { LambdaFunction } from "../models/LambdaFunction"
-
-const tableName = process.env.TABLE_NAME ?? ""
 
 const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })
 
@@ -18,7 +17,7 @@ const handler: Handler = async (event: EventRequest): Promise<EnrichEventRespons
                 S: event.id,
             },
         },
-        TableName: tableName,
+        TableName: config.tableName,
     }
 
     const command = new GetItemCommand(params)

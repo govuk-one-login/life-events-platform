@@ -22,6 +22,10 @@ output "queue_kms_key_arn" {
   value = aws_kms_key.sqs_key.arn
 }
 
+output "queue_kms_key_id" {
+  value = aws_kms_key.sqs_key.id
+}
+
 output "dead_letter_queue_kms_key_arn" {
   value = aws_kms_key.dead_letter_queue_kms_key.arn
 }

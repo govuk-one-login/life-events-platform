@@ -3,6 +3,7 @@ import { unmarshall } from "@aws-sdk/util-dynamodb"
 import { Handler } from "aws-lambda"
 
 import { DeleteEventResponse } from "../models/DeleteEventResponse"
+import { EventRecord } from "../models/EventRecord"
 import { EventRequest } from "../models/EventRequest"
 import { LambdaFunction } from "../models/LambdaFunction"
 
@@ -30,11 +31,11 @@ const handler: Handler = async (event: EventRequest): Promise<DeleteEventRespons
                 hash: event.id,
             })
         }
-        const eventRecord = unmarshall(result.Attributes)
+        const eventRecord = unmarshall(result.Attributes) as EventRecord
         const logParams = {
             hash: event.id,
-            RegistrationId: eventRecord?.RegistrationId,
-            EventTime: eventRecord?.EventTime,
+            registrationId: eventRecord?.registrationId,
+            eventTime: eventRecord?.eventTime,
         }
         console.log("Successfully deleted event", logParams)
         return {

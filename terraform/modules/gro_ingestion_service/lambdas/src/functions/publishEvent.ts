@@ -86,8 +86,8 @@ const handler: Handler = async (event: DynamoDBStreamEvent) => {
         .map(r => unmarshall(r as Record<string, AttributeValue>) as EventRecord)
     const publishEvents = eventRecords.map(
         (r): PublishEvent => ({
-            eventType: "DEATH_NOTIFICATION",
-            eventTime: r.EventTime,
+            eventType: "GRO_DEATH_NOTIFICATION",
+            eventTime: r.eventTime,
             id: r.hash,
         }),
     )
@@ -102,8 +102,8 @@ const handler: Handler = async (event: DynamoDBStreamEvent) => {
         const eventRecord = eventRecords.find(r => r.hash === event.id)
         const logParams = {
             hash: eventRecord?.hash,
-            RegistrationId: eventRecord?.RegistrationId,
-            EventTime: eventRecord?.EventTime,
+            registrationId: eventRecord?.registrationId,
+            eventTime: eventRecord?.eventTime,
             error: null,
         }
 

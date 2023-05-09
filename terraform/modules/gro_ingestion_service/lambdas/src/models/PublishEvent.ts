@@ -1,5 +1,5 @@
 export interface PublishEvent {
-    eventType: "DEATH_NOTIFICATION"
+    eventType: "GRO_DEATH_NOTIFICATION"
     eventTime: string
     id: string
 }

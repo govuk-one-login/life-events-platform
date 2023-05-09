@@ -8,6 +8,8 @@ import { mockCallback, mockContext } from "../const/aws-lambda"
 import { dbItem } from "../const/dbItem"
 import { eventRequest } from "../const/eventRequest"
 
+jest.mock("../../src/helpers/config")
+
 describe("Unit test for delete event handler", function () {
     beforeEach(() => {
         dynamoDbSendFn.mockReset()

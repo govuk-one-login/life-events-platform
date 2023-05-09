@@ -18,7 +18,7 @@
     "lintFix": "npm run eslintFix && npm run prettierFix",
     "prettier": "prettier --check .",
     "prettierFix": "prettier --write .",
-    "test": "jest --coverage"
+    "test": "jest --coverage --silent"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.321.1",

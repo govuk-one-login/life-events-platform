@@ -9,6 +9,10 @@ import { dbItem } from "../const/dbItem"
 import { eventRequest } from "../const/eventRequest"
 
 describe("Unit test for delete event handler", function () {
+    beforeEach(() => {
+        dynamoDbSendFn.mockReset()
+    })
+
     test("verifies successful response", async () => {
         dynamoDbSendFn.mockReturnValueOnce(Promise.resolve({ Attributes: dbItem }))
 

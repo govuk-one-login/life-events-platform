@@ -21,5 +21,7 @@ resource "aws_ssm_parameter" "security_contact_number" {
 }
 
 data "aws_ssm_parameter" "security_contact_number" {
-  name = "DWPPrincipal"
+  name = "security-contact-number"
+
+  depends_on = [aws_ssm_parameter.security_contact_number]
 }

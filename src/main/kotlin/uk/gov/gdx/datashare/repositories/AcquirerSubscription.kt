@@ -1,6 +1,7 @@
 package uk.gov.gdx.datashare.repositories
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
@@ -21,6 +22,7 @@ data class AcquirerSubscription(
   val enrichmentFieldsIncludedInPoll: Boolean = false,
   val queueName: String? = null,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
+  val whenDeleted: LocalDateTime? = null,
 
   @Transient
   @Value("false")

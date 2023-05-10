@@ -75,22 +75,12 @@ data "aws_iam_policy_document" "dwp_queue_cross_account_access" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = [data.aws_ssm_parameter.dwp_principal.value]
+      identifiers = ["*"]
     }
-  }
-
-  statement {
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey",
-    ]
-    resources = [
-      module.dwp_dev_queue.queue_kms_key_arn,
-    ]
-    effect = "Allow"
-    principals {
-      type        = "AWS"
-      identifiers = [data.aws_ssm_parameter.dwp_principal.value]
+    condition {
+      test     = "StringEquals"
+      values   = [data.aws_ssm_parameter.dwp_principal.value]
+      variable = "aws:PrincipalArn"
     }
   }
 }
@@ -102,4 +92,45 @@ locals {
 resource "aws_sqs_queue_policy" "dwp_queue_cross_account_access" {
   policy    = local.dwp_queue_cross_account_access_policy_json
   queue_url = module.dwp_dev_queue.queue_id
+}
+
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "dwp_kms_cross_account_access" {
+  statement {
+    actions   = ["kms:*"]
+    resources = ["*"]
+    effect    = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+  }
+
+  statement {
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "StringEquals"
+      values   = [aws_ssm_parameter.dwp_principal.value]
+      variable = "aws:PrincipalArn"
+    }
+  }
+}
+
+locals {
+  dwp_kms_cross_account_access_policy_json = sensitive(data.aws_iam_policy_document.dwp_kms_cross_account_access.json)
+}
+
+resource "aws_kms_key_policy" "dwp_kms_cross_account_access" {
+  key_id = module.dwp_dev_queue.queue_kms_key_id
+  policy = local.dwp_kms_cross_account_access_policy_json
 }

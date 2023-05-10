@@ -4,7 +4,7 @@ resource "aws_account_alternate_contact" "security" {
   name          = "GDX Dev Team"
   title         = "Dev Team"
   email_address = "gdx-dev-team@digital.cabinet-office.gov.uk"
-  phone_number  = sensitive(data.aws_ssm_parameter.security_contact_number.value)
+  phone_number  = data.aws_ssm_parameter.security_contact_number.value
 }
 
 resource "aws_ssm_parameter" "security_contact_number" {

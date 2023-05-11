@@ -129,11 +129,15 @@ class SuppliersService(
     id: UUID,
   ): Supplier {
     val now = dateTimeHandler.now()
-    adminActionAlertsService.noticeAction(AdminAction("Delete supplier",
-      object {
-        val supplierId = id
-        val whenDeleted = now
-      },))
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Delete supplier",
+        object {
+          val supplierId = id
+          val whenDeleted = now
+        },
+      ),
+    )
     val supplier = supplierRepository.save(
       supplierRepository.findByIdOrNull(id)?.copy(
         whenDeleted = now,

@@ -21,7 +21,7 @@ class DeathNotificationService(
     return eventType == EventType.DEATH_NOTIFICATION
   }
 
-  override fun process(eventType: EventType, dataId: String, enrichmentFields: List<EnrichmentField>): DeathNotificationDetails? {
+  override fun process(dataId: String, enrichmentFields: List<EnrichmentField>): DeathNotificationDetails? {
     val citizenDeathId = dataId.toInt()
     return levApiService
       .findDeathById(citizenDeathId)

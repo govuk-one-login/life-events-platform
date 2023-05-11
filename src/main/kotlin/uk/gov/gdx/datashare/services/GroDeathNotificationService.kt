@@ -17,7 +17,6 @@ class GroDeathNotificationService : EnrichmentService {
   }
 
   override fun process(
-    eventType: EventType,
     dataId: String,
     enrichmentFields: List<EnrichmentField>,
   ): GroDeathNotificationDetails {

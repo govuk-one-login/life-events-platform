@@ -7,6 +7,14 @@
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
+    },
+    {
+      "name": "DS_CLOUDWATCH_ALARM",
+      "label": "CloudWatch Alarm",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "computest-cloudwatchalarm-datasource",
+      "pluginName": "CloudWatch Alarm"
     }
   ],
   "__elements": {
@@ -17,7 +25,7 @@
       "model": {
         "datasource": {
           "type": "prometheus",
-          "uid": "E4sYzjJVk"
+          "uid": "p00hsdPVk"
         },
         "description": "",
         "fieldConfig": {
@@ -88,7 +96,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "E4sYzjJVk"
+              "uid": "p00hsdPVk"
             },
             "editorMode": "builder",
             "expr": "sum by(uri, method) (increase(http_server_requests_seconds_count{uri=~\"/events.*\"}[5m]))",
@@ -106,6 +114,18 @@
   "__requires": [
     {
       "type": "panel",
+      "id": "alertlist",
+      "name": "Alert list",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "computest-cloudwatchalarm-datasource",
+      "name": "CloudWatch Alarm",
+      "version": "1.0.1"
+    },
+    {
+      "type": "panel",
       "id": "dashlist",
       "name": "Dashboard list",
       "version": ""
@@ -114,13 +134,19 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.3.6"
+      "version": "9.5.1"
     },
     {
       "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
       "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
     }
   ],
   "annotations": {
@@ -188,7 +214,7 @@
         "showStarred": true,
         "tags": []
       },
-      "pluginVersion": "9.3.6",
+      "pluginVersion": "9.5.1",
       "tags": [],
       "targets": [
         {
@@ -201,9 +227,135 @@
       ],
       "title": "Dashboards",
       "type": "dashlist"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS_- DEV}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 123128,
+      "options": {
+        "alertInstanceLabelFilter": "",
+        "alertName": "",
+        "dashboardAlerts": false,
+        "folder": "",
+        "groupBy": [],
+        "groupMode": "default",
+        "maxItems": 20,
+        "sortOrder": 1,
+        "stateFilter": {
+          "error": true,
+          "firing": true,
+          "noData": false,
+          "normal": false,
+          "pending": false
+        },
+        "viewMode": "list"
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS_- DEV}"
+          },
+          "editorMode": "builder",
+          "expr": "ALERTS",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Active alerts",
+      "type": "alertlist"
+    },
+    {
+      "datasource": {
+        "type": "computest-cloudwatchalarm-datasource",
+        "uid": "${DS_CLOUDWATCH_ALARM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "id": 123126,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "View in cloudwatch",
+          "url": "https://eu-west-2.console.aws.amazon.com/cloudwatch/home?region=eu-west-2#alarmsV2:?~(alarmStateFilter~'ALARM)"
+        }
+      ],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.1",
+      "targets": [
+        {
+          "alarmNamePrefix": "",
+          "datasource": {
+            "type": "computest-cloudwatchalarm-datasource",
+            "uid": "${DS_CLOUDWATCH_ALARM}"
+          },
+          "includeAlarm": true,
+          "includeInsufficientData": true,
+          "includeOk": false,
+          "refId": "A",
+          "region": "eu-west-2"
+        }
+      ],
+      "title": "Active Cloudwatch alarms",
+      "type": "table"
     }
   ],
-  "schemaVersion": 37,
+  "refresh": "",
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {

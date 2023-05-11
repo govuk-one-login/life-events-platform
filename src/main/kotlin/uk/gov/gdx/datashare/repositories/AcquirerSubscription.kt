@@ -21,6 +21,7 @@ data class AcquirerSubscription(
   val enrichmentFieldsIncludedInPoll: Boolean = false,
   val queueName: String? = null,
   val whenCreated: LocalDateTime = LocalDateTime.now(),
+  val whenDeleted: LocalDateTime? = null,
 
   @Transient
   @Value("false")

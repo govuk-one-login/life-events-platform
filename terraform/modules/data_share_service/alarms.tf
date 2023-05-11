@@ -75,3 +75,25 @@ resource "aws_cloudwatch_metric_alarm" "queue_process_error_number" {
     QueueName = "${var.environment}-gdx-data-share-${each.key}-dlq"
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_rate_alarm" {
+  provider            = aws.us-east-1
+  alarm_name          = "${local.alarm_prefix}-cloudfront-5xx-rate"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  threshold           = "10"
+  alarm_description   = "Application Cloudfront distribution 5xx rate exceeds 10%"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [module.sns.topic_arn]
+  ok_actions          = [module.sns.topic_arn]
+
+  metric_name = "5xxErrorRate"
+  namespace   = "AWS/CloudFront"
+  period      = "300"
+  statistic   = "Average"
+  unit        = "Percent"
+
+  dimensions = {
+    DistributionId = aws_cloudfront_distribution.gdx_data_share_poc.id
+  }
+}

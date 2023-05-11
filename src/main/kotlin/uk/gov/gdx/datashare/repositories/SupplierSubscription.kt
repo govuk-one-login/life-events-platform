@@ -27,8 +27,10 @@ data class SupplierSubscription(
   val clientId: String,
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,
-  @Schema(description = "Indicates when the Supplier subcription was created", required = true, example = "2023-01-04T12:30:00")
+  @Schema(description = "Indicates when the Supplier subscription was created", required = true, example = "2023-01-04T12:30:00")
   val whenCreated: LocalDateTime = LocalDateTime.now(),
+  @Schema(description = "Indicates when the Supplier subscription was deleted", required = false, example = "2023-01-04T12:30:00")
+  val whenDeleted: LocalDateTime? = null,
 
   @Transient
   @Value("false")

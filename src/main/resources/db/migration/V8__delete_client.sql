@@ -1,0 +1,11 @@
+ALTER TABLE acquirer
+    ADD COLUMN when_deleted TIMESTAMP WITH TIME ZONE NULL;
+
+ALTER TABLE acquirer_subscription
+    ADD COLUMN when_deleted TIMESTAMP WITH TIME ZONE NULL;
+
+ALTER TABLE supplier
+    ADD COLUMN when_deleted TIMESTAMP WITH TIME ZONE NULL;
+
+ALTER TABLE supplier_subscription
+    ADD COLUMN when_deleted TIMESTAMP WITH TIME ZONE NULL;

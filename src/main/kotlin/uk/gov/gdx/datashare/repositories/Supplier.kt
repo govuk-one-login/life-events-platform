@@ -24,6 +24,8 @@ data class Supplier(
   val name: String,
   @Schema(description = "Indicates when the Supplier was created", required = true, example = "2023-01-04T12:30:00")
   val whenCreated: LocalDateTime = LocalDateTime.now(),
+  @Schema(description = "Indicates when the Supplier was deleted", required = false, example = "2023-01-04T12:30:00")
+  val whenDeleted: LocalDateTime? = null,
 
   @Transient
   @Value("false")

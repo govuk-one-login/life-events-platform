@@ -73,6 +73,8 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
 
+  implementation("com.amazonaws:aws-java-sdk-lambda:1.12.465")
+
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.4")
 
   implementation("org.javers:javers-spring:7.0.0")
@@ -84,7 +86,6 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.18.1"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.467") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

@@ -1,0 +1,2 @@
+ALTER TABLE supplier_event
+    ADD COLUMN event_consumed BOOLEAN NOT NULL DEFAULT FALSE;

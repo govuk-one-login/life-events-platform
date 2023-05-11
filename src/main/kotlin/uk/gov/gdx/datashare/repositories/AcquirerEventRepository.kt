@@ -62,4 +62,12 @@ interface AcquirerEventRepository : CrudRepository<AcquirerEvent, UUID> {
   fun softDeleteById(id: UUID, deletionTime: LocalDateTime)
 
   fun countByDeletedAtIsNull(): Int
+
+  @Query(
+    "SELECT ae.supplier_event_id  " +
+      "FROM acquirer_event ae JOIN supplier_event se on ae.supplier_event_id = se.id and se.event_consumed = false " +
+      "GROUP BY ae.supplier_event_id " +
+      "HAVING SUM( CASE when ae.deleted_at is null then 1 else 0 END ) = COUNT(*)",
+  )
+  fun findAllByDeletedEventsForAllAcquirers(): List<UUID>
 }

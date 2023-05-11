@@ -14,6 +14,7 @@ module "cloudfront_logs_bucket" {
   expiration_days = 180
 
   add_log_bucket      = false
+  allow_delivery_logs = true
   object_writer_owner = true
 
   sns_arn = module.sns.topic_arn

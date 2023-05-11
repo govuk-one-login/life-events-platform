@@ -4,6 +4,7 @@ import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.SupplierSubscriptionNotFoundException
 import uk.gov.gdx.datashare.enums.EventType

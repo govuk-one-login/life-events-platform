@@ -17,9 +17,6 @@ interface SupplierSubscriptionRepository : CrudRepository<SupplierSubscription, 
   override fun findAll() = findAllByWhenDeletedIsNull()
   fun findAllByWhenDeletedIsNull(): List<SupplierSubscription>
 
-  fun findByIdOrNull(id: UUID) = findByIdAndWhenDeletedIsNullOrNull(id)
-  fun findByIdAndWhenDeletedIsNullOrNull(id: UUID): SupplierSubscription?
-
   fun findAllByClientId(clientId: String) = findAllByClientIdAndWhenDeletedIsNull(clientId)
   fun findAllByClientIdAndWhenDeletedIsNull(clientId: String): List<SupplierSubscription>
 

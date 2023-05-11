@@ -114,6 +114,36 @@ class SuppliersController(
   )
   fun getSupplierSubscriptions() = suppliersService.getSupplierSubscriptions()
 
+  @DeleteMapping("/subscriptions")
+  @Operation(
+    summary = "Delete Supplier Subscriptions",
+    description = "Need scope of events/admin",
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Supplier Subscription Deleted",
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+    ],
+  )
+  fun deleteSupplierSubscription(
+    @Schema(
+      description = "Supplier Subscription ID",
+      required = true,
+    )
+    @RequestBody
+    supplierSubscriptionId: UUID,
+  ) = suppliersService.deleteSupplierSubscription(supplierSubscriptionId)
+
   @GetMapping("/{supplierId}/subscriptions")
   @Operation(
     summary = "Get Supplier Subscriptions for Supplier",
@@ -142,7 +172,12 @@ class SuppliersController(
     ],
   )
   fun getSubscriptionsForSupplier(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
+    @Schema(
+      description = "Supplier ID",
+      required = true,
+      example = "00000000-0000-0001-0000-000000000000",
+      pattern = UUID_REGEX,
+    )
     @PathVariable
     supplierId: UUID,
   ) = suppliersService.getSubscriptionsForSupplier(supplierId)
@@ -169,7 +204,12 @@ class SuppliersController(
     ],
   )
   fun addSupplierSubscription(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
+    @Schema(
+      description = "Supplier ID",
+      required = true,
+      example = "00000000-0000-0001-0000-000000000000",
+      pattern = UUID_REGEX,
+    )
     @PathVariable
     supplierId: UUID,
     @Schema(
@@ -204,7 +244,12 @@ class SuppliersController(
 
   )
   fun updateSupplierSubscription(
-    @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
+    @Schema(
+      description = "Supplier ID",
+      required = true,
+      example = "00000000-0000-0001-0000-000000000000",
+      pattern = UUID_REGEX,
+    )
     @PathVariable
     supplierId: UUID,
     @Schema(

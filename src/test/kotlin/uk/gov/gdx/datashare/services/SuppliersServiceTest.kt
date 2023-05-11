@@ -4,7 +4,7 @@ import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.data.repository.findByIdOrNull
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.SupplierSubscriptionNotFoundException
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.SupplierRequest
@@ -16,11 +16,19 @@ import uk.gov.gdx.datashare.repositories.SupplierSubscriptionRepository
 import java.util.*
 
 class SuppliersServiceTest {
+  private val adminActionAlertsService = mockk<AdminActionAlertsService>()
+  private val cognitoService = mockk<CognitoService>()
+  private val dateTimeHandler = mockk<DateTimeHandler>()
   private val supplierSubscriptionRepository = mockk<SupplierSubscriptionRepository>()
   private val supplierRepository = mockk<SupplierRepository>()
-  private val adminActionAlertsService = mockk<AdminActionAlertsService>()
 
-  private val underTest = SuppliersService(supplierSubscriptionRepository, supplierRepository, adminActionAlertsService)
+  private val underTest = SuppliersService(
+    adminActionAlertsService,
+    cognitoService,
+    dateTimeHandler,
+    supplierRepository,
+    supplierSubscriptionRepository,
+  )
 
   @Test
   fun `getSuppliers gets all suppliers`() {

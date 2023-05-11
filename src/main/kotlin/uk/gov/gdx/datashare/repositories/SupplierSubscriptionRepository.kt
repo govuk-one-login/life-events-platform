@@ -9,9 +9,26 @@ import java.util.*
 @Repository
 @JaversSpringDataAuditable
 interface SupplierSubscriptionRepository : CrudRepository<SupplierSubscription, UUID> {
-  fun findByClientIdAndEventType(clientId: String, eventType: EventType): SupplierSubscription?
+  @Override
+  override fun findById(id: UUID) = findByIdAndWhenDeletedIsNull(id)
+  fun findByIdAndWhenDeletedIsNull(id: UUID): Optional<SupplierSubscription>
 
-  fun findAllBySupplierId(id: UUID): List<SupplierSubscription>
+  @Override
+  override fun findAll() = findAllByWhenDeletedIsNull()
+  fun findAllByWhenDeletedIsNull(): List<SupplierSubscription>
 
-  fun findFirstByEventType(eventType: EventType): SupplierSubscription?
+  fun findByIdOrNull(id: UUID) = findByIdAndWhenDeletedIsNullOrNull(id)
+  fun findByIdAndWhenDeletedIsNullOrNull(id: UUID): SupplierSubscription?
+
+  fun findAllByClientId(clientId: String) = findAllByClientIdAndWhenDeletedIsNull(clientId)
+  fun findAllByClientIdAndWhenDeletedIsNull(clientId: String): List<SupplierSubscription>
+
+  fun findByClientIdAndEventType(clientId: String, eventType: EventType) = findByClientIdAndEventTypeAndWhenDeletedIsNull(clientId, eventType)
+  fun findByClientIdAndEventTypeAndWhenDeletedIsNull(clientId: String, eventType: EventType): SupplierSubscription?
+
+  fun findAllBySupplierId(id: UUID) = findAllBySupplierIdAndWhenDeletedIsNull(id)
+  fun findAllBySupplierIdAndWhenDeletedIsNull(id: UUID): List<SupplierSubscription>
+
+  fun findFirstByEventType(eventType: EventType) = findFirstByEventTypeAndWhenDeletedIsNull(eventType)
+  fun findFirstByEventTypeAndWhenDeletedIsNull(eventType: EventType): SupplierSubscription?
 }

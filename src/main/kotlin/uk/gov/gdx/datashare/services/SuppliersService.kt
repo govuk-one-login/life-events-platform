@@ -102,7 +102,7 @@ class SuppliersService(
     )
     val subscription = supplierSubscriptionRepository.save(
       supplierSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
-        whenDeleted = now
+        whenDeleted = now,
       ) ?: throw SupplierSubscriptionNotFoundException("Subscription $subscriptionId not found"),
     )
     val otherSubscriptionsWithClient = supplierSubscriptionRepository.findAllByClientId(subscription.clientId)

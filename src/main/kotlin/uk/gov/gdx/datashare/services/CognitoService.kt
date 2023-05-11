@@ -5,13 +5,9 @@ import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient
 import software.amazon.awssdk.services.cognitoidentityprovider.model.CreateUserPoolClientRequest
 import software.amazon.awssdk.services.cognitoidentityprovider.model.DeleteUserPoolClientRequest
-import software.amazon.awssdk.services.cognitoidentityprovider.model.DescribeUserPoolClientRequest
 import software.amazon.awssdk.services.cognitoidentityprovider.model.ExplicitAuthFlowsType
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUserPoolClientsRequest
 import software.amazon.awssdk.services.cognitoidentityprovider.model.OAuthFlowType
-import software.amazon.awssdk.services.cognitoidentityprovider.model.TagResourceRequest
 import software.amazon.awssdk.services.cognitoidentityprovider.model.TokenValidityUnitsType
-import software.amazon.awssdk.services.cognitoidentityprovider.model.UpdateUserPoolClientRequest
 import uk.gov.gdx.datashare.enums.CognitoClientType
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CognitoClientResponse

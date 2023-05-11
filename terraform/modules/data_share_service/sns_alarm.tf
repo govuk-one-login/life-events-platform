@@ -15,8 +15,8 @@ module "sns-us-east-1" {
   }
   source = "../sns"
 
-  account_id = data.aws_caller_identity.current.account_id
-  environment = var.environment
-  name = "gdx-alarms"
+  account_id          = data.aws_caller_identity.current.account_id
+  environment         = var.environment
+  name                = "gdx-alarms"
   notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
 }

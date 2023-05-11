@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient
 import software.amazon.awssdk.services.cognitoidentityprovider.model.CreateUserPoolClientRequest
+import software.amazon.awssdk.services.cognitoidentityprovider.model.DeleteUserPoolClientRequest
 import software.amazon.awssdk.services.cognitoidentityprovider.model.ExplicitAuthFlowsType
 import software.amazon.awssdk.services.cognitoidentityprovider.model.OAuthFlowType
 import software.amazon.awssdk.services.cognitoidentityprovider.model.TokenValidityUnitsType
@@ -47,6 +48,16 @@ class CognitoService(
         clientSecret = response.clientSecret(),
       )
     }
+  }
+
+  fun deleteUserPoolClient(clientId: String) {
+    val deleteClientRequest = DeleteUserPoolClientRequest
+      .builder()
+      .clientId(clientId)
+      .userPoolId(userPoolId)
+      .build()
+
+    createCognitoClient().deleteUserPoolClient(deleteClientRequest)
   }
 
   private fun createCognitoClient() =

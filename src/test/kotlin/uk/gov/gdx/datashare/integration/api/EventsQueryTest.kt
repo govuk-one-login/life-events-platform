@@ -100,7 +100,7 @@ class EventsQueryTest : MockIntegrationTestBase() {
     val timestamp = LocalDateTime.of(2000, 5, 3, 12, 4, 3)
 
     val supplierEvent = SupplierEvent(
-      supplierSubscriptionId = supplierSubscription!!.supplierSubscriptionId,
+      supplierSubscriptionId = supplierSubscription!!.id,
       eventTime = timestamp,
       dataId = "1234",
       createdAt = timestamp,
@@ -128,7 +128,7 @@ class EventsQueryTest : MockIntegrationTestBase() {
       val eventTime = LocalDateTime.of(2000, 5, 3, 12, 4, 3 + dataId.toInt())
 
       val supplierEvent = SupplierEvent(
-        supplierSubscriptionId = supplierSubscription!!.supplierSubscriptionId,
+        supplierSubscriptionId = supplierSubscription!!.id,
         eventTime = eventTime,
         dataId = dataId,
         createdAt = eventTime,

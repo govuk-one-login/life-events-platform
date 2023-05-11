@@ -14,6 +14,7 @@ import uk.gov.gdx.datashare.repositories.Supplier
 import uk.gov.gdx.datashare.repositories.SupplierRepository
 import uk.gov.gdx.datashare.repositories.SupplierSubscription
 import uk.gov.gdx.datashare.repositories.SupplierSubscriptionRepository
+import java.time.LocalDateTime
 import java.util.*
 
 class SuppliersServiceTest {
@@ -153,6 +154,81 @@ class SuppliersServiceTest {
   }
 
   @Test
+  fun `deleteSupplierSubscription deletes subscription and cognito client`() {
+    val now = LocalDateTime.now()
+    every { dateTimeHandler.now() }.returns(now)
+
+    every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.id) }.returns(supplierSubscription)
+    every { supplierSubscriptionRepository.findAllByClientId(supplierSubscription.clientId) }.returns(
+      emptyList(),
+    )
+    every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+    every { cognitoService.deleteUserPoolClient(supplierSubscription.clientId) } just runs
+
+    underTest.deleteSupplierSubscription(supplierSubscription.id)
+
+    verify(exactly = 1) {
+      supplierSubscriptionRepository.save(
+        withArg {
+          assertThat(it.whenDeleted).isEqualTo(now)
+        },
+      )
+    }
+
+    verify(exactly = 1) {
+      cognitoService.deleteUserPoolClient(supplierSubscription.clientId)
+    }
+  }
+
+  @Test
+  fun `deleteSupplierSubscription deletes subscription and not cognito client if shared`() {
+    val now = LocalDateTime.now()
+    every { dateTimeHandler.now() }.returns(now)
+
+    every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.id) }.returns(supplierSubscription)
+    every { supplierSubscriptionRepository.findAllByClientId(supplierSubscription.clientId) }.returns(
+      listOf(otherSupplierSubscription),
+    )
+    every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+    every { cognitoService.deleteUserPoolClient(supplierSubscription.clientId) } just runs
+
+    underTest.deleteSupplierSubscription(supplierSubscription.id)
+
+    verify(exactly = 1) {
+      supplierSubscriptionRepository.save(
+        withArg {
+          assertThat(it.whenDeleted).isEqualTo(now)
+        },
+      )
+    }
+
+    verify(exactly = 0) {
+      cognitoService.deleteUserPoolClient(supplierSubscription.clientId)
+    }
+  }
+
+  @Test
+  fun `deleteSupplierSubscription does not delete subscription if subscription does not exist`() {
+    val now = LocalDateTime.now()
+    every { dateTimeHandler.now() }.returns(now)
+
+    every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.id) }.returns(null)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+
+    val exception = assertThrows<SupplierSubscriptionNotFoundException> {
+      underTest.deleteSupplierSubscription(supplierSubscription.id)
+    }
+
+    assertThat(exception.message).isEqualTo("Subscription ${supplierSubscription.id} not found")
+
+    verify(exactly = 0) { supplierSubscriptionRepository.save(any()) }
+
+    verify(exactly = 0) { cognitoService.deleteUserPoolClient(any()) }
+  }
+
+  @Test
   fun `addSupplier adds supplier`() {
     val supplierRequest = SupplierRequest(
       name = "Supplier",
@@ -234,6 +310,11 @@ class SuppliersServiceTest {
   private val supplierSubscription = SupplierSubscription(
     supplierId = supplier.id,
     clientId = "Client",
+    eventType = EventType.DEATH_NOTIFICATION,
+  )
+  private val otherSupplierSubscription = SupplierSubscription(
+    supplierId = UUID.randomUUID(),
+    clientId = "Client2",
     eventType = EventType.DEATH_NOTIFICATION,
   )
   private val supplierSubRequest = SupplierSubRequest(

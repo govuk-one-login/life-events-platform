@@ -1,6 +1,6 @@
 # 25. Internal event flows
 
-[Next >>](9999-end.md)
+[Next >>](0026-client-off-boarding.md)
 
 Date: 2023-05-10
 
@@ -32,4 +32,4 @@ The Acquirer Event Processor will be updated to use the previously created acqui
 that do not have a corresponding database entry. This will prevent duplicate events from being created.
 
 
-[Next >>](9999-end.md)
+[Next >>](0026-client-off-boarding.md)

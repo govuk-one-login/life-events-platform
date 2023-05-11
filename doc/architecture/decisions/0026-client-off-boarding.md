@@ -1,4 +1,4 @@
-# 25. Client off-boarding
+# 26. Client off-boarding
 
 [Next >>](9999-end.md)
 

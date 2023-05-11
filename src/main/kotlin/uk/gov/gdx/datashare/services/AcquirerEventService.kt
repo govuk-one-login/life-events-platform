@@ -149,11 +149,15 @@ class AcquirerEventService(
       sourceId = if (EnrichmentField.SOURCE_ID in enrichmentFieldNames) event.dataId else null,
       dataIncluded = if (!callbackEvent) includeData else null,
       enrichmentFields = if (!callbackEvent) enrichmentFieldNames else null,
-      eventData = if (includeData) callbackAndEnrichData(
-        subscription.eventType,
-        event.dataId,
-        enrichmentFieldNames,
-      ) else null,
+      eventData = if (includeData) {
+        callbackAndEnrichData(
+          subscription.eventType,
+          event.dataId,
+          enrichmentFieldNames,
+        )
+      } else {
+        null
+      },
     )
   }
 

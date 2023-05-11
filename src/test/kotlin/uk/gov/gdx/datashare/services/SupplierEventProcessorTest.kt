@@ -25,7 +25,7 @@ class SupplierEventProcessorTest {
   private val supplierEventRepository = mockk<SupplierEventRepository>()
   private val awsQueueService = mockk<AwsQueueService>()
   private val supplierSubscription = SupplierSubscription(
-    supplierSubscriptionId = UUID.randomUUID(),
+    id = UUID.randomUUID(),
     supplierId = UUID.randomUUID(),
     clientId = "",
     eventType = EventType.DEATH_NOTIFICATION,
@@ -43,11 +43,11 @@ class SupplierEventProcessorTest {
   fun `onGovEvent saves death notifications for LEV`() {
     val supplierEvent = SupplierEvent(
       id = UUID.randomUUID(),
-      supplierSubscriptionId = supplierSubscription.supplierSubscriptionId,
+      supplierSubscriptionId = supplierSubscription.id,
       dataId = "1234",
       eventTime = LocalDateTime.of(2010, 1, 1, 12, 0),
     )
-    every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.supplierSubscriptionId) }
+    every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.id) }
       .returns(supplierSubscription)
     val acquirerSubscriptions = listOf(
       AcquirerSubscription(
@@ -75,7 +75,7 @@ class SupplierEventProcessorTest {
         withArg<SupplierEvent> {
           assertThat(it.id).isEqualTo(supplierEvent.id)
           assertThat(it.dataId).isEqualTo(supplierEvent.dataId)
-          assertThat(it.supplierSubscriptionId).isEqualTo(supplierSubscription.supplierSubscriptionId)
+          assertThat(it.supplierSubscriptionId).isEqualTo(supplierSubscription.id)
           assertThat(it.eventTime).isEqualTo(supplierEvent.eventTime)
         },
       )

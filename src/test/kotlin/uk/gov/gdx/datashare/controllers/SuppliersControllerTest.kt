@@ -137,7 +137,7 @@ class SuppliersControllerTest {
     )
     val supplierSubscription = SupplierSubscription(
       supplierId = supplierId,
-      supplierSubscriptionId = subscriptionId,
+      id = subscriptionId,
       clientId = "Client-New",
       eventType = EventType.LIFE_EVENT,
     )

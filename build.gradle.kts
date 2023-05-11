@@ -46,6 +46,7 @@ dependencies {
   implementation("com.amazonaws:aws-xray-recorder-sdk-spring")
   implementation("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2")
   implementation("com.amazonaws:aws-xray-recorder-sdk-slf4j")
+  implementation("software.amazon.awssdk:lambda")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")

@@ -54,7 +54,10 @@ class AcquirerEventService(
     return buildEnrichedEventNotification(event, acquirerSubscription)
   }
 
-  fun buildEnrichedEventNotification(event: AcquirerEvent, acquirerSubscription: AcquirerSubscription): EventNotification {
+  fun buildEnrichedEventNotification(
+    event: AcquirerEvent,
+    acquirerSubscription: AcquirerSubscription,
+  ): EventNotification {
     val enrichmentFieldNames = acquirersService.getEnrichmentFieldsForAcquirerSubscription(acquirerSubscription)
 
     return mapEventNotification(
@@ -146,7 +149,11 @@ class AcquirerEventService(
       sourceId = if (EnrichmentField.SOURCE_ID in enrichmentFieldNames) event.dataId else null,
       dataIncluded = if (!callbackEvent) includeData else null,
       enrichmentFields = if (!callbackEvent) enrichmentFieldNames else null,
-      eventData = if (includeData) callbackAndEnrichData(subscription.eventType, event.dataId, enrichmentFieldNames) else null,
+      eventData = if (includeData) callbackAndEnrichData(
+        subscription.eventType,
+        event.dataId,
+        enrichmentFieldNames,
+      ) else null,
     )
   }
 
@@ -156,6 +163,6 @@ class AcquirerEventService(
     enrichmentFieldNames: List<EnrichmentField>,
   ): EventDetails? {
     return enrichmentServices.single { p -> p.accepts(eventType) }
-      .process(eventType, dataId, enrichmentFieldNames)
+      .process(dataId, enrichmentFieldNames)
   }
 }

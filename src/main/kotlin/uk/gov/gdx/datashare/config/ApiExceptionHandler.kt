@@ -155,7 +155,6 @@ class ApiExceptionHandler {
       )
   }
 
-
   @ExceptionHandler(java.lang.Exception::class)
   fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse?>? {
     log.error("Unexpected exception", e)
@@ -227,7 +226,7 @@ data class ErrorResponse(
     example = "Bad Data",
     required = false,
     maxLength = 200,
-    pattern = "^[a-zA-Z\\d. _-]{1,200}\$"
+    pattern = "^[a-zA-Z\\d. _-]{1,200}\$",
   )
   val userMessage: String? = null,
   @Schema(
@@ -235,7 +234,7 @@ data class ErrorResponse(
     example = "This is a stack trace",
     required = false,
     maxLength = 4000,
-    pattern = "^[a-zA-Z\\d. _-]*\$"
+    pattern = "^[a-zA-Z\\d. _-]*\$",
   )
   val developerMessage: String? = null,
   @Schema(
@@ -243,7 +242,7 @@ data class ErrorResponse(
     example = "More info",
     required = false,
     maxLength = 4000,
-    pattern = "^[a-zA-Z\\d. _-]*\$"
+    pattern = "^[a-zA-Z\\d. _-]*\$",
   )
   val moreInfo: String? = null,
 ) {

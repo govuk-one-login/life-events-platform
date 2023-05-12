@@ -1,6 +1,6 @@
 package uk.gov.gdx.datashare.services
 
-import net.minidev.json.JSONObject
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -32,7 +32,11 @@ class EventConsumedCheckingService(
   }
 
   private fun deleteEvent(id: UUID): DeleteEventResponse {
-    val jsonPayload = createDeleteEventPayload(id)
+    val jsonPayload = objectMapper.writeValueAsString(
+      object {
+        val id = id
+      },
+    )
 
     val res = lambdaService.invokeLambda(functionName, jsonPayload)
     val parsedResponse = lambdaService.parseLambdaResponse(res, DeleteEventResponse::class.java)
@@ -42,12 +46,6 @@ class EventConsumedCheckingService(
     }
 
     return parsedResponse
-  }
-
-  private fun createDeleteEventPayload(dataId: UUID): String {
-    val jsonObj = JSONObject()
-    jsonObj["id"] = dataId.toString()
-    return jsonObj.toString()
   }
 }
 

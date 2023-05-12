@@ -39,7 +39,7 @@ resource "aws_glue_catalog_table" "cloudtrail" {
   database_name = aws_glue_catalog_database.cloudtrail.name
   name          = "cloudtrail_logs_${module.bucket.id}"
   table_type    = "EXTERNAL_TABLE"
-  parameters    = {
+  parameters = {
     "classification"                     = "cloudtrail"
     "projection.enabled"                 = "true"
     "projection.timestamp.format"        = "yyyy/MM/dd"

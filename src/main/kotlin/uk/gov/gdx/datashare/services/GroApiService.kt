@@ -24,7 +24,7 @@ class GroApiService(
     val res = lambdaService.invokeLambda(functionName, jsonPayload)
     val parsedResponse = lambdaService.parseLambdaResponse(res, GroEnrichEventResponse::class.java)
 
-    if (parsedResponse.StatusCode.equals(HttpStatus.NOT_FOUND) || parsedResponse.Event == null) {
+    if (parsedResponse.StatusCode == HttpStatus.NOT_FOUND.value() || parsedResponse.Event == null) {
       throw NoDataFoundException(dataId)
     }
 

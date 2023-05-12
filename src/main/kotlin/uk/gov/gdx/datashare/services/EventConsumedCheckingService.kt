@@ -14,7 +14,8 @@ import java.util.*
 class EventConsumedCheckingService(
   private val lambdaService: LambdaService,
   private val supplierEventRepository: SupplierEventRepository,
-  @Value("\${environment}") val environment: String,
+  private val objectMapper: ObjectMapper,
+  @Value("\${delete.event.lambda.function.name}") val functionName: String,
 ) {
 
   @Transactional
@@ -33,7 +34,7 @@ class EventConsumedCheckingService(
   private fun deleteEvent(id: UUID): DeleteEventResponse {
     val jsonPayload = createDeleteEventPayload(id)
 
-    val res = lambdaService.invokeLambda("$environment-gro-ingestion-lambda-function-delete-event", jsonPayload)
+    val res = lambdaService.invokeLambda(functionName, jsonPayload)
     val parsedResponse = lambdaService.parseLambdaResponse(res, DeleteEventResponse::class.java)
 
     if (parsedResponse.statusCode == HttpStatus.NOT_FOUND.value()) {

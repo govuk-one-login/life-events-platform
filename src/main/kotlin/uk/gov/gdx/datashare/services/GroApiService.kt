@@ -1,6 +1,6 @@
 package uk.gov.gdx.datashare.services
 
-import net.minidev.json.JSONObject
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -24,16 +24,10 @@ class GroApiService(
     val res = lambdaService.invokeLambda(functionName, jsonPayload)
     val parsedResponse = lambdaService.parseLambdaResponse(res, GroEnrichEventResponse::class.java)
 
-    if (parsedResponse.StatusCode.equals(HttpStatus.NOT_FOUND)) {
+    if (parsedResponse.StatusCode.equals(HttpStatus.NOT_FOUND) || parsedResponse.Event == null) {
       throw NoDataFoundException(dataId)
     }
 
-    return parsedResponse.Event!!
-  }
-
-  private fun createEnrichEventPayload(dataId: String): String {
-    val jsonObj = JSONObject()
-    jsonObj["id"] = dataId
-    return jsonObj.toString()
+    return parsedResponse.Event
   }
 }

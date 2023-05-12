@@ -1,17 +1,20 @@
 package uk.gov.gdx.datashare.services
 
-import com.amazonaws.services.lambda.AWSLambdaClientBuilder
-import com.amazonaws.services.lambda.invoke.LambdaFunction
-import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory
+import net.minidev.json.JSONObject
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class EventConsumedCheckingService(
+  private val lambdaService: LambdaService,
   private val supplierEventRepository: SupplierEventRepository,
+  @Value("\${environment}") val environment: String,
 ) {
 
   @Transactional
@@ -28,27 +31,26 @@ class EventConsumedCheckingService(
   }
 
   private fun deleteEvent(id: UUID): DeleteEventResponse {
-    val client = AWSLambdaClientBuilder.defaultClient()
+    val jsonPayload = createDeleteEventPayload(id)
 
-    val deleteEvent = LambdaInvokerFactory.builder()
-      .lambdaClient(client)
-      .build(DeleteEventService::class.java)
+    val res = lambdaService.invokeLambda("$environment-gro-ingestion-lambda-function-delete-event", jsonPayload)
+    val parsedResponse = lambdaService.parseLambdaResponse(res, DeleteEventResponse::class.java)
 
-    return deleteEvent.deleteEvent(EventRequest(id.toString()))
+    if (parsedResponse.statusCode == HttpStatus.NOT_FOUND.value()) {
+      throw NoDataFoundException(id.toString())
+    }
+
+    return parsedResponse
+  }
+
+  private fun createDeleteEventPayload(dataId: UUID): String {
+    val jsonObj = JSONObject()
+    jsonObj["id"] = dataId.toString()
+    return jsonObj.toString()
   }
 }
-
-data class EventRequest(
-  val id: String,
-)
 
 data class DeleteEventResponse(
   val id: String,
   val statusCode: Int,
 )
-
-interface DeleteEventService {
-  // TODO: This is just placeholder for agreed implementation
-  @LambdaFunction(functionName = "dev-gro-ingestion-lambda-function-delete-event")
-  fun deleteEvent(input: EventRequest): DeleteEventResponse
-}

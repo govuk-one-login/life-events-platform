@@ -85,6 +85,36 @@ class SuppliersController(
     supplierRequest: SupplierRequest,
   ) = suppliersService.addSupplier(supplierRequest)
 
+  @DeleteMapping
+  @Operation(
+    summary = "Delete Supplier",
+    description = "Need scope of events/admin",
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Supplier Deleted",
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+    ],
+  )
+  fun deleteSupplier(
+    @Schema(
+      description = "Supplier ID",
+      required = true,
+    )
+    @RequestBody
+    supplierId: UUID,
+  ) = suppliersService.deleteSupplier(supplierId)
+
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Supplier Subscriptions",

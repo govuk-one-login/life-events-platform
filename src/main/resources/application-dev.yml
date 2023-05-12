@@ -8,7 +8,7 @@ management:
     health:
       cache:
         time-to-live: 0
-      show-details: ALWAYS
+      show-details: always
     info:
       cache:
         time-to-live: 0

@@ -2,11 +2,6 @@ info.app:
   name: GDX Data Share POC
   version: 1.0
 
-management:
-  endpoint:
-    health:
-      show-details: never
-
 spring:
   application:
     name: gdx-data-share-poc
@@ -84,8 +79,8 @@ management:
     health:
       cache:
         time-to-live: 2000ms
-      show-components: always
-      show-details: always
+      show-components: never
+      show-details: never
       probes:
         enabled: true
     info:

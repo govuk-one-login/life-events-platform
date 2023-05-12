@@ -52,6 +52,21 @@ class SuppliersControllerTest {
   }
 
   @Test
+  fun `deleteSupplier deletes supplier`() {
+    val supplier = Supplier(name = "Supplier Name")
+
+    every { suppliersService.deleteSupplier(supplier.id) }.returns(supplier)
+
+    val supplierOutput = underTest.deleteSupplier(supplier.id)
+
+    assertThat(supplierOutput).isEqualTo(supplier)
+
+    verify(exactly = 1) {
+      suppliersService.deleteSupplier(supplier.id)
+    }
+  }
+
+  @Test
   fun `getSupplierSubscriptions gets supplier subscriptions`() {
     val supplierSubscriptions = listOf(
       SupplierSubscription(

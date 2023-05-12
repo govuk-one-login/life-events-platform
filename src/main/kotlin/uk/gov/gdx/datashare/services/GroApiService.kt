@@ -16,7 +16,7 @@ class GroApiService(
   fun enrichEvent(dataId: String): GroDeathRecord {
     val jsonPayload = createEnrichEventPayload(dataId)
 
-    val res = lambdaService.invokeLambda("$environment-gro-ingestion-lambda-enrich-event", jsonPayload)
+    val res = lambdaService.invokeLambda(functionName, jsonPayload)
     val parsedResponse = lambdaService.parseLambdaResponse(res, GroEnrichEventResponse::class.java)
 
     if (parsedResponse.StatusCode.equals(HttpStatus.NOT_FOUND)) {

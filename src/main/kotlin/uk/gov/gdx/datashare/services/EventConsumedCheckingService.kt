@@ -5,22 +5,21 @@ import com.amazonaws.services.lambda.invoke.LambdaFunction
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class EventConsumedCheckingService(
-  private val acquirerEventRepository: AcquirerEventRepository,
   private val supplierEventRepository: SupplierEventRepository,
 ) {
 
   @Transactional
   fun checkAndMarkConsumed() {
+    // Check is all consumed or over a month elapsed - need to make it configurable obs!
     supplierEventRepository.findAllByCreatedAtBeforeAndEventConsumedIsFalse(LocalDateTime.now().minusMonths(1))
       .map { it.id }.plus(
-        acquirerEventRepository.findAllByDeletedEventsForAllAcquirers(),
+        supplierEventRepository.findAllByDeletedEventsForAllAcquirers(),
       )
       .forEach {
         deleteEvent(it) // TODO: Will need to handle transactions on failures etc

@@ -46,6 +46,7 @@ dependencies {
   implementation("com.amazonaws:aws-xray-recorder-sdk-spring")
   implementation("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2")
   implementation("com.amazonaws:aws-xray-recorder-sdk-slf4j")
+  implementation("com.amazonaws:aws-java-sdk-lambda:1.12.465")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")
@@ -72,8 +73,6 @@ dependencies {
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
-
-  implementation("com.amazonaws:aws-java-sdk-lambda:1.12.465")
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.4")
 

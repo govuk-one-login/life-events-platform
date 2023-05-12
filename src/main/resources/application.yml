@@ -2,6 +2,11 @@ info.app:
   name: GDX Data Share POC
   version: 1.0
 
+management:
+  endpoint:
+    health:
+      show-details: never
+
 spring:
   application:
     name: gdx-data-share-poc

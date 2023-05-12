@@ -66,20 +66,6 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(SupplierConfigException::class)
-  fun handleSupplierConfigException(e: SupplierConfigException): ResponseEntity<ErrorResponse> {
-    log.info("Config exception: {}", e.message)
-    return ResponseEntity
-      .status(BAD_REQUEST)
-      .body(
-        ErrorResponse(
-          status = BAD_REQUEST,
-          userMessage = "Config failure: ${e.message}",
-          developerMessage = e.message,
-        ),
-      )
-  }
-
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: ValidationException): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.message)
@@ -169,47 +155,6 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(UnknownDatasetException::class)
-  fun handleEventNotFoundException(e: UnknownDatasetException): ResponseEntity<ErrorResponse?>? {
-    log.debug("Dataset not found: {}", e.message)
-    return ResponseEntity
-      .status(NOT_FOUND)
-      .body(
-        ErrorResponse(
-          status = NOT_FOUND,
-          userMessage = "Dataset not found: ${e.message}",
-          developerMessage = e.message,
-        ),
-      )
-  }
-
-  @ExceptionHandler(ListOfDataNotFoundException::class)
-  fun handleListOfDataNotFoundException(e: ListOfDataNotFoundException): ResponseEntity<ErrorResponse?>? {
-    log.debug("List of data not found exception caught: {}", e.message)
-    return ResponseEntity
-      .status(NOT_FOUND)
-      .body(
-        ErrorResponse(
-          status = NOT_FOUND,
-          userMessage = e.message,
-          developerMessage = e.message,
-        ),
-      )
-  }
-
-  @ExceptionHandler(DataIntegrityException::class)
-  fun handleDataIntegrityException(e: DataIntegrityException): ResponseEntity<ErrorResponse?>? {
-    log.error("Data integrity exception: {}", e.message)
-    return ResponseEntity
-      .status(INTERNAL_SERVER_ERROR)
-      .body(
-        ErrorResponse(
-          status = INTERNAL_SERVER_ERROR,
-          userMessage = "Data integrity exception: ${e.message}",
-          developerMessage = e.message,
-        ),
-      )
-  }
 
   @ExceptionHandler(java.lang.Exception::class)
   fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse?>? {
@@ -258,22 +203,17 @@ class ApiExceptionHandler {
   }
 }
 
-class SupplierConfigException(message: String) : Exception(message)
 class SupplierPermissionException(message: String) : Exception(message)
-class UnknownDatasetException(message: String) : Exception(message)
 class EventNotFoundException(message: String) : Exception(message)
 class AcquirerSubscriptionNotFoundException(message: String) : Exception(message) {
   constructor(id: UUID) : this("No acquirer subscription found with id $id")
 }
+
 class SupplierSubscriptionNotFoundException(message: String) : Exception(message) {
   constructor(id: UUID) : this("No subscriber found with id $id")
 }
+
 class NoDataFoundException(message: String) : Exception(message)
-
-class ListOfDataNotFoundException(dataType: String, ids: Collection<Long>) :
-  Exception("No $dataType found for ID(s) $ids")
-
-class DataIntegrityException(message: String) : Exception(message)
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Error Response")
@@ -282,11 +222,29 @@ data class ErrorResponse(
   val status: Int,
   @Schema(description = "Error Code", example = "500", required = false)
   val errorCode: Int? = null,
-  @Schema(description = "User Message of error", example = "Bad Data", required = false, maxLength = 200, pattern = "^[a-zA-Z\\d. _-]{1,200}\$")
+  @Schema(
+    description = "User Message of error",
+    example = "Bad Data",
+    required = false,
+    maxLength = 200,
+    pattern = "^[a-zA-Z\\d. _-]{1,200}\$"
+  )
   val userMessage: String? = null,
-  @Schema(description = "More detailed error message", example = "This is a stack trace", required = false, maxLength = 4000, pattern = "^[a-zA-Z\\d. _-]*\$")
+  @Schema(
+    description = "More detailed error message",
+    example = "This is a stack trace",
+    required = false,
+    maxLength = 4000,
+    pattern = "^[a-zA-Z\\d. _-]*\$"
+  )
   val developerMessage: String? = null,
-  @Schema(description = "More information about the error", example = "More info", required = false, maxLength = 4000, pattern = "^[a-zA-Z\\d. _-]*\$")
+  @Schema(
+    description = "More information about the error",
+    example = "More info",
+    required = false,
+    maxLength = 4000,
+    pattern = "^[a-zA-Z\\d. _-]*\$"
+  )
   val moreInfo: String? = null,
 ) {
   constructor(

@@ -11,10 +11,15 @@ import uk.gov.gdx.datashare.models.GroEnrichEventResponse
 @Service
 class GroApiService(
   private val lambdaService: LambdaService,
-  @Value("\${environment}") val environment: String,
+  private val objectMapper: ObjectMapper,
+  @Value("\${enrich.event.lambda.function.name}") val functionName: String,
 ) {
   fun enrichEvent(dataId: String): GroDeathRecord {
-    val jsonPayload = createEnrichEventPayload(dataId)
+    val jsonPayload = objectMapper.writeValueAsString(
+      object {
+        val id = dataId
+      },
+    )
 
     val res = lambdaService.invokeLambda(functionName, jsonPayload)
     val parsedResponse = lambdaService.parseLambdaResponse(res, GroEnrichEventResponse::class.java)

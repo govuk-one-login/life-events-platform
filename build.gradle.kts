@@ -42,11 +42,11 @@ dependencies {
   implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:ssm")
+  implementation("software.amazon.awssdk:lambda")
   implementation(platform("com.amazonaws:aws-xray-recorder-sdk-bom:2.14.0"))
   implementation("com.amazonaws:aws-xray-recorder-sdk-spring")
   implementation("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2")
   implementation("com.amazonaws:aws-xray-recorder-sdk-slf4j")
-  implementation("software.amazon.awssdk:lambda")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")

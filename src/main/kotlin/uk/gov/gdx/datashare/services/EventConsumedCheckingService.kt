@@ -15,7 +15,7 @@ class EventConsumedCheckingService(
   private val lambdaService: LambdaService,
   private val supplierEventRepository: SupplierEventRepository,
   private val objectMapper: ObjectMapper,
-  @Value("\${delete.event.lambda.function.name}") val functionName: String,
+  @Value("\${delete.event.lambda.function.name:#{null}}") val functionName: String?,
 ) {
 
   @Transactional
@@ -32,13 +32,15 @@ class EventConsumedCheckingService(
   }
 
   private fun deleteEvent(id: UUID): DeleteEventResponse {
+    val deleteEventFunctionName = functionName ?: throw IllegalStateException("Function name not found.")
+
     val jsonPayload = objectMapper.writeValueAsString(
       object {
         val id = id
       },
     )
 
-    val res = lambdaService.invokeLambda(functionName, jsonPayload)
+    val res = lambdaService.invokeLambda(deleteEventFunctionName, jsonPayload)
     val parsedResponse = lambdaService.parseLambdaResponse(res, DeleteEventResponse::class.java)
 
     if (parsedResponse.statusCode == HttpStatus.NOT_FOUND.value()) {

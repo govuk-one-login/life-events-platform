@@ -57,6 +57,10 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
       notes: GPC-334
+  "CVE-2023-1255 - openssl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-353
 
   # Security Hub
 

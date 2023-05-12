@@ -12,16 +12,18 @@ import uk.gov.gdx.datashare.models.GroEnrichEventResponse
 class GroApiService(
   private val lambdaService: LambdaService,
   private val objectMapper: ObjectMapper,
-  @Value("\${enrich.event.lambda.function.name}") val functionName: String,
+  @Value("\${enrich-event-lambda-function-name:#{null}}") val functionName: String?,
 ) {
   fun enrichEvent(dataId: String): GroDeathRecord {
+    val enrichEventFunctionName = functionName ?: throw IllegalStateException("Function name not found.")
+
     val jsonPayload = objectMapper.writeValueAsString(
       object {
         val id = dataId
       },
     )
 
-    val res = lambdaService.invokeLambda(functionName, jsonPayload)
+    val res = lambdaService.invokeLambda(enrichEventFunctionName, jsonPayload)
     val parsedResponse = lambdaService.parseLambdaResponse(res, GroEnrichEventResponse::class.java)
 
     if (parsedResponse.StatusCode == HttpStatus.NOT_FOUND.value() || parsedResponse.Event == null) {

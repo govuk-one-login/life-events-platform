@@ -84,8 +84,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_rate_alarm" {
   threshold           = "10"
   alarm_description   = "Application Cloudfront distribution 5xx rate exceeds 10%"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [module.sns.topic_arn]
-  ok_actions          = [module.sns.topic_arn]
+  alarm_actions       = [module.sns-us-east-1.topic_arn]
+  ok_actions          = [module.sns-us-east-1.topic_arn]
 
   metric_name = "5xxErrorRate"
   namespace   = "AWS/CloudFront"

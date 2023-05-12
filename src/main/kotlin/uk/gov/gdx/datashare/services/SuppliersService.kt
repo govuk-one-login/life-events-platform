@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.SupplierSubscriptionNotFoundException
 import uk.gov.gdx.datashare.models.SupplierRequest
 import uk.gov.gdx.datashare.models.SupplierSubRequest
@@ -19,9 +20,11 @@ import java.util.*
 @Transactional
 @XRayEnabled
 class SuppliersService(
-  private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
-  private val supplierRepository: SupplierRepository,
   private val adminActionAlertsService: AdminActionAlertsService,
+  private val cognitoService: CognitoService,
+  private val dateTimeHandler: DateTimeHandler,
+  private val supplierRepository: SupplierRepository,
+  private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -84,6 +87,31 @@ class SuppliersService(
     }
   }
 
+  fun deleteSupplierSubscription(
+    subscriptionId: UUID,
+  ): SupplierSubscription {
+    val now = dateTimeHandler.now()
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Delete supplier subscription",
+        object {
+          val subscriptionId = subscriptionId
+          val whenDeleted = now
+        },
+      ),
+    )
+    val subscription = supplierSubscriptionRepository.save(
+      supplierSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
+        whenDeleted = now,
+      ) ?: throw SupplierSubscriptionNotFoundException("Subscription $subscriptionId not found"),
+    )
+    val otherSubscriptionsWithClient = supplierSubscriptionRepository.findAllByClientId(subscription.clientId)
+    if (otherSubscriptionsWithClient.isEmpty()) {
+      cognitoService.deleteUserPoolClient(subscription.clientId)
+    }
+    return subscription
+  }
+
   fun addSupplier(
     supplierRequest: SupplierRequest,
   ): Supplier {
@@ -95,5 +123,28 @@ class SuppliersService(
         ),
       )
     }
+  }
+
+  fun deleteSupplier(
+    id: UUID,
+  ): Supplier {
+    val now = dateTimeHandler.now()
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Delete supplier",
+        object {
+          val supplierId = id
+          val whenDeleted = now
+        },
+      ),
+    )
+    val supplier = supplierRepository.save(
+      supplierRepository.findByIdOrNull(id)?.copy(
+        whenDeleted = now,
+      ) ?: throw SupplierSubscriptionNotFoundException("Supplier $id not found"),
+    )
+    val subscriptions = supplierSubscriptionRepository.findAllBySupplierId(id)
+    subscriptions.forEach { deleteSupplierSubscription(it.id) }
+    return supplier
   }
 }

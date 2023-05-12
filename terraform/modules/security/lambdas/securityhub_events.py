@@ -45,7 +45,7 @@ def suppress_finding(finding):
     # As described in the link below, AWS Security Hub already resolves NOT_APPLICABLE for controls, this just adds in
     # suppressing them in our findings
     # https://docs.aws.amazon.com/securityhub/latest/userguide/controls-findings-create-update.html#securityhub-standards-results-updating
-    if 'ProductFields' in finding and finding['ProductFields']['aws/config/ConfigComplianceType'] == 'NOT_APPLICABLE':
+    if 'ProductFields' in finding and 'aws/config/ConfigComplianceType' in finding['ProductFields'] and finding['ProductFields']['aws/config/ConfigComplianceType'] == 'NOT_APPLICABLE':
         logger.info(
             f'Perform Suppression on finding {finding_id}, '
             f'as it has ConfigComplianceType NOT_APPLICABLE'

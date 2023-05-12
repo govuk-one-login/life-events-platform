@@ -1,6 +1,6 @@
 # 24. Flat File Ingestion Proof of Concept
 
-[Next >>](9999-end.md)
+[Next >>](0025-internal-event-flow.md)
 
 Date: 2023-04-20
 
@@ -55,4 +55,4 @@ As part of these changes, we'll need to implement a few new features including
 - Event/callback when all consumers have consumed a given event, set up as SNS
 - Lambdas for posting and retrieving data to/from the API, as well as deleting data when consumed
 
-[Next >>](9999-end.md)
+[Next >>](0025-internal-event-flow.md)

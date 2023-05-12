@@ -2,6 +2,7 @@ package uk.gov.gdx.datashare.controllers
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EventType
@@ -48,6 +49,21 @@ class SuppliersControllerTest {
     val supplierOutput = underTest.addSupplier(supplierRequest)
 
     assertThat(supplierOutput).isEqualTo(supplier)
+  }
+
+  @Test
+  fun `deleteSupplier deletes supplier`() {
+    val supplier = Supplier(name = "Supplier Name")
+
+    every { suppliersService.deleteSupplier(supplier.id) }.returns(supplier)
+
+    val supplierOutput = underTest.deleteSupplier(supplier.id)
+
+    assertThat(supplierOutput).isEqualTo(supplier)
+
+    verify(exactly = 1) {
+      suppliersService.deleteSupplier(supplier.id)
+    }
   }
 
   @Test
@@ -137,7 +153,7 @@ class SuppliersControllerTest {
     )
     val supplierSubscription = SupplierSubscription(
       supplierId = supplierId,
-      supplierSubscriptionId = subscriptionId,
+      id = subscriptionId,
       clientId = "Client-New",
       eventType = EventType.LIFE_EVENT,
     )
@@ -150,5 +166,28 @@ class SuppliersControllerTest {
       underTest.updateSupplierSubscription(supplierId, subscriptionId, supplierSubscriptionRequest)
 
     assertThat(supplierSubscriptionOutput).isEqualTo(supplierSubscription)
+  }
+
+  @Test
+  fun `deleteSupplierSubscription deletes supplier subscription`() {
+    val subscriptionId = UUID.randomUUID()
+    val supplierSubscription = SupplierSubscription(
+      supplierId = UUID.randomUUID(),
+      id = subscriptionId,
+      clientId = "Client-New",
+      eventType = EventType.LIFE_EVENT,
+    )
+
+    every { suppliersService.deleteSupplierSubscription(subscriptionId) }.returns(
+      supplierSubscription,
+    )
+
+    val supplierSubscriptionOutput = underTest.deleteSupplierSubscription(subscriptionId)
+
+    assertThat(supplierSubscriptionOutput).isEqualTo(supplierSubscription)
+
+    verify(exactly = 1) {
+      suppliersService.deleteSupplierSubscription(subscriptionId)
+    }
   }
 }

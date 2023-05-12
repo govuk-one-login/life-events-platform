@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -17,10 +18,13 @@ class EventConsumedCheckingService(
 
   @Transactional
   fun checkAndMarkConsumed() {
-    acquirerEventRepository.findAllByDeletedEventsForAllAcquirers()
+    supplierEventRepository.findAllByCreatedAtBeforeAndEventConsumedIsFalse(LocalDateTime.now().minusMonths(1))
+      .map { it.id }.plus(
+        acquirerEventRepository.findAllByDeletedEventsForAllAcquirers(),
+      )
       .forEach {
-        deleteEvent(it)
-        supplierEventRepository.markAsFullConsumed(it)
+        deleteEvent(it) // TODO: Will need to handle transactions on failures etc
+        supplierEventRepository.markAsFullyConsumed(it)
       }
   }
 
@@ -45,6 +49,7 @@ data class DeleteEventResponse(
 )
 
 interface DeleteEventService {
+  // TODO: This is just placeholder for agreed implementation
   @LambdaFunction(functionName = "dev-gro-ingestion-lambda-function-delete-event")
   fun deleteEvent(input: EventRequest): DeleteEventResponse
 }

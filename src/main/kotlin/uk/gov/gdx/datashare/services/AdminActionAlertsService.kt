@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.sns.model.PublishRequest
 @Service
 class AdminActionAlertsService(
   @Value("\${admin-action-alert-sns-topic-arn:#{null}}") private val topicArn: String?,
+  @Value("\${environment}") private val environment: String,
   private val objectMapper: ObjectMapper,
 ) {
   private val snsClient by lazy { SnsClient.create() }
@@ -26,7 +27,7 @@ class AdminActionAlertsService(
   }
 
   private fun actionToMessage(action: AdminAction): String {
-    return "${currentPrincipal() ?: "unknown"} performed ${action.name}, details: ${action.details.toJson()}"
+    return "${currentPrincipal() ?: "unknown"} performed ${action.name}, environment: $environment, details: ${action.details.toJson()}"
   }
 
   private fun currentPrincipal(): String? {

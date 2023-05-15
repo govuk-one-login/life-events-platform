@@ -6,10 +6,16 @@ server:
 aws:
   provider: localstack
 
-management.endpoint:
-  health.cache.time-to-live: 0
-  info.cache.time-to-live: 0
-
+management:
+  endpoint:
+    health:
+      cache:
+        time-to-live: 0
+      show-details: always
+      show-components: always
+    info:
+      cache:
+        time-to-live: 0
 prometheus:
   user:
     name: prometheus

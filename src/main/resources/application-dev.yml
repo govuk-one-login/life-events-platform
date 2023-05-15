@@ -3,10 +3,16 @@ environment: dev
 server:
   shutdown: immediate
 
-management.endpoint:
-  health.cache.time-to-live: 0
-  info.cache.time-to-live: 0
 management:
+  endpoint:
+    health:
+      cache:
+        time-to-live: 0
+      show-details: always
+      show-components: always
+    info:
+      cache:
+        time-to-live: 0
   endpoints:
     web:
       base-path: /

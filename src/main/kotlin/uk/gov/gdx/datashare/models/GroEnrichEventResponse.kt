@@ -1,6 +1,6 @@
 package uk.gov.gdx.datashare.models
 
 data class GroEnrichEventResponse(
-  val StatusCode: Number,
-  val Event: GroDeathRecord? = null,
+  val statusCode: Number,
+  val event: GroDeathRecord? = null,
 )

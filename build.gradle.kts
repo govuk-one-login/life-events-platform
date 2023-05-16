@@ -36,17 +36,17 @@ dependencies {
 
   //  AWS dependencies for SNS, SQS etc
   implementation(platform("software.amazon.awssdk:bom:2.20.65"))
+  implementation("software.amazon.awssdk:cognitoidentityprovider")
+  implementation("software.amazon.awssdk:lambda")
+  implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:sns")
   implementation("software.amazon.awssdk:sqs")
-  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.1.1")
-  implementation("software.amazon.awssdk:rds")
-  implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:ssm")
+  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.1.1")
   implementation(platform("com.amazonaws:aws-xray-recorder-sdk-bom:2.14.0"))
   implementation("com.amazonaws:aws-xray-recorder-sdk-spring")
   implementation("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2")
   implementation("com.amazonaws:aws-xray-recorder-sdk-slf4j")
-  implementation("software.amazon.awssdk:lambda")
 
   implementation("org.springframework:spring-jms")
   implementation("org.hibernate:hibernate-validator:8.0.0.Final")

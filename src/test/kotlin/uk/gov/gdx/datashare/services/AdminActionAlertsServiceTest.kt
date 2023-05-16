@@ -21,6 +21,7 @@ class AdminActionAlertsServiceTest {
 
   private val underTest = AdminActionAlertsService(
     "topicArn",
+    "test",
     objectMapper,
   )
 
@@ -38,7 +39,7 @@ class AdminActionAlertsServiceTest {
     verify(exactly = 1) {
       snsClient.publish(
         withArg<PublishRequest> {
-          assertThat(it.message()).isEqualTo("test principal performed test action, details: {details}")
+          assertThat(it.message()).isEqualTo("test principal performed test action, environment: test, details: {details}")
           assertThat(it.topicArn()).isEqualTo("topicArn")
         },
       )

@@ -68,6 +68,8 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         },
         { "name" : "AWS_XRAY_CONTEXT_MISSING", "value" : "IGNORE_ERROR" },
         { "name" : "ADMIN_ACTION_ALERT_SNS_TOPIC_ARN", "value" : module.sns_admin_alerts.topic_arn },
+
+        { "name" : "ENRICH_EVENT_LAMBDA_FUNCTION_NAME", "value" : var.enrich_event_function_name },
       ]
       secrets = [
         {

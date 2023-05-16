@@ -14,7 +14,7 @@ class TestEventEnrichmentService : EnrichmentService {
     return eventType == EventType.TEST_EVENT
   }
 
-  override fun process(eventType: EventType, dataId: String, enrichmentFields: List<EnrichmentField>): EventDetails? {
+  override fun process(dataId: String, enrichmentFields: List<EnrichmentField>): EventDetails? {
     return TestEventDetails(testField = "Test Field Value")
   }
 }

@@ -24,7 +24,6 @@ class PrisonerLookupService(
   }
 
   override fun process(
-    eventType: EventType,
     dataId: String,
     enrichmentFields: List<EnrichmentField>,
   ): PrisonerDetails? {

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.services.lambda.LambdaClient
-import software.amazon.awssdk.services.lambda.LambdaClientBuilder
 import software.amazon.awssdk.services.lambda.model.InvokeRequest
 import software.amazon.awssdk.services.lambda.model.InvokeResponse
 import uk.gov.gdx.datashare.config.JacksonConfiguration
@@ -32,13 +31,11 @@ class LambdaServiceTest {
   )
 
   private val mockLambdaClient = mockk<LambdaClient>()
-  private val mockLambdaClientBuilder = mockk<LambdaClientBuilder>()
 
   @BeforeEach
   fun init() {
     mockkStatic(LambdaClient::class)
-    every { LambdaClient.builder() } returns mockLambdaClientBuilder
-    every { mockLambdaClientBuilder.build() } returns mockLambdaClient
+    every { LambdaClient.builder().build() } returns mockLambdaClient
   }
 
   @Test

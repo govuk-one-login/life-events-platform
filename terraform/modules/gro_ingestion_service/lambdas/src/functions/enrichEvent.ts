@@ -3,9 +3,9 @@ import { unmarshall } from "@aws-sdk/util-dynamodb"
 import { Handler } from "aws-lambda"
 
 import { config } from "../helpers/config"
-import { EnrichEventResponse } from "../models/EventResponse"
 import { EventRecord } from "../models/EventRecord"
 import { EventRequest } from "../models/EventRequest"
+import { EnrichEventResponse } from "../models/EventResponse"
 import { LambdaFunction } from "../models/LambdaFunction"
 
 const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })

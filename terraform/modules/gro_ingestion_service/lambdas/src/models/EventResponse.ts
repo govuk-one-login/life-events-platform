@@ -5,6 +5,6 @@ export interface EventResponse<T> {
     payload?: T
 }
 
-export interface EnrichEventResponse extends EventResponse<EventRecord> {}
+export type EnrichEventResponse = EventResponse<EventRecord>
 
-export interface DeleteEventResponse extends EventResponse<string> {}
+export type DeleteEventResponse = EventResponse<string>

@@ -112,7 +112,7 @@ class GroApiServiceTest {
           object {
             val id = supplierEvent1.dataId
           },
-        )
+        ),
       )
     }
     verify(exactly = 1) {
@@ -122,7 +122,7 @@ class GroApiServiceTest {
           object {
             val id = supplierEvent2.dataId
           },
-        )
+        ),
       )
     }
   }

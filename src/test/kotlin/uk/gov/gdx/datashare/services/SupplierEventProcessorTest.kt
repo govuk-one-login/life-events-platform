@@ -1,10 +1,11 @@
 package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import software.amazon.awssdk.services.sqs.SqsClient
@@ -23,6 +24,7 @@ class SupplierEventProcessorTest {
   private val supplierSubscriptionRepository = mockk<SupplierSubscriptionRepository>()
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val supplierEventRepository = mockk<SupplierEventRepository>()
+  private val acquirerEventRepository = mockk<AcquirerEventRepository>()
   private val awsQueueService = mockk<AwsQueueService>()
   private val supplierSubscription = SupplierSubscription(
     id = UUID.randomUUID(),
@@ -36,8 +38,26 @@ class SupplierEventProcessorTest {
     supplierSubscriptionRepository,
     acquirerSubscriptionRepository,
     supplierEventRepository,
+    acquirerEventRepository,
     awsQueueService,
   )
+
+  companion object {
+    val currentTime: LocalDateTime = LocalDateTime.of(2018, 5, 3, 1, 4)
+
+    @JvmStatic
+    @BeforeAll
+    fun setUp() {
+      mockkStatic(LocalDateTime::class)
+      every { LocalDateTime.now() } returns currentTime
+    }
+
+    @JvmStatic
+    @AfterAll
+    fun tearDown() {
+      unmockkStatic(LocalDateTime::class)
+    }
+  }
 
   @Test
   fun `onGovEvent saves death notifications for LEV`() {
@@ -58,6 +78,11 @@ class SupplierEventProcessorTest {
       AcquirerSubscription(
         acquirerId = UUID.randomUUID(),
         eventType = supplierSubscription.eventType,
+        queueName = "queuename2",
+      ),
+      AcquirerSubscription(
+        acquirerId = UUID.randomUUID(),
+        eventType = supplierSubscription.eventType,
         oauthClientId = "clientId",
       ),
     )
@@ -66,6 +91,8 @@ class SupplierEventProcessorTest {
     every { supplierEventRepository.save(any<SupplierEvent>()) }.returns(mockk<SupplierEvent>())
     every { objectMapper.readValue(any<String>(), SupplierEvent::class.java) }.returns(supplierEvent)
     every { objectMapper.writeValueAsString(any<AcquirerEvent>()) }.returns("")
+    val events = slot<List<AcquirerEvent>>()
+    every { acquirerEventRepository.saveAll(capture(events)) } answers { events.captured }
     val queueClient = mockQueueClient()
 
     underTest.onSupplierEvent("string")
@@ -77,6 +104,23 @@ class SupplierEventProcessorTest {
           assertThat(it.dataId).isEqualTo(supplierEvent.dataId)
           assertThat(it.supplierSubscriptionId).isEqualTo(supplierSubscription.id)
           assertThat(it.eventTime).isEqualTo(supplierEvent.eventTime)
+        },
+      )
+    }
+    verify(exactly = 1) {
+      acquirerEventRepository.saveAll(
+        withArg<List<AcquirerEvent>> {
+          assertThat(it).hasSize(3)
+          it.forEach { event ->
+            Assertions.assertNull(event.deletedAt)
+            assertThat(event.supplierEventId).isEqualTo(supplierEvent.id)
+            assertThat(event.dataId).isEqualTo(supplierEvent.dataId)
+            assertThat(event.eventTime).isEqualTo(supplierEvent.eventTime)
+            assertThat(event.createdAt).isEqualTo(currentTime)
+          }
+          val receivedAcquirerSubscriptionIds = it.map { event -> event.acquirerSubscriptionId }
+          val expectedAcquirerSubscriptionIds = acquirerSubscriptions.map { sub -> sub.id }
+          assertThat(receivedAcquirerSubscriptionIds).isEqualTo(expectedAcquirerSubscriptionIds)
         },
       )
     }

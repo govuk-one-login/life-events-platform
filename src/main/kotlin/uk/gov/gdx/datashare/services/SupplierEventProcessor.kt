@@ -22,6 +22,7 @@ class SupplierEventProcessor(
   private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val supplierEventRepository: SupplierEventRepository,
+  private val acquirerEventRepository: AcquirerEventRepository,
   private val awsQueueService: AwsQueueService,
 ) {
   private val acquirerEventQueue by lazy { awsQueueService.findByQueueId("acquirerevent") as AwsQueue }
@@ -38,8 +39,13 @@ class SupplierEventProcessor(
     val supplierEvent = buildSupplierEvent(message)
     val supplierSubscription = fetchSupplierSubscription(supplierEvent)
     supplierEventRepository.save(supplierEvent)
-    val acquirerEvents = buildAcquirerEvents(supplierSubscription, supplierEvent)
-    enqueueAcquirerEvents(acquirerEvents)
+
+    val acquirerSubscriptions = acquirerSubscriptionRepository.findAllByEventType(supplierSubscription.eventType)
+    val acquirerEvents = buildAndPersistAcquirerEvents(acquirerSubscriptions, supplierEvent)
+
+    enqueueAcquirerEvents(
+      acquirerEventsToPushToOutboundQueues(acquirerSubscriptions, acquirerEvents),
+    )
   }
 
   private fun buildSupplierEvent(message: String): SupplierEvent {
@@ -52,11 +58,10 @@ class SupplierEventProcessor(
         ?: throw SupplierSubscriptionNotFoundException(supplierEvent.supplierSubscriptionId)
       )
 
-  private fun buildAcquirerEvents(
-    supplierSubscription: SupplierSubscription,
+  private fun buildAndPersistAcquirerEvents(
+    acquirerSubscriptions: Iterable<AcquirerSubscription>,
     supplierEvent: SupplierEvent,
-  ): List<AcquirerEvent> {
-    val acquirerSubscriptions = acquirerSubscriptionRepository.findAllByEventType(supplierSubscription.eventType)
+  ): Iterable<AcquirerEvent> {
     val acquirerEvents = acquirerSubscriptions.map { acquirerSubscription ->
       AcquirerEvent(
         supplierEventId = supplierEvent.id,
@@ -65,16 +70,25 @@ class SupplierEventProcessor(
         acquirerSubscriptionId = acquirerSubscription.id,
       )
     }
-    return acquirerEvents
+
+    return acquirerEventRepository.saveAll(acquirerEvents)
   }
 
-  private fun enqueueAcquirerEvents(acquirerEvents: List<AcquirerEvent>) {
+  private fun acquirerEventsToPushToOutboundQueues(
+    acquirerSubscriptions: Iterable<AcquirerSubscription>,
+    acquirerEvents: Iterable<AcquirerEvent>,
+  ): Iterable<AcquirerEvent> {
+    val acquirerSubscriptionsById = acquirerSubscriptions.associateBy { it.acquirerSubscriptionId }
+    return acquirerEvents.filter { acquirerSubscriptionsById[it.acquirerSubscriptionId]?.queueName != null }
+  }
+
+  private fun enqueueAcquirerEvents(acquirerEvents: Iterable<AcquirerEvent>) {
     val acquirerEventMessages = acquirerEvents
       .map {
         SendMessageBatchRequestEntry.builder()
           .id(it.id.toString())
-          .messageBody(it.toJson())
-          .delaySeconds(10)
+          .messageBody(it.id.toString())
+          .delaySeconds(10) // transaction is not committed until all messages are sent. Wait until visible in other transactions
           .build()
       }
 
@@ -86,6 +100,4 @@ class SupplierEventProcessor(
       acquirerEventSqsClient.sendMessageBatch(req)
     }
   }
-
-  private fun Any.toJson() = objectMapper.writeValueAsString(this)
 }

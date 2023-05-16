@@ -7,11 +7,13 @@ import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
+import uk.gov.gdx.datashare.config.EventNotFoundException
 import uk.gov.gdx.datashare.repositories.AcquirerEvent
 import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.repositories.AcquirerSubscription
 import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
 import java.time.LocalDateTime
+import java.util.*
 
 @Service
 @XRayEnabled
@@ -23,31 +25,28 @@ class AcquirerEventProcessor(
   private val acquirerEventAuditService: AcquirerEventAuditService,
   private val outboundEventQueueService: OutboundEventQueueService,
 ) {
-
   @JmsListener(destination = "acquirerevent", containerFactory = "awsQueueContainerFactoryProxy")
   @Transactional
-  fun onAcquirerEvent(message: String) {
-    val acquirerEvent = objectMapper.readValue(message, AcquirerEvent::class.java)
+  fun onAcquirerEvent(acquirerEventId: String) {
+    val acquirerEvent = acquirerEventRepository.findByIdOrNull(UUID.fromString(acquirerEventId))
+      ?: throw EventNotFoundException("No acquirer event found with ID $acquirerEventId")
+
     val acquirerSubscription = acquirerSubscriptionRepository.findByIdOrNull(acquirerEvent.acquirerSubscriptionId)
       ?: throw AcquirerSubscriptionNotFoundException(acquirerEvent.acquirerSubscriptionId)
 
-    if (acquirerSubscription.queueName != null) {
-      persistEventAndPushToQueue(acquirerEvent, acquirerSubscription)
-    } else {
-      persistEvent(acquirerEvent)
+    if (acquirerSubscription.queueName == null) {
+      return
     }
+
+    consumeEventAndPushToQueue(acquirerEvent, acquirerSubscription)
   }
 
-  private fun persistEventAndPushToQueue(acquirerEvent: AcquirerEvent, acquirerSubscription: AcquirerSubscription) {
+  private fun consumeEventAndPushToQueue(acquirerEvent: AcquirerEvent, acquirerSubscription: AcquirerSubscription) {
     acquirerEvent.deletedAt = LocalDateTime.now()
     acquirerEventRepository.save(acquirerEvent)
     val eventNotification = acquirerEventService.buildEnrichedEventNotification(acquirerEvent, acquirerSubscription)
     acquirerEventAuditService.auditQueuedEventMessage(eventNotification, acquirerSubscription.queueName!!)
     outboundEventQueueService.sendMessage(acquirerSubscription.queueName, eventNotification.toJson())
-  }
-
-  private fun persistEvent(acquirerEvent: AcquirerEvent) {
-    acquirerEventRepository.save(acquirerEvent)
   }
 
   private fun Any.toJson() = objectMapper.writeValueAsString(this)

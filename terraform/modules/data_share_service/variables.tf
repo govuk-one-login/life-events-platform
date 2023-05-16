@@ -45,3 +45,7 @@ variable "hosted_zone_name" {
 variable "delete_event_function_name" {
   type = string
 }
+
+variable "enrich_event_function_name" {
+  type = string
+}

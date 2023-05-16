@@ -35,14 +35,14 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.65"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.66"))
+  implementation("software.amazon.awssdk:cognitoidentityprovider")
+  implementation("software.amazon.awssdk:lambda")
+  implementation("software.amazon.awssdk:rds")
   implementation("software.amazon.awssdk:sns")
   implementation("software.amazon.awssdk:sqs")
-  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.1.1")
-  implementation("software.amazon.awssdk:rds")
-  implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:ssm")
-  implementation("software.amazon.awssdk:lambda")
+  implementation("com.amazonaws:amazon-sqs-java-messaging-lib:2.1.1")
   implementation(platform("com.amazonaws:aws-xray-recorder-sdk-bom:2.14.0"))
   implementation("com.amazonaws:aws-xray-recorder-sdk-spring")
   implementation("com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2")
@@ -71,8 +71,8 @@ dependencies {
   implementation("io.micrometer:micrometer-registry-prometheus:1.11.0")
   implementation("io.opentelemetry:opentelemetry-api:1.26.0")
 
-  implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:5.3.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.3.0")
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.4")
 
@@ -85,7 +85,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.18.1"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.468") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.469") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.security:spring-security-test")

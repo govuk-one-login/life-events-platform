@@ -104,6 +104,7 @@ module "data_share_service" {
   hosted_zone_name = module.route53.name
 
   delete_event_function_name = module.gro_ingestion_service.delete_event_function_name
+  enrich_event_function_name = module.gro_ingestion_service.enrich_event_function_name
 }
 
 module "gro_ingestion_service" {

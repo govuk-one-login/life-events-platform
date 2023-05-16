@@ -92,7 +92,6 @@ class AcquirerEventServiceTest {
     every { acquirerSubscriptionRepository.findByEventId(event.id) }.returns(deathNotificationSubscription)
     every {
       deathNotificationService.process(
-        EventType.DEATH_NOTIFICATION,
         event.dataId,
         subscriptionEnrichmentFields,
       )
@@ -173,7 +172,6 @@ class AcquirerEventServiceTest {
     }.returns(deathEvents.count())
     every {
       deathNotificationService.process(
-        EventType.DEATH_NOTIFICATION,
         any(),
         subscriptionEnrichmentFields,
       )
@@ -236,7 +234,6 @@ class AcquirerEventServiceTest {
     }.returns(totalEventCount)
     every {
       deathNotificationService.process(
-        eventType = EventType.DEATH_NOTIFICATION,
         any(),
         subscriptionEnrichmentFields,
       )
@@ -344,7 +341,6 @@ class AcquirerEventServiceTest {
     }.returns(extraDeathEvents.count())
     every {
       deathNotificationService.process(
-        EventType.DEATH_NOTIFICATION,
         any(),
         subscriptionEnrichmentFields,
       )

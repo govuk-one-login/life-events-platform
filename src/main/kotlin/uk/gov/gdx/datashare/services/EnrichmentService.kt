@@ -7,7 +7,6 @@ import uk.gov.gdx.datashare.models.EventDetails
 interface EnrichmentService {
   fun accepts(eventType: EventType): Boolean
   fun process(
-    eventType: EventType,
     dataId: String,
     enrichmentFields: List<EnrichmentField>,
   ): EventDetails?

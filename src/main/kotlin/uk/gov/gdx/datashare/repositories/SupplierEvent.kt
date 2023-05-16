@@ -15,7 +15,7 @@ data class SupplierEvent(
   val dataId: String,
   val eventTime: LocalDateTime?,
   val createdAt: LocalDateTime = LocalDateTime.now(),
-  val eventConsumed: Boolean = false,
+  var deletedAt: LocalDateTime? = null,
 
   @Transient
   @Value("false")

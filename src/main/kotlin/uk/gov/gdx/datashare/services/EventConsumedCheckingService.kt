@@ -4,30 +4,25 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
-import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class EventConsumedCheckingService(
+  private val dateTimeHandler: DateTimeHandler,
   private val lambdaService: LambdaService,
-  private val supplierEventRepository: SupplierEventRepository,
   private val objectMapper: ObjectMapper,
+  private val supplierEventRepository: SupplierEventRepository,
   @Value("\${delete.event.lambda.function.name:#{null}}") val functionName: String?,
 ) {
-
-  @Transactional
   fun checkAndMarkConsumed() {
-    // Check is all consumed or over a month elapsed - need to make it configurable obs!
-    supplierEventRepository.findAllByCreatedAtBeforeAndEventConsumedIsFalse(LocalDateTime.now().minusMonths(1))
-      .map { it.id }.plus(
-        supplierEventRepository.findAllByDeletedEventsForAllAcquirers(),
-      )
+    val now = dateTimeHandler.now()
+    supplierEventRepository.findGroDeathEventsForDeletion()
       .forEach {
-        deleteEvent(it) // TODO: Will need to handle transactions on failures etc
-        supplierEventRepository.markAsFullyConsumed(it)
+        deleteEvent(it.id)
+        supplierEventRepository.save(it.copy(deletedAt = now))
       }
   }
 

@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger
 @Service
 class ScheduledJobService(
   private val acquirerEventRepository: AcquirerEventRepository,
+  private val groApiService: GroApiService,
   meterRegistry: MeterRegistry,
 ) {
   private val gauge = meterRegistry.gauge("UnconsumedEvents", AtomicInteger(acquirerEventRepository.countByDeletedAtIsNull()))
@@ -22,5 +23,12 @@ class ScheduledJobService(
     LockAssert.assertLocked()
     val unconsumedEventsCount = acquirerEventRepository.countByDeletedAtIsNull()
     gauge!!.set(unconsumedEventsCount)
+  }
+
+  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+  @SchedulerLock(name = "deleteConsumedGroSupplierEvents", lockAtMostFor = "3m", lockAtLeastFor = "3m")
+  fun deleteConsumedGroSupplierEvents() {
+    LockAssert.assertLocked()
+    groApiService.deleteConsumedGroSupplierEvents()
   }
 }

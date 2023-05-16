@@ -1,26 +1,41 @@
 package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
 
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import software.amazon.awssdk.services.lambda.model.InvokeResponse
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.enums.GroSex
 import uk.gov.gdx.datashare.models.GroDeathRecord
+import uk.gov.gdx.datashare.models.GroDeleteEventResponse
 import uk.gov.gdx.datashare.models.GroEnrichEventResponse
+import uk.gov.gdx.datashare.repositories.SupplierEvent
+import uk.gov.gdx.datashare.repositories.SupplierEventRepository
 import uk.gov.gdx.datashare.services.GroApiService
 import uk.gov.gdx.datashare.services.LambdaService
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.*
 
 class GroApiServiceTest {
+  private val dateTimeHandler = mockk<DateTimeHandler>()
   private val lambdaService = mockk<LambdaService>()
   private val objectMapper = JacksonConfiguration().objectMapper()
-  private val functionName = "MockLambda"
+  private val supplierEventRepository = mockk<SupplierEventRepository>()
+  private val deleteFunctionName = "DeleteMockLambda"
+  private val enrichFunctionName = "EnrichMockLambda"
 
-  private val underTest: GroApiService = GroApiService(lambdaService, objectMapper, functionName)
+  private val underTest: GroApiService = GroApiService(
+    dateTimeHandler,
+    lambdaService,
+    objectMapper,
+    supplierEventRepository,
+    deleteFunctionName,
+    enrichFunctionName,
+  )
 
   private val dataId = "asdfasdfasdfasdfasdf"
   private val deathRecord = GroDeathRecord(
@@ -50,12 +65,107 @@ class GroApiServiceTest {
   private val invokeResponse = mockk<InvokeResponse>()
 
   @Test
+  fun `deleteConsumedGroSupplierEvents deletes multiple events`() {
+    val now = LocalDateTime.now()
+    val supplierEvent1 = SupplierEvent(
+      supplierSubscriptionId = UUID.randomUUID(),
+      dataId = "asdasd",
+      eventTime = null,
+    )
+    val supplierEvent2 = SupplierEvent(
+      supplierSubscriptionId = UUID.randomUUID(),
+      dataId = "asdasd2",
+      eventTime = null,
+    )
+    every { dateTimeHandler.now() } returns now
+    every { supplierEventRepository.findGroDeathEventsForDeletion() } returns listOf(supplierEvent1, supplierEvent2)
+    every { supplierEventRepository.save(any()) } returns supplierEvent1
+    every { lambdaService.invokeLambda(deleteFunctionName, any()) } returns invokeResponse
+    every { lambdaService.parseLambdaResponse(invokeResponse, GroDeleteEventResponse::class.java) } returns
+      GroDeleteEventResponse(
+        statusCode = 200,
+        payload = "asd",
+      )
+
+    underTest.deleteConsumedGroSupplierEvents()
+
+    verify(exactly = 1) {
+      supplierEventRepository.save(
+        withArg<SupplierEvent> {
+          assertThat(it.deletedAt).isEqualTo(now)
+          assertThat(it.id).isEqualTo(supplierEvent1.id)
+        },
+      )
+    }
+    verify(exactly = 1) {
+      supplierEventRepository.save(
+        withArg<SupplierEvent> {
+          assertThat(it.deletedAt).isEqualTo(now)
+          assertThat(it.id).isEqualTo(supplierEvent2.id)
+        },
+      )
+    }
+    verify(exactly = 1) {
+      lambdaService.invokeLambda(
+        deleteFunctionName,
+        objectMapper.writeValueAsString(
+          object {
+            val id = supplierEvent1.dataId
+          },
+        )
+      )
+    }
+    verify(exactly = 1) {
+      lambdaService.invokeLambda(
+        deleteFunctionName,
+        objectMapper.writeValueAsString(
+          object {
+            val id = supplierEvent2.dataId
+          },
+        )
+      )
+    }
+  }
+
+  @Test
+  fun `deleteConsumedGroSupplierEvents throws for null lambda`() {
+    val now = LocalDateTime.now()
+    every { dateTimeHandler.now() } returns now
+    every { supplierEventRepository.findGroDeathEventsForDeletion() } returns listOf(
+      SupplierEvent(
+        supplierSubscriptionId = UUID.randomUUID(),
+        dataId = "asdasd",
+        eventTime = null,
+      ),
+    )
+
+    val underTest = GroApiService(
+      dateTimeHandler,
+      lambdaService,
+      objectMapper,
+      supplierEventRepository,
+      null,
+      enrichFunctionName,
+    )
+
+    val exception = assertThrows<IllegalStateException> { underTest.deleteConsumedGroSupplierEvents() }
+    assertThat(exception.message).isEqualTo("Function name for delete not found.")
+
+    verify(exactly = 0) {
+      supplierEventRepository.save(any())
+    }
+    verify(exactly = 0) {
+      lambdaService.invokeLambda(any(), any())
+    }
+  }
+
+  @Test
   fun `enrichEvent enriches event for valid ID`() {
-    every { lambdaService.invokeLambda(functionName, jsonPayload) } returns invokeResponse
+    every { lambdaService.invokeLambda(enrichFunctionName, jsonPayload) } returns invokeResponse
     every { lambdaService.parseLambdaResponse(invokeResponse, GroEnrichEventResponse::class.java) } returns
       GroEnrichEventResponse(
         statusCode = 200,
-        event = deathRecord,
+        payload = deathRecord,
       )
 
     val enrichedPayload = underTest.enrichEvent(dataId)
@@ -80,21 +190,32 @@ class GroApiServiceTest {
 
   @Test
   fun `enrichEvent throws for not found ID`() {
-    every { lambdaService.invokeLambda(functionName, jsonPayload) } returns invokeResponse
+    every { lambdaService.invokeLambda(enrichFunctionName, jsonPayload) } returns invokeResponse
     every { lambdaService.parseLambdaResponse(invokeResponse, GroEnrichEventResponse::class.java) } returns
       GroEnrichEventResponse(
         statusCode = 401,
       )
 
     val exception = assertThrows<NoDataFoundException> { underTest.enrichEvent(dataId) }
-    assertThat(exception.message).isEqualTo("No data found for ID $dataId")
+    assertThat(exception.message).isEqualTo("No data found to enrich ID $dataId")
   }
 
   @Test
   fun `enrichEvent throws for null lambda`() {
-    val underTest = GroApiService(lambdaService, objectMapper, null)
+    val underTest = GroApiService(
+      dateTimeHandler,
+      lambdaService,
+      objectMapper,
+      supplierEventRepository,
+      deleteFunctionName,
+      null,
+    )
 
     val exception = assertThrows<IllegalStateException> { underTest.enrichEvent(dataId) }
-    assertThat(exception.message).isEqualTo("Function name not found.")
+    assertThat(exception.message).isEqualTo("Function name for enrich not found.")
+
+    verify(exactly = 0) {
+      lambdaService.invokeLambda(any(), any())
+    }
   }
 }

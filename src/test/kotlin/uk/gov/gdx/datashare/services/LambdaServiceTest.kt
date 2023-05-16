@@ -14,6 +14,7 @@ import software.amazon.awssdk.services.lambda.model.InvokeResponse
 import uk.gov.gdx.datashare.config.JacksonConfiguration
 import uk.gov.gdx.datashare.enums.GroSex
 import uk.gov.gdx.datashare.models.GroDeathRecord
+import uk.gov.gdx.datashare.models.GroDeleteEventResponse
 import uk.gov.gdx.datashare.models.GroEnrichEventResponse
 import uk.gov.gdx.datashare.services.LambdaService
 import java.time.LocalDate
@@ -66,10 +67,26 @@ class LambdaServiceTest {
   }
 
   @Test
+  fun `parseLambdaResponse correctly parses GroDeleteEventResponse response`() {
+    val eventResponse = GroDeleteEventResponse(
+      statusCode = 200,
+      payload = "asdfasdfasdfasdfasdf",
+    )
+    val eventJsonPayload = objectMapper.writeValueAsString(eventResponse)
+    val mockInvokeResponse = mockk<InvokeResponse>()
+    every { mockInvokeResponse.payload() } returns SdkBytes.fromUtf8String(eventJsonPayload)
+
+    val response = underTest.parseLambdaResponse(mockInvokeResponse, GroDeleteEventResponse::class.java)
+
+    assertThat(response.statusCode).isEqualTo(eventResponse.statusCode)
+    assertThat(response.payload).isEqualTo(eventResponse.payload)
+  }
+
+  @Test
   fun `parseLambdaResponse correctly parses GroEnrichEventResponse response`() {
     val eventResponse = GroEnrichEventResponse(
       statusCode = 200,
-      event = GroDeathRecord(
+      payload = GroDeathRecord(
         hash = "asdfasdfasdfasdfasdf",
         registrationId = "registrationId",
         eventTime = LocalDate.now(),
@@ -96,21 +113,21 @@ class LambdaServiceTest {
     val response = underTest.parseLambdaResponse(mockInvokeResponse, GroEnrichEventResponse::class.java)
 
     assertThat(response.statusCode).isEqualTo(eventResponse.statusCode)
-    assertThat(response.event?.registrationId).isEqualTo(eventResponse.event?.registrationId)
-    assertThat(response.event?.eventTime).isEqualTo(eventResponse.event?.eventTime)
-    assertThat(response.event?.verificationLevel).isEqualTo(eventResponse.event?.verificationLevel)
-    assertThat(response.event?.dateOfDeath).isEqualTo(eventResponse.event?.dateOfDeath)
-    assertThat(response.event?.partialMonthOfDeath).isEqualTo(eventResponse.event?.partialMonthOfDeath)
-    assertThat(response.event?.partialYearOfDeath).isEqualTo(eventResponse.event?.partialYearOfDeath)
-    assertThat(response.event?.forenames).isEqualTo(eventResponse.event?.forenames)
-    assertThat(response.event?.surname).isEqualTo(eventResponse.event?.surname)
-    assertThat(response.event?.maidenSurname).isEqualTo(eventResponse.event?.maidenSurname)
-    assertThat(response.event?.sex).isEqualTo(eventResponse.event?.sex)
-    assertThat(response.event?.dateOfBirth).isEqualTo(eventResponse.event?.dateOfBirth)
-    assertThat(response.event?.addressLine1).isEqualTo(eventResponse.event?.addressLine1)
-    assertThat(response.event?.addressLine2).isEqualTo(eventResponse.event?.addressLine2)
-    assertThat(response.event?.addressLine3).isEqualTo(eventResponse.event?.addressLine3)
-    assertThat(response.event?.addressLine4).isEqualTo(eventResponse.event?.addressLine4)
-    assertThat(response.event?.postcode).isEqualTo(eventResponse.event?.postcode)
+    assertThat(response.payload?.registrationId).isEqualTo(eventResponse.payload?.registrationId)
+    assertThat(response.payload?.eventTime).isEqualTo(eventResponse.payload?.eventTime)
+    assertThat(response.payload?.verificationLevel).isEqualTo(eventResponse.payload?.verificationLevel)
+    assertThat(response.payload?.dateOfDeath).isEqualTo(eventResponse.payload?.dateOfDeath)
+    assertThat(response.payload?.partialMonthOfDeath).isEqualTo(eventResponse.payload?.partialMonthOfDeath)
+    assertThat(response.payload?.partialYearOfDeath).isEqualTo(eventResponse.payload?.partialYearOfDeath)
+    assertThat(response.payload?.forenames).isEqualTo(eventResponse.payload?.forenames)
+    assertThat(response.payload?.surname).isEqualTo(eventResponse.payload?.surname)
+    assertThat(response.payload?.maidenSurname).isEqualTo(eventResponse.payload?.maidenSurname)
+    assertThat(response.payload?.sex).isEqualTo(eventResponse.payload?.sex)
+    assertThat(response.payload?.dateOfBirth).isEqualTo(eventResponse.payload?.dateOfBirth)
+    assertThat(response.payload?.addressLine1).isEqualTo(eventResponse.payload?.addressLine1)
+    assertThat(response.payload?.addressLine2).isEqualTo(eventResponse.payload?.addressLine2)
+    assertThat(response.payload?.addressLine3).isEqualTo(eventResponse.payload?.addressLine3)
+    assertThat(response.payload?.addressLine4).isEqualTo(eventResponse.payload?.addressLine4)
+    assertThat(response.payload?.postcode).isEqualTo(eventResponse.payload?.postcode)
   }
 }

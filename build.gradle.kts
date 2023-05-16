@@ -71,7 +71,7 @@ dependencies {
   implementation("io.opentelemetry:opentelemetry-api:1.26.0")
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.3.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.3.0")
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.4")
 

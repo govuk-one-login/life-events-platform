@@ -48,10 +48,10 @@ const handler: Handler = async (event: EventRequest): Promise<DeleteEventRespons
         })
     }
 
-    function logError(logParams) {
+    function logError(logParams): DeleteEventResponse {
         console.error("Failed to delete event", logParams)
         return {
-            id: event.id,
+            payload: event.id,
             statusCode: 404,
         }
     }

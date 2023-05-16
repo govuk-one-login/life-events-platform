@@ -2,7 +2,7 @@ import { describe, expect } from "@jest/globals"
 
 import lambdaFunction from "../../src/functions/deleteEvent"
 import { config } from "../../src/helpers/config"
-import { DeleteEventResponse } from "../../src/models/DeleteEventResponse"
+import { DeleteEventResponse } from "../../src/models/EventResponse"
 import { dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 import { mockCallback, mockContext } from "../const/aws-lambda"
 import { dbItem } from "../const/dbItem"
@@ -34,7 +34,7 @@ describe("Unit test for delete event handler", function () {
             }),
         )
         expect(result).toEqual({
-            id: eventRequest.id,
+            payload: eventRequest.id,
             statusCode: 200,
         })
     })
@@ -60,7 +60,7 @@ describe("Unit test for delete event handler", function () {
             }),
         )
         expect(result).toEqual({
-            id: eventRequest.id,
+            payload: eventRequest.id,
             statusCode: 404,
         })
     })

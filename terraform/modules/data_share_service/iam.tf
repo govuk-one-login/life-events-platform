@@ -95,6 +95,13 @@ data "aws_iam_policy_document" "ecs_task" {
     resources = ["*"]
     effect    = "Allow"
   }
+
+  statement {
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+    resources = [var.enrich_event_function_arn]
+  }
 }
 
 resource "aws_iam_policy" "ecs_task" {

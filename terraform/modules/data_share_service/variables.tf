@@ -49,3 +49,7 @@ variable "delete_event_function_name" {
 variable "enrich_event_function_name" {
   type = string
 }
+
+variable "enrich_event_function_arn" {
+  type = string
+}

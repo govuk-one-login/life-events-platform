@@ -54,9 +54,9 @@ resource "aws_sqs_queue_redrive_allow_policy" "dead_letter_queue" {
 
 data "aws_iam_policy_document" "default_queue_policy" {
   statement {
-    sid = "httpsonly"
+    sid     = "httpsonly"
     actions = ["sqs:*"]
-    effect = "Deny"
+    effect  = "Deny"
     condition {
       test     = "Bool"
       values   = ["false"]

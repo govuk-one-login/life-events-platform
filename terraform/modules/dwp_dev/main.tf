@@ -1,7 +1,7 @@
 module "dwp_dev_queue" {
-  source      = "../sqs"
-  environment = "dev"
-  queue_name  = "acq_dev_dwp-dev"
+  source       = "../sqs"
+  environment  = "dev"
+  queue_name   = "acq_dev_dwp-dev"
   queue_policy = sensitive(data.aws_iam_policy_document.dwp_queue_cross_account_access.json)
 }
 
@@ -63,9 +63,9 @@ resource "aws_iam_group_policy_attachment" "dwp_group_access" {
 
 data "aws_iam_policy_document" "dwp_queue_cross_account_access" {
   statement {
-    sid = "httpsonly"
+    sid     = "httpsonly"
     actions = ["sqs:*"]
-    effect = "Deny"
+    effect  = "Deny"
     condition {
       test     = "Bool"
       values   = ["false"]

@@ -23,7 +23,7 @@ EOF
 }
 
 variable "queue_policy" {
-  type = string
-  default = null
+  type        = string
+  default     = null
   description = "Queue resource policy. Defaults to blocking HTTP traffic"
 }

@@ -1,1 +1,0 @@
-{"filename": "builds/dd456d9ca77f1d89a08fb5935490af7abb9cc34d5a1bc8ba62c43d80a8321533.zip", "runtime": "python3.9", "artifacts_dir": "builds", "build_plan": [["pip", "python3.9", "../modules/security_hub/lambdas/requirements.txt", null, null], ["zip", "../modules/security_hub/lambdas/", null]]}

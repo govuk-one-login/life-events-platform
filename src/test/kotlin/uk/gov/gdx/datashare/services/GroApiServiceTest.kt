@@ -107,7 +107,7 @@ class GroApiServiceTest {
   fun `deleteConsumedGroSupplierEvent throws for null lambda`() {
     val now = LocalDateTime.now()
     every { dateTimeHandler.now() } returns now
-    every { supplierEventRepository.findGroDeathEventsForDeletion() } returns listOf(supplierEvent)
+    every { supplierEventRepository.findGroDeathEventsForDeletion() } returns mutableListOf(supplierEvent)
 
     val underTest = GroApiService(
       dateTimeHandler,

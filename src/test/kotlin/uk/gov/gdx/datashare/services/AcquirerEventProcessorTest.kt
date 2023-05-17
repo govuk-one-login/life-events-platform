@@ -6,7 +6,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.models.EventNotification
@@ -31,44 +30,6 @@ class AcquirerEventProcessorTest {
   private val outboundEventQueueService = mockk<OutboundEventQueueService>()
 
   @Test
-  fun `saves events to the database`() {
-    val acquirerSubscription = AcquirerSubscriptionBuilder().also {
-      it.queueName = null
-    }.build()
-    val acquirerEvent = AcquirerEventBuilder().also {
-      it.acquirerSubscriptionId = acquirerSubscription.id
-    }.build()
-    every { acquirerSubscriptionRepository.findByIdOrNull(any<UUID>()) }.returns(acquirerSubscription)
-    every { objectMapper.readValue(any<String>(), AcquirerEvent::class.java) }.returns(acquirerEvent)
-    every { acquirerEventRepository.save(any<AcquirerEvent>()) }.returns(acquirerEvent)
-
-    val underTest = AcquirerEventProcessor(
-      objectMapper,
-      acquirerSubscriptionRepository,
-      acquirerEventRepository,
-      acquirerEventService,
-      acquirerEventAuditService,
-      outboundEventQueueService,
-    )
-
-    underTest.onAcquirerEvent("")
-
-    verify(exactly = 1) {
-      acquirerEventRepository.save(
-        withArg<AcquirerEvent> {
-          assertThat(it.id).isEqualTo(acquirerEvent.id)
-          assertNull(it.deletedAt)
-          assertThat(it.supplierEventId).isEqualTo(acquirerEvent.supplierEventId)
-          assertThat(it.acquirerSubscriptionId).isEqualTo(acquirerEvent.acquirerSubscriptionId)
-          assertThat(it.dataId).isEqualTo(acquirerEvent.dataId)
-          assertThat(it.eventTime).isEqualTo(acquirerEvent.eventTime)
-          assertThat(it.createdAt).isEqualTo(acquirerEvent.createdAt)
-        },
-      )
-    }
-  }
-
-  @Test
   fun `pushes event to outbound queue`() {
     val acquirerSubscription = AcquirerSubscriptionBuilder().also {
       it.queueName = "acq_test-queue"
@@ -77,7 +38,7 @@ class AcquirerEventProcessorTest {
       it.acquirerSubscriptionId = acquirerSubscription.id
     }.build()
     every { acquirerSubscriptionRepository.findByIdOrNull(any<UUID>()) }.returns(acquirerSubscription)
-    every { objectMapper.readValue(any<String>(), AcquirerEvent::class.java) }.returns(acquirerEvent)
+    every { acquirerEventRepository.findByIdOrNull(acquirerEvent.id) }.returns(acquirerEvent)
     every { acquirerEventRepository.save(any<AcquirerEvent>()) }.returns(acquirerEvent)
     every {
       acquirerEventService.buildEnrichedEventNotification(
@@ -103,7 +64,7 @@ class AcquirerEventProcessorTest {
       outboundEventQueueService,
     )
 
-    underTest.onAcquirerEvent("")
+    underTest.onAcquirerEvent(acquirerEvent.id.toString())
 
     verify(exactly = 1) {
       acquirerEventRepository.save(

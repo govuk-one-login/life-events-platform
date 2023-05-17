@@ -2,7 +2,7 @@ import { describe, expect } from "@jest/globals"
 
 import lambdaFunction from "../../src/functions/enrichEvent"
 import { config } from "../../src/helpers/config"
-import { EnrichEventResponse } from "../../src/models/EnrichEventResponse"
+import { EnrichEventResponse } from "../../src/models/EventResponse"
 import { dynamoDbSendFn } from "../__mocks__/@aws-sdk/client-dynamodb"
 import { mockCallback, mockContext } from "../const/aws-lambda"
 import { dbItem } from "../const/dbItem"
@@ -30,7 +30,7 @@ describe("Unit test for enrich event handler", function () {
         )
 
         expect(result).toEqual({
-            event: {
+            payload: {
                 hash: eventRequest.id,
                 RegistrationId: "111",
                 EventTime: "2023-01-11",

@@ -3,9 +3,9 @@ import { unmarshall } from "@aws-sdk/util-dynamodb"
 import { Handler } from "aws-lambda"
 
 import { config } from "../helpers/config"
-import { DeleteEventResponse } from "../models/DeleteEventResponse"
 import { EventRecord } from "../models/EventRecord"
 import { EventRequest } from "../models/EventRequest"
+import { DeleteEventResponse } from "../models/EventResponse"
 import { LambdaFunction } from "../models/LambdaFunction"
 
 const dynamo = new DynamoDBClient({ apiVersion: "2012-08-10" })
@@ -38,7 +38,7 @@ const handler: Handler = async (event: EventRequest): Promise<DeleteEventRespons
         }
         console.log("Successfully deleted event", logParams)
         return {
-            id: event.id,
+            payload: event.id,
             statusCode: 200,
         }
     } catch (err) {
@@ -48,10 +48,10 @@ const handler: Handler = async (event: EventRequest): Promise<DeleteEventRespons
         })
     }
 
-    function logError(logParams) {
+    function logError(logParams): DeleteEventResponse {
         console.error("Failed to delete event", logParams)
         return {
-            id: event.id,
+            payload: event.id,
             statusCode: 404,
         }
     }

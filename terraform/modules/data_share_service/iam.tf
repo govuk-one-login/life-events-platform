@@ -100,7 +100,11 @@ data "aws_iam_policy_document" "ecs_task" {
     actions = [
       "lambda:InvokeFunction"
     ]
-    resources = [var.enrich_event_function_arn]
+    resources = [
+      var.enrich_event_function_arn,
+      var.delete_event_function_arn
+    ]
+    effect = "Allow"
   }
 }
 

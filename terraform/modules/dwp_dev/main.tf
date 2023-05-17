@@ -2,6 +2,7 @@ module "dwp_dev_queue" {
   source      = "../sqs"
   environment = "dev"
   queue_name  = "acq_dev_dwp-dev"
+  queue_policy = sensitive(data.aws_iam_policy_document.dwp_queue_cross_account_access.json)
 }
 
 resource "aws_iam_user" "dwp_dev_user" {
@@ -62,6 +63,17 @@ resource "aws_iam_group_policy_attachment" "dwp_group_access" {
 
 data "aws_iam_policy_document" "dwp_queue_cross_account_access" {
   statement {
+    sid = "httpsonly"
+    actions = ["sqs:*"]
+    effect = "Deny"
+    condition {
+      test     = "Bool"
+      values   = ["false"]
+      variable = "aws:SecureTransport"
+    }
+  }
+
+  statement {
     actions = [
       "sqs:ChangeMessageVisibility",
       "sqs:DeleteMessage",
@@ -83,15 +95,6 @@ data "aws_iam_policy_document" "dwp_queue_cross_account_access" {
       variable = "aws:PrincipalArn"
     }
   }
-}
-
-locals {
-  dwp_queue_cross_account_access_policy_json = sensitive(data.aws_iam_policy_document.dwp_queue_cross_account_access.json)
-}
-
-resource "aws_sqs_queue_policy" "dwp_queue_cross_account_access" {
-  policy    = local.dwp_queue_cross_account_access_policy_json
-  queue_url = module.dwp_dev_queue.queue_id
 }
 
 data "aws_caller_identity" "current" {}

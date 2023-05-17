@@ -21,3 +21,9 @@ variable "dlq_message_retention_seconds" {
   If not specified, twice main queue is used (capped at 14 days).
 EOF
 }
+
+variable "queue_policy" {
+  type = string
+  default = null
+  description = "Queue resource policy. Defaults to blocking HTTP traffic"
+}

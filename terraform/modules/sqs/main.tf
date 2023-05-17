@@ -51,3 +51,26 @@ resource "aws_sqs_queue_redrive_allow_policy" "dead_letter_queue" {
     sourceQueueArns   = [aws_sqs_queue.queue.arn]
   })
 }
+
+data "aws_iam_policy_document" "default_queue_policy" {
+  statement {
+    sid = "httpsonly"
+    actions = ["sqs:*"]
+    effect = "Deny"
+    condition {
+      test     = "Bool"
+      values   = ["false"]
+      variable = "aws:SecureTransport"
+    }
+  }
+}
+
+resource "aws_sqs_queue_policy" "queue_policy" {
+  policy    = coalesce(var.queue_policy, data.aws_iam_policy_document.default_queue_policy.json)
+  queue_url = aws_sqs_queue.queue.id
+}
+
+resource "aws_sqs_queue_policy" "dlq_policy" {
+  policy    = data.aws_iam_policy_document.default_queue_policy.json
+  queue_url = aws_sqs_queue.dead_letter_queue.id
+}

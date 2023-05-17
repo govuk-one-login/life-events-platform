@@ -8,7 +8,7 @@ import java.util.*
 @Repository
 interface SupplierEventRepository : CrudRepository<SupplierEvent, UUID> {
   @Query(
-    "SELECT se FROM supplier_event se " +
+    "SELECT se.* FROM supplier_event se " +
       "JOIN supplier_subscription ss ON ss.id = se.supplier_subscription_id " +
       "WHERE se.deleted_at IS NULL " +
       "AND ss.event_type = 'GRO_DEATH_NOTIFICATION' " +

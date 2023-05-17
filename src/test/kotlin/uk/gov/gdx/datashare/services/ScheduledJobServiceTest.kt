@@ -3,7 +3,6 @@ package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
 import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.*
 import net.javacrumbs.shedlock.core.LockAssert
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.helpers.TimeLimitedRepeater
@@ -21,7 +20,7 @@ class ScheduledJobServiceTest {
   private val supplierEventRepository = mockk<SupplierEventRepository>()
   private val meterRegistry = mockk<MeterRegistry>()
 
-  private lateinit var underTest: ScheduledJobService;
+  private lateinit var underTest: ScheduledJobService
 
   @BeforeEach
   fun init() {

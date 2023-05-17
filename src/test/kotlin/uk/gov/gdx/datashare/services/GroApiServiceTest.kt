@@ -57,6 +57,11 @@ class GroApiServiceTest {
     addressLine4 = "addressLine4",
     postcode = "postcode",
   )
+  private val supplierEvent = SupplierEvent(
+    supplierSubscriptionId = UUID.randomUUID(),
+    dataId = "asdasd",
+    eventTime = null,
+  )
   private val jsonPayload = objectMapper.writeValueAsString(
     object {
       val id = dataId
@@ -65,21 +70,10 @@ class GroApiServiceTest {
   private val invokeResponse = mockk<InvokeResponse>()
 
   @Test
-  fun `deleteConsumedGroSupplierEvents deletes multiple events`() {
+  fun `deleteConsumedGroSupplierEvent deletes event`() {
     val now = LocalDateTime.now()
-    val supplierEvent1 = SupplierEvent(
-      supplierSubscriptionId = UUID.randomUUID(),
-      dataId = "asdasd",
-      eventTime = null,
-    )
-    val supplierEvent2 = SupplierEvent(
-      supplierSubscriptionId = UUID.randomUUID(),
-      dataId = "asdasd2",
-      eventTime = null,
-    )
     every { dateTimeHandler.now() } returns now
-    every { supplierEventRepository.findGroDeathEventsForDeletion() } returns listOf(supplierEvent1, supplierEvent2)
-    every { supplierEventRepository.save(any()) } returns supplierEvent1
+    every { supplierEventRepository.save(any()) } returns supplierEvent
     every { lambdaService.invokeLambda(deleteFunctionName, any()) } returns invokeResponse
     every { lambdaService.parseLambdaResponse(invokeResponse, GroDeleteEventResponse::class.java) } returns
       GroDeleteEventResponse(
@@ -87,21 +81,13 @@ class GroApiServiceTest {
         payload = "asd",
       )
 
-    underTest.deleteConsumedGroSupplierEvents()
+    underTest.deleteConsumedGroSupplierEvent(supplierEvent)
 
     verify(exactly = 1) {
       supplierEventRepository.save(
         withArg<SupplierEvent> {
           assertThat(it.deletedAt).isEqualTo(now)
-          assertThat(it.id).isEqualTo(supplierEvent1.id)
-        },
-      )
-    }
-    verify(exactly = 1) {
-      supplierEventRepository.save(
-        withArg<SupplierEvent> {
-          assertThat(it.deletedAt).isEqualTo(now)
-          assertThat(it.id).isEqualTo(supplierEvent2.id)
+          assertThat(it.id).isEqualTo(supplierEvent.id)
         },
       )
     }
@@ -110,17 +96,7 @@ class GroApiServiceTest {
         deleteFunctionName,
         objectMapper.writeValueAsString(
           object {
-            val id = supplierEvent1.dataId
-          },
-        ),
-      )
-    }
-    verify(exactly = 1) {
-      lambdaService.invokeLambda(
-        deleteFunctionName,
-        objectMapper.writeValueAsString(
-          object {
-            val id = supplierEvent2.dataId
+            val id = supplierEvent.dataId
           },
         ),
       )
@@ -128,16 +104,10 @@ class GroApiServiceTest {
   }
 
   @Test
-  fun `deleteConsumedGroSupplierEvents throws for null lambda`() {
+  fun `deleteConsumedGroSupplierEvent throws for null lambda`() {
     val now = LocalDateTime.now()
     every { dateTimeHandler.now() } returns now
-    every { supplierEventRepository.findGroDeathEventsForDeletion() } returns listOf(
-      SupplierEvent(
-        supplierSubscriptionId = UUID.randomUUID(),
-        dataId = "asdasd",
-        eventTime = null,
-      ),
-    )
+    every { supplierEventRepository.findGroDeathEventsForDeletion() } returns listOf(supplierEvent)
 
     val underTest = GroApiService(
       dateTimeHandler,
@@ -148,7 +118,7 @@ class GroApiServiceTest {
       enrichFunctionName,
     )
 
-    val exception = assertThrows<IllegalStateException> { underTest.deleteConsumedGroSupplierEvents() }
+    val exception = assertThrows<IllegalStateException> { underTest.deleteConsumedGroSupplierEvent(supplierEvent) }
     assertThat(exception.message).isEqualTo("Function name for delete not found.")
 
     verify(exactly = 0) {

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.config.NoDataFoundException
 import uk.gov.gdx.datashare.models.GroDeathRecord
 import uk.gov.gdx.datashare.models.GroDeleteEventResponse
 import uk.gov.gdx.datashare.models.GroEnrichEventResponse
+import uk.gov.gdx.datashare.repositories.SupplierEvent
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
 import java.util.*
 
@@ -21,13 +23,10 @@ class GroApiService(
   @Value("\${delete.event.lambda.function.name:#{null}}") val deleteFunctionName: String?,
   @Value("\${enrich-event-lambda-function-name:#{null}}") val enrichFunctionName: String?,
 ) {
-  fun deleteConsumedGroSupplierEvents() {
-    val now = dateTimeHandler.now()
-    supplierEventRepository.findGroDeathEventsForDeletion()
-      .forEach {
-        deleteEvent(it.dataId)
-        supplierEventRepository.save(it.copy(deletedAt = now))
-      }
+  @Transactional
+  fun deleteConsumedGroSupplierEvent(event: SupplierEvent) {
+    deleteEvent(event.dataId)
+    supplierEventRepository.save(event.copy(deletedAt = dateTimeHandler.now()))
   }
 
   fun enrichEvent(dataId: String): GroDeathRecord {

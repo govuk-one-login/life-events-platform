@@ -10,11 +10,12 @@ interface SupplierEventRepository : CrudRepository<SupplierEvent, UUID> {
   @Query(
     "SELECT se FROM supplier_event se " +
       "JOIN supplier_subscription ss ON ss.id = se.supplier_subscription_id " +
-      "LEFT JOIN acquirer_event ae ON ae.supplier_event_id = se.id " +
       "WHERE se.deleted_at IS NULL " +
-      "AND ss.event_type = 'GRO_DEATH_NOTIFICATION'" +
-      "GROUP BY se.id " +
-      "HAVING SUM( CASE WHEN ae.deleted_at IS NULL THEN 1 ELSE 0 END ) = 0",
+      "AND ss.event_type = 'GRO_DEATH_NOTIFICATION' " +
+      "AND NOT EXISTS (" +
+      "SELECT 1 FROM acquirer_event ae WHERE ae.deleted_at IS NULL AND ae.supplier_event_id = se.id " +
+      ") " +
+      "ORDER BY random()",
   )
   fun findGroDeathEventsForDeletion(): List<SupplierEvent>
 }

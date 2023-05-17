@@ -35,6 +35,10 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-337
+  "GHSA-hqxw-f8mx-cpmw - github.com/docker/distribution":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-374
 
   ## Grafana
   "CVE-2023-0464 - openssl":

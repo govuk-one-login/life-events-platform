@@ -209,7 +209,7 @@ Suppressions:
   ## EBS
   "ebs-in-backup-plan-conformance-pack-ikljqduwd":
     - resources:
-        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0dcf5147cd17583df
+        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-072201eb4a2eaf7e8
         - arn:aws:ec2:eu-west-2:776473272850:volume/vol-09cd56b781f85cef6
       notes: >
         We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have the
@@ -226,8 +226,8 @@ Suppressions:
   ## EC2
   "ec2-instance-detailed-monitoring-enabled-conformance-pack-ikljqduwd":
     - resources:
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-00eb37b5e5291c721
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-0d0783b9d07be1873
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-0bf4534985002ccd1
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-05763ea9b647902d7
       notes: >
         We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have
         detailed monitoring
@@ -365,6 +365,8 @@ Suppressions:
     - resources:
         - arn:aws:sns:eu-west-2:776473272850:bootstrap-sns
         - arn:aws:sns:eu-west-2:776473272850:shared-sns
+        - arn:aws:sns:us-east-1:776473272850:dev-gdx-alarms
+        - arn:aws:sns:us-east-1:776473272850:demo-gdx-alarms
         - arn:aws:sns:eu-west-2:776473272850:dev-gdx-alarms
         - arn:aws:sns:eu-west-2:776473272850:demo-gdx-alarms
         - arn:aws:sns:eu-west-2:776473272850:dev-gdx-gro-sns
@@ -417,6 +419,7 @@ Suppressions:
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-data-logs-gdx-gro-poc
         - arn:aws:s3:::demo-data-logs-gdx-gro-poc
+        - arn:aws:s3:::shared-athena-cloudtrail-query-results-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-ikljqduwd":
     - resources:
@@ -441,6 +444,7 @@ Suppressions:
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-data-logs-gdx-gro-poc
         - arn:aws:s3:::demo-data-logs-gdx-gro-poc
+        - arn:aws:s3:::shared-athena-cloudtrail-query-results-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-logging-enabled-conformance-pack-flegfck3w":
     - resources:
@@ -465,6 +469,7 @@ Suppressions:
         - arn:aws:s3:::shared-cloudtrail-logs-logs-gdx-data-share-poc
         - arn:aws:s3:::dev-data-logs-gdx-gro-poc
         - arn:aws:s3:::demo-data-logs-gdx-gro-poc
+        - arn:aws:s3:::shared-athena-cloudtrail-query-results-logs-gdx-data-share-poc
       notes: These are all log buckets already - we do not want to add logging to prevent infinite chain of log buckets
   "s3-bucket-replication-enabled-conformance-pack-ikljqduwd":
     - resources:
@@ -495,6 +500,7 @@ Suppressions:
         - arn:aws:s3:::demo-data-logs-gdx-gro-poc
         - arn:aws:s3:::dev-data-gdx-gro-poc
         - arn:aws:s3:::demo-data-gdx-gro-poc
+        - arn:aws:s3:::shared-athena-cloudtrail-query-results-logs-gdx-data-share-poc
       notes: >
         For log buckets, we do not need versioning on them as only new items will be added.
         For the data-gdx-gro-poc buckets, we are only holding data for a short time so do not want versioning.
@@ -523,6 +529,7 @@ Suppressions:
         - arn:aws:s3:::demo-data-logs-gdx-gro-poc
         - arn:aws:s3:::dev-data-gdx-gro-poc
         - arn:aws:s3:::demo-data-gdx-gro-poc
+        - arn:aws:s3:::shared-athena-cloudtrail-query-results-logs-gdx-data-share-poc
       notes: >
         For log buckets, we do not need versioning on them as only new items will be added.
         For the data-gdx-gro-poc buckets, we are only holding data for a short time so do not want versioning.

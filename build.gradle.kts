@@ -35,7 +35,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.66"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.67"))
   implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:lambda")
   implementation("software.amazon.awssdk:rds")
@@ -57,7 +57,7 @@ dependencies {
   runtimeOnly("org.flywaydb:flyway-core")
 
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
-  implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.0.0")
+  implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.1.1")
   implementation("org.postgresql:postgresql:42.6.0")
 
   implementation("org.springdoc:springdoc-openapi-starter-common:2.1.0")
@@ -93,7 +93,7 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt-api:0.11.5")
   testRuntimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
   testRuntimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.13")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.14")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.5")

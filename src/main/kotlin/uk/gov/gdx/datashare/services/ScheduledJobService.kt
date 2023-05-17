@@ -5,7 +5,7 @@ import net.javacrumbs.shedlock.core.LockAssert
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import uk.gov.gdx.datashare.helpers.TimeLimitedRepeater
+import uk.gov.gdx.datashare.helpers.repeatForLimitedTime
 import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
 import java.util.concurrent.TimeUnit
@@ -30,10 +30,10 @@ class ScheduledJobService(
   }
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
-  @SchedulerLock(name = "deleteConsumedGroSupplierEvents", lockAtMostFor = "45s", lockAtLeastFor = "15s")
+  @SchedulerLock(name = "deleteConsumedGroSupplierEvents", lockAtMostFor = "60s", lockAtLeastFor = "15s")
   fun deleteConsumedGroSupplierEvents() {
     LockAssert.assertLocked()
-    TimeLimitedRepeater.repeat(
+    repeatForLimitedTime(
       supplierEventRepository.findGroDeathEventsForDeletion(),
       groApiService::deleteConsumedGroSupplierEvent,
     )

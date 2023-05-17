@@ -5,7 +5,6 @@ import io.mockk.*
 import net.javacrumbs.shedlock.core.LockAssert
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.helpers.TimeLimitedRepeater
 import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.repositories.SupplierEvent
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
@@ -38,7 +37,6 @@ class ScheduledJobServiceTest {
   fun `deleteConsumedGroSupplierEvents deletes multiple events`() {
     mockkStatic(LockAssert::class)
     every { LockAssert.assertLocked() } just runs
-    mockkStatic(TimeLimitedRepeater::class)
 
     val supplierEvent1 = SupplierEvent(
       supplierSubscriptionId = UUID.randomUUID(),
@@ -52,12 +50,16 @@ class ScheduledJobServiceTest {
     )
     val supplierEvents = listOf(supplierEvent1, supplierEvent2)
     every { supplierEventRepository.findGroDeathEventsForDeletion() } returns supplierEvents
-    every { TimeLimitedRepeater.repeat(supplierEvents, groApiService::deleteConsumedGroSupplierEvent) } just runs
+    every { groApiService.deleteConsumedGroSupplierEvent(supplierEvent1) } just runs
+    every { groApiService.deleteConsumedGroSupplierEvent(supplierEvent2) } just runs
 
     underTest.deleteConsumedGroSupplierEvents()
 
     verify(exactly = 1) {
-      TimeLimitedRepeater.repeat(supplierEvents, groApiService::deleteConsumedGroSupplierEvent)
+      groApiService.deleteConsumedGroSupplierEvent(supplierEvent1)
+    }
+    verify(exactly = 1) {
+      groApiService.deleteConsumedGroSupplierEvent(supplierEvent2)
     }
   }
 }

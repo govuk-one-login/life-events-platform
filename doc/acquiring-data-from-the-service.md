@@ -42,64 +42,7 @@ from the services oauth system using the client ID and secret already provided.
 
 ### Getting a token
 
-The service uses AWS Cognito as our oauth system, with a grant type of client credentials, the token endpoint
-documentation can be found [here](https://docs.aws.amazon.com/cognito/latest/developerguide/token-endpoint.html)
-
-In order to get the token, the client will need to call the oauth system's token endpoint, found
-at `[Oauth Base URL]/oauth2/token`. This token is currently set to a lifetime of 1 hour.
-
-To this endpoint, one of 2 calls can be made:
-
-#### Form encoded credentials
-
-`POST` to this endpoint with:
-
-* a `Content-Type` header with value `application/x-www-form-urlencoded`
-* a form (of format `x-www-form-urlencoded`) with key pairs:
-    * a key of `grant_type` and value `client_credentials`
-    * a key of `client_id` and value `[Client ID]`
-    * a key of `client_secret` and value `[Client Secret]`
-
-Example bash script:
-
-```shell
-OAUTH_URL=[Oauth URL]
-CLIENT_ID=[Client ID]
-CLIENT_SECRET=[Client Secret]
-JWT_TOKEN=$(curl --location --request POST "$OAUTH_URL/oauth2/token" --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'grant_type=client_credentials' --data-urlencode "client_id=$CLIENT_ID" --data-urlencode "client_secret=$CLIENT_SECRET" | jq -r .access_token)
-echo $JWT_TOKEN
-```
-
-#### Basic Authorization
-
-`POST` to this endpoint with:
-
-* a `Content-Type` header with value `application/x-www-form-urlencoded`
-* an `Authorization` header with value `Basic: [Base64Encoded(clientId:clientSecret)]` following basic authorization
-  format
-* a form (of format `x-www-form-urlencoded`) with a key of `grant_type` and value `client_credentials`
-
-Example bash script:
-
-```shell
-OAUTH_URL=[Oauth URL]
-CLIENT_ID=[Client ID]
-CLIENT_SECRET=[Client Secret]
-JWT_TOKEN=$(curl --location --request POST "$OAUTH_URL/oauth2/token" --header 'Content-Type: application/x-www-form-urlencoded' --header "Authorization: Basic $(echo -n $CLIENT_ID:$CLIENT_SECRET | base64)" --data-urlencode 'grant_type=client_credentials' | jq -r .access_token)
-echo $JWT_TOKEN
-```
-
-#### Response
-
-The response will be of the form:
-
-```json
-{
-  "access_token": "ey...........",
-  "expires_in": 3600,
-  "token_type": "Bearer"
-}
-```
+See our public facing [TechDocs](https://alphagov.github.io/gdx-data-share-poc/how-to-generate-an-access-token.html).
 
 ### Using the token
 

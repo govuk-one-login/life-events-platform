@@ -4,7 +4,7 @@ host: https://alphagov.github.io/gdx-data-share-poc
 # Header-related options
 show_govuk_logo: true
 service_name: GDX Platform
-service_link: https://d33v84mi0vopmk.cloudfront.net/swagger-ui/index.html
+service_link: https://dev.share-life-events.service.gov.uk/swagger-ui/index.html
 phase:
 
 # Links to show on right-hand-side of header
@@ -38,4 +38,4 @@ show_contribution_banner: true
 github_repo: alphagov/gdx-data-share-poc
 github_branch: main
 
-api_path: https://d33v84mi0vopmk.cloudfront.net/v3/api-docs.yaml
+api_path: https://dev.share-life-events.service.gov.uk/v3/api-docs.yaml

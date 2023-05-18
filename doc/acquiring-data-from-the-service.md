@@ -27,10 +27,10 @@ This will be provided by the GDX team upon request.
 
 ### Service API URL
 
-| environment | url                                    | swagger url                                           |
-|-------------|----------------------------------------|-------------------------------------------------------|
-| dev         | https://d33v84mi0vopmk.cloudfront.net  | https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html |
-| demo        | https://d2w5ifs4ir0pe.cloudfront.net   | https://d2w5ifs4ir0pe.cloudfront.net/swagger-ui.html  |
+| environment | url                                           | swagger url                                                   |
+|-------------|-----------------------------------------------|---------------------------------------------------------------|
+| dev         | https://dev.share-life-events.service.gov.uk  | https://dev.share-life-events.service.gov.uk/swagger-ui.html  |
+| demo        | https://demo.share-life-events.service.gov.uk | https://demo.share-life-events.service.gov.uk/swagger-ui.html |
 
 ## How to authenticate
 

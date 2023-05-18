@@ -1,10 +1,19 @@
 *.mp4
 
+.git
 .github
 .gradle
 .idea
+.run
 
 build
 ci
 doc
+frontend
+grafana
+lev-data
+oauth2-data
+prisoner-search-data
+prometheus
+scripts
 terraform

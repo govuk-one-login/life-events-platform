@@ -4,13 +4,10 @@ import com.amazonaws.xray.spring.aop.XRayEnabled
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.dao.DuplicateKeyException
-import org.springframework.data.relational.core.conversion.DbActionExecutionException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.jms.annotation.JmsListener
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.interceptor.TransactionInterceptor
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry
 import uk.gov.gdx.datashare.config.SupplierSubscriptionNotFoundException
@@ -41,18 +38,7 @@ class SupplierEventProcessor(
   fun onSupplierEvent(message: String) {
     val supplierEvent = buildSupplierEvent(message)
     val supplierSubscription = fetchSupplierSubscription(supplierEvent)
-    
-    val savepoint = TransactionInterceptor.currentTransactionStatus().createSavepoint()
-    try {
-      supplierEventRepository.save(supplierEvent)
-    }
-    catch (e: DbActionExecutionException) {
-      if (e.cause is DuplicateKeyException) {
-        log.info("Duplicate ID for supplier event found")
-        TransactionInterceptor.currentTransactionStatus().rollbackToSavepoint(savepoint)
-        return
-      }
-    }
+    supplierEventRepository.save(supplierEvent)
 
     val acquirerSubscriptions = acquirerSubscriptionRepository.findAllByEventType(supplierSubscription.eventType)
     val acquirerEvents = buildAndPersistAcquirerEvents(acquirerSubscriptions, supplierEvent)

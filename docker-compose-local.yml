@@ -57,7 +57,7 @@ services:
       - POSTGRES_DB=datashare
 
   lev-api:
-    image: quay.io/governmentdigitalservices/lev-api:latest
+    image: quay.io/ukhomeofficedigital/lev-api:latest
     container_name: lev-api
     networks:
       - hmpo

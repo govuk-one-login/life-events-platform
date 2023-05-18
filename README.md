@@ -4,7 +4,7 @@ Cross governmental data sharing platform, to simplify data acquisition and shari
 
 ## Documentation
 Techdocs for this service are available [here](https://alphagov.github.io/gdx-data-share-poc/).
-There are also [Swagger docs](https://d33v84mi0vopmk.cloudfront.net/swagger-ui.html).
+There are also [Swagger docs](https://dev.share-life-events.service.gov.uk/swagger-ui.html).
 
 ## Running the service
 

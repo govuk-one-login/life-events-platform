@@ -14,8 +14,7 @@ interface SupplierEventRepository : CrudRepository<SupplierEvent, UUID> {
       "AND ss.event_type = 'GRO_DEATH_NOTIFICATION' " +
       "AND NOT EXISTS (" +
       "SELECT 1 FROM acquirer_event ae WHERE ae.deleted_at IS NULL AND ae.supplier_event_id = se.id " +
-      ") " +
-      "ORDER BY random()",
+      ") ",
   )
-  fun findGroDeathEventsForDeletion(): List<SupplierEvent>
+  fun findGroDeathEventsForDeletion(): MutableList<SupplierEvent>
 }

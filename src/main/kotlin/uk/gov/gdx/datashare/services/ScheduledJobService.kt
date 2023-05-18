@@ -33,8 +33,10 @@ class ScheduledJobService(
   @SchedulerLock(name = "deleteConsumedGroSupplierEvents", lockAtMostFor = "60s", lockAtLeastFor = "15s")
   fun deleteConsumedGroSupplierEvents() {
     LockAssert.assertLocked()
+    val events = supplierEventRepository.findGroDeathEventsForDeletion()
+    events.shuffle()
     repeatForLimitedTime(
-      supplierEventRepository.findGroDeathEventsForDeletion(),
+      events,
       groApiService::deleteConsumedGroSupplierEvent,
     )
   }

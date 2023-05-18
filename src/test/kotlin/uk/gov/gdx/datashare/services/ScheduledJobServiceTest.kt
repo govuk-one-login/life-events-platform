@@ -48,7 +48,7 @@ class ScheduledJobServiceTest {
       dataId = "asdasd2",
       eventTime = null,
     )
-    val supplierEvents = listOf(supplierEvent1, supplierEvent2)
+    val supplierEvents = mutableListOf(supplierEvent1, supplierEvent2)
     every { supplierEventRepository.findGroDeathEventsForDeletion() } returns supplierEvents
     every { groApiService.deleteConsumedGroSupplierEvent(supplierEvent1) } just runs
     every { groApiService.deleteConsumedGroSupplierEvent(supplierEvent2) } just runs

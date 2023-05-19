@@ -118,7 +118,7 @@ class SuppliersController(
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Supplier Subscriptions",
-    description = "Need scope of events/admin",
+    description = "Mark a supplier as deleted. This will also soft delete all supplier subscriptions linked to this supplier, and delete the cognito clients for those subscriptions, if no more subscriptions are attached to them.",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -147,7 +147,7 @@ class SuppliersController(
   @DeleteMapping("/subscriptions")
   @Operation(
     summary = "Delete Supplier Subscriptions",
-    description = "Need scope of events/admin",
+    description = "Mark a supplier subscription as deleted. This will also delete the cognito client for this subscription, if no more subscriptions are attached to it.",
     responses = [
       ApiResponse(
         responseCode = "201",
@@ -272,7 +272,7 @@ class SuppliersController(
       ),
     ],
 
-  )
+    )
   fun updateSupplierSubscription(
     @Schema(
       description = "Supplier ID",

@@ -24,7 +24,7 @@ class AcquirersService(
   private val adminActionAlertsService: AdminActionAlertsService,
   private val dateTimeHandler: DateTimeHandler,
   private val cognitoService: CognitoService,
-  private val queueService: QueueService,
+  private val outboundEventQueueService: OutboundEventQueueService,
 ) {
   fun getAcquirers() = acquirerRepository.findAll()
 
@@ -186,8 +186,8 @@ class AcquirersService(
 
     val otherSubscriptionsOnQueue = acquirerSubscriptionRepository.findAllByQueueName(subscription.queueName)
     if (otherSubscriptionsOnQueue.isEmpty()) {
-      queueService.deleteQueue(subscription.queueName)
-      queueService.deleteQueue("${subscription.queueName}-dlq")
+      outboundEventQueueService.deleteQueue(subscription.queueName)
+      outboundEventQueueService.deleteQueue("${subscription.queueName}-dlq")
     }
     return subscription
   }

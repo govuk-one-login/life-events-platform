@@ -22,7 +22,7 @@ class AcquirersServiceTest {
   private val adminActionAlertsService = mockk<AdminActionAlertsService>()
   private val cognitoService = mockk<CognitoService>()
   private val dateTimeHandler = mockk<DateTimeHandler>()
-  private val queueService = mockk<QueueService>()
+  private val outboundEventQueueService = mockk<OutboundEventQueueService>()
 
   private val underTest = AcquirersService(
     acquirerSubscriptionRepository,
@@ -31,7 +31,7 @@ class AcquirersServiceTest {
     adminActionAlertsService,
     dateTimeHandler,
     cognitoService,
-    queueService,
+    outboundEventQueueService,
   )
 
   @Test
@@ -296,8 +296,8 @@ class AcquirersServiceTest {
       emptyList(),
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
-    every { queueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
-    every { queueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
+    every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
+    every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
 
     underTest.deleteAcquirerSubscription(queueAcquirerSubscription.id)
 
@@ -310,14 +310,14 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      queueService.deleteQueue(
+      outboundEventQueueService.deleteQueue(
         withArg {
           assertThat(it).isEqualTo(queueAcquirerSubscription.queueName)
         },
       )
     }
     verify(exactly = 1) {
-      queueService.deleteQueue(
+      outboundEventQueueService.deleteQueue(
         withArg {
           assertThat(it).isEqualTo("${queueAcquirerSubscription.queueName}-dlq")
         },
@@ -389,8 +389,8 @@ class AcquirersServiceTest {
       emptyList(),
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
-    every { queueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
-    every { queueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
+    every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
+    every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
 
     underTest.deleteAcquirerSubscription(queueAcquirerSubscription.id)
 
@@ -403,11 +403,11 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 0) {
-      queueService.deleteQueue(queueAcquirerSubscription.queueName!!)
+      outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!)
     }
 
     verify(exactly = 0) {
-      queueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq")
+      outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq")
     }
   }
 
@@ -636,8 +636,8 @@ class AcquirersServiceTest {
       emptyList(),
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
-    every { queueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
-    every { queueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
+    every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
+    every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
     underTest.deleteAcquirer(acquirer.id)
 
     verify(exactly = 1) {
@@ -657,14 +657,14 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      queueService.deleteQueue(
+      outboundEventQueueService.deleteQueue(
         withArg {
           assertThat(it).isEqualTo(queueAcquirerSubscription.queueName)
         },
       )
     }
     verify(exactly = 1) {
-      queueService.deleteQueue(
+      outboundEventQueueService.deleteQueue(
         withArg {
           assertThat(it).isEqualTo("${queueAcquirerSubscription.queueName}-dlq")
         },
@@ -707,8 +707,8 @@ class AcquirersServiceTest {
       emptyList(),
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
-    every { queueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
-    every { queueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
+    every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
+    every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
 
     underTest.deleteAcquirer(acquirer.id)
 
@@ -739,7 +739,7 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      queueService.deleteQueue(
+      outboundEventQueueService.deleteQueue(
         withArg {
           assertThat(it).isEqualTo(queueAcquirerSubscription.queueName)
         },
@@ -747,7 +747,7 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      queueService.deleteQueue(
+      outboundEventQueueService.deleteQueue(
         withArg {
           assertThat(it).isEqualTo("${queueAcquirerSubscription.queueName}-dlq")
         },

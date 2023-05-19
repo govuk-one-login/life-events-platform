@@ -219,7 +219,8 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
       "sqs:ListQueueTags",
       "sqs:SendMessage",
       "sqs:SetQueueAttributes",
-      "sqs:TagQueue"
+      "sqs:TagQueue",
+      "sqs:DeleteQueue"
     ]
     resources = ["arn:aws:sqs:${var.region}:${data.aws_caller_identity.current.account_id}:acq_${var.environment}_*"]
     effect    = "Allow"

@@ -157,7 +157,7 @@ class ApiExceptionHandler {
 
   @ExceptionHandler(AcquirerNotFoundException::class)
   fun handleAcquirerNotFoundException(e: AcquirerNotFoundException): ResponseEntity<ErrorResponse?>? {
-    log.debug("Acquirer snot found exception caught: {}", e.message)
+    log.debug("Acquirer not found exception caught: {}", e.message)
     return ResponseEntity
       .status(NOT_FOUND)
       .body(

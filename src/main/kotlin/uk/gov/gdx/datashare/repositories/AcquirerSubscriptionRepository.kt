@@ -45,7 +45,7 @@ interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, 
   @Query(
     "SELECT asub.* FROM acquirer_subscription asub " +
       "JOIN acquirer a ON asub.acquirer_id = a.id " +
-      "AND a.id = :id AND asub.when_deleted IS NULL",
+      "WHERE a.id = :id AND asub.when_deleted IS NULL",
   )
   fun findAllByAcquirerId(id: UUID): List<AcquirerSubscription>
 }

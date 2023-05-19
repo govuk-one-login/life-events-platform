@@ -5,4 +5,3 @@ import java.time.temporal.ChronoUnit
 
 val compareIgnoringNanos: Comparator<LocalDateTime> =
   Comparator { d1, d2 -> ChronoUnit.MICROS.between(d1, d2).toInt() }
-

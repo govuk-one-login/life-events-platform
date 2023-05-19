@@ -155,6 +155,20 @@ class ApiExceptionHandler {
       )
   }
 
+  @ExceptionHandler(AcquirerNotFoundException::class)
+  fun handleAcquirerNotFoundException(e: AcquirerNotFoundException): ResponseEntity<ErrorResponse?>? {
+    log.debug("Acquirer snot found exception caught: {}", e.message)
+    return ResponseEntity
+      .status(NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = NOT_FOUND,
+          userMessage = "Acquirer Not Found: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
   @ExceptionHandler(java.lang.Exception::class)
   fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse?>? {
     log.error("Unexpected exception", e)
@@ -207,6 +221,8 @@ class EventNotFoundException(message: String) : Exception(message)
 class AcquirerSubscriptionNotFoundException(message: String) : Exception(message) {
   constructor(id: UUID) : this("No acquirer subscription found with id $id")
 }
+
+class AcquirerNotFoundException(message: String) : Exception(message)
 
 class SupplierSubscriptionNotFoundException(message: String) : Exception(message) {
   constructor(id: UUID) : this("No subscriber found with id $id")

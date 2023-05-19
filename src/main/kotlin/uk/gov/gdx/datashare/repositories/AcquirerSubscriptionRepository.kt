@@ -14,6 +14,8 @@ interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, 
 
   fun findAllByEventType(eventType: EventType): List<AcquirerSubscription>
 
+  fun findByAcquirerSubscriptionIdAndQueueNameIsNotNull(acquirerSubscriptionId: UUID): AcquirerSubscription?
+
   fun findAllByOauthClientIdAndEventTypeIsIn(
     oauthClientId: String,
     eventTypes: List<EventType>,

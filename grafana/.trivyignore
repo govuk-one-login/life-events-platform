@@ -22,8 +22,8 @@ CVE-2023-0466
 # GPC-353: We do not run on ARM and this is a difficult to expose vulnerability.
 CVE-2023-1255
 
-# GPC-377: These are issues in curl that currently have no descriptions, these will be revisited when they do have
-# descriptions
+# GPC-377: These are issues in curl that are minor and not impactful to us, they will be removed when the base image
+# upgrades to libcurl 8.1.0
 CVE-2023-28319
 CVE-2023-28320
 CVE-2023-28321

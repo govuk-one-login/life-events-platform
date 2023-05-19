@@ -31,12 +31,8 @@ class AcquirerEventProcessor(
     val acquirerEvent = acquirerEventRepository.findByIdOrNull(UUID.fromString(acquirerEventId))
       ?: throw EventNotFoundException("No acquirer event found with ID $acquirerEventId")
 
-    val acquirerSubscription = acquirerSubscriptionRepository.findByIdOrNull(acquirerEvent.acquirerSubscriptionId)
+    val acquirerSubscription = acquirerSubscriptionRepository.findByAcquirerSubscriptionIdAndQueueNameIsNotNull(acquirerEvent.acquirerSubscriptionId)
       ?: throw AcquirerSubscriptionNotFoundException(acquirerEvent.acquirerSubscriptionId)
-
-    if (acquirerSubscription.queueName == null) {
-      return
-    }
 
     consumeEventAndPushToQueue(acquirerEvent, acquirerSubscription)
   }

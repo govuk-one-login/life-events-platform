@@ -411,7 +411,6 @@ class AcquirersServiceTest {
     }
   }
 
-
   @Test
   fun `deleteAcquirerSubscription does not delete subscription if subscription does not exist`() {
     val now = LocalDateTime.now()
@@ -432,7 +431,6 @@ class AcquirersServiceTest {
 
     verify(exactly = 0) { cognitoService.deleteUserPoolClient(any()) }
   }
-
 
   @Test
   fun `addAcquirer adds acquirer`() {
@@ -657,7 +655,6 @@ class AcquirersServiceTest {
         },
       )
     }
-
 
     verify(exactly = 1) {
       queueService.deleteQueue(

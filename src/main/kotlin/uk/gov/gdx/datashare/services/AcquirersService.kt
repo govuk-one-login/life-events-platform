@@ -190,7 +190,6 @@ class AcquirersService(
       queueService.deleteQueue("${subscription.queueName}-dlq")
     }
     return subscription
-
   }
 
   fun addAcquirer(

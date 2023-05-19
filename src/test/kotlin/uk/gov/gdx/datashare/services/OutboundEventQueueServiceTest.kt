@@ -53,7 +53,6 @@ class OutboundEventQueueServiceTest {
     unmockkStatic(SqsClient::class)
   }
 
-
   @Test
   fun `sends message`() {
     underTest.sendMessage("queueone", "message")
@@ -124,23 +123,27 @@ class OutboundEventQueueServiceTest {
     underTest.createAcquirerQueue("test", "principal")
 
     verify(exactly = 1) {
-      sqsClient.createQueue(withArg<CreateQueueRequest> {
-        assertThat(it.queueName()).isEqualTo("test_dlq")
-        assertThat(it.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID]).isEqualTo("dlqKeyId")
-        assertThat(it.attributes()[QueueAttributeName.MESSAGE_RETENTION_PERIOD]).isEqualTo("${8 * 24 * 60 * 60}")
-        assertThat(it.attributes()[QueueAttributeName.REDRIVE_POLICY]).isNull()
-        assertThat(it.attributes()[QueueAttributeName.FIFO_QUEUE]).isNull()
-      })
+      sqsClient.createQueue(
+        withArg<CreateQueueRequest> {
+          assertThat(it.queueName()).isEqualTo("test_dlq")
+          assertThat(it.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID]).isEqualTo("dlqKeyId")
+          assertThat(it.attributes()[QueueAttributeName.MESSAGE_RETENTION_PERIOD]).isEqualTo("${8 * 24 * 60 * 60}")
+          assertThat(it.attributes()[QueueAttributeName.REDRIVE_POLICY]).isNull()
+          assertThat(it.attributes()[QueueAttributeName.FIFO_QUEUE]).isNull()
+        },
+      )
     }
 
     verify(exactly = 1) {
-      sqsClient.createQueue(withArg<CreateQueueRequest> {
-        assertThat(it.queueName()).isEqualTo("test")
-        assertThat(it.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID]).isEqualTo("keyId")
-        assertThat(it.attributes()[QueueAttributeName.MESSAGE_RETENTION_PERIOD]).isEqualTo("${4 * 24 * 60 * 60}")
-        assertThat(it.attributes()[QueueAttributeName.REDRIVE_POLICY]).isEqualTo("""{"maxReceiveCount": "10", "deadLetterTargetArn": "dlq:arn"}""")
-        assertThat(it.attributes()[QueueAttributeName.FIFO_QUEUE]).isNull()
-      })
+      sqsClient.createQueue(
+        withArg<CreateQueueRequest> {
+          assertThat(it.queueName()).isEqualTo("test")
+          assertThat(it.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID]).isEqualTo("keyId")
+          assertThat(it.attributes()[QueueAttributeName.MESSAGE_RETENTION_PERIOD]).isEqualTo("${4 * 24 * 60 * 60}")
+          assertThat(it.attributes()[QueueAttributeName.REDRIVE_POLICY]).isEqualTo("""{"maxReceiveCount": "10", "deadLetterTargetArn": "dlq:arn"}""")
+          assertThat(it.attributes()[QueueAttributeName.FIFO_QUEUE]).isNull()
+        },
+      )
     }
   }
 
@@ -151,23 +154,27 @@ class OutboundEventQueueServiceTest {
     underTest.createAcquirerQueue("test.fifo", "principal")
 
     verify(exactly = 1) {
-      sqsClient.createQueue(withArg<CreateQueueRequest> {
-        assertThat(it.queueName()).isEqualTo("test_dlq.fifo")
-        assertThat(it.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID]).isEqualTo("dlqKeyId")
-        assertThat(it.attributes()[QueueAttributeName.MESSAGE_RETENTION_PERIOD]).isEqualTo("${8 * 24 * 60 * 60}")
-        assertThat(it.attributes()[QueueAttributeName.REDRIVE_POLICY]).isNull()
-        assertThat(it.attributes()[QueueAttributeName.FIFO_QUEUE]).isEqualTo("true")
-      })
+      sqsClient.createQueue(
+        withArg<CreateQueueRequest> {
+          assertThat(it.queueName()).isEqualTo("test_dlq.fifo")
+          assertThat(it.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID]).isEqualTo("dlqKeyId")
+          assertThat(it.attributes()[QueueAttributeName.MESSAGE_RETENTION_PERIOD]).isEqualTo("${8 * 24 * 60 * 60}")
+          assertThat(it.attributes()[QueueAttributeName.REDRIVE_POLICY]).isNull()
+          assertThat(it.attributes()[QueueAttributeName.FIFO_QUEUE]).isEqualTo("true")
+        },
+      )
     }
 
     verify(exactly = 1) {
-      sqsClient.createQueue(withArg<CreateQueueRequest> {
-        assertThat(it.queueName()).isEqualTo("test.fifo")
-        assertThat(it.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID]).isEqualTo("keyId")
-        assertThat(it.attributes()[QueueAttributeName.MESSAGE_RETENTION_PERIOD]).isEqualTo("${4 * 24 * 60 * 60}")
-        assertThat(it.attributes()[QueueAttributeName.REDRIVE_POLICY]).isEqualTo("""{"maxReceiveCount": "10", "deadLetterTargetArn": "dlq:arn"}""")
-        assertThat(it.attributes()[QueueAttributeName.FIFO_QUEUE]).isEqualTo("true")
-      })
+      sqsClient.createQueue(
+        withArg<CreateQueueRequest> {
+          assertThat(it.queueName()).isEqualTo("test.fifo")
+          assertThat(it.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID]).isEqualTo("keyId")
+          assertThat(it.attributes()[QueueAttributeName.MESSAGE_RETENTION_PERIOD]).isEqualTo("${4 * 24 * 60 * 60}")
+          assertThat(it.attributes()[QueueAttributeName.REDRIVE_POLICY]).isEqualTo("""{"maxReceiveCount": "10", "deadLetterTargetArn": "dlq:arn"}""")
+          assertThat(it.attributes()[QueueAttributeName.FIFO_QUEUE]).isEqualTo("true")
+        },
+      )
     }
   }
 
@@ -178,10 +185,11 @@ class OutboundEventQueueServiceTest {
     underTest.createAcquirerQueue("test", "principal")
 
     verify(exactly = 1) {
-      sqsClient.createQueue(withArg<CreateQueueRequest> {
-        assertThat(it.queueName()).isEqualTo("test_dlq")
-        assertThat(it.attributes()[QueueAttributeName.POLICY]).isEqualToIgnoringWhitespace(
-          """
+      sqsClient.createQueue(
+        withArg<CreateQueueRequest> {
+          assertThat(it.queueName()).isEqualTo("test_dlq")
+          assertThat(it.attributes()[QueueAttributeName.POLICY]).isEqualToIgnoringWhitespace(
+            """
         {
           "Version": "2012-10-12",
           "Id": "cross-account-access",
@@ -198,16 +206,18 @@ class OutboundEventQueueServiceTest {
             }
           ]
         }
-        """.trimIndent()
-        )
-      })
+            """.trimIndent(),
+          )
+        },
+      )
     }
 
     verify(exactly = 1) {
-      sqsClient.createQueue(withArg<CreateQueueRequest> {
-        assertThat(it.queueName()).isEqualTo("test")
-        assertThat(it.attributes()[QueueAttributeName.POLICY]).isEqualToIgnoringWhitespace(
-          """
+      sqsClient.createQueue(
+        withArg<CreateQueueRequest> {
+          assertThat(it.queueName()).isEqualTo("test")
+          assertThat(it.attributes()[QueueAttributeName.POLICY]).isEqualToIgnoringWhitespace(
+            """
         {
           "Version": "2012-10-12",
           "Id": "cross-account-access",
@@ -238,9 +248,10 @@ class OutboundEventQueueServiceTest {
             }
           ]
         }
-        """.trimIndent()
-        )
-      })
+            """.trimIndent(),
+          )
+        },
+      )
     }
   }
 
@@ -251,10 +262,11 @@ class OutboundEventQueueServiceTest {
     underTest.createAcquirerQueue("test", "principal")
 
     verifyOrder {
-      kmsClient.createKey(withArg<CreateKeyRequest> {
-        assertThat(it.description()).isEqualTo("Key for sqs queue test_dlq in environment test")
-        assertThat(it.policy()).isEqualToIgnoringWhitespace(
-          """
+      kmsClient.createKey(
+        withArg<CreateKeyRequest> {
+          assertThat(it.description()).isEqualTo("Key for sqs queue test_dlq in environment test")
+          assertThat(it.policy()).isEqualToIgnoringWhitespace(
+            """
             {
               "Version": "2012-10-17",
               "Id": "key-default-1",
@@ -279,23 +291,29 @@ class OutboundEventQueueServiceTest {
                 }
               ]
             }
-          """.trimIndent()
-        )
-      })
+            """.trimIndent(),
+          )
+        },
+      )
 
-      kmsClient.createAlias(withArg<CreateAliasRequest> {
-        assertThat(it.aliasName()).isEqualTo("test/sqs-test_dlq")
-        assertThat(it.targetKeyId()).isEqualTo("dlqKeyId")
-      })
+      kmsClient.createAlias(
+        withArg<CreateAliasRequest> {
+          assertThat(it.aliasName()).isEqualTo("test/sqs-test_dlq")
+          assertThat(it.targetKeyId()).isEqualTo("dlqKeyId")
+        },
+      )
 
-      kmsClient.tagResource(withArg<TagResourceRequest> {
-        assertThat(it.keyId()).isEqualTo("dlqKeyId")
-      })
+      kmsClient.tagResource(
+        withArg<TagResourceRequest> {
+          assertThat(it.keyId()).isEqualTo("dlqKeyId")
+        },
+      )
 
-      kmsClient.createKey(withArg<CreateKeyRequest> {
-        assertThat(it.description()).isEqualTo("Key for sqs queue test in environment test")
-        assertThat(it.policy()).isEqualToIgnoringWhitespace(
-          """
+      kmsClient.createKey(
+        withArg<CreateKeyRequest> {
+          assertThat(it.description()).isEqualTo("Key for sqs queue test in environment test")
+          assertThat(it.policy()).isEqualToIgnoringWhitespace(
+            """
         {
           "Version": "2012-10-17",
           "Id": "key-default-1",
@@ -332,24 +350,28 @@ class OutboundEventQueueServiceTest {
             }
           ]
         }
-      """.trimIndent()
-        )
-      })
+            """.trimIndent(),
+          )
+        },
+      )
 
-      kmsClient.createAlias(withArg<CreateAliasRequest> {
-        assertThat(it.aliasName()).isEqualTo("test/sqs-test")
-        assertThat(it.targetKeyId()).isEqualTo("keyId")
-      })
+      kmsClient.createAlias(
+        withArg<CreateAliasRequest> {
+          assertThat(it.aliasName()).isEqualTo("test/sqs-test")
+          assertThat(it.targetKeyId()).isEqualTo("keyId")
+        },
+      )
 
-      kmsClient.tagResource(withArg<TagResourceRequest> {
-        assertThat(it.keyId()).isEqualTo("keyId")
-      })
+      kmsClient.tagResource(
+        withArg<TagResourceRequest> {
+          assertThat(it.keyId()).isEqualTo("keyId")
+        },
+      )
     }
   }
 
   @Test
   fun `grants the acquirer access to the queue key but not the dlq key`() {
-
   }
 
   private fun mockAws() {

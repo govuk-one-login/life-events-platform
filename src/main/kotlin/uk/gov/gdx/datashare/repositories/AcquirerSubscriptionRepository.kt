@@ -10,13 +10,27 @@ import java.util.*
 @Repository
 @JaversSpringDataAuditable
 interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, UUID> {
-  fun findAllByOauthClientId(oauthClientId: String): List<AcquirerSubscription>
+  @Override
+  override fun findAll() = findAllByWhenDeletedIsNull()
+  fun findAllByWhenDeletedIsNull(): List<AcquirerSubscription>
 
-  fun findAllByEventType(eventType: EventType): List<AcquirerSubscription>
+  fun findAllByOauthClientId(oauthClientId: String) = findAllByOauthClientIdAndWhenDeletedIsNull(oauthClientId)
+  fun findAllByOauthClientIdAndWhenDeletedIsNull(oauthClientId: String): List<AcquirerSubscription>
+
+  fun findAllByEventType(eventType: EventType) = findAllByEventTypeAndWhenDeletedIsNull(eventType)
+  fun findAllByEventTypeAndWhenDeletedIsNull(eventType: EventType): List<AcquirerSubscription>
+
+  fun findAllByQueueName(queueName: String) = findAllByQueueNameAndWhenDeletedIsNull(queueName)
+  fun findAllByQueueNameAndWhenDeletedIsNull(queueName: String): List<AcquirerSubscription>
 
   fun findByAcquirerSubscriptionIdAndQueueNameIsNotNull(acquirerSubscriptionId: UUID): AcquirerSubscription?
 
   fun findAllByOauthClientIdAndEventTypeIsIn(
+    oauthClientId: String,
+    eventTypes: List<EventType>,
+  ) = findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(oauthClientId, eventTypes)
+
+  fun findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
     oauthClientId: String,
     eventTypes: List<EventType>,
   ): List<AcquirerSubscription>
@@ -24,14 +38,14 @@ interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, 
   @Query(
     "SELECT asub.* FROM acquirer_subscription asub " +
       "JOIN acquirer_event ae ON asub.id = ae.acquirer_subscription_id " +
-      "WHERE ae.id = :id ",
+      "WHERE ae.id = :id AND asub.when_deleted IS NULL",
   )
   fun findByEventId(id: UUID): AcquirerSubscription?
 
   @Query(
     "SELECT asub.* FROM acquirer_subscription asub " +
       "JOIN acquirer a ON asub.acquirer_id = a.id " +
-      "AND a.id = :id",
+      "AND a.id = :id AND asub.when_deleted IS NULL",
   )
   fun findAllByAcquirerId(id: UUID): List<AcquirerSubscription>
 }

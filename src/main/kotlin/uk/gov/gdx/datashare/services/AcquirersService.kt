@@ -4,6 +4,7 @@ import com.amazonaws.xray.spring.aop.XRayEnabled
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.gdx.datashare.config.AcquirerNotFoundException
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.enums.EnrichmentField
@@ -203,6 +204,27 @@ class AcquirersService(
         ),
       )
     }
+  }
+
+  fun deleteAcquirer(id: UUID): Acquirer {
+    val now = dateTimeHandler.now()
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Delete acquirer",
+        object {
+          val acquirerId = id
+          val whenDeleted = now
+        },
+      ),
+    )
+    val acquirer = acquirerRepository.save(
+      acquirerRepository.findByIdOrNull(id)?.copy(
+        whenDeleted = now,
+      ) ?: throw AcquirerNotFoundException("Acquirer $id not found"),
+    )
+    val subscriptions = acquirerSubscriptionRepository.findAllByAcquirerId(id)
+    subscriptions.forEach { deleteAcquirerSubscription(it.id) }
+    return acquirer
   }
 
   fun getEnrichmentFieldsForAcquirerSubscription(acquirerSubscription: AcquirerSubscription): List<EnrichmentField> {

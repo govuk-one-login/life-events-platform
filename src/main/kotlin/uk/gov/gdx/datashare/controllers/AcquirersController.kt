@@ -85,6 +85,36 @@ class AcquirersController(
     acquirerRequest: AcquirerRequest,
   ) = acquirersService.addAcquirer(acquirerRequest)
 
+  @DeleteMapping
+  @Operation(
+    summary = "Delete Acquirer",
+    description = "Need scope of events/admin",
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Acquirer Deleted",
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+    ],
+  )
+  fun deleteAcquirer(
+    @Schema(
+      description = "Acquirer ID",
+      required = true,
+    )
+    @RequestBody
+    acquirerId: UUID,
+  ) = acquirersService.deleteAcquirer(acquirerId)
+
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Acquirer Subscriptions",
@@ -172,7 +202,12 @@ class AcquirersController(
     ],
   )
   fun getSubscriptionsForAcquirer(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
+    @Schema(
+      description = "Acquirer ID",
+      required = true,
+      example = "00000000-0000-0001-0000-000000000000",
+      pattern = UUID_REGEX,
+    )
     @PathVariable
     acquirerId: UUID,
   ) = acquirersService.getSubscriptionsForAcquirer(acquirerId)
@@ -199,7 +234,12 @@ class AcquirersController(
     ],
   )
   fun addAcquirerSubscription(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
+    @Schema(
+      description = "Acquirer ID",
+      required = true,
+      example = "00000000-0000-0001-0000-000000000000",
+      pattern = UUID_REGEX,
+    )
     @PathVariable
     acquirerId: UUID,
     @Schema(
@@ -233,10 +273,20 @@ class AcquirersController(
     ],
   )
   fun updateAcquirerSubscription(
-    @Schema(description = "Acquirer ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
+    @Schema(
+      description = "Acquirer ID",
+      required = true,
+      example = "00000000-0000-0001-0000-000000000000",
+      pattern = UUID_REGEX,
+    )
     @PathVariable
     acquirerId: UUID,
-    @Schema(description = "Acquirer Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
+    @Schema(
+      description = "Acquirer Subscription ID",
+      required = true,
+      example = "00000000-0000-0001-0000-000000000000",
+      pattern = UUID_REGEX,
+    )
     @PathVariable
     subscriptionId: UUID,
     @Schema(

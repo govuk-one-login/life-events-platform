@@ -114,6 +114,36 @@ class AcquirersController(
   )
   fun getAcquirerSubscriptions() = acquirersService.getAcquirerSubscriptions()
 
+  @DeleteMapping("/subscriptions")
+  @Operation(
+    summary = "Delete Acquirer Subscriptions",
+    description = "Need scope of events/admin",
+    responses = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Acquirer Subscription Deleted",
+      ),
+      ApiResponse(
+        responseCode = "415",
+        description = "Not able to process the request because the payload is in a format not supported by this endpoint.",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+    ],
+  )
+  fun deleteAcquirerSubscription(
+    @Schema(
+      description = "Acquirer Subscription ID",
+      required = true,
+    )
+    @RequestBody
+    acquirerSubscriptionId: UUID,
+  ) = acquirersService.deleteAcquirerSubscription(acquirerSubscriptionId)
+
   @GetMapping("/{acquirerId}/subscriptions")
   @Operation(
     summary = "Get Acquirer Subscriptions for Acquirer",

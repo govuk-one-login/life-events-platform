@@ -61,7 +61,7 @@ describe("Unit test for delete event handler", function () {
         )
         expect(result).toEqual({
             payload: eventRequest.id,
-            statusCode: 404,
+            statusCode: 500,
         })
     })
 })

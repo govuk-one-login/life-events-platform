@@ -242,10 +242,9 @@ class AcquirersServiceTest {
       emptyList(),
     )
     every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      allEnrichmentFields,
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
+      Unit,
     )
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteById(any()) }.returns(Unit)
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
@@ -260,17 +259,9 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteById(
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
         withArg {
-          assertThat(it).isEqualTo(acquirerSubscriptionEnrichmentField.id)
-        },
-      )
-    }
-
-    verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteById(
-        withArg {
-          assertThat(it).isEqualTo(newAcquirerSubscriptionEnrichmentField.id)
+          assertThat(it).isEqualTo(acquirerSubscription.id)
         },
       )
     }
@@ -292,8 +283,8 @@ class AcquirersServiceTest {
       emptyList(),
     )
     every { acquirerSubscriptionRepository.save(any()) }.returns(queueAcquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
-      emptyList(),
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
+      Unit,
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
@@ -335,10 +326,9 @@ class AcquirersServiceTest {
       listOf(otherAcquirerSubscription),
     )
     every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      allEnrichmentFields,
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
+      Unit,
     )
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteById(any()) }.returns(Unit)
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
@@ -353,17 +343,9 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteById(
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
         withArg {
-          assertThat(it).isEqualTo(acquirerSubscriptionEnrichmentField.id)
-        },
-      )
-    }
-
-    verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteById(
-        withArg {
-          assertThat(it).isEqualTo(newAcquirerSubscriptionEnrichmentField.id)
+          assertThat(it).isEqualTo(acquirerSubscription.id)
         },
       )
     }
@@ -385,8 +367,8 @@ class AcquirersServiceTest {
       listOf(otherQueueAcquirerSubscription),
     )
     every { acquirerSubscriptionRepository.save(any()) }.returns(queueAcquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
-      emptyList(),
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
+      Unit,
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
@@ -427,7 +409,7 @@ class AcquirersServiceTest {
 
     verify(exactly = 0) { acquirerSubscriptionRepository.save(any()) }
 
-    verify(exactly = 0) { acquirerSubscriptionEnrichmentFieldRepository.deleteById(any()) }
+    verify(exactly = 0) { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(any()) }
 
     verify(exactly = 0) { cognitoService.deleteUserPoolClient(any()) }
   }
@@ -486,10 +468,9 @@ class AcquirersServiceTest {
     )
     every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) }.returns(listOf(acquirerSubscription))
     every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      allEnrichmentFields,
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
+      Unit,
     )
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteById(any()) }.returns(Unit)
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
@@ -512,17 +493,9 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteById(
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
         withArg {
-          assertThat(it).isEqualTo(acquirerSubscriptionEnrichmentField.id)
-        },
-      )
-    }
-
-    verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteById(
-        withArg {
-          assertThat(it).isEqualTo(newAcquirerSubscriptionEnrichmentField.id)
+          assertThat(it).isEqualTo(acquirerSubscription.id)
         },
       )
     }
@@ -558,13 +531,9 @@ class AcquirersServiceTest {
       ),
     )
     every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      allEnrichmentFields,
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(any()) }.returns(
+      Unit,
     )
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(otherAcquirerSubscription.id) }.returns(
-      emptyList(),
-    )
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteById(any()) }.returns(Unit)
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
@@ -597,17 +566,9 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteById(
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
         withArg {
-          assertThat(it).isEqualTo(acquirerSubscriptionEnrichmentField.id)
-        },
-      )
-    }
-
-    verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteById(
-        withArg {
-          assertThat(it).isEqualTo(newAcquirerSubscriptionEnrichmentField.id)
+          assertThat(it).isEqualTo(acquirerSubscription.id)
         },
       )
     }
@@ -632,8 +593,8 @@ class AcquirersServiceTest {
     )
     every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) }.returns(listOf(queueAcquirerSubscription))
     every { acquirerSubscriptionRepository.save(any()) }.returns(queueAcquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
-      emptyList(),
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
+      Unit,
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
@@ -700,11 +661,8 @@ class AcquirersServiceTest {
       ),
     )
     every { acquirerSubscriptionRepository.save(any()) }.returns(queueAcquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
-      emptyList(),
-    )
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(otherQueueAcquirerSubscription.id) }.returns(
-      emptyList(),
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(any()) }.returns(
+      Unit,
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
@@ -768,10 +726,9 @@ class AcquirersServiceTest {
     )
     every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) }.returns(listOf(acquirerSubscription))
     every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      allEnrichmentFields,
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
+      Unit,
     )
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteById(any()) }.returns(Unit)
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 

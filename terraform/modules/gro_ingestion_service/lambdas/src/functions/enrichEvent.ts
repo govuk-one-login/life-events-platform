@@ -21,35 +21,47 @@ const handler: Handler = async (event: EventRequest): Promise<EnrichEventRespons
     }
 
     const command = new GetItemCommand(params)
-    const result = await dynamo.send(command)
 
-    if (!result.Item) {
+    try {
+        const result = await dynamo.send(command)
+
+        if (!result.Item) {
+            return logError(event.id, `Record with hash ${event.id} not found`)
+        }
+
+        const eventRecord = unmarshall(result.Item) as EventRecord
+
         const logParams = {
-            hash: event.id,
-            error: `Record with hash ${event.id} not found`,
+            hash: eventRecord.hash,
+            registrationId: eventRecord?.registrationId,
+            eventTime: eventRecord?.eventTime,
+            error: null,
         }
-        console.error("Failed to enrich event", logParams)
+
+        console.log("Successfully enriched event", logParams)
+
         return {
-            statusCode: 404,
+            statusCode: 200,
+            payload: eventRecord,
         }
-    }
-
-    const eventRecord = unmarshall(result.Item) as EventRecord
-
-    const logParams = {
-        hash: eventRecord.hash,
-        registrationId: eventRecord?.registrationId,
-        eventTime: eventRecord?.eventTime,
-        error: null,
-    }
-
-    console.log("Successfully enriched event", logParams)
-
-    return {
-        statusCode: 200,
-        payload: eventRecord,
+    } catch (err) {
+        return logError(event.id, err)
     }
 }
+
+const logError = (eventId, error): EnrichEventResponse => {
+    const logParams = {
+        hash: eventId,
+        error: error,
+    }
+
+    console.error("Failed to enrich event", logParams)
+    return {
+        payload: eventId,
+        statusCode: 404,
+    }
+}
+
 
 const lambdaFunction: LambdaFunction = {
     name: "enrichEvent",

@@ -12,7 +12,20 @@ const handler: Handler = async (event: BucketObjectDetails) => {
         Key: event.key,
     })
 
-    await client.send(deleteCommand)
+    try {
+        await client.send(deleteCommand)
+        const logParams = {
+            fileKey: event.key,
+            error: null,
+        }
+        console.log("Successfully deleted XML file", logParams)
+    } catch (err) {
+        const logParams = {
+            fileKey: event.key,
+            error: err,
+        }
+        console.log("Failed to delete XML file", logParams)
+    }
 }
 
 const lambdaFunction: LambdaFunction = {

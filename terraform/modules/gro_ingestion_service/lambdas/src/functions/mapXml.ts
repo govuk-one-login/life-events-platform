@@ -1,6 +1,7 @@
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb"
 import { marshall } from "@aws-sdk/util-dynamodb"
 import { Handler } from "aws-lambda"
+import hash from "object-hash"
 
 import { config } from "../helpers/config"
 import { GroDeathRegistration, mapToEventRecord } from "../models/GroDeathRegistration"
@@ -23,7 +24,25 @@ const generateRecord = (deathRegistration: GroDeathRegistration): PutItemCommand
 
 const handler: Handler = async (event: GroDeathRegistration) => {
     const deathRecord = generateRecord(event)
-    await pushRecord(deathRecord)
+
+    try {
+        await pushRecord(deathRecord)
+
+        const logParams = {
+            hash: hash(deathRecord),
+            registrationId: event.RegistrationID,
+            eventTime: event.RecordUpdateDateTime,
+        }
+        console.log("Successfully entered event into DynamoDB", logParams)
+    } catch (err) {
+        const logParams = {
+            hash: hash(deathRecord),
+            registrationId: event.RegistrationID,
+            eventTime: event.RecordUpdateDateTime,
+            error: err
+        }
+        console.error("Failed to insert event into DynamoDB", logParams)
+    }
 }
 
 const lambdaFunction: LambdaFunction = {

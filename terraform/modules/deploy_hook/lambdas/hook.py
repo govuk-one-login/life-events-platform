@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import ssl
+import uuid
 from datetime import datetime
 from http.client import HTTPResponse
 from typing import Literal
@@ -78,7 +79,7 @@ def put_lifecycle_event_hook(event, status: Literal["Failed", "Succeeded"]):
 def post_event(auth_token: str):
     event_request_data = json.dumps({
         "eventType": "TEST_EVENT",
-        "id": 1
+        "id": uuid.uuid4()
     }).encode("utf-8")
     event_request = request.Request(
         events_url,

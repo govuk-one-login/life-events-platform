@@ -75,20 +75,6 @@ class AcquirersService(
     ).toList()
   }
 
-  fun deleteAcquirerSubscriptionEnrichmentField(enrichmentFieldId: UUID) {
-    val now = dateTimeHandler.now()
-    adminActionAlertsService.noticeAction(
-      AdminAction(
-        "Delete acquirer subscription enrichment field",
-        object {
-          val enrichmentFieldId = enrichmentFieldId
-          val whenDeleted = now
-        },
-      ),
-    )
-    acquirerSubscriptionEnrichmentFieldRepository.deleteById(enrichmentFieldId)
-  }
-
   fun addAcquirerSubscription(
     acquirerId: UUID,
     acquirerSubRequest: AcquirerSubRequest,
@@ -170,24 +156,26 @@ class AcquirersService(
     acquirerSubscriptionEnrichmentFieldRepository
       .deleteAllByAcquirerSubscriptionId(subscriptionId)
 
+    if (subscription.queueName == null && subscription.oauthClientId == null) {
+      throw IllegalStateException("Acquirer does not have a client id or queue name.")
+    }
+
     if (subscription.oauthClientId != null) {
       val otherSubscriptionsWithClient =
         acquirerSubscriptionRepository.findAllByOauthClientId(subscription.oauthClientId)
       if (otherSubscriptionsWithClient.isEmpty()) {
         cognitoService.deleteUserPoolClient(subscription.oauthClientId)
       }
-      return subscription
     }
 
-    if (subscription.queueName == null) {
-      throw IllegalStateException("Acquirer does not have a client id or queue name.")
+    if (subscription.queueName != null) {
+      val otherSubscriptionsOnQueue = acquirerSubscriptionRepository.findAllByQueueName(subscription.queueName)
+      if (otherSubscriptionsOnQueue.isEmpty()) {
+        outboundEventQueueService.deleteQueue(subscription.queueName)
+        outboundEventQueueService.deleteQueue("${subscription.queueName}-dlq")
+      }
     }
 
-    val otherSubscriptionsOnQueue = acquirerSubscriptionRepository.findAllByQueueName(subscription.queueName)
-    if (otherSubscriptionsOnQueue.isEmpty()) {
-      outboundEventQueueService.deleteQueue(subscription.queueName)
-      outboundEventQueueService.deleteQueue("${subscription.queueName}-dlq")
-    }
     return subscription
   }
 

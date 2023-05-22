@@ -7,8 +7,8 @@ import { LambdaFunction } from "../models/LambdaFunction"
 const client = new S3Client({ apiVersion: "2012-08-10" })
 
 const handler: Handler = async (event: BucketObjectDetails) => {
-    const logParams: { fileKey: string, error?: Error } = {
-        fileKey: event.key
+    const logParams: { fileKey: string; error?: Error } = {
+        fileKey: event.key,
     }
     const deleteCommand = new DeleteObjectCommand({
         Bucket: event.bucket,

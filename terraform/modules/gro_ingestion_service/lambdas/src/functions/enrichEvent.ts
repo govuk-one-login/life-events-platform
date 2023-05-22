@@ -19,8 +19,8 @@ const handler: Handler = async (event: EventRequest): Promise<EnrichEventRespons
         },
         TableName: config.tableName,
     }
-    const logParams: { hash: string, registrationId?: string, eventTime?: string, error?: string | Error } = {
-        hash: event.id
+    const logParams: { hash: string; registrationId?: string; eventTime?: string; error?: string | Error } = {
+        hash: event.id,
     }
 
     const command = new GetItemCommand(params)

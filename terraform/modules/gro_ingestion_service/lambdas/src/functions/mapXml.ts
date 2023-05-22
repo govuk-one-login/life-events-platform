@@ -24,7 +24,7 @@ const generateRecord = (deathRegistration: GroDeathRegistration): PutItemCommand
 
 const handler: Handler = async (event: GroDeathRegistration) => {
     const deathRecord = generateRecord(event)
-    const logParams: { hash: string, registrationId?: string, eventTime?: string, error?: Error } = {
+    const logParams: { hash: string; registrationId?: string; eventTime?: string; error?: Error } = {
         hash: hash(deathRecord),
         registrationId: event.RegistrationID,
         eventTime: event.RecordUpdateDateTime,

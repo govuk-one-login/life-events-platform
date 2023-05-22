@@ -18,7 +18,7 @@ const getGroFile = async (event: S3ObjectCreatedNotificationEvent) => {
 }
 
 const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) => {
-    const logParams: { fileKey: string, error?: string | Error } = {
+    const logParams: { fileKey: string; error?: string | Error } = {
         fileKey: event.detail.object.key,
     }
 

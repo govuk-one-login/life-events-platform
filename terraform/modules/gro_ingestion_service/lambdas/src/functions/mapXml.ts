@@ -24,23 +24,17 @@ const generateRecord = (deathRegistration: GroDeathRegistration): PutItemCommand
 
 const handler: Handler = async (event: GroDeathRegistration) => {
     const deathRecord = generateRecord(event)
+    const logParams: { hash: string, registrationId?: string, eventTime?: string, error?: Error } = {
+        hash: hash(deathRecord),
+        registrationId: event.RegistrationID,
+        eventTime: event.RecordUpdateDateTime,
+    }
 
     try {
         await pushRecord(deathRecord)
-
-        const logParams = {
-            hash: hash(deathRecord),
-            registrationId: event.RegistrationID,
-            eventTime: event.RecordUpdateDateTime,
-        }
         console.log("Successfully entered event into DynamoDB", logParams)
     } catch (err) {
-        const logParams = {
-            hash: hash(deathRecord),
-            registrationId: event.RegistrationID,
-            eventTime: event.RecordUpdateDateTime,
-            error: err,
-        }
+        logParams.error = err
         console.error("Failed to insert event into DynamoDB", logParams)
     }
 }

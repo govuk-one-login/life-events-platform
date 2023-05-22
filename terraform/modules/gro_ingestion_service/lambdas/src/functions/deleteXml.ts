@@ -7,6 +7,9 @@ import { LambdaFunction } from "../models/LambdaFunction"
 const client = new S3Client({ apiVersion: "2012-08-10" })
 
 const handler: Handler = async (event: BucketObjectDetails) => {
+    const logParams: { fileKey: string, error?: Error } = {
+        fileKey: event.key
+    }
     const deleteCommand = new DeleteObjectCommand({
         Bucket: event.bucket,
         Key: event.key,
@@ -14,16 +17,9 @@ const handler: Handler = async (event: BucketObjectDetails) => {
 
     try {
         await client.send(deleteCommand)
-        const logParams = {
-            fileKey: event.key,
-            error: null,
-        }
         console.log("Successfully deleted XML file", logParams)
     } catch (err) {
-        const logParams = {
-            fileKey: event.key,
-            error: err,
-        }
+        logParams.error = err
         console.log("Failed to delete XML file", logParams)
     }
 }

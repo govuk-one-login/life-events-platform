@@ -168,8 +168,7 @@ class AcquirersService(
     )
 
     acquirerSubscriptionEnrichmentFieldRepository
-      .findAllByAcquirerSubscriptionId(subscriptionId)
-      .forEach { deleteAcquirerSubscriptionEnrichmentField(it.id) }
+      .deleteAllByAcquirerSubscriptionId(subscriptionId)
 
     if (subscription.oauthClientId != null) {
       val otherSubscriptionsWithClient =

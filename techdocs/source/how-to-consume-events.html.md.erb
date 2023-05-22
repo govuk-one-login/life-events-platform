@@ -31,3 +31,12 @@ api_operation> /events/{id} get
 ## Mark an event as processed
 
 api_operation> /events/{id} delete
+
+## FAQs
+
+* How many events can be returned from `GET /events`?
+  * This endpoint is paginated and the acquirer can specify any page size they want.
+* What is the `[event ID]` for event specific queries?
+  * This is the `id` property of every object in the array `data` in the response from `GET /events`.
+* If there are no events, what will the response be from `GET /events`?
+  * The array `data` will be empty, and `meta.page.totalElements` will be 0.

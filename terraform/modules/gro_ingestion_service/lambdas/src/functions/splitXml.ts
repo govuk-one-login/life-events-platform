@@ -22,10 +22,15 @@ const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) => {
         const groXml = await getGroFile(event)
 
         if (!groXml) {
-            return logError({
+            const logParams = {
                 fileKey: event.detail.object.key,
                 error: `File with key ${event.detail.object.key} not found`,
-            })
+            }
+
+            console.error("Failed to insert records into DynamoDB", logParams)
+            return {
+                statusCode: 404,
+            }
         }
 
         const groJson = parser.parse(groXml)
@@ -36,17 +41,15 @@ const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) => {
             deathRegistrations: Array.isArray(deathRegistrations) ? deathRegistrations : [deathRegistrations],
         }
     } catch (err) {
-        return logError({
+        const logParams = {
             fileKey: event.detail.object.key,
             error: err,
-        })
-    }
-}
+        }
 
-const logError = logParams => {
-    console.error("Failed to insert records into DynamoDB", logParams)
-    return {
-        statusCode: 404,
+        console.error("Failed to insert records into DynamoDB", logParams)
+        return {
+            statusCode: 500,
+        }
     }
 }
 

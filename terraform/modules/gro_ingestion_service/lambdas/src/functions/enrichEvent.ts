@@ -26,7 +26,15 @@ const handler: Handler = async (event: EventRequest): Promise<EnrichEventRespons
         const result = await dynamo.send(command)
 
         if (!result.Item) {
-            return logError(event.id, `Record with hash ${event.id} not found`)
+            const logParams = {
+                hash: event.id,
+                error: `Record with hash ${event.id} not found`,
+            }
+
+            console.error("Failed to enrich event", logParams)
+            return {
+                statusCode: 404,
+            }
         }
 
         const eventRecord = unmarshall(result.Item) as EventRecord
@@ -45,20 +53,15 @@ const handler: Handler = async (event: EventRequest): Promise<EnrichEventRespons
             payload: eventRecord,
         }
     } catch (err) {
-        return logError(event.id, err)
-    }
-}
+        const logParams = {
+            hash: event.id,
+            error: err,
+        }
 
-const logError = (eventId, error): EnrichEventResponse => {
-    const logParams = {
-        hash: eventId,
-        error: error,
-    }
-
-    console.error("Failed to enrich event", logParams)
-    return {
-        payload: eventId,
-        statusCode: 404,
+        console.error("Failed to enrich event", logParams)
+        return {
+            statusCode: 500,
+        }
     }
 }
 

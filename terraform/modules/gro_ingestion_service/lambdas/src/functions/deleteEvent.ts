@@ -26,33 +26,39 @@ const handler: Handler = async (event: EventRequest): Promise<DeleteEventRespons
         const result = await dynamo.send(command)
 
         if (!result.Attributes) {
-            return logError(event.id)
+            const logParams = {
+                hash: event.id,
+            }
+            console.error("Failed to delete event", logParams)
+            return {
+                payload: event.id,
+                statusCode: 404,
+            }
         }
         const eventRecord = unmarshall(result.Attributes) as EventRecord
+
         const logParams = {
             hash: event.id,
             registrationId: eventRecord?.registrationId,
             eventTime: eventRecord?.eventTime,
         }
         console.log("Successfully deleted event", logParams)
+
         return {
             payload: event.id,
             statusCode: 200,
         }
     } catch (err) {
-        return logError(event.id, err)
-    }
-}
+        const logParams = {
+            hash: event.id,
+            error: err,
+        }
+        console.error("Failed to delete event", logParams)
 
-const logError = (eventId, error?): DeleteEventResponse => {
-    const logParams = {
-        hash: eventId,
-        error: error,
-    }
-    console.error("Failed to delete event", logParams)
-    return {
-        payload: eventId,
-        statusCode: 404,
+        return {
+            payload: event.id,
+            statusCode: 500,
+        }
     }
 }
 

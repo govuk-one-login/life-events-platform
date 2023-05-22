@@ -43,7 +43,7 @@ const handler: Handler = async (event: S3ObjectCreatedNotificationEvent) => {
     }
 }
 
-const logError = (logParams) => {
+const logError = logParams => {
     console.error("Failed to insert records into DynamoDB", logParams)
     return {
         statusCode: 404,

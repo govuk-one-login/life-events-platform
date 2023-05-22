@@ -39,7 +39,7 @@ const handler: Handler = async (event: GroDeathRegistration) => {
             hash: hash(deathRecord),
             registrationId: event.RegistrationID,
             eventTime: event.RecordUpdateDateTime,
-            error: err
+            error: err,
         }
         console.error("Failed to insert event into DynamoDB", logParams)
     }

@@ -62,7 +62,6 @@ const logError = (eventId, error): EnrichEventResponse => {
     }
 }
 
-
 const lambdaFunction: LambdaFunction = {
     name: "enrichEvent",
     handler: handler,

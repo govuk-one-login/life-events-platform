@@ -272,7 +272,7 @@ class SuppliersController(
       ),
     ],
 
-    )
+  )
   fun updateSupplierSubscription(
     @Schema(
       description = "Supplier ID",

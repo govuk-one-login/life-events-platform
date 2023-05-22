@@ -1,0 +1,19 @@
+---
+title: How to supply events
+weight: 60
+---
+
+# How to supply events
+You will first need to generate an access token, as described
+in [How to generate an access token](how-to-generate-an-access-token).
+
+All requests to the below endpoint must be authorised by including an `Authorization: Bearer <access_token>` header.
+
+<%= inset_text("The following information is also available as <a href=\"https://dev.share-life-events.service.gov.uk/swagger-ui/index.html\">Swagger docs</a>") %>
+
+## Basic procedure
+1. Call POST [/events](#supply-an-event) to supply an event
+
+## Supply an event
+
+api_operation> /events post

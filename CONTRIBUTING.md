@@ -64,6 +64,12 @@ In order to run terraform or aws cli etc., just run the below and enter the MFA 
 eval $(assume-role gdx)
 ```
 
+#### Grafana access
+
+1. Set up a user in the `grafana` user pool in AWS cognito for yourself [here](https://eu-west-2.console.aws.amazon.com/cognito/v2/idp/user-pools/eu-west-2_bM1uLXz8Z/users?region=eu-west-2)
+2. Add your user to the Admin group
+3. Go to [Grafana](https://non-prod-grafana.share-life-events.service.gov.uk/) and choose to log in with cognito
+
 ## Local Development Setup
 
 Requirements

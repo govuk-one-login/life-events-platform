@@ -40,7 +40,4 @@ alerts for all environments in one place.
 
 ## Access
 
-To access the Grafana, set up a User for yourself in the Cognito Grafana user pool, and put them in the Admin user
-group, this is then your login for the Grafana instance.
-
-To access our Grafana instance go [here](https://non-prod-grafana.share-life-events.service.gov.uk/).
+To get access, please read the CONTRIBUTING doc Grafana Access section [here](../../CONTRIBUTING.md#grafana-access).

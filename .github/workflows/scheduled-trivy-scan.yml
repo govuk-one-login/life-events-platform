@@ -6,8 +6,26 @@ on:
     - cron: '0 3 * * *'
 
 jobs:
-  trivy:
+  validate-images:
+    strategy:
+      matrix:
+        include:
+          - image: gdx
+            context: ./
+            trivyignore: .trivyignore
+          - image: prometheus
+            context: ./prometheus
+            trivyignore: prometheus/.trivyignore
+          - image: grafana
+            context: ./grafana
+            trivyignore: grafana/.trivyignore
+      fail-fast: false
+    name: Validate ${{ matrix.image }} image
     runs-on: ubuntu-latest
+    outputs:
+      gdx-outcome: ${{ steps.output.outputs.gdx-outcome || '' }}
+      prometheus-outcome: ${{ steps.output.outputs.prometheus-outcome || '' }}
+      grafana-outcome: ${{ steps.output.outputs.grafana-outcome || '' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -18,34 +36,115 @@ jobs:
       - name: Build and tag image
         uses: docker/build-push-action@v4
         with:
-          context: ./
+          context: ${{ matrix.context }}
           push: false
-          tags: ${{ github.ref_name }}:latest
+          tags: ${{ github.ref_name }}:${{ matrix.image }}
           load: true
           cache-to: type=gha
           cache-from: type=gha
 
-      - name: Run Trivy vulnerabilities for code scanner
-        id: trivy-code
+      - id: trivy
+        name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.10.0
         continue-on-error: true
         with:
-          image-ref: ${{ github.ref_name }}:latest
-          trivy-config: trivy.yaml
+          image-ref: ${{ github.ref_name }}:${{ matrix.image }}
+          trivyignores: ${{ matrix.trivyignore }}
 
-      - name: Run Trivy vulnerabilities for infrastructure scanner
-        id: trivy-infra
+      - id: output
+        name: Setup output
+        run: echo "${{ matrix.image }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
+
+  validate-infra:
+    name: Validate infra code
+    runs-on: ubuntu-latest
+    outputs:
+      outcome: steps.trivy.outcome
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - id: trivy
+        name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.10.0
         continue-on-error: true
         with:
           scan-type: config
-          trivy-config: trivy.yaml
+          trivyignores: .trivyignore.docker
+          skip-dirs: lev-data/
+
+  notify-slack:
+    name: Notify Slack
+    needs: [validate-images, validate-infra]
+    runs-on: ubuntu-latest
+    steps:
+      - id: inputs
+        name: Parse inputs
+        run: |
+          echo "gdx-outcome=${{ needs.validate-images.outputs.gdx-outcome }}" >> $GITHUB_OUTPUT
+          echo "prometheus-outcome=${{ needs.validate-images.outputs.prometheus-outcome }}" >> $GITHUB_OUTPUT
+          echo "grafana-outcome=${{ needs.validate-images.outputs.grafana-outcome }}" >> $GITHUB_OUTPUT
+          echo "terraform-outcome=${{ needs.validate-infra.outputs.outcome }}" >> $GITHUB_OUTPUT
 
       - name: Send failure message to Slack
-        if: steps.trivy-code.outcome != 'success' || steps.trivy-infra.outcome != 'success'
+        if: steps.inputs.outputs.gdx-outcome != 'success' || steps.inputs.outputs.prometheus-outcome != 'success' || steps.inputs.outputs.grafana-outcome != 'success' || steps.inputs.outputs.terraform-outcome != 'success'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\nOutcomes:\n    Code: ${{ steps.trivy-code.outcome }}\n    Infra: ${{ steps.trivy-infra.outcome }}"
+          payload: |
+            {
+              "text": "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  },
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Scan*"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Outcome*"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "GDX"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "${{ steps.inputs.outputs.gdx-outcome }}"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "Prometheus"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "${{ steps.inputs.outputs.prometheus-outcome }}"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "Grafana"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "${{ steps.inputs.outputs.grafana-outcome }}"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "terraform"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "${{ steps.inputs.outputs.terraform-outcome }}"
+                    }
+                  ]
+                }
+              ]
+            }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

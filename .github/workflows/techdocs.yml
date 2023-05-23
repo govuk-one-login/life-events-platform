@@ -29,8 +29,8 @@ jobs:
           bundler-cache: true
           cache-version: 0
       - name: Build site
+        working-directory: techdocs
         run: |
-          cd techdocs
           bundle install
           bundle exec middleman build
       - name: Upload artifact
@@ -48,6 +48,3 @@ jobs:
       - name: Deploy to github pages
         id: deployment
         uses: actions/deploy-pages@v2
-
-
-

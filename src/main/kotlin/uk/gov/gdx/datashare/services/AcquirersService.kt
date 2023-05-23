@@ -4,7 +4,9 @@ import com.amazonaws.xray.spring.aop.XRayEnabled
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import uk.gov.gdx.datashare.config.AcquirerNotFoundException
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
+import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
@@ -20,6 +22,9 @@ class AcquirersService(
   private val acquirerRepository: AcquirerRepository,
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
   private val adminActionAlertsService: AdminActionAlertsService,
+  private val dateTimeHandler: DateTimeHandler,
+  private val cognitoService: CognitoService,
+  private val outboundEventQueueService: OutboundEventQueueService,
 ) {
   fun getAcquirers() = acquirerRepository.findAll()
 
@@ -131,6 +136,49 @@ class AcquirersService(
     }
   }
 
+  fun deleteAcquirerSubscription(subscriptionId: UUID): AcquirerSubscription {
+    val now = dateTimeHandler.now()
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Delete acquirer subscription",
+        object {
+          val subscriptionId = subscriptionId
+          val whenDeleted = now
+        },
+      ),
+    )
+    val subscription = acquirerSubscriptionRepository.save(
+      acquirerSubscriptionRepository.findByIdOrNull(subscriptionId)?.copy(
+        whenDeleted = now,
+      ) ?: throw AcquirerSubscriptionNotFoundException("Subscription $subscriptionId not found"),
+    )
+
+    acquirerSubscriptionEnrichmentFieldRepository
+      .deleteAllByAcquirerSubscriptionId(subscriptionId)
+
+    if (subscription.queueName == null && subscription.oauthClientId == null) {
+      throw IllegalStateException("Acquirer does not have a client id or queue name.")
+    }
+
+    if (subscription.oauthClientId != null) {
+      val otherSubscriptionsWithClient =
+        acquirerSubscriptionRepository.findAllByOauthClientId(subscription.oauthClientId)
+      if (otherSubscriptionsWithClient.isEmpty()) {
+        cognitoService.deleteUserPoolClient(subscription.oauthClientId)
+      }
+    }
+
+    if (subscription.queueName != null) {
+      val otherSubscriptionsOnQueue = acquirerSubscriptionRepository.findAllByQueueName(subscription.queueName)
+      if (otherSubscriptionsOnQueue.isEmpty()) {
+        outboundEventQueueService.deleteQueue(subscription.queueName)
+        outboundEventQueueService.deleteQueue("${subscription.queueName}-dlq")
+      }
+    }
+
+    return subscription
+  }
+
   fun addAcquirer(
     acquirerRequest: AcquirerRequest,
   ): Acquirer {
@@ -142,6 +190,27 @@ class AcquirersService(
         ),
       )
     }
+  }
+
+  fun deleteAcquirer(id: UUID): Acquirer {
+    val now = dateTimeHandler.now()
+    adminActionAlertsService.noticeAction(
+      AdminAction(
+        "Delete acquirer",
+        object {
+          val acquirerId = id
+          val whenDeleted = now
+        },
+      ),
+    )
+    val acquirer = acquirerRepository.save(
+      acquirerRepository.findByIdOrNull(id)?.copy(
+        whenDeleted = now,
+      ) ?: throw AcquirerNotFoundException("Acquirer $id not found"),
+    )
+    val subscriptions = acquirerSubscriptionRepository.findAllByAcquirerId(id)
+    subscriptions.forEach { deleteAcquirerSubscription(it.id) }
+    return acquirer
   }
 
   fun getEnrichmentFieldsForAcquirerSubscription(acquirerSubscription: AcquirerSubscription): List<EnrichmentField> {

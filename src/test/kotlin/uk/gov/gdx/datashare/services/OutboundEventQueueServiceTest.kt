@@ -26,10 +26,12 @@ class OutboundEventQueueServiceTest {
     "test",
     "taskRoleArn",
   )
+  private val queueUrl = "queueurl"
 
   @BeforeEach
   fun setup() {
-    every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()).queueUrl() }.returns("queueurl")
+    every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()).queueUrl() }.returns(queueUrl)
+
     every {
       awsQueueFactory.getOrDefaultSqsClient(
         any<String>(),
@@ -374,6 +376,30 @@ class OutboundEventQueueServiceTest {
   fun `grants the acquirer access to the queue key but not the dlq key`() {
   }
 
+  @Test
+  fun `deleteQueue calls delete`() {
+    mockAws()
+
+    underTest.deleteQueue("queue")
+
+    verify(exactly = 1) {
+      awsQueueFactory.getOrDefaultSqsClient(
+        "queue",
+        any<SqsProperties.QueueConfig>(),
+        any<SqsProperties>(),
+        any<SqsClient>(),
+      )
+    }
+
+    verify(exactly = 1) {
+      sqsClient.deleteQueue(
+        withArg<DeleteQueueRequest> {
+          assertThat(it.queueUrl()).isEqualTo(queueUrl)
+        },
+      )
+    }
+  }
+
   private fun mockAws() {
     val createKeyResponse = mockk<CreateKeyResponse>()
     every { createKeyResponse.keyMetadata().keyId() } returns "dlqKeyId" andThen "keyId"
@@ -384,10 +410,12 @@ class OutboundEventQueueServiceTest {
     mockkStatic(SqsClient::class)
     every { SqsClient.create() } returns sqsClient
     val createQueueResponse = mockk<CreateQueueResponse>()
-    every { createQueueResponse.queueUrl() } returns "queue-url"
+    every { createQueueResponse.queueUrl() } returns queueUrl
     every { sqsClient.createQueue(any<CreateQueueRequest>()) } returns createQueueResponse
     val queueAttributesResponse = mockk<GetQueueAttributesResponse>()
     every { queueAttributesResponse.attributes()[QueueAttributeName.QUEUE_ARN] } returns "dlq:arn" andThen "queue:arn"
     every { sqsClient.getQueueAttributes(any<GetQueueAttributesRequest>()) } returns queueAttributesResponse
+    val deleteQueueResponse = mockk<DeleteQueueResponse>()
+    every { sqsClient.deleteQueue(any<DeleteQueueRequest>()) } returns deleteQueueResponse
   }
 }

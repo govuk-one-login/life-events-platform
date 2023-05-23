@@ -9,6 +9,7 @@ import software.amazon.awssdk.services.kms.model.Tag
 import software.amazon.awssdk.services.kms.model.TagResourceRequest
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest
+import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest
@@ -45,6 +46,12 @@ class OutboundEventQueueService(
     val dlqArn = getQueueArn(dlqUrl)
     val keyId = createKeyForQueue(queueName, acquirerPrincipal)
     return createQueue(queueName, keyId, 4, dlqArn, acquirerPrincipal)
+  }
+
+  fun deleteQueue(queueName: String) {
+    val queue = getQueue(queueName)
+    val deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queue.queueUrl).build()
+    sqsClient.deleteQueue(deleteQueueRequest)
   }
 
   private fun createKeyForQueue(queueName: String, acquirerPrincipal: String? = null): String {

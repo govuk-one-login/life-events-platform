@@ -19,35 +19,42 @@ const handler: Handler = async (event: EventRequest): Promise<EnrichEventRespons
         },
         TableName: config.tableName,
     }
+    const logParams: { hash: string; registrationId?: string; eventTime?: string; error?: string | Error } = {
+        hash: event.id,
+    }
 
     const command = new GetItemCommand(params)
-    const result = await dynamo.send(command)
 
-    if (!result.Item) {
-        const logParams = {
-            hash: event.id,
-            error: `Record with hash ${event.id} not found`,
+    try {
+        const result = await dynamo.send(command)
+
+        if (!result.Item) {
+            logParams.error = `Record with hash ${event.id} not found`
+
+            console.error("Failed to enrich event", logParams)
+            return {
+                statusCode: 404,
+            }
         }
+
+        const eventRecord = unmarshall(result.Item) as EventRecord
+
+        logParams.registrationId = eventRecord.registrationId
+        logParams.eventTime = eventRecord.eventTime
+
+        console.log("Successfully enriched event", logParams)
+
+        return {
+            statusCode: 200,
+            payload: eventRecord,
+        }
+    } catch (err) {
+        logParams.error = err
+
         console.error("Failed to enrich event", logParams)
         return {
-            statusCode: 404,
+            statusCode: 500,
         }
-    }
-
-    const eventRecord = unmarshall(result.Item) as EventRecord
-
-    const logParams = {
-        hash: eventRecord.hash,
-        registrationId: eventRecord?.registrationId,
-        eventTime: eventRecord?.eventTime,
-        error: null,
-    }
-
-    console.log("Successfully enriched event", logParams)
-
-    return {
-        statusCode: 200,
-        payload: eventRecord,
     }
 }
 

@@ -57,7 +57,7 @@ class OutboundEventQueueServiceTest {
 
   @Test
   fun `sends message`() {
-    underTest.sendMessage("queueone", "message")
+    underTest.sendMessage("queueone", "message", "id")
 
     verify(exactly = 1) {
       awsQueueFactory.getOrDefaultSqsClient(
@@ -73,9 +73,30 @@ class OutboundEventQueueServiceTest {
   }
 
   @Test
+  fun `sends a message to a fifo queue`() {
+    underTest.sendMessage("queueone.fifo", "message", "testId")
+
+    verify(exactly = 1) {
+      awsQueueFactory.getOrDefaultSqsClient(
+        "queueone.fifo",
+        any<SqsProperties.QueueConfig>(),
+        any<SqsProperties>(),
+        any<SqsClient>(),
+      )
+    }
+    verify(exactly = 1) {
+      sqsClient.sendMessage(
+        withArg<SendMessageRequest> {
+          assertThat(it.messageDeduplicationId()).isEqualTo("testId")
+        },
+      )
+    }
+  }
+
+  @Test
   fun `memoizes clients`() {
-    underTest.sendMessage("queueone", "message")
-    underTest.sendMessage("queueone", "message")
+    underTest.sendMessage("queueone", "message", "id")
+    underTest.sendMessage("queueone", "message", "id")
 
     verify(exactly = 1) {
       awsQueueFactory.getOrDefaultSqsClient(
@@ -92,8 +113,8 @@ class OutboundEventQueueServiceTest {
 
   @Test
   fun `fetches new client for every queue`() {
-    underTest.sendMessage("queueone", "message")
-    underTest.sendMessage("queuetwo", "message")
+    underTest.sendMessage("queueone", "message", "id")
+    underTest.sendMessage("queuetwo", "message", "id")
 
     verifySequence {
       awsQueueFactory.getOrDefaultSqsClient(

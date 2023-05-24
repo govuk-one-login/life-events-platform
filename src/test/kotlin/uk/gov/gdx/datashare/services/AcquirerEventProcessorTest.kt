@@ -54,7 +54,7 @@ class AcquirerEventProcessorTest {
       )
     }.returns(Unit)
     every { objectMapper.writeValueAsString(any<EventNotification>()) }.returns("")
-    every { outboundEventQueueService.sendMessage(any<String>(), any<String>()) }.returns(Unit)
+    every { outboundEventQueueService.sendMessage(any<String>(), any<String>(), any<String>()) }.returns(Unit)
 
     val underTest = AcquirerEventProcessor(
       objectMapper,
@@ -84,7 +84,7 @@ class AcquirerEventProcessorTest {
       acquirerEventAuditService.auditQueuedEventMessage(any<EventNotification>(), "acq_test-queue")
     }
     verify(exactly = 1) {
-      outboundEventQueueService.sendMessage("acq_test-queue", any<String>())
+      outboundEventQueueService.sendMessage("acq_test-queue", any<String>(), any<String>())
     }
   }
 }

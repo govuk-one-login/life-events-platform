@@ -94,10 +94,16 @@ class AcquirersService(
           acquirerId = acquirerId,
           oauthClientId = oauthClientId,
           eventType = eventType,
+          enrichmentFieldsIncludedInPoll = enrichmentFieldsIncludedInPoll,
+          queueName = queueName,
         ),
       )
       val enrichmentFields =
         addAcquirerSubscriptionEnrichmentFields(acquirerSubscription.acquirerSubscriptionId, enrichmentFields)
+
+      if (queueName != null && principalArn != null) {
+        outboundEventQueueService.createAcquirerQueue(queueName, principalArn)
+      }
 
       return mapAcquirerSubscriptionDto(acquirerSubscription, enrichmentFields)
     }

@@ -85,9 +85,11 @@ class OutboundEventQueueServiceTest {
       )
     }
     verify(exactly = 1) {
-      sqsClient.sendMessage(withArg<SendMessageRequest> {
-        assertThat(it.messageDeduplicationId()).isEqualTo("testId")
-      })
+      sqsClient.sendMessage(
+        withArg<SendMessageRequest> {
+          assertThat(it.messageDeduplicationId()).isEqualTo("testId")
+        },
+      )
     }
   }
 

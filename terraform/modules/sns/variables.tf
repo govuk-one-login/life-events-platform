@@ -22,3 +22,7 @@ variable "allow_s3_notification" {
   type    = bool
   default = true
 }
+variable "allow_codestar_notification" {
+  type    = bool
+  default = true
+}

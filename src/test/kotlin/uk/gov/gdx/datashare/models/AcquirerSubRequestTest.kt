@@ -4,6 +4,8 @@ import jakarta.validation.Validation
 import jakarta.validation.Validator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
 
@@ -12,7 +14,12 @@ class AcquirerSubRequestTest {
 
   @Test
   fun `null queue name is accepted`() {
-    val underTest = createRequestWithQueueName(null)
+    val underTest = AcquirerSubRequest(
+      EventType.TEST_EVENT,
+      enrichmentFields = emptyList(),
+      oauthClientId = "oauthid",
+      queueName = null,
+    )
 
     val violations = validator.validate(underTest)
     assertThat(violations).isEmpty()
@@ -58,11 +65,46 @@ class AcquirerSubRequestTest {
     assertThat(violations).isNotEmpty()
   }
 
+  @ParameterizedTest
+  @CsvSource(
+    nullValues = ["NULL"],
+    textBlock = """
+oauthClient,NULL    ,NULL     ,NULL
+NULL       ,acq_test,principal,NULL
+NULL       ,NULL    ,NULL     ,Exactly one of oauthClientId and queueUrl must be specified
+oauthClient,acq_test,principal,Exactly one of oauthClientId and queueUrl must be specified
+NULL       ,acq_test,NULL     ,Both queueName and principalArn must be specified or both must be null
+oauthClient,NULL    ,principal,Both queueName and principalArn must be specified or both must be null""",
+  )
+  fun `Only a single output method may be specified`(
+    oauthClientId: String?,
+    queueName: String?,
+    principalArn: String?,
+    errorMessage: String?,
+  ) {
+    val underTest = AcquirerSubRequest(
+      EventType.TEST_EVENT,
+      enrichmentFields = emptyList(),
+      oauthClientId = oauthClientId,
+      queueName = queueName,
+      principalArn = principalArn,
+    )
+
+    val violations = validator.validate(underTest)
+    if (errorMessage == null) {
+      assertThat(violations).isEmpty()
+    } else {
+      assertThat(violations).isNotEmpty()
+      assertThat(violations.first().message).isEqualTo(errorMessage)
+    }
+  }
+
   private fun createRequestWithQueueName(queueName: String?) = AcquirerSubRequest(
     EventType.TEST_EVENT,
     null,
     emptyList(),
     false,
     queueName,
+    "principalArn",
   )
 }

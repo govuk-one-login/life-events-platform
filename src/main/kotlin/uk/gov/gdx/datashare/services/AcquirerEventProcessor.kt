@@ -42,7 +42,7 @@ class AcquirerEventProcessor(
     acquirerEventRepository.save(acquirerEvent)
     val eventNotification = acquirerEventService.buildEnrichedEventNotification(acquirerEvent, acquirerSubscription)
     acquirerEventAuditService.auditQueuedEventMessage(eventNotification, acquirerSubscription.queueName!!)
-    outboundEventQueueService.sendMessage(acquirerSubscription.queueName, eventNotification.toJson())
+    outboundEventQueueService.sendMessage(acquirerSubscription.queueName, eventNotification.toJson(), acquirerEvent.id.toString())
   }
 
   private fun Any.toJson() = objectMapper.writeValueAsString(this)

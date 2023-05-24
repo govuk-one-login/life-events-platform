@@ -30,11 +30,16 @@ class OutboundEventQueueService(
   private val kmsClient by lazy { KmsClient.create() }
   private val sqsClient by lazy { SqsClient.create() }
 
-  fun sendMessage(queueName: String, message: String) {
+  fun sendMessage(queueName: String, message: String, id: String) {
     val queue = getQueue(queueName)
     val request = SendMessageRequest.builder()
       .queueUrl(queue.queueUrl)
       .messageBody(message)
+
+    if (isFifoQueue(queueName)) {
+      request.messageGroupId("default")
+        .messageDeduplicationId(id)
+    }
 
     queue.sqsClient.sendMessage(request.build())
   }

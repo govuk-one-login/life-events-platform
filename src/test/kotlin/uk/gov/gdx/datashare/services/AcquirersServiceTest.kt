@@ -177,6 +177,33 @@ class AcquirersServiceTest {
   }
 
   @Test
+  fun `addAcquirerSubscription creates a new queue`() {
+    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
+    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
+    every {
+      acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
+    }.returns(allEnrichmentFields)
+    every { outboundEventQueueService.createAcquirerQueue(any(), any()) } returns ""
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+
+    val acquirerSubRequest = AcquirerSubRequest(
+      EventType.TEST_EVENT,
+      oauthClientId = null,
+      enrichmentFields = emptyList(),
+      queueName = "acq_test",
+      principalArn = "principal",
+    )
+    underTest.addAcquirerSubscription(acquirer.id, acquirerSubRequest)
+
+    verify(exactly = 1) {
+      outboundEventQueueService.createAcquirerQueue(
+        withArg { assertThat(it).isEqualTo("acq_test") },
+        withArg { assertThat(it).isEqualTo("principal") },
+      )
+    }
+  }
+
+  @Test
   fun `updateAcquirerSubscription updates subscription`() {
     every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)

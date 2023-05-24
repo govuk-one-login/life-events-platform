@@ -111,3 +111,15 @@ resource "aws_iam_role_policy_attachment" "passrole_codedeploy" {
   role       = aws_iam_role.ecs_codedeploy.name
   policy_arn = aws_iam_policy.passrole_codedeploy.arn
 }
+
+resource "aws_codestarnotifications_notification_rule" "codedeploy_failure_notification" {
+  detail_type    = "BASIC"
+  event_type_ids = ["codedeploy-application-deployment-failed"]
+
+  name     = "${var.environment}-ecs-code-deploy-failure-notification"
+  resource = aws_codedeploy_app.gdx_data_share_poc.arn
+
+  target {
+    address = module.sns.topic_arn
+  }
+}

@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "kms_codestar_access" {
       test     = "StringEquals"
       variable = "kms:ViaService"
 
-      values = "sns.${var.region}.amazonaws.com"
+      values = ["sns.${var.region}.amazonaws.com"]
     }
   }
 }

@@ -52,6 +52,8 @@ jobs:
           image-ref: ${{ github.ref_name }}:${{ matrix.image }}
           trivyignores: ${{ matrix.trivyignore }}
           exit-code: 1
+          format: table
+          output: ${{ matrix.image }}.table
 
       - id: output
         name: Setup output
@@ -75,6 +77,8 @@ jobs:
           trivyignores: .trivyignore.docker
           skip-dirs: lev-data/
           exit-code: 1
+          format: table
+          output: terraform.table
 
   notify-slack:
     name: Notify Slack
@@ -146,6 +150,13 @@ jobs:
                       "text": "${{ steps.inputs.outputs.terraform-outcome }}"
                     }
                   ]
+                },
+                {
+                  "type": "divider"
+                },
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                 }
               ]
             }

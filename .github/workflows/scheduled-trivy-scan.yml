@@ -62,7 +62,9 @@ jobs:
         name: Setup output
         run: |
           echo "${{ matrix.image }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
-          echo "${{ matrix.image }}-table=$(cat ${{ matrix.image }}.table)" >> $GITHUB_OUTPUT
+          echo "${{ matrix.image }-table<<$EOF" >> "$GITHUB_OUTPUT"
+          cat ${{ matrix.image }}.table >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
 
   validate-infra:
     name: Validate infra code
@@ -91,6 +93,9 @@ jobs:
         run: |
           echo "terraform-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
           echo "terraform-table=$(cat terraform.table)" >> $GITHUB_OUTPUT
+          echo "terraform-table<<$EOF" >> "$GITHUB_OUTPUT"
+          cat terraform.table >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
 
   notify-slack:
     name: Notify Slack

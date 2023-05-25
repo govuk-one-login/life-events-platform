@@ -63,6 +63,7 @@ jobs:
         run: |
           echo "${{ matrix.image }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          cat ${{ matrix.image }}.json
           echo "${{ matrix.image }}-json<<$EOF" >> $GITHUB_OUTPUT
           jq '.Results[]
             | select(.Vulnerabilities != null)
@@ -101,6 +102,7 @@ jobs:
         run: |
           echo "infra-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          cat infra.json
           echo "infra-json<<$EOF" >> $GITHUB_OUTPUT
           jq '.Results[]
             | select(.Misconfigurations != null)

@@ -183,7 +183,7 @@ jobs:
           if [ "${{ needs.validate-images.outputs.gdx-outcome }}" = "failure"  ]
           then
             fields=$(jq '. += ${{ needs.validate-images.outputs.gdx-json }}' <<< $base_vulnerability_fields)
-            payload=$(jq '.blocks += [
+            payload=$(jq --arg fields "fields" '.blocks += [
               {
                 "type": "divider"
               },
@@ -191,7 +191,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*GDX*"
+                  "text": "*GDX*",
                   "fields": $fields
                 }
               }
@@ -201,7 +201,7 @@ jobs:
           if [ "${{ needs.validate-images.outputs.prometheus-outcome }}" = "failure" ]
           then
             fields=$(jq '. += ${{ needs.validate-images.outputs.prometheus-json }}' <<< $base_vulnerability_fields)
-            payload=$(jq '.blocks += [
+            payload=$(jq --arg fields "fields" '.blocks += [
               {
                 "type": "divider"
               },
@@ -209,7 +209,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*Prometheus*"
+                  "text": "*Prometheus*",
                   "fields": $fields
                 }
               }
@@ -219,7 +219,7 @@ jobs:
           if [ "${{ needs.validate-images.outputs.grafana-outcome }}" = "failure" ]
           then
             fields=$(jq '. += ${{ needs.validate-images.outputs.grafana-json }}' <<< $base_vulnerability_fields)
-            payload=$(jq '.blocks += [
+            payload=$(jq --arg fields "fields" '.blocks += [
               {
                 "type": "divider"
               },
@@ -227,7 +227,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*Grafana*"
+                  "text": "*Grafana*",
                   "fields": $fields
                 }
               }
@@ -237,7 +237,7 @@ jobs:
           if [ "${{ needs.validate-infra.outputs.terraform-outcome }}" = "failure" ]
           then
             fields=$(jq '. += ${{ needs.validate-infra.outputs.terraform-json }}' <<< $base_vulnerability_fields)
-            payload=$(jq '.blocks += [
+            payload=$(jq --arg fields "fields" '.blocks += [
               {
                 "type": "divider"
               },
@@ -245,7 +245,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*terraform*"
+                  "text": "*terraform*",
                   "fields": $fields
                 }
               }

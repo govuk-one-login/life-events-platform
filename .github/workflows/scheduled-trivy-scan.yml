@@ -64,7 +64,11 @@ jobs:
           echo "${{ matrix.image }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "${{ matrix.image }}-json<<$EOF" >> $GITHUB_OUTPUT
-          cat ${{ matrix.image }}.json >> $GITHUB_OUTPUT
+          jq '.Results[]
+            | select(.Vulnerabilities != null)
+            | .Vulnerabilities
+            | map({ type: "mrkdwn", text: ("<"+.PrimaryURL+"|"+.VulnerabilityID+">") }, { type: "mrkdwn", text: .Severity })
+            | .[]' ${{ matrix.image }}.json >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
   validate-infra:
@@ -95,7 +99,11 @@ jobs:
           echo "terraform-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "terraform-json<<$EOF" >> $GITHUB_OUTPUT
-          cat terraform.json >> $GITHUB_OUTPUT
+          jq '.Results[]
+            | select(.Vulnerabilities != null)
+            | .Vulnerabilities
+            | map({ type: "mrkdwn", text: ("<"+.PrimaryURL+"|"+.VulnerabilityID+">") }, { type: "mrkdwn", text: .Severity })
+            | .[]' terraform.json >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
   notify-slack:
@@ -157,55 +165,91 @@ jobs:
                     "text": "${{ needs.validate-infra.outputs.terraform-outcome }}"
                   }
                 ]
-              },
-              {
-                "type": "divider"
               }
             ]
           }'
 
+          base_vulnerability_fields='[
+            {
+              "type": "mrkdwn",
+              "text": "*Vulnerabilitiy*"
+            },
+            {
+              "type": "mrkdwn",
+              "text": "*Severity*"
+            }
+          ]'
+
           if [ "${{ needs.validate-images.outputs.gdx-outcome }}" = "failure"  ]
           then
-            payload=$(jq '.blocks += [{
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "*GDX json*\n${{ needs.validate-images.outputs.gdx-json }}"
+            fields=$(jq '. += ${{ needs.validate-images.outputs.gdx-json }}' <<< $base_vulnerability_fields)
+            payload=$(jq '.blocks += [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*GDX*"
+                  "fields": $fields
+                }
               }
-            }]' <<< $payload)
+            ]' <<< $payload)
           fi
 
           if [ "${{ needs.validate-images.outputs.prometheus-outcome }}" = "failure" ]
           then
-            payload=$(jq '.blocks += [{
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "*Prometheus json*\n${{ needs.validate-images.outputs.prometheus-json }}"
+            fields=$(jq '. += ${{ needs.validate-images.outputs.prometheus-json }}' <<< $base_vulnerability_fields)
+            payload=$(jq '.blocks += [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Prometheus*"
+                  "fields": $fields
+                }
               }
-            }]' <<< $payload)
+            ]' <<< $payload)
           fi
 
           if [ "${{ needs.validate-images.outputs.grafana-outcome }}" = "failure" ]
           then
-            payload=$(jq '.blocks += [{
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "*Grafana json*\n${{ needs.validate-images.outputs.grafana-json }}"
+            fields=$(jq '. += ${{ needs.validate-images.outputs.grafana-json }}' <<< $base_vulnerability_fields)
+            payload=$(jq '.blocks += [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Grafana*"
+                  "fields": $fields
+                }
               }
-            }]' <<< $payload)
+            ]' <<< $payload)
           fi
 
           if [ "${{ needs.validate-infra.outputs.terraform-outcome }}" = "failure" ]
           then
-            payload=$(jq '.blocks += [{
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "*terraform json*\n${{ needs.validate-infra.outputs.terraform-json }}"
+            fields=$(jq '. += ${{ needs.validate-infra.outputs.terraform-json }}' <<< $base_vulnerability_fields)
+            payload=$(jq '.blocks += [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*terraform*"
+                  "fields": $fields
+                }
               }
-            }]' <<< $payload)
+            ]' <<< $payload)
           fi
 
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)

@@ -208,7 +208,10 @@ jobs:
             }]' <<< $payload)
           fi
 
-          echo "payload=$payload" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "payload<<$EOF" >> $GITHUB_OUTPUT
+          echo $payload >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Send failure message to Slack
         if: needs.validate-images.outputs.gdx-outcome != 'success' || needs.validate-images.outputs.prometheus-outcome != 'success' || needs.validate-images.outputs.grafana-outcome != 'success' || needs.validate-infra.outputs.terraform-outcome != 'success'

@@ -164,43 +164,47 @@ jobs:
             ]
           }'
 
-          if [ -z "${{ needs.validate-images.outputs.gdx-table }}" ]
+          if [ -n "${{ needs.validate-images.outputs.gdx-table }}" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
                 "text": "GDX table\n${{ needs.validate-images.outputs.gdx-table }}"
+              }
             }]' <<< $payload)
           fi
 
-          if [ -z "${{ needs.validate-images.outputs.prometheus-table }}" ]
+          if [ -n "${{ needs.validate-images.outputs.prometheus-table }}" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
                 "text": "Prometheus table\n${{ needs.validate-images.outputs.prometheus-table }}"
+              }
             }]' <<< $payload)
           fi
 
-          if [ -z "${{ needs.validate-images.outputs.grafana-table }}" ]
+          if [ -n "${{ needs.validate-images.outputs.grafana-table }}" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
                 "text": "Grafana table\n${{ needs.validate-images.outputs.grafana-table }}"
+              }
             }]' <<< $payload)
           fi
 
-          if [ -z "${{ needs.validate-infra.outputs.terraform-table }}" ]
+          if [ -n "${{ needs.validate-infra.outputs.terraform-table }}" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
                 "text": "terraform table\n${{ needs.validate-infra.outputs.terraform-table }}"
+              }
             }]' <<< $payload)
           fi
 

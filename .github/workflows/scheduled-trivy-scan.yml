@@ -59,6 +59,10 @@ jobs:
         name: Setup output
         run: echo "${{ matrix.image }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
 
+      - id: errors
+        name: Print errors
+        run: cat ${{ matrix.image }}.table
+
   validate-infra:
     name: Validate infra code
     runs-on: ubuntu-latest
@@ -153,10 +157,6 @@ jobs:
                 },
                 {
                   "type": "divider"
-                },
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "Trivy dependency scan failed\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                 }
               ]
             }

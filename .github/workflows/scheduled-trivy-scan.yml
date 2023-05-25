@@ -62,9 +62,10 @@ jobs:
         name: Setup output
         run: |
           echo "${{ matrix.image }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
-          echo "${{ matrix.image }}-table<<$EOF" >> "$GITHUB_OUTPUT"
-          cat ${{ matrix.image }}.table >> "$GITHUB_OUTPUT"
-          echo "$EOF" >> "$GITHUB_OUTPUT"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "${{ matrix.image }}-table<<$EOF" >> $GITHUB_OUTPUT
+          cat ${{ matrix.image }}.table >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
   validate-infra:
     name: Validate infra code

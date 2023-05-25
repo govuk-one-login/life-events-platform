@@ -9,6 +9,7 @@ import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.CognitoClientResponse
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
+import uk.gov.gdx.datashare.models.CreateAcquirerResponse
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
 import uk.gov.gdx.datashare.services.AdminService
 
@@ -25,14 +26,14 @@ class AdminControllerTest {
       listOf(EnrichmentField.FIRST_NAMES, EnrichmentField.LAST_NAME),
       false,
     )
-    val cognitoClientResponse = CognitoClientResponse("HMPO", "ClientId", "ClientSecret")
+    val createAcquirerResponse = CreateAcquirerResponse(null, "HMPO", "ClientId", "ClientSecret")
 
-    every { adminService.createAcquirer(createAcquirerRequest) }.returns(cognitoClientResponse)
+    every { adminService.createAcquirer(createAcquirerRequest) }.returns(createAcquirerResponse)
 
-    val cognitoClientResponseOutput = underTest.createAcquirer(createAcquirerRequest)
+    val response = underTest.createAcquirer(createAcquirerRequest)
 
     verify(exactly = 1) { adminService.createAcquirer(createAcquirerRequest) }
-    assertThat(cognitoClientResponseOutput).isEqualTo(cognitoClientResponse)
+    assertThat(response).isEqualTo(createAcquirerResponse)
   }
 
   @Test

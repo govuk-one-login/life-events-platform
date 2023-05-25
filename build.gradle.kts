@@ -89,7 +89,9 @@ dependencies {
   testImplementation("org.testcontainers:postgresql")
   testImplementation("com.amazonaws:aws-java-sdk-core:1.12.474") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    exclude(module = "mockito-core")
+  }
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.assertj:assertj-core:3.24.2")
   testImplementation("io.jsonwebtoken:jjwt-api:0.11.5")
@@ -99,6 +101,7 @@ dependencies {
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.5")
+  testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("com.approvaltests:approvaltests:18.6.0")
   testImplementation("com.google.code.gson:gson:2.10.1") // Needed for JsonApprovals
 }

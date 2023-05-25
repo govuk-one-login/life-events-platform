@@ -8,9 +8,13 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import uk.gov.gdx.datashare.config.ErrorResponse
 import uk.gov.gdx.datashare.models.CreateAcquirerRequest
+import uk.gov.gdx.datashare.models.CreateAcquirerResponse
 import uk.gov.gdx.datashare.models.CreateSupplierRequest
 import uk.gov.gdx.datashare.services.AdminService
 
@@ -50,7 +54,7 @@ class AdminController(
     @RequestBody
     @Valid
     createAcquirerRequest: CreateAcquirerRequest,
-  ) = adminService.createAcquirer(createAcquirerRequest)
+  ): CreateAcquirerResponse = adminService.createAcquirer(createAcquirerRequest)
 
   @PostMapping("/supplier")
   @Operation(

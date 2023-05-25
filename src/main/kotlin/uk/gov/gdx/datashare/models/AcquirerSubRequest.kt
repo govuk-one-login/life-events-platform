@@ -10,10 +10,12 @@ import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
 import uk.gov.gdx.datashare.enums.RegExConstants.SQS_QUEUE_NAME_REGEX
 import uk.gov.gdx.datashare.models.validators.SingleConsumptionMethod
+import uk.gov.gdx.datashare.models.validators.ValidQueueDetails
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Acquirer Subscription Request")
 @SingleConsumptionMethod
+@ValidQueueDetails
 data class AcquirerSubRequest(
   @Schema(description = "Events Type", required = true, example = "DEATH_NOTIFICATION")
   val eventType: EventType,

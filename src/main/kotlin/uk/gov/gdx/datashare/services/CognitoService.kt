@@ -3,11 +3,7 @@ package uk.gov.gdx.datashare.services
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient
-import software.amazon.awssdk.services.cognitoidentityprovider.model.CreateUserPoolClientRequest
-import software.amazon.awssdk.services.cognitoidentityprovider.model.DeleteUserPoolClientRequest
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ExplicitAuthFlowsType
-import software.amazon.awssdk.services.cognitoidentityprovider.model.OAuthFlowType
-import software.amazon.awssdk.services.cognitoidentityprovider.model.TokenValidityUnitsType
+import software.amazon.awssdk.services.cognitoidentityprovider.model.*
 import uk.gov.gdx.datashare.enums.CognitoClientType
 import uk.gov.gdx.datashare.models.CognitoClientRequest
 import uk.gov.gdx.datashare.models.CognitoClientResponse
@@ -20,7 +16,7 @@ class CognitoService(
   @Value("\${cognito.supplier-scope:#{null}}") val supplierScope: String? = null,
   @Value("\${cognito.admin-scope:#{null}}") val adminScope: String? = null,
 ) {
-  fun createUserPoolClient(cognitoClientRequest: CognitoClientRequest): CognitoClientResponse? {
+  fun createUserPoolClient(cognitoClientRequest: CognitoClientRequest): CognitoClientResponse {
     val scopes = cognitoClientRequest.clientTypes.map {
       when (it) {
         CognitoClientType.ACQUIRER -> acquirerScope
@@ -41,13 +37,11 @@ class CognitoService(
       .createUserPoolClient(userPoolClientRequest.build())
       .userPoolClient()
 
-    return response?.let {
-      CognitoClientResponse(
-        clientName = response.clientName(),
-        clientId = response.clientId(),
-        clientSecret = response.clientSecret(),
-      )
-    }
+    return CognitoClientResponse(
+      clientName = response.clientName(),
+      clientId = response.clientId(),
+      clientSecret = response.clientSecret(),
+    )
   }
 
   fun deleteUserPoolClient(clientId: String) {

@@ -1,10 +1,10 @@
 package uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension
+import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.integration.IntegrationTestBase
@@ -13,7 +13,6 @@ import uk.gov.gdx.datashare.services.AcquirerEventProcessor
 import uk.gov.gdx.datashare.services.EventAcceptorService
 import uk.gov.gdx.datashare.services.PrisonerEventMessageProcessor
 import uk.gov.gdx.datashare.services.SupplierEventProcessor
-import java.util.*
 
 /**
  * Base class for MockMvc tests
@@ -29,23 +28,23 @@ import java.util.*
 @ExtendWith(WireMockExtension::class)
 @AutoConfigureMockMvc
 abstract class MockIntegrationTestBase : IntegrationTestBase() {
-  @MockBean
+  @MockkBean
   @Suppress("unused")
   private lateinit var eventAcceptorService: EventAcceptorService
 
-  @MockBean
+  @MockkBean
   @Suppress("unused")
   private lateinit var supplierEventProcessor: SupplierEventProcessor
 
-  @MockBean
+  @MockkBean
   @Suppress("unused")
   private lateinit var acquirerEventProcessor: AcquirerEventProcessor
 
-  @MockBean
+  @MockkBean
   @Suppress("unused")
   private lateinit var prisonerEventMessageProcessor: PrisonerEventMessageProcessor
 
-  @MockBean
+  @MockkBean
   @Suppress("unused")
   private lateinit var awsQueueService: AwsQueueService
 }

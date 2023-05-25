@@ -1,4 +1,4 @@
-FROM public.ecr.aws/aws-observability/aws-otel-collector:v0.29.0 as base
+FROM public.ecr.aws/aws-observability/aws-otel-collector:v0.29.1 as base
 
 FROM alpine:3.18.0 as run
 

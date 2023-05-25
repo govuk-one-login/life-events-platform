@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "kms_codestar_access" {
 locals {
   kms_prometheus_policy = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.kms_arns_access.json] : []
   kms_s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.kms_s3_access.json] : []
-  kms_codestar_policy   = var.allow_codestar_notification ? [data.aws_iam_policy_document.codestar_access.json] : []
+  kms_codestar_policy   = var.allow_codestar_notification ? [data.aws_iam_policy_document.kms_codestar_access.json] : []
   kms_source_policies   = concat(local.kms_prometheus_policy, local.kms_s3_policy, local.kms_codestar_policy)
 }
 

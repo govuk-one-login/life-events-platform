@@ -13,8 +13,6 @@ module "state_bucket" {
     "arn:aws:iam::255773200490:role/prod-github-oidc-deploy",
     "arn:aws:iam::255773200490:role/github-oidc-pull-request"
   ]
-
-  depends_on = [module.sns]
 }
 
 module "sns" {

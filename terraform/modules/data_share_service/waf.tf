@@ -293,8 +293,6 @@ module "waf_lb_logs_bucket" {
   allow_delivery_logs = true
 
   sns_arn = module.sns.topic_arn
-
-  depends_on = [module.sns]
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "load_balancer" {
@@ -321,8 +319,6 @@ module "waf_cloudfront_logs_bucket" {
   allow_delivery_logs = true
 
   sns_arn = module.sns.topic_arn
-
-  depends_on = [module.sns]
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "cloudfront" {

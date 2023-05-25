@@ -74,8 +74,6 @@ module "vpc" {
   vpc_cidr    = "10.158.32.0/20"
 
   sns_topic_arn = module.sns.topic_arn
-
-  depends_on = [module.sns]
 }
 
 module "route53" {
@@ -105,8 +103,6 @@ module "grafana" {
 
   hosted_zone_id   = module.route53.zone_id
   hosted_zone_name = module.route53.name
-
-  depends_on = [module.sns]
 }
 
 module "security" {
@@ -168,8 +164,6 @@ module "security" {
       disabled_reason = "For this GDS created account this is not possible to enforce"
     },
   ]
-
-  depends_on = [module.sns]
 }
 
 module "ecr" {

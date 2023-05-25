@@ -103,21 +103,6 @@ jobs:
     needs: [validate-images, validate-infra]
     runs-on: ubuntu-latest
     steps:
-      - id: inputs
-        name: Parse inputs
-        run: |
-          echo "gdx-outcome=${{ needs.validate-images.outputs.gdx-outcome }}" >> $GITHUB_OUTPUT
-          echo "gdx-table=${{ needs.validate-images.outputs.gdx-table }}" >> $GITHUB_OUTPUT
-
-          echo "prometheus-outcome=${{ needs.validate-images.outputs.prometheus-outcome }}" >> $GITHUB_OUTPUT
-          echo "prometheus-table=${{ needs.validate-images.outputs.prometheus-table }}" >> $GITHUB_OUTPUT
-
-          echo "grafana-outcome=${{ needs.validate-images.outputs.grafana-outcome }}" >> $GITHUB_OUTPUT
-          echo "grafana-table=${{ needs.validate-images.outputs.grafana-table }}" >> $GITHUB_OUTPUT
-
-          echo "terraform-outcome=${{ needs.validate-infra.outputs.terraform-outcome }}" >> $GITHUB_OUTPUT
-          echo "terraform-table=${{ needs.validate-images.outputs.terraform-table }}" >> $GITHUB_OUTPUT
-
       - id: payload
         name: Construct payload
         run: |
@@ -145,7 +130,7 @@ jobs:
                   },
                   {
                     "type": "plain_text",
-                    "text": "${{ steps.inputs.outputs.gdx-outcome }}"
+                    "text": "${{ needs.validate-images.outputs.gdx-outcome }}"
                   },
                   {
                     "type": "plain_text",
@@ -153,7 +138,7 @@ jobs:
                   },
                   {
                     "type": "plain_text",
-                    "text": "${{ steps.inputs.outputs.prometheus-outcome }}"
+                    "text": "${{ needs.validate-images.outputs.prometheus-outcome }}"
                   },
                   {
                     "type": "plain_text",
@@ -161,7 +146,7 @@ jobs:
                   },
                   {
                     "type": "plain_text",
-                    "text": "${{ steps.inputs.outputs.grafana-outcome }}"
+                    "text": "${{ needs.validate-images.outputs.grafana-outcome }}"
                   },
                   {
                     "type": "plain_text",
@@ -169,7 +154,7 @@ jobs:
                   },
                   {
                     "type": "plain_text",
-                    "text": "${{ steps.inputs.outputs.terraform-outcome }}"
+                    "text": "${{ needs.validate-infra.outputs.terraform-outcome }}"
                   }
                 ]
               },
@@ -179,50 +164,50 @@ jobs:
             ]
           }'
 
-          if [ -z "${{ steps.inputs.outputs.gdx-table }}" ]
+          if [ -z "${{ needs.validate-images.outputs.gdx-table }}" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "GDX table\n${{ steps.inputs.outputs.gdx-table }}"
+                "text": "GDX table\n${{ needs.validate-images.outputs.gdx-table }}"
             }]' <<< $payload)
           fi
 
-          if [ -z "${{ steps.inputs.outputs.prometheus-table }}" ]
+          if [ -z "${{ needs.validate-images.outputs.prometheus-table }}" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "Prometheus table\n${{ steps.inputs.outputs.prometheus-table }}"
+                "text": "Prometheus table\n${{ needs.validate-images.outputs.prometheus-table }}"
             }]' <<< $payload)
           fi
 
-          if [ -z "${{ steps.inputs.outputs.grafana-table }}" ]
+          if [ -z "${{ needs.validate-images.outputs.grafana-table }}" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "Grafana table\n${{ steps.inputs.outputs.grafana-table }}"
+                "text": "Grafana table\n${{ needs.validate-images.outputs.grafana-table }}"
             }]' <<< $payload)
           fi
 
-          if [ -z "${{ steps.inputs.outputs.terraform-table }}" ]
+          if [ -z "${{ needs.validate-infra.outputs.terraform-table }}" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "terraform table\n${{ steps.inputs.outputs.terraform-table }}"
+                "text": "terraform table\n${{ needs.validate-infra.outputs.terraform-table }}"
             }]' <<< $payload)
           fi
 
           echo "payload=$payload" >> $GITHUB_OUTPUT
 
       - name: Send failure message to Slack
-        if: steps.inputs.outputs.gdx-outcome != 'success' || steps.inputs.outputs.prometheus-outcome != 'success' || steps.inputs.outputs.grafana-outcome != 'success' || steps.inputs.outputs.terraform-outcome != 'success'
+        if: needs.validate-images.outputs.gdx-outcome != 'success' || needs.validate-images.outputs.prometheus-outcome != 'success' || needs.validate-images.outputs.grafana-outcome != 'success' || needs.validate-infra.outputs.terraform-outcome != 'success'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}

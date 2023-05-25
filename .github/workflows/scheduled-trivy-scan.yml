@@ -68,7 +68,7 @@ jobs:
             | select(.Vulnerabilities != null)
             | .Vulnerabilities
             | map({ type: "mrkdwn", text: ("<"+.PrimaryURL+"|"+.VulnerabilityID+">") }, { type: "mrkdwn", text: .Severity })
-            | .[]' ${{ matrix.image }}.json >> $GITHUB_OUTPUT
+            | .[]' ${{ matrix.image }}.json | jq -s >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
   validate-infra:
@@ -103,7 +103,7 @@ jobs:
             | select(.Vulnerabilities != null)
             | .Vulnerabilities
             | map({ type: "mrkdwn", text: ("<"+.PrimaryURL+"|"+.VulnerabilityID+">") }, { type: "mrkdwn", text: .Severity })
-            | .[]' terraform.json >> $GITHUB_OUTPUT
+            | .[]' terraform.json | jq -s >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
   notify-slack:

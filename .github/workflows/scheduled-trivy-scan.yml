@@ -47,7 +47,6 @@ jobs:
       - id: trivy
         name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.10.0
-        continue-on-error: true
         with:
           image-ref: ${{ github.ref_name }}:${{ matrix.image }}
           trivyignores: ${{ matrix.trivyignore }}
@@ -60,7 +59,7 @@ jobs:
     name: Validate infra code
     runs-on: ubuntu-latest
     outputs:
-      outcome: steps.trivy.outcome
+      outcome: ${{ steps.trivy.outcome }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -68,7 +67,6 @@ jobs:
       - id: trivy
         name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.10.0
-        continue-on-error: true
         with:
           scan-type: config
           trivyignores: .trivyignore.docker

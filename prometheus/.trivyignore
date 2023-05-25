@@ -5,7 +5,7 @@ CVE-2020-8912
 
 ## Prometheus
 # The latest version of the aws-otel-collector is yet to update Prometheus to fix this vulnerability
-CVE-2019-3826
+# CVE-2019-3826
 
 # GPC-353: We do not run on ARM and this is a difficult to expose vulnerability.
 # CVE-2023-1255

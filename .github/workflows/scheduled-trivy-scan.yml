@@ -25,11 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       gdx-outcome: ${{ steps.output.outputs.gdx-outcome || '' }}
-      gdx-table: ${{ steps.output.outputs.gdx-table || '' }}
+      gdx-json: ${{ steps.output.outputs.gdx-json || '' }}
       prometheus-outcome: ${{ steps.output.outputs.prometheus-outcome || '' }}
-      prometheus-table: ${{ steps.output.outputs.prometheus-table || '' }}
+      prometheus-json: ${{ steps.output.outputs.prometheus-json || '' }}
       grafana-outcome: ${{ steps.output.outputs.grafana-outcome || '' }}
-      grafana-table: ${{ steps.output.outputs.grafana-table || '' }}
+      grafana-json: ${{ steps.output.outputs.grafana-json || '' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -55,16 +55,16 @@ jobs:
           image-ref: ${{ github.ref_name }}:${{ matrix.image }}
           trivyignores: ${{ matrix.trivyignore }}
           exit-code: 1
-          format: table
-          output: ${{ matrix.image }}.table
+          format: json
+          output: ${{ matrix.image }}.json
 
       - id: output
         name: Setup output
         run: |
           echo "${{ matrix.image }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "${{ matrix.image }}-table<<$EOF" >> $GITHUB_OUTPUT
-          cat ${{ matrix.image }}.table >> $GITHUB_OUTPUT
+          echo "${{ matrix.image }}-json<<$EOF" >> $GITHUB_OUTPUT
+          cat ${{ matrix.image }}.json >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
   validate-infra:
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       terraform-outcome: ${{ steps.output.outputs.terraform-outcome }}
-      terraform-table: ${{ steps.output.outputs.terraform-table }}
+      terraform-json: ${{ steps.output.outputs.terraform-json }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -86,17 +86,14 @@ jobs:
           trivyignores: .trivyignore.docker
           skip-dirs: lev-data/
           exit-code: 1
-          format: table
-          output: terraform.table
+          format: json
+          output: terraform.json
 
       - id: output
         name: Setup output
         run: |
           echo "terraform-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "terraform-table<<$EOF" >> $GITHUB_OUTPUT
-          cat terraform.table >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
+          echo "terraform-json=$(cat terraform.json)" >> $GITHUB_OUTPUT
 
   notify-slack:
     name: Notify Slack
@@ -164,46 +161,46 @@ jobs:
             ]
           }'
 
-          if [ -n "${{ needs.validate-images.outputs.gdx-table }}" ]
+          if [ "${{ needs.validate-images.outputs.gdx-outcome }}" = "failure"  ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "GDX table\n${{ needs.validate-images.outputs.gdx-table }}"
+                "text": "*GDX json*\n${{ needs.validate-images.outputs.gdx-json }}"
               }
             }]' <<< $payload)
           fi
 
-          if [ -n "${{ needs.validate-images.outputs.prometheus-table }}" ]
+          if [ "${{ needs.validate-images.outputs.prometheus-outcome }}" = "failure" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "Prometheus table\n${{ needs.validate-images.outputs.prometheus-table }}"
+                "text": "*Prometheus json*\n${{ needs.validate-images.outputs.prometheus-json }}"
               }
             }]' <<< $payload)
           fi
 
-          if [ -n "${{ needs.validate-images.outputs.grafana-table }}" ]
+          if [ "${{ needs.validate-images.outputs.grafana-outcome }}" = "failure" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "Grafana table\n${{ needs.validate-images.outputs.grafana-table }}"
+                "text": "*Grafana json*\n${{ needs.validate-images.outputs.grafana-json }}"
               }
             }]' <<< $payload)
           fi
 
-          if [ -n "${{ needs.validate-infra.outputs.terraform-table }}" ]
+          if [ "${{ needs.validate-infra.outputs.terraform-outcome }}" = "failure" ]
           then
             payload=$(jq '.blocks += [{
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "terraform table\n${{ needs.validate-infra.outputs.terraform-table }}"
+                "text": "*terraform json*\n${{ needs.validate-infra.outputs.terraform-json }}"
               }
             }]' <<< $payload)
           fi

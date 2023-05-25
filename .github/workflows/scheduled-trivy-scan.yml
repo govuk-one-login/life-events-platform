@@ -102,9 +102,9 @@ jobs:
           cat infra.json
           echo "infra-json<<$EOF" >> $GITHUB_OUTPUT
           jq '.Results[]
-            | select(.Vulnerabilities != null)
-            | .Vulnerabilities
-            | map({ type: "mrkdwn", text: ("<"+.PrimaryURL+"|"+.VulnerabilityID+">") }, { type: "mrkdwn", text: .Severity })
+            | select(.Misconfigurations != null)
+            | .Misconfigurations
+            | map({ type: "mrkdwn", text: ("<"+.PrimaryURL+"|"+.AVDID+">") }, { type: "mrkdwn", text: .Severity })
             | .[]' infra.json | jq -s >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 

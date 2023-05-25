@@ -93,7 +93,10 @@ jobs:
         name: Setup output
         run: |
           echo "terraform-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
-          echo "terraform-json=$(cat terraform.json)" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "terraform-json<<$EOF" >> $GITHUB_OUTPUT
+          cat terraform.json >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
   notify-slack:
     name: Notify Slack

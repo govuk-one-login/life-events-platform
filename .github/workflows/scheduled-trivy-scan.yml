@@ -191,9 +191,9 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*GDX*",
-                  "fields": $fields
-                }
+                  "text": "*GDX*"
+                },
+                "fields": $fields
               }
             ]' <<< $payload)
           fi
@@ -209,9 +209,9 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*Prometheus*",
-                  "fields": $fields
-                }
+                  "text": "*Prometheus*"
+                },
+                "fields": $fields
               }
             ]' <<< $payload)
           fi
@@ -227,9 +227,9 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*Grafana*",
-                  "fields": $fields
-                }
+                  "text": "*Grafana*"
+                },
+                "fields": $fields
               }
             ]' <<< $payload)
           fi
@@ -245,9 +245,9 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*terraform*",
-                  "fields": $fields
-                }
+                  "text": "*terraform*"
+                },
+                "fields": $fields
               }
             ]' <<< $payload)
           fi

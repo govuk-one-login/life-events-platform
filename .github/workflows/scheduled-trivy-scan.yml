@@ -27,9 +27,9 @@ jobs:
       gdx-outcome: ${{ steps.output.outputs.gdx-outcome || '' }}
       gdx-table: ${{ steps.output.outputs.gdx-table || '' }}
       prometheus-outcome: ${{ steps.output.outputs.prometheus-outcome || '' }}
-      prometheus-table: ${{ steps.output.outputs.gdx-table || '' }}
+      prometheus-table: ${{ steps.output.outputs.prometheus-table || '' }}
       grafana-outcome: ${{ steps.output.outputs.grafana-outcome || '' }}
-      grafana-table: ${{ steps.output.outputs.gdx-table || '' }}
+      grafana-table: ${{ steps.output.outputs.grafana-table || '' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -71,8 +71,8 @@ jobs:
     name: Validate infra code
     runs-on: ubuntu-latest
     outputs:
-      terraform-outcome: ${{ steps.output.outputs.gdx-outcome }}
-      terraform-table: ${{ steps.output.outputs.gdx-table }}
+      terraform-outcome: ${{ steps.output.outputs.terraform-outcome }}
+      terraform-table: ${{ steps.output.outputs.terraform-table }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

@@ -75,8 +75,8 @@ jobs:
     name: Validate infra code
     runs-on: ubuntu-latest
     outputs:
-      terraform-outcome: ${{ steps.output.outputs.terraform-outcome }}
-      terraform-json: ${{ steps.output.outputs.terraform-json }}
+      infra-outcome: ${{ steps.output.outputs.infra-outcome }}
+      infra-json: ${{ steps.output.outputs.infra-json }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -91,19 +91,19 @@ jobs:
           skip-dirs: lev-data/
           exit-code: 1
           format: json
-          output: terraform.json
+          output: infra.json
 
       - id: output
         name: Setup output
         run: |
-          echo "terraform-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
+          echo "infra-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "terraform-json<<$EOF" >> $GITHUB_OUTPUT
+          echo "infra-json<<$EOF" >> $GITHUB_OUTPUT
           jq '.Results[]
             | select(.Vulnerabilities != null)
             | .Vulnerabilities
             | map({ type: "mrkdwn", text: ("<"+.PrimaryURL+"|"+.VulnerabilityID+">") }, { type: "mrkdwn", text: .Severity })
-            | .[]' terraform.json | jq -s >> $GITHUB_OUTPUT
+            | .[]' infra.json | jq -s >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
   notify-slack:
@@ -158,11 +158,11 @@ jobs:
                   },
                   {
                     "type": "plain_text",
-                    "text": "terraform"
+                    "text": "Infrastructure"
                   },
                   {
                     "type": "plain_text",
-                    "text": "${{ needs.validate-infra.outputs.terraform-outcome }}"
+                    "text": "${{ needs.validate-infra.outputs.infra-outcome }}"
                   }
                 ]
               }
@@ -234,9 +234,9 @@ jobs:
             ]' <<< $payload)
           fi
 
-          if [ "${{ needs.validate-infra.outputs.terraform-outcome }}" = "failure" ]
+          if [ "${{ needs.validate-infra.outputs.infra-outcome }}" = "failure" ]
           then
-            fields=$(jq '. += ${{ needs.validate-infra.outputs.terraform-json }}' <<< $base_vulnerability_fields)
+            fields=$(jq '. += ${{ needs.validate-infra.outputs.infra-json }}' <<< $base_vulnerability_fields)
             payload=$(jq --argjson fields "$fields" '.blocks += [
               {
                 "type": "divider"
@@ -245,7 +245,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*terraform*"
+                  "text": "*Infrastructure*"
                 },
                 "fields": $fields
               }
@@ -258,7 +258,11 @@ jobs:
           echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Send failure message to Slack
-        if: needs.validate-images.outputs.gdx-outcome != 'success' || needs.validate-images.outputs.prometheus-outcome != 'success' || needs.validate-images.outputs.grafana-outcome != 'success' || needs.validate-infra.outputs.terraform-outcome != 'success'
+        if: |
+          needs.validate-images.outputs.gdx-outcome != 'success' ||
+          needs.validate-images.outputs.prometheus-outcome != 'success' ||
+          needs.validate-images.outputs.grafana-outcome != 'success' ||
+          needs.validate-infra.outputs.infra-outcome != 'success'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}

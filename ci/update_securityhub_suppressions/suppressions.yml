@@ -13,6 +13,10 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-294
+  "IN1-JAVA-ORGYAML-3152153 - org.yaml:snakeyaml":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-294
   "IN1-JAVA-IONETTY-1042268 - io.netty:netty-handler":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*

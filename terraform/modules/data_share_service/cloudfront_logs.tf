@@ -18,8 +18,6 @@ module "cloudfront_logs_bucket" {
   object_writer_owner = true
 
   sns_arn = module.sns.topic_arn
-
-  depends_on = [module.sns]
 }
 
 resource "aws_s3_bucket_acl" "cloudfront_logs_bucket_grants" {

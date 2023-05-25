@@ -4,6 +4,9 @@ variable "account_id" {
 variable "environment" {
   type = string
 }
+variable "region" {
+  type = string
+}
 variable "name" {
   type = string
 }
@@ -16,6 +19,10 @@ variable "arns_which_can_publish" {
   default = []
 }
 variable "allow_s3_notification" {
+  type    = bool
+  default = true
+}
+variable "allow_codestar_notification" {
   type    = bool
   default = true
 }

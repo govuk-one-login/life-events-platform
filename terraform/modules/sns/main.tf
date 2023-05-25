@@ -42,10 +42,33 @@ data "aws_iam_policy_document" "kms_s3_access" {
   }
 }
 
+data "aws_iam_policy_document" "kms_codestar_access" {
+  statement {
+    sid = "CodeStar SNS KMS Access"
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["codestar-notifications.amazonaws.com"]
+    }
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+
+      values = ["sns.${var.region}.amazonaws.com"]
+    }
+  }
+}
+
 locals {
   kms_prometheus_policy = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.kms_arns_access.json] : []
   kms_s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.kms_s3_access.json] : []
-  kms_source_policies   = concat(local.kms_prometheus_policy, local.kms_s3_policy)
+  kms_codestar_policy   = var.allow_codestar_notification ? [data.aws_iam_policy_document.kms_codestar_access.json] : []
+  kms_source_policies   = concat(local.kms_prometheus_policy, local.kms_s3_policy, local.kms_codestar_policy)
 }
 
 data "aws_iam_policy_document" "kms_access" {
@@ -123,10 +146,26 @@ data "aws_iam_policy_document" "s3_access" {
   }
 }
 
+data "aws_iam_policy_document" "codestar_access" {
+  statement {
+    sid = "CodeStar SNS Access"
+    actions = [
+      "SNS:Publish",
+    ]
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["codestar-notifications.amazonaws.com"]
+    }
+    resources = [aws_sns_topic.sns_topic.arn]
+  }
+}
+
 locals {
   prometheus_policy = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.arns_access.json] : []
   s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.s3_access.json] : []
-  source_policies   = concat(local.prometheus_policy, local.s3_policy)
+  codestar_policy   = var.allow_codestar_notification ? [data.aws_iam_policy_document.codestar_access.json] : []
+  source_policies   = concat(local.prometheus_policy, local.s3_policy, local.codestar_policy)
 }
 
 data "aws_iam_policy_document" "sns_access" {

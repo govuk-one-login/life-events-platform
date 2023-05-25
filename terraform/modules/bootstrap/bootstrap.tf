@@ -13,8 +13,6 @@ module "state_bucket" {
     "arn:aws:iam::255773200490:role/prod-github-oidc-deploy",
     "arn:aws:iam::255773200490:role/github-oidc-pull-request"
   ]
-
-  depends_on = [module.sns]
 }
 
 module "sns" {
@@ -22,6 +20,7 @@ module "sns" {
 
   account_id          = data.aws_caller_identity.current.account_id
   environment         = "bootstrap"
+  region              = data.aws_region.current.name
   name                = "sns"
   notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
 }

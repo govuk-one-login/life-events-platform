@@ -3,11 +3,11 @@ resource "aws_cloudwatch_event_rule" "tunnel_notification" {
   description = "Send an SNS notification when a tunnel is initiated to the bastion host"
 
   event_pattern = jsonencode({
-    "source": ["aws.ssm"],
-    "detail-type": ["AWS API Call via CloudTrail"],
-    "detail": {
-      "eventSource": ["ssm.amazonaws.com"],
-      "eventName": ["StartSession"]
+    "source" : ["aws.ssm"],
+    "detail-type" : ["AWS API Call via CloudTrail"],
+    "detail" : {
+      "eventSource" : ["ssm.amazonaws.com"],
+      "eventName" : ["StartSession"]
     }
   })
 }

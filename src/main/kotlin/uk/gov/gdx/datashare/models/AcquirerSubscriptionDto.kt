@@ -61,6 +61,12 @@ data class AcquirerSubscriptionDto(
     pattern = SQS_QUEUE_NAME_REGEX,
   )
   val queueName: String? = null,
+  @Schema(
+    description = "Provides the url of the SQS queue when it is created",
+    required = false,
+    example = "https://sqs.eu-west-2.amazonaws.com/000000000000/acq_example-queue",
+  )
+  val queueUrl: String? = null,
   @Schema(description = "Indicates when the subscription was created", required = true, example = "2023-01-04T12:30:00")
   val whenCreated: LocalDateTime,
 )

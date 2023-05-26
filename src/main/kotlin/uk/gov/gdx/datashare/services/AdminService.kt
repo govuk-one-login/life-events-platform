@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.enums.CognitoClientType
 import uk.gov.gdx.datashare.models.*
+import uk.gov.gdx.datashare.repositories.Acquirer
 
 @Service
 @XRayEnabled
@@ -15,12 +16,24 @@ class AdminService(
   private val adminActionAlertsService: AdminActionAlertsService,
 ) {
   @Transactional
-  fun createAcquirer(createAcquirerRequest: CreateAcquirerRequest): CognitoClientResponse? {
+  fun createAcquirer(createAcquirerRequest: CreateAcquirerRequest): CreateAcquirerResponse {
     adminActionAlertsService.noticeAction(AdminAction("Create Acquirer", createAcquirerRequest))
-    val acquirer = acquirersService.addAcquirer(AcquirerRequest(createAcquirerRequest.clientName))
+    val acquirer = acquirersService.addAcquirer(AcquirerRequest(createAcquirerRequest.acquirerName))
+
+    if (createAcquirerRequest.queueName == null) {
+      return createApiAcquirer(createAcquirerRequest, acquirer)
+    }
+
+    return createQueueAcquirer(acquirer, createAcquirerRequest)
+  }
+
+  private fun createApiAcquirer(
+    createAcquirerRequest: CreateAcquirerRequest,
+    acquirer: Acquirer,
+  ): CreateAcquirerResponse {
     return cognitoService.createUserPoolClient(
-      CognitoClientRequest(createAcquirerRequest.clientName, listOf(CognitoClientType.ACQUIRER)),
-    )?.let {
+      CognitoClientRequest(createAcquirerRequest.acquirerName, listOf(CognitoClientType.ACQUIRER)),
+    ).let {
       acquirersService.addAcquirerSubscription(
         acquirer.id,
         AcquirerSubRequest(
@@ -31,7 +44,36 @@ class AdminService(
         ),
       )
 
-      CognitoClientResponse(it.clientName, it.clientId, it.clientSecret)
+      CreateAcquirerResponse(
+        queueUrl = null,
+        clientName = it.clientName,
+        clientId = it.clientId,
+        clientSecret = it.clientSecret,
+      )
+    }
+  }
+
+  private fun createQueueAcquirer(
+    acquirer: Acquirer,
+    createAcquirerRequest: CreateAcquirerRequest,
+  ): CreateAcquirerResponse {
+    return acquirersService.addAcquirerSubscription(
+      acquirer.id,
+      AcquirerSubRequest(
+        oauthClientId = null,
+        eventType = createAcquirerRequest.eventType,
+        enrichmentFields = createAcquirerRequest.enrichmentFields,
+        enrichmentFieldsIncludedInPoll = createAcquirerRequest.enrichmentFieldsIncludedInPoll,
+        queueName = createAcquirerRequest.queueName,
+        principalArn = createAcquirerRequest.principalArn,
+      ),
+    ).let {
+      CreateAcquirerResponse(
+        queueUrl = it.queueUrl,
+        clientId = null,
+        clientName = null,
+        clientSecret = null,
+      )
     }
   }
 
@@ -41,7 +83,7 @@ class AdminService(
     val supplier = suppliersService.addSupplier(SupplierRequest(createSupplierRequest.clientName))
     return cognitoService.createUserPoolClient(
       CognitoClientRequest(createSupplierRequest.clientName, listOf(CognitoClientType.SUPPLIER)),
-    )?.let {
+    ).let {
       suppliersService.addSupplierSubscription(
         supplier.id,
         SupplierSubRequest(

@@ -49,6 +49,7 @@ class AcquirersService(
   private fun mapAcquirerSubscriptionDto(
     acquirerSubscription: AcquirerSubscription,
     enrichmentFields: List<AcquirerSubscriptionEnrichmentField>,
+    queueUrl: String? = null,
   ): AcquirerSubscriptionDto {
     return AcquirerSubscriptionDto(
       acquirerSubscriptionId = acquirerSubscription.acquirerSubscriptionId,
@@ -57,6 +58,8 @@ class AcquirersService(
       eventType = acquirerSubscription.eventType,
       enrichmentFields = enrichmentFields.map { it.enrichmentField },
       enrichmentFieldsIncludedInPoll = acquirerSubscription.enrichmentFieldsIncludedInPoll,
+      queueName = acquirerSubscription.queueName,
+      queueUrl = queueUrl,
       whenCreated = acquirerSubscription.whenCreated,
     )
   }
@@ -102,7 +105,8 @@ class AcquirersService(
         addAcquirerSubscriptionEnrichmentFields(acquirerSubscription.acquirerSubscriptionId, enrichmentFields)
 
       if (queueName != null && principalArn != null) {
-        outboundEventQueueService.createAcquirerQueue(queueName, principalArn)
+        val queueUrl = outboundEventQueueService.createAcquirerQueue(queueName, principalArn)
+        return mapAcquirerSubscriptionDto(acquirerSubscription, enrichmentFields, queueUrl)
       }
 
       return mapAcquirerSubscriptionDto(acquirerSubscription, enrichmentFields)

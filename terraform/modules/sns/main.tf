@@ -64,11 +64,34 @@ data "aws_iam_policy_document" "kms_codestar_access" {
   }
 }
 
+data "aws_iam_policy_document" "kms_eventbridge_access" {
+  statement {
+    sid = "EventBridge SNS KMS Access"
+    actions = [
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceAccount"
+
+      values = [var.account_id]
+    }
+  }
+}
+
 locals {
-  kms_prometheus_policy = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.kms_arns_access.json] : []
-  kms_s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.kms_s3_access.json] : []
-  kms_codestar_policy   = var.allow_codestar_notification ? [data.aws_iam_policy_document.kms_codestar_access.json] : []
-  kms_source_policies   = concat(local.kms_prometheus_policy, local.kms_s3_policy, local.kms_codestar_policy)
+  kms_prometheus_policy  = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.kms_arns_access.json] : []
+  kms_s3_policy          = var.allow_s3_notification ? [data.aws_iam_policy_document.kms_s3_access.json] : []
+  kms_codestar_policy    = var.allow_codestar_notification ? [data.aws_iam_policy_document.kms_codestar_access.json] : []
+  kms_eventbridge_policy = var.allow_eventbridge_notification ? [data.aws_iam_policy_document.kms_eventbridge_access.json] : []
+  kms_source_policies    = concat(local.kms_prometheus_policy, local.kms_s3_policy, local.kms_codestar_policy, local.kms_eventbridge_policy)
 }
 
 data "aws_iam_policy_document" "kms_access" {
@@ -161,11 +184,27 @@ data "aws_iam_policy_document" "codestar_access" {
   }
 }
 
+data "aws_iam_policy_document" "eventbridge_access" {
+  statement {
+    sid = "EventBridge SNS Access"
+    actions = [
+      "SNS:Publish",
+    ]
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+    resources = [aws_sns_topic.sns_topic.arn]
+  }
+}
+
 locals {
-  prometheus_policy = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.arns_access.json] : []
-  s3_policy         = var.allow_s3_notification ? [data.aws_iam_policy_document.s3_access.json] : []
-  codestar_policy   = var.allow_codestar_notification ? [data.aws_iam_policy_document.codestar_access.json] : []
-  source_policies   = concat(local.prometheus_policy, local.s3_policy, local.codestar_policy)
+  prometheus_policy  = length(var.arns_which_can_publish) != 0 ? [data.aws_iam_policy_document.arns_access.json] : []
+  s3_policy          = var.allow_s3_notification ? [data.aws_iam_policy_document.s3_access.json] : []
+  codestar_policy    = var.allow_codestar_notification ? [data.aws_iam_policy_document.codestar_access.json] : []
+  eventbridge_policy = var.allow_eventbridge_notification ? [data.aws_iam_policy_document.eventbridge_access.json] : []
+  source_policies    = concat(local.prometheus_policy, local.s3_policy, local.codestar_policy, local.eventbridge_policy)
 }
 
 data "aws_iam_policy_document" "sns_access" {

@@ -26,3 +26,7 @@ variable "allow_codestar_notification" {
   type    = bool
   default = true
 }
+variable "allow_eventbridge_notification" {
+  type    = bool
+  default = true
+}

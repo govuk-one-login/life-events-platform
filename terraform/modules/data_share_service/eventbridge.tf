@@ -92,12 +92,16 @@ resource "aws_cloudwatch_event_target" "admin_role_notification" {
 }
 
 resource "aws_cloudwatch_event_target" "admin_role_notification_us_east_1" {
+  provider = aws.us-east-1
+
   rule      = aws_cloudwatch_event_rule.admin_role_notification_us_east_1.name
   target_id = "SendToSNS"
   arn       = module.sns-us-east-1.topic_arn
 }
 
 resource "aws_cloudwatch_event_target" "admin_role_notification_eu_west_1" {
+  provider = aws.eu-west-1
+
   rule      = aws_cloudwatch_event_rule.admin_role_notification_eu_west_1.name
   target_id = "SendToSNS"
   arn       = module.sns-eu-west-1.topic_arn

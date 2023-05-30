@@ -58,6 +58,9 @@ jobs:
     defaults:
       run:
         working-directory: terraform/${{ matrix.env }}
+    concurrency:
+      group: infrastructure-pipeline-${{ matrix.env }}
+      cancel-in-progress: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -66,11 +69,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
-
-      - name: Set up mutex
-        uses: ben-z/gh-action-mutex@v1.0-alpha-7
-        with:
-          branch: ${{ matrix.env }}-mutex-terraform-locking
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2

@@ -291,7 +291,10 @@ resource "aws_iam_role_policy_attachment" "ecs_task_rds_access" {
 
 data "aws_iam_policy_document" "ecs_task_cognito_access" {
   statement {
-    actions = ["cognito-idp:CreateUserPoolClient"]
+    actions = [
+      "cognito-idp:CreateUserPoolClient",
+      "cognito-idp:DeleteUserPoolClient"
+    ]
     resources = [
       module.cognito.user_pool_arn
     ]

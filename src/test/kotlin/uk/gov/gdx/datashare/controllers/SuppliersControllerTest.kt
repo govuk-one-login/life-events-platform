@@ -55,14 +55,14 @@ class SuppliersControllerTest {
   fun `deleteSupplier deletes supplier`() {
     val supplier = Supplier(name = "Supplier Name")
 
-    every { suppliersService.deleteSupplier(supplier.id) }.returns(supplier)
+    every { suppliersService.deleteSupplier(supplier.supplierId) }.returns(supplier)
 
-    val supplierOutput = underTest.deleteSupplier(supplier.id)
+    val supplierOutput = underTest.deleteSupplier(supplier.supplierId)
 
     assertThat(supplierOutput).isEqualTo(supplier)
 
     verify(exactly = 1) {
-      suppliersService.deleteSupplier(supplier.id)
+      suppliersService.deleteSupplier(supplier.supplierId)
     }
   }
 
@@ -153,7 +153,7 @@ class SuppliersControllerTest {
     )
     val supplierSubscription = SupplierSubscription(
       supplierId = supplierId,
-      id = subscriptionId,
+      supplierSubscriptionId = subscriptionId,
       clientId = "Client-New",
       eventType = EventType.LIFE_EVENT,
     )
@@ -173,7 +173,7 @@ class SuppliersControllerTest {
     val subscriptionId = UUID.randomUUID()
     val supplierSubscription = SupplierSubscription(
       supplierId = UUID.randomUUID(),
-      id = subscriptionId,
+      supplierSubscriptionId = subscriptionId,
       clientId = "Client-New",
       eventType = EventType.LIFE_EVENT,
     )

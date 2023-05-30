@@ -52,7 +52,7 @@ class AcquirersController(
       ),
     ],
   )
-  fun getAcquirers(): MutableIterable<Acquirer> = acquirersService.getAcquirers()
+  fun getAcquirers(): Iterable<Acquirer> = acquirersService.getAcquirers()
 
   @PostMapping
   @Operation(

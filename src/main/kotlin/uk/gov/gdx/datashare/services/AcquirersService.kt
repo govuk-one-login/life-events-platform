@@ -18,15 +18,16 @@ import java.util.*
 @Transactional
 @XRayEnabled
 class AcquirersService(
-  private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
+  private val acquirerEventRepository: AcquirerEventRepository,
   private val acquirerRepository: AcquirerRepository,
+  private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val acquirerSubscriptionEnrichmentFieldRepository: AcquirerSubscriptionEnrichmentFieldRepository,
   private val adminActionAlertsService: AdminActionAlertsService,
-  private val dateTimeHandler: DateTimeHandler,
   private val cognitoService: CognitoService,
+  private val dateTimeHandler: DateTimeHandler,
   private val outboundEventQueueService: OutboundEventQueueService,
 ) {
-  fun getAcquirers() = acquirerRepository.findAll()
+  fun getAcquirers(): Iterable<Acquirer> = acquirerRepository.findAll()
 
   fun getAcquirerSubscriptions(): List<AcquirerSubscriptionDto> {
     val acquirerSubscriptions = acquirerSubscriptionRepository.findAll()
@@ -165,6 +166,8 @@ class AcquirersService(
 
     acquirerSubscriptionEnrichmentFieldRepository
       .deleteAllByAcquirerSubscriptionId(subscriptionId)
+
+    acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(subscriptionId, now)
 
     if (subscription.queueName == null && subscription.oauthClientId == null) {
       throw IllegalStateException("Acquirer does not have a client id or queue name.")

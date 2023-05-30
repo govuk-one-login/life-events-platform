@@ -61,5 +61,13 @@ interface AcquirerEventRepository : CrudRepository<AcquirerEvent, UUID> {
   @Modifying
   fun softDeleteById(id: UUID, deletionTime: LocalDateTime)
 
+  @Query(
+    "UPDATE acquirer_event " +
+      "SET deleted_at=:deletionTime " +
+      "WHERE acquirer_subscription_id = :acquirerSubscriptionId",
+  )
+  @Modifying
+  fun softDeleteAllByAcquirerSubscriptionId(acquirerSubscriptionId: UUID, deletionTime: LocalDateTime)
+
   fun countByDeletedAtIsNull(): Int
 }

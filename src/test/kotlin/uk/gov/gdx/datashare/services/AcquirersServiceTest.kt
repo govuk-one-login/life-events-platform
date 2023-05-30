@@ -16,8 +16,9 @@ import java.time.LocalDateTime
 import java.util.*
 
 class AcquirersServiceTest {
-  private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
+  private val acquirerEventRepository = mockk<AcquirerEventRepository>()
   private val acquirerRepository = mockk<AcquirerRepository>()
+  private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val acquirerSubscriptionEnrichmentFieldRepository = mockk<AcquirerSubscriptionEnrichmentFieldRepository>()
   private val adminActionAlertsService = mockk<AdminActionAlertsService>()
   private val cognitoService = mockk<CognitoService>()
@@ -25,12 +26,13 @@ class AcquirersServiceTest {
   private val outboundEventQueueService = mockk<OutboundEventQueueService>()
 
   private val underTest = AcquirersService(
-    acquirerSubscriptionRepository,
+    acquirerEventRepository,
     acquirerRepository,
+    acquirerSubscriptionRepository,
     acquirerSubscriptionEnrichmentFieldRepository,
     adminActionAlertsService,
-    dateTimeHandler,
     cognitoService,
+    dateTimeHandler,
     outboundEventQueueService,
   )
 
@@ -262,17 +264,18 @@ class AcquirersServiceTest {
   @Test
   fun `deleteAcquirerSubscription deletes subscription, enrichment fields and cognito client`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) }.returns(
-      emptyList(),
-    )
-    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      Unit,
-    )
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now) } just runs
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
     underTest.deleteAcquirerSubscription(acquirerSubscription.id)
@@ -286,11 +289,11 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
-        withArg {
-          assertThat(it).isEqualTo(acquirerSubscription.id)
-        },
-      )
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id)
+    }
+
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now)
     }
 
     verify(exactly = 1) {
@@ -301,19 +304,18 @@ class AcquirersServiceTest {
   @Test
   fun `deleteAcquirerSubscription deletes subscription, queue and dlq`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) }.returns(
-      queueAcquirerSubscription,
-    )
-    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) }.returns(
-      emptyList(),
-    )
-    every { acquirerSubscriptionRepository.save(any()) }.returns(queueAcquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
-      Unit,
-    )
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now) } just runs
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) } returns queueAcquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.save(any()) } returns queueAcquirerSubscription
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
     every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
 
@@ -328,35 +330,36 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(
-        withArg {
-          assertThat(it).isEqualTo(queueAcquirerSubscription.queueName)
-        },
-      )
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id)
+    }
+
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now)
+    }
+
+    verify(exactly = 1) {
+      outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!)
     }
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(
-        withArg {
-          assertThat(it).isEqualTo("${queueAcquirerSubscription.queueName}-dlq")
-        },
-      )
+      outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq")
     }
   }
 
   @Test
   fun `deleteAcquirerSubscription deletes subscription and enrichment fields but not cognito client if shared`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) }.returns(
-      listOf(otherAcquirerSubscription),
-    )
-    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      Unit,
-    )
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now) } just runs
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returns listOf(otherAcquirerSubscription)
+    every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
     underTest.deleteAcquirerSubscription(acquirerSubscription.id)
@@ -370,11 +373,11 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
-        withArg {
-          assertThat(it).isEqualTo(acquirerSubscription.id)
-        },
-      )
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id)
+    }
+
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now)
     }
 
     verify(exactly = 0) {
@@ -385,19 +388,18 @@ class AcquirersServiceTest {
   @Test
   fun `deleteAcquirerSubscription deletes subscription but not queue and dlq if shared`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) }.returns(
-      queueAcquirerSubscription,
-    )
-    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) }.returns(
-      listOf(otherQueueAcquirerSubscription),
-    )
-    every { acquirerSubscriptionRepository.save(any()) }.returns(queueAcquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
-      Unit,
-    )
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now) } just runs
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) } returns queueAcquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) } returns listOf(otherQueueAcquirerSubscription)
+    every { acquirerSubscriptionRepository.save(any()) } returns queueAcquirerSubscription
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
     every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
 
@@ -409,6 +411,14 @@ class AcquirersServiceTest {
           assertThat(it.whenDeleted).isEqualTo(now)
         },
       )
+    }
+
+    verify(exactly = 1) {
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id)
+    }
+
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now)
     }
 
     verify(exactly = 0) {
@@ -423,9 +433,10 @@ class AcquirersServiceTest {
   @Test
   fun `deleteAcquirerSubscription does not delete subscription if subscription does not exist`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(null)
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now) } just runs
+    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns null
     every { adminActionAlertsService.noticeAction(any()) } just runs
 
     val exception = assertThrows<AcquirerSubscriptionNotFoundException> {
@@ -437,6 +448,8 @@ class AcquirersServiceTest {
     verify(exactly = 0) { acquirerSubscriptionRepository.save(any()) }
 
     verify(exactly = 0) { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(any()) }
+
+    verify(exactly = 0) { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(any(), any()) }
 
     verify(exactly = 0) { cognitoService.deleteUserPoolClient(any()) }
   }
@@ -485,20 +498,22 @@ class AcquirersServiceTest {
   @Test
   fun `deleteAcquirer deletes acquirer, subscription, enrichment fields, and cognito client`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
-    every { acquirerRepository.save(any()) }.returns(acquirer)
-    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) }.returns(
-      emptyList(),
-    )
-    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) }.returns(listOf(acquirerSubscription))
-    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      Unit,
-    )
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now) } just runs
+
+    every { acquirerRepository.findByIdOrNull(acquirer.id) } returns acquirer
+    every { acquirerRepository.save(any()) } returns acquirer
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) } returns listOf(acquirerSubscription)
+    every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
     underTest.deleteAcquirer(acquirer.id)
@@ -520,11 +535,11 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
-        withArg {
-          assertThat(it).isEqualTo(acquirerSubscription.id)
-        },
-      )
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id)
+    }
+
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now)
     }
 
     verify(exactly = 1) {
@@ -535,33 +550,32 @@ class AcquirersServiceTest {
   @Test
   fun `deleteAcquirer deletes acquirer, multiple subscriptions, enrichment fields, and cognito client`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
-    every { acquirerRepository.save(any()) }.returns(acquirer)
-    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionRepository.findByIdOrNull(otherAcquirerSubscription.id) }.returns(
-      otherAcquirerSubscription,
-    )
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) }.returnsMany(
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(any(), now) } just runs
+
+    every { acquirerRepository.findByIdOrNull(acquirer.id) } returns acquirer
+    every { acquirerRepository.save(any()) } returns acquirer
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
+    every { acquirerSubscriptionRepository.findByIdOrNull(otherAcquirerSubscription.id) } returns otherAcquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returnsMany
       listOf(
         listOf(
           otherAcquirerSubscription,
         ),
         emptyList(),
-      ),
+      )
+    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) } returns listOf(
+      acquirerSubscription,
+      otherAcquirerSubscription,
     )
-    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) }.returns(
-      listOf(
-        acquirerSubscription,
-        otherAcquirerSubscription,
-      ),
-    )
-    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(any()) }.returns(
-      Unit,
-    )
+    every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(any()) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
     underTest.deleteAcquirer(acquirer.id)
@@ -593,11 +607,17 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
-        withArg {
-          assertThat(it).isEqualTo(acquirerSubscription.id)
-        },
-      )
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id)
+    }
+    verify(exactly = 1) {
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(otherAcquirerSubscription.id)
+    }
+
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now)
+    }
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(otherAcquirerSubscription.id, now)
     }
 
     verify(exactly = 1) {
@@ -610,22 +630,23 @@ class AcquirersServiceTest {
     val now = LocalDateTime.now()
     every { dateTimeHandler.now() }.returns(now)
 
-    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
-    every { acquirerRepository.save(any()) }.returns(acquirer)
-    every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) }.returns(
-      queueAcquirerSubscription,
-    )
-    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) }.returns(
-      emptyList(),
-    )
-    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) }.returns(listOf(queueAcquirerSubscription))
-    every { acquirerSubscriptionRepository.save(any()) }.returns(queueAcquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) }.returns(
-      Unit,
-    )
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now) } just runs
+
+    every { acquirerRepository.findByIdOrNull(acquirer.id) } returns acquirer
+    every { acquirerRepository.save(any()) } returns acquirer
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) } returns queueAcquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) } returns listOf(queueAcquirerSubscription)
+    every { acquirerSubscriptionRepository.save(any()) } returns queueAcquirerSubscription
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
     every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
+
     underTest.deleteAcquirer(acquirer.id)
 
     verify(exactly = 1) {
@@ -645,53 +666,52 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(
-        withArg {
-          assertThat(it).isEqualTo(queueAcquirerSubscription.queueName)
-        },
-      )
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id)
+    }
+
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now)
+    }
+
+    verify(exactly = 1) {
+      outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!)
     }
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(
-        withArg {
-          assertThat(it).isEqualTo("${queueAcquirerSubscription.queueName}-dlq")
-        },
-      )
+      outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq")
     }
   }
 
   @Test
   fun `deleteAcquirer deletes acquirer, multiple subscriptions, queue and dlq`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
-    every { acquirerRepository.save(any()) }.returns(acquirer)
-    every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) }.returns(
-      queueAcquirerSubscription,
-    )
-    every { acquirerSubscriptionRepository.findByIdOrNull(otherQueueAcquirerSubscription.id) }.returns(
-      otherQueueAcquirerSubscription,
-    )
-    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) }.returnsMany(
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(any(), now) } just runs
+
+    every { acquirerRepository.findByIdOrNull(acquirer.id) } returns acquirer
+    every { acquirerRepository.save(any()) } returns acquirer
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) } returns queueAcquirerSubscription
+    every { acquirerSubscriptionRepository.findByIdOrNull(otherQueueAcquirerSubscription.id) } returns otherQueueAcquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) } returnsMany
       listOf(
         listOf(
           otherQueueAcquirerSubscription,
         ),
         emptyList(),
-      ),
-    )
-    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) }.returns(
+      )
+    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) } returns
       listOf(
         queueAcquirerSubscription,
         otherQueueAcquirerSubscription,
-      ),
-    )
-    every { acquirerSubscriptionRepository.save(any()) }.returns(queueAcquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(any()) }.returns(
-      Unit,
-    )
+      )
+    every { acquirerSubscriptionRepository.save(any()) } returnsMany
+      listOf(queueAcquirerSubscription, otherQueueAcquirerSubscription)
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(any()) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
     every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq") } just runs
 
@@ -724,39 +744,46 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(
-        withArg {
-          assertThat(it).isEqualTo(queueAcquirerSubscription.queueName)
-        },
-      )
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id)
+    }
+    verify(exactly = 1) {
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(otherQueueAcquirerSubscription.id)
     }
 
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(
-        withArg {
-          assertThat(it).isEqualTo("${queueAcquirerSubscription.queueName}-dlq")
-        },
-      )
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now)
+    }
+    verify(exactly = 1) {
+      acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(otherQueueAcquirerSubscription.id, now)
+    }
+
+    verify(exactly = 1) {
+      outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!)
+    }
+    verify(exactly = 1) {
+      outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}-dlq")
     }
   }
 
   @Test
   fun `deleteAcquirer action is noticed`() {
     val now = LocalDateTime.now()
-    every { dateTimeHandler.now() }.returns(now)
+    every { dateTimeHandler.now() } returns now
 
-    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
-    every { acquirerRepository.save(any()) }.returns(acquirer)
-    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) }.returns(
-      emptyList(),
-    )
-    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) }.returns(listOf(acquirerSubscription))
-    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
-      Unit,
-    )
+    every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(any(), now) } just runs
+
+    every { acquirerRepository.findByIdOrNull(acquirer.id) } returns acquirer
+    every { acquirerRepository.save(any()) } returns acquirer
+
+    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
+    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) } returns listOf(acquirerSubscription)
+    every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
+
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) } returns Unit
+
     every { adminActionAlertsService.noticeAction(any()) } just runs
+
     every { cognitoService.deleteUserPoolClient(acquirerSubscription.oauthClientId!!) } just runs
 
     underTest.deleteAcquirer(acquirer.id)

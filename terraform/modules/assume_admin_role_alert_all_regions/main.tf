@@ -14,15 +14,6 @@ module "assume_admin_role_alert" {
   sns_arn = var.eu_west_2_sns_arn
 }
 
-module "assume_admin_role_alert_us_east_1" {
-  source = "../assume_admin_role_alert"
-  providers = {
-    aws = aws.us-east-1
-  }
-
-  sns_arn = var.us_east_1_sns_arn
-}
-
 module "assume_admin_role_alert_eu_west_1" {
   source = "../assume_admin_role_alert"
   providers = {
@@ -30,4 +21,13 @@ module "assume_admin_role_alert_eu_west_1" {
   }
 
   sns_arn = var.eu_west_1_sns_arn
+}
+
+module "assume_admin_role_alert_us_east_1" {
+  source = "../assume_admin_role_alert"
+  providers = {
+    aws = aws.us-east-1
+  }
+
+  sns_arn = var.us_east_1_sns_arn
 }

@@ -28,3 +28,6 @@ CVE-2023-28319
 CVE-2023-28320
 CVE-2023-28321
 CVE-2023-28322
+
+# GPC-389: This vulnerability is not an issue for us and would only impact dashboarding, so we can ignore it
+CVE-2023-29491

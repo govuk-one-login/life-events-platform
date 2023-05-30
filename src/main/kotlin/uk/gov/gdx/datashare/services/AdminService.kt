@@ -85,7 +85,7 @@ class AdminService(
       CognitoClientRequest(createSupplierRequest.clientName, listOf(CognitoClientType.SUPPLIER)),
     ).let {
       suppliersService.addSupplierSubscription(
-        supplier.id,
+        supplier.supplierId,
         SupplierSubRequest(
           clientId = it.clientId,
           eventType = createSupplierRequest.eventType,

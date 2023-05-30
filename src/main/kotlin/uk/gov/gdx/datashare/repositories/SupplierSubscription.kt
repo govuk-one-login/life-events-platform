@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.domain.Persistable
+import org.springframework.data.relational.core.mapping.Column
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_ID_REGEX
 import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
@@ -17,9 +18,9 @@ import java.util.*
 @Schema(description = "Supplier Subscription")
 data class SupplierSubscription(
   @Id
-  @JvmField
+  @Column("id")
   @Schema(description = "Supplier Subscription ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
-  val id: UUID = UUID.randomUUID(),
+  val supplierSubscriptionId: UUID = UUID.randomUUID(),
   @Schema(description = "Supplier ID", required = true, example = "00000000-0000-0001-0000-000000000000", pattern = UUID_REGEX)
   val supplierId: UUID,
   @Schema(description = "Client ID", required = true, example = "a-client-id", maxLength = 50, pattern = CLIENT_ID_REGEX)
@@ -36,9 +37,9 @@ data class SupplierSubscription(
   @JsonIgnore
   val new: Boolean = true,
 
-) : Persistable<UUID> {
+  ) : Persistable<UUID> {
   @JsonIgnore
-  override fun getId(): UUID = id
+  override fun getId(): UUID = supplierSubscriptionId
 
   override fun isNew(): Boolean = new
 }

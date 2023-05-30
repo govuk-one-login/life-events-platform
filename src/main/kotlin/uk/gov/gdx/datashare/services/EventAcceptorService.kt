@@ -45,7 +45,7 @@ class EventAcceptorService(
     ) ?: throw SupplierPermissionException("$clientId does not have permission")
 
     val supplierEvent = SupplierEvent(
-      supplierSubscriptionId = subscription.id,
+      supplierSubscriptionId = subscription.supplierSubscriptionId,
       dataId = eventPayload.id,
       eventTime = eventPayload.eventTime,
       createdAt = dateTimeHandler.now(),

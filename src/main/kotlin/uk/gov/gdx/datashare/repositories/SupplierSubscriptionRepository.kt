@@ -10,8 +10,8 @@ import java.util.*
 @JaversSpringDataAuditable
 interface SupplierSubscriptionRepository : CrudRepository<SupplierSubscription, UUID> {
   @Override
-  override fun findById(id: UUID) = findByIdAndWhenDeletedIsNull(id)
-  fun findByIdAndWhenDeletedIsNull(id: UUID): Optional<SupplierSubscription>
+  override fun findById(id: UUID) = findBySupplierSubscriptionIdAndWhenDeletedIsNull(id)
+  fun findBySupplierSubscriptionIdAndWhenDeletedIsNull(id: UUID): Optional<SupplierSubscription>
 
   @Override
   override fun findAll() = findAllByWhenDeletedIsNull()

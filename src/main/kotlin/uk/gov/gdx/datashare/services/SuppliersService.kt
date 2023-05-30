@@ -144,7 +144,7 @@ class SuppliersService(
       ) ?: throw SupplierSubscriptionNotFoundException("Supplier $id not found"),
     )
     val subscriptions = supplierSubscriptionRepository.findAllBySupplierId(id)
-    subscriptions.forEach { deleteSupplierSubscription(it.id) }
+    subscriptions.forEach { deleteSupplierSubscription(it.supplierSubscriptionId) }
     return supplier
   }
 }

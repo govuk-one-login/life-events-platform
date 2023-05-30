@@ -64,7 +64,7 @@ interface AcquirerEventRepository : CrudRepository<AcquirerEvent, UUID> {
   @Query(
     "UPDATE acquirer_event " +
       "SET deleted_at=:deletionTime " +
-      "WHERE devrdsdb.public.acquirer_event.acquirer_subscription_id = :acquirerSubscriptionId",
+      "WHERE acquirer_subscription_id = :acquirerSubscriptionId",
   )
   @Modifying
   fun softDeleteAllByAcquirerSubscriptionId(acquirerSubscriptionId: UUID, deletionTime: LocalDateTime)

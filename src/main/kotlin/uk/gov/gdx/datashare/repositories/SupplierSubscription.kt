@@ -37,7 +37,7 @@ data class SupplierSubscription(
   @JsonIgnore
   val new: Boolean = true,
 
-  ) : Persistable<UUID> {
+) : Persistable<UUID> {
   @JsonIgnore
   override fun getId(): UUID = supplierSubscriptionId
 

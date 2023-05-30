@@ -46,6 +46,14 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  alias  = "eu-west-1"
+  region = "eu-west-1"
+  default_tags {
+    tags = local.default_tags
+  }
+}
+
 data "aws_caller_identity" "current" {}
 
 data "aws_availability_zones" "available" {

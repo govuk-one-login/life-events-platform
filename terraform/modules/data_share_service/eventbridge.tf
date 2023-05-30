@@ -23,15 +23,15 @@ resource "aws_cloudwatch_event_rule" "admin_role_notification" {
   description = "Send an SNS notification when a user assumes an admin role"
 
   event_pattern = jsonencode({
-    "source": ["aws.sts"],
-    "detail-type": ["AWS API Call via CloudTrail"],
-    "detail": {
-      "eventSource": ["sts.amazonaws.com"],
-      "eventName": ["AssumeRole"],
-      "requestParameters": {
+    "source" : ["aws.sts"],
+    "detail-type" : ["AWS API Call via CloudTrail"],
+    "detail" : {
+      "eventSource" : ["sts.amazonaws.com"],
+      "eventName" : ["AssumeRole"],
+      "requestParameters" : {
         "roleArn" : [
           {
-            "suffix": "-admin"
+            "suffix" : "-admin"
           }
         ]
       }
@@ -46,15 +46,15 @@ resource "aws_cloudwatch_event_rule" "admin_role_notification_us_east_1" {
   description = "Send an SNS notification when a user assumes an admin role"
 
   event_pattern = jsonencode({
-    "source": ["aws.sts"],
-    "detail-type": ["AWS API Call via CloudTrail"],
-    "detail": {
-      "eventSource": ["sts.amazonaws.com"],
-      "eventName": ["AssumeRole"],
-      "requestParameters": {
+    "source" : ["aws.sts"],
+    "detail-type" : ["AWS API Call via CloudTrail"],
+    "detail" : {
+      "eventSource" : ["sts.amazonaws.com"],
+      "eventName" : ["AssumeRole"],
+      "requestParameters" : {
         "roleArn" : [
           {
-            "suffix": "-admin"
+            "suffix" : "-admin"
           }
         ]
       }
@@ -69,15 +69,15 @@ resource "aws_cloudwatch_event_rule" "admin_role_notification_eu_west_1" {
   description = "Send an SNS notification when a user assumes an admin role"
 
   event_pattern = jsonencode({
-    "source": ["aws.sts"],
-    "detail-type": ["AWS API Call via CloudTrail"],
-    "detail": {
-      "eventSource": ["sts.amazonaws.com"],
-      "eventName": ["AssumeRole"],
-      "requestParameters": {
+    "source" : ["aws.sts"],
+    "detail-type" : ["AWS API Call via CloudTrail"],
+    "detail" : {
+      "eventSource" : ["sts.amazonaws.com"],
+      "eventName" : ["AssumeRole"],
+      "requestParameters" : {
         "roleArn" : [
           {
-            "suffix": "-admin"
+            "suffix" : "-admin"
           }
         ]
       }

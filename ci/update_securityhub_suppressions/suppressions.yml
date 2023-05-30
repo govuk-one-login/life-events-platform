@@ -21,6 +21,12 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-332
+  "CVE-2020-29582 - org.jetbrains.kotlin:kotlin-stdlib":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: >
+        This is due to Inspector scanning our kotlin version incorrectly, we have version 1.8.21 and this was resolved
+        in version 1.4.21.
 
   ## Prometheus
   "CVE-2023-27561 - github.com/opencontainers/runc":

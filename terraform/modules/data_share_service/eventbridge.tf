@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_event_rule" "tunnel_notification" {
-  name        = "bastion-tunnel-notification"
+  name        = "${var.environment}-bastion-tunnel-notification"
   description = "Send an SNS notification when a tunnel is initiated to the bastion host"
 
   event_pattern = jsonencode({
@@ -19,7 +19,7 @@ resource "aws_cloudwatch_event_target" "tunnel_notification" {
 }
 
 resource "aws_cloudwatch_event_rule" "admin_role_notification" {
-  name        = "admin-role-notification"
+  name        = "${var.environment}-admin-role-notification"
   description = "Send an SNS notification when a user assumes an admin role"
 
   event_pattern = jsonencode({
@@ -42,7 +42,7 @@ resource "aws_cloudwatch_event_rule" "admin_role_notification" {
 resource "aws_cloudwatch_event_rule" "admin_role_notification_us_east_1" {
   provider = aws.us-east-1
 
-  name        = "admin-role-notification"
+  name        = "${var.environment}-admin-role-notification"
   description = "Send an SNS notification when a user assumes an admin role"
 
   event_pattern = jsonencode({
@@ -65,7 +65,7 @@ resource "aws_cloudwatch_event_rule" "admin_role_notification_us_east_1" {
 resource "aws_cloudwatch_event_rule" "admin_role_notification_eu_west_1" {
   provider = aws.eu-west-1
 
-  name        = "admin-role-notification"
+  name        = "${var.environment}-admin-role-notification"
   description = "Send an SNS notification when a user assumes an admin role"
 
   event_pattern = jsonencode({

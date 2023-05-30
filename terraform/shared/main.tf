@@ -255,7 +255,7 @@ module "assume_admin_role_alert" {
   providers = {
     aws           = aws
     aws.us-east-1 = aws.us-east-1
-    aws.eu-west-1 = aws.us-west-1
+    aws.eu-west-1 = aws.eu-west-1
   }
   source = "../modules/assume_admin_role_alert_all_regions"
 

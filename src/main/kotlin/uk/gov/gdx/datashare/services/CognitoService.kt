@@ -1,5 +1,7 @@
 package uk.gov.gdx.datashare.services
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient
@@ -16,6 +18,10 @@ class CognitoService(
   @Value("\${cognito.supplier-scope:#{null}}") val supplierScope: String? = null,
   @Value("\${cognito.admin-scope:#{null}}") val adminScope: String? = null,
 ) {
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
   fun createUserPoolClient(cognitoClientRequest: CognitoClientRequest): CognitoClientResponse {
     val scopes = cognitoClientRequest.clientTypes.map {
       when (it) {
@@ -50,8 +56,11 @@ class CognitoService(
       .clientId(clientId)
       .userPoolId(userPoolId)
       .build()
-
-    createCognitoClient().deleteUserPoolClient(deleteClientRequest)
+    try {
+      createCognitoClient().deleteUserPoolClient(deleteClientRequest)
+    } catch (e: ResourceNotFoundException) {
+      log.warn("User pool client with ID: $clientId not found")
+    }
   }
 
   private fun createCognitoClient() =

@@ -75,9 +75,9 @@ class PrisonerEventMessageProcessorTest {
     underTest.onPrisonerEventMessage("/messages/prisonerReleased.json".readResourceAsText())
 
     verify(exactly = 0) {
-        supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(
-            any<EventType>()
-        )
+      supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(
+        any<EventType>(),
+      )
     }
 
     verify(exactly = 0) {

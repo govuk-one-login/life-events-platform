@@ -155,7 +155,7 @@ class AcquirerEventServiceTest {
     every {
       acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
         clientId,
-        eventTypes
+        eventTypes,
       )
     }
       .returns(listOf(deathNotificationSubscription))
@@ -222,7 +222,7 @@ class AcquirerEventServiceTest {
     every {
       acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
         clientId,
-        eventTypes
+        eventTypes,
       )
     }
       .returns(listOf(deathNotificationSubscription))
@@ -277,7 +277,7 @@ class AcquirerEventServiceTest {
     every {
       acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
         clientId,
-        eventTypes
+        eventTypes,
       )
     }
       .returns(listOf(thinDeathNotificationSubscription))

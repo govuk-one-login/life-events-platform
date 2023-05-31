@@ -68,12 +68,12 @@ class AcquirerSubscriptionRepositoryTest(
     val subscriptions = acquirerSubscriptionRepository.findAllByEventTypeAndWhenDeletedIsNull(EventType.DEATH_NOTIFICATION)
 
     assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == returnedSubscription.id }
+      subscriptions.filter { s -> s.acquirerSubscriptionId == returnedSubscription.id },
     )
       .hasSize(1)
 
     assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == notReturnedSubscription.id }
+      subscriptions.filter { s -> s.acquirerSubscriptionId == notReturnedSubscription.id },
     )
       .isEmpty()
   }

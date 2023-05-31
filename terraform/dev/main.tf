@@ -124,19 +124,6 @@ module "len" {
   lev_rds_db_host             = module.lev_api.lev_rds_db_host
 }
 
-module "consumer" {
-  source                      = "../modules/consumer"
-  environment                 = local.env
-  region                      = data.aws_region.current.name
-  cloudwatch_retention_period = 30
-  gdx_url                     = module.data_share_service.gdx_url
-  auth_url                    = module.data_share_service.token_auth_url
-  consumer_client_id          = module.data_share_service.consumer_client_id
-  consumer_client_secret      = module.data_share_service.consumer_client_secret
-  lev_api_url                 = "https://${module.lev_api.service_url}"
-  schedule                    = "cron(0,30 9-18 ? * MON-FRI *)"
-}
-
 module "dwp_dev" {
   source = "../modules/dwp_dev"
 }

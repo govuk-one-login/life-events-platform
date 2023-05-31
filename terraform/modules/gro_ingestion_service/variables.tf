@@ -25,3 +25,7 @@ variable "cloudwatch_retention_period" {
   type    = number
   default = 365
 }
+
+variable "insert_xml_lambda_schedule" {
+  type = string
+}

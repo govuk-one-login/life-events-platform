@@ -8,11 +8,7 @@ import software.amazon.awssdk.services.kms.model.CreateKeyRequest
 import software.amazon.awssdk.services.kms.model.Tag
 import software.amazon.awssdk.services.kms.model.TagResourceRequest
 import software.amazon.awssdk.services.sqs.SqsClient
-import software.amazon.awssdk.services.sqs.model.CreateQueueRequest
-import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest
-import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest
-import software.amazon.awssdk.services.sqs.model.QueueAttributeName
-import software.amazon.awssdk.services.sqs.model.SendMessageRequest
+import software.amazon.awssdk.services.sqs.model.*
 import software.amazon.awssdk.services.sts.StsClient
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueFactory
@@ -75,7 +71,7 @@ class OutboundEventQueueService(
 
   private fun aliasKey(queueName: String, keyId: String?) {
     val aliasRequest = CreateAliasRequest.builder()
-      .aliasName("$environment/sqs-$queueName")
+      .aliasName("alias/$environment/sqs-$queueName")
       .targetKeyId(keyId)
       .build()
     kmsClient.createAlias(aliasRequest)

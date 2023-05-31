@@ -191,10 +191,10 @@ class AcquirersService(
     if (subscription.queueName != null) {
       val otherSubscriptionsOnQueue = acquirerSubscriptionRepository.findAllByQueueName(subscription.queueName)
       if (otherSubscriptionsOnQueue.isEmpty()) {
-        val dqlQueueName = "${subscription.queueName}-dlq"
-        log.info("Deleting queues: ${subscription.queueName} and $dqlQueueName")
+        val deadLetterQueueName = "${subscription.queueName}-dlq"
+        log.info("Deleting queues: ${subscription.queueName} and $deadLetterQueueName")
         outboundEventQueueService.deleteQueue(subscription.queueName)
-        outboundEventQueueService.deleteQueue(dqlQueueName)
+        outboundEventQueueService.deleteQueue(deadLetterQueueName)
       }
     }
 

@@ -90,60 +90,64 @@ class EventsQueryTest : MockIntegrationTestBase() {
       headers(setAuthorisation(DWP_EVENT_RECEIVER, listOf(""), listOf("events/consume")))
     }.andReturn().response.contentAsString
 
-  private fun thereIsAnEvent() {
-    val acquirerSubscription = acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(
-      DWP_EVENT_RECEIVER,
-      listOf(EventType.DEATH_NOTIFICATION),
-    ).first()
-    val supplierSubscription = supplierSubscriptionRepository.findFirstByEventType(EventType.DEATH_NOTIFICATION)
+    private fun thereIsAnEvent() {
+        val acquirerSubscription =
+            acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
+                DWP_EVENT_RECEIVER,
+                listOf(EventType.DEATH_NOTIFICATION)
+            ).first()
+        val supplierSubscription =
+            supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(EventType.DEATH_NOTIFICATION)
 
-    val timestamp = LocalDateTime.of(2000, 5, 3, 12, 4, 3)
+        val timestamp = LocalDateTime.of(2000, 5, 3, 12, 4, 3)
 
-    val supplierEvent = SupplierEvent(
-      supplierSubscriptionId = supplierSubscription!!.supplierSubscriptionId,
-      eventTime = timestamp,
-      dataId = "1234",
-      createdAt = timestamp,
-    )
-    supplierEventRepository.save(supplierEvent)
+        val supplierEvent = SupplierEvent(
+            supplierSubscriptionId = supplierSubscription!!.supplierSubscriptionId,
+            eventTime = timestamp,
+            dataId = "1234",
+            createdAt = timestamp,
+        )
+        supplierEventRepository.save(supplierEvent)
 
-    val acquirerEvent = AcquirerEvent(
-      id = eventId,
-      supplierEventId = supplierEvent.id,
-      acquirerSubscriptionId = acquirerSubscription.acquirerSubscriptionId,
-      dataId = "1234",
-      eventTime = timestamp,
-      createdAt = timestamp,
-    )
-    acquirerEventRepository.save(acquirerEvent)
-  }
-
-  private fun thereAreFiveEvents() {
-    val acquirerSubscription = acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(
-      DWP_EVENT_RECEIVER,
-      listOf(EventType.DEATH_NOTIFICATION),
-    ).first()
-    val supplierSubscription = supplierSubscriptionRepository.findFirstByEventType(EventType.DEATH_NOTIFICATION)
-    listOf("1", "2", "3", "4", "5").map { dataId ->
-      val eventTime = LocalDateTime.of(2000, 5, 3, 12, 4, 3 + dataId.toInt())
-
-      val supplierEvent = SupplierEvent(
-        supplierSubscriptionId = supplierSubscription!!.supplierSubscriptionId,
-        eventTime = eventTime,
-        dataId = dataId,
-        createdAt = eventTime,
-      )
-      supplierEventRepository.save(supplierEvent)
-
-      val acquirerEvent = AcquirerEvent(
-        id = UUID.randomUUID(),
-        supplierEventId = supplierEvent.id,
-        acquirerSubscriptionId = acquirerSubscription.acquirerSubscriptionId,
-        dataId = dataId,
-        eventTime = eventTime,
-        createdAt = eventTime,
-      )
-      acquirerEventRepository.save(acquirerEvent)
+        val acquirerEvent = AcquirerEvent(
+            id = eventId,
+            supplierEventId = supplierEvent.id,
+            acquirerSubscriptionId = acquirerSubscription.acquirerSubscriptionId,
+            dataId = "1234",
+            eventTime = timestamp,
+            createdAt = timestamp,
+        )
+        acquirerEventRepository.save(acquirerEvent)
     }
-  }
+
+    private fun thereAreFiveEvents() {
+        val acquirerSubscription =
+            acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
+                DWP_EVENT_RECEIVER,
+                listOf(EventType.DEATH_NOTIFICATION)
+            ).first()
+        val supplierSubscription =
+            supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(EventType.DEATH_NOTIFICATION)
+        listOf("1", "2", "3", "4", "5").map { dataId ->
+            val eventTime = LocalDateTime.of(2000, 5, 3, 12, 4, 3 + dataId.toInt())
+
+            val supplierEvent = SupplierEvent(
+                supplierSubscriptionId = supplierSubscription!!.supplierSubscriptionId,
+                eventTime = eventTime,
+                dataId = dataId,
+                createdAt = eventTime,
+            )
+            supplierEventRepository.save(supplierEvent)
+
+            val acquirerEvent = AcquirerEvent(
+                id = UUID.randomUUID(),
+                supplierEventId = supplierEvent.id,
+                acquirerSubscriptionId = acquirerSubscription.acquirerSubscriptionId,
+                dataId = dataId,
+                eventTime = eventTime,
+                createdAt = eventTime,
+            )
+            acquirerEventRepository.save(acquirerEvent)
+        }
+    }
 }

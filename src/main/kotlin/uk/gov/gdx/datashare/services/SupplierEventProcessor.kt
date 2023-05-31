@@ -40,7 +40,8 @@ class SupplierEventProcessor(
     val supplierSubscription = fetchSupplierSubscription(supplierEvent)
     supplierEventRepository.save(supplierEvent)
 
-    val acquirerSubscriptions = acquirerSubscriptionRepository.findAllByEventType(supplierSubscription.eventType)
+    val acquirerSubscriptions =
+      acquirerSubscriptionRepository.findAllByEventTypeAndWhenDeletedIsNull(supplierSubscription.eventType)
     val acquirerEvents = buildAndPersistAcquirerEvents(acquirerSubscriptions, supplierEvent)
 
     enqueueAcquirerEvents(

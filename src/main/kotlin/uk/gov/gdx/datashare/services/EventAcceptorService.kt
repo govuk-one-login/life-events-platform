@@ -39,10 +39,8 @@ class EventAcceptorService(
   }
 
   fun acceptEvent(eventPayload: EventToPublish, clientId: String): SupplierEvent {
-    val subscription = supplierSubscriptionRepository.findByClientIdAndEventType(
-      clientId,
-      eventPayload.eventType,
-    ) ?: throw SupplierPermissionException("$clientId does not have permission")
+    val subscription =
+      supplierSubscriptionRepository.findByClientIdAndEventTypeAndWhenDeletedIsNull(clientId, eventPayload.eventType) ?: throw SupplierPermissionException("$clientId does not have permission")
 
     val supplierEvent = SupplierEvent(
       supplierSubscriptionId = subscription.supplierSubscriptionId,

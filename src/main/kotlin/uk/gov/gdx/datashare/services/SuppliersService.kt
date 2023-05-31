@@ -30,12 +30,13 @@ class SuppliersService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getSuppliers(): Iterable<Supplier> = supplierRepository.findAll()
+  fun getSuppliers(): Iterable<Supplier> = supplierRepository.findAllByWhenDeletedIsNull()
 
-  fun getSupplierSubscriptions(): Iterable<SupplierSubscription> = supplierSubscriptionRepository.findAll()
+  fun getSupplierSubscriptions(): Iterable<SupplierSubscription> =
+    supplierSubscriptionRepository.findAllByWhenDeletedIsNull()
 
   fun getSubscriptionsForSupplier(supplierId: UUID) =
-    supplierSubscriptionRepository.findAllBySupplierId(supplierId)
+    supplierSubscriptionRepository.findAllBySupplierIdAndWhenDeletedIsNull(supplierId)
 
   fun addSupplierSubscription(
     supplierId: UUID,
@@ -105,7 +106,8 @@ class SuppliersService(
         whenDeleted = now,
       ) ?: throw SupplierSubscriptionNotFoundException("Subscription $subscriptionId not found"),
     )
-    val otherSubscriptionsWithClient = supplierSubscriptionRepository.findAllByClientId(subscription.clientId)
+    val otherSubscriptionsWithClient =
+      supplierSubscriptionRepository.findAllByClientIdAndWhenDeletedIsNull(subscription.clientId)
     if (otherSubscriptionsWithClient.isEmpty()) {
       log.info("Deleting User Pool Client ID: ${subscription.clientId}")
       cognitoService.deleteUserPoolClient(subscription.clientId)
@@ -144,7 +146,7 @@ class SuppliersService(
         whenDeleted = now,
       ) ?: throw SupplierSubscriptionNotFoundException("Supplier $id not found"),
     )
-    val subscriptions = supplierSubscriptionRepository.findAllBySupplierId(id)
+    val subscriptions = supplierSubscriptionRepository.findAllBySupplierIdAndWhenDeletedIsNull(id)
     subscriptions.forEach { deleteSupplierSubscription(it.supplierSubscriptionId) }
     return supplier
   }

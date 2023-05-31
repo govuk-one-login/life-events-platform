@@ -10,25 +10,15 @@ import java.util.*
 @Repository
 @JaversSpringDataAuditable
 interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, UUID> {
-  @Override
-  override fun findAll() = findAllByWhenDeletedIsNull()
   fun findAllByWhenDeletedIsNull(): List<AcquirerSubscription>
 
-  fun findAllByOauthClientId(oauthClientId: String) = findAllByOauthClientIdAndWhenDeletedIsNull(oauthClientId)
   fun findAllByOauthClientIdAndWhenDeletedIsNull(oauthClientId: String): List<AcquirerSubscription>
 
-  fun findAllByEventType(eventType: EventType) = findAllByEventTypeAndWhenDeletedIsNull(eventType)
   fun findAllByEventTypeAndWhenDeletedIsNull(eventType: EventType): List<AcquirerSubscription>
 
-  fun findAllByQueueName(queueName: String) = findAllByQueueNameAndWhenDeletedIsNull(queueName)
   fun findAllByQueueNameAndWhenDeletedIsNull(queueName: String): List<AcquirerSubscription>
 
   fun findByAcquirerSubscriptionIdAndQueueNameIsNotNull(acquirerSubscriptionId: UUID): AcquirerSubscription?
-
-  fun findAllByOauthClientIdAndEventTypeIsIn(
-    oauthClientId: String,
-    eventTypes: List<EventType>,
-  ) = findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(oauthClientId, eventTypes)
 
   fun findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
     oauthClientId: String,

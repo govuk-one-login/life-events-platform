@@ -42,18 +42,18 @@ class PrisonerEventMessageProcessor(
   }
 
   fun processHMPPSEvent(hmppsDomainEvent: HMPPSDomainEvent) {
-    // find a supplier with a defined name
-    supplierSubscriptionRepository.findFirstByEventType(EventType.ENTERED_PRISON)
-      ?.let {
-        eventAcceptorService.acceptEvent(
-          EventToPublish(
-            EventType.ENTERED_PRISON,
-            LocalDateTime.parse(hmppsDomainEvent.occurredAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME),
-            hmppsDomainEvent.additionalInformation.nomsNumber,
-          ),
-          it.clientId,
-        )
-      } ?: log.warn("No supplier found for this event type {}", EventType.ENTERED_PRISON)
+      // find a supplier with a defined name
+      supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(EventType.ENTERED_PRISON)
+          ?.let {
+              eventAcceptorService.acceptEvent(
+                  EventToPublish(
+                      EventType.ENTERED_PRISON,
+                      LocalDateTime.parse(hmppsDomainEvent.occurredAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                      hmppsDomainEvent.additionalInformation.nomsNumber,
+                  ),
+                  it.clientId,
+              )
+          } ?: log.warn("No supplier found for this event type {}", EventType.ENTERED_PRISON)
   }
 }
 

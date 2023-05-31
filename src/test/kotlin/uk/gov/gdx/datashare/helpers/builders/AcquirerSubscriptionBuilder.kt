@@ -13,6 +13,7 @@ data class AcquirerSubscriptionBuilder(
   var enrichmentFieldsIncludedInPoll: Boolean = false,
   var queueName: String? = null,
   var whenCreated: LocalDateTime = LocalDateTime.now(),
+  var whenDeleted: LocalDateTime? = null,
   var new: Boolean = true,
 ) {
   fun build(): AcquirerSubscription {
@@ -24,6 +25,7 @@ data class AcquirerSubscriptionBuilder(
       enrichmentFieldsIncludedInPoll = enrichmentFieldsIncludedInPoll,
       queueName = queueName,
       whenCreated = whenCreated,
+      whenDeleted = whenDeleted,
       new = new,
     )
   }

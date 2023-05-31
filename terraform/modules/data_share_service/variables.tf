@@ -21,16 +21,6 @@ variable "db_username" {
   type = string
 }
 
-variable "prisoner_event_enabled" {
-  type = string
-}
-variable "prisoner_search_url" {
-  type = string
-}
-variable "hmpps_auth_url" {
-  type = string
-}
-
 variable "grafana_task_role_name" {
   type = string
 }

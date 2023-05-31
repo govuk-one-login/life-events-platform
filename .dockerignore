@@ -13,7 +13,6 @@ frontend
 grafana
 lev-data
 oauth2-data
-prisoner-search-data
 prometheus
 scripts
 terraform

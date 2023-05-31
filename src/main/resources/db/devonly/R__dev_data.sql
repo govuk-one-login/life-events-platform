@@ -42,11 +42,7 @@ FROM acquirer_subscription_enrichment_field
 WHERE acquirer_subscription_id IN
       (SELECT id
        FROM acquirer_subscription
-       WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'prisoner-check'));
-
-DELETE
-FROM acquirer_subscription
-WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client', 'prisoner-check');
+       WHERE oauth_client_id IN ('dwp-event-receiver', 'hmrc-client'));
 
 DELETE
 FROM supplier_event
@@ -54,43 +50,38 @@ WHERE supplier_subscription_id IN
       (SELECT id
        FROM supplier_subscription
        WHERE supplier_id IN (
-                             getIdFromSupplierName('HMPO'),
-                             getIdFromSupplierName('HMPPS')
+                             getIdFromSupplierName('HMPO')
            ));
 
 DELETE
 FROM supplier_subscription
-WHERE supplier_id IN (getIdFromSupplierName('HMPO'), getIdFromSupplierName('HMPPS'));
+WHERE supplier_id IN (getIdFromSupplierName('HMPO'));
 
 DELETE
 FROM acquirer
-WHERE name IN ('Prisoner Check Client', 'DWP Poller', 'Pub/Sub Consumer');
+WHERE name IN ('DWP Poller', 'Pub/Sub Consumer');
 
 DELETE
 FROM supplier
-where name IN ('HMPPS', 'HMPO');
+where name IN ('HMPO');
 
 INSERT INTO supplier (name)
-VALUES ('HMPO'),
-       ('HMPPS');
+VALUES ('HMPO');
 
 INSERT INTO acquirer (name)
-VALUES ('Prisoner Check Client'),
-       ('DWP Poller'),
+VALUES ('DWP Poller'),
        ('Pub/Sub Consumer');
 
 INSERT INTO supplier_subscription
     (client_id, supplier_id, event_type)
-VALUES ('len', getIdFromSupplierName('HMPO'), 'DEATH_NOTIFICATION'),
-       ('passthru', getIdFromSupplierName('HMPPS'), 'ENTERED_PRISON');
+VALUES ('len', getIdFromSupplierName('HMPO'), 'DEATH_NOTIFICATION');
 
 INSERT INTO acquirer_subscription
 (oauth_client_id, acquirer_id, event_type, enrichment_fields_included_in_poll)
 VALUES ('dwp-event-receiver', getIdFromAcquirerName('DWP Poller'), 'DEATH_NOTIFICATION', false),
        ('dwp-event-receiver', getIdFromAcquirerName('DWP Poller'), 'LIFE_EVENT', false),
        ('hmrc-client', getIdFromAcquirerName('Pub/Sub Consumer'), 'DEATH_NOTIFICATION', true),
-       ('hmrc-client', getIdFromAcquirerName('Pub/Sub Consumer'), 'LIFE_EVENT', true),
-       ('prisoner-check', getIdFromAcquirerName('Prisoner Check Client'), 'ENTERED_PRISON', false);
+       ('hmrc-client', getIdFromAcquirerName('Pub/Sub Consumer'), 'LIFE_EVENT', true);
 
 INSERT INTO acquirer_subscription_enrichment_field(acquirer_subscription_id, enrichment_field)
 SELECT id,
@@ -98,13 +89,6 @@ SELECT id,
 FROM acquirer_subscription
 WHERE event_type = 'DEATH_NOTIFICATION'
   AND oauth_client_id IN ('dwp-event-receiver', 'hmrc-client');
-
-INSERT INTO acquirer_subscription_enrichment_field(acquirer_subscription_id, enrichment_field)
-SELECT id,
-       unnest(ARRAY ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAMES', 'DATE_OF_DEATH', 'GENDER', 'PRISONER_NUMBER'])
-FROM acquirer_subscription
-WHERE event_type = 'ENTERED_PRISON'
-  AND oauth_client_id IN ('prisoner-check');
 
 DROP FUNCTION IF EXISTS getIdFromSupplierName;
 DROP FUNCTION IF EXISTS getIdFromAcquirerName;

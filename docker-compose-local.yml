@@ -20,16 +20,6 @@ services:
       - "${TMPDIR:-/tmp/localstack}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
-  prisoner-search:
-    image: wiremock/wiremock:2.35.0
-    networks:
-      - hmpps
-    container_name: prisoner-search
-    ports:
-      - "8082:8080"
-    volumes:
-      - ./prisoner-search-data:/home/wiremock
-
   prometheus:
     image: prom/prometheus
     networks:
@@ -104,7 +94,6 @@ services:
 networks:
   gds:
   hmpo:
-  hmpps:
   prometheus:
 
 volumes:

@@ -25,17 +25,6 @@ spring:
         jwt:
           issuer-uri: ${api.base.url.issuer-uri}
 
-      client:
-        registration:
-          prisoner-search:
-            provider: hmpps-auth
-            client-id: ${api.base.prisoner-search.api.client.id:-}
-            client-secret: ${api.base.prisoner-search.api.client.secret:-}
-            authorization-grant-type: client_credentials
-        provider:
-          hmpps-auth:
-            token-uri: ${api.base.url.hmpps-auth:-}/oauth/token
-
   devtools:
     add-properties: false
 
@@ -101,11 +90,6 @@ springdoc:
   swagger-ui:
     oauth2RedirectUrl: http://localhost:8080/swagger-ui/oauth2-redirect.html
     tags-sorter: alpha
-
-api:
-  base:
-    prisoner-event:
-      enabled: false
 
 cognito:
   enabled: true

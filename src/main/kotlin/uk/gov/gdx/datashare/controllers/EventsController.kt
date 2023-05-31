@@ -30,7 +30,9 @@ import uk.gov.gdx.datashare.enums.RegExConstants.UUID_REGEX
 import uk.gov.gdx.datashare.helpers.getPageLinks
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.models.EventToPublish
-import uk.gov.gdx.datashare.services.*
+import uk.gov.gdx.datashare.services.AcquirerEventAuditService
+import uk.gov.gdx.datashare.services.AcquirerEventService
+import uk.gov.gdx.datashare.services.EventAcceptorService
 import java.time.LocalDateTime
 import java.util.*
 
@@ -52,8 +54,7 @@ class EventsController(
     operationId = "getEvents",
     summary = "Event Get API - Get event data",
     description = "<h3>Event Types</h3>" +
-      "<h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>" +
-      "<h4>2. Person has been sent to prison - Type: <em>ENTERED_PRISON</em></h4>",
+      "<h4>1. Death Notification - Type: <em>DEATH_NOTIFICATION</em></h4>",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -236,20 +237,7 @@ class EventsController(
       "}" +
       "</pre></p>" +
       "<p><b>Mandatory Fields:</b> registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
-      "<p><b>Gender Types:</b> Male, Female, Indeterminate</p>" +
-      "<h4>Person has been sent to prison</h4>" +
-      "<p>The `event_data` object for a prisoner received notification takes the following json structure:" +
-      "<pre>" +
-      "{\n" +
-      "\"prisonerNumber\": \"A1234DB\",\n" +
-      "\"firstName\": \"Mary\",\n" +
-      "\"middleNames\": \"Jane\",\n" +
-      "\"lastName\": \"Smith\",\n" +
-      "\"gender\": \"Male\",\n" +
-      "\"dateOfBirth\": \"1972-02-20\"\n" +
-      "}" +
-      "</pre></p>" +
-      "<p><b>Mandatory Fields:</b> prisonerNumber, firstName, lastName, gender, dateOfBirth</p>",
+      "<p><b>Gender Types:</b> Male, Female, Indeterminate</p>",
     responses = [
       ApiResponse(
         responseCode = "200",

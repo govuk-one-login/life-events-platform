@@ -150,18 +150,6 @@ resource "aws_iam_role_policy_attachment" "ecs_task_prometheus_access" {
   policy_arn = data.aws_iam_policy.ecs_task_prometheus_access.arn
 }
 
-data "aws_ssm_parameter" "prisoner_event_aws_account_id" {
-  name = aws_ssm_parameter.prisoner_event_aws_account_id.name
-}
-
-data "aws_ssm_parameter" "prisoner_event_queue_name" {
-  name = aws_ssm_parameter.prisoner_event_queue_name.name
-}
-
-data "aws_ssm_parameter" "prisoner_event_dlq_name" {
-  name = aws_ssm_parameter.prisoner_event_dlq_name.name
-}
-
 data "aws_iam_policy_document" "ecs_task_sqs_access" {
   statement {
     actions = [
@@ -177,8 +165,6 @@ data "aws_iam_policy_document" "ecs_task_sqs_access" {
       module.supplier_event_queue.dead_letter_queue_arn,
       module.acquirer_event_queue.queue_arn,
       module.acquirer_event_queue.dead_letter_queue_arn,
-      "arn:aws:sqs:eu-west-2:${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}:${data.aws_ssm_parameter.prisoner_event_queue_name.value}",
-      "arn:aws:sqs:eu-west-2:${data.aws_ssm_parameter.prisoner_event_aws_account_id.value}:${data.aws_ssm_parameter.prisoner_event_dlq_name.value}",
     ]
     effect = "Allow"
   }

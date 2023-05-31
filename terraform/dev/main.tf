@@ -93,9 +93,6 @@ module "data_share_service" {
   vpc_cidr                    = "10.158.0.0/20"
   lev_url                     = module.lev_api.service_url
   db_username                 = "ecs_dev_db"
-  prisoner_event_enabled      = "false"
-  prisoner_search_url         = "https://prisoner-offender-search-dev.prison.service.justice.gov.uk"
-  hmpps_auth_url              = "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
 
   grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
 

@@ -44,16 +44,6 @@ output "len_client_secret" {
   sensitive = true
 }
 
-output "consumer_client_id" {
-  value     = module.example_consumer.client_id
-  sensitive = true
-}
-
-output "consumer_client_secret" {
-  value     = module.example_consumer.client_secret
-  sensitive = true
-}
-
 output "gro_ingestion_client_id" {
   value     = module.gro_ingestion.client_id
   sensitive = true

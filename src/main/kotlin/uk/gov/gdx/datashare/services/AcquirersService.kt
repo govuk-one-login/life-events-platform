@@ -1,6 +1,8 @@
 package uk.gov.gdx.datashare.services
 
 import com.amazonaws.xray.spring.aop.XRayEnabled
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +29,10 @@ class AcquirersService(
   private val dateTimeHandler: DateTimeHandler,
   private val outboundEventQueueService: OutboundEventQueueService,
 ) {
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
   fun getAcquirers(): Iterable<Acquirer> = acquirerRepository.findAll()
 
   fun getAcquirerSubscriptions(): List<AcquirerSubscriptionDto> {
@@ -177,6 +183,7 @@ class AcquirersService(
       val otherSubscriptionsWithClient =
         acquirerSubscriptionRepository.findAllByOauthClientId(subscription.oauthClientId)
       if (otherSubscriptionsWithClient.isEmpty()) {
+        log.info("Deleting User Pool Client ID: ${subscription.oauthClientId}")
         cognitoService.deleteUserPoolClient(subscription.oauthClientId)
       }
     }
@@ -184,8 +191,10 @@ class AcquirersService(
     if (subscription.queueName != null) {
       val otherSubscriptionsOnQueue = acquirerSubscriptionRepository.findAllByQueueName(subscription.queueName)
       if (otherSubscriptionsOnQueue.isEmpty()) {
+        val dqlQueueName = "${subscription.queueName}-dlq"
+        log.info("Deleting queues: ${subscription.queueName} and $dqlQueueName")
         outboundEventQueueService.deleteQueue(subscription.queueName)
-        outboundEventQueueService.deleteQueue("${subscription.queueName}-dlq")
+        outboundEventQueueService.deleteQueue(dqlQueueName)
       }
     }
 

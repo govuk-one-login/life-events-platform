@@ -94,7 +94,6 @@ module "data_share_service" {
   lev_url                     = module.lev_api.service_url
   db_username                 = "ecs_demo_db"
 
-
   grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
 
   hosted_zone_id   = module.route53.zone_id

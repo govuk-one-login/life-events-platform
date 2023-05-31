@@ -239,7 +239,7 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
     ]
     effect = "Allow"
     resources = [
-      "arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:alias/${var.environment}-acq-queue-*"
+      "arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:alias/${var.environment}/sqs-acq_${var.environment}_*"
     ]
 
   }

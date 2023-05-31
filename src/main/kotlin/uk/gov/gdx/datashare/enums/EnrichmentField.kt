@@ -19,11 +19,6 @@ enum class EnrichmentField(@JsonValue val jsonName: String) {
   RETIRED("retired"),
   ADDRESS("address"),
 
-  PRISONER_NUMBER("prisonerNumber"),
-  FIRST_NAME("firstName"),
-  MIDDLE_NAMES("middleNames"),
-  GENDER("gender"),
-
   REGISTRATION_ID("registrationId"),
   EVENT_TIME("eventTime"),
   VERIFICATION_LEVEL("verificationLevel"),

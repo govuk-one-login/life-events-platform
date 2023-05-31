@@ -40,10 +40,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "API_BASE_URL_ISSUER_URI", "value" : "https://${module.cognito.issuer_domain}" },
         { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },
 
-        { "name" : "API_BASE_PRISONER_EVENT_ENABLED", "value" : var.prisoner_event_enabled },
-        { "name" : "API_BASE_URL_PRISONER_SEARCH", "value" : var.prisoner_search_url },
-        { "name" : "API_BASE_URL_HMPPS_AUTH", "value" : var.hmpps_auth_url },
-
         { "name" : "COGNITO_USER_POOL_ID", "value" : module.cognito.user_pool_id },
         { "name" : "COGNITO_ACQUIRER_SCOPE", "value" : module.cognito.acquirer_scope },
         { "name" : "COGNITO_SUPPLIER_SCOPE", "value" : module.cognito.supplier_scope },
@@ -61,7 +57,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "SQS_QUEUES_ACQUIREREVENT_QUEUENAME", "value" : module.acquirer_event_queue.queue_name },
         { "name" : "SQS_QUEUES_ACQUIREREVENT_DLQNAME", "value" : module.acquirer_event_queue.dead_letter_queue_name },
 
-        { "name" : "SQS_QUEUES_PRISONEREVENT_ENABLED", "value" : var.prisoner_event_enabled },
         {
           "name" : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL",
           "value" : "${local.gdx_api_base_url}/swagger-ui/oauth2-redirect.html"
@@ -76,22 +71,6 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "ENRICH_EVENT_LAMBDA_FUNCTION_NAME", "value" : var.enrich_event_function_name },
       ]
       secrets = [
-        {
-          "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_ID",
-          "valueFrom" : aws_ssm_parameter.prisoner_search_api_client_id.arn
-        },
-        {
-          "name" : "API_BASE_PRISONER_SEARCH_API_CLIENT_SECRET",
-          "valueFrom" : aws_ssm_parameter.prisoner_search_api_client_secret.arn
-        },
-        {
-          "name" : "SQS_QUEUES_PRISONEREVENT_QUEUENAME", "valueFrom" : aws_ssm_parameter.prisoner_event_queue_name.arn
-        },
-        { "name" : "SQS_QUEUES_PRISONEREVENT_DLQNAME", "valueFrom" : aws_ssm_parameter.prisoner_event_dlq_name.arn },
-        {
-          "name" : "SQS_QUEUES_PRISONEREVENT_AWSACCOUNTID",
-          "valueFrom" : aws_ssm_parameter.prisoner_event_aws_account_id.arn
-        },
         { "name" : "API_BASE_LEV_API_CLIENT_NAME", "valueFrom" : aws_ssm_parameter.lev_api_client_name.arn },
         { "name" : "API_BASE_LEV_API_CLIENT_USER", "valueFrom" : aws_ssm_parameter.lev_api_client_user.arn },
       ]

@@ -94,9 +94,6 @@ module "data_share_service" {
   lev_url                     = module.lev_api.service_url
   db_username                 = "ecs_demo_db"
 
-  prisoner_event_enabled = "false"
-  prisoner_search_url    = ""
-  hmpps_auth_url         = ""
 
   grafana_task_role_name = data.terraform_remote_state.shared.outputs.grafana_task_role_name
 

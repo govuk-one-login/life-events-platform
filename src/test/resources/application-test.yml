@@ -24,24 +24,15 @@ prometheus:
 
 api:
   base:
-    prisoner-event:
-      enabled: true
     lev:
       api:
         client:
           name: gdx-data-share
           user: gdx-data-share-user
-    prisoner-search:
-      api:
-        client:
-          id: prisoner-search-client
-          secret: prisoner-search-secret
     url:
       issuer-uri: http://localhost:19090
       oauth: http://localhost:19090
       lev: http://localhost:18099
-      prisoner-search: http://localhost:18082
-      hmpps-auth:  http://localhost:19090
     s3:
       localstack-url: http://127.0.0.1:4566
 
@@ -69,9 +60,6 @@ sqs:
     acquirerevent:
       queueName: acquirer-event-queue
       dlqName: acquirer-event-dlq
-    prisonerevent:
-      queueName: prisoner-event-queue
-      dlqName: prisoner-event-dlq
 
 xray-tracing:
   enabled: false

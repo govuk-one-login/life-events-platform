@@ -11,7 +11,6 @@ import uk.gov.gdx.datashare.integration.IntegrationTestBase
 import uk.gov.gdx.datashare.queue.AwsQueueService
 import uk.gov.gdx.datashare.services.AcquirerEventProcessor
 import uk.gov.gdx.datashare.services.EventAcceptorService
-import uk.gov.gdx.datashare.services.PrisonerEventMessageProcessor
 import uk.gov.gdx.datashare.services.SupplierEventProcessor
 
 /**
@@ -39,10 +38,6 @@ abstract class MockIntegrationTestBase : IntegrationTestBase() {
   @MockkBean
   @Suppress("unused")
   private lateinit var acquirerEventProcessor: AcquirerEventProcessor
-
-  @MockkBean
-  @Suppress("unused")
-  private lateinit var prisonerEventMessageProcessor: PrisonerEventMessageProcessor
 
   @MockkBean
   @Suppress("unused")

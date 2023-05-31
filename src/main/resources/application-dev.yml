@@ -39,13 +39,6 @@ prometheus:
 
 api:
   base:
-    prisoner-event:
-      enabled: true
-    prisoner-search:
-      api:
-        client:
-          id: prisoner-search-client
-          secret: prisoner-search-secret
     lev:
       api:
         client:
@@ -55,8 +48,6 @@ api:
       issuer-uri: http://localhost:9090/issuer1
       oauth: http://localhost:9090/issuer1
       lev: http://localhost:8099
-      prisoner-search: http://localhost:8082
-      hmpps-auth: http://localhost:9090/issuer1
 
 xray-tracing:
   enabled: false

@@ -62,20 +62,7 @@ data class EventNotification(
       "        \"address\": \"101 Address Street, A Town, Postcode\"\n" +
       "}\n" +
       "      </pre>" +
-      "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>" +
-      "<h4>2. Person has been sent to prison - Type: <em>ENTERED_PRISON</em></h4>" +
-      "     <p>Prisoner received notifications take the following json structure." +
-      "     <pre>\n" +
-      "{\n" +
-      "        \"prisonerNumber\": \"A1234DB\",\n" +
-      "        \"firstName\": \"Mary\",\n" +
-      "        \"middleNames\": \"Jane\",\n" +
-      "        \"lastName\": \"Smith\",\n" +
-      "        \"sex\": \"Male\",\n" +
-      "        \"dateOfBirth\": \"1972-02-20\",\n" +
-      "}\n" +
-      "      </pre>" +
-      "      <p><b>Mandatory Fields</b>: prisonerNumber, firstName, lastName, sex, dateOfBirth</p>",
+      "      <p><b>Mandatory Fields</b>: registrationDate, firstNames, lastName, sex, dateOfDeath</p>",
     required = false,
   )
   val eventData: EventDetails? = null,

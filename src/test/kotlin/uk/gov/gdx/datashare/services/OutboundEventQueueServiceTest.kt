@@ -321,7 +321,7 @@ class OutboundEventQueueServiceTest {
 
       kmsClient.createAlias(
         withArg<CreateAliasRequest> {
-          assertThat(it.aliasName()).isEqualTo("test/sqs-test_dlq")
+          assertThat(it.aliasName()).isEqualTo("alias/test/sqs-test_dlq")
           assertThat(it.targetKeyId()).isEqualTo("dlqKeyId")
         },
       )
@@ -380,7 +380,7 @@ class OutboundEventQueueServiceTest {
 
       kmsClient.createAlias(
         withArg<CreateAliasRequest> {
-          assertThat(it.aliasName()).isEqualTo("test/sqs-test")
+          assertThat(it.aliasName()).isEqualTo("alias/test/sqs-test")
           assertThat(it.targetKeyId()).isEqualTo("keyId")
         },
       )

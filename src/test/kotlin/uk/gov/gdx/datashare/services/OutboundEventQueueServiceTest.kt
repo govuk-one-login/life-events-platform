@@ -214,7 +214,7 @@ class OutboundEventQueueServiceTest {
           assertThat(it.attributes()[QueueAttributeName.POLICY]).isEqualToIgnoringWhitespace(
             """
         {
-          "Version": "2012-10-12",
+          "Version": "2012-10-17",
           "Id": "cross-account-access",
           "Statement": [
             {
@@ -242,7 +242,7 @@ class OutboundEventQueueServiceTest {
           assertThat(it.attributes()[QueueAttributeName.POLICY]).isEqualToIgnoringWhitespace(
             """
         {
-          "Version": "2012-10-12",
+          "Version": "2012-10-17",
           "Id": "cross-account-access",
           "Statement": [
             {

@@ -1,10 +1,11 @@
 import { describe, expect } from "@jest/globals"
-import { DeleteEventResponse, InsertXmlResponse } from "../../src/models/EventResponse"
+
 import lambdaFunction from "../../src/functions/insertXml"
-import { eventRequest } from "../const/eventRequest"
-import { mockCallback, mockContext } from "../const/aws-lambda"
 import { config } from "../../src/helpers/config"
+import { DeleteEventResponse, InsertXmlResponse } from "../../src/models/EventResponse"
 import { s3SendFn } from "../__mocks__/@aws-sdk/client-s3"
+import { mockCallback, mockContext } from "../const/aws-lambda"
+import { eventRequest } from "../const/eventRequest"
 
 jest.mock("../../src/helpers/config")
 

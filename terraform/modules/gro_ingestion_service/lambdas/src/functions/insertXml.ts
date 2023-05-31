@@ -1,10 +1,11 @@
-import { Handler } from "aws-lambda"
-import { LambdaFunction } from "../models/LambdaFunction"
-import { XMLBuilder } from "fast-xml-parser"
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
-import { config } from "../helpers/config"
+import { Handler } from "aws-lambda"
 import { randomUUID } from "crypto"
+import { XMLBuilder } from "fast-xml-parser"
+
+import { config } from "../helpers/config"
 import { InsertXmlResponse } from "../models/EventResponse"
+import { LambdaFunction } from "../models/LambdaFunction"
 
 const s3Client = new S3Client({ apiVersion: "2012-08-10" })
 const xmlBuilder = new XMLBuilder()
@@ -19,14 +20,15 @@ const addressOptions = [
     ["10 Test Street", "Test Town", "Test County"],
     ["", "Westminster", "London"],
     ["27 Brown Lane", "", "Somerset"],
-    ["65 Link Road", "Southport", ""]
+    ["65 Link Road", "Southport", ""],
 ]
 const postcodeOptions = ["PR8 1HY", ""]
 
 const handler: Handler = async (event): Promise<InsertXmlResponse> => {
-    const numberOfRecords = event["detail-type"] === "Scheduled Event" || !event["numberOfRecords"] ? 25 : event["numberOfRecords"]
+    const numberOfRecords =
+        event["detail-type"] === "Scheduled Event" || !event["numberOfRecords"] ? 25 : event["numberOfRecords"]
     const fileKey = `${new Date().toISOString()}-fake-gro.xml`
-    const logParams: { fileKey: string, error?: Error } = { fileKey: fileKey }
+    const logParams: { fileKey: string; error?: Error } = { fileKey: fileKey }
 
     try {
         const xml = generateXml(numberOfRecords)
@@ -34,13 +36,13 @@ const handler: Handler = async (event): Promise<InsertXmlResponse> => {
         console.log("Successfully generated GRO file", logParams)
         return {
             statusCode: 200,
-            payload: fileKey
+            payload: fileKey,
         }
     } catch (err) {
         logParams.error = err
         console.error("Failed to generate GRO file", logParams)
         return {
-            statusCode: 500
+            statusCode: 500,
         }
     }
 }
@@ -60,7 +62,7 @@ const generateXml = (numberOfRecords: number) => {
         DeathRegistrationGroup: {
             DeathRegistration: deathRecords,
             RecordCount: numberOfRecords,
-        }
+        },
     })
 }
 
@@ -111,12 +113,12 @@ const createDeathRecord = () => {
                 Building: "",
                 Line: getRandomElement(addressOptions),
                 Postcode: getRandomElement(postcodeOptions),
-            }
-        }
+            },
+        },
     }
 }
 
-const getRandomElement = <T, >(array: T[]): T => array[Math.floor(Math.random() * array.length)]
+const getRandomElement = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)]
 
 const lambdaFunction: LambdaFunction = {
     name: "insertXml",

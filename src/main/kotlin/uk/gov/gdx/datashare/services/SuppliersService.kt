@@ -107,6 +107,7 @@ class SuppliersService(
     )
     val otherSubscriptionsWithClient = supplierSubscriptionRepository.findAllByClientId(subscription.clientId)
     if (otherSubscriptionsWithClient.isEmpty()) {
+      log.info("Deleting User Pool Client ID: ${subscription.clientId}")
       cognitoService.deleteUserPoolClient(subscription.clientId)
     }
     return subscription

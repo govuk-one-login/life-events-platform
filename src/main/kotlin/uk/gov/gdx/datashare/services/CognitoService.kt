@@ -58,8 +58,7 @@ class CognitoService(
       .build()
     try {
       createCognitoClient().deleteUserPoolClient(deleteClientRequest)
-    }
-    catch (e: ResourceNotFoundException) {
+    } catch (e: ResourceNotFoundException) {
       log.warn("User pool client with ID: $clientId not found")
     }
   }

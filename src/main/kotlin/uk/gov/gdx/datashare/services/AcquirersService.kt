@@ -176,7 +176,8 @@ class AcquirersService(
     acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(subscriptionId, now)
 
     if (subscription.queueName == null && subscription.oauthClientId == null) {
-      throw IllegalStateException("Acquirer does not have a client id or queue name.")
+      log.warn("Acquirer does not have a client id or queue name.")
+      return subscription
     }
 
     if (subscription.oauthClientId != null) {

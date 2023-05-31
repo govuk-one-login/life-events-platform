@@ -33,10 +33,10 @@ class AcquirersService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getAcquirers(): Iterable<Acquirer> = acquirerRepository.findAll()
+  fun getAcquirers(): Iterable<Acquirer> = acquirerRepository.findAllByWhenDeletedIsNull()
 
   fun getAcquirerSubscriptions(): List<AcquirerSubscriptionDto> {
-    val acquirerSubscriptions = acquirerSubscriptionRepository.findAll()
+    val acquirerSubscriptions = acquirerSubscriptionRepository.findAllByWhenDeletedIsNull()
     return acquirerSubscriptions.map {
       val enrichmentFields =
         acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(it.acquirerSubscriptionId)
@@ -181,7 +181,7 @@ class AcquirersService(
 
     if (subscription.oauthClientId != null) {
       val otherSubscriptionsWithClient =
-        acquirerSubscriptionRepository.findAllByOauthClientId(subscription.oauthClientId)
+        acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNull(subscription.oauthClientId)
       if (otherSubscriptionsWithClient.isEmpty()) {
         log.info("Deleting User Pool Client ID: ${subscription.oauthClientId}")
         cognitoService.deleteUserPoolClient(subscription.oauthClientId)
@@ -189,7 +189,8 @@ class AcquirersService(
     }
 
     if (subscription.queueName != null) {
-      val otherSubscriptionsOnQueue = acquirerSubscriptionRepository.findAllByQueueName(subscription.queueName)
+      val otherSubscriptionsOnQueue =
+        acquirerSubscriptionRepository.findAllByQueueNameAndWhenDeletedIsNull(subscription.queueName)
       if (otherSubscriptionsOnQueue.isEmpty()) {
         val deadLetterQueueName = "${subscription.queueName}-dlq"
         log.info("Deleting queues: ${subscription.queueName} and $deadLetterQueueName")

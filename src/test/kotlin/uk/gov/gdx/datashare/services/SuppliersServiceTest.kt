@@ -40,7 +40,7 @@ class SuppliersServiceTest {
       Supplier(name = "Supplier3"),
     )
 
-    every { supplierRepository.findAll() }.returns(savedSuppliers)
+    every { supplierRepository.findAllByWhenDeletedIsNull() }.returns(savedSuppliers)
 
     val suppliers = underTest.getSuppliers()
 
@@ -68,7 +68,7 @@ class SuppliersServiceTest {
       ),
     )
 
-    every { supplierSubscriptionRepository.findAll() }.returns(savedSupplierSubscriptions)
+    every { supplierSubscriptionRepository.findAllByWhenDeletedIsNull() }.returns(savedSupplierSubscriptions)
 
     val supplierSubscriptions = underTest.getSupplierSubscriptions()
 
@@ -96,7 +96,7 @@ class SuppliersServiceTest {
       ),
     )
 
-    every { supplierSubscriptionRepository.findAllBySupplierId(supplier.supplierId) }.returns(savedSupplierSubscriptions)
+    every { supplierSubscriptionRepository.findAllBySupplierIdAndWhenDeletedIsNull(supplier.supplierId) }.returns(savedSupplierSubscriptions)
 
     val supplierSubscriptions = underTest.getSubscriptionsForSupplier(supplier.supplierId)
 
@@ -159,7 +159,7 @@ class SuppliersServiceTest {
     every { dateTimeHandler.now() }.returns(now)
 
     every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.supplierSubscriptionId) }.returns(supplierSubscription)
-    every { supplierSubscriptionRepository.findAllByClientId(supplierSubscription.clientId) }.returns(
+    every { supplierSubscriptionRepository.findAllByClientIdAndWhenDeletedIsNull(supplierSubscription.clientId) }.returns(
       emptyList(),
     )
     every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
@@ -187,7 +187,7 @@ class SuppliersServiceTest {
     every { dateTimeHandler.now() }.returns(now)
 
     every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.supplierSubscriptionId) }.returns(supplierSubscription)
-    every { supplierSubscriptionRepository.findAllByClientId(supplierSubscription.clientId) }.returns(
+    every { supplierSubscriptionRepository.findAllByClientIdAndWhenDeletedIsNull(supplierSubscription.clientId) }.returns(
       listOf(otherSupplierSubscription),
     )
     every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
@@ -256,8 +256,8 @@ class SuppliersServiceTest {
     every { supplierRepository.findByIdOrNull(supplier.supplierId) }.returns(supplier)
     every { supplierRepository.save(any()) }.returns(supplier)
     every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.supplierSubscriptionId) }.returns(supplierSubscription)
-    every { supplierSubscriptionRepository.findAllByClientId(supplierSubscription.clientId) }.returns(emptyList())
-    every { supplierSubscriptionRepository.findAllBySupplierId(supplier.supplierId) }.returns(listOf(supplierSubscription))
+    every { supplierSubscriptionRepository.findAllByClientIdAndWhenDeletedIsNull(supplierSubscription.clientId) }.returns(emptyList())
+    every { supplierSubscriptionRepository.findAllBySupplierIdAndWhenDeletedIsNull(supplier.supplierId) }.returns(listOf(supplierSubscription))
     every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { cognitoService.deleteUserPoolClient(supplierSubscription.clientId) } just runs
@@ -294,8 +294,8 @@ class SuppliersServiceTest {
     every { supplierRepository.save(any()) }.returns(supplier)
     every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.supplierSubscriptionId) }.returns(supplierSubscription)
     every { supplierSubscriptionRepository.findByIdOrNull(otherSupplierSubscription.supplierSubscriptionId) }.returns(otherSupplierSubscription)
-    every { supplierSubscriptionRepository.findAllByClientId(supplierSubscription.clientId) }.returnsMany(listOf(listOf(otherSupplierSubscription), emptyList()))
-    every { supplierSubscriptionRepository.findAllBySupplierId(supplier.supplierId) }.returns(listOf(supplierSubscription, otherSupplierSubscription))
+    every { supplierSubscriptionRepository.findAllByClientIdAndWhenDeletedIsNull(supplierSubscription.clientId) }.returnsMany(listOf(listOf(otherSupplierSubscription), emptyList()))
+    every { supplierSubscriptionRepository.findAllBySupplierIdAndWhenDeletedIsNull(supplier.supplierId) }.returns(listOf(supplierSubscription, otherSupplierSubscription))
     every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { cognitoService.deleteUserPoolClient(supplierSubscription.clientId) } just runs
@@ -362,8 +362,8 @@ class SuppliersServiceTest {
     every { supplierRepository.findByIdOrNull(supplier.supplierId) }.returns(supplier)
     every { supplierRepository.save(any()) }.returns(supplier)
     every { supplierSubscriptionRepository.findByIdOrNull(supplierSubscription.supplierSubscriptionId) }.returns(supplierSubscription)
-    every { supplierSubscriptionRepository.findAllByClientId(supplierSubscription.clientId) }.returns(emptyList())
-    every { supplierSubscriptionRepository.findAllBySupplierId(supplier.supplierId) }.returns(listOf(supplierSubscription))
+    every { supplierSubscriptionRepository.findAllByClientIdAndWhenDeletedIsNull(supplierSubscription.clientId) }.returns(emptyList())
+    every { supplierSubscriptionRepository.findAllBySupplierIdAndWhenDeletedIsNull(supplier.supplierId) }.returns(listOf(supplierSubscription))
     every { supplierSubscriptionRepository.save(any()) }.returns(supplierSubscription)
     every { adminActionAlertsService.noticeAction(any()) } just runs
     every { cognitoService.deleteUserPoolClient(supplierSubscription.clientId) } just runs

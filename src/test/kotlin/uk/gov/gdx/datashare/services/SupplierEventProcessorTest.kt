@@ -86,7 +86,7 @@ class SupplierEventProcessorTest {
         oauthClientId = "clientId",
       ),
     )
-    every { acquirerSubscriptionRepository.findAllByEventType(supplierSubscription.eventType) }
+    every { acquirerSubscriptionRepository.findAllByEventTypeAndWhenDeletedIsNull(supplierSubscription.eventType) }
       .returns(acquirerSubscriptions)
     every { supplierEventRepository.save(any<SupplierEvent>()) }.returns(mockk<SupplierEvent>())
     every { objectMapper.readValue(any<String>(), SupplierEvent::class.java) }.returns(supplierEvent)

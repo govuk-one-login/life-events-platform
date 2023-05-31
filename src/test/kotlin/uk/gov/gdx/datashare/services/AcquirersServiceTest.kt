@@ -44,7 +44,7 @@ class AcquirersServiceTest {
       Acquirer(name = "Acquirer3"),
     )
 
-    every { acquirerRepository.findAll() }.returns(savedAcquirers)
+    every { acquirerRepository.findAllByWhenDeletedIsNull() }.returns(savedAcquirers)
 
     val acquirers = underTest.getAcquirers().toList()
 
@@ -81,7 +81,7 @@ class AcquirersServiceTest {
       )
     }
 
-    every { acquirerSubscriptionRepository.findAll() }.returns(savedAcquirerSubscriptions)
+    every { acquirerSubscriptionRepository.findAllByWhenDeletedIsNull() }.returns(savedAcquirerSubscriptions)
 
     val acquirerSubscriptions = underTest.getAcquirerSubscriptions().toList()
 
@@ -269,7 +269,7 @@ class AcquirersServiceTest {
     every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now) } just runs
 
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNull(acquirerSubscription.oauthClientId!!) } returns emptyList()
     every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
 
     every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) } returns Unit
@@ -309,7 +309,7 @@ class AcquirersServiceTest {
     every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now) } just runs
 
     every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) } returns queueAcquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.findAllByQueueNameAndWhenDeletedIsNull(queueAcquirerSubscription.queueName!!) } returns emptyList()
     every { acquirerSubscriptionRepository.save(any()) } returns queueAcquirerSubscription
 
     every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) } returns Unit
@@ -353,7 +353,7 @@ class AcquirersServiceTest {
     every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscription.id, now) } just runs
 
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returns listOf(otherAcquirerSubscription)
+    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNull(acquirerSubscription.oauthClientId!!) } returns listOf(otherAcquirerSubscription)
     every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
 
     every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) } returns Unit
@@ -393,7 +393,7 @@ class AcquirersServiceTest {
     every { acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id, now) } just runs
 
     every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) } returns queueAcquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) } returns listOf(otherQueueAcquirerSubscription)
+    every { acquirerSubscriptionRepository.findAllByQueueNameAndWhenDeletedIsNull(queueAcquirerSubscription.queueName!!) } returns listOf(otherQueueAcquirerSubscription)
     every { acquirerSubscriptionRepository.save(any()) } returns queueAcquirerSubscription
 
     every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(queueAcquirerSubscription.id) } returns Unit
@@ -506,7 +506,7 @@ class AcquirersServiceTest {
     every { acquirerRepository.save(any()) } returns acquirer
 
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNull(acquirerSubscription.oauthClientId!!) } returns emptyList()
     every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) } returns listOf(acquirerSubscription)
     every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
 
@@ -559,7 +559,7 @@ class AcquirersServiceTest {
 
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
     every { acquirerSubscriptionRepository.findByIdOrNull(otherAcquirerSubscription.id) } returns otherAcquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returnsMany
+    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNull(acquirerSubscription.oauthClientId!!) } returnsMany
       listOf(
         listOf(
           otherAcquirerSubscription,
@@ -636,7 +636,7 @@ class AcquirersServiceTest {
     every { acquirerRepository.save(any()) } returns acquirer
 
     every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) } returns queueAcquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.findAllByQueueNameAndWhenDeletedIsNull(queueAcquirerSubscription.queueName!!) } returns emptyList()
     every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) } returns listOf(queueAcquirerSubscription)
     every { acquirerSubscriptionRepository.save(any()) } returns queueAcquirerSubscription
 
@@ -693,7 +693,7 @@ class AcquirersServiceTest {
 
     every { acquirerSubscriptionRepository.findByIdOrNull(queueAcquirerSubscription.id) } returns queueAcquirerSubscription
     every { acquirerSubscriptionRepository.findByIdOrNull(otherQueueAcquirerSubscription.id) } returns otherQueueAcquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByQueueName(queueAcquirerSubscription.queueName!!) } returnsMany
+    every { acquirerSubscriptionRepository.findAllByQueueNameAndWhenDeletedIsNull(queueAcquirerSubscription.queueName!!) } returnsMany
       listOf(
         listOf(
           otherQueueAcquirerSubscription,
@@ -776,7 +776,7 @@ class AcquirersServiceTest {
     every { acquirerRepository.save(any()) } returns acquirer
 
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) } returns acquirerSubscription
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(acquirerSubscription.oauthClientId!!) } returns emptyList()
+    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNull(acquirerSubscription.oauthClientId!!) } returns emptyList()
     every { acquirerSubscriptionRepository.findAllByAcquirerId(acquirer.id) } returns listOf(acquirerSubscription)
     every { acquirerSubscriptionRepository.save(any()) } returns acquirerSubscription
 

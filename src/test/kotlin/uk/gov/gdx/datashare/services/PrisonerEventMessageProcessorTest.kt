@@ -48,7 +48,7 @@ class PrisonerEventMessageProcessorTest {
 
   @Test
   fun `processes prisoner entering prison event`() {
-    every { supplierSubscriptionRepository.findFirstByEventType(EventType.ENTERED_PRISON) }
+    every { supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(EventType.ENTERED_PRISON) }
       .returns(supplierSubscriptions[0])
 
     val clientId = supplierSubscriptions[0].clientId
@@ -75,8 +75,8 @@ class PrisonerEventMessageProcessorTest {
     underTest.onPrisonerEventMessage("/messages/prisonerReleased.json".readResourceAsText())
 
     verify(exactly = 0) {
-      supplierSubscriptionRepository.findFirstByEventType(
-        any(),
+      supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(
+        any<EventType>(),
       )
     }
 

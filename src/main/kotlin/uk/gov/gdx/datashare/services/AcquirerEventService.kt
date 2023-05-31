@@ -81,8 +81,8 @@ class AcquirerEventService(
     val clientId = authenticationFacade.getUsername()
 
     val acquirerSubscriptions = eventTypes?.let {
-      acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(clientId, eventTypes)
-    } ?: acquirerSubscriptionRepository.findAllByOauthClientId(clientId)
+      acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(clientId, eventTypes)
+    } ?: acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNull(clientId)
 
     if (acquirerSubscriptions.isEmpty()) {
       return Events(0, emptyList())

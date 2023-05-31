@@ -152,7 +152,12 @@ class AcquirerEventServiceTest {
       address = deathNotificationSubscription.id.toString(),
     )
 
-    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(clientId, eventTypes) }
+    every {
+      acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
+        clientId,
+        eventTypes,
+      )
+    }
       .returns(listOf(deathNotificationSubscription))
     every {
       acquirerEventRepository.findPageByAcquirerSubscriptions(
@@ -214,7 +219,12 @@ class AcquirerEventServiceTest {
     )
     val totalEventCount = 156
 
-    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(clientId, eventTypes) }
+    every {
+      acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
+        clientId,
+        eventTypes,
+      )
+    }
       .returns(listOf(deathNotificationSubscription))
     every {
       acquirerEventRepository.findPageByAcquirerSubscriptions(
@@ -264,7 +274,12 @@ class AcquirerEventServiceTest {
     val startTime = LocalDateTime.now().minusHours(1)
     val endTime = LocalDateTime.now().plusHours(1)
 
-    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(clientId, eventTypes) }
+    every {
+      acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
+        clientId,
+        eventTypes,
+      )
+    }
       .returns(listOf(thinDeathNotificationSubscription))
     every {
       acquirerEventRepository.findPageByAcquirerSubscriptions(
@@ -321,7 +336,7 @@ class AcquirerEventServiceTest {
       address = deathNotificationSubscription.id.toString(),
     )
 
-    every { acquirerSubscriptionRepository.findAllByOauthClientId(clientId) }
+    every { acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNull(clientId) }
       .returns(listOf(deathNotificationSubscription))
     every {
       acquirerEventRepository.findPageByAcquirerSubscriptions(

@@ -91,11 +91,13 @@ class EventsQueryTest : MockIntegrationTestBase() {
     }.andReturn().response.contentAsString
 
   private fun thereIsAnEvent() {
-    val acquirerSubscription = acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(
-      DWP_EVENT_RECEIVER,
-      listOf(EventType.DEATH_NOTIFICATION),
-    ).first()
-    val supplierSubscription = supplierSubscriptionRepository.findFirstByEventType(EventType.DEATH_NOTIFICATION)
+    val acquirerSubscription =
+      acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
+        DWP_EVENT_RECEIVER,
+        listOf(EventType.DEATH_NOTIFICATION),
+      ).first()
+    val supplierSubscription =
+      supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(EventType.DEATH_NOTIFICATION)
 
     val timestamp = LocalDateTime.of(2000, 5, 3, 12, 4, 3)
 
@@ -119,11 +121,13 @@ class EventsQueryTest : MockIntegrationTestBase() {
   }
 
   private fun thereAreFiveEvents() {
-    val acquirerSubscription = acquirerSubscriptionRepository.findAllByOauthClientIdAndEventTypeIsIn(
-      DWP_EVENT_RECEIVER,
-      listOf(EventType.DEATH_NOTIFICATION),
-    ).first()
-    val supplierSubscription = supplierSubscriptionRepository.findFirstByEventType(EventType.DEATH_NOTIFICATION)
+    val acquirerSubscription =
+      acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(
+        DWP_EVENT_RECEIVER,
+        listOf(EventType.DEATH_NOTIFICATION),
+      ).first()
+    val supplierSubscription =
+      supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(EventType.DEATH_NOTIFICATION)
     listOf("1", "2", "3", "4", "5").map { dataId ->
       val eventTime = LocalDateTime.of(2000, 5, 3, 12, 4, 3 + dataId.toInt())
 

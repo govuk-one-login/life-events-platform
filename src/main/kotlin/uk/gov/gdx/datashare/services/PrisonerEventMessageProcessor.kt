@@ -43,7 +43,7 @@ class PrisonerEventMessageProcessor(
 
   fun processHMPPSEvent(hmppsDomainEvent: HMPPSDomainEvent) {
     // find a supplier with a defined name
-    supplierSubscriptionRepository.findFirstByEventType(EventType.ENTERED_PRISON)
+    supplierSubscriptionRepository.findFirstByEventTypeAndWhenDeletedIsNull(EventType.ENTERED_PRISON)
       ?.let {
         eventAcceptorService.acceptEvent(
           EventToPublish(

@@ -49,14 +49,6 @@ interface AcquirerEventRepository : CrudRepository<AcquirerEvent, UUID> {
   )
   fun findByClientIdAndId(clientId: String, id: UUID): AcquirerEvent?
 
-  @Override
-  override fun findById(id: UUID): Optional<AcquirerEvent> = findByIdAndDeletedAtIsNull(id)
-  fun findByIdAndDeletedAtIsNull(id: UUID): Optional<AcquirerEvent>
-
-  @Override
-  override fun findAll(): List<AcquirerEvent> = findAllByDeletedAtIsNull()
-  fun findAllByDeletedAtIsNull(): List<AcquirerEvent>
-
   @Query("UPDATE acquirer_event SET deleted_at=:deletionTime WHERE id = :id")
   @Modifying
   fun softDeleteById(id: UUID, deletionTime: LocalDateTime)

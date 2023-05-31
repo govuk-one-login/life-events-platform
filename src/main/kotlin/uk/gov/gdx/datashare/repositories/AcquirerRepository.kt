@@ -7,4 +7,6 @@ import java.util.*
 
 @Repository
 @JaversSpringDataAuditable
-interface AcquirerRepository : CrudRepository<Acquirer, UUID>
+interface AcquirerRepository : CrudRepository<Acquirer, UUID> {
+  fun findAllByWhenDeletedIsNull(): List<Acquirer>
+}

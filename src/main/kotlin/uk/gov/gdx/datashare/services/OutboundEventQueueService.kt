@@ -3,10 +3,7 @@ package uk.gov.gdx.datashare.services
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.kms.KmsClient
-import software.amazon.awssdk.services.kms.model.CreateAliasRequest
-import software.amazon.awssdk.services.kms.model.CreateKeyRequest
-import software.amazon.awssdk.services.kms.model.Tag
-import software.amazon.awssdk.services.kms.model.TagResourceRequest
+import software.amazon.awssdk.services.kms.model.*
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.*
 import software.amazon.awssdk.services.sts.StsClient
@@ -62,11 +59,18 @@ class OutboundEventQueueService(
       .build()
     val createKeyResponse = kmsClient.createKey(keyRequest)
     val keyId = createKeyResponse.keyMetadata().keyId()
-
+    enableKeyRotation(keyId)
     aliasKey(queueName, keyId)
     tagKey(keyId)
 
     return keyId
+  }
+
+  private fun enableKeyRotation(keyId: String) {
+    val rotationRequest = EnableKeyRotationRequest.builder()
+      .keyId(keyId)
+      .build()
+    kmsClient.enableKeyRotation(rotationRequest)
   }
 
   private fun aliasKey(queueName: String, keyId: String?) {

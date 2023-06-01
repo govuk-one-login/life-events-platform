@@ -1,0 +1,60 @@
+name: Run E2E tests
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      API_BASE_URL:
+        required: true
+      COGNITO_BASE_URL:
+        required: true
+      COGNITO_CLIENT_ID:
+        required: true
+      COGNITO_CLIENT_SECRET:
+        required: true
+
+jobs:
+  e2e-test:
+    name: Run E2E tests
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ secrets.API_URL }}
+      COGNITO_TOKEN_URL: ${{ secrets.COGNITO_TOKEN_URL }}
+      COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+      COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: corretto
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Execute Gradle build
+        run: ./gradlew clean e2eTest
+
+      - name: Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test results
+          path: "**/build/test-results/e2eTest/TEST-*.xml"
+          reporter: java-junit
+          only-summary: true
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: junit-test-results
+          path: '**/build/test-results/e2eTest/TEST-*.xml'
+          retention-days: 1

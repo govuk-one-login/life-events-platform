@@ -35,6 +35,13 @@ jobs:
       group: application-pipeline-dev
       cancel-in-progress: false
 
+  e2e-test-dev:
+    name: E2E test dev environment
+    needs: deploy-dev
+    uses: ./.github/workflows/e2eTest.yml
+    with:
+      environment: dev
+
   deploy-demo:
     name: Deploy demo environment
     needs: build-and-push-image

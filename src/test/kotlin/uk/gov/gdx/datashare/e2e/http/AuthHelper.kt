@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e.Config
-import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-
 
 fun getAdminAuthToken(): String {
   val postData = "grant_type=client_credentials&client_id=${Config.adminClientId}&client_secret=${Config.adminClientSecret}"
@@ -34,5 +32,5 @@ data class AuthResponse(
   @JsonProperty("expires_in")
   val expiresIn: Int,
   @JsonProperty("token_type")
-  val tokenType: String
+  val tokenType: String,
 )

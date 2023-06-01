@@ -14,7 +14,6 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.UUID
 
-
 class Api {
   private val authorization = "Bearer ${getAdminAuthToken()}"
   private val client = HttpClient.newHttpClient()

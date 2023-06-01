@@ -9,6 +9,7 @@ import java.util.*
 @Tag("E2E")
 class SupplierTest {
   private val underTest = Api()
+
   @Test
   fun `create and delete supplier with cognito client`() {
     val clientName = UUID.randomUUID().toString()

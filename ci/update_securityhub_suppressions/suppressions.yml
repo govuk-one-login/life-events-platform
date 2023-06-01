@@ -7,6 +7,12 @@ Suppressions:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
         - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
       notes: GPC-292
+  "CVE-2023-2650 - openssl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+        - arn:aws:ecr:eu-west-2:776473272850:repository/prometheus-adot/.*
+      notes: GPC-392
 
   ## GDX
   "CVE-2022-1471 - org.yaml:snakeyaml":
@@ -75,6 +81,26 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
       notes: GPC-353
+  "CVE-2023-29491 - ncurses":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-389
+  "CVE-2023-28319 - curl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-377
+  "CVE-2023-28320 - curl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-377
+  "CVE-2023-28321 - curl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-377
+  "CVE-2023-28322 - curl":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/grafana/.*
+      notes: GPC-377
 
   # Security Hub
 

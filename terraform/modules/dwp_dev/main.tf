@@ -24,6 +24,7 @@ data "aws_iam_policy_document" "dwp_user_access" {
     ]
     resources = [
       module.dwp_dev_queue.queue_arn,
+      "arn:aws:sqs:eu-west-2:776473272850:acq_dev_dwp-death-notifications"
     ]
     effect = "Allow"
   }
@@ -35,6 +36,7 @@ data "aws_iam_policy_document" "dwp_user_access" {
     ]
     resources = [
       module.dwp_dev_queue.queue_kms_key_arn,
+      "arn:aws:kms:eu-west-2:776473272850:key/8dc17eba-9e8f-44a6-8e11-c97c94acf526"
     ]
     effect = "Allow"
   }

@@ -6,27 +6,18 @@ on:
       environment:
         required: true
         type: string
-    vars:
-      API_BASE_URL:
-        required: true
-      COGNITO_BASE_URL:
-        required: true
-      COGNITO_CLIENT_ID:
-        required: true
-    secrets:
-      COGNITO_CLIENT_SECRET:
-        required: true
+
+env:
+  API_URL: ${{ vars.API_URL }}
+  COGNITO_TOKEN_URL: ${{ vars.COGNITO_TOKEN_URL }}
+  COGNITO_CLIENT_ID: ${{ vars.COGNITO_CLIENT_ID }}
+  COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
 
 jobs:
   e2e-test:
     name: Run E2E tests
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    env:
-      API_URL: ${{ vars.API_URL }}
-      COGNITO_TOKEN_URL: ${{ vars.COGNITO_TOKEN_URL }}
-      COGNITO_CLIENT_ID: ${{ vars.COGNITO_CLIENT_ID }}
-      COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

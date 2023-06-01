@@ -19,7 +19,7 @@ object PostgresContainer {
       return null
     }
     log.info("Creating a Postgres database")
-    return PostgreSQLContainer<Nothing>("postgres:13.7").apply {
+    return PostgreSQLContainer<Nothing>("postgres:14.6").apply {
       withEnv("HOSTNAME_EXTERNAL", "localhost")
       withStartupAttempts(5)
       withDatabaseName("datashareint_db")

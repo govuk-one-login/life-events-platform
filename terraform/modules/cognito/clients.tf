@@ -2,7 +2,7 @@ module "admin_client" {
   source       = "../simple_user_pool_client"
   environment  = var.environment
   scopes       = ["${local.identifier}/${local.scope_admin}"]
-  name         = "${var.environment}-admin-client"
+  name         = "admin-client"
   user_pool_id = aws_cognito_user_pool.pool.id
 
   depends_on = [aws_cognito_resource_server.events]

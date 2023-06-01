@@ -1,0 +1,11 @@
+name: TEMP
+
+on:
+  pull_request:
+
+jobs:
+  e2e-test-dev:
+    name: E2E test dev environment
+    uses: ./.github/workflows/e2eTest.yml
+    with:
+      environment: dev

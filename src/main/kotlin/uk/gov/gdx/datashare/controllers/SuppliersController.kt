@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -85,7 +86,7 @@ class SuppliersController(
     supplierRequest: SupplierRequest,
   ) = suppliersService.addSupplier(supplierRequest)
 
-  @DeleteMapping
+  @DeleteMapping("/{supplierId}")
   @Operation(
     summary = "Delete Supplier",
     description = "Need scope of events/admin",
@@ -106,12 +107,13 @@ class SuppliersController(
       ),
     ],
   )
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteSupplier(
     @Schema(
       description = "Supplier ID",
       required = true,
     )
-    @RequestBody
+    @PathVariable
     supplierId: UUID,
   ) = suppliersService.deleteSupplier(supplierId)
 
@@ -144,7 +146,7 @@ class SuppliersController(
   )
   fun getSupplierSubscriptions() = suppliersService.getSupplierSubscriptions()
 
-  @DeleteMapping("/subscriptions")
+  @DeleteMapping("/subscriptions/{supplierSubscriptionId}")
   @Operation(
     summary = "Delete Supplier Subscriptions",
     description = "Mark a supplier subscription as deleted. This will also delete the cognito client for this subscription, if no more subscriptions are attached to it.",
@@ -165,12 +167,13 @@ class SuppliersController(
       ),
     ],
   )
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteSupplierSubscription(
     @Schema(
       description = "Supplier Subscription ID",
       required = true,
     )
-    @RequestBody
+    @PathVariable
     supplierSubscriptionId: UUID,
   ) = suppliersService.deleteSupplierSubscription(supplierSubscriptionId)
 

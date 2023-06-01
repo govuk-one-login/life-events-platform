@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -85,7 +86,7 @@ class AcquirersController(
     acquirerRequest: AcquirerRequest,
   ) = acquirersService.addAcquirer(acquirerRequest)
 
-  @DeleteMapping
+  @DeleteMapping("{acquirerId}")
   @Operation(
     summary = "Delete Acquirer",
     description = "Mark an acquirer as deleted. This will also soft delete all acquirer subscriptions linked to this acquirer, and delete the queues or cognito clients for those subscriptions, if no more subscriptions are attached to the queue or cognito client.",
@@ -106,12 +107,13 @@ class AcquirersController(
       ),
     ],
   )
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteAcquirer(
     @Schema(
       description = "Acquirer ID",
       required = true,
     )
-    @RequestBody
+    @PathVariable
     acquirerId: UUID,
   ) = acquirersService.deleteAcquirer(acquirerId)
 
@@ -144,13 +146,13 @@ class AcquirersController(
   )
   fun getAcquirerSubscriptions() = acquirersService.getAcquirerSubscriptions()
 
-  @DeleteMapping("/subscriptions")
+  @DeleteMapping("/subscriptions/{acquirerSubscriptionId}")
   @Operation(
     summary = "Delete Acquirer Subscriptions",
     description = "Mark an acquirer subscription as deleted. This will also delete the queue or cognito client for this subscription, if no more subscriptions are attached to it.",
     responses = [
       ApiResponse(
-        responseCode = "201",
+        responseCode = "204",
         description = "Acquirer Subscription Deleted",
       ),
       ApiResponse(
@@ -165,12 +167,13 @@ class AcquirersController(
       ),
     ],
   )
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteAcquirerSubscription(
     @Schema(
       description = "Acquirer Subscription ID",
       required = true,
     )
-    @RequestBody
+    @PathVariable
     acquirerSubscriptionId: UUID,
   ) = acquirersService.deleteAcquirerSubscription(acquirerSubscriptionId)
 

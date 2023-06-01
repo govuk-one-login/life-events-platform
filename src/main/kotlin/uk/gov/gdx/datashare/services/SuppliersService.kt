@@ -90,7 +90,7 @@ class SuppliersService(
 
   fun deleteSupplierSubscription(
     subscriptionId: UUID,
-  ): SupplierSubscription {
+  ) {
     val now = dateTimeHandler.now()
     adminActionAlertsService.noticeAction(
       AdminAction(
@@ -112,7 +112,6 @@ class SuppliersService(
       log.info("Deleting User Pool Client ID: ${subscription.clientId}")
       cognitoService.deleteUserPoolClient(subscription.clientId)
     }
-    return subscription
   }
 
   fun addSupplier(
@@ -130,7 +129,7 @@ class SuppliersService(
 
   fun deleteSupplier(
     id: UUID,
-  ): Supplier {
+  ) {
     val now = dateTimeHandler.now()
     adminActionAlertsService.noticeAction(
       AdminAction(
@@ -141,13 +140,12 @@ class SuppliersService(
         },
       ),
     )
-    val supplier = supplierRepository.save(
+    supplierRepository.save(
       supplierRepository.findByIdOrNull(id)?.copy(
         whenDeleted = now,
       ) ?: throw SupplierSubscriptionNotFoundException("Supplier $id not found"),
     )
     val subscriptions = supplierSubscriptionRepository.findAllBySupplierIdAndWhenDeletedIsNull(id)
     subscriptions.forEach { deleteSupplierSubscription(it.supplierSubscriptionId) }
-    return supplier
   }
 }

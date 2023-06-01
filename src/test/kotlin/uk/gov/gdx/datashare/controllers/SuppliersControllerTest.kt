@@ -1,8 +1,6 @@
 package uk.gov.gdx.datashare.controllers
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EventType
@@ -55,11 +53,9 @@ class SuppliersControllerTest {
   fun `deleteSupplier deletes supplier`() {
     val supplier = Supplier(name = "Supplier Name")
 
-    every { suppliersService.deleteSupplier(supplier.supplierId) }.returns(supplier)
+    every { suppliersService.deleteSupplier(supplier.supplierId) } just runs
 
-    val supplierOutput = underTest.deleteSupplier(supplier.supplierId)
-
-    assertThat(supplierOutput).isEqualTo(supplier)
+    underTest.deleteSupplier(supplier.supplierId)
 
     verify(exactly = 1) {
       suppliersService.deleteSupplier(supplier.supplierId)
@@ -171,20 +167,10 @@ class SuppliersControllerTest {
   @Test
   fun `deleteSupplierSubscription deletes supplier subscription`() {
     val subscriptionId = UUID.randomUUID()
-    val supplierSubscription = SupplierSubscription(
-      supplierId = UUID.randomUUID(),
-      supplierSubscriptionId = subscriptionId,
-      clientId = "Client-New",
-      eventType = EventType.LIFE_EVENT,
-    )
 
-    every { suppliersService.deleteSupplierSubscription(subscriptionId) }.returns(
-      supplierSubscription,
-    )
+    every { suppliersService.deleteSupplierSubscription(subscriptionId) } just runs
 
-    val supplierSubscriptionOutput = underTest.deleteSupplierSubscription(subscriptionId)
-
-    assertThat(supplierSubscriptionOutput).isEqualTo(supplierSubscription)
+    underTest.deleteSupplierSubscription(subscriptionId)
 
     verify(exactly = 1) {
       suppliersService.deleteSupplierSubscription(subscriptionId)

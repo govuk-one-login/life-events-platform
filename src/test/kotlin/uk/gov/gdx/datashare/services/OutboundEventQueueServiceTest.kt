@@ -319,6 +319,12 @@ class OutboundEventQueueServiceTest {
         },
       )
 
+      kmsClient.enableKeyRotation(
+        withArg<EnableKeyRotationRequest> {
+          assertThat(it.keyId()).isEqualTo("dlqKeyId")
+        }
+      )
+
       kmsClient.createAlias(
         withArg<CreateAliasRequest> {
           assertThat(it.aliasName()).isEqualTo("alias/test/sqs-test_dlq")
@@ -378,6 +384,12 @@ class OutboundEventQueueServiceTest {
         },
       )
 
+      kmsClient.enableKeyRotation(
+        withArg<EnableKeyRotationRequest> {
+          assertThat(it.keyId()).isEqualTo("keyId")
+        }
+      )
+
       kmsClient.createAlias(
         withArg<CreateAliasRequest> {
           assertThat(it.aliasName()).isEqualTo("alias/test/sqs-test")
@@ -425,6 +437,7 @@ class OutboundEventQueueServiceTest {
     val createKeyResponse = mockk<CreateKeyResponse>()
     every { createKeyResponse.keyMetadata().keyId() } returns "dlqKeyId" andThen "keyId"
     every { kmsClient.createKey(any<CreateKeyRequest>()) } returns createKeyResponse
+    every { kmsClient.enableKeyRotation(any<EnableKeyRotationRequest>()) } returns mockk<EnableKeyRotationResponse>()
     every { kmsClient.createAlias(any<CreateAliasRequest>()) } returns mockk<CreateAliasResponse>()
     every { kmsClient.tagResource(any<TagResourceRequest>()) } returns mockk<TagResourceResponse>()
 

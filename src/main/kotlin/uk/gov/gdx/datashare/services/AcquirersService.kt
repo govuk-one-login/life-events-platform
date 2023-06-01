@@ -153,7 +153,7 @@ class AcquirersService(
     }
   }
 
-  fun deleteAcquirerSubscription(subscriptionId: UUID): AcquirerSubscription {
+  fun deleteAcquirerSubscription(subscriptionId: UUID) {
     val now = dateTimeHandler.now()
     adminActionAlertsService.noticeAction(
       AdminAction(
@@ -177,7 +177,7 @@ class AcquirersService(
 
     if (subscription.queueName == null && subscription.oauthClientId == null) {
       log.warn("Acquirer does not have a client id or queue name.")
-      return subscription
+      return
     }
 
     if (subscription.oauthClientId != null) {
@@ -199,8 +199,6 @@ class AcquirersService(
         outboundEventQueueService.deleteQueue(deadLetterQueueName)
       }
     }
-
-    return subscription
   }
 
   fun addAcquirer(
@@ -216,7 +214,7 @@ class AcquirersService(
     }
   }
 
-  fun deleteAcquirer(id: UUID): Acquirer {
+  fun deleteAcquirer(id: UUID) {
     val now = dateTimeHandler.now()
     adminActionAlertsService.noticeAction(
       AdminAction(
@@ -227,14 +225,13 @@ class AcquirersService(
         },
       ),
     )
-    val acquirer = acquirerRepository.save(
+    acquirerRepository.save(
       acquirerRepository.findByIdOrNull(id)?.copy(
         whenDeleted = now,
       ) ?: throw AcquirerNotFoundException("Acquirer $id not found"),
     )
     val subscriptions = acquirerSubscriptionRepository.findAllByAcquirerId(id)
     subscriptions.forEach { deleteAcquirerSubscription(it.id) }
-    return acquirer
   }
 
   fun getEnrichmentFieldsForAcquirerSubscription(acquirerSubscription: AcquirerSubscription): List<EnrichmentField> {

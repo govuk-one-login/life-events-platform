@@ -13,8 +13,8 @@ const xmlBuilder = new XMLBuilder()
 const titleOptions = ["Mr", "Mrs"]
 const forenameOptions = ["Tester", ""]
 const surnameOptions = ["SMITH", ""]
-const dateOfBirthOptions = ["1912-02-29", ""]
-const dateOfDeathOptions = ["2012-02-29", ""]
+const dateOfBirthOptions = [new Date(1912, 2, 29), null]
+const dateOfDeathOptions = [new Date(2012, 2, 29), null]
 const genderOptions = ["1", "2"]
 const addressOptions = [
     ["10 Test Street", "Test Town", "Test County"],
@@ -70,6 +70,8 @@ const createDeathRecord = () => {
     const title = getRandomElement(titleOptions)
     const forename = getRandomElement(forenameOptions)
     const surname = getRandomElement(surnameOptions)
+    const dateOfBirth = getRandomElement(dateOfBirthOptions)
+    const dateOfDeath = getRandomElement(dateOfDeathOptions)
     const date = new Date().toISOString().slice(0, 19)
 
     return {
@@ -94,19 +96,19 @@ const createDeathRecord = () => {
             DeceasedMaidenNameType: "",
             DeceasedGender: getRandomElement(genderOptions),
             DeceasedDeathDate: {
-                PersonDeathDate: getRandomElement(dateOfDeathOptions),
+                PersonDeathDate: dateOfBirth?.toISOString().split("T")[0] ?? "",
                 VerificationLevel: "03",
             },
-            PartialMonthOfDeath: "",
-            PartialYearOfDeath: "",
+            PartialMonthOfDeath: dateOfDeath?.getMonth() ?? "",
+            PartialYearOfDeath: dateOfDeath?.getFullYear() ?? "",
             QualifierText: "",
             FreeFormatDeathDate: "",
             DeceasedBirthDate: {
-                PersonDeathDate: getRandomElement(dateOfBirthOptions),
+                PersonBirthDate: dateOfBirth?.toISOString().split("T")[0] ?? "",
                 VerificationLevel: "",
             },
-            PartialMonthOfBirth: "",
-            PartialYearOfBirth: "",
+            PartialMonthOfBirth: dateOfBirth?.getMonth() ?? "",
+            PartialYearOfBirth: dateOfBirth?.getFullYear() ?? "",
             FreeFormatBirthDate: "",
             DeceasedAddress: {
                 Flat: "",

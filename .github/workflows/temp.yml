@@ -1,5 +1,11 @@
 name: TEMP
 
+
+permissions:
+  id-token: write
+  contents: read
+  checks: write
+  
 on:
   pull_request:
 

@@ -116,4 +116,6 @@ module "gro_ingestion_service" {
   auth_url                = module.data_share_service.token_auth_url
   publisher_client_id     = module.data_share_service.gro_ingestion_client_id
   publisher_client_secret = module.data_share_service.gro_ingestion_client_secret
+
+  insert_xml_lambda_schedule = "rate(1 hour)"
 }

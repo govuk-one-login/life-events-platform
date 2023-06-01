@@ -8,3 +8,5 @@ export interface EventResponse<T> {
 export type EnrichEventResponse = EventResponse<EventRecord>
 
 export type DeleteEventResponse = EventResponse<string>
+
+export type InsertXmlResponse = EventResponse<string>

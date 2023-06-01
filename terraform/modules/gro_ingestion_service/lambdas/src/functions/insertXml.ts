@@ -57,7 +57,7 @@ const uploadXml = async (xml: string, fileKey: string) => {
 }
 
 const generateXml = (numberOfRecords: number) => {
-    const deathRecords = [...Array(numberOfRecords)].map(_ => createDeathRecord())
+    const deathRecords = [...Array(numberOfRecords)].map(createDeathRecord)
     return xmlBuilder.build({
         DeathRegistrationGroup: {
             DeathRegistration: deathRecords,

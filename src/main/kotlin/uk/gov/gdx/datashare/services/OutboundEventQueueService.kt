@@ -214,7 +214,7 @@ class OutboundEventQueueService(
     if (acquirerPrincipal == null) {
       return """
         {
-          "Version": "2012-10-12",
+          "Version": "2012-10-17",
           "Id": "cross-account-access",
           "Statement": [
             {
@@ -233,7 +233,7 @@ class OutboundEventQueueService(
     }
     return """
       {
-        "Version": "2012-10-12",
+        "Version": "2012-10-17",
         "Id": "cross-account-access",
         "Statement": [
           {

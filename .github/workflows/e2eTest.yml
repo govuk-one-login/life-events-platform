@@ -6,13 +6,14 @@ on:
       environment:
         required: true
         type: string
-    secrets:
+    vars:
       API_BASE_URL:
         required: true
       COGNITO_BASE_URL:
         required: true
       COGNITO_CLIENT_ID:
         required: true
+    secrets:
       COGNITO_CLIENT_SECRET:
         required: true
 
@@ -22,9 +23,9 @@ jobs:
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     env:
-      API_URL: ${{ secrets.API_URL }}
-      COGNITO_TOKEN_URL: ${{ secrets.COGNITO_TOKEN_URL }}
-      COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+      API_URL: ${{ vars.API_URL }}
+      COGNITO_TOKEN_URL: ${{ vars.COGNITO_TOKEN_URL }}
+      COGNITO_CLIENT_ID: ${{ vars.COGNITO_CLIENT_ID }}
       COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
     steps:
       - name: Checkout code

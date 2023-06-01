@@ -322,7 +322,7 @@ class OutboundEventQueueServiceTest {
       kmsClient.enableKeyRotation(
         withArg<EnableKeyRotationRequest> {
           assertThat(it.keyId()).isEqualTo("dlqKeyId")
-        }
+        },
       )
 
       kmsClient.createAlias(
@@ -387,7 +387,7 @@ class OutboundEventQueueServiceTest {
       kmsClient.enableKeyRotation(
         withArg<EnableKeyRotationRequest> {
           assertThat(it.keyId()).isEqualTo("keyId")
-        }
+        },
       )
 
       kmsClient.createAlias(

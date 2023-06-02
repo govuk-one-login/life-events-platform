@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.integration.health
+package uk.gov.gdx.datashare.integration.actuator
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

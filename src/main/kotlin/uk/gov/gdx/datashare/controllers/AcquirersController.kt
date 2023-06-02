@@ -92,7 +92,7 @@ class AcquirersController(
     description = "Mark an acquirer as deleted. This will also soft delete all acquirer subscriptions linked to this acquirer, and delete the queues or cognito clients for those subscriptions, if no more subscriptions are attached to the queue or cognito client.",
     responses = [
       ApiResponse(
-        responseCode = "201",
+        responseCode = "204",
         description = "Acquirer Deleted",
       ),
       ApiResponse(
@@ -120,7 +120,7 @@ class AcquirersController(
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Acquirer Subscriptions",
-    description = "Need scope of events/admin",
+    description = "Get all acquirer subscriptions. Needs scope of events/admin",
     responses = [
       ApiResponse(
         responseCode = "200",

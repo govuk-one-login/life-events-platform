@@ -89,10 +89,10 @@ class SuppliersController(
   @DeleteMapping("/{supplierId}")
   @Operation(
     summary = "Delete Supplier",
-    description = "Need scope of events/admin",
+    description = "Mark a supplier and all its subscriptions as deleted. This will also delete any cognito client for this supplier.",
     responses = [
       ApiResponse(
-        responseCode = "201",
+        responseCode = "204",
         description = "Supplier Deleted",
       ),
       ApiResponse(
@@ -120,7 +120,7 @@ class SuppliersController(
   @GetMapping("/subscriptions")
   @Operation(
     summary = "Get Supplier Subscriptions",
-    description = "Mark a supplier as deleted. This will also soft delete all supplier subscriptions linked to this supplier, and delete the cognito clients for those subscriptions, if no more subscriptions are attached to them.",
+    description = "Get all supplier subscriptions. Needs scope of events/admin.",
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -152,7 +152,7 @@ class SuppliersController(
     description = "Mark a supplier subscription as deleted. This will also delete the cognito client for this subscription, if no more subscriptions are attached to it.",
     responses = [
       ApiResponse(
-        responseCode = "201",
+        responseCode = "204",
         description = "Supplier Subscription Deleted",
       ),
       ApiResponse(

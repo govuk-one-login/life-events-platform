@@ -47,3 +47,8 @@ variable "enrich_event_function_arn" {
 variable "enrich_event_function_name" {
   type = string
 }
+
+variable "admin_alerts_enabled" {
+  type    = bool
+  default = true
+}

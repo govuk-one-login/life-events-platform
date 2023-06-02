@@ -49,6 +49,6 @@ variable "enrich_event_function_name" {
 }
 
 variable "admin_alerts_enabled" {
-  type = bool
+  type    = bool
   default = true
 }

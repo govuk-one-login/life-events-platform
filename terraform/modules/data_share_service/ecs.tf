@@ -8,7 +8,7 @@ resource "aws_ecs_cluster" "main" {
 }
 
 locals {
-  rds_db_url = "jdbc:aws-wrapper:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?wrapperPlugins=iam,failover&sslmode=verify-full"
+  rds_db_url         = "jdbc:aws-wrapper:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?wrapperPlugins=iam,failover&sslmode=verify-full"
   admin_action_alert = var.admin_alerts_enabled ? { name : "ADMIN_ACTION_ALERT_SNS_TOPIC_ARN", value : module.sns_admin_alerts.topic_arn } : {}
 }
 

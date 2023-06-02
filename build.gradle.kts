@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.util.profile
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -120,7 +121,15 @@ tasks {
     }
   }
   withType<Test> {
-    useJUnitPlatform()
+    useJUnitPlatform {
+      excludeTags = setOf("E2E")
+    }
+  }
+}
+
+tasks.register<Test>("e2eTest") {
+  useJUnitPlatform {
+    includeTags = setOf("E2E")
   }
 }
 

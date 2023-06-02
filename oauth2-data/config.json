@@ -69,6 +69,36 @@
             ],
             "client_id": "everything"
           }
+        },
+        {
+          "requestParam": "client_secret",
+          "match": "publish",
+          "claims": {
+            "sub": "len",
+            "scope": "events/publish",
+            "client_id": "publish",
+            "client_secret": "publish"
+          }
+        },
+        {
+          "requestParam": "client_secret",
+          "match": "consume",
+          "claims": {
+            "sub": "consume",
+            "scope": "events/consume",
+            "client_id": "consume",
+            "client_secret": "consume"
+          }
+        },
+        {
+          "requestParam": "client_secret",
+          "match": "admin",
+          "claims": {
+            "sub": "admin",
+            "scope": "events/admin",
+            "client_id": "admin",
+            "client_secret": "admin"
+          }
         }
       ]
     }

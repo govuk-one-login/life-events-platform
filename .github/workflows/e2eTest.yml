@@ -25,13 +25,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Checkout code
-        run: |
-          echo $API_URL
-          echo $COGNITO_TOKEN_URL
-          echo $COGNITO_CLIENT_ID
-          echo $COGNITO_CLIENT_SECRET
-
       - name: Setup Java
         uses: actions/setup-java@v3
         with:

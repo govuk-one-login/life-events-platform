@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -30,26 +31,48 @@ class ResourceServerConfiguration {
       .roles(role)
   }
 
+  @Order(1)
   @Bean
-  fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+  fun permittedFilterChain(http: HttpSecurity): SecurityFilterChain {
     return http
       .csrf { it.disable() } // csrf not needed on a rest api
-      .authorizeHttpRequests { it ->
-        it.requestMatchers(
-          "/favicon.ico",
-          "/health/**",
-          "/info",
-          "/v3/api-docs/**",
-          "/v3/api-docs.yaml",
-          "/swagger-ui/**",
-          "/swagger-ui.html",
-          "/metrics/**",
-        )
-          .permitAll()
-        it.requestMatchers("/prometheus").hasRole("ACTUATOR").and().httpBasic()
+      .securityMatcher(
+        "/favicon.ico",
+        "/health/**",
+        "/info",
+        "/v3/api-docs/**",
+        "/v3/api-docs.yaml",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/metrics/**",
+      )
+      .authorizeHttpRequests {
+        it.anyRequest().permitAll()
+      }
+      .build()
+  }
+
+  @Order(2)
+  @Bean
+  fun prometheusFilterChain(http: HttpSecurity): SecurityFilterChain {
+    return http
+      .csrf { it.disable() }
+      .securityMatcher("/prometheus")
+      .authorizeHttpRequests {
+        it.anyRequest().hasRole("ACTUATOR")
+      }
+      .httpBasic {}
+      .build()
+  }
+
+  @Bean
+  fun apiFilterChain(http: HttpSecurity): SecurityFilterChain {
+    return http
+      .csrf { it.disable() }
+      .authorizeHttpRequests {
         it.anyRequest().authenticated()
       }
-      .oauth2ResourceServer { it.jwt() }
+      .oauth2ResourceServer { it.jwt {} }
       .build()
   }
 }

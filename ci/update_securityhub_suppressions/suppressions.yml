@@ -346,6 +346,8 @@ Suppressions:
         - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-publish-event
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-split-xml
         - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-split-xml
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-insert-xml
+        - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-insert-xml
       notes: >
         These Lambdas are either: proxies, that will only access our systems over the public internet; codedeploy
         smoke testing lambdas; or a suppressor that only accesses AWS services for suppressions. We have logging for all
@@ -370,6 +372,8 @@ Suppressions:
         - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-publish-event
         - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-split-xml
         - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-split-xml
+        - arn:aws:lambda:eu-west-2:776473272850:function:dev-gro-ingestion-lambda-function-insert-xml
+        - arn:aws:lambda:eu-west-2:776473272850:function:demo-gro-ingestion-lambda-function-insert-xml
       notes: >
         These Lambdas are either: proxies, that will only access our systems over the public internet; or a
         suppressor that only accesses AWS services for suppressions. They have no access to our actual system.

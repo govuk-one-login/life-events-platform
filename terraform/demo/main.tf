@@ -1,5 +1,5 @@
 locals {
-  env = "demo"
+  env          = "demo"
   default_tags = {
     Product     = "Government Data Exchange"
     Environment = local.env
@@ -66,7 +66,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "lev_api" {
-  source = "../modules/lev_api"
+  source    = "../modules/lev_api"
   providers = {
     aws = aws.eu-west-1
   }
@@ -81,7 +81,7 @@ module "route53" {
 }
 
 module "data_share_service" {
-  source = "../modules/data_share_service"
+  source    = "../modules/data_share_service"
   providers = {
     aws.us-east-1 = aws.us-east-1
     aws.eu-west-1 = aws.eu-west-1
@@ -103,6 +103,8 @@ module "data_share_service" {
   delete_event_function_name = module.gro_ingestion_service.delete_event_function_name
   enrich_event_function_arn  = module.gro_ingestion_service.enrich_event_function_arn
   enrich_event_function_name = module.gro_ingestion_service.enrich_event_function_name
+
+  admin_alerts_enabled = false
 }
 
 module "gro_ingestion_service" {

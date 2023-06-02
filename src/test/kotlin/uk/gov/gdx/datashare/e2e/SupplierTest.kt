@@ -11,6 +11,14 @@ class SupplierTest {
   private val underTest = Api()
 
   @Test
+  fun `validate env variables`() {
+    assertThat(Config.apiUrl).hasSize(44)
+    assertThat(Config.cognitoTokenUrl).hasSize(72)
+    assertThat(Config.adminClientId).hasSize(26)
+    assertThat(Config.adminClientSecret).hasSize(28)
+  }
+  
+  @Test
   fun `create and delete supplier with cognito client`() {
     val clientName = UUID.randomUUID().toString()
     val createResponse = underTest.createSupplierWithCognitoClient(clientName)

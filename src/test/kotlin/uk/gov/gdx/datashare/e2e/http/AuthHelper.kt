@@ -9,6 +9,11 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 fun getAdminAuthToken(): String {
+  println(Config.apiUrl)
+  println(Config.cognitoTokenUri)
+  println(Config.adminClientId)
+  println(Config.adminClientSecret)
+
   val postData = "grant_type=client_credentials&client_id=${Config.adminClientId}&client_secret=${Config.adminClientSecret}"
 
   val client = HttpClient.newHttpClient()

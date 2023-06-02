@@ -8,8 +8,7 @@ resource "aws_ecs_cluster" "main" {
 }
 
 locals {
-  rds_db_url         = "jdbc:aws-wrapper:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?wrapperPlugins=iam,failover&sslmode=verify-full"
-  admin_action_alert = var.admin_alerts_enabled ? { name : "ADMIN_ACTION_ALERT_SNS_TOPIC_ARN", value : module.sns_admin_alerts.topic_arn } : {}
+  rds_db_url = "jdbc:aws-wrapper:postgresql://${aws_rds_cluster.rds_postgres_cluster.endpoint}:${aws_rds_cluster.rds_postgres_cluster.port}/${aws_rds_cluster.rds_postgres_cluster.database_name}?wrapperPlugins=iam,failover&sslmode=verify-full"
 }
 
 resource "aws_ecs_task_definition" "gdx_data_share_poc" {
@@ -66,7 +65,7 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         { "name" : "TASK_ROLE_ARN", "value" : aws_iam_role.ecs_task.arn },
 
         { "name" : "AWS_XRAY_CONTEXT_MISSING", "value" : "IGNORE_ERROR" },
-        local.admin_action_alert,
+        { name : "ADMIN_ACTION_ALERT_SNS_TOPIC_ARN", value : var.admin_alerts_enabled ? module.sns_admin_alerts.topic_arn : null },
 
         { "name" : "DELETE_EVENT_LAMBDA_FUNCTION_NAME", "value" : var.delete_event_function_name },
         { "name" : "ENRICH_EVENT_LAMBDA_FUNCTION_NAME", "value" : var.enrich_event_function_name },

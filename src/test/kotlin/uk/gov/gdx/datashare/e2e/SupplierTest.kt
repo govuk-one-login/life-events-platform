@@ -17,7 +17,7 @@ class SupplierTest {
     assertThat(Config.adminClientId).hasSize(26)
     assertThat(Config.adminClientSecret).hasSize(28)
   }
-  
+
   @Test
   fun `create and delete supplier with cognito client`() {
     val clientName = UUID.randomUUID().toString()

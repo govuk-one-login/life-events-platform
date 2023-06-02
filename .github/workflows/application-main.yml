@@ -41,6 +41,8 @@ jobs:
     uses: ./.github/workflows/e2eTest.yml
     with:
       environment: dev
+    secrets:
+      COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
 
   deploy-demo:
     name: Deploy demo environment

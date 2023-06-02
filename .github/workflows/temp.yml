@@ -5,7 +5,7 @@ permissions:
   id-token: write
   contents: read
   checks: write
-  
+
 on:
   pull_request:
 
@@ -15,3 +15,5 @@ jobs:
     uses: ./.github/workflows/e2eTest.yml
     with:
       environment: dev
+    secrets:
+      COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}

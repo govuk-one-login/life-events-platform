@@ -7,20 +7,26 @@ on:
         required: true
         type: string
 
-env:
-  API_URL: ${{ vars.API_URL }}
-  COGNITO_TOKEN_URL: ${{ vars.COGNITO_TOKEN_URL }}
-  COGNITO_CLIENT_ID: ${{ vars.COGNITO_CLIENT_ID }}
-  COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
-
 jobs:
   e2e-test:
     name: Run E2E tests
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ vars.API_URL }}
+      COGNITO_TOKEN_URL: ${{ vars.COGNITO_TOKEN_URL }}
+      COGNITO_CLIENT_ID: ${{ vars.COGNITO_CLIENT_ID }}
+      COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Checkout code
+        run: |
+          echo $API_URL
+          echo $COGNITO_TOKEN_URL
+          echo $COGNITO_CLIENT_ID
+          echo $COGNITO_CLIENT_SECRET
 
       - name: Setup Java
         uses: actions/setup-java@v3

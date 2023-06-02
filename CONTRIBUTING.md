@@ -19,7 +19,7 @@ Once you have a `gds-users` IAM user, you will need to set up a role for you to 
 into `terraform/shared/main.tf` and updating the relevant list with your name. After the next terraform apply, you will
 have an account that you can assume role into.
 
-#### Console access:
+#### Console access
 
 1. Log in to the `gds-users` account
 2. Assume your role by:
@@ -27,7 +27,7 @@ have an account that you can assume role into.
     2. In the role switch, enter the correct account and the created role, for example `[name]-admin`
     3. Switch role
 
-#### Terraform access:
+#### Terraform access
 
 1. Set up an access key id and secret access key for yourself to access `gds-users`
 2. Set up a profile (in my case called gds) in the aws credentials files for that user
@@ -84,7 +84,7 @@ Generally, development is easier with
 
 For a new configuration
 
-![](./doc/contributing-setup.png)
+![IntelliJ JVM Configuration](./doc/contributing-setup.png)
 
 - From run/debug configurations, create a new Spring Boot configuration
 - under "Runs on" select "Docker Compose" under "Create New Target"
@@ -93,6 +93,7 @@ For a new configuration
 
 - If you have issues running like not being able to find localstack, manually spinning up services may help. In a
   terminal, run
-  ```
+  
+  ```sh
   docker-compose up datashare-db oauth2 localstack -d
   ```

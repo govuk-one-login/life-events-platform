@@ -54,6 +54,6 @@ variable "admin_alerts_enabled" {
 }
 
 variable "database_tunnel_alerts_enabled" {
-  type = bool
+  type    = bool
   default = true
 }

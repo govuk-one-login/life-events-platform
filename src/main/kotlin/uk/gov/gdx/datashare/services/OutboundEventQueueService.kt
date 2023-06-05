@@ -1,5 +1,7 @@
 package uk.gov.gdx.datashare.services
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.kms.KmsClient
@@ -18,10 +20,15 @@ class OutboundEventQueueService(
   @Value("\${environment}") private val environment: String,
   @Value("\${task-role-arn}") private val taskRoleArn: String,
 ) {
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
   private val awsQueues: MutableMap<String, AwsQueue> = mutableMapOf()
   private val accountId by lazy { StsClient.create().callerIdentity.account() }
   private val kmsClient by lazy { KmsClient.create() }
   private val sqsClient by lazy { SqsClient.create() }
+  private val awsKeyAliases by lazy { getKmsAliases() }
 
   fun sendMessage(queueName: String, message: String, id: String) {
     val queue = getQueue(queueName)
@@ -46,10 +53,13 @@ class OutboundEventQueueService(
     return createQueue(queueName, keyId, 4, dlqArn, acquirerPrincipal)
   }
 
-  fun deleteQueue(queueName: String) {
-    val queue = getQueue(queueName)
-    val deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queue.queueUrl).build()
-    sqsClient.deleteQueue(deleteQueueRequest)
+  fun deleteAcquirerQueueAndDlq(queueName: String) {
+    val dlqName = dlqName(queueName)
+    log.info("Deleting queues: $queueName and $dlqName")
+    deleteQueue(queueName)
+    deleteKeyForQueue(queueName)
+    deleteQueue(dlqName)
+    deleteKeyForQueue(dlqName)
   }
 
   private fun createKeyForQueue(queueName: String, acquirerPrincipal: String? = null): String {
@@ -75,11 +85,13 @@ class OutboundEventQueueService(
 
   private fun aliasKey(queueName: String, keyId: String?) {
     val aliasRequest = CreateAliasRequest.builder()
-      .aliasName("alias/$environment/sqs-$queueName")
+      .aliasName(generateAlias(queueName))
       .targetKeyId(keyId)
       .build()
     kmsClient.createAlias(aliasRequest)
   }
+
+  private fun generateAlias(queueName: String) = "alias/$environment/sqs-$queueName"
 
   private fun tagKey(keyId: String?) {
     val tagRequest = TagResourceRequest.builder()
@@ -269,6 +281,27 @@ class OutboundEventQueueService(
     """.trimIndent()
   }
 
+  private fun deleteQueue(queueName: String) {
+    val queue = getQueue(queueName)
+    val deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queue.queueUrl).build()
+    queue.sqsClient.deleteQueue(deleteQueueRequest)
+  }
+
+  private fun deleteKeyForQueue(queueName: String) {
+    val alias = generateAlias(queueName)
+    val keyId = getKeyAlias(alias).targetKeyId()
+    scheduleKeyDeletion(keyId)
+  }
+
+  private fun scheduleKeyDeletion(keyId: String) {
+    val scheduleKeyDeletionRequest = ScheduleKeyDeletionRequest.builder()
+      .keyId(keyId)
+      .pendingWindowInDays(7)
+      .build()
+
+    kmsClient.scheduleKeyDeletion(scheduleKeyDeletionRequest)
+  }
+
   private fun getQueue(queueName: String): AwsQueue {
     return awsQueues.computeIfAbsent(queueName) {
       val queueConfig = SqsProperties.QueueConfig(queueName = it)
@@ -276,4 +309,14 @@ class OutboundEventQueueService(
       AwsQueue(it, sqsClient, it)
     }
   }
+
+  private fun getKeyAlias(alias: String): AliasListEntry {
+    return awsKeyAliases.computeIfAbsent(alias) {
+      val aliases = kmsClient.listAliases().aliases()
+      aliases.first { alias -> alias.aliasName() == it }
+    }
+  }
+
+  private fun getKmsAliases(): MutableMap<String, AliasListEntry> =
+    kmsClient.listAliases().aliases().associateBy { it.aliasName() }.toMutableMap()
 }

@@ -43,7 +43,6 @@ class SupplierSubscriptionRepositoryTest(
       .isEmpty()
   }
 
-
   @Test
   fun `findAllByOauthClientIdAndWhenDeletedIsNull returns the correct values`() {
     val supplier = supplierRepository.save(SupplierBuilder().build())
@@ -122,7 +121,6 @@ class SupplierSubscriptionRepositoryTest(
       .isNotEqualTo(incorrectClientIdSubscription)
       .isNotEqualTo(incorrectEventTypeSubscription)
   }
-
 
   @Test
   fun `findByClientIdAndEventTypeAndWhenDeletedIsNull does not return a deleted subscription`() {

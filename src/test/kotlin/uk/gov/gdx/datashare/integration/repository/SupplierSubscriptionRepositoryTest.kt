@@ -81,6 +81,11 @@ class SupplierSubscriptionRepositoryTest(
       subscriptions.filter { s -> s.supplierSubscriptionId == whenDeletedNotNullSubscription.id },
     )
       .isEmpty()
+
+    assertThat(
+      subscriptions.filter { s -> s.supplierSubscriptionId == incorrectClientIdSubscription.id },
+    )
+      .isEmpty()
   }
 
   @Test
@@ -176,6 +181,11 @@ class SupplierSubscriptionRepositoryTest(
 
     assertThat(
       subscriptions.filter { s -> s.supplierSubscriptionId == subscriptionWithIncorrectSupplier.id },
+    )
+      .isEmpty()
+
+    assertThat(
+      subscriptions.filter { s -> s.supplierSubscriptionId == deletedSubscription.id },
     )
       .isEmpty()
   }

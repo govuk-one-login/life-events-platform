@@ -134,7 +134,12 @@ class AcquirerSubscriptionRepositoryTest(
       .hasSize(1)
 
     assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == whenDeletedNotNullSubscription.id || s.acquirerSubscriptionId == incorrectClientIdSubscription.id },
+      subscriptions.filter { s -> s.acquirerSubscriptionId == whenDeletedNotNullSubscription.id },
+    )
+      .isEmpty()
+
+    assertThat(
+      subscriptions.filter { s -> s.acquirerSubscriptionId == incorrectClientIdSubscription.id },
     )
       .isEmpty()
   }
@@ -171,7 +176,12 @@ class AcquirerSubscriptionRepositoryTest(
       .hasSize(1)
 
     assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == whenDeletedNotNullSubscription.id || s.acquirerSubscriptionId == incorrectQueueNameSubscription.id },
+      subscriptions.filter { s -> s.acquirerSubscriptionId == whenDeletedNotNullSubscription.id },
+    )
+      .isEmpty()
+
+    assertThat(
+      subscriptions.filter { s -> s.acquirerSubscriptionId == incorrectQueueNameSubscription.id },
     )
       .isEmpty()
   }
@@ -221,7 +231,17 @@ class AcquirerSubscriptionRepositoryTest(
       .hasSize(1)
 
     assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == whenDeletedNotNullSubscription.id || s.acquirerSubscriptionId == incorrectClientIdSubscription.id || s.acquirerSubscriptionId == incorrectEventTypeSubscription.id },
+      subscriptions.filter { s -> s.acquirerSubscriptionId == whenDeletedNotNullSubscription.id },
+    )
+      .isEmpty()
+
+    assertThat(
+      subscriptions.filter { s -> s.acquirerSubscriptionId == incorrectClientIdSubscription.id },
+    )
+      .isEmpty()
+
+    assertThat(
+      subscriptions.filter { s -> s.acquirerSubscriptionId == incorrectEventTypeSubscription.id },
     )
       .isEmpty()
   }
@@ -325,7 +345,12 @@ class AcquirerSubscriptionRepositoryTest(
       .hasSize(1)
 
     assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == subscriptionWithIncorrectAcquirer.id || s.acquirerSubscriptionId == deletedSubscription.id },
+      subscriptions.filter { s -> s.acquirerSubscriptionId == subscriptionWithIncorrectAcquirer.id },
+    )
+      .isEmpty()
+
+    assertThat(
+      subscriptions.filter { s -> s.acquirerSubscriptionId == deletedSubscription.id },
     )
       .isEmpty()
   }

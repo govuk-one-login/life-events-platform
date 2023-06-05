@@ -1,4 +1,6 @@
 resource "aws_cloudwatch_event_rule" "tunnel_notification" {
+  count = var.database_tunnel_alerts_enabled ? 1 : 0
+
   name        = "${var.environment}-bastion-tunnel-notification"
   description = "Send an SNS notification when a tunnel is initiated to the bastion host"
 
@@ -13,7 +15,9 @@ resource "aws_cloudwatch_event_rule" "tunnel_notification" {
 }
 
 resource "aws_cloudwatch_event_target" "tunnel_notification" {
-  rule      = aws_cloudwatch_event_rule.tunnel_notification.name
+  count = var.database_tunnel_alerts_enabled ? 1 : 0
+
+  rule      = aws_cloudwatch_event_rule.tunnel_notification[0].name
   target_id = "SendToSNS"
   arn       = module.sns.topic_arn
 }

@@ -104,7 +104,8 @@ module "data_share_service" {
   enrich_event_function_arn  = module.gro_ingestion_service.enrich_event_function_arn
   enrich_event_function_name = module.gro_ingestion_service.enrich_event_function_name
 
-  admin_alerts_enabled = false
+  admin_alerts_enabled           = false
+  database_tunnel_alerts_enabled = false
 }
 
 module "gro_ingestion_service" {

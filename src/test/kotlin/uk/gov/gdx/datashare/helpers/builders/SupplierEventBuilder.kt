@@ -1,24 +1,22 @@
 package uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders
 
-import uk.gov.gdx.datashare.repositories.AcquirerEvent
+import uk.gov.gdx.datashare.repositories.SupplierEvent
 import java.time.LocalDateTime
 import java.util.*
 
-data class AcquirerEventBuilder(
+data class SupplierEventBuilder(
   var id: UUID = UUID.randomUUID(),
-  var supplierEventId: UUID = UUID.randomUUID(),
-  var acquirerSubscriptionId: UUID = UUID.randomUUID(),
+  var supplierSubscriptionId: UUID = UUID.randomUUID(),
   var dataId: String = "",
   var eventTime: LocalDateTime? = null,
   var createdAt: LocalDateTime = LocalDateTime.now(),
   var deletedAt: LocalDateTime? = null,
   var new: Boolean = true,
 ) {
-  fun build(): AcquirerEvent {
-    return AcquirerEvent(
+  fun build(): SupplierEvent {
+    return SupplierEvent(
       id = id,
-      supplierEventId = supplierEventId,
-      acquirerSubscriptionId = acquirerSubscriptionId,
+      supplierSubscriptionId = supplierSubscriptionId,
       dataId = dataId,
       eventTime = eventTime,
       createdAt = createdAt,

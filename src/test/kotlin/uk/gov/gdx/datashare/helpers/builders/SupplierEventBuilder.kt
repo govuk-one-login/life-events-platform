@@ -11,7 +11,7 @@ data class SupplierEventBuilder(
   var eventTime: LocalDateTime? = null,
   var createdAt: LocalDateTime = LocalDateTime.now(),
   var deletedAt: LocalDateTime? = null,
-  var new: Boolean = false,
+  var new: Boolean = true,
 ) {
   fun build(): SupplierEvent {
     return SupplierEvent(

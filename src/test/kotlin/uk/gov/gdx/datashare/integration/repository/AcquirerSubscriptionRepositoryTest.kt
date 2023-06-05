@@ -263,7 +263,6 @@ class AcquirerSubscriptionRepositoryTest(
       supplierEventRepository.save(
         SupplierEventBuilder(
           supplierSubscriptionId = supplierSubscription.id,
-          new = true,
         ).build(),
       )
 
@@ -271,7 +270,6 @@ class AcquirerSubscriptionRepositoryTest(
       AcquirerEventBuilder(
         acquirerSubscriptionId = returnedSubscription.id,
         supplierEventId = supplierEvent.id,
-        new = true,
       ).build(),
     )
 
@@ -302,7 +300,6 @@ class AcquirerSubscriptionRepositoryTest(
       supplierEventRepository.save(
         SupplierEventBuilder(
           supplierSubscriptionId = supplierSubscription.id,
-          new = true,
         ).build(),
       )
 
@@ -310,7 +307,6 @@ class AcquirerSubscriptionRepositoryTest(
       AcquirerEventBuilder(
         acquirerSubscriptionId = returnedSubscription.id,
         supplierEventId = supplierEvent.id,
-        new = true,
       ).build(),
     )
 

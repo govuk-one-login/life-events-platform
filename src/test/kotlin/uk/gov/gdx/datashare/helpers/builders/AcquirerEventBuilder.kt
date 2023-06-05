@@ -12,7 +12,7 @@ data class AcquirerEventBuilder(
   var eventTime: LocalDateTime? = null,
   var createdAt: LocalDateTime = LocalDateTime.now(),
   var deletedAt: LocalDateTime? = null,
-  var new: Boolean = false,
+  var new: Boolean = true,
 ) {
   fun build(): AcquirerEvent {
     return AcquirerEvent(

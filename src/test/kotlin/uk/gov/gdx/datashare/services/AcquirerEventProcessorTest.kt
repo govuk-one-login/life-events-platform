@@ -36,6 +36,7 @@ class AcquirerEventProcessorTest {
     }.build()
     val acquirerEvent = AcquirerEventBuilder().also {
       it.acquirerSubscriptionId = acquirerSubscription.id
+      it.new = false
     }.build()
     every { acquirerSubscriptionRepository.findByAcquirerSubscriptionIdAndQueueNameIsNotNull(any<UUID>()) }
       .returns(acquirerSubscription)

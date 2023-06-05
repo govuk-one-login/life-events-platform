@@ -37,7 +37,6 @@ class SupplierEventRepositoryTest(
       supplierEventRepository.save(
         SupplierEventBuilder(
           supplierSubscriptionId = groSubscription.id,
-          new = true,
           dataId = "test1",
         ).build(),
       )
@@ -45,7 +44,6 @@ class SupplierEventRepositoryTest(
       supplierEventRepository.save(
         SupplierEventBuilder(
           supplierSubscriptionId = nonGroSubscription.id,
-          new = true,
           dataId = "test2",
         ).build(),
       )
@@ -54,7 +52,6 @@ class SupplierEventRepositoryTest(
         SupplierEventBuilder(
           supplierSubscriptionId = groSubscription.id,
           deletedAt = LocalDateTime.now(),
-          new = true,
           dataId = "test3",
         ).build(),
       )
@@ -62,7 +59,6 @@ class SupplierEventRepositoryTest(
       supplierEventRepository.save(
         SupplierEventBuilder(
           supplierSubscriptionId = groSubscription.id,
-          new = true,
           dataId = "test4",
         ).build(),
       )
@@ -74,7 +70,6 @@ class SupplierEventRepositoryTest(
       AcquirerEventBuilder(
         acquirerSubscriptionId = acquirerSubscription.id,
         supplierEventId = supplierEventWithAcquirerEvent.id,
-        new = true,
       ).build(),
     )
 

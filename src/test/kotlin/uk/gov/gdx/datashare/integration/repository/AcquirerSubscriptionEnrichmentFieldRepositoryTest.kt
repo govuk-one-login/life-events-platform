@@ -1,6 +1,6 @@
 package uk.gov.gdx.datashare.integration.repository
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.gdx.datashare.repositories.*
@@ -35,12 +35,12 @@ class AcquirerSubscriptionEnrichmentFieldRepositoryTest(
     val enrichmentFields =
       acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(checkedSubscription.id)
 
-    Assertions.assertThat(
+    assertThat(
       enrichmentFields.filter { e -> e.acquirerSubscriptionEnrichmentFieldId == returnedEnrichmentField.id },
     )
       .hasSize(1)
 
-    Assertions.assertThat(
+    assertThat(
       enrichmentFields.filter { e -> e.acquirerSubscriptionEnrichmentFieldId == notReturnedEnrichmentField.id },
     )
       .isEmpty()
@@ -72,12 +72,12 @@ class AcquirerSubscriptionEnrichmentFieldRepositoryTest(
     val notDeletedEnrichmentFields =
       acquirerSubscriptionEnrichmentFieldRepository.findAllByAcquirerSubscriptionId(notCheckedSubscription.id)
 
-    Assertions.assertThat(
+    assertThat(
       deletedEnrichmentFields.filter { e -> e.acquirerSubscriptionEnrichmentFieldId == enrichmentFieldToDelete.id },
     )
       .isEmpty()
 
-    Assertions.assertThat(
+    assertThat(
       notDeletedEnrichmentFields.filter { e -> e.acquirerSubscriptionEnrichmentFieldId == enrichmentFieldToNotDelete.id },
     )
       .hasSize(1)

@@ -1,6 +1,6 @@
 package uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.repository
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.gdx.datashare.enums.EventType
@@ -32,12 +32,12 @@ class SupplierSubscriptionRepositoryTest(
     val subscriptions =
       supplierSubscriptionRepository.findAllByWhenDeletedIsNull()
 
-    Assertions.assertThat(
+    assertThat(
       subscriptions.filter { s -> s.supplierSubscriptionId == returnedSubscription.id },
     )
       .hasSize(1)
 
-    Assertions.assertThat(
+    assertThat(
       subscriptions.filter { s -> s.supplierSubscriptionId == notReturnedSubscription.id },
     )
       .isEmpty()
@@ -72,13 +72,13 @@ class SupplierSubscriptionRepositoryTest(
     val subscriptions =
       supplierSubscriptionRepository.findAllByClientIdAndWhenDeletedIsNull("test")
 
-    Assertions.assertThat(
+    assertThat(
       subscriptions.filter { s -> s.supplierSubscriptionId == returnedSubscription.id },
     )
       .hasSize(1)
 
-    Assertions.assertThat(
-      subscriptions.filter { s -> s.supplierSubscriptionId == whenDeletedNotNullSubscription.id || s.supplierSubscriptionId == incorrectClientIdSubscription.id },
+    assertThat(
+      subscriptions.filter { s -> s.supplierSubscriptionId == whenDeletedNotNullSubscription.id },
     )
       .isEmpty()
   }
@@ -108,7 +108,7 @@ class SupplierSubscriptionRepositoryTest(
       ).build(),
     )
 
-    Assertions.assertThat(
+    assertThat(
       supplierSubscriptionRepository.findByClientIdAndEventTypeAndWhenDeletedIsNull(
         "test",
         EventType.DEATH_NOTIFICATION,
@@ -134,7 +134,7 @@ class SupplierSubscriptionRepositoryTest(
       ).build(),
     )
 
-    Assertions.assertThat(
+    assertThat(
       supplierSubscriptionRepository.findByClientIdAndEventTypeAndWhenDeletedIsNull(
         "test",
         EventType.DEATH_NOTIFICATION,
@@ -169,13 +169,13 @@ class SupplierSubscriptionRepositoryTest(
 
     val subscriptions = supplierSubscriptionRepository.findAllBySupplierIdAndWhenDeletedIsNull(checkedSupplier.id)
 
-    Assertions.assertThat(
+    assertThat(
       subscriptions.filter { s -> s.supplierSubscriptionId == returnedSubscription.id },
     )
       .hasSize(1)
 
-    Assertions.assertThat(
-      subscriptions.filter { s -> s.supplierSubscriptionId == subscriptionWithIncorrectSupplier.id || s.supplierSubscriptionId == deletedSubscription.id },
+    assertThat(
+      subscriptions.filter { s -> s.supplierSubscriptionId == subscriptionWithIncorrectSupplier.id },
     )
       .isEmpty()
   }

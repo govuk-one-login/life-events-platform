@@ -1,6 +1,6 @@
 package uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.repository
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.gdx.datashare.enums.EventType
@@ -80,13 +80,23 @@ class SupplierEventRepositoryTest(
 
     val events = supplierEventRepository.findGroDeathEventsForDeletion()
 
-    Assertions.assertThat(
+    assertThat(
       events.filter { e -> e.id == returnedSupplierEvent.id },
     )
       .hasSize(1)
 
-    Assertions.assertThat(
-      events.filter { e -> e.id == nonGroSupplierEvent.id || e.id == deletedSupplierEvent.id || e.id == supplierEventWithAcquirerEvent.id },
+    assertThat(
+      events.filter { e -> e.id == nonGroSupplierEvent.id },
+    )
+      .isEmpty()
+
+    assertThat(
+      events.filter { e -> e.id == deletedSupplierEvent.id },
+    )
+      .isEmpty()
+
+    assertThat(
+      events.filter { e -> e.id == supplierEventWithAcquirerEvent.id },
     )
       .isEmpty()
   }

@@ -194,6 +194,8 @@ resource "aws_iam_role_policy_attachment" "ecs_task_sqs_access" {
   policy_arn = aws_iam_policy.ecs_task_sqs_access.arn
 }
 
+# We are enforcing only key deletion for acquirer queues with conditions
+#tfsec:ignore:aws-iam-no-policy-wildcards
 data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
   statement {
     sid = "manageAcquirerQueues"
@@ -230,6 +232,7 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
       variable = "kms:KeyUsage"
     }
   }
+
   statement {
     sid = "deleteExistingKeys"
     actions = [
@@ -248,6 +251,7 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
       variable = "kms:ResourceAliases"
     }
   }
+
   statement {
     # This allows an alias to be created, but does not allow it to be attached to a key. The key policy must grant
     # CreateAlias permission, so the application can only alias keys it creates

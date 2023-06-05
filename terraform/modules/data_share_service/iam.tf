@@ -213,10 +213,9 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
   }
 
   statement {
-    sid = "createAndDeleteKeys"
+    sid = "createNewKeys"
     actions = [
-      "kms:CreateKey",
-      "kms:ScheduleKeyDeletion"
+      "kms:CreateKey"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -232,12 +231,22 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
     }
   }
   statement {
-    sid = "listAliases"
+    sid = "deleteExistingKeys"
     actions = [
-      "kms:ListAliases"
+      "kms:ScheduleKeyDeletion"
     ]
     resources = ["*"]
     effect    = "Allow"
+    condition {
+      test     = "ForAllValues:StringLike"
+      values   = ["alias/${var.environment}/sqs-acq_${var.environment}_*"]
+      variable = "kms:ResourceAliases"
+    }
+    condition {
+      test     = "ForAnyValues:StringLike"
+      values   = ["alias/${var.environment}/sqs-acq_${var.environment}_*"]
+      variable = "kms:ResourceAliases"
+    }
   }
   statement {
     # This allows an alias to be created, but does not allow it to be attached to a key. The key policy must grant

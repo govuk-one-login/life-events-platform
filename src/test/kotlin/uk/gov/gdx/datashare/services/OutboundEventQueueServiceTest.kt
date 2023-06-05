@@ -459,13 +459,6 @@ class OutboundEventQueueServiceTest {
     every { kmsClient.enableKeyRotation(any<EnableKeyRotationRequest>()) } returns mockk<EnableKeyRotationResponse>()
     every { kmsClient.createAlias(any<CreateAliasRequest>()) } returns mockk<CreateAliasResponse>()
     every { kmsClient.tagResource(any<TagResourceRequest>()) } returns mockk<TagResourceResponse>()
-    val queueAliasListEntry = mockk<AliasListEntry>()
-    val dlqAliasListEntry = mockk<AliasListEntry>()
-    every { kmsClient.listAliases().aliases() } returns listOf(queueAliasListEntry, dlqAliasListEntry)
-    every { queueAliasListEntry.aliasName() } returns "alias/$environment/sqs-$queueName"
-    every { dlqAliasListEntry.aliasName() } returns "alias/$environment/sqs-${queueName}_dlq"
-    every { queueAliasListEntry.targetKeyId() } returns "queueKeyId"
-    every { dlqAliasListEntry.targetKeyId() } returns "dlqKeyId"
     every { kmsClient.scheduleKeyDeletion(any<ScheduleKeyDeletionRequest>()) } returns mockk<ScheduleKeyDeletionResponse>()
 
     mockkStatic(SqsClient::class)
@@ -475,6 +468,7 @@ class OutboundEventQueueServiceTest {
     every { sqsClient.createQueue(any<CreateQueueRequest>()) } returns createQueueResponse
     val queueAttributesResponse = mockk<GetQueueAttributesResponse>()
     every { queueAttributesResponse.attributes()[QueueAttributeName.QUEUE_ARN] } returns "dlq:arn" andThen "queue:arn"
+    every { queueAttributesResponse.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID] } returns "queueKeyId" andThen "dlqKeyId"
     every { sqsClient.getQueueAttributes(any<GetQueueAttributesRequest>()) } returns queueAttributesResponse
     every { sqsClient.deleteQueue(any<DeleteQueueRequest>()) } returns mockk<DeleteQueueResponse>()
     every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()).queueUrl() } returns queueUrl

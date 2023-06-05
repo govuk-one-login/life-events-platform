@@ -28,7 +28,6 @@ class OutboundEventQueueService(
   private val accountId by lazy { StsClient.create().callerIdentity.account() }
   private val kmsClient by lazy { KmsClient.create() }
   private val sqsClient by lazy { SqsClient.create() }
-  private val awsKeyAliases by lazy { getKmsAliases() }
 
   fun sendMessage(queueName: String, message: String, id: String) {
     val queue = getQueue(queueName)
@@ -56,10 +55,8 @@ class OutboundEventQueueService(
   fun deleteAcquirerQueueAndDlq(queueName: String) {
     val dlqName = dlqName(queueName)
     log.info("Deleting queues: $queueName and $dlqName")
-    deleteQueue(queueName)
-    deleteKeyForQueue(queueName)
-    deleteQueue(dlqName)
-    deleteKeyForQueue(dlqName)
+    deleteQueueAndKey(queueName)
+    deleteQueueAndKey(dlqName)
   }
 
   private fun createKeyForQueue(queueName: String, acquirerPrincipal: String? = null): String {
@@ -143,13 +140,16 @@ class OutboundEventQueueService(
     return attributes
   }
 
-  private fun getQueueArn(queueUrl: String): String? {
+  private fun getQueueArn(queueUrl: String) = getQueueAttribute(queueUrl, QueueAttributeName.QUEUE_ARN)
+  private fun getQueueKmsId(queueUrl: String) = getQueueAttribute(queueUrl, QueueAttributeName.KMS_MASTER_KEY_ID)
+
+  private fun getQueueAttribute(queueUrl: String, queueAttributeName: QueueAttributeName): String? {
     val request = GetQueueAttributesRequest.builder()
       .queueUrl(queueUrl)
-      .attributeNames(QueueAttributeName.QUEUE_ARN)
+      .attributeNames(queueAttributeName)
       .build()
     val response = sqsClient.getQueueAttributes(request)
-    return response.attributes()[QueueAttributeName.QUEUE_ARN]
+    return response.attributes()[queueAttributeName]
   }
 
   private fun isFifoQueue(queueName: String) = queueName.endsWith(".fifo")
@@ -281,21 +281,14 @@ class OutboundEventQueueService(
     """.trimIndent()
   }
 
-  private fun deleteQueue(queueName: String) {
+  private fun deleteQueueAndKey(queueName: String) {
     val queue = getQueue(queueName)
     val deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queue.queueUrl).build()
     queue.sqsClient.deleteQueue(deleteQueueRequest)
-  }
 
-  private fun deleteKeyForQueue(queueName: String) {
-    val alias = generateAlias(queueName)
-    val keyId = getKeyAlias(alias).targetKeyId()
-    scheduleKeyDeletion(keyId)
-  }
-
-  private fun scheduleKeyDeletion(keyId: String) {
+    val kmsId = getQueueKmsId(queue.queueUrl)
     val scheduleKeyDeletionRequest = ScheduleKeyDeletionRequest.builder()
-      .keyId(keyId)
+      .keyId(kmsId)
       .pendingWindowInDays(7)
       .build()
 
@@ -309,14 +302,4 @@ class OutboundEventQueueService(
       AwsQueue(it, sqsClient, it)
     }
   }
-
-  private fun getKeyAlias(alias: String): AliasListEntry {
-    return awsKeyAliases.computeIfAbsent(alias) {
-      val aliases = kmsClient.listAliases().aliases()
-      aliases.first { alias -> alias.aliasName() == it }
-    }
-  }
-
-  private fun getKmsAliases(): MutableMap<String, AliasListEntry> =
-    kmsClient.listAliases().aliases().associateBy { it.aliasName() }.toMutableMap()
 }

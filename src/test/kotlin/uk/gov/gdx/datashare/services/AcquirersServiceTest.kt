@@ -340,9 +340,6 @@ class AcquirersServiceTest {
     verify(exactly = 1) {
       outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!)
     }
-    verify(exactly = 1) {
-      outboundEventQueueService.deleteAcquirerQueueAndDlq("${queueAcquirerSubscription.queueName}_dlq")
-    }
   }
 
   @Test
@@ -676,9 +673,6 @@ class AcquirersServiceTest {
     verify(exactly = 1) {
       outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!)
     }
-    verify(exactly = 1) {
-      outboundEventQueueService.deleteAcquirerQueueAndDlq("${queueAcquirerSubscription.queueName}_dlq")
-    }
   }
 
   @Test
@@ -759,9 +753,6 @@ class AcquirersServiceTest {
 
     verify(exactly = 1) {
       outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!)
-    }
-    verify(exactly = 1) {
-      outboundEventQueueService.deleteAcquirerQueueAndDlq("${queueAcquirerSubscription.queueName}_dlq")
     }
   }
 

@@ -16,6 +16,8 @@ class SupplierTest {
     val createResponse = underTest.createSupplierWithCognitoClient(clientName)
 
     assertThat(createResponse.clientName).isEqualTo(clientName)
+    assertThat(createResponse.clientId).isNotNull()
+    assertThat(createResponse.clientSecret).isNotNull()
 
     val suppliers = underTest.getSuppliers()
     assertThat(suppliers.filter { it.name == clientName }).hasSize(1)
@@ -24,6 +26,7 @@ class SupplierTest {
 
     val newSupplierSubscriptions = underTest.getSupplierSubscriptionsForSupplier(supplier.id)
     assertThat(newSupplierSubscriptions).hasSize(1)
+    assertThat(newSupplierSubscriptions).first().hasFieldOrPropertyWithValue("clientId", createResponse.clientId)
 
     underTest.deleteSupplier(supplier.id)
 

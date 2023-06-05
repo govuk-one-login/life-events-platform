@@ -11,6 +11,7 @@ on:
         required: true
 
 env:
+  ENVIRONMENT: ${{ inputs.environment }}
   API_URL: ${{ vars.API_URL }}
   COGNITO_TOKEN_URL: ${{ vars.COGNITO_TOKEN_URL }}
   COGNITO_CLIENT_ID: ${{ vars.COGNITO_CLIENT_ID }}

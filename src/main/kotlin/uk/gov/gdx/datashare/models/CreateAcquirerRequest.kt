@@ -56,7 +56,7 @@ class CreateAcquirerRequest(
   )
   val queueName: String? = null,
   @Schema(
-    description = "AWS princiapl to grant access to the SQS queue. Required if queue name is present. Must only be present if queue name is present.",
+    description = "AWS principal to grant access to the SQS queue. Required if queue name is present. Must only be present if queue name is present.",
     required = false,
     example = "arn:aws:iam::000000000000:role/example-role",
   )

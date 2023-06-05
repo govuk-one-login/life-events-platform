@@ -2,9 +2,11 @@ package uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e.http
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import uk.gov.gdx.datashare.config.JacksonConfiguration
+import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
-import uk.gov.gdx.datashare.models.CognitoClientResponse
-import uk.gov.gdx.datashare.models.CreateSupplierRequest
+import uk.gov.gdx.datashare.models.*
+import uk.gov.gdx.datashare.repositories.Acquirer
+import uk.gov.gdx.datashare.repositories.AcquirerSubscription
 import uk.gov.gdx.datashare.repositories.Supplier
 import uk.gov.gdx.datashare.repositories.SupplierSubscription
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e.Config
@@ -31,10 +33,41 @@ class Api {
   fun getSuppliers(): List<Supplier> = getRequest("/suppliers")
   fun getSupplierSubscriptions(): List<SupplierSubscription> =
     getRequest("/suppliers/subscriptions")
+
   fun getSupplierSubscriptionsForSupplier(supplierId: UUID): List<SupplierSubscription> =
     getRequest("/suppliers/$supplierId/subscriptions")
 
   fun deleteSupplier(supplierId: UUID) = deleteRequest("/suppliers/$supplierId")
+
+  fun createAcquirerWithCognitoClient(clientName: String): CreateAcquirerResponse = postRequest(
+    "/admin/acquirer",
+    CreateAcquirerRequest(
+      acquirerName = clientName,
+      eventType = EventType.TEST_EVENT,
+      enrichmentFields = listOf(EnrichmentField.POSTCODE),
+    ),
+  )
+
+  fun createAcquirerWithQueue(clientName: String, queueName: String, principalArn: String): CreateAcquirerResponse =
+    postRequest(
+      "/admin/acquirer",
+      CreateAcquirerRequest(
+        acquirerName = clientName,
+        eventType = EventType.TEST_EVENT,
+        enrichmentFields = listOf(EnrichmentField.POSTCODE),
+        queueName = queueName,
+        principalArn = principalArn,
+      ),
+    )
+
+  fun getAcquirers(): List<Acquirer> = getRequest("/acquirers")
+  fun getAcquirerSubscriptions(): List<AcquirerSubscription> =
+    getRequest("/acquirers/subscriptions")
+
+  fun getAcquirerSubscriptionsForAcquirer(acquirerId: UUID): List<AcquirerSubscriptionDto> =
+    getRequest("/acquirers/$acquirerId/subscriptions")
+
+  fun deleteAcquirer(acquirerId: UUID) = deleteRequest("/acquirers/$acquirerId")
 
   private inline fun <reified O> getRequest(relativePath: String): O {
     val request = baseRequest

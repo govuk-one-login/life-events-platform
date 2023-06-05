@@ -16,6 +16,7 @@ import uk.gov.gdx.datashare.queue.SqsProperties
 class OutboundEventQueueServiceTest {
   private val environment = "test"
   private val awsQueueFactory = mockk<AwsQueueFactory>()
+  private val cloudWatchService = mockk<CloudWatchService>()
   private val sqsProperties = mockk<SqsProperties>()
   private val sqsClient = mockk<SqsClient>(relaxed = true)
   private val stsClient = mockk<StsClient>()
@@ -23,11 +24,13 @@ class OutboundEventQueueServiceTest {
   private val secondSqsClient = mockk<SqsClient>(relaxed = true)
   private val underTest = OutboundEventQueueService(
     awsQueueFactory,
+    cloudWatchService,
     sqsProperties,
     environment,
     "taskRoleArn",
   )
   private val queueName = "queue"
+  private val dlqName = "${queueName}_dlq"
   private val queueUrl = "queueurl"
   private val dlqUrl = "dlqurl"
 
@@ -407,12 +410,25 @@ class OutboundEventQueueServiceTest {
   }
 
   @Test
+  fun `creates cloudwatch alarms`() {
+    mockAws()
+
+    underTest.createAcquirerQueue(queueName, "principal")
+
+    verify(exactly = 1) {
+      cloudWatchService.createSqsAlarm(queueName)
+      cloudWatchService.createSqsAlarm(dlqName)
+    }
+  }
+
+  @Test
   fun `grants the acquirer access to the queue key but not the dlq key`() {
   }
 
   @Test
   fun `deleteAcquirerQueueAndDlq calls delete queues and keys`() {
     mockAws()
+    every { cloudWatchService.deleteSqsAlarm(any()) } just runs
 
     underTest.deleteAcquirerQueueAndDlq(queueName)
 
@@ -424,7 +440,7 @@ class OutboundEventQueueServiceTest {
         any<SqsClient>(),
       )
       awsQueueFactory.getOrDefaultSqsClient(
-        "${queueName}_dlq",
+        dlqName,
         any<SqsProperties.QueueConfig>(),
         any<SqsProperties>(),
         any<SqsClient>(),
@@ -449,6 +465,8 @@ class OutboundEventQueueServiceTest {
           assertThat(it.keyId()).isEqualTo("dlqKeyId")
         },
       )
+      cloudWatchService.deleteSqsAlarm(queueName)
+      cloudWatchService.deleteSqsAlarm(dlqName)
     }
   }
 
@@ -473,5 +491,8 @@ class OutboundEventQueueServiceTest {
     every { sqsClient.deleteQueue(any<DeleteQueueRequest>()) } returns mockk<DeleteQueueResponse>()
     every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()).queueUrl() } returns queueUrl
     every { secondSqsClient.getQueueUrl(any<GetQueueUrlRequest>()).queueUrl() } returns dlqUrl
+
+    every { cloudWatchService.createSqsAlarm(any()) } just runs
+    every { cloudWatchService.deleteSqsAlarm(any()) } just runs
   }
 }

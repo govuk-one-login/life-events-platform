@@ -264,6 +264,16 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
       "arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:alias/${var.environment}/sqs-acq_${var.environment}_*"
     ]
   }
+
+  statement {
+    sid = "createAndDeleteAlarmsForQueues"
+    actions = [
+      "cloudwatch:DeleteAlarms",
+      "cloudwatch:PutMetricAlarm"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_policy" "ecs_task_manage_acquirer_queues" {

@@ -32,47 +32,47 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         }
       ],
       environment = [
-        { "name" : "ENVIRONMENT", "value" : var.environment },
+        { name : "ENVIRONMENT", value : var.environment },
 
-        { "name" : "SERVER_PORT", "value" : "8080" },
+        { name : "SERVER_PORT", value : "8080" },
 
-        { "name" : "API_BASE_URL_LEV", "value" : "https://${var.lev_url}" },
-        { "name" : "API_BASE_URL_ISSUER_URI", "value" : "https://${module.cognito.issuer_domain}" },
-        { "name" : "API_BASE_URL_OAUTH", "value" : "https://${module.cognito.auth_domain}" },
+        { name : "API_BASE_URL_LEV", value : "https://${var.lev_url}" },
+        { name : "API_BASE_URL_ISSUER_URI", value : "https://${module.cognito.issuer_domain}" },
+        { name : "API_BASE_URL_OAUTH", value : "https://${module.cognito.auth_domain}" },
 
-        { "name" : "COGNITO_USER_POOL_ID", "value" : module.cognito.user_pool_id },
-        { "name" : "COGNITO_ACQUIRER_SCOPE", "value" : module.cognito.acquirer_scope },
-        { "name" : "COGNITO_SUPPLIER_SCOPE", "value" : module.cognito.supplier_scope },
-        { "name" : "COGNITO_ADMIN_SCOPE", "value" : module.cognito.admin_scope },
+        { name : "COGNITO_USER_POOL_ID", value : module.cognito.user_pool_id },
+        { name : "COGNITO_ACQUIRER_SCOPE", value : module.cognito.acquirer_scope },
+        { name : "COGNITO_SUPPLIER_SCOPE", value : module.cognito.supplier_scope },
+        { name : "COGNITO_ADMIN_SCOPE", value : module.cognito.admin_scope },
 
-        { "name" : "PROMETHEUS_USER_NAME", "value" : random_password.prometheus_username.result },
-        { "name" : "PROMETHEUS_USER_PASSWORD", "value" : random_password.prometheus_password.result },
+        { name : "PROMETHEUS_USER_NAME", value : random_password.prometheus_username.result },
+        { name : "PROMETHEUS_USER_PASSWORD", value : random_password.prometheus_password.result },
 
-        { "name" : "SPRING_DATASOURCE_URL", "value" : local.rds_db_url },
-        { "name" : "SPRING_DATASOURCE_USERNAME", "value" : var.db_username },
+        { name : "SPRING_DATASOURCE_URL", value : local.rds_db_url },
+        { name : "SPRING_DATASOURCE_USERNAME", value : var.db_username },
 
-        { "name" : "SQS_QUEUES_SUPPLIEREVENT_QUEUENAME", "value" : module.supplier_event_queue.queue_name },
-        { "name" : "SQS_QUEUES_SUPPLIEREVENT_DLQNAME", "value" : module.supplier_event_queue.dead_letter_queue_name },
+        { name : "SQS_QUEUES_SUPPLIEREVENT_QUEUENAME", value : module.supplier_event_queue.queue_name },
+        { name : "SQS_QUEUES_SUPPLIEREVENT_DLQNAME", value : module.supplier_event_queue.dead_letter_queue_name },
 
-        { "name" : "SQS_QUEUES_ACQUIREREVENT_QUEUENAME", "value" : module.acquirer_event_queue.queue_name },
-        { "name" : "SQS_QUEUES_ACQUIREREVENT_DLQNAME", "value" : module.acquirer_event_queue.dead_letter_queue_name },
+        { name : "SQS_QUEUES_ACQUIREREVENT_QUEUENAME", value : module.acquirer_event_queue.queue_name },
+        { name : "SQS_QUEUES_ACQUIREREVENT_DLQNAME", value : module.acquirer_event_queue.dead_letter_queue_name },
 
         {
-          "name" : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL",
-          "value" : "${local.gdx_api_base_url}/swagger-ui/oauth2-redirect.html"
+          name : "SPRINGDOC_SWAGGER_UI_OAUTH2_REDIRECT_URL",
+          value : "${local.gdx_api_base_url}/swagger-ui/oauth2-redirect.html"
         },
 
-        { "name" : "TASK_ROLE_ARN", "value" : aws_iam_role.ecs_task.arn },
+        { name : "TASK_ROLE_ARN", value : aws_iam_role.ecs_task.arn },
 
-        { "name" : "AWS_XRAY_CONTEXT_MISSING", "value" : "IGNORE_ERROR" },
-        { name : "ADMIN_ACTION_ALERT_SNS_TOPIC_ARN", value : var.admin_alerts_enabled ? module.sns_admin_alerts.topic_arn : null },
+        { name : "AWS_XRAY_CONTEXT_MISSING", value : "IGNORE_ERROR" },
+        { name : "ALERT_SNS_TOPIC_ARN", value : var.admin_alerts_enabled ? module.sns_admin_alerts.topic_arn : null },
 
-        { "name" : "DELETE_EVENT_LAMBDA_FUNCTION_NAME", "value" : var.delete_event_function_name },
-        { "name" : "ENRICH_EVENT_LAMBDA_FUNCTION_NAME", "value" : var.enrich_event_function_name },
+        { name : "DELETE_EVENT_LAMBDA_FUNCTION_NAME", value : var.delete_event_function_name },
+        { name : "ENRICH_EVENT_LAMBDA_FUNCTION_NAME", value : var.enrich_event_function_name },
       ]
       secrets = [
-        { "name" : "API_BASE_LEV_API_CLIENT_NAME", "valueFrom" : aws_ssm_parameter.lev_api_client_name.arn },
-        { "name" : "API_BASE_LEV_API_CLIENT_USER", "valueFrom" : aws_ssm_parameter.lev_api_client_user.arn },
+        { name : "API_BASE_LEV_API_CLIENT_NAME", valueFrom : aws_ssm_parameter.lev_api_client_name.arn },
+        { name : "API_BASE_LEV_API_CLIENT_USER", valueFrom : aws_ssm_parameter.lev_api_client_user.arn },
       ]
       logConfiguration : {
         logDriver : "awslogs",
@@ -126,13 +126,13 @@ resource "aws_ecs_task_definition" "gdx_data_share_poc" {
         }
       },
       environment = [
-        { "name" : "PROMETHEUS_USERNAME", "value" : random_password.prometheus_username.result },
-        { "name" : "PROMETHEUS_PASSWORD", "value" : random_password.prometheus_password.result },
+        { name : "PROMETHEUS_USERNAME", value : random_password.prometheus_username.result },
+        { name : "PROMETHEUS_PASSWORD", value : random_password.prometheus_password.result },
         {
-          "name" : "AWS_PROMETHEUS_ENDPOINT",
-          "value" : "${aws_prometheus_workspace.prometheus.prometheus_endpoint}api/v1/remote_write"
+          name : "AWS_PROMETHEUS_ENDPOINT",
+          value : "${aws_prometheus_workspace.prometheus.prometheus_endpoint}api/v1/remote_write"
         },
-        { "name" : "AWS_REGION", "value" : var.region },
+        { name : "AWS_REGION", value : var.region },
       ],
     },
   ])

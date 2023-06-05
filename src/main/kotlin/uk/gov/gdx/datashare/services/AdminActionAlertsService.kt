@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.sns.model.PublishRequest
 
 @Service
 class AdminActionAlertsService(
-  @Value("\${admin-action-alert-sns-topic-arn:#{null}}") private val topicArn: String?,
+  @Value("\${alert-sns-topic-arn:#{null}}") private val topicArn: String?,
   @Value("\${environment}") private val environment: String,
   private val objectMapper: ObjectMapper,
 ) {

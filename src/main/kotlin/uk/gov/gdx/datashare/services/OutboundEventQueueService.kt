@@ -16,6 +16,7 @@ import uk.gov.gdx.datashare.queue.SqsProperties
 @Service
 class OutboundEventQueueService(
   private val awsQueueFactory: AwsQueueFactory,
+  private val cloudWatchService: CloudWatchService,
   private val sqsProperties: SqsProperties,
   @Value("\${environment}") private val environment: String,
   @Value("\${task-role-arn}") private val taskRoleArn: String,
@@ -47,16 +48,21 @@ class OutboundEventQueueService(
     val dlqName = dlqName(queueName)
     val dlqKeyId = createKeyForQueue(dlqName)
     val dlqUrl = createQueue(dlqName, dlqKeyId, 8)
+    cloudWatchService.createSqsAlarm(dlqName)
     val dlqArn = getQueueArn(dlqUrl)
     val keyId = createKeyForQueue(queueName, acquirerPrincipal)
-    return createQueue(queueName, keyId, 4, dlqArn, acquirerPrincipal)
+    val queueUrl = createQueue(queueName, keyId, 4, dlqArn, acquirerPrincipal)
+    cloudWatchService.createSqsAlarm(queueName)
+    return queueUrl
   }
 
   fun deleteAcquirerQueueAndDlq(queueName: String) {
     val dlqName = dlqName(queueName)
     log.info("Deleting queues: $queueName and $dlqName")
     deleteQueueAndKey(queueName)
+    cloudWatchService.deleteSqsAlarm(queueName)
     deleteQueueAndKey(dlqName)
+    cloudWatchService.deleteSqsAlarm(dlqName)
   }
 
   private fun createKeyForQueue(queueName: String, acquirerPrincipal: String? = null): String {

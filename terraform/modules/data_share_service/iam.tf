@@ -213,9 +213,10 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
   }
 
   statement {
-    sid = "createNewKeys"
+    sid = "createAndDeleteKeys"
     actions = [
-      "kms:CreateKey"
+      "kms:CreateKey",
+      "kms:ScheduleKeyDeletion"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -231,6 +232,14 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
     }
   }
   statement {
+    sid = "listAliases"
+    actions = [
+    "kms:ListAliases"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+  statement {
     # This allows an alias to be created, but does not allow it to be attached to a key. The key policy must grant
     # CreateAlias permission, so the application can only alias keys it creates
     sid = "createAlias"
@@ -241,7 +250,6 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
     resources = [
       "arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:alias/${var.environment}/sqs-acq_${var.environment}_*"
     ]
-
   }
 }
 

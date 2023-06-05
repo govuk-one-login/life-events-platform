@@ -234,7 +234,7 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
   statement {
     sid = "listAliases"
     actions = [
-    "kms:ListAliases"
+      "kms:ListAliases"
     ]
     resources = ["*"]
     effect    = "Allow"

@@ -316,8 +316,7 @@ class AcquirersServiceTest {
 
     every { adminActionAlertsService.noticeAction(any()) } just runs
 
-    every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
-    every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}_dlq") } just runs
+    every { outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!) } just runs
 
     underTest.deleteAcquirerSubscription(queueAcquirerSubscription.id)
 
@@ -338,10 +337,7 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!)
-    }
-    verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}_dlq")
+      outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!)
     }
   }
 
@@ -400,8 +396,8 @@ class AcquirersServiceTest {
 
     every { adminActionAlertsService.noticeAction(any()) } just runs
 
-    every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
-    every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}_dlq") } just runs
+    every { outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!) } just runs
+    every { outboundEventQueueService.deleteAcquirerQueueAndDlq("${queueAcquirerSubscription.queueName}_dlq") } just runs
 
     underTest.deleteAcquirerSubscription(queueAcquirerSubscription.id)
 
@@ -422,11 +418,11 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 0) {
-      outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!)
+      outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!)
     }
 
     verify(exactly = 0) {
-      outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}_dlq")
+      outboundEventQueueService.deleteAcquirerQueueAndDlq("${queueAcquirerSubscription.queueName}_dlq")
     }
   }
 
@@ -644,8 +640,8 @@ class AcquirersServiceTest {
 
     every { adminActionAlertsService.noticeAction(any()) } just runs
 
-    every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
-    every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}_dlq") } just runs
+    every { outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!) } just runs
+    every { outboundEventQueueService.deleteAcquirerQueueAndDlq("${queueAcquirerSubscription.queueName}_dlq") } just runs
 
     underTest.deleteAcquirer(acquirer.id)
 
@@ -674,10 +670,7 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!)
-    }
-    verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}_dlq")
+      outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!)
     }
   }
 
@@ -712,8 +705,8 @@ class AcquirersServiceTest {
 
     every { adminActionAlertsService.noticeAction(any()) } just runs
 
-    every { outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!) } just runs
-    every { outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}_dlq") } just runs
+    every { outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!) } just runs
+    every { outboundEventQueueService.deleteAcquirerQueueAndDlq("${queueAcquirerSubscription.queueName}_dlq") } just runs
 
     underTest.deleteAcquirer(acquirer.id)
 
@@ -758,10 +751,7 @@ class AcquirersServiceTest {
     }
 
     verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue(queueAcquirerSubscription.queueName!!)
-    }
-    verify(exactly = 1) {
-      outboundEventQueueService.deleteQueue("${queueAcquirerSubscription.queueName}_dlq")
+      outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!)
     }
   }
 

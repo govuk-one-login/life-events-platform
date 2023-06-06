@@ -14,6 +14,7 @@ import uk.gov.gdx.datashare.queue.AwsQueueFactory
 import uk.gov.gdx.datashare.queue.SqsProperties
 
 class OutboundEventQueueServiceTest {
+  private val environment = "test"
   private val awsQueueFactory = mockk<AwsQueueFactory>()
   private val sqsProperties = mockk<SqsProperties>()
   private val sqsClient = mockk<SqsClient>(relaxed = true)
@@ -23,15 +24,15 @@ class OutboundEventQueueServiceTest {
   private val underTest = OutboundEventQueueService(
     awsQueueFactory,
     sqsProperties,
-    "test",
+    environment,
     "taskRoleArn",
   )
+  private val queueName = "queue"
   private val queueUrl = "queueurl"
+  private val dlqUrl = "dlqurl"
 
   @BeforeEach
   fun setup() {
-    every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()).queueUrl() }.returns(queueUrl)
-
     every {
       awsQueueFactory.getOrDefaultSqsClient(
         any<String>(),
@@ -410,24 +411,42 @@ class OutboundEventQueueServiceTest {
   }
 
   @Test
-  fun `deleteQueue calls delete`() {
+  fun `deleteAcquirerQueueAndDlq calls delete queues and keys`() {
     mockAws()
 
-    underTest.deleteQueue("queue")
+    underTest.deleteAcquirerQueueAndDlq(queueName)
 
     verify(exactly = 1) {
       awsQueueFactory.getOrDefaultSqsClient(
-        "queue",
+        queueName,
         any<SqsProperties.QueueConfig>(),
         any<SqsProperties>(),
         any<SqsClient>(),
       )
-    }
-
-    verify(exactly = 1) {
+      awsQueueFactory.getOrDefaultSqsClient(
+        "${queueName}_dlq",
+        any<SqsProperties.QueueConfig>(),
+        any<SqsProperties>(),
+        any<SqsClient>(),
+      )
       sqsClient.deleteQueue(
         withArg<DeleteQueueRequest> {
           assertThat(it.queueUrl()).isEqualTo(queueUrl)
+        },
+      )
+      secondSqsClient.deleteQueue(
+        withArg<DeleteQueueRequest> {
+          assertThat(it.queueUrl()).isEqualTo(dlqUrl)
+        },
+      )
+      kmsClient.scheduleKeyDeletion(
+        withArg<ScheduleKeyDeletionRequest> {
+          assertThat(it.keyId()).isEqualTo("queueKeyId")
+        },
+      )
+      kmsClient.scheduleKeyDeletion(
+        withArg<ScheduleKeyDeletionRequest> {
+          assertThat(it.keyId()).isEqualTo("dlqKeyId")
         },
       )
     }
@@ -440,6 +459,7 @@ class OutboundEventQueueServiceTest {
     every { kmsClient.enableKeyRotation(any<EnableKeyRotationRequest>()) } returns mockk<EnableKeyRotationResponse>()
     every { kmsClient.createAlias(any<CreateAliasRequest>()) } returns mockk<CreateAliasResponse>()
     every { kmsClient.tagResource(any<TagResourceRequest>()) } returns mockk<TagResourceResponse>()
+    every { kmsClient.scheduleKeyDeletion(any<ScheduleKeyDeletionRequest>()) } returns mockk<ScheduleKeyDeletionResponse>()
 
     mockkStatic(SqsClient::class)
     every { SqsClient.create() } returns sqsClient
@@ -448,8 +468,10 @@ class OutboundEventQueueServiceTest {
     every { sqsClient.createQueue(any<CreateQueueRequest>()) } returns createQueueResponse
     val queueAttributesResponse = mockk<GetQueueAttributesResponse>()
     every { queueAttributesResponse.attributes()[QueueAttributeName.QUEUE_ARN] } returns "dlq:arn" andThen "queue:arn"
+    every { queueAttributesResponse.attributes()[QueueAttributeName.KMS_MASTER_KEY_ID] } returns "queueKeyId" andThen "dlqKeyId"
     every { sqsClient.getQueueAttributes(any<GetQueueAttributesRequest>()) } returns queueAttributesResponse
-    val deleteQueueResponse = mockk<DeleteQueueResponse>()
-    every { sqsClient.deleteQueue(any<DeleteQueueRequest>()) } returns deleteQueueResponse
+    every { sqsClient.deleteQueue(any<DeleteQueueRequest>()) } returns mockk<DeleteQueueResponse>()
+    every { sqsClient.getQueueUrl(any<GetQueueUrlRequest>()).queueUrl() } returns queueUrl
+    every { secondSqsClient.getQueueUrl(any<GetQueueUrlRequest>()).queueUrl() } returns dlqUrl
   }
 }

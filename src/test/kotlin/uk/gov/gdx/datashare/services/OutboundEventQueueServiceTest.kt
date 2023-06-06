@@ -222,6 +222,7 @@ class OutboundEventQueueServiceTest {
               "Sid": "httpsonly",
               "Effect": "Deny",
               "Action": "sqs:*",
+              "Resource": "*",
               "Condition": {
                 "Bool": {
                   "aws:SecureTransport": "false"
@@ -252,6 +253,7 @@ class OutboundEventQueueServiceTest {
                 "AWS": "principal"
               },
               "Effect": "Allow",
+              "Resource": "*",
               "Action": [
                 "SQS:GetQueueUrl",
                 "SQS:GetQueueAttributes",
@@ -264,6 +266,7 @@ class OutboundEventQueueServiceTest {
               "Sid": "httpsonly",
               "Effect": "Deny",
               "Action": "sqs:*",
+              "Resource": "*",
               "Condition": {
                 "Bool": {
                   "aws:SecureTransport": "false"

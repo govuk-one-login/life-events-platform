@@ -34,7 +34,7 @@ sequenceDiagram
 
 ```
 
-NOTE: SEE [ADR-0012](0012=delay-enrichment.md) FOR FOLLOWUP
+NOTE: SEE [ADR-0012](0012-delay-enrichment.md) FOR FOLLOWUP
 
 For this proof of concept, the key API calls will be
 ```mermaid

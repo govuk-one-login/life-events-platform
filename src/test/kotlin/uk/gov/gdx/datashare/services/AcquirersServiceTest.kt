@@ -316,7 +316,6 @@ class AcquirersServiceTest {
 
     every { adminActionAlertsService.noticeAction(any()) } just runs
 
-    every { outboundEventQueueService.deleteAcquirerQueueAndDlq(queueAcquirerSubscription.queueName!!) } just runs
     every { outboundEventQueueService.deleteAcquirerQueueAndDlq("${queueAcquirerSubscription.queueName}_dlq") } just runs
 
     underTest.deleteAcquirerSubscription(queueAcquirerSubscription.id)

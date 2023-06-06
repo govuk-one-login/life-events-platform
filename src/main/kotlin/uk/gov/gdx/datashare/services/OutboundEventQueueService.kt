@@ -284,7 +284,6 @@ class OutboundEventQueueService(
   private fun deleteQueueAndKey(queueName: String) {
     val queue = getQueue(queueName)
     val deleteQueueRequest = DeleteQueueRequest.builder().queueUrl(queue.queueUrl).build()
-    queue.sqsClient.deleteQueue(deleteQueueRequest)
 
     val kmsId = getQueueKmsId(queue.queueUrl)
     val scheduleKeyDeletionRequest = ScheduleKeyDeletionRequest.builder()
@@ -292,6 +291,7 @@ class OutboundEventQueueService(
       .pendingWindowInDays(7)
       .build()
 
+    queue.sqsClient.deleteQueue(deleteQueueRequest)
     kmsClient.scheduleKeyDeletion(scheduleKeyDeletionRequest)
   }
 

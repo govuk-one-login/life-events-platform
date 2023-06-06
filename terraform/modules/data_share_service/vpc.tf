@@ -21,12 +21,22 @@ locals {
       action     = "ALLOW"
       protocol   = "tcp"
     },
-    # Allow response to outbound calls
+    # Deny port 3389 (RDP)
     {
       rule_no    = 3
+      from_port  = 3389
+      to_port    = 3389
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = "tcp"
+    },
+    # Allow response to outbound calls
+    {
+      rule_no    = 4
       from_port  = 1024
       to_port    = 65535
       cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
       protocol   = "tcp"
     },
     {
@@ -63,6 +73,7 @@ locals {
       from_port  = 1024
       to_port    = 65535
       cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
       protocol   = "tcp"
     },
     {
@@ -94,12 +105,22 @@ locals {
       action     = "ALLOW"
       protocol   = "tcp"
     },
-    # Allow response to outbound calls
+    # Deny port 3389 (RDP)
     {
       rule_no    = 3
+      from_port  = 3389
+      to_port    = 3389
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = "tcp"
+    },
+    # Allow response to outbound calls
+    {
+      rule_no    = 4
       from_port  = 1024
       to_port    = 65535
       cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
       protocol   = "tcp"
     },
     {
@@ -127,6 +148,7 @@ locals {
       from_port  = 1024
       to_port    = 65535
       cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
       protocol   = "tcp"
     },
     {

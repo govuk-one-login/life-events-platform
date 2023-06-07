@@ -10,7 +10,6 @@ import uk.gov.gdx.datashare.integration.SqsIntegrationTestBase
 import uk.gov.gdx.datashare.models.CognitoClientResponse
 import uk.gov.gdx.datashare.services.CognitoService
 import uk.gov.gdx.datashare.services.OutboundEventQueueService
-import uk.gov.gdx.datashare.services.ScheduledJobService
 
 class AdminControllerTest : SqsIntegrationTestBase() {
   @MockkBean
@@ -18,9 +17,6 @@ class AdminControllerTest : SqsIntegrationTestBase() {
 
   @MockkBean
   private lateinit var outboundEventQueueService: OutboundEventQueueService
-
-  @MockkBean
-  private lateinit var scheduledJobService: ScheduledJobService
 
   @Test
   fun `Creates an acquirer`() {

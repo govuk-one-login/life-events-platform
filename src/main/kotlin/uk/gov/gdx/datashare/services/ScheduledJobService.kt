@@ -23,26 +23,14 @@ class ScheduledJobService(
   private val unconsumedEventsGauge =
     meterRegistry.gauge("UnconsumedEvents", AtomicInteger(acquirerEventRepository.countByDeletedAtIsNull()))
 
-  init {
-    monitorQueueMetrics()
-  }
-
-  @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
-  @SchedulerLock(name = "countUnconsumedEvents", lockAtMostFor = "3m", lockAtLeastFor = "3m")
+  @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
   fun countUnconsumedEvents() {
-    LockAssert.assertLocked()
     val unconsumedEventsCount = acquirerEventRepository.countByDeletedAtIsNull()
     unconsumedEventsGauge!!.set(unconsumedEventsCount)
   }
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
-  @SchedulerLock(name = "monitorQueueMetrics", lockAtMostFor = "60s", lockAtLeastFor = "15s")
-  fun scheduledMonitorQueueMetrics() {
-    LockAssert.assertLocked()
-    monitorQueueMetrics()
-  }
-
-  private fun monitorQueueMetrics() {
+  final fun monitorQueueMetrics() {
     val queueMetrics = outboundEventQueueService.getMetrics()
     queueMetrics.forEach {
       meterRegistry.gauge("dlq_length", listOf(Tag.of("queue_name", it.key)), AtomicInteger(it.value.dlqLength))

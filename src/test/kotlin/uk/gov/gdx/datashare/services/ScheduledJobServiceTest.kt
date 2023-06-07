@@ -59,7 +59,7 @@ class ScheduledJobServiceTest {
       )
     } returns AtomicInteger(6)
 
-    underTest.scheduledMonitorQueueMetrics()
+    underTest.monitorQueueMetrics()
 
     verify(exactly = 1) {
       meterRegistry.gauge(

@@ -4,8 +4,12 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
+import software.amazon.awssdk.services.cloudwatch.model.*
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.*
+import software.amazon.awssdk.services.kms.model.Tag
+import software.amazon.awssdk.services.kms.model.TagResourceRequest
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.*
 import software.amazon.awssdk.services.sts.StsClient
@@ -13,12 +17,12 @@ import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueFactory
 import uk.gov.gdx.datashare.queue.SqsProperties
 import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
+import java.time.Instant
 
 @Service
 class OutboundEventQueueService(
   private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val awsQueueFactory: AwsQueueFactory,
-  private val cloudWatchService: CloudWatchService,
   private val sqsProperties: SqsProperties,
   @Value("\${environment}") private val environment: String,
   @Value("\${task-role-arn}") private val taskRoleArn: String,
@@ -29,6 +33,7 @@ class OutboundEventQueueService(
 
   private val awsQueues: MutableMap<String, AwsQueue> = mutableMapOf()
   private val accountId by lazy { StsClient.create().callerIdentity.account() }
+  private val cloudWatchClient by lazy { CloudWatchClient.create() }
   private val kmsClient by lazy { KmsClient.create() }
   private val sqsClient by lazy { SqsClient.create() }
 
@@ -70,13 +75,7 @@ class OutboundEventQueueService(
       return emptyMap()
     }
 
-    val queuesWithAges = cloudWatchService.getQueuesAgeOfOldestMessage(allQueueNames)
-    return queuesWithAges.mapValues {
-      QueueMetric(
-        it.value?.toInt() ?: 0,
-        getQueueLength(getQueue(dlqName(it.key)).queueUrl)?.toInt() ?: 0,
-      )
-    }
+    return getQueueMetrics(allQueueNames)
   }
 
   private fun createKeyForQueue(queueName: String, acquirerPrincipal: String? = null): String {
@@ -162,7 +161,6 @@ class OutboundEventQueueService(
 
   private fun getQueueArn(queueUrl: String) = getQueueAttribute(queueUrl, QueueAttributeName.QUEUE_ARN)
   private fun getQueueKmsId(queueUrl: String) = getQueueAttribute(queueUrl, QueueAttributeName.KMS_MASTER_KEY_ID)
-  private fun getQueueLength(queueUrl: String) = getQueueAttribute(queueUrl, QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES)
 
   private fun getQueueAttribute(queueUrl: String, queueAttributeName: QueueAttributeName): String? {
     val request = GetQueueAttributesRequest.builder()
@@ -326,6 +324,47 @@ class OutboundEventQueueService(
       AwsQueue(it, sqsClient, it)
     }
   }
+
+  private fun getQueueMetrics(queueNames: List<String>): Map<String, QueueMetric> {
+    val dlqLengthQueries = queueNames.map {
+      buildMetricDataQuery("ApproximateNumberOfMessagesVisible", dlqName(it))
+    }
+    val ageOfOldestMessageQueries = queueNames.map {
+      buildMetricDataQuery("ApproximateAgeOfOldestMessage", it)
+    }
+
+    val getMetricDataRequest = GetMetricDataRequest.builder()
+      .metricDataQueries(dlqLengthQueries + ageOfOldestMessageQueries)
+      .startTime(Instant.now().minusSeconds(120))
+      .endTime(Instant.now())
+      .build()
+
+    val metricDataResults = cloudWatchClient.getMetricData(getMetricDataRequest).metricDataResults()
+    return queueNames.associateWith { queueName ->
+      QueueMetric(
+        metricDataResults.find { it.id() == queueName }?.values()?.firstOrNull()?.toInt() ?: 0,
+        metricDataResults.find { it.id() == dlqName(queueName) }?.values()?.firstOrNull()?.toInt() ?: 0,
+      )
+    }
+  }
+
+  private fun buildMetricDataQuery(metricName: String, queueName: String) =
+    MetricDataQuery.builder()
+      .metricStat(
+        MetricStat.builder()
+          .metric(
+            Metric.builder()
+              .namespace("AWS/SQS")
+              .metricName(metricName)
+              .dimensions(Dimension.builder().name("QueueName").value(queueName).build())
+              .build(),
+          )
+          .period(60)
+          .stat("Maximum")
+          .build(),
+      )
+      .id(queueName)
+      .build()
 }
 
 data class QueueMetric(

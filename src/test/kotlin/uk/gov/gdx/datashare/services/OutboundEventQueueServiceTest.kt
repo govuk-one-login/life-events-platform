@@ -5,6 +5,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
+import software.amazon.awssdk.services.cloudwatch.model.GetMetricDataRequest
+import software.amazon.awssdk.services.cloudwatch.model.MetricDataResult
 import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.kms.model.*
 import software.amazon.awssdk.services.sqs.SqsClient
@@ -19,16 +22,16 @@ class OutboundEventQueueServiceTest {
   private val environment = "test"
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val awsQueueFactory = mockk<AwsQueueFactory>()
-  private val cloudWatchService = mockk<CloudWatchService>()
   private val sqsProperties = mockk<SqsProperties>()
   private val sqsClient = mockk<SqsClient>(relaxed = true)
   private val stsClient = mockk<StsClient>()
+  private val cloudWatchClient = mockk<CloudWatchClient>()
   private val kmsClient = mockk<KmsClient>()
   private val secondSqsClient = mockk<SqsClient>(relaxed = true)
+
   private val underTest = OutboundEventQueueService(
     acquirerSubscriptionRepository,
     awsQueueFactory,
-    cloudWatchService,
     sqsProperties,
     environment,
     "taskRoleArn",
@@ -51,6 +54,8 @@ class OutboundEventQueueServiceTest {
     mockkStatic(StsClient::class)
     every { StsClient.create() } returns stsClient
     every { stsClient.callerIdentity.account() } returns "1234"
+    mockkStatic(CloudWatchClient::class)
+    every { CloudWatchClient.create() } returns cloudWatchClient
     mockkStatic(KmsClient::class)
     every { KmsClient.create() } returns kmsClient
   }
@@ -469,17 +474,16 @@ class OutboundEventQueueServiceTest {
       AcquirerSubscriptionBuilder(queueName = "queuetwo").build(),
       AcquirerSubscriptionBuilder(queueName = "queuethree").build(),
     )
-    val queueNames = acquirerSubscriptions.mapNotNull { it.queueName }
 
     every { acquirerSubscriptionRepository.findAllByQueueNameIsNotNullAndWhenDeletedIsNull() } returns acquirerSubscriptions
-    every { cloudWatchService.getQueuesAgeOfOldestMessage(queueNames) } returns mapOf(
-      "queueone" to 1.0,
-      "queuetwo" to 2.0,
-      "queuethree" to null,
+    every { cloudWatchClient.getMetricData(any<GetMetricDataRequest>()).metricDataResults() } returns listOf(
+      MetricDataResult.builder().id("queueone").values(listOf(1.0)).build(),
+      MetricDataResult.builder().id("queuetwo").values(listOf(2.0)).build(),
+      MetricDataResult.builder().id("queuethree").values(listOf(null)).build(),
+      MetricDataResult.builder().id("queueone_dlq").values(listOf(1.0)).build(),
+      MetricDataResult.builder().id("queuetwo_dlq").values(listOf(null)).build(),
+      MetricDataResult.builder().id("queuethree_dlq").values(listOf(3.0)).build(),
     )
-    val queueAttributesResponse = mockk<GetQueueAttributesResponse>()
-    every { sqsClient.getQueueAttributes(any<GetQueueAttributesRequest>()) } returns queueAttributesResponse
-    every { queueAttributesResponse.attributes()[QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES] } returns "1" andThen null andThen "3"
 
     val metrics = underTest.getMetrics()
 

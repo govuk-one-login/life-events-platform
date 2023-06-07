@@ -246,7 +246,7 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
       variable = "kms:ResourceAliases"
     }
     condition {
-      test     = "ForAnyValues:StringLike"
+      test     = "ForAnyValue:StringLike"
       values   = ["alias/${var.environment}/sqs-acq_${var.environment}_*"]
       variable = "kms:ResourceAliases"
     }

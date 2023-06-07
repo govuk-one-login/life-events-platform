@@ -1,1 +1,1 @@
-FROM grafana/grafana-enterprise:9.5.2
+FROM grafana/grafana-enterprise:9.5.3

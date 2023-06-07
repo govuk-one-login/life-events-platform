@@ -7,7 +7,7 @@ locals {
     Source      = "terraform"
     Repository  = "https://github.com/alphagov/gdx-data-share-poc"
   }
-  vpc_cidr = "10.158.32.0/20"
+  vpc_cidr            = "10.158.32.0/20"
   private_subnet_cidr = cidrsubnet(local.vpc_cidr, 1, 0)
   public_subnet_cidr  = cidrsubnet(local.vpc_cidr, 1, 1)
 }

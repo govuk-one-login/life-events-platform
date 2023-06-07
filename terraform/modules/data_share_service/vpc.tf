@@ -23,11 +23,11 @@ locals {
     },
     # Allow response to outbound calls
     {
-      rule_no = 3
-      from_port = 1024
-      to_port = 65535
+      rule_no    = 3
+      from_port  = 1024
+      to_port    = 65535
       cidr_block = "0.0.0.0/0"
-      protocol = "tcp"
+      protocol   = "tcp"
     },
     {
       rule_no    = 100
@@ -59,11 +59,11 @@ locals {
     },
     # Allow response to inbound calls
     {
-      rule_no = 3
-      from_port = 1024
-      to_port = 65535
+      rule_no    = 3
+      from_port  = 1024
+      to_port    = 65535
       cidr_block = "0.0.0.0/0"
-      protocol = "tcp"
+      protocol   = "tcp"
     },
     {
       rule_no    = 100
@@ -96,11 +96,11 @@ locals {
     },
     # Allow response to outbound calls
     {
-      rule_no = 3
-      from_port = 1024
-      to_port = 65535
+      rule_no    = 3
+      from_port  = 1024
+      to_port    = 65535
       cidr_block = "0.0.0.0/0"
-      protocol = "tcp"
+      protocol   = "tcp"
     },
     {
       rule_no    = 100
@@ -123,11 +123,11 @@ locals {
     },
     # Allow response to inbound calls
     {
-      rule_no = 2
-      from_port = 1024
-      to_port = 65535
+      rule_no    = 2
+      from_port  = 1024
+      to_port    = 65535
       cidr_block = "0.0.0.0/0"
-      protocol = "tcp"
+      protocol   = "tcp"
     },
     {
       rule_no    = 100
@@ -150,8 +150,8 @@ module "vpc" {
   vpc_cidr      = var.vpc_cidr
   sns_topic_arn = module.sns.topic_arn
 
-  acl_egress_private = local.private_acl_egress_rules
+  acl_egress_private  = local.private_acl_egress_rules
   acl_ingress_private = local.private_acl_ingress_rules
-  acl_ingress_public = local.public_acl_ingress_rules
-  acl_egress_public = local.public_acl_egress_rules
+  acl_ingress_public  = local.public_acl_ingress_rules
+  acl_egress_public   = local.public_acl_egress_rules
 }

@@ -44,7 +44,7 @@ class SupplierSubscriptionRepositoryTest(
   }
 
   @Test
-  fun `findAllByOauthClientIdAndWhenDeletedIsNull returns the correct values`() {
+  fun `findAllByClientIdAndWhenDeletedIsNull returns the correct values`() {
     val supplier = supplierRepository.save(SupplierBuilder().build())
     val returnedSubscription = supplierSubscriptionRepository.save(
       SupplierSubscriptionBuilder(
@@ -139,17 +139,16 @@ class SupplierSubscriptionRepositoryTest(
       ).build(),
     )
 
-    assertThat(
-      supplierSubscriptionRepository.findByClientIdAndEventTypeAndWhenDeletedIsNull(
-        "test",
-        EventType.DEATH_NOTIFICATION,
-      ),
+    val subscription = supplierSubscriptionRepository.findByClientIdAndEventTypeAndWhenDeletedIsNull(
+      "test",
+      EventType.DEATH_NOTIFICATION,
     )
-      .isEqualTo(null)
+
+    assertThat(subscription).isNull()
   }
 
   @Test
-  fun `findAllBySupplierId returns the correct values`() {
+  fun `findAllBySupplierIdAndWhenDeletedIsNull returns the correct values`() {
     val checkedSupplier = supplierRepository.save(SupplierBuilder().build())
     val notCheckedSupplier = supplierRepository.save(SupplierBuilder().build())
     val returnedSubscription = supplierSubscriptionRepository.save(

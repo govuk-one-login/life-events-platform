@@ -26,4 +26,17 @@ data class AcquirerEventBuilder(
       new = new,
     )
   }
+
+  fun buildWithNewId(): AcquirerEvent {
+    return AcquirerEvent(
+      id = UUID.randomUUID(),
+      supplierEventId = supplierEventId,
+      acquirerSubscriptionId = acquirerSubscriptionId,
+      dataId = dataId,
+      eventTime = eventTime,
+      createdAt = createdAt,
+      deletedAt = deletedAt,
+      new = new,
+    )
+  }
 }

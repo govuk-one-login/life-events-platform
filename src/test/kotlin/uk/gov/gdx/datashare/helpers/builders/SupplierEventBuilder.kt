@@ -7,7 +7,7 @@ import java.util.*
 data class SupplierEventBuilder(
   var id: UUID = UUID.randomUUID(),
   var supplierSubscriptionId: UUID = UUID.randomUUID(),
-  var dataId: String = "",
+  var dataId: String = UUID.randomUUID().toString(),
   var eventTime: LocalDateTime? = null,
   var createdAt: LocalDateTime = LocalDateTime.now(),
   var deletedAt: LocalDateTime? = null,

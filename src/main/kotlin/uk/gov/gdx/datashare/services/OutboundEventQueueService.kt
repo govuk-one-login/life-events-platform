@@ -12,10 +12,13 @@ import software.amazon.awssdk.services.sts.StsClient
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueFactory
 import uk.gov.gdx.datashare.queue.SqsProperties
+import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
 
 @Service
 class OutboundEventQueueService(
+  private val acquirerSubscriptionRepository: AcquirerSubscriptionRepository,
   private val awsQueueFactory: AwsQueueFactory,
+  private val cloudWatchService: CloudWatchService,
   private val sqsProperties: SqsProperties,
   @Value("\${environment}") private val environment: String,
   @Value("\${task-role-arn}") private val taskRoleArn: String,
@@ -57,6 +60,23 @@ class OutboundEventQueueService(
     log.info("Deleting queues: $queueName and $dlqName")
     deleteQueueAndKey(queueName)
     deleteQueueAndKey(dlqName)
+  }
+
+  fun getMetrics(): Map<String, QueueMetric> {
+    val allQueueNames = acquirerSubscriptionRepository.findAllByQueueNameIsNotNullAndWhenDeletedIsNull().mapNotNull {
+      it.queueName
+    }
+    if (allQueueNames.isEmpty()) {
+      return emptyMap()
+    }
+
+    val queuesWithAges = cloudWatchService.getQueuesAgeOfOldestMessage(allQueueNames)
+    return queuesWithAges.mapValues {
+      QueueMetric(
+        it.value?.toInt() ?: 0,
+        getQueueLength(getQueue(dlqName(it.key)).queueUrl)?.toInt() ?: 0,
+      )
+    }
   }
 
   private fun createKeyForQueue(queueName: String, acquirerPrincipal: String? = null): String {
@@ -142,6 +162,7 @@ class OutboundEventQueueService(
 
   private fun getQueueArn(queueUrl: String) = getQueueAttribute(queueUrl, QueueAttributeName.QUEUE_ARN)
   private fun getQueueKmsId(queueUrl: String) = getQueueAttribute(queueUrl, QueueAttributeName.KMS_MASTER_KEY_ID)
+  private fun getQueueLength(queueUrl: String) = getQueueAttribute(queueUrl, QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES)
 
   private fun getQueueAttribute(queueUrl: String, queueAttributeName: QueueAttributeName): String? {
     val request = GetQueueAttributesRequest.builder()
@@ -306,3 +327,8 @@ class OutboundEventQueueService(
     }
   }
 }
+
+data class QueueMetric(
+  val ageOfOldestMessage: Int,
+  val dlqLength: Int,
+)

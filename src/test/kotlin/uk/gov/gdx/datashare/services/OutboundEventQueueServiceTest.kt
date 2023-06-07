@@ -12,17 +12,23 @@ import software.amazon.awssdk.services.sqs.model.*
 import software.amazon.awssdk.services.sts.StsClient
 import uk.gov.gdx.datashare.queue.AwsQueueFactory
 import uk.gov.gdx.datashare.queue.SqsProperties
+import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
+import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
 
 class OutboundEventQueueServiceTest {
   private val environment = "test"
+  private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
   private val awsQueueFactory = mockk<AwsQueueFactory>()
+  private val cloudWatchService = mockk<CloudWatchService>()
   private val sqsProperties = mockk<SqsProperties>()
   private val sqsClient = mockk<SqsClient>(relaxed = true)
   private val stsClient = mockk<StsClient>()
   private val kmsClient = mockk<KmsClient>()
   private val secondSqsClient = mockk<SqsClient>(relaxed = true)
   private val underTest = OutboundEventQueueService(
+    acquirerSubscriptionRepository,
     awsQueueFactory,
+    cloudWatchService,
     sqsProperties,
     environment,
     "taskRoleArn",
@@ -453,6 +459,37 @@ class OutboundEventQueueServiceTest {
         },
       )
     }
+  }
+
+  @Test
+  fun `getMetrics returns metrics for queues`() {
+    mockAws()
+    val acquirerSubscriptions = listOf(
+      AcquirerSubscriptionBuilder(queueName = "queueone").build(),
+      AcquirerSubscriptionBuilder(queueName = "queuetwo").build(),
+      AcquirerSubscriptionBuilder(queueName = "queuethree").build(),
+    )
+    val queueNames = acquirerSubscriptions.mapNotNull { it.queueName }
+
+    every { acquirerSubscriptionRepository.findAllByQueueNameIsNotNullAndWhenDeletedIsNull() } returns acquirerSubscriptions
+    every { cloudWatchService.getQueuesAgeOfOldestMessage(queueNames) } returns mapOf(
+      "queueone" to 1.0,
+      "queuetwo" to 2.0,
+      "queuethree" to null,
+    )
+    val queueAttributesResponse = mockk<GetQueueAttributesResponse>()
+    every { sqsClient.getQueueAttributes(any<GetQueueAttributesRequest>()) } returns queueAttributesResponse
+    every { queueAttributesResponse.attributes()[QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES] } returns "1" andThen null andThen "3"
+
+    val metrics = underTest.getMetrics()
+
+    assertThat(metrics).isEqualTo(
+      mapOf(
+        "queueone" to QueueMetric(ageOfOldestMessage = 1, dlqLength = 1),
+        "queuetwo" to QueueMetric(ageOfOldestMessage = 2, dlqLength = 0),
+        "queuethree" to QueueMetric(ageOfOldestMessage = 0, dlqLength = 3),
+      ),
+    )
   }
 
   private fun mockAws() {

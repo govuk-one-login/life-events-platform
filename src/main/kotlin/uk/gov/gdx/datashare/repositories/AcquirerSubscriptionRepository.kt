@@ -12,6 +12,8 @@ import java.util.*
 interface AcquirerSubscriptionRepository : CrudRepository<AcquirerSubscription, UUID> {
   fun findAllByWhenDeletedIsNull(): List<AcquirerSubscription>
 
+  fun findAllByQueueNameIsNotNullAndWhenDeletedIsNull(): List<AcquirerSubscription>
+
   fun findAllByOauthClientIdAndWhenDeletedIsNull(oauthClientId: String): List<AcquirerSubscription>
 
   fun findAllByEventTypeAndWhenDeletedIsNull(eventType: EventType): List<AcquirerSubscription>

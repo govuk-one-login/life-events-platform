@@ -18,63 +18,6 @@ class AcquirerSubscriptionRepositoryTest(
   @Autowired private val supplierSubscriptionRepository: SupplierSubscriptionRepository,
   @Autowired private val supplierEventRepository: SupplierEventRepository,
 ) : MockIntegrationTestBase() {
-
-  @Test
-  fun `findByAcquirerSubscriptionIdAndQueueNameIsNotNull returns the correct values`() {
-    val acquirer = acquirerRepository.save(AcquirerBuilder().build())
-    val returnedSubscription = acquirerSubscriptionRepository.save(
-      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = "test").build(),
-    )
-    val notReturnedSubscription = acquirerSubscriptionRepository.save(
-      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = null).build(),
-    )
-
-    assertThat(
-      acquirerSubscriptionRepository.findByAcquirerSubscriptionIdAndQueueNameIsNotNull(returnedSubscription.acquirerSubscriptionId),
-    )
-      .usingRecursiveComparison()
-      .ignoringFields("new")
-      .withComparatorForType(compareIgnoringNanos, LocalDateTime::class.java)
-      .isEqualTo(returnedSubscription)
-
-    assertThat(
-      acquirerSubscriptionRepository.findByAcquirerSubscriptionIdAndQueueNameIsNotNull(notReturnedSubscription.acquirerSubscriptionId),
-    ).isNull()
-  }
-
-  @Test
-  fun `findAllByEventTypeAndWhenDeletedIsNull returns the correct values`() {
-    val acquirer = acquirerRepository.save(AcquirerBuilder().build())
-    val returnedSubscription = acquirerSubscriptionRepository.save(
-      AcquirerSubscriptionBuilder(
-        acquirerId = acquirer.id,
-        queueName = "test",
-        eventType = EventType.DEATH_NOTIFICATION,
-      ).build(),
-    )
-    val notReturnedSubscription = acquirerSubscriptionRepository.save(
-      AcquirerSubscriptionBuilder(
-        acquirerId = acquirer.id,
-        queueName = null,
-        eventType = EventType.DEATH_NOTIFICATION,
-        whenDeleted = LocalDateTime.now(),
-      ).build(),
-    )
-
-    val subscriptions =
-      acquirerSubscriptionRepository.findAllByEventTypeAndWhenDeletedIsNull(EventType.DEATH_NOTIFICATION)
-
-    assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == returnedSubscription.id },
-    )
-      .hasSize(1)
-
-    assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == notReturnedSubscription.id },
-    )
-      .isEmpty()
-  }
-
   @Test
   fun `findAllByWhenDeletedIsNull returns the correct values`() {
     val acquirer = acquirerRepository.save(AcquirerBuilder().build())
@@ -145,6 +88,39 @@ class AcquirerSubscriptionRepositoryTest(
   }
 
   @Test
+  fun `findAllByEventTypeAndWhenDeletedIsNull returns the correct values`() {
+    val acquirer = acquirerRepository.save(AcquirerBuilder().build())
+    val returnedSubscription = acquirerSubscriptionRepository.save(
+      AcquirerSubscriptionBuilder(
+        acquirerId = acquirer.id,
+        queueName = "test",
+        eventType = EventType.DEATH_NOTIFICATION,
+      ).build(),
+    )
+    val notReturnedSubscription = acquirerSubscriptionRepository.save(
+      AcquirerSubscriptionBuilder(
+        acquirerId = acquirer.id,
+        queueName = null,
+        eventType = EventType.DEATH_NOTIFICATION,
+        whenDeleted = LocalDateTime.now(),
+      ).build(),
+    )
+
+    val subscriptions =
+      acquirerSubscriptionRepository.findAllByEventTypeAndWhenDeletedIsNull(EventType.DEATH_NOTIFICATION)
+
+    assertThat(
+      subscriptions.filter { s -> s.acquirerSubscriptionId == returnedSubscription.id },
+    )
+      .hasSize(1)
+
+    assertThat(
+      subscriptions.filter { s -> s.acquirerSubscriptionId == notReturnedSubscription.id },
+    )
+      .isEmpty()
+  }
+
+  @Test
   fun `findAllByQueueNameAndWhenDeletedIsNull returns the correct values`() {
     val acquirer = acquirerRepository.save(AcquirerBuilder().build())
     val returnedSubscription = acquirerSubscriptionRepository.save(
@@ -184,6 +160,29 @@ class AcquirerSubscriptionRepositoryTest(
       subscriptions.filter { s -> s.acquirerSubscriptionId == incorrectQueueNameSubscription.id },
     )
       .isEmpty()
+  }
+
+  @Test
+  fun `findByAcquirerSubscriptionIdAndQueueNameIsNotNull returns the correct values`() {
+    val acquirer = acquirerRepository.save(AcquirerBuilder().build())
+    val returnedSubscription = acquirerSubscriptionRepository.save(
+      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = "test").build(),
+    )
+    val notReturnedSubscription = acquirerSubscriptionRepository.save(
+      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = null).build(),
+    )
+
+    assertThat(
+      acquirerSubscriptionRepository.findByAcquirerSubscriptionIdAndQueueNameIsNotNull(returnedSubscription.acquirerSubscriptionId),
+    )
+      .usingRecursiveComparison()
+      .ignoringFields("new")
+      .withComparatorForType(compareIgnoringNanos, LocalDateTime::class.java)
+      .isEqualTo(returnedSubscription)
+
+    assertThat(
+      acquirerSubscriptionRepository.findByAcquirerSubscriptionIdAndQueueNameIsNotNull(notReturnedSubscription.acquirerSubscriptionId),
+    ).isNull()
   }
 
   @Test

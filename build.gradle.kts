@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.util.profile
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -37,6 +36,7 @@ dependencies {
 
   //  AWS dependencies for SNS, SQS etc
   implementation(platform("software.amazon.awssdk:bom:2.20.81"))
+  implementation("software.amazon.awssdk:cloudwatch")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:lambda")
   implementation("software.amazon.awssdk:rds")

@@ -46,6 +46,30 @@ class AcquirerSubscriptionRepositoryTest(
   }
 
   @Test
+  fun `findAllByQueueNameIsNotNullAndWhenDeletedIsNull returns the correct values`() {
+    val acquirer = acquirerRepository.save(AcquirerBuilder().build())
+    acquirerSubscriptionRepository.save(
+      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = "test1").build(),
+    )
+    acquirerSubscriptionRepository.save(
+      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = "test2").build(),
+    )
+    acquirerSubscriptionRepository.save(
+      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = null).build(),
+    )
+    acquirerSubscriptionRepository.save(
+      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = "test3", whenDeleted = LocalDateTime.now()).build(),
+    )
+
+    val subscriptions = acquirerSubscriptionRepository.findAllByQueueNameIsNotNullAndWhenDeletedIsNull()
+
+    assertThat(subscriptions.any { it.queueName == "test1" }).isTrue()
+    assertThat(subscriptions.any { it.queueName == "test2" }).isTrue()
+    assertThat(subscriptions.any { it.queueName == null }).isFalse()
+    assertThat(subscriptions.any { it.queueName == "test3" }).isFalse()
+  }
+
+  @Test
   fun `findAllByOauthClientIdAndWhenDeletedIsNull returns the correct values`() {
     val acquirer = acquirerRepository.save(AcquirerBuilder().build())
     val returnedSubscription = acquirerSubscriptionRepository.save(

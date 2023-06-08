@@ -340,8 +340,8 @@ module "iam_user_roles" {
 module "statuscake" {
   source = "../modules/statuscake"
   env_url_pair = {
-    dev  = "https://dev.share-life-events.service.gov.uk/health/ping"
-    demo = "https://demo.share-life-events.service.gov.uk/health/ping"
+    dev  = "https://dev.share-life-events.service.gov.uk/health"
+    demo = "https://demo.share-life-events.service.gov.uk/health"
   }
 }
 

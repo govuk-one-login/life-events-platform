@@ -29,9 +29,9 @@ class HealthCheckTest : SqsIntegrationTestBase() {
   }
 
   @Test
-  fun `Health ping page is accessible`() {
+  fun `Health page is accessible`() {
     webTestClient.get()
-      .uri("/health/ping")
+      .uri("/health")
       .exchange()
       .expectStatus()
       .isOk

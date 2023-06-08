@@ -270,7 +270,7 @@ data "aws_iam_policy_document" "ecs_task_manage_acquirer_queues" {
     actions = [
       "cloudwatch:GetMetricData"
     ]
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["*"]
   }
 }

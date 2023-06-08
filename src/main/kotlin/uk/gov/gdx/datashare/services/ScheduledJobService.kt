@@ -39,6 +39,13 @@ class ScheduledJobService(
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   fun monitorQueueMetrics() {
     val queueMetrics = outboundEventQueueService.getMetrics()
+
+    queueMetersMap.forEach {
+      if (!queueMetrics.keys.contains(it.key)) {
+        queueMetersMap.remove(it.key)
+      }
+    }
+
     queueMetrics.forEach { (queueName, queueMetric) ->
       val (ageMeter, dlqLengthMeter) = queueMetersMap.computeIfAbsent(queueName) {
         Pair(

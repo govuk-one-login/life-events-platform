@@ -86,17 +86,36 @@ class ScheduledJobServiceTest {
     assertThat(logsList[1].level).isEqualTo(Level.WARN)
   }
 
-  private fun setupMeter(metricName: String, queueName: String): AtomicInteger {
-    val atomicInteger = mockk<AtomicInteger>()
-    every {
-      meterRegistry.gauge(
-        metricName,
-        listOf(Tag.of("queue_name", queueName)),
-        any<AtomicInteger>(),
-      )
-    } returns atomicInteger
-    every { atomicInteger.set(any()) } just runs
-    return atomicInteger
+  @Test
+  fun `scheduledMonitorQueueMetrics removes strong references`() {
+    val firstMetrics = mapOf(
+      "queueone" to QueueMetric(ageOfOldestMessage = 1, dlqLength = 11),
+      "queuetwo" to QueueMetric(ageOfOldestMessage = 2, dlqLength = 12),
+    )
+    val secondMetrics = mapOf(
+      "queueone" to QueueMetric(ageOfOldestMessage = 101, dlqLength = 111),
+    )
+    val ageMeterOne = setupMeter("age_of_oldest_message", "queueone")
+    val ageMeterTwo = setupMeter("age_of_oldest_message", "queuetwo")
+    val dlqLengthMeterOne = setupMeter("dlq_length", "queueone")
+    val dlqLengthMeterTwo = setupMeter("dlq_length", "queuetwo")
+    every { outboundEventQueueService.getMetrics() } returns firstMetrics andThen secondMetrics
+
+    underTest.monitorQueueMetrics()
+    underTest.monitorQueueMetrics()
+
+    verify(exactly = 1) {
+      ageMeterOne.set(1)
+      ageMeterTwo.set(2)
+      dlqLengthMeterOne.set(11)
+      dlqLengthMeterTwo.set(12)
+
+      ageMeterOne.set(101)
+      dlqLengthMeterOne.set(111)
+
+      ageMeterTwo.set(any())
+      dlqLengthMeterTwo.set(any())
+    }
   }
 
   @Test
@@ -124,5 +143,18 @@ class ScheduledJobServiceTest {
     verify(exactly = 1) {
       groApiService.deleteConsumedGroSupplierEvent(supplierEvent2)
     }
+  }
+
+  private fun setupMeter(metricName: String, queueName: String): AtomicInteger {
+    val atomicInteger = mockk<AtomicInteger>()
+    every {
+      meterRegistry.gauge(
+        metricName,
+        listOf(Tag.of("queue_name", queueName)),
+        any<AtomicInteger>(),
+      )
+    } returns atomicInteger
+    every { atomicInteger.set(any()) } just runs
+    return atomicInteger
   }
 }

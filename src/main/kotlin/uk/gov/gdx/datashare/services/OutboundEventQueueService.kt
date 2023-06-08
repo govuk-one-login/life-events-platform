@@ -366,7 +366,7 @@ class OutboundEventQueueService(
       .id(sanitizeMetricId(queueName))
       .build()
 
-  private fun sanitizeMetricId(id: String): String = id.replace("-","_")
+  private fun sanitizeMetricId(id: String): String = id.replace("-", "_")
 }
 
 data class QueueMetric(

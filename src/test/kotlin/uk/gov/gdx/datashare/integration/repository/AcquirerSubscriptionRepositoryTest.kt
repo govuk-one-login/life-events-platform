@@ -63,10 +63,10 @@ class AcquirerSubscriptionRepositoryTest(
 
     val subscriptions = acquirerSubscriptionRepository.findAllByQueueNameIsNotNullAndWhenDeletedIsNull()
 
-    assertThat(subscriptions.any {it.queueName == "test1"}).isTrue()
-    assertThat(subscriptions.any {it.queueName == "test2"}).isTrue()
-    assertThat(subscriptions.any {it.queueName == null}).isFalse()
-    assertThat(subscriptions.any {it.queueName == "test3"}).isFalse()
+    assertThat(subscriptions.any { it.queueName == "test1" }).isTrue()
+    assertThat(subscriptions.any { it.queueName == "test2" }).isTrue()
+    assertThat(subscriptions.any { it.queueName == null }).isFalse()
+    assertThat(subscriptions.any { it.queueName == "test3" }).isFalse()
   }
 
   @Test

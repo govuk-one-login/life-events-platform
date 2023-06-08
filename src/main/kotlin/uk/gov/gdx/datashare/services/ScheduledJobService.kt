@@ -38,7 +38,7 @@ class ScheduledJobService(
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   final fun monitorQueueMetrics() {
     val queueMetrics = outboundEventQueueService.getMetrics()
-    queueMetrics.forEach {queueMetric ->
+    queueMetrics.forEach { queueMetric ->
       val queueName = queueMetric.key
       queueMetric.value.ageOfOldestMessage?.let {
         meterRegistry.gauge("age_of_oldest_message", listOf(Tag.of("queue_name", queueName)), AtomicInteger(it))

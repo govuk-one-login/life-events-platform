@@ -1,15 +1,10 @@
 package uk.gov.gdx.datashare.services
 
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.Logger
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.read.ListAppender
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricDataRequest
 import software.amazon.awssdk.services.cloudwatch.model.MetricDataResult
@@ -22,7 +17,6 @@ import uk.gov.gdx.datashare.queue.AwsQueueFactory
 import uk.gov.gdx.datashare.queue.SqsProperties
 import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
-
 
 class OutboundEventQueueServiceTest {
   private val environment = "test"

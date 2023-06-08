@@ -36,7 +36,7 @@ class ScheduledJobService(
   }
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
-  final fun monitorQueueMetrics() {
+  fun monitorQueueMetrics() {
     val queueMetrics = outboundEventQueueService.getMetrics()
     queueMetrics.forEach { queueMetric ->
       val queueName = queueMetric.key

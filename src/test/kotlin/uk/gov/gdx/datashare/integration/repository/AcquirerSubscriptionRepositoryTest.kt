@@ -1,7 +1,6 @@
 package uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.repository
 
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatPredicate
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.gdx.datashare.enums.EventType
@@ -26,20 +25,24 @@ class AcquirerSubscriptionRepositoryTest(
       AcquirerSubscriptionBuilder(acquirerId = acquirer.id).build(),
     )
     val notReturnedSubscription = acquirerSubscriptionRepository.save(
-      AcquirerSubscriptionBuilder(acquirerId = acquirer.id, queueName = null).build(),
+      AcquirerSubscriptionBuilder(
+        acquirerId = acquirer.id,
+        whenDeleted = LocalDateTime.now(),
+      ).build(),
     )
 
-    assertThat(
-      acquirerSubscriptionRepository.findByAcquirerSubscriptionIdAndQueueNameIsNotNull(returnedSubscription.acquirerSubscriptionId),
-    )
-      .usingRecursiveComparison()
-      .ignoringFields("new")
-      .withComparatorForType(compareIgnoringNanos, LocalDateTime::class.java)
-      .isEqualTo(returnedSubscription)
+    val subscriptions =
+      acquirerSubscriptionRepository.findAllByWhenDeletedIsNull()
 
     assertThat(
-      acquirerSubscriptionRepository.findByAcquirerSubscriptionIdAndQueueNameIsNotNull(notReturnedSubscription.acquirerSubscriptionId),
-    ).isNull()
+      subscriptions.filter { s -> s.acquirerSubscriptionId == returnedSubscription.id },
+    )
+      .hasSize(1)
+
+    assertThat(
+      subscriptions.filter { s -> s.acquirerSubscriptionId == notReturnedSubscription.id },
+    )
+      .isEmpty()
   }
 
   @Test
@@ -64,30 +67,6 @@ class AcquirerSubscriptionRepositoryTest(
     assertThat(subscriptions.any {it.queueName == "test2"}).isTrue()
     assertThat(subscriptions.any {it.queueName == null}).isFalse()
     assertThat(subscriptions.any {it.queueName == "test3"}).isFalse()
-  }
-
-  @Test
-  fun `findAllByEventTypeAndWhenDeletedIsNull returns the correct values`() {
-    val acquirer = acquirerRepository.save(AcquirerBuilder().build())
-    val returnedSubscription = acquirerSubscriptionRepository.save(
-      AcquirerSubscriptionBuilder(
-        acquirerId = acquirer.id,
-        whenDeleted = LocalDateTime.now(),
-      ).build(),
-    )
-
-    val subscriptions =
-      acquirerSubscriptionRepository.findAllByWhenDeletedIsNull()
-
-    assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == returnedSubscription.id },
-    )
-      .hasSize(1)
-
-    assertThat(
-      subscriptions.filter { s -> s.acquirerSubscriptionId == notReturnedSubscription.id },
-    )
-      .isEmpty()
   }
 
   @Test

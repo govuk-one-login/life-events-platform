@@ -17,15 +17,3 @@ variable "vpc_cidr" {
 variable "sns_topic_arn" {
   type = string
 }
-variable "acl_ingress_private" {
-  type = list(any)
-}
-variable "acl_egress_private" {
-  type = list(any)
-}
-variable "acl_ingress_public" {
-  type = list(any)
-}
-variable "acl_egress_public" {
-  type = list(any)
-}

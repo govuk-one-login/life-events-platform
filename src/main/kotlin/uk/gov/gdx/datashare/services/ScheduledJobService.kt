@@ -4,6 +4,8 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import net.javacrumbs.shedlock.core.LockAssert
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.helpers.repeatForLimitedTime
@@ -20,6 +22,10 @@ class ScheduledJobService(
   private val meterRegistry: MeterRegistry,
   private val outboundEventQueueService: OutboundEventQueueService,
 ) {
+  companion object {
+    val log: Logger = LoggerFactory.getLogger(this::class.java)
+  }
+
   private val unconsumedEventsGauge =
     meterRegistry.gauge("UnconsumedEvents", AtomicInteger(acquirerEventRepository.countByDeletedAtIsNull()))
 
@@ -32,9 +38,14 @@ class ScheduledJobService(
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   final fun monitorQueueMetrics() {
     val queueMetrics = outboundEventQueueService.getMetrics()
-    queueMetrics.forEach {
-      meterRegistry.gauge("dlq_length", listOf(Tag.of("queue_name", it.key)), AtomicInteger(it.value.dlqLength))
-      meterRegistry.gauge("age_of_oldest_message", listOf(Tag.of("queue_name", it.key)), AtomicInteger(it.value.ageOfOldestMessage))
+    queueMetrics.forEach {queueMetric ->
+      val queueName = queueMetric.key
+      queueMetric.value.ageOfOldestMessage?.let {
+        meterRegistry.gauge("age_of_oldest_message", listOf(Tag.of("queue_name", queueName)), AtomicInteger(it))
+      } ?: log.error("No age_of_oldest_message found for queue: $queueName")
+      queueMetric.value.dlqLength?.let {
+        meterRegistry.gauge("dlq_length", listOf(Tag.of("queue_name", queueName)), AtomicInteger(it))
+      } ?: log.error("No dlq_length found for queue: $queueName")
     }
   }
 

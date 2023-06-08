@@ -342,8 +342,8 @@ class OutboundEventQueueService(
     val metricDataResults = cloudWatchClient.getMetricData(getMetricDataRequest).metricDataResults()
     return queueNames.associateWith { queueName ->
       QueueMetric(
-        metricDataResults.find { it.id() == queueName }?.values()?.firstOrNull()?.toInt() ?: 0,
-        metricDataResults.find { it.id() == dlqName(queueName) }?.values()?.firstOrNull()?.toInt() ?: 0,
+        metricDataResults.find { it.id() == queueName }?.values()?.firstOrNull()?.toInt(),
+        metricDataResults.find { it.id() == dlqName(queueName) }?.values()?.firstOrNull()?.toInt(),
       )
     }
   }
@@ -368,6 +368,6 @@ class OutboundEventQueueService(
 }
 
 data class QueueMetric(
-  val ageOfOldestMessage: Int,
-  val dlqLength: Int,
+  val ageOfOldestMessage: Int?,
+  val dlqLength: Int?,
 )

@@ -1,10 +1,15 @@
 package uk.gov.gdx.datashare.services
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricDataRequest
 import software.amazon.awssdk.services.cloudwatch.model.MetricDataResult
@@ -18,6 +23,7 @@ import uk.gov.gdx.datashare.queue.SqsProperties
 import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
 import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
 
+
 class OutboundEventQueueServiceTest {
   private val environment = "test"
   private val acquirerSubscriptionRepository = mockk<AcquirerSubscriptionRepository>()
@@ -29,7 +35,7 @@ class OutboundEventQueueServiceTest {
   private val kmsClient = mockk<KmsClient>()
   private val secondSqsClient = mockk<SqsClient>(relaxed = true)
 
-  private val underTest = OutboundEventQueueService(
+  private var underTest = OutboundEventQueueService(
     acquirerSubscriptionRepository,
     awsQueueFactory,
     sqsProperties,
@@ -469,6 +475,7 @@ class OutboundEventQueueServiceTest {
   @Test
   fun `getMetrics returns metrics for queues`() {
     mockAws()
+
     val acquirerSubscriptions = listOf(
       AcquirerSubscriptionBuilder(queueName = "queueone").build(),
       AcquirerSubscriptionBuilder(queueName = "queuetwo").build(),
@@ -490,8 +497,8 @@ class OutboundEventQueueServiceTest {
     assertThat(metrics).isEqualTo(
       mapOf(
         "queueone" to QueueMetric(ageOfOldestMessage = 1, dlqLength = 1),
-        "queuetwo" to QueueMetric(ageOfOldestMessage = 2, dlqLength = 0),
-        "queuethree" to QueueMetric(ageOfOldestMessage = 0, dlqLength = 3),
+        "queuetwo" to QueueMetric(ageOfOldestMessage = 2, dlqLength = null),
+        "queuethree" to QueueMetric(ageOfOldestMessage = null, dlqLength = 3),
       ),
     )
   }

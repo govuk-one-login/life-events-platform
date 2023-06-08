@@ -60,46 +60,43 @@ class ScheduledJobServiceTest {
       "queuetwo" to QueueMetric(ageOfOldestMessage = 2, dlqLength = null),
       "queuethree" to QueueMetric(ageOfOldestMessage = null, dlqLength = 13),
     )
+    val ageMeterOne = setupMeter("age_of_oldest_message", "queueone")
+    val ageMeterTwo = setupMeter("age_of_oldest_message", "queuetwo")
+    val ageMeterThree = setupMeter("age_of_oldest_message", "queuethree")
+    val dlqLengthMeterOne = setupMeter("dlq_length", "queueone")
+    val dlqLengthMeterTwo = setupMeter("dlq_length", "queuetwo")
+    val dlqLengthMeterThree = setupMeter("dlq_length", "queuethree")
     every { outboundEventQueueService.getMetrics() } returns metrics
-    every { meterRegistry.gauge("dlq_length", any<Iterable<Tag>>(), any<AtomicInteger>()) } returns AtomicInteger(5)
-    every {
-      meterRegistry.gauge(
-        "age_of_oldest_message",
-        any<Iterable<Tag>>(),
-        any<AtomicInteger>(),
-      )
-    } returns AtomicInteger(6)
 
     underTest.monitorQueueMetrics()
 
     verify(exactly = 1) {
-      meterRegistry.gauge(
-        "dlq_length",
-        listOf(Tag.of("queue_name", "queueone")),
-        withArg<AtomicInteger> { assertThat(it.get()).isEqualTo(11) },
-      )
-      meterRegistry.gauge(
-        "age_of_oldest_message",
-        listOf(Tag.of("queue_name", "queueone")),
-        withArg<AtomicInteger> { assertThat(it.get()).isEqualTo(1) },
-      )
-      meterRegistry.gauge(
-        "age_of_oldest_message",
-        listOf(Tag.of("queue_name", "queuetwo")),
-        withArg<AtomicInteger> { assertThat(it.get()).isEqualTo(2) },
-      )
-      meterRegistry.gauge(
-        "dlq_length",
-        listOf(Tag.of("queue_name", "queuethree")),
-        withArg<AtomicInteger> { assertThat(it.get()).isEqualTo(13) },
-      )
+      ageMeterOne.set(1)
+      ageMeterTwo.set(2)
+      ageMeterThree.set(0)
+      dlqLengthMeterOne.set(11)
+      dlqLengthMeterTwo.set(0)
+      dlqLengthMeterThree.set(13)
     }
 
     val logsList = listAppender.list
     assertThat(logsList[0].message).isEqualTo("No dlq_length found for queue: queuetwo")
-    assertThat(logsList[0].level).isEqualTo(Level.ERROR)
+    assertThat(logsList[0].level).isEqualTo(Level.WARN)
     assertThat(logsList[1].message).isEqualTo("No age_of_oldest_message found for queue: queuethree")
-    assertThat(logsList[1].level).isEqualTo(Level.ERROR)
+    assertThat(logsList[1].level).isEqualTo(Level.WARN)
+  }
+
+  private fun setupMeter(metricName: String, queueName: String): AtomicInteger {
+    val atomicInteger = mockk<AtomicInteger>()
+    every {
+      meterRegistry.gauge(
+        metricName,
+        listOf(Tag.of("queue_name", queueName)),
+        any<AtomicInteger>(),
+      )
+    } returns atomicInteger
+    every { atomicInteger.set(any()) } just runs
+    return atomicInteger
   }
 
   @Test

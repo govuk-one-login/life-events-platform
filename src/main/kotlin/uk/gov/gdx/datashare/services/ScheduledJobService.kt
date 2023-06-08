@@ -26,6 +26,7 @@ class ScheduledJobService(
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
+  private val queueMetersMap = mutableMapOf<String, Pair<AtomicInteger, AtomicInteger>>()
   private val unconsumedEventsGauge =
     meterRegistry.gauge("UnconsumedEvents", AtomicInteger(acquirerEventRepository.countByDeletedAtIsNull()))
 
@@ -38,14 +39,21 @@ class ScheduledJobService(
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   fun monitorQueueMetrics() {
     val queueMetrics = outboundEventQueueService.getMetrics()
-    queueMetrics.forEach { queueMetric ->
-      val queueName = queueMetric.key
-      queueMetric.value.ageOfOldestMessage?.let {
-        meterRegistry.gauge("age_of_oldest_message", listOf(Tag.of("queue_name", queueName)), AtomicInteger(it))
-      } ?: log.error("No age_of_oldest_message found for queue: $queueName")
-      queueMetric.value.dlqLength?.let {
-        meterRegistry.gauge("dlq_length", listOf(Tag.of("queue_name", queueName)), AtomicInteger(it))
-      } ?: log.error("No dlq_length found for queue: $queueName")
+    queueMetrics.forEach { (queueName, queueMetric) ->
+      val (ageMeter, dlqLengthMeter) = queueMetersMap.computeIfAbsent(queueName) {
+        Pair(
+          meterRegistry.gauge("age_of_oldest_message", listOf(Tag.of("queue_name", it)), AtomicInteger(0))!!,
+          meterRegistry.gauge("dlq_length", listOf(Tag.of("queue_name", it)), AtomicInteger(0))!!,
+        )
+      }
+      ageMeter.set(queueMetric.ageOfOldestMessage ?: 0)
+      if (queueMetric.ageOfOldestMessage == null) {
+        log.warn("No age_of_oldest_message found for queue: $queueName")
+      }
+      dlqLengthMeter.set(queueMetric.dlqLength ?: 0)
+      if (queueMetric.dlqLength == null) {
+        log.warn("No dlq_length found for queue: $queueName")
+      }
     }
   }
 

@@ -19,24 +19,14 @@ class HealthCheckTest : SqsIntegrationTestBase() {
   }
 
   @Test
-  fun `Health info reports version`() {
+  fun `Health info reports version when authenticated`() {
     webTestClient.get().uri("/health")
+      .headers { it.setBasicAuth("prometheus", "prometheus") }
       .exchange()
       .expectStatus().isOk
       .expectBody().jsonPath("components.healthInfo.details.version").value<String> {
         assertThat(it).startsWith(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
       }
-  }
-
-  @Test
-  fun `Health page is accessible`() {
-    webTestClient.get()
-      .uri("/health")
-      .exchange()
-      .expectStatus()
-      .isOk
-      .expectBody()
-      .jsonPath("status").isEqualTo("UP")
   }
 
   @Test

@@ -68,8 +68,8 @@ management:
     health:
       cache:
         time-to-live: 2000ms
-      show-components: never
-      show-details: never
+      show-components: when_authorized
+      show-details: when_authorized
       probes:
         enabled: true
     info:

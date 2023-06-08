@@ -11,8 +11,6 @@ management:
     health:
       cache:
         time-to-live: 0
-      show-details: always
-      show-components: always
     info:
       cache:
         time-to-live: 0

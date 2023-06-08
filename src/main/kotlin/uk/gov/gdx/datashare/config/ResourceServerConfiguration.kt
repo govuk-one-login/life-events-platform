@@ -39,7 +39,6 @@ class ResourceServerConfiguration {
       .csrf { it.disable() } // csrf not needed on a rest api
       .securityMatcher(
         "/favicon.ico",
-        "/health/**",
         "/info",
         "/v3/api-docs/**",
         "/v3/api-docs.yaml",
@@ -61,6 +60,19 @@ class ResourceServerConfiguration {
       .securityMatcher("/prometheus")
       .authorizeHttpRequests {
         it.anyRequest().hasRole("ACTUATOR")
+      }
+      .httpBasic {}
+      .build()
+  }
+
+  @Order(3)
+  @Bean
+  fun healthFilterChain(http: HttpSecurity): SecurityFilterChain {
+    return http
+      .csrf { it.disable() }
+      .securityMatcher("/health/**")
+      .authorizeHttpRequests {
+        it.anyRequest().permitAll()
       }
       .httpBasic {}
       .build()

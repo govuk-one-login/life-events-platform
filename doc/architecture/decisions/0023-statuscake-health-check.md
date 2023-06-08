@@ -43,17 +43,19 @@ resource "aws_ssm_parameter" "statuscake_api_key" {
 module "statuscake" {
   source = "../modules/statuscake"
   env_url_pair = {
-    prod  = "https://share-life-events.service.gov.uk/health/ping"
+    prod  = "https://share-life-events.service.gov.uk/health"
   }
 }
 ```
-The health check page on the application is under `/health/ping` and returns a 200 on success with a response of:
+
+The health check page on the application is under `/health` and returns a 200 on success with a response of:
+
 ```json5
 {
-   "status": "UP"
+  "status":"UP",
+  "groups":["liveness","readiness"]
 }
 ```
-
 
 ## Consequences
 The integration of this service is two-step which greats a slightly manual process but will only be a one-off event.

@@ -12,7 +12,7 @@ plugins {
   id("org.jmailen.kotlinter") version "3.15.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   kotlin("jvm") version "1.8.22"
-  kotlin("plugin.spring") version "1.8.21"
+  kotlin("plugin.spring") version "1.8.22"
 }
 
 openApi {

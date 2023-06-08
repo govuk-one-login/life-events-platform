@@ -342,8 +342,8 @@ class OutboundEventQueueService(
     val metricDataResults = cloudWatchClient.getMetricData(getMetricDataRequest).metricDataResults()
     return queueNames.associateWith { queueName ->
       QueueMetric(
-        metricDataResults.find { it.id() == queueName }?.values()?.firstOrNull()?.toInt(),
-        metricDataResults.find { it.id() == dlqName(queueName) }?.values()?.firstOrNull()?.toInt(),
+        metricDataResults.find { it.id() == sanitizeMetricId(queueName) }?.values()?.firstOrNull()?.toInt(),
+        metricDataResults.find { it.id() == sanitizeMetricId(dlqName(queueName)) }?.values()?.firstOrNull()?.toInt(),
       )
     }
   }
@@ -363,8 +363,10 @@ class OutboundEventQueueService(
           .stat("Maximum")
           .build(),
       )
-      .id(queueName)
+      .id(sanitizeMetricId(queueName))
       .build()
+
+  private fun sanitizeMetricId(id: String): String = id.replace("-", "_")
 }
 
 data class QueueMetric(

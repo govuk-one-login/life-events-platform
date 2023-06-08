@@ -48,11 +48,11 @@ class ScheduledJobService(
       }
       ageMeter.set(queueMetric.ageOfOldestMessage ?: 0)
       if (queueMetric.ageOfOldestMessage == null) {
-        log.error("No age_of_oldest_message found for queue: $queueName")
+        log.warn("No age_of_oldest_message found for queue: $queueName")
       }
       dlqLengthMeter.set(queueMetric.dlqLength ?: 0)
       if (queueMetric.dlqLength == null) {
-        log.error("No dlq_length found for queue: $queueName")
+        log.warn("No dlq_length found for queue: $queueName")
       }
     }
   }

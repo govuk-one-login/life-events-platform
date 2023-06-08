@@ -81,9 +81,9 @@ class ScheduledJobServiceTest {
 
     val logsList = listAppender.list
     assertThat(logsList[0].message).isEqualTo("No dlq_length found for queue: queuetwo")
-    assertThat(logsList[0].level).isEqualTo(Level.ERROR)
+    assertThat(logsList[0].level).isEqualTo(Level.WARN)
     assertThat(logsList[1].message).isEqualTo("No age_of_oldest_message found for queue: queuethree")
-    assertThat(logsList[1].level).isEqualTo(Level.ERROR)
+    assertThat(logsList[1].level).isEqualTo(Level.WARN)
   }
 
   private fun setupMeter(metricName: String, queueName: String): AtomicInteger {

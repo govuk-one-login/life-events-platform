@@ -7,6 +7,9 @@ locals {
     Source      = "terraform"
     Repository  = "https://github.com/alphagov/gdx-data-share-poc"
   }
+  vpc_cidr            = "10.158.32.0/20"
+  private_subnet_cidr = cidrsubnet(local.vpc_cidr, 1, 0)
+  public_subnet_cidr  = cidrsubnet(local.vpc_cidr, 1, 1)
 }
 
 terraform {
@@ -71,9 +74,141 @@ module "vpc" {
   account_id  = data.aws_caller_identity.current.account_id
   region      = data.aws_region.current.name
   name_prefix = "${local.env}-"
-  vpc_cidr    = "10.158.32.0/20"
+  vpc_cidr    = local.vpc_cidr
 
   sns_topic_arn = module.sns.topic_arn
+
+  acl_ingress_private = [
+    # Allow traffic from loadbalancer
+    {
+      rule_no    = 1
+      from_port  = 3000
+      to_port    = 3000
+      cidr_block = local.public_subnet_cidr
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    # Deny port 3389 (RDP)
+    {
+      rule_no    = 2
+      from_port  = 3389
+      to_port    = 3389
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = "tcp"
+    },
+    # Allow response to outbound calls
+    {
+      rule_no    = 3
+      from_port  = 1024
+      to_port    = 65535
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    {
+      rule_no    = 100
+      from_port  = 0
+      to_port    = 0
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = -1
+    }
+  ]
+  acl_egress_private = [
+    # HTTPS calls from ECS service to internet
+    {
+      rule_no    = 1
+      from_port  = 443
+      to_port    = 443
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    # Allow response to inbound calls
+    {
+      rule_no    = 2
+      from_port  = 1024
+      to_port    = 65535
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    {
+      rule_no    = 100
+      from_port  = 0
+      to_port    = 0
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = -1
+    }
+  ]
+
+  acl_ingress_public = [
+    # Inbound loadbalancer traffic
+    {
+      rule_no    = 1
+      from_port  = 443
+      to_port    = 443
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    # Deny port 3389 (RDP)
+    {
+      rule_no    = 2
+      from_port  = 3389
+      to_port    = 3389
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = "tcp"
+    },
+    # Allow response to outbound calls
+    {
+      rule_no    = 3
+      from_port  = 1024
+      to_port    = 65535
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    {
+      rule_no    = 100
+      from_port  = 0
+      to_port    = 0
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = -1
+    }
+  ]
+  acl_egress_public = [
+    # Outbound calls mainly to AWS services
+    {
+      rule_no    = 1
+      from_port  = 443
+      to_port    = 443
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    # Allow response to inbound calls
+    {
+      rule_no    = 2
+      from_port  = 1024
+      to_port    = 65535
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    {
+      rule_no    = 100
+      from_port  = 0
+      to_port    = 0
+      cidr_block = "0.0.0.0/0"
+      action     = "DENY"
+      protocol   = -1
+    }
+  ]
 }
 
 module "route53" {

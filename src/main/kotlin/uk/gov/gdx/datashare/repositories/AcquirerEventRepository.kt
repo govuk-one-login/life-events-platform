@@ -61,5 +61,16 @@ interface AcquirerEventRepository : CrudRepository<AcquirerEvent, UUID> {
   @Modifying
   fun softDeleteAllByAcquirerSubscriptionId(acquirerSubscriptionId: UUID, deletionTime: LocalDateTime)
 
-  fun countByDeletedAtIsNull(): Int
+  @Query(
+    "SELECT acquirer_subscription_id, COUNT(*) as count " +
+      "FROM acquirer_event " +
+      "WHERE deleted_at IS NULL " +
+      "GROUP BY acquirer_subscription_id",
+  )
+  fun countByDeletedAtIsNullForSubscriptions(): List<SubscriptionsCount>
 }
+
+data class SubscriptionsCount(
+  val acquirerSubscriptionId: UUID,
+  val count: Int,
+)

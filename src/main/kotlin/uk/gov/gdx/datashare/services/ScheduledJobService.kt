@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.helpers.repeatForLimitedTime
 import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -27,13 +28,24 @@ class ScheduledJobService(
   }
 
   private val queueMetersMap = mutableMapOf<String, Pair<AtomicInteger, AtomicInteger>>()
-  private val unconsumedEventsGauge =
-    meterRegistry.gauge("UnconsumedEvents", AtomicInteger(acquirerEventRepository.countByDeletedAtIsNull()))
+  private val unconsumedEventsMetersMap = mutableMapOf<UUID, AtomicInteger>()
 
   @Scheduled(fixedRate = 30, timeUnit = TimeUnit.SECONDS)
   fun countUnconsumedEvents() {
-    val unconsumedEventsCount = acquirerEventRepository.countByDeletedAtIsNull()
-    unconsumedEventsGauge!!.set(unconsumedEventsCount)
+    val unconsumedEventsForSubscriptions = acquirerEventRepository.countByDeletedAtIsNullForSubscriptions()
+
+    unconsumedEventsMetersMap.forEach { meter ->
+      if (!unconsumedEventsForSubscriptions.map { it.acquirerSubscriptionId }.contains(meter.key)) {
+        unconsumedEventsMetersMap.remove(meter.key)
+      }
+    }
+
+    unconsumedEventsForSubscriptions.forEach { (subscription, count) ->
+      val meter = unconsumedEventsMetersMap.computeIfAbsent(subscription) {
+        meterRegistry.gauge("unconsumed_events", listOf(Tag.of("acquirer_subscription_id", it.toString())), AtomicInteger(0))!!
+      }
+      meter.set(count)
+    }
   }
 
   @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)

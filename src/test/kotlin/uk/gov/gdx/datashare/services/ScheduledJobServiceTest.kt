@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
+import uk.gov.gdx.datashare.repositories.SubscriptionsCount
 import uk.gov.gdx.datashare.repositories.SupplierEvent
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
 import uk.gov.gdx.datashare.services.GroApiService
@@ -40,10 +41,6 @@ class ScheduledJobServiceTest {
 
     mockkStatic(LockAssert::class)
     every { LockAssert.assertLocked() } just runs
-
-    every { acquirerEventRepository.countByDeletedAtIsNull() } returns 5
-    every { meterRegistry.gauge("UnconsumedEvents", any()) } returns AtomicInteger(5)
-    every { outboundEventQueueService.getMetrics() } returns emptyMap()
     underTest = ScheduledJobService(
       acquirerEventRepository,
       groApiService,
@@ -54,18 +51,76 @@ class ScheduledJobServiceTest {
   }
 
   @Test
+  fun `countUnconsumedEvents monitors unconsumed events`() {
+    val subscriptionOneId = UUID.randomUUID()
+    val subscriptionTwoId = UUID.randomUUID()
+    val subscriptionThreeId = UUID.randomUUID()
+    val metrics = listOf(
+      SubscriptionsCount(subscriptionOneId, 1),
+      SubscriptionsCount(subscriptionTwoId, 2),
+      SubscriptionsCount(subscriptionThreeId, 3),
+    )
+    val unconsumedEventMeterOne = setupSubscriptionMeter(subscriptionOneId)
+    val unconsumedEventMeterTwo = setupSubscriptionMeter(subscriptionTwoId)
+    val unconsumedEventMeterThree = setupSubscriptionMeter(subscriptionThreeId)
+    every { acquirerEventRepository.countByDeletedAtIsNullForSubscriptions() } returns metrics
+
+    underTest.countUnconsumedEvents()
+
+    verify(exactly = 1) {
+      unconsumedEventMeterOne.set(1)
+      unconsumedEventMeterTwo.set(2)
+      unconsumedEventMeterThree.set(3)
+    }
+  }
+
+  @Test
+  fun `countUnconsumedEvents removes strong references`() {
+    val subscriptionOneId = UUID.randomUUID()
+    val subscriptionTwoId = UUID.randomUUID()
+    val subscriptionThreeId = UUID.randomUUID()
+    val firstMetrics = listOf(
+      SubscriptionsCount(subscriptionOneId, 1),
+      SubscriptionsCount(subscriptionTwoId, 2),
+      SubscriptionsCount(subscriptionThreeId, 3),
+    )
+    val secondMetrics = listOf(
+      SubscriptionsCount(subscriptionOneId, 11),
+      SubscriptionsCount(subscriptionTwoId, 12),
+    )
+    val unconsumedEventMeterOne = setupSubscriptionMeter(subscriptionOneId)
+    val unconsumedEventMeterTwo = setupSubscriptionMeter(subscriptionTwoId)
+    val unconsumedEventMeterThree = setupSubscriptionMeter(subscriptionThreeId)
+    every { acquirerEventRepository.countByDeletedAtIsNullForSubscriptions() } returns firstMetrics andThen secondMetrics
+
+    underTest.countUnconsumedEvents()
+    underTest.countUnconsumedEvents()
+
+    verify(exactly = 1) {
+      unconsumedEventMeterOne.set(1)
+      unconsumedEventMeterTwo.set(2)
+      unconsumedEventMeterThree.set(3)
+
+      unconsumedEventMeterOne.set(11)
+      unconsumedEventMeterTwo.set(12)
+
+      unconsumedEventMeterThree.set(any())
+    }
+  }
+
+  @Test
   fun `scheduledMonitorQueueMetrics monitors queue metrics`() {
     val metrics = mapOf(
       "queueone" to QueueMetric(ageOfOldestMessage = 1, dlqLength = 11),
       "queuetwo" to QueueMetric(ageOfOldestMessage = 2, dlqLength = null),
       "queuethree" to QueueMetric(ageOfOldestMessage = null, dlqLength = 13),
     )
-    val ageMeterOne = setupMeter("age_of_oldest_message", "queueone")
-    val ageMeterTwo = setupMeter("age_of_oldest_message", "queuetwo")
-    val ageMeterThree = setupMeter("age_of_oldest_message", "queuethree")
-    val dlqLengthMeterOne = setupMeter("dlq_length", "queueone")
-    val dlqLengthMeterTwo = setupMeter("dlq_length", "queuetwo")
-    val dlqLengthMeterThree = setupMeter("dlq_length", "queuethree")
+    val ageMeterOne = setupQueueMeter("age_of_oldest_message", "queueone")
+    val ageMeterTwo = setupQueueMeter("age_of_oldest_message", "queuetwo")
+    val ageMeterThree = setupQueueMeter("age_of_oldest_message", "queuethree")
+    val dlqLengthMeterOne = setupQueueMeter("dlq_length", "queueone")
+    val dlqLengthMeterTwo = setupQueueMeter("dlq_length", "queuetwo")
+    val dlqLengthMeterThree = setupQueueMeter("dlq_length", "queuethree")
     every { outboundEventQueueService.getMetrics() } returns metrics
 
     underTest.monitorQueueMetrics()
@@ -95,10 +150,10 @@ class ScheduledJobServiceTest {
     val secondMetrics = mapOf(
       "queueone" to QueueMetric(ageOfOldestMessage = 101, dlqLength = 111),
     )
-    val ageMeterOne = setupMeter("age_of_oldest_message", "queueone")
-    val ageMeterTwo = setupMeter("age_of_oldest_message", "queuetwo")
-    val dlqLengthMeterOne = setupMeter("dlq_length", "queueone")
-    val dlqLengthMeterTwo = setupMeter("dlq_length", "queuetwo")
+    val ageMeterOne = setupQueueMeter("age_of_oldest_message", "queueone")
+    val ageMeterTwo = setupQueueMeter("age_of_oldest_message", "queuetwo")
+    val dlqLengthMeterOne = setupQueueMeter("dlq_length", "queueone")
+    val dlqLengthMeterTwo = setupQueueMeter("dlq_length", "queuetwo")
     every { outboundEventQueueService.getMetrics() } returns firstMetrics andThen secondMetrics
 
     underTest.monitorQueueMetrics()
@@ -145,7 +200,20 @@ class ScheduledJobServiceTest {
     }
   }
 
-  private fun setupMeter(metricName: String, queueName: String): AtomicInteger {
+  private fun setupSubscriptionMeter(subscriptionId: UUID): AtomicInteger {
+    val atomicInteger = mockk<AtomicInteger>()
+    every {
+      meterRegistry.gauge(
+        "unconsumed_events",
+        listOf(Tag.of("acquirer_subscription_id", subscriptionId.toString())),
+        any<AtomicInteger>(),
+      )
+    } returns atomicInteger
+    every { atomicInteger.set(any()) } just runs
+    return atomicInteger
+  }
+
+  private fun setupQueueMeter(metricName: String, queueName: String): AtomicInteger {
     val atomicInteger = mockk<AtomicInteger>()
     every {
       meterRegistry.gauge(

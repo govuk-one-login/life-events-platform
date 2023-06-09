@@ -30,9 +30,18 @@ locals {
       action     = "DENY"
       protocol   = "tcp"
     },
-    # Allow response to outbound calls
+    # Allow 443 from other subnets for VPC endpoints
     {
       rule_no    = 4
+      from_port  = 443
+      to_port    = 443
+      cidr_block = var.vpc_cidr
+      action     = "ALLOW"
+      protocol   = "tcp"
+    },
+    # Allow response to outbound calls
+    {
+      rule_no    = 5
       from_port  = 1024
       to_port    = 65535
       cidr_block = "0.0.0.0/0"

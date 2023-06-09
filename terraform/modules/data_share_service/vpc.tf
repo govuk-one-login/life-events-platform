@@ -95,10 +95,10 @@ locals {
     }
   ]
 
-  public_acl_ingress_rules = [
+  base_public_acl_ingress_rules = [
     # Inbound service traffic
     {
-      rule_no    = 1
+      rule_no    = 2
       from_port  = 443
       to_port    = 443
       cidr_block = "0.0.0.0/0"
@@ -107,7 +107,7 @@ locals {
     },
     # Inbound service test traffic
     {
-      rule_no    = 2
+      rule_no    = 3
       from_port  = 8443
       to_port    = 8443
       cidr_block = "0.0.0.0/0"
@@ -116,7 +116,7 @@ locals {
     },
     # Deny port 3389 (RDP)
     {
-      rule_no    = 3
+      rule_no    = 4
       from_port  = 3389
       to_port    = 3389
       cidr_block = "0.0.0.0/0"
@@ -125,7 +125,7 @@ locals {
     },
     # Allow response to outbound calls
     {
-      rule_no    = 4
+      rule_no    = 5
       from_port  = 1024
       to_port    = 65535
       cidr_block = "0.0.0.0/0"
@@ -141,6 +141,20 @@ locals {
       protocol   = -1
     }
   ]
+  port_80_ingress = [
+    # Dev inbound service traffic
+    # TODO GPC-399: Remove this rule
+    {
+      rule_no    = 1
+      from_port  = 80
+      to_port    = 80
+      cidr_block = "0.0.0.0/0"
+      action     = "ALLOW"
+      protocol   = "tcp"
+    }
+  ]
+
+  public_acl_ingress_rules = local.is_dev ? concat(local.port_80_ingress, local.base_public_acl_ingress_rules) : local.base_public_acl_ingress_rules
   public_acl_egress_rules = [
     # Outbound calls mainly to AWS services
     {

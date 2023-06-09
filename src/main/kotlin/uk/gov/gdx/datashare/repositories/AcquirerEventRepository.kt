@@ -49,14 +49,15 @@ interface AcquirerEventRepository : CrudRepository<AcquirerEvent, UUID> {
   )
   fun findByClientIdAndId(clientId: String, id: UUID): AcquirerEvent?
 
-  @Query("UPDATE acquirer_event SET deleted_at=:deletionTime WHERE id = :id")
+  @Query("UPDATE acquirer_event SET deleted_at=:deletionTime WHERE id = :id AND deleted_at IS NULL")
   @Modifying
   fun softDeleteById(id: UUID, deletionTime: LocalDateTime)
 
   @Query(
     "UPDATE acquirer_event " +
       "SET deleted_at=:deletionTime " +
-      "WHERE acquirer_subscription_id = :acquirerSubscriptionId",
+      "WHERE acquirer_subscription_id = :acquirerSubscriptionId " +
+      "AND deleted_at IS NULL",
   )
   @Modifying
   fun softDeleteAllByAcquirerSubscriptionId(acquirerSubscriptionId: UUID, deletionTime: LocalDateTime)

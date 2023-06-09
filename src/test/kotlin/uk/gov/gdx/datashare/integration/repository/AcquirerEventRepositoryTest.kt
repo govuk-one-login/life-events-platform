@@ -142,6 +142,24 @@ class AcquirerEventRepositoryTest(
   }
 
   @Test
+  fun `softDeleteById doesn't update deleted event`() {
+    setupSupplierAndAcquirerSubscriptions()
+
+    val oldDeletionTime = LocalDateTime.now().minusDays(4)
+
+    val acquirerEvent = saveDeletedAcquirerEventForSubscription(deletedAt = oldDeletionTime)
+
+    val deletionTime = LocalDateTime.now()
+
+    acquirerEventRepository.softDeleteById(acquirerEvent.id, deletionTime)
+
+    assertThat(
+      acquirerEventRepository.findByIdOrNull(acquirerEvent.id)?.deletedAt?.truncatedTo(ChronoUnit.MILLIS),
+    )
+      .isEqualTo(oldDeletionTime.truncatedTo(ChronoUnit.MILLIS))
+  }
+
+  @Test
   fun `softDeleteByAllByAcquirerSubscriptionId soft deletes all events`() {
     setupSupplierAndAcquirerSubscriptions()
 
@@ -159,6 +177,29 @@ class AcquirerEventRepositoryTest(
         acquirerEventRepository.findByIdOrNull(event.id)?.deletedAt?.truncatedTo(ChronoUnit.MILLIS),
       )
         .isEqualTo(deletionTime.truncatedTo(ChronoUnit.MILLIS))
+    }
+  }
+
+  @Test
+  fun `softDeleteByAllByAcquirerSubscriptionId doesn't update deleted event`() {
+    setupSupplierAndAcquirerSubscriptions()
+
+    val oldDeletionTime = LocalDateTime.now().minusDays(4)
+
+    val events = ArrayList<AcquirerEvent>()
+    for (i in 1..3) {
+      events.add(saveDeletedAcquirerEventForSubscription(deletedAt = oldDeletionTime))
+    }
+
+    val deletionTime = LocalDateTime.now()
+
+    acquirerEventRepository.softDeleteAllByAcquirerSubscriptionId(acquirerSubscriptionId, deletionTime)
+
+    events.forEach { event ->
+      assertThat(
+        acquirerEventRepository.findByIdOrNull(event.id)?.deletedAt?.truncatedTo(ChronoUnit.MILLIS),
+      )
+        .isEqualTo(oldDeletionTime.truncatedTo(ChronoUnit.MILLIS))
     }
   }
 
@@ -223,21 +264,23 @@ class AcquirerEventRepositoryTest(
     ).build(),
   )
 
-  private fun saveAcquirerEventForOtherSubscription(createdAt: LocalDateTime = timeInRange) = acquirerEventRepository.save(
-    AcquirerEventBuilder(
-      acquirerSubscriptionId = otherAcquirerSubscriptionId,
-      supplierEventId = saveSupplierEvent().id,
-      createdAt = createdAt,
-    ).build(),
-  )
+  private fun saveAcquirerEventForOtherSubscription(createdAt: LocalDateTime = timeInRange) =
+    acquirerEventRepository.save(
+      AcquirerEventBuilder(
+        acquirerSubscriptionId = otherAcquirerSubscriptionId,
+        supplierEventId = saveSupplierEvent().id,
+        createdAt = createdAt,
+      ).build(),
+    )
 
-  private fun saveAcquirerEventForThirdSubscription(createdAt: LocalDateTime = timeInRange) = acquirerEventRepository.save(
-    AcquirerEventBuilder(
-      acquirerSubscriptionId = thirdAcquirerSubscriptionId,
-      supplierEventId = saveSupplierEvent().id,
-      createdAt = createdAt,
-    ).build(),
-  )
+  private fun saveAcquirerEventForThirdSubscription(createdAt: LocalDateTime = timeInRange) =
+    acquirerEventRepository.save(
+      AcquirerEventBuilder(
+        acquirerSubscriptionId = thirdAcquirerSubscriptionId,
+        supplierEventId = saveSupplierEvent().id,
+        createdAt = createdAt,
+      ).build(),
+    )
 
   private fun saveTooEarlyAcquirerEventForSubscription() = acquirerEventRepository.save(
     AcquirerEventBuilder(
@@ -255,12 +298,15 @@ class AcquirerEventRepositoryTest(
     ).build(),
   )
 
-  private fun saveDeletedAcquirerEventForSubscription(createdAt: LocalDateTime = timeInRange) = acquirerEventRepository.save(
+  private fun saveDeletedAcquirerEventForSubscription(
+    createdAt: LocalDateTime = timeInRange,
+    deletedAt: LocalDateTime = LocalDateTime.now(),
+  ) = acquirerEventRepository.save(
     AcquirerEventBuilder(
       acquirerSubscriptionId = acquirerSubscriptionId,
       supplierEventId = saveSupplierEvent().id,
       createdAt = createdAt,
-      deletedAt = LocalDateTime.now(),
+      deletedAt = deletedAt,
     ).build(),
   )
 

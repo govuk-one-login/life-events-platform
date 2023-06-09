@@ -83,7 +83,7 @@ class ScheduledJobServiceTest {
     val subscriptionTwoId = UUID.randomUUID()
     val subscriptionThreeId = UUID.randomUUID()
     val firstMetrics = listOf(
-      SubscriptionsCount(subscriptionOneId, 1),
+      SubscriptionsCount(subscriptionOneId, 0),
       SubscriptionsCount(subscriptionTwoId, 2),
       SubscriptionsCount(subscriptionThreeId, 3),
     )
@@ -100,7 +100,7 @@ class ScheduledJobServiceTest {
     underTest.countUnconsumedEvents()
 
     verify(exactly = 1) {
-      unconsumedEventMeterOne.set(1)
+      unconsumedEventMeterOne.set(0)
       unconsumedEventMeterTwo.set(2)
       unconsumedEventMeterThree.set(3)
 

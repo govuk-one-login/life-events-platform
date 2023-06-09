@@ -122,7 +122,10 @@ resource "aws_vpc_endpoint" "rds_bastion_vpc_endpoint_ssm" {
   vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.eu-west-2.ssm"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [module.vpc.private_subnet_ids[0]]
+  subnet_ids          = [
+    module.vpc.private_subnet_ids[0],
+    module.vpc.private_subnet_ids[1]
+  ]
   private_dns_enabled = true
   security_group_ids  = [aws_security_group.rds_bastion_host_vpc_endpoint_sg.id]
 }

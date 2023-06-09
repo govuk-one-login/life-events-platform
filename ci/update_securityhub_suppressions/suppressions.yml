@@ -250,7 +250,7 @@ Suppressions:
   "ebs-in-backup-plan-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:ec2:eu-west-2:776473272850:volume/vol-0cda61e0007f7189a
-        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-03e271afd6728092b
+        - arn:aws:ec2:eu-west-2:776473272850:volume/vol-08b9cbe775eaac709
       notes: >
         We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have the
         volumes be backed up
@@ -267,7 +267,7 @@ Suppressions:
   "ec2-instance-detailed-monitoring-enabled-conformance-pack-ikljqduwd":
     - resources:
         - arn:aws:ec2:eu-west-2:776473272850:instance/i-0437db543ef48999e
-        - arn:aws:ec2:eu-west-2:776473272850:instance/i-04988c45c43be9829
+        - arn:aws:ec2:eu-west-2:776473272850:instance/i-01acf284a28d7a4e1
       notes: >
         We only use EC2 instances as bastions for connecting to our RDS databases, as such we do not need to have
         detailed monitoring

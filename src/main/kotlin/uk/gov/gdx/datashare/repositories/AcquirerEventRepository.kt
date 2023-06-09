@@ -72,5 +72,5 @@ interface AcquirerEventRepository : CrudRepository<AcquirerEvent, UUID> {
 
 data class SubscriptionsCount(
   val acquirerSubscriptionId: UUID,
-  val count: Int
+  val count: Int,
 )

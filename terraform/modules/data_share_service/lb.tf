@@ -73,6 +73,7 @@ resource "aws_acm_certificate_validation" "acm_lb_certificate_validation" {
   validation_record_fqdns = [for record in aws_route53_record.lb_cert_validation : record.fqdn]
 }
 
+# TODO GPC-399: remove HTTP
 #tfsec:ignore:aws-elb-http-not-used
 resource "aws_lb_listener" "listener_https" {
   load_balancer_arn = aws_lb.load_balancer.arn
@@ -94,6 +95,7 @@ resource "aws_lb_listener" "listener_https" {
   depends_on = [aws_lb_target_group.green]
 }
 
+# TODO GPC-399: Remove HTTP
 #tfsec:ignore:aws-elb-http-not-used
 resource "aws_lb_listener" "test_listener_https" {
   load_balancer_arn = aws_lb.load_balancer.arn

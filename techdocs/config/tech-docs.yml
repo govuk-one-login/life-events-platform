@@ -38,4 +38,4 @@ show_contribution_banner: true
 github_repo: alphagov/gdx-data-share-poc
 github_branch: main
 
-api_path: https://dev.share-life-events.service.gov.uk/v3/api-docs.yaml
+api_path: https://demo.share-life-events.service.gov.uk/v3/api-docs.yaml

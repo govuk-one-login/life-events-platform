@@ -163,7 +163,7 @@ class AcquirerEventRepositoryTest(
   }
 
   @Test
-  fun `countByDeletedAtIsNull counts not deleted events`() {
+  fun `countByDeletedAtIsNullForSubscriptions counts not deleted events`() {
     setupSupplierAndAcquirerSubscriptions()
 
     saveAcquirerEventForSubscription()
@@ -171,9 +171,10 @@ class AcquirerEventRepositoryTest(
     saveAcquirerEventForOtherSubscription()
     saveDeletedAcquirerEventForSubscription()
 
-    val count = acquirerEventRepository.countByDeletedAtIsNull()
+    val countsForSubscriptions = acquirerEventRepository.countByDeletedAtIsNullForSubscriptions()
 
-    assertThat(count).isEqualTo(3)
+    assertThat(countsForSubscriptions.any { it.acquirerSubscriptionId == acquirerSubscriptionId && it.count == 2 }).isTrue()
+    assertThat(countsForSubscriptions.any { it.acquirerSubscriptionId == otherAcquirerSubscriptionId && it.count == 1 }).isTrue()
   }
 
   private fun setupSupplierAndAcquirerSubscriptions() {

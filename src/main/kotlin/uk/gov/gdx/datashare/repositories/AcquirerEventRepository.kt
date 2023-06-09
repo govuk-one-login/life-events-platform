@@ -62,9 +62,10 @@ interface AcquirerEventRepository : CrudRepository<AcquirerEvent, UUID> {
   fun softDeleteAllByAcquirerSubscriptionId(acquirerSubscriptionId: UUID, deletionTime: LocalDateTime)
 
   @Query(
-    "SELECT acquirer_subscription_id, COUNT(*) as count " +
-      "FROM acquirer_event " +
-      "WHERE deleted_at IS NULL " +
+    "SELECT acquirer_subscription_id, COUNT(CASE WHEN deleted_at IS NULL THEN 1 END) " +
+      "FROM acquirer_event ae " +
+      "JOIN acquirer_subscription asub ON ae.acquirer_subscription_id = asub.id " +
+      "WHERE asub.when_deleted IS NULL " +
       "GROUP BY acquirer_subscription_id",
   )
   fun countByDeletedAtIsNullForSubscriptions(): List<SubscriptionsCount>

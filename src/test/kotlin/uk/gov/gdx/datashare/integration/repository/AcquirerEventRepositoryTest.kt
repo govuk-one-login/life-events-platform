@@ -168,13 +168,15 @@ class AcquirerEventRepositoryTest(
 
     saveAcquirerEventForSubscription()
     saveAcquirerEventForSubscription()
-    saveAcquirerEventForOtherSubscription()
+    saveAcquirerEventForThirdSubscription()
+    saveDeletedAcquirerEventForOtherSubscription()
     saveDeletedAcquirerEventForSubscription()
 
     val countsForSubscriptions = acquirerEventRepository.countByDeletedAtIsNullForSubscriptions()
 
     assertThat(countsForSubscriptions.any { it.acquirerSubscriptionId == acquirerSubscriptionId && it.count == 2 }).isTrue()
-    assertThat(countsForSubscriptions.any { it.acquirerSubscriptionId == otherAcquirerSubscriptionId && it.count == 1 }).isTrue()
+    assertThat(countsForSubscriptions.any { it.acquirerSubscriptionId == otherAcquirerSubscriptionId && it.count == 0 }).isTrue()
+    assertThat(countsForSubscriptions.any { it.acquirerSubscriptionId == thirdAcquirerSubscriptionId && it.count == 1 }).isTrue()
   }
 
   private fun setupSupplierAndAcquirerSubscriptions() {
@@ -261,6 +263,18 @@ class AcquirerEventRepositoryTest(
       supplierEventId = saveSupplierEvent().id,
       createdAt = createdAt,
       deletedAt = LocalDateTime.now(),
+    ).build(),
+  )
+
+  private fun saveDeletedAcquirerEventForOtherSubscription(
+    createdAt: LocalDateTime = timeInRange,
+    deletedAt: LocalDateTime = LocalDateTime.now(),
+  ) = acquirerEventRepository.save(
+    AcquirerEventBuilder(
+      acquirerSubscriptionId = otherAcquirerSubscriptionId,
+      supplierEventId = saveSupplierEvent().id,
+      createdAt = createdAt,
+      deletedAt = deletedAt,
     ).build(),
   )
 

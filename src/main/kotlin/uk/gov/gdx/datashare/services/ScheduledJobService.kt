@@ -36,11 +36,14 @@ class ScheduledJobService(
   fun countUnconsumedEvents() {
     val unconsumedEventsForSubscriptions = acquirerEventRepository.countByDeletedAtIsNullForSubscriptions()
 
+    val metersToRemove = mutableListOf<UUID>()
     unconsumedEventsMetersMap.forEach { meter ->
       if (!unconsumedEventsForSubscriptions.map { it.acquirerSubscriptionId }.contains(meter.key)) {
-        unconsumedEventsMetersMap.remove(meter.key)
+        metersToRemove.plus(meter.key)
       }
     }
+
+    metersToRemove.forEach { unconsumedEventsMetersMap.remove(it) }
 
     unconsumedEventsForSubscriptions.forEach { (subscription, count) ->
       val meter = unconsumedEventsMetersMap.computeIfAbsent(subscription) {
@@ -61,11 +64,14 @@ class ScheduledJobService(
   fun monitorQueueMetrics() {
     val queueMetrics = outboundEventQueueService.getMetrics()
 
+    val metersToRemove = mutableListOf<String>()
     queueMetersMap.forEach {
       if (!queueMetrics.keys.contains(it.key)) {
-        queueMetersMap.remove(it.key)
+        metersToRemove.plus(it.key)
       }
     }
+
+    metersToRemove.forEach { queueMetersMap.remove(it) }
 
     queueMetrics.forEach { (queueName, queueMetric) ->
       val (ageMeter, dlqLengthMeter) = queueMetersMap.computeIfAbsent(queueName) {

@@ -95,6 +95,30 @@ resource "aws_lb_listener" "listener_https" {
   depends_on = [aws_lb_target_group.green]
 }
 
+resource "aws_lb_listener_rule" "security_txt_redirect" {
+  listener_arn = aws_lb_listener.listener_https.arn
+  priority     = 100
+
+  action {
+    type = "redirect"
+
+    redirect {
+      protocol    = "HTTPS"
+      host        = "vdp.cabinetoffice.gov.uk"
+      port        = "443"
+      path        = "/.well-known/security.txt"
+      query       = ""
+      status_code = "HTTP_302"
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/security.txt", "/.well-known/security.txt"]
+    }
+  }
+}
+
 # TODO GPC-399: Remove HTTP
 #tfsec:ignore:aws-elb-http-not-used
 resource "aws_lb_listener" "test_listener_https" {

@@ -12,10 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
-import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
-import uk.gov.gdx.datashare.repositories.SubscriptionsCount
-import uk.gov.gdx.datashare.repositories.SupplierEvent
-import uk.gov.gdx.datashare.repositories.SupplierEventRepository
+import uk.gov.gdx.datashare.repositories.*
 import uk.gov.gdx.datashare.services.GroApiService
 import uk.gov.gdx.datashare.services.OutboundEventQueueService
 import uk.gov.gdx.datashare.services.QueueMetric
@@ -25,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class ScheduledJobServiceTest {
   private val acquirerEventRepository = mockk<AcquirerEventRepository>()
+  private val acquirerRepository = mockk<AcquirerRepository>()
   private val groApiService = mockk<GroApiService>()
   private val supplierEventRepository = mockk<SupplierEventRepository>()
   private val meterRegistry = mockk<MeterRegistry>()
@@ -43,6 +41,7 @@ class ScheduledJobServiceTest {
     every { LockAssert.assertLocked() } just runs
     underTest = ScheduledJobService(
       acquirerEventRepository,
+      acquirerRepository,
       groApiService,
       supplierEventRepository,
       meterRegistry,
@@ -52,6 +51,8 @@ class ScheduledJobServiceTest {
 
   @Test
   fun `countUnconsumedEvents monitors unconsumed events`() {
+    val acquirerNameOne = "acquirerone"
+    val acquirerNameTwo = "acquirertwo"
     val subscriptionOneId = UUID.randomUUID()
     val subscriptionTwoId = UUID.randomUUID()
     val subscriptionThreeId = UUID.randomUUID()
@@ -60,9 +61,9 @@ class ScheduledJobServiceTest {
       SubscriptionsCount(subscriptionTwoId, 2),
       SubscriptionsCount(subscriptionThreeId, 3),
     )
-    val unconsumedEventMeterOne = setupSubscriptionMeter(subscriptionOneId)
-    val unconsumedEventMeterTwo = setupSubscriptionMeter(subscriptionTwoId)
-    val unconsumedEventMeterThree = setupSubscriptionMeter(subscriptionThreeId)
+    val unconsumedEventMeterOne = setupSubscriptionMeter(subscriptionOneId, acquirerNameOne)
+    val unconsumedEventMeterTwo = setupSubscriptionMeter(subscriptionTwoId, acquirerNameOne)
+    val unconsumedEventMeterThree = setupSubscriptionMeter(subscriptionThreeId, acquirerNameTwo)
     every { acquirerEventRepository.countByDeletedAtIsNullForSubscriptions() } returns metrics
 
     underTest.countUnconsumedEvents()
@@ -76,6 +77,8 @@ class ScheduledJobServiceTest {
 
   @Test
   fun `countUnconsumedEvents removes strong references`() {
+    val acquirerNameOne = "acquirerone"
+    val acquirerNameTwo = "acquirertwo"
     val subscriptionOneId = UUID.randomUUID()
     val subscriptionTwoId = UUID.randomUUID()
     val subscriptionThreeId = UUID.randomUUID()
@@ -88,9 +91,9 @@ class ScheduledJobServiceTest {
       SubscriptionsCount(subscriptionOneId, 11),
       SubscriptionsCount(subscriptionTwoId, 12),
     )
-    val unconsumedEventMeterOne = setupSubscriptionMeter(subscriptionOneId)
-    val unconsumedEventMeterTwo = setupSubscriptionMeter(subscriptionTwoId)
-    val unconsumedEventMeterThree = setupSubscriptionMeter(subscriptionThreeId)
+    val unconsumedEventMeterOne = setupSubscriptionMeter(subscriptionOneId, acquirerNameOne)
+    val unconsumedEventMeterTwo = setupSubscriptionMeter(subscriptionTwoId, acquirerNameOne)
+    val unconsumedEventMeterThree = setupSubscriptionMeter(subscriptionThreeId, acquirerNameTwo)
     every { acquirerEventRepository.countByDeletedAtIsNullForSubscriptions() } returns firstMetrics andThen secondMetrics
 
     underTest.countUnconsumedEvents()
@@ -200,16 +203,20 @@ class ScheduledJobServiceTest {
     }
   }
 
-  private fun setupSubscriptionMeter(subscriptionId: UUID): AtomicInteger {
+  private fun setupSubscriptionMeter(subscriptionId: UUID, acquirerName: String): AtomicInteger {
     val atomicInteger = mockk<AtomicInteger>()
     every {
       meterRegistry.gauge(
         "unconsumed_events",
-        listOf(Tag.of("acquirer_subscription_id", subscriptionId.toString())),
+        listOf(
+          Tag.of("acquirer_subscription_id", subscriptionId.toString()),
+          Tag.of("acquirer", acquirerName),
+        ),
         any<AtomicInteger>(),
       )
     } returns atomicInteger
     every { atomicInteger.set(any()) } just runs
+    every { acquirerRepository.findNameForAcquirerSubscriptionId(subscriptionId) } returns acquirerName
     return atomicInteger
   }
 

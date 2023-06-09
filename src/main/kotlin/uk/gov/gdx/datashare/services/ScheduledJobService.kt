@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import uk.gov.gdx.datashare.helpers.repeatForLimitedTime
 import uk.gov.gdx.datashare.repositories.AcquirerEventRepository
+import uk.gov.gdx.datashare.repositories.AcquirerRepository
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger
 @Service
 class ScheduledJobService(
   private val acquirerEventRepository: AcquirerEventRepository,
+  private val acquirerRepository: AcquirerRepository,
   private val groApiService: GroApiService,
   private val supplierEventRepository: SupplierEventRepository,
   private val meterRegistry: MeterRegistry,
@@ -42,7 +44,14 @@ class ScheduledJobService(
 
     unconsumedEventsForSubscriptions.forEach { (subscription, count) ->
       val meter = unconsumedEventsMetersMap.computeIfAbsent(subscription) {
-        meterRegistry.gauge("unconsumed_events", listOf(Tag.of("acquirer_subscription_id", it.toString())), AtomicInteger(0))!!
+        meterRegistry.gauge(
+          "unconsumed_events",
+          listOf(
+            Tag.of("acquirer_subscription_id", it.toString()),
+            Tag.of("acquirer", acquirerRepository.findNameForAcquirerSubscriptionId(it)),
+          ),
+          AtomicInteger(0),
+        )!!
       }
       meter.set(count)
     }

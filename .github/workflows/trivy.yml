@@ -40,7 +40,7 @@ jobs:
           cache-from: type=gha
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.11.0
+        uses: aquasecurity/trivy-action@0.11.1
         with:
           image-ref: ${{ github.ref_name }}:${{ matrix.image }}
           trivyignores: ${{ matrix.trivyignore }}
@@ -54,7 +54,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.11.0
+        uses: aquasecurity/trivy-action@0.11.1
         with:
           scan-type: config
           trivyignores: .trivyignore.docker

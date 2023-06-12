@@ -3,9 +3,5 @@
 CVE-2020-8911
 CVE-2020-8912
 
-## Prometheus
-# The latest version of the aws-otel-collector is yet to update Prometheus to fix this vulnerability
-CVE-2019-3826
-
 # GPC-392: This is slow processing of malicious requests and we expect the attack vector to be inaccessible, so we can ignore this
 CVE-2023-2650

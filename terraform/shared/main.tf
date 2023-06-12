@@ -323,7 +323,6 @@ locals {
   ]
 
   gdx_read_only = [
-    "sudha.mohan"
   ]
 }
 

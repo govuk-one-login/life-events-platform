@@ -3,31 +3,8 @@
 CVE-2020-8911
 CVE-2020-8912
 
-## Prometheus
-# The latest version of the grafana is yet to update Prometheus to fix this vulnerability
-CVE-2019-3826
-
-## Golang HPACK
-# The latest version of the grafana is yet to update golang HPACK decoder to fix this vulnerability
-# This denial of service is not largely impactful on our metric dashboarding service
-CVE-2022-41723
-GHSA-vvpx-j8f3-3w6h
-
-# This is an issue in the OS image alpine 3.17.2 that has been solved in 3.17.3, but grafana isn't there yet
-# We do not use the functionality that is required for this exploit
-CVE-2023-0464
-CVE-2023-0465
-CVE-2023-0466
-
 # GPC-353: We do not run on ARM and this is a difficult to expose vulnerability.
 CVE-2023-1255
-
-# GPC-377: These are issues in curl that are minor and not impactful to us, they will be removed when the base image
-# upgrades to libcurl 8.1.0
-CVE-2023-28319
-CVE-2023-28320
-CVE-2023-28321
-CVE-2023-28322
 
 # GPC-389: This vulnerability is not an issue for us and would only impact dashboarding, so we can ignore it
 CVE-2023-29491

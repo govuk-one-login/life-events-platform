@@ -6,7 +6,7 @@ locals {
 }
 
 resource "aws_cognito_user_pool" "pool" {
-  name = "${var.environment}-gdx-data-share"
+  name                = "${var.environment}-gdx-data-share"
   deletion_protection = "ACTIVE"
 }
 

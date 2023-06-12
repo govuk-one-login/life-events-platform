@@ -37,7 +37,7 @@ jobs:
           cache-from: type=gha
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.11.1
+        uses: aquasecurity/trivy-action@0.11.2
         with:
           image-ref: ${{ github.ref_name }}:latest
           exit-code: 1

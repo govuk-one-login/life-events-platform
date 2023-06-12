@@ -12,6 +12,7 @@ plugins {
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   kotlin("jvm") version "1.8.22"
   kotlin("plugin.spring") version "1.8.22"
+  jacoco
 }
 
 openApi {
@@ -120,10 +121,18 @@ tasks {
       jvmTarget = "17"
     }
   }
-  withType<Test> {
-    useJUnitPlatform {
-      excludeTags = setOf("E2E")
-    }
+}
+
+tasks.test {
+  useJUnitPlatform {
+    excludeTags = setOf("E2E")
+  }
+  finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+  reports {
+    xml.required.set(true)
   }
 }
 

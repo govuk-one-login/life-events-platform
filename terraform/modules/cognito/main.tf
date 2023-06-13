@@ -8,6 +8,40 @@ locals {
 resource "aws_cognito_user_pool" "pool" {
   name                = "${var.environment}-gdx-data-share"
   deletion_protection = "ACTIVE"
+
+  mfa_configuration = "ON"
+
+  password_policy {
+    minimum_length                   = 12
+    require_lowercase                = true
+    require_uppercase                = true
+    require_numbers                  = true
+    require_symbols                  = true
+    temporary_password_validity_days = 7
+  }
+
+  account_recovery_setting {
+    recovery_mechanism {
+      name     = "admin_only"
+      priority = 1
+    }
+  }
+
+
+  software_token_mfa_configuration {
+    enabled = true
+  }
+
+  admin_create_user_config {
+    allow_admin_create_user_only = true
+
+    invite_message_template {
+      email_subject = "Your temporary password for DI Event Platform"
+      email_message = "Your username is {username} and temporary password is {####}."
+      sms_message   = "Your username is {username} and temporary password is {####}."
+    }
+  }
+
 }
 
 resource "aws_cognito_user_pool_domain" "domain" {

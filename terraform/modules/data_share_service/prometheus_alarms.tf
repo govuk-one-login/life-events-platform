@@ -18,10 +18,10 @@ EOF
   events_alerts = [
     <<EOF
     - alert: ${var.environment} Growing Unconsumed Events
-      expr: max(UnconsumedEvents) > 500000
+      expr: max by(acquirer, acquirer_subscription_id) (unconsumed_events) > 100000
       for: 5m
       annotations:
-        summary: ${var.environment} Over 500000 unconsumed events in database
+        summary: ${var.environment} Over 100000 unconsumed events in database for a subscription
 EOF
   ]
 

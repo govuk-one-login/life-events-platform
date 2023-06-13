@@ -32,7 +32,8 @@ EOF
       for: 5m
       annotations:
         summary: ${var.environment} Acquirer SQS DLQ has messages
-EOF,
+EOF
+    ,
     <<EOF
     - alert: ${var.environment} Acquirer SQS message age over 3 days
       expr: max by(queue_name) (age_of_oldest_message) > 259200

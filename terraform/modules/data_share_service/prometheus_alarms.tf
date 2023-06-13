@@ -25,6 +25,23 @@ EOF
 EOF
   ]
 
+  sqs_alerts = [
+    <<EOF
+    - alert: ${var.environment} Acquirer SQS DLQ has messages
+      expr: max by(queue_name) (dlq_length) > 0
+      for: 5m
+      annotations:
+        summary: ${var.environment} Acquirer SQS DLQ has messages
+EOF,
+    <<EOF
+    - alert: ${var.environment} Acquirer SQS message age over 3 days
+      expr: max by(queue_name) (age_of_oldest_message) > 259200
+      for: 5m
+      annotations:
+        summary: ${var.environment} Acquirer SQS message age over 3 days
+EOF
+  ]
+
   error_rate_alerts = [
     for k, v in local.http_requests :
     <<EOF
@@ -54,7 +71,7 @@ EOF
 EOF
   ]
 
-  alerts = concat(local.anomaly_alerts, local.events_alerts, local.error_rate_alerts)
+  alerts = concat(local.anomaly_alerts, local.events_alerts, local.error_rate_alerts, local.sqs_alerts)
 
   alert_rules = join("\n", local.alerts)
 }

@@ -57,7 +57,7 @@ EOF
     local.rate5m_1w_average_metrics,
     local.rate5m_1w_st_dev_metrics,
     local.rate5m_prediction,
-    local.unconsumed_events_max
+    local.unconsumed_events_by_subscription
   )
 
   metric_rules = join("\n", local.metrics)

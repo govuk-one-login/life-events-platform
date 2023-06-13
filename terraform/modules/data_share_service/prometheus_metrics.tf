@@ -47,7 +47,7 @@ EOF
 
   unconsumed_events_by_subscription = [
     <<EOF
-    - record: unconsumed_events_max
+    - record: unconsumed_events_by_subscription
       expr: max by(acquirer, acquirer_subscription_id) (unconsumed_events)
 EOF
   ]

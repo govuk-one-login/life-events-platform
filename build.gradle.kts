@@ -71,7 +71,7 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
   implementation("io.micrometer:micrometer-core:1.11.1")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.11.0")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.11.1")
   implementation("io.opentelemetry:opentelemetry-api:1.27.0")
 
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.4.0")

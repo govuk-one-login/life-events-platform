@@ -25,3 +25,10 @@ Before go-live, we will test the service at twice an expected load (to approx ~6
 above - see [GPC-384](https://govukverify.atlassian.net/browse/GPC-384). In non production environments, the mock data
 generation averages 5 events per minute, or 7,200 in 24 hours, but gradually released through the day, so is not
 representative of a peak load.
+
+## RPO and RTO
+
+During the private beta, we're aiming for
+  
+- restoration in business hours, which may be 72 hours (over a weekend)
+- loss of up to one hour of metadata/audit data, but acquirers will receieve all data from upstream suppliers, potentially with delay

@@ -45,7 +45,20 @@ EOF
 EOF
   ]
 
-  metrics = concat(local.rate5m_metrics, local.rate5m_1w_average_metrics, local.rate5m_1w_st_dev_metrics, local.rate5m_prediction)
+  unconsumed_events_max = [
+    <<EOF
+    - record: unconsumed_events_max
+      expr: max by(acquirer, acquirer_subscription_id) (unconsumed_events)
+EOF
+  ]
+
+  metrics = concat(
+    local.rate5m_metrics,
+    local.rate5m_1w_average_metrics,
+    local.rate5m_1w_st_dev_metrics,
+    local.rate5m_prediction,
+    local.unconsumed_events_max
+  )
 
   metric_rules = join("\n", local.metrics)
 }

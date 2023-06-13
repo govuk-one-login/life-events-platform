@@ -84,10 +84,9 @@ class ScheduledJobService(
       if (queueMetric.ageOfOldestMessage == null) {
         log.warn("No age_of_oldest_message found for queue: $queueName")
       }
+      // We will get no metrics for a queue if it is empty and has had no activity for 6 hours. This is expected
+      // behaviour for our DLQs, so we will not warn if that happens for them
       dlqLengthMeter.set(queueMetric.dlqLength ?: 0)
-      if (queueMetric.dlqLength == null) {
-        log.warn("No dlq_length found for queue: $queueName")
-      }
     }
   }
 

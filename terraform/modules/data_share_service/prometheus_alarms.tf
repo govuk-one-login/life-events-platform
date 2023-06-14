@@ -18,7 +18,7 @@ EOF
   events_alerts = [
     <<EOF
     - alert: ${var.environment} Growing Unconsumed Events
-      expr: deriv(unconsumed_events_by_subscription[1h])
+      expr: deriv(unconsumed_events_by_subscription[1h]) > 0.02
       for: 24h
       annotations:
         summary: ${var.environment} Number of events growing every hour for 24h

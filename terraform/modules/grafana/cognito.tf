@@ -1,6 +1,8 @@
 resource "aws_cognito_user_pool" "pool" {
   name = "grafana"
 
+  deletion_protection = "ACTIVE"
+
   mfa_configuration = "ON"
 
   password_policy {

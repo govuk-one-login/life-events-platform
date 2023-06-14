@@ -27,7 +27,6 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
   software_token_mfa_configuration {
     enabled = true
   }
@@ -41,7 +40,6 @@ resource "aws_cognito_user_pool" "pool" {
       sms_message   = "Your username is {username} and temporary password is {####}."
     }
   }
-
 }
 
 resource "aws_cognito_user_pool_domain" "domain" {

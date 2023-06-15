@@ -1,5 +1,5 @@
 locals {
-  gdx_api_base_url = "https://${aws_cloudfront_distribution.gdx_data_share_poc.domain_name}"
+  gdx_api_base_url = "https://${var.hosted_zone_name}"
 }
 
 #tfsec:ignore:aws-cloudfront-use-secure-tls-policy

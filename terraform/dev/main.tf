@@ -106,6 +106,8 @@ module "data_share_service" {
 
   admin_alerts_enabled           = false
   database_tunnel_alerts_enabled = false
+
+  admin_login_allowed_ip_blocks = null
 }
 
 module "len" {

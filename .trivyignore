@@ -1,3 +1,6 @@
 # SnakeYAML Dependency flagged, but not exposed
 # remove when dependencies are updated - GPC-256
 CVE-2022-1471
+
+# Guava - filesystem not shared - GPC-407
+CVE-2023-2976

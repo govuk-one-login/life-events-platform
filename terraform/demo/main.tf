@@ -106,6 +106,25 @@ module "data_share_service" {
 
   admin_alerts_enabled           = false
   database_tunnel_alerts_enabled = false
+
+  admin_login_allowed_ip_blocks = [
+    # GDS https://sites.google.com/a/digital.cabinet-office.gov.uk/gds/working-at-gds/gds-internal-it/gds-internal-it-network-public-ip-addresses
+    "213.86.153.212/32",
+    "213.86.153.213/32",
+    "213.86.153.214/32",
+    "213.86.153.235/32",
+    "213.86.153.236/32",
+    "213.86.153.237/32",
+    "213.86.153.211/32",
+    "213.86.153.231/32",
+    "51.149.8.0/25",
+    "51.149.8.128/29",
+    # SW
+    "31.221.86.178/32",
+    "167.98.33.82/32",
+    "82.163.115.98/32",
+    "87.224.105.250/32"
+  ]
 }
 
 module "gro_ingestion_service" {

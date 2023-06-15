@@ -50,6 +50,82 @@ resource "aws_wafv2_web_acl" "ip_restrict_user_login" {
       sampled_requests_enabled   = false
     }
   }
+  rule {
+    name     = "allow-2fa"
+    priority = 3
+    action {
+      allow {}
+    }
+    statement {
+      and_statement {
+        statement {
+          byte_match_statement {
+            field_to_match {
+              uri_path {}
+            }
+            positional_constraint = "EXACTLY"
+            search_string         = "/"
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+        statement {
+          byte_match_statement {
+            field_to_match {
+              method {}
+            }
+            positional_constraint = "EXACTLY"
+            search_string         = "POST"
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+        statement {
+          or_statement {
+            statement {
+              byte_match_statement {
+                field_to_match {
+                  single_header {
+                    name = "x-amzn-cognito-operation-name"
+                  }
+                }
+                positional_constraint = "EXACTLY"
+                search_string         = "AssociateSoftwareToken"
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+            statement {
+              byte_match_statement {
+                field_to_match {
+                  single_header {
+                    name = "x-amzn-cognito-operation-name"
+                  }
+                }
+                positional_constraint = "EXACTLY"
+                search_string         = "VerifySoftwareToken"
+                text_transformation {
+                  priority = 0
+                  type     = "NONE"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.environment}-cognito-waf-allow-2fa"
+      sampled_requests_enabled   = false
+    }
+  }
 
   visibility_config {
     cloudwatch_metrics_enabled = true

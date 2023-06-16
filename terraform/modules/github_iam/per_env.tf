@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "github_oidc_environment_assume" {
 
     condition {
       test     = "StringEquals"
-      values   = ["repo:alphagov/gdx-data-share-poc:environment:${each.value}"]
+      values   = ["repo:alphagov/di-data-life-events-platform:environment:${each.value}"]
       variable = "token.actions.githubusercontent.com:sub"
     }
   }

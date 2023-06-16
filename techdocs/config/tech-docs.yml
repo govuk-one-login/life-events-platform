@@ -35,7 +35,7 @@ max_toc_heading_level: 2
 prevent_indexing: false
 
 show_contribution_banner: true
-github_repo: alphagov/gdx-data-share-poc
+github_repo: alphagov/di-data-life-events-platform
 github_branch: main
 
 api_path: https://demo.share-life-events.service.gov.uk/v3/api-docs.yaml

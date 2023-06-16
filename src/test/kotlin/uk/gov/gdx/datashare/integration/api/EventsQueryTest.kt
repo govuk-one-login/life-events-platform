@@ -90,7 +90,6 @@ class EventsQueryTest : MockIntegrationTestBase() {
       headers(setAuthorisation(DWP_EVENT_RECEIVER, listOf(""), listOf("events/consume")))
     }.andReturn().response.contentAsString
 
-
   private fun thereIsAnEvent() {
     val acquirerSubscription =
       acquirerSubscriptionRepository.findAllByOauthClientIdAndWhenDeletedIsNullAndEventTypeIsIn(

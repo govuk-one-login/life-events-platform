@@ -9,6 +9,7 @@ resource "aws_cloudwatch_log_group" "ecs_logs" {
   kms_key_id = aws_kms_key.log_key.arn
 }
 
+
 resource "aws_cloudwatch_log_group" "ecs_adot_logs" {
   name              = "${var.environment}-gdx-data-share-poc-ecs-adot-logs"
   retention_in_days = var.cloudwatch_retention_period

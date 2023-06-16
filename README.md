@@ -3,7 +3,7 @@
 Cross governmental data sharing platform, to simplify data acquisition and sharing in an event driven way.
 
 ## Documentation
-Techdocs for this service are available [here](https://alphagov.github.io/gdx-data-share-poc/).
+Techdocs for this service are available [here](https://alphagov.github.io/di-data-life-events-platform/).
 There are also [Swagger docs](https://dev.share-life-events.service.gov.uk/swagger-ui.html).
 
 ## Running the service
@@ -38,7 +38,7 @@ Architecture decision records start [here](doc/architecture/decisions/0001-use-a
 
 ## Glossary
 
-See [TechDocs](https://alphagov.github.io/gdx-data-share-poc/glossary.html).
+See [TechDocs](https://alphagov.github.io/di-data-life-events-platform/glossary.html).
 
 ## Licence
 [MIT License](LICENCE)

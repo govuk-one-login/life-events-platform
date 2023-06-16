@@ -1,5 +1,5 @@
 # Host to use for canonical URL generation (without trailing slash)
-host: https://alphagov.github.io/gdx-data-share-poc
+host: https://alphagov.github.io/di-data-life-events-platform
 
 # Header-related options
 show_govuk_logo: true

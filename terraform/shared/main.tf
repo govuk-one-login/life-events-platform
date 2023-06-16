@@ -5,7 +5,7 @@ locals {
     Environment = local.env
     Owner       = "gdx-dev-team@digital.cabinet-office.gov.uk"
     Source      = "terraform"
-    Repository  = "https://github.com/alphagov/gdx-data-share-poc"
+    Repository  = "https://github.com/alphagov/di-data-life-events-platform"
   }
   vpc_cidr            = "10.158.32.0/20"
   private_subnet_cidr = cidrsubnet(local.vpc_cidr, 1, 0)

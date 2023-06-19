@@ -25,7 +25,7 @@ Deployment pipelines are out of scope for this ADR and will be considered separa
 
 Our approach here is a large rework of our architecture, while maintaining a similar data flow and disrupting our
 integrations as little as possible. Currently, the only major integration is DWP with access to a queue for receiving
-events from our system, and with HMPO
+events from our system, and with HMPO where we have already built a serverless ingestion flow.
 
 ### Event flow
 

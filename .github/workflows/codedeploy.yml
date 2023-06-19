@@ -22,6 +22,7 @@ jobs:
     name: Trigger Codedeploy
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Setup variables for environment
         id: vars

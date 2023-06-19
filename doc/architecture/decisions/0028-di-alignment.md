@@ -49,6 +49,17 @@ integrate easily with other desired acquiring methods. This ordering is from sup
 
 ![Image](di-alignment.svg)
 
-### Organisation management
+### Acquirer and supplier management
+
+In order to manage our acquirers and suppliers, we need to be able to spin up new sets of lambdas and queues.
+
+For our suppliers, when we add one we will be adding a whole new event type, which means we will have to add both code
+and infrastructure. We will need to spin up new versions of the validation, enrichment, and minimisation lambdas and
+queues, as well as additions to our API gateway and authorisation lambda. As these are code changes as well as
+infrastructure, this will be a slightly slower process than onboarding an acquirer, and as such can be done on the
+frequency of new releases. This means that all the aforementioned will be managed through our code and in our IAAC, and
+be deployed as part of a new release.
+
+For our acquirers, we want to be able to add new acquirers or update acquirers to have more event types very easily and quickly. As a result, we want this to be possible through a simple API call, and not require any new releases. To achieve this, we will be using dynamic infrastructure to spin up new minimisation and delivery lambdas and queues. The minimsis
 
 [Next >>](9999-end.md)

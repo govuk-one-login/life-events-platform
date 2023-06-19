@@ -1,6 +1,6 @@
 # 26. Client off-boarding
 
-[Next >>](9999-end.md)
+[Next >>](0027-recovery-and-rollback-strategy.md)
 
 Date: 2023-05-10
 
@@ -39,4 +39,4 @@ this one. In these cases, we will:
 Deleting the clients will be marking the client as deleted, and then performing the subscription deletions for all of
 that clients subscriptions.
 
-[Next >>](9999-end.md)
+[Next >>](0027-recovery-and-rollback-strategy.md)

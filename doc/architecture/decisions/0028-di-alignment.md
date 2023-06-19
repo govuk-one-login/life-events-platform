@@ -1,4 +1,4 @@
-# 27. DI Alignment
+# 28. DI Alignment
 
 [Next >>](9999-end.md)
 
@@ -14,15 +14,18 @@ Due to our move into the DI/One Login teams, we want to align our whole approach
 patterns. This is because we want to make our system familiar and easy to access for support and other teams inside the
 DI space, and to make sure our security and resiliency standings align with theirs.
 
-This document is looking at approaches to realign our system and architecture, but not the deployment pipeline, with
-these patterns. We are looking here at how to replace the containerised central system with a more serverless approach,
-as is favoured in DI.
+## Scope
+
+This document is looking at approaches to realign our system and architecture with these patterns. We are looking here
+at how to replace the containerised central system with a more serverless approach, as is favoured in DI.
+
+Deployment pipelines are out of scope for this ADR and will be considered separately.
 
 ## Approach
 
 Our approach here is a large rework of our architecture, while maintaining a similar data flow and disrupting our
 integrations as little as possible. Currently, the only major integration is DWP with access to a queue for receiving
-events from our system.
+events from our system, and with HMPO
 
 ### Event flow
 

@@ -49,7 +49,7 @@ const handler: Handler = async (event): Promise<InsertXmlResponse> => {
 
 const uploadXml = async (xml: string, fileKey: string) => {
     const putObjectCommand = new PutObjectCommand({
-        Bucket: config.s3BucketArn,
+        Bucket: config.s3BucketName,
         Key: fileKey,
         Body: xml,
     })

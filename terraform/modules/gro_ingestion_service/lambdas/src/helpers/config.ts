@@ -4,5 +4,5 @@ export const config = {
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     tableName: process.env.TABLE_NAME ?? "",
-    s3BucketArn: process.env.S3_BUCKET_ARN ?? "",
+    s3BucketName: process.env.S3_BUCKET_NAME ?? "",
 }

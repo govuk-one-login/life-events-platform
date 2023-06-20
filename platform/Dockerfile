@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY build.gradle.kts settings.gradle.kts gradlew ./
 COPY gradle/ gradle/
+RUN chmod +x gradlew
 RUN ./gradlew build || return 0
 
 

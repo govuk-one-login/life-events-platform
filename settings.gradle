@@ -1,0 +1,4 @@
+rootProject.name = "di-data-life-events-platform"
+include("lambdas",
+        "lambdas:test-lambda",
+        "platform")

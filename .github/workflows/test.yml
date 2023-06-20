@@ -24,7 +24,7 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
 
       - name: Execute Gradle build
-        run: ./gradlew clean test
+        run: ./gradlew clean platformTest
 
       - name: Report
         uses: dorny/test-reporter@v1

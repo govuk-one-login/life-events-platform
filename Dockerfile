@@ -2,7 +2,7 @@ FROM amazoncorretto:17.0.7-alpine3.17 AS builder
 
 WORKDIR /app
 
-COPY build.gradle.kts settings.gradle.kts gradlew ./
+COPY platform/build.gradle.kts platform/settings.gradle.kts gradlew ./
 COPY gradle/ gradle/
 RUN ./gradlew build || return 0
 

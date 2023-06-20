@@ -1,0 +1,17 @@
+plugins {
+    id "java"
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    dependencyVersions = [
+            awsLambdaJavaCore:'1.2.1'
+    ]
+}
+
+subprojects {
+    task allDeps(type: DependencyReportTask) {}
+}

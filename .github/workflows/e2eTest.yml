@@ -36,7 +36,7 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
 
       - name: Execute Gradle build
-        run: ./gradlew clean e2eTest
+        run: ./gradlew clean platformE2eTest
 
       - name: Report
         uses: dorny/test-reporter@v1

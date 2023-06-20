@@ -1,0 +1,32 @@
+plugins {
+    id "java"
+    id "jacoco"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.9.3",
+            "org.mockito:mockito-junit-jupiter:5.3.1"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    useJUnitPlatform ()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required.set(true)
+    }
+}

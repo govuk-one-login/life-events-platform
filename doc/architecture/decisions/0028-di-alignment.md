@@ -69,7 +69,7 @@ specify what fields they need, and this configuration will be passed into a new 
 Similarly, the queues will be created specific to the acquirer, with the initial queue being automatically subscribed to
 the SNS topic for that event type.
 
-To manage our dynamic infrastructure, we will use the same API gateway as defined early, and have custom authorisation
+To manage our dynamic infrastructure, we will use the same API gateway as defined already for the supplier interface, and have custom authorisation
 for our Admin interactions. The API gateway will then trigger the relevant lambda that will then generate all the
 necessary dynamic infrastructure, returning to the person calling it the authorisation details of that acquirer if
 relevant. This is shown in the image below.

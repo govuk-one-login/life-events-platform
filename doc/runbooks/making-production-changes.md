@@ -30,4 +30,4 @@ be used when any more favourable alternatives are not feasible.
 Any direct interaction with a production system must be made from a GDS issued device. Where possible, this is enforced
 with IP restriction policies (Cognito user pool IP restrictions, AWS policy conditions).
 All accounts with access to production systems are protected by enforced MFA (conditions
-on AWS policies, organisation level requirements on Github).
+on AWS policies, organisation level requirements on GitHub).

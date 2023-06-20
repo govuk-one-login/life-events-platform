@@ -5,5 +5,6 @@ import enrichEvent from "./enrichEvent"
 import mapXml from "./mapXml"
 import publishEvent from "./publishEvent"
 import splitXml from "./splitXml"
+import insertXml from "./insertXml"
 
-export const functions: LambdaFunction[] = [deleteEvent, deleteXml, enrichEvent, mapXml, publishEvent, splitXml]
+export const functions: LambdaFunction[] = [deleteEvent, deleteXml, enrichEvent, mapXml, publishEvent, splitXml, insertXml]

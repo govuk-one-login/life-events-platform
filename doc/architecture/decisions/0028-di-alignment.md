@@ -47,6 +47,14 @@ integrate easily with other desired acquiring methods. This ordering is from sup
 6. Delivery - The minimisation lambdas will then put the final minimised event payload onto the final acquirer queues,
    which our acquirers will then directly interface with.
 
+The possible adapters are, in order:
+
+1. An adapter to put an API gateway in front of the SQS queue but allow a similar interaction as would exist directly
+   integrating with an SQS queue.
+2. An adapter to put an API gateway in front of the SQS queue with a custom interaction flow relying on us storing the
+   data inside a database in order to query it in a more custom flow.
+3. An adapter to deposit the SQS queue into an S3 bucket for file consumption by an acquirer.
+
 ![Image](di-alignment-event-flow.svg)
 
 ### Acquirer and supplier management
@@ -69,7 +77,8 @@ specify what fields they need, and this configuration will be passed into a new 
 Similarly, the queues will be created specific to the acquirer, with the initial queue being automatically subscribed to
 the SNS topic for that event type.
 
-To manage our dynamic infrastructure, we will use the same API gateway as defined already for the supplier interface, and have custom authorisation
+To manage our dynamic infrastructure, we will use the same API gateway as defined already for the supplier interface,
+and have custom authorisation
 for our Admin interactions. The API gateway will then trigger the relevant lambda that will then generate all the
 necessary dynamic infrastructure, returning to the person calling it the authorisation details of that acquirer if
 relevant. This is shown in the image below.

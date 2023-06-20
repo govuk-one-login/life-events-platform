@@ -31,7 +31,7 @@ jobs:
         if: always()
         with:
           name: Test results
-          path:  ${{ github.workspace }}/platform/build/test-results/test/TEST-*.xml
+          path: ${{ github.workspace }}/platform/build/test-results/test/TEST-*.xml
           reporter: java-junit
           only-summary: true
 

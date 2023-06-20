@@ -97,3 +97,27 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx_rate_alarm" {
     DistributionId = aws_cloudfront_distribution.gdx_data_share_poc.id
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "queue_lag_alarm" {
+  for_each = local.queues
+
+  provider            = aws.us-east-1
+  alarm_name          = "${local.alarm_prefix}-queue-lag"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  threshold           = "3600"
+  alarm_description   = "Age of oldest message on queue is older than 1 hour"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [module.sns-us-east-1.topic_arn]
+  ok_actions          = [module.sns-us-east-1.topic_arn]
+
+  metric_name = "ApproximateAgeOfOldestMessage"
+  namespace   = "AWS/SQS"
+  period      = "300"
+  statistic   = "Maximum"
+  unit        = "Seconds"
+
+  dimensions = {
+    QueueName = "${var.environment}-gdx-data-share-${each.key}"
+  }
+}

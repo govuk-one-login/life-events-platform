@@ -41,10 +41,16 @@ jobs:
           useConfigFile: true
           configFilePath: git-version.yml
 
+      - name: Copy gradle
+        run: |
+          cp -r gradle platform/gradle
+          cp gradlew platform/gradlew
+          cp gradlew.bat platform/gradlew.bat
+
       - name: Build and tag image
         uses: docker/build-push-action@v4
         with:
-          context: ./
+          context: platform
           push: false
           tags: ${{ github.ref_name }}:latest
           load: true
@@ -56,7 +62,8 @@ jobs:
         uses: aquasecurity/trivy-action@0.11.2
         with:
           image-ref: ${{ github.ref_name }}:latest
-          trivy-config: trivy.yaml
+          trivyignores: platform/.trivyignore
+          exit-code: 1
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2

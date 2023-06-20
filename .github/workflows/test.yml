@@ -24,14 +24,14 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
 
       - name: Execute Gradle build
-        run: ./gradlew clean test
+        run: ./gradlew clean platform:test
 
       - name: Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Test results
-          path: "**/build/test-results/test/TEST-*.xml"
+          path: ${{ github.workspace }}/platform/build/test-results/test/TEST-*.xml
           reporter: java-junit
           only-summary: true
 
@@ -39,7 +39,7 @@ jobs:
         uses: madrapps/jacoco-report@7ce0d588f6d00dd4a7b63a597383332e0c5c72d0
         if: ${{ github.event_name == 'pull_request' }}
         with:
-          paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
+          paths: ${{ github.workspace }}/platform/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Test Report

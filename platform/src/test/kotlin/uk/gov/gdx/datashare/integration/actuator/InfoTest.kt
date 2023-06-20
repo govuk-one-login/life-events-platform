@@ -15,7 +15,7 @@ class InfoTest : SqsIntegrationTestBase() {
       .expectStatus()
       .isOk
       .expectBody()
-      .jsonPath("build.name").isEqualTo("gdx-data-share-poc")
+      .jsonPath("build.name").isEqualTo("platform")
   }
 
   @Test

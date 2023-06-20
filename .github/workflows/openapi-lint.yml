@@ -25,6 +25,7 @@ jobs:
           file: docker-compose-local.yml
 
       - name: Generate API docs
+        working-directory: platform
         run: ./gradlew -Pdocs generateOpenApiDocs
 
       - name: Setup Node

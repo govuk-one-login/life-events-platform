@@ -11,13 +11,13 @@ jobs:
       matrix:
         include:
           - image: gdx
-            context: ./
-            trivyignore: .trivyignore
+            context: platform
+            trivyignore: platform/.trivyignore
           - image: prometheus
-            context: ./prometheus
+            context: prometheus
             trivyignore: prometheus/.trivyignore
           - image: grafana
-            context: ./grafana
+            context: grafana
             trivyignore: grafana/.trivyignore
       fail-fast: false
     name: Validate ${{ matrix.image }} image

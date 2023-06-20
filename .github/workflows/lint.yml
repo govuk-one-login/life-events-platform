@@ -36,7 +36,7 @@ jobs:
           node-version: 18
 
       - name: Update gradle lockfile
-        run: ./gradlew dependencies --write-locks
+        run: ./gradlew platform:dependencies --write-locks
 
       - name: Fix formatting of all Kotlin files
         run: ./gradlew clean formatKotlin

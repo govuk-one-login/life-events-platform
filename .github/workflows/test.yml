@@ -10,9 +10,6 @@ jobs:
       checks: write
       pull-requests: write
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: platform
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -27,7 +24,7 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
 
       - name: Execute Gradle build
-        run: ./gradlew clean test
+        run: ./gradlew clean platform:test
 
       - name: Report
         uses: dorny/test-reporter@v1

@@ -36,12 +36,10 @@ jobs:
           node-version: 18
 
       - name: Update gradle lockfile
-        working-directory: platform
-        run: ./gradlew dependencies --write-locks
+        run: ./gradlew platform:dependencies --write-locks
 
       - name: Fix formatting of all Kotlin files
-        working-directory: platform
-        run: ./gradlew clean formatKotlin
+        run: ./gradlew clean platform:formatKotlin
 
       - name: Fix formatting of all Terraform files
         run: terraform fmt -recursive

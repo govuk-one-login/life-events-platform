@@ -41,6 +41,12 @@ jobs:
           useConfigFile: true
           configFilePath: git-version.yml
 
+      - name: Copy gradle
+        run: |
+          cp -r gradle platform/gradle
+          cp gradlew platform/gradlew
+          cp gradlew.bat platform/gradlew.bat
+
       - name: Build and tag image
         uses: docker/build-push-action@v4
         with:

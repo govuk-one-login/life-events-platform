@@ -3,14 +3,14 @@ FROM amazoncorretto:17.0.7-alpine3.17 AS builder
 WORKDIR /app
 
 COPY build.gradle.kts settings.gradle.kts gradlew ./
-COPY gradle gradle/
+COPY gradle/ gradle/
 RUN ./gradlew build || return 0
 
 
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
-COPY .. .
+COPY . .
 RUN ./gradlew clean assemble -Dorg.gradle.daemon=false
 
 FROM amazoncorretto:17.0.7-alpine3.17

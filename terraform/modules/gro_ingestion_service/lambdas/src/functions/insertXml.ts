@@ -75,7 +75,7 @@ const createDeathRecord = () => {
     const date = new Date().toISOString().slice(0, 19)
 
     return {
-        RegistrationId: randomUUID(),
+        RegistrationID: randomUUID(),
         RecordLockedDateTime: date,
         RecordUpdateDateTime: date,
         RecordUpdateReason: "",
@@ -92,7 +92,7 @@ const createDeathRecord = () => {
             PersonNameSuffix: "",
         },
         DeceasedAliasNameType: "",
-        DeceasedMaidenNameType: "",
+        DeceasedMaidenName: "",
         DeceasedGender: getRandomElement(genderOptions),
         DeceasedDeathDate: {
             PersonDeathDate: dateOfDeath?.toISOString().split("T")[0] ?? "",

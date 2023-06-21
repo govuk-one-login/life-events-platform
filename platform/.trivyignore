@@ -4,3 +4,6 @@ CVE-2022-1471
 
 # Guava - filesystem not shared - GPC-407
 CVE-2023-2976
+
+# Netty - over allocation of memory on connection open - GPC-432
+CVE-2023-34462

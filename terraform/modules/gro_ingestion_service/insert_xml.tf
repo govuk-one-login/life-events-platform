@@ -87,8 +87,8 @@ resource "aws_lambda_function" "insert_xml_lambda" {
 
   environment {
     variables = {
-      "FUNCTION_NAME" = "insertXml",
-      "S3_BUCKET_ARN" = module.gro_bucket.arn
+      "FUNCTION_NAME"  = "insertXml",
+      "S3_BUCKET_NAME" = module.gro_bucket.id
     }
   }
   tracing_config {

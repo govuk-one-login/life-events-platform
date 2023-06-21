@@ -23,7 +23,7 @@ describe("Unit test for delete xml handler", function () {
             expect.objectContaining({
                 input: {
                     Key: expect.stringContaining("fake-gro.xml"),
-                    Bucket: config.s3BucketArn,
+                    Bucket: config.s3BucketName,
                     Body: expect.stringContaining("<DeathRegistrationGroup>"),
                 },
             }),
@@ -45,7 +45,7 @@ describe("Unit test for delete xml handler", function () {
             expect.objectContaining({
                 input: {
                     Key: expect.stringContaining("fake-gro.xml"),
-                    Bucket: config.s3BucketArn,
+                    Bucket: config.s3BucketName,
                     Body: expect.stringContaining("<DeathRegistrationGroup>"),
                 },
             }),

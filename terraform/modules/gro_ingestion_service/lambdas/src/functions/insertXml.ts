@@ -75,47 +75,45 @@ const createDeathRecord = () => {
     const date = new Date().toISOString().slice(0, 19)
 
     return {
-        DeathRegistration: {
-            RegistrationId: randomUUID(),
-            RecordLockedDateTime: date,
-            RecordUpdateDateTime: date,
-            RecordUpdateReason: "",
-            DeceasedName: {
-                PersonNameTitle: title,
-                PersonGivenName: forename,
-                PersonFamilyName: surname,
-                PersonNameSuffix: "",
-            },
-            DeceasedAliasName: {
-                PersonNameTitle: title,
-                PersonGivenName: forename,
-                PersonFamilyName: surname,
-                PersonNameSuffix: "",
-            },
-            DeceasedAliasNameType: "",
-            DeceasedMaidenNameType: "",
-            DeceasedGender: getRandomElement(genderOptions),
-            DeceasedDeathDate: {
-                PersonDeathDate: dateOfBirth?.toISOString().split("T")[0] ?? "",
-                VerificationLevel: "03",
-            },
-            PartialMonthOfDeath: dateOfDeath?.getMonth() ?? "",
-            PartialYearOfDeath: dateOfDeath?.getFullYear() ?? "",
-            QualifierText: "",
-            FreeFormatDeathDate: "",
-            DeceasedBirthDate: {
-                PersonBirthDate: dateOfBirth?.toISOString().split("T")[0] ?? "",
-                VerificationLevel: "",
-            },
-            PartialMonthOfBirth: dateOfBirth?.getMonth() ?? "",
-            PartialYearOfBirth: dateOfBirth?.getFullYear() ?? "",
-            FreeFormatBirthDate: "",
-            DeceasedAddress: {
-                Flat: "",
-                Building: "",
-                Line: getRandomElement(addressOptions),
-                Postcode: getRandomElement(postcodeOptions),
-            },
+        RegistrationId: randomUUID(),
+        RecordLockedDateTime: date,
+        RecordUpdateDateTime: date,
+        RecordUpdateReason: "",
+        DeceasedName: {
+            PersonNameTitle: title,
+            PersonGivenName: forename,
+            PersonFamilyName: surname,
+            PersonNameSuffix: "",
+        },
+        DeceasedAliasName: {
+            PersonNameTitle: title,
+            PersonGivenName: forename,
+            PersonFamilyName: surname,
+            PersonNameSuffix: "",
+        },
+        DeceasedAliasNameType: "",
+        DeceasedMaidenNameType: "",
+        DeceasedGender: getRandomElement(genderOptions),
+        DeceasedDeathDate: {
+            PersonDeathDate: dateOfDeath?.toISOString().split("T")[0] ?? "",
+            VerificationLevel: "03",
+        },
+        PartialMonthOfDeath: dateOfDeath?.getMonth() ?? "",
+        PartialYearOfDeath: dateOfDeath?.getFullYear() ?? "",
+        QualifierText: "",
+        FreeFormatDeathDate: "",
+        DeceasedBirthDate: {
+            PersonBirthDate: dateOfBirth?.toISOString().split("T")[0] ?? "",
+            VerificationLevel: "",
+        },
+        PartialMonthOfBirth: dateOfBirth?.getMonth() ?? "",
+        PartialYearOfBirth: dateOfBirth?.getFullYear() ?? "",
+        FreeFormatBirthDate: "",
+        DeceasedAddress: {
+            Flat: "",
+            Building: "",
+            Line: getRandomElement(addressOptions),
+            Postcode: getRandomElement(postcodeOptions),
         },
     }
 }

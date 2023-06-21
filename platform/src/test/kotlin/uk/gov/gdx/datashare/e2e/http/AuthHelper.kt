@@ -1,9 +1,9 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e.http
+package uk.gov.gdx.datashare.e2e.http
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e.Config
+import uk.gov.gdx.datashare.e2e.Config
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse

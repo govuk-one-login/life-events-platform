@@ -1,7 +1,8 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e.http
+package uk.gov.gdx.datashare.e2e.http
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import uk.gov.gdx.datashare.config.JacksonConfiguration
+import uk.gov.gdx.datashare.e2e.Config
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.*
@@ -9,7 +10,6 @@ import uk.gov.gdx.datashare.repositories.Acquirer
 import uk.gov.gdx.datashare.repositories.AcquirerSubscription
 import uk.gov.gdx.datashare.repositories.Supplier
 import uk.gov.gdx.datashare.repositories.SupplierSubscription
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e.Config
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

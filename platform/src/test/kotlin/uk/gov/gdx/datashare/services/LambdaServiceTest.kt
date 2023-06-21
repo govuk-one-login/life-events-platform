@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import io.mockk.every
 import io.mockk.mockk
@@ -16,7 +16,6 @@ import uk.gov.gdx.datashare.enums.GroSex
 import uk.gov.gdx.datashare.models.GroDeathRecord
 import uk.gov.gdx.datashare.models.GroDeleteEventResponse
 import uk.gov.gdx.datashare.models.GroEnrichEventResponse
-import uk.gov.gdx.datashare.services.LambdaService
 import java.time.LocalDate
 
 class LambdaServiceTest {

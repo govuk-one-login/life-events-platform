@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.*
@@ -15,7 +15,6 @@ import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.queue.AwsQueue
 import uk.gov.gdx.datashare.queue.AwsQueueService
 import uk.gov.gdx.datashare.repositories.*
-import uk.gov.gdx.datashare.services.SupplierEventProcessor
 import java.time.LocalDateTime
 import java.util.*
 

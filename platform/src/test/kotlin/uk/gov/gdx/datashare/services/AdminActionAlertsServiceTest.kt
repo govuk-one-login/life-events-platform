@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
@@ -12,8 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
 import software.amazon.awssdk.services.sns.model.PublishResponse
-import uk.gov.gdx.datashare.services.AdminAction
-import uk.gov.gdx.datashare.services.AdminActionAlertsService
 
 class AdminActionAlertsServiceTest {
   private val objectMapper = mockk<ObjectMapper>()

@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.api
+package uk.gov.gdx.datashare.integration.api
 
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.integration.SqsIntegrationTestBase

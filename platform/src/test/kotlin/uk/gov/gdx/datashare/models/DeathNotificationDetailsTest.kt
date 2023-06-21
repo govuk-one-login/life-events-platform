@@ -1,13 +1,10 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.models
+package uk.gov.gdx.datashare.models
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.Sex
-import uk.gov.gdx.datashare.models.DeathNotificationDetails
-import uk.gov.gdx.datashare.models.LevDeathRecord
-import uk.gov.gdx.datashare.models.LevDeceased
 import java.time.LocalDate
 
 class DeathNotificationDetailsTest {

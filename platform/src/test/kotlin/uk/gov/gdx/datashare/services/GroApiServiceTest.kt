@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
@@ -14,8 +14,6 @@ import uk.gov.gdx.datashare.models.GroDeleteEventResponse
 import uk.gov.gdx.datashare.models.GroEnrichEventResponse
 import uk.gov.gdx.datashare.repositories.SupplierEvent
 import uk.gov.gdx.datashare.repositories.SupplierEventRepository
-import uk.gov.gdx.datashare.services.GroApiService
-import uk.gov.gdx.datashare.services.LambdaService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*

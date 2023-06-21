@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e
+package uk.gov.gdx.datashare.e2e
 
 import java.net.URI
 

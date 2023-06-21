@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import io.mockk.every
 import io.mockk.mockk
@@ -20,7 +20,6 @@ import uk.gov.gdx.datashare.models.DeathNotificationDetails
 import uk.gov.gdx.datashare.models.EventNotification
 import uk.gov.gdx.datashare.repositories.AcquirerEventAudit
 import uk.gov.gdx.datashare.repositories.AcquirerEventAuditRepository
-import uk.gov.gdx.datashare.services.AcquirerEventAuditService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*

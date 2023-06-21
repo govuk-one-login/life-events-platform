@@ -3,11 +3,11 @@ package uk.gov.gdx.datashare.integration.repository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import uk.gov.gdx.datashare.helpers.builders.AcquirerBuilder
+import uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
+import uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionEnrichmentFieldBuilder
+import uk.gov.gdx.datashare.integration.MockIntegrationTestBase
 import uk.gov.gdx.datashare.repositories.*
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerBuilder
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionEnrichmentFieldBuilder
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.MockIntegrationTestBase
 
 class AcquirerSubscriptionEnrichmentFieldRepositoryTest(
   @Autowired private val acquirerRepository: AcquirerRepository,

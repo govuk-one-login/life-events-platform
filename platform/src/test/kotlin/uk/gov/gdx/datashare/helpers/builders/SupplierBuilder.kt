@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders
+package uk.gov.gdx.datashare.helpers.builders
 
 import uk.gov.gdx.datashare.repositories.Supplier
 import java.time.LocalDateTime

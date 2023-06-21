@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders
+package uk.gov.gdx.datashare.helpers.builders
 
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionEnrichmentField

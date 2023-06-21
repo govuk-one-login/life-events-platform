@@ -46,6 +46,7 @@ class AdminController(
       ),
     ],
   )
+  
   fun createAcquirer(
     @Schema(
       required = true,

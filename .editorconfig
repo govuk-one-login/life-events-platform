@@ -19,7 +19,6 @@ ij_java_insert_inner_class_imports = true
 ij_kotlin_allow_trailing_comma = true
 ij_kotlin_allow_trailing_comma_on_call_site = true
 ktlint_standard_no-wildcard-imports = disabled
-ktlint_disabled_rules = no-wildcard-imports
 
 [*.kts]
 indent_size = 2

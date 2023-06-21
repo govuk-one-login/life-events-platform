@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
-import uk.gov.gdx.datashare.integration.IntegrationTestBase
 import uk.gov.gdx.datashare.queue.AwsQueueService
 import uk.gov.gdx.datashare.services.AcquirerEventProcessor
 import uk.gov.gdx.datashare.services.EventAcceptorService

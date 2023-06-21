@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.enums.EventType
-import uk.gov.gdx.datashare.repositories.*
 import uk.gov.gdx.datashare.helpers.builders.*
 import uk.gov.gdx.datashare.helpers.compareIgnoringNanos
 import uk.gov.gdx.datashare.integration.MockIntegrationTestBase
+import uk.gov.gdx.datashare.repositories.*
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*

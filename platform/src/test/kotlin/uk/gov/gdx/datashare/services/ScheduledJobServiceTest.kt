@@ -13,10 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import uk.gov.gdx.datashare.repositories.*
-import uk.gov.gdx.datashare.services.GroApiService
-import uk.gov.gdx.datashare.services.OutboundEventQueueService
-import uk.gov.gdx.datashare.services.QueueMetric
-import uk.gov.gdx.datashare.services.ScheduledJobService
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 

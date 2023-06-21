@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import uk.gov.gdx.datashare.enums.EventType
-import uk.gov.gdx.datashare.models.AcquirerSubRequest
 
 class AcquirerSubRequestTest {
   private val validator: Validator = Validation.buildDefaultValidatorFactory().validator

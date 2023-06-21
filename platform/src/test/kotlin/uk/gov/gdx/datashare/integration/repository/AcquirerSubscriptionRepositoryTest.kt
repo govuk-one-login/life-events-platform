@@ -4,10 +4,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.gdx.datashare.enums.EventType
-import uk.gov.gdx.datashare.repositories.*
 import uk.gov.gdx.datashare.helpers.builders.*
 import uk.gov.gdx.datashare.helpers.compareIgnoringNanos
 import uk.gov.gdx.datashare.integration.MockIntegrationTestBase
+import uk.gov.gdx.datashare.repositories.*
 import java.time.LocalDateTime
 
 class AcquirerSubscriptionRepositoryTest(

@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.GroSex
 import uk.gov.gdx.datashare.models.GroDeathRecord
-import uk.gov.gdx.datashare.services.GroApiService
-import uk.gov.gdx.datashare.services.GroDeathNotificationService
 import java.time.LocalDate
 
 class GroDeathNotificationServiceTest {

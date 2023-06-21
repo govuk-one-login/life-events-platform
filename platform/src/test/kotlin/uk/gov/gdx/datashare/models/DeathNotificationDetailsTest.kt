@@ -5,9 +5,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.Sex
-import uk.gov.gdx.datashare.models.DeathNotificationDetails
-import uk.gov.gdx.datashare.models.LevDeathRecord
-import uk.gov.gdx.datashare.models.LevDeceased
 import java.time.LocalDate
 
 class DeathNotificationDetailsTest {

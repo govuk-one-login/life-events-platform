@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
@@ -17,8 +17,8 @@ import uk.gov.gdx.datashare.services.AcquirerEventAuditService
 import uk.gov.gdx.datashare.services.AcquirerEventProcessor
 import uk.gov.gdx.datashare.services.AcquirerEventService
 import uk.gov.gdx.datashare.services.OutboundEventQueueService
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerEventBuilder
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
+import uk.gov.gdx.datashare.helpers.builders.AcquirerEventBuilder
+import uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
 import java.util.*
 
 class AcquirerEventProcessorTest {

@@ -16,7 +16,7 @@ import software.amazon.awssdk.services.sts.StsClient
 import uk.gov.gdx.datashare.queue.AwsQueueFactory
 import uk.gov.gdx.datashare.queue.SqsProperties
 import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
+import uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
 
 class OutboundEventQueueServiceTest {
   private val environment = "test"

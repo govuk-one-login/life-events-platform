@@ -1,9 +1,9 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e
+package uk.gov.gdx.datashare.e2e
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.e2e.http.Api
+import uk.gov.gdx.datashare.e2e.http.Api
 import java.util.*
 
 @Tag("E2E")

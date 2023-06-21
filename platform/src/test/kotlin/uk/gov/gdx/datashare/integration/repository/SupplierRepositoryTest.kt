@@ -4,8 +4,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.gdx.datashare.repositories.SupplierRepository
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.SupplierBuilder
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.MockIntegrationTestBase
+import uk.gov.gdx.datashare.helpers.builders.SupplierBuilder
+import uk.gov.gdx.datashare.integration.MockIntegrationTestBase
 import java.time.LocalDateTime
 
 class SupplierRepositoryTest(@Autowired private val supplierRepository: SupplierRepository) :

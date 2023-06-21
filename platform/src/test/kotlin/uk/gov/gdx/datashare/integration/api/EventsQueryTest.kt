@@ -10,9 +10,9 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.repositories.*
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.MockIntegrationTestBase
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.wiremock.mockLevApi
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.wiremock.stubLevApiDeath
+import uk.gov.gdx.datashare.integration.MockIntegrationTestBase
+import uk.gov.gdx.datashare.integration.wiremock.mockLevApi
+import uk.gov.gdx.datashare.integration.wiremock.stubLevApiDeath
 import java.time.LocalDateTime
 import java.util.*
 

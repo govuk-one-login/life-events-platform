@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.actuator
+package uk.gov.gdx.datashare.integration.actuator
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability

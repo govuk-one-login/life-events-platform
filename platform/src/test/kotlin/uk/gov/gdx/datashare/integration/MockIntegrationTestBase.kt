@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration
+package uk.gov.gdx.datashare.integration
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension
 import com.ninjasquad.springmockk.MockkBean

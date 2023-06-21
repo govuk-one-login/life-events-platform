@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers
+package uk.gov.gdx.datashare.helpers
 
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit

@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger

@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.api
+package uk.gov.gdx.datashare.integration.api
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every

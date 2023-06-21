@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.models
+package uk.gov.gdx.datashare.models
 
 import jakarta.validation.Validation
 import jakarta.validation.Validator

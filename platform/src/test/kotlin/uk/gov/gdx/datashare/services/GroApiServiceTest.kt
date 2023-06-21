@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat

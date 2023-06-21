@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.gdx.datashare.repositories.AcquirerRepository
 import uk.gov.gdx.datashare.repositories.AcquirerSubscriptionRepository
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerBuilder
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
-import uk.gov.gdx.datashare.uk.gov.gdx.datashare.integration.MockIntegrationTestBase
+import uk.gov.gdx.datashare.helpers.builders.AcquirerBuilder
+import uk.gov.gdx.datashare.helpers.builders.AcquirerSubscriptionBuilder
+import uk.gov.gdx.datashare.integration.MockIntegrationTestBase
 import java.time.LocalDateTime
 
 class AcquirerRepositoryTest(

@@ -1,4 +1,4 @@
-package uk.gov.gdx.datashare.uk.gov.gdx.datashare.services
+package uk.gov.gdx.datashare.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.*

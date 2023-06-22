@@ -1,3 +1,9 @@
 plugins {
     id "java"
 }
+
+ext {
+    dependencyVersions = [
+            awsLambdaJavaCore:'1.2.1'
+    ]
+}

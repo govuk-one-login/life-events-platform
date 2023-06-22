@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
+import uk.gov.gdx.datashare.config.EnrichmentFieldsNotValidForEventType
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.AcquirerRequest
@@ -209,9 +210,6 @@ class AcquirersServiceTest {
   fun `addAcquirerSubscription validates enrichmentFields for given eventType`() {
     every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
     every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every {
-      acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
-    }.returns(allEnrichmentFields)
     every { outboundEventQueueService.createAcquirerQueue(any(), any()) } returns ""
     every { adminActionAlertsService.noticeAction(any()) } just runs
 
@@ -221,7 +219,7 @@ class AcquirersServiceTest {
       enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES),
     )
 
-    val exception = assertThrows<Exception> {
+    val exception = assertThrows<EnrichmentFieldsNotValidForEventType> {
       underTest.addAcquirerSubscription(acquirer.id, acquirerSubRequest)
     }
 
@@ -304,9 +302,6 @@ class AcquirersServiceTest {
     every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
       Unit,
     )
-    every {
-      acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
-    }.returns(allEnrichmentFields)
     every { adminActionAlertsService.noticeAction(any()) } just runs
 
     val acquirerSubRequest = AcquirerSubRequest(
@@ -315,7 +310,7 @@ class AcquirersServiceTest {
       enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES),
     )
 
-    val exception = assertThrows<Exception> {
+    val exception = assertThrows<EnrichmentFieldsNotValidForEventType> {
       underTest.updateAcquirerSubscription(acquirer.id, acquirerSubscription.id, acquirerSubRequest)
     }
 

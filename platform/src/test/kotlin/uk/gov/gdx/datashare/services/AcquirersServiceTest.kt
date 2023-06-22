@@ -12,6 +12,7 @@ import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
 import uk.gov.gdx.datashare.repositories.*
+import java.lang.Exception
 import java.time.LocalDateTime
 import java.util.*
 
@@ -206,6 +207,39 @@ class AcquirersServiceTest {
   }
 
   @Test
+  fun `addAcquirerSubscription validates enrichmentFields for given eventType`(){
+    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
+    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
+    every {
+      acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
+    }.returns(allEnrichmentFields)
+    every { outboundEventQueueService.createAcquirerQueue(any(), any()) } returns ""
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+
+    val acquirerSubRequest = AcquirerSubRequest(
+      EventType.TEST_EVENT,
+      oauthClientId = null,
+      enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES),
+    )
+
+    val exception = assertThrows<Exception> {
+      underTest.addAcquirerSubscription(acquirer.id, acquirerSubRequest)
+    }
+
+    assertThat(exception.message).isEqualTo("Invalid enrichment field(s) for the given event type")
+
+    verify(exactly = 1) {
+      acquirerSubscriptionRepository.save(
+        withArg {
+          assertThat(it.acquirerId).isEqualTo(acquirer.id)
+          assertThat(it.oauthClientId).isEqualTo(acquirerSubRequest.oauthClientId)
+          assertThat(it.eventType).isEqualTo(acquirerSubRequest.eventType)
+        },
+      )
+    }
+    verify(exactly = 0) { acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>()) }
+  }
+  @Test
   fun `updateAcquirerSubscription updates subscription`() {
     every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
@@ -261,6 +295,43 @@ class AcquirersServiceTest {
     verify(exactly = 0) { acquirerSubscriptionRepository.save(any()) }
   }
 
+  @Test
+  fun `updateAcquirerSubscription validates enrichmentFields for given eventType`(){
+    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
+    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
+
+    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
+    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
+      Unit,
+    )
+    every {
+      acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>())
+    }.returns(allEnrichmentFields)
+    every { adminActionAlertsService.noticeAction(any()) } just runs
+
+    val acquirerSubRequest = AcquirerSubRequest(
+      EventType.TEST_EVENT,
+      oauthClientId = "callbackClientIdNew",
+      enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES),
+    )
+
+    val exception = assertThrows<Exception> {
+      underTest.updateAcquirerSubscription(acquirer.id, acquirerSubscription.id, acquirerSubRequest)
+    }
+
+    assertThat(exception.message).isEqualTo("Invalid enrichment field(s) for the given event type")
+
+    verify(exactly = 1) {
+      acquirerSubscriptionRepository.save(
+        withArg {
+          assertThat(it.acquirerId).isEqualTo(acquirer.id)
+          assertThat(it.oauthClientId).isEqualTo(acquirerSubRequest.oauthClientId)
+          assertThat(it.eventType).isEqualTo(acquirerSubRequest.eventType)
+        },
+      )
+    }
+    verify(exactly = 0) { acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>()) }
+  }
   @Test
   fun `deleteAcquirerSubscription deletes subscription, enrichment fields and cognito client`() {
     val now = LocalDateTime.now()

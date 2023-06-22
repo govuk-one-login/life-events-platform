@@ -215,14 +215,14 @@ class AcquirersServiceTest {
     val acquirerSubRequest = AcquirerSubRequest(
       EventType.TEST_EVENT,
       oauthClientId = "",
-      enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES),
+      enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES, EnrichmentField.SURNAME),
     )
 
     val exception = assertThrows<EnrichmentFieldsNotValidForEventTypeException> {
       underTest.addAcquirerSubscription(acquirer.id, acquirerSubRequest)
     }
 
-    assertThat(exception.message).isEqualTo("Enrichment fields, [FORENAMES], are not valid for the event type DEATH_NOTIFICATION")
+    assertThat(exception.message).isEqualTo("Enrichment fields, [FORENAMES, SURNAME], are not valid for the event type DEATH_NOTIFICATION")
 
     verify(exactly = 1) {
       acquirerSubscriptionRepository.save(
@@ -305,14 +305,14 @@ class AcquirersServiceTest {
     val acquirerSubRequest = AcquirerSubRequest(
       EventType.TEST_EVENT,
       oauthClientId = "callbackClientIdNew",
-      enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES),
+      enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES, EnrichmentField.SURNAME),
     )
 
     val exception = assertThrows<EnrichmentFieldsNotValidForEventTypeException> {
       underTest.updateAcquirerSubscription(acquirer.id, testEventAcquirerSubscription.id, acquirerSubRequest)
     }
 
-    assertThat(exception.message).isEqualTo("Enrichment fields, [FORENAMES], are not valid for the event type ${acquirerSubRequest.eventType}")
+    assertThat(exception.message).isEqualTo("Enrichment fields, [FORENAMES, SURNAME], are not valid for the event type ${acquirerSubRequest.eventType}")
 
     verify(exactly = 1) {
       acquirerSubscriptionRepository.save(

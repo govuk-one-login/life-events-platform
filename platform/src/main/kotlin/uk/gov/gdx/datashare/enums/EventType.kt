@@ -12,6 +12,7 @@ val EventTypeEnrichmentFieldsRelationship = mapOf(
     EnrichmentField.SOURCE_ID,
     EnrichmentField.SEX,
     EnrichmentField.DATE_OF_BIRTH,
+    EnrichmentField.DATE_OF_DEATH,
     EnrichmentField.REGISTRATION_ID,
     EnrichmentField.EVENT_TIME,
     EnrichmentField.VERIFICATION_LEVEL,

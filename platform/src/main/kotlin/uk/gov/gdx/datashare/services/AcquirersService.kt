@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AcquirerNotFoundException
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
-import uk.gov.gdx.datashare.config.EnrichmentFieldsNotValidForEventType
+import uk.gov.gdx.datashare.config.EnrichmentFieldsNotValidForEventTypeException
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.EventTypeEnrichmentFieldsRelationship
@@ -80,10 +80,14 @@ class AcquirersService(
     enrichmentFields: List<EnrichmentField>,
   ): List<AcquirerSubscriptionEnrichmentField> {
     val eventTypeEnrichmentFields = EventTypeEnrichmentFieldsRelationship[eventType]
+    val invalidEnrichmentFields = mutableListOf<EnrichmentField>()
     enrichmentFields.forEach {
       if (!eventTypeEnrichmentFields!!.contains(it)) {
-        throw EnrichmentFieldsNotValidForEventType("Invalid enrichment field(s) for the given event type")
+        invalidEnrichmentFields.add(it)
       }
+    }
+    if (invalidEnrichmentFields.isNotEmpty()) {
+      throw EnrichmentFieldsNotValidForEventTypeException("Enrichment fields, $invalidEnrichmentFields, are not valid for the event type $eventType")
     }
     return acquirerSubscriptionEnrichmentFieldRepository.saveAll(
       enrichmentFields.map {

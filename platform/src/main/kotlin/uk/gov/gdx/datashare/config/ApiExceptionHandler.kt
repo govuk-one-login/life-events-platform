@@ -113,8 +113,8 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(EnrichmentFieldsNotValidForEventType::class)
-  fun handleEnrichmentFieldsNotValidForEventType(e: EnrichmentFieldsNotValidForEventType): ResponseEntity<ErrorResponse?>? {
+  @ExceptionHandler(EnrichmentFieldsNotValidForEventTypeException::class)
+  fun handleEnrichmentFieldsNotValidForEventType(e: EnrichmentFieldsNotValidForEventTypeException): ResponseEntity<ErrorResponse?>? {
     log.debug("Invalid enrichment field(s) for the given event type: {}", e.message)
     return ResponseEntity
       .status(BAD_REQUEST)
@@ -244,7 +244,7 @@ class SupplierSubscriptionNotFoundException(message: String) : Exception(message
 
 class NoDataFoundException(message: String) : Exception(message)
 
-class EnrichmentFieldsNotValidForEventType(message: String) : Exception(message)
+class EnrichmentFieldsNotValidForEventTypeException(message: String) : Exception(message)
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Error Response")

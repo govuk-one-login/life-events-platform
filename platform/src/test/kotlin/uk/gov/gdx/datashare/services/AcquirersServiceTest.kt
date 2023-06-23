@@ -7,7 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
-import uk.gov.gdx.datashare.config.EnrichmentFieldsNotValidForEventType
+import uk.gov.gdx.datashare.config.EnrichmentFieldsNotValidForEventTypeException
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.AcquirerRequest
@@ -215,15 +215,15 @@ class AcquirersServiceTest {
 
     val acquirerSubRequest = AcquirerSubRequest(
       EventType.TEST_EVENT,
-      oauthClientId = null,
+      oauthClientId = "",
       enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES),
     )
 
-    val exception = assertThrows<EnrichmentFieldsNotValidForEventType> {
+    val exception = assertThrows<EnrichmentFieldsNotValidForEventTypeException> {
       underTest.addAcquirerSubscription(acquirer.id, acquirerSubRequest)
     }
 
-    assertThat(exception.message).isEqualTo("Invalid enrichment field(s) for the given event type")
+    assertThat(exception.message).isEqualTo("Enrichment fields, [FORENAMES], are not valid for the event type DEATH_NOTIFICATION")
 
     verify(exactly = 1) {
       acquirerSubscriptionRepository.save(
@@ -296,10 +296,16 @@ class AcquirersServiceTest {
   @Test
   fun `updateAcquirerSubscription validates enrichmentFields for given eventType`() {
     every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
-    every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
+    every { acquirerSubscriptionRepository.findByIdOrNull(testEventAcquirerSubscription.id) }.returns(
+      testEventAcquirerSubscription,
+    )
 
-    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.id) }.returns(
+    every { acquirerSubscriptionRepository.save(any()) }.returns(testEventAcquirerSubscription)
+    every {
+      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
+        testEventAcquirerSubscription.id,
+      )
+    }.returns(
       Unit,
     )
     every { adminActionAlertsService.noticeAction(any()) } just runs
@@ -310,11 +316,11 @@ class AcquirersServiceTest {
       enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES),
     )
 
-    val exception = assertThrows<EnrichmentFieldsNotValidForEventType> {
-      underTest.updateAcquirerSubscription(acquirer.id, acquirerSubscription.id, acquirerSubRequest)
+    val exception = assertThrows<EnrichmentFieldsNotValidForEventTypeException> {
+      underTest.updateAcquirerSubscription(acquirer.id, testEventAcquirerSubscription.id, acquirerSubRequest)
     }
 
-    assertThat(exception.message).isEqualTo("Invalid enrichment field(s) for the given event type")
+    assertThat(exception.message).isEqualTo("Enrichment fields, [FORENAMES], are not valid for the event type ${acquirerSubRequest.eventType}")
 
     verify(exactly = 1) {
       acquirerSubscriptionRepository.save(
@@ -930,6 +936,11 @@ class AcquirersServiceTest {
     acquirerId = acquirer.id,
     oauthClientId = "Client",
     eventType = EventType.DEATH_NOTIFICATION,
+  )
+  private val testEventAcquirerSubscription = AcquirerSubscription(
+    acquirerId = acquirer.id,
+    oauthClientId = "",
+    eventType = EventType.TEST_EVENT,
   )
   private val queueAcquirerSubscription = AcquirerSubscription(
     acquirerId = acquirer.id,

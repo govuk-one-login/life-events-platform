@@ -62,10 +62,10 @@ resource "aws_lambda_function" "enrich_event_lambda" {
   filename      = data.archive_file.lambda_function_source.output_path
   function_name = "${var.environment}-gro-ingestion-lambda-function-enrich-event"
 
-  handler = "index.handler"
-  runtime = local.lambda_runtime
-  role    = aws_iam_role.enrich_event_lambda.arn
-  timeout = 10
+  handler       = "index.handler"
+  runtime       = local.lambda_runtime
+  role          = aws_iam_role.enrich_event_lambda.arn
+  timeout       = 10
   architectures = ["arm64"]
 
   source_code_hash = data.archive_file.lambda_function_source.output_sha

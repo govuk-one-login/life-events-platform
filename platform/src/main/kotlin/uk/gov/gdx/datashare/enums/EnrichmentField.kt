@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonValue
 enum class EnrichmentField(@JsonValue val jsonName: String) {
   SOURCE_ID("sourceId"),
 
-  LAST_NAME("lastName"),
   SEX("sex"),
   DATE_OF_BIRTH("dateOfBirth"),
 
   REGISTRATION_DATE("registrationDate"),
   FIRST_NAMES("firstNames"),
+  LAST_NAME("lastName"),
   DATE_OF_DEATH("dateOfDeath"),
   BIRTH_PLACE("birthPlace"),
   DEATH_PLACE("deathPlace"),

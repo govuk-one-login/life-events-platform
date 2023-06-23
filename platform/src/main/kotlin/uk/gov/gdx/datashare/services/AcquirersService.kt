@@ -9,7 +9,10 @@ import org.springframework.transaction.annotation.Transactional
 import uk.gov.gdx.datashare.config.AcquirerNotFoundException
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
+import uk.gov.gdx.datashare.config.EnrichmentFieldsNotValidForEventTypeException
 import uk.gov.gdx.datashare.enums.EnrichmentField
+import uk.gov.gdx.datashare.enums.EventType
+import uk.gov.gdx.datashare.enums.EventTypeEnrichmentFieldsRelationship
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
 import uk.gov.gdx.datashare.models.AcquirerSubscriptionDto
@@ -73,8 +76,19 @@ class AcquirersService(
 
   private fun addAcquirerSubscriptionEnrichmentFields(
     acquirerSubscriptionId: UUID,
+    eventType: EventType,
     enrichmentFields: List<EnrichmentField>,
   ): List<AcquirerSubscriptionEnrichmentField> {
+    val eventTypeEnrichmentFields = EventTypeEnrichmentFieldsRelationship[eventType]
+    val invalidEnrichmentFields = mutableListOf<EnrichmentField>()
+    enrichmentFields.forEach {
+      if (!eventTypeEnrichmentFields!!.contains(it)) {
+        invalidEnrichmentFields.add(it)
+      }
+    }
+    if (invalidEnrichmentFields.isNotEmpty()) {
+      throw EnrichmentFieldsNotValidForEventTypeException("Enrichment fields, $invalidEnrichmentFields, are not valid for the event type $eventType")
+    }
     return acquirerSubscriptionEnrichmentFieldRepository.saveAll(
       enrichmentFields.map {
         AcquirerSubscriptionEnrichmentField(
@@ -108,8 +122,11 @@ class AcquirersService(
           queueName = queueName,
         ),
       )
-      val enrichmentFields =
-        addAcquirerSubscriptionEnrichmentFields(acquirerSubscription.acquirerSubscriptionId, enrichmentFields)
+      val enrichmentFields = addAcquirerSubscriptionEnrichmentFields(
+        acquirerSubscription.acquirerSubscriptionId,
+        acquirerSubscription.eventType,
+        enrichmentFields,
+      )
 
       if (queueName != null && principalArn != null) {
         val queueUrl = outboundEventQueueService.createAcquirerQueue(queueName, principalArn)
@@ -147,7 +164,11 @@ class AcquirersService(
 
       acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(acquirerSubscription.acquirerSubscriptionId)
       val enrichmentFields =
-        addAcquirerSubscriptionEnrichmentFields(acquirerSubscription.acquirerSubscriptionId, enrichmentFields)
+        addAcquirerSubscriptionEnrichmentFields(
+          acquirerSubscription.acquirerSubscriptionId,
+          acquirerSubscription.eventType,
+          enrichmentFields,
+        )
 
       return mapAcquirerSubscriptionDto(acquirerSubscription, enrichmentFields)
     }

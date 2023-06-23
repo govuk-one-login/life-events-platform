@@ -1,1 +1,1 @@
-FROM grafana/grafana-enterprise:10.0.0
+FROM grafana/grafana-enterprise:10.0.1

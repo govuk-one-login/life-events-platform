@@ -41,6 +41,10 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-432
+  "IN1-JAVA-IONETTY-5725787 - io.netty:netty-handler":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-432
 
   ## Prometheus
   "CVE-2023-27561 - github.com/opencontainers/runc":

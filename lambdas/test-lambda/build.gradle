@@ -10,8 +10,8 @@ repositories {
 dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.9.3",
-            "org.mockito:mockito-junit-jupiter:5.3.1"
+    testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.ext.dependencyVersions.junitJupiter",
+            "org.mockito:mockito-junit-jupiter:$rootProject.ext.dependencyVersions.mockitoJunitJupiter"
 }
 
 java {
@@ -20,7 +20,7 @@ java {
 }
 
 test {
-    useJUnitPlatform ()
+    useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
 
@@ -29,8 +29,4 @@ jacocoTestReport {
     reports {
         xml.required.set(true)
     }
-}
-
-task wrapper(type: Wrapper){
-    gradleVersion = '7.6'
 }

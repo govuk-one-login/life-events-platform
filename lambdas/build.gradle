@@ -1,7 +1,3 @@
 plugins {
     id "java"
 }
-
-allprojects {
-    tasks.register("prepareKotlinBuildScriptModel"){}
-}

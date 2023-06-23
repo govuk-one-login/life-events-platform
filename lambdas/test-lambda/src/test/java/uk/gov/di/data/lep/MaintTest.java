@@ -1,4 +1,4 @@
-package lep;
+package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import org.junit.jupiter.api.Test;

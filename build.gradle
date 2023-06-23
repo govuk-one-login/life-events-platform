@@ -4,6 +4,8 @@ plugins {
 
 ext {
     dependencyVersions = [
-            awsLambdaJavaCore:'1.2.1'
+            awsLambdaJavaCore  : '1.2.1',
+            junitJupiter       : '5.9.3',
+            mockitoJunitJupiter: '5.3.1'
     ]
 }

@@ -82,6 +82,7 @@ resource "aws_lambda_function" "insert_xml_lambda" {
   runtime = local.lambda_runtime
   role    = aws_iam_role.insert_xml_lambda.arn
   timeout = 10
+  architectures = ["arm64"]
 
   source_code_hash = data.archive_file.lambda_function_source.output_sha
 

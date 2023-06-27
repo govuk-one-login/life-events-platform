@@ -1,7 +1,7 @@
 locals {
   env = "dev"
   default_tags = {
-    Product     = "Government Data Exchange"
+    Product     = "DI Life Events Platform"
     Environment = local.env
     Owner       = "di-life-events-platform@digital.cabinet-office.gov.uk"
     Source      = "terraform"

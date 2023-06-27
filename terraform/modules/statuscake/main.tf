@@ -10,7 +10,7 @@ resource "statuscake_contact_group" "gdx_platform_team" {
   name = "GDX Platform"
 
   email_addresses = [
-    "gdx-dev-team@digital.cabinet-office.gov.uk"
+    "di-life-events-platform@digital.cabinet-office.gov.uk"
   ]
 }
 

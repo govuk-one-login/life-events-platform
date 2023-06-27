@@ -23,9 +23,9 @@ a GitHub account. As a consequence we need to set up a robot account to have a P
 
 ## Approach
 
-We have created an account `gdx-dev-team` linked to out group email
-address, `gdx-dev-team@digital.cabinet-office.gov.uk`. This will be our robot account. We will use the PAT for this
-account in the workflow to update the gradle lockfile.
+We have created an account `di-life-events-platform` linked to out group email
+address, `di-life-events-platform@digital.cabinet-office.gov.uk`. This will be our robot account. We will use the PAT
+for this account in the workflow to update the gradle lockfile.
 
 ## Consequences
 

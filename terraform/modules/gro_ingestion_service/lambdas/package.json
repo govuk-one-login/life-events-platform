@@ -2,7 +2,7 @@
   "name": "gro-ingestion-lambda",
   "version": "0.0.1",
   "description": "GRO Ingestion Lambda",
-  "author": "gdx-dev-team@digital.cabinet-office.gov.uk",
+  "author": "di-life-events-platform@digital.cabinet-office.gov.uk",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

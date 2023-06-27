@@ -5,7 +5,7 @@ module "sns" {
   environment         = var.environment
   region              = var.region
   name                = "gdx-alarms"
-  notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
+  notification_emails = ["di-life-events-platform@digital.cabinet-office.gov.uk"]
 
   arns_which_can_publish = [aws_prometheus_workspace.prometheus.arn]
 }
@@ -20,5 +20,5 @@ module "sns-us-east-1" {
   environment         = var.environment
   region              = "us-east-1"
   name                = "gdx-alarms"
-  notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
+  notification_emails = ["di-life-events-platform@digital.cabinet-office.gov.uk"]
 }

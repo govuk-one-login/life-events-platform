@@ -5,5 +5,5 @@ module "sns_admin_alerts" {
   environment         = var.environment
   region              = var.region
   name                = "gdx-admin-alerts"
-  notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
+  notification_emails = ["di-life-events-platform@digital.cabinet-office.gov.uk"]
 }

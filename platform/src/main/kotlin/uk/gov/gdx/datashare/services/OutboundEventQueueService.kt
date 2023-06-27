@@ -114,8 +114,8 @@ class OutboundEventQueueService(
       .keyId(keyId)
       .tags(
         Tag.builder().tagKey("Environment").tagValue(environment).build(),
-        Tag.builder().tagKey("Owner").tagValue("gdx-dev-team@digital.cabinet-office.gov.uk").build(),
-        Tag.builder().tagKey("Product").tagValue("Government Data Exchange").build(),
+        Tag.builder().tagKey("Owner").tagValue("di-life-events-platform@digital.cabinet-office.gov.uk").build(),
+        Tag.builder().tagKey("Product").tagValue("DI Life Events Platform").build(),
         Tag.builder().tagKey("Repository").tagValue("https://github.com/alphagov/di-data-life-events-platform").build(),
         Tag.builder().tagKey("Source").tagValue("Application").build(),
       ).build()

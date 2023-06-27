@@ -54,7 +54,7 @@ class OpenApiConfiguration(
         .contact(
           Contact()
             .name("GDX Platform Team")
-            .email("gdx-dev-team@digital.cabinet-office.gov.uk")
+            .email("di-life-events-platform@digital.cabinet-office.gov.uk")
             .url("https://www.gov.uk/government/organisations/government-digital-service"),
         ),
     )

@@ -22,7 +22,7 @@ module "sns" {
   environment         = "bootstrap"
   region              = data.aws_region.current.name
   name                = "sns"
-  notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
+  notification_emails = ["di-life-events-platform@digital.cabinet-office.gov.uk"]
 }
 
 # we're not storing anything sensitive in DynamoDB, just using it for locking, so encryption is unecessary

@@ -1,9 +1,9 @@
 resource "aws_account_alternate_contact" "security" {
   alternate_contact_type = "SECURITY"
 
-  name          = "GDX Dev Team"
+  name          = "DI Life Events Platform Team"
   title         = "Dev Team"
-  email_address = "gdx-dev-team@digital.cabinet-office.gov.uk"
+  email_address = "di-life-events-platform@digital.cabinet-office.gov.uk"
   phone_number  = data.aws_ssm_parameter.security_contact_number.value
 }
 

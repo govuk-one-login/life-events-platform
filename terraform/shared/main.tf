@@ -3,7 +3,7 @@ locals {
   default_tags = {
     Product     = "Government Data Exchange"
     Environment = local.env
-    Owner       = "gdx-dev-team@digital.cabinet-office.gov.uk"
+    Owner       = "di-life-events-platform@digital.cabinet-office.gov.uk"
     Source      = "terraform"
     Repository  = "https://github.com/alphagov/di-data-life-events-platform"
   }
@@ -64,7 +64,7 @@ module "sns" {
   environment         = local.env
   region              = data.aws_region.current.name
   name                = "sns"
-  notification_emails = ["gdx-dev-team@digital.cabinet-office.gov.uk"]
+  notification_emails = ["di-life-events-platform@digital.cabinet-office.gov.uk"]
 }
 
 module "vpc" {

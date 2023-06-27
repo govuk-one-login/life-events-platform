@@ -20,7 +20,7 @@ provider "aws" {
     tags = {
       Product     = "Government Data Exchange"
       Environment = "bootstrap"
-      Owner       = "gdx-dev-team@digital.cabinet-office.gov.uk"
+      Owner       = "di-life-events-platform@digital.cabinet-office.gov.uk"
       Source      = "terraform"
       Repository  = "https://github.com/alphagov/di-data-life-events-platform"
     }

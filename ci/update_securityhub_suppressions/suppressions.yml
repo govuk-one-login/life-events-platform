@@ -37,6 +37,10 @@ Suppressions:
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
       notes: GPC-407
+  "CVE-2023-34462 - io.netty:netty-handler":
+    - resources:
+        - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*
+      notes: GPC-432
   "GHSA-6mjq-h674-j845 - io.netty:netty-handler":
     - resources:
         - arn:aws:ecr:eu-west-2:776473272850:repository/gdx-data-share-poc/.*

@@ -2,7 +2,7 @@ variable "username" {
   type = string
 }
 variable "policy_arns" {
-  type = list(string)
+  type = set(string)
 }
 variable "role_suffix" {
   type = string

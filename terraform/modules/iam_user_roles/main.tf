@@ -54,7 +54,9 @@ module "admin_roles" {
   source      = "../iam_user_role"
   role_suffix = "admin"
   username    = each.value
-  policy_arns = [data.aws_iam_policy.admin_policy.arn]
+  policy_arns = tomap({
+    admin_policy = data.aws_iam_policy.admin_policy.arn
+  })
 }
 
 module "read_only_roles" {
@@ -63,10 +65,10 @@ module "read_only_roles" {
   source      = "../iam_user_role"
   role_suffix = "read-only"
   username    = each.value
-  policy_arns = [
-    data.aws_iam_policy.read_only_policy.arn,
-    data.aws_iam_policy.security_hub_read_only_policy.arn,
-    data.aws_iam_policy.support_access_policy.arn,
-    aws_iam_policy.terraform_plan_policy.arn
-  ]
+  policy_arns = tomap({
+    read_only_policy              = data.aws_iam_policy.read_only_policy.arn
+    security_hub_read_only_policy = data.aws_iam_policy.security_hub_read_only_policy.arn
+    support_access_policy         = data.aws_iam_policy.support_access_policy.arn
+    terraform_plan_policy         = aws_iam_policy.terraform_plan_policy.arn
+  })
 }

@@ -53,7 +53,7 @@ dependencies {
   implementation("com.amazonaws:aws-xray-recorder-sdk-slf4j")
 
   implementation("org.springframework:spring-jms")
-  implementation("org.hibernate:hibernate-validator:8.0.0.Final")
+  implementation("org.hibernate:hibernate-validator:8.0.1.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive")

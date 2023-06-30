@@ -1,4 +1,5 @@
 rootProject.name = "gdx-data-share-poc"
-include("lambdas",
-        "lambdas:test-lambda",
-        "platform")
+include "lambdas",
+        "lambdas:death-minimisation",
+        "lib",
+        "platform"

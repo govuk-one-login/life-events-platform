@@ -1,5 +1,6 @@
-package uk.gov.di.data.lep.classes;
+package uk.gov.di.data.lep.dto;
 
+import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.EventType;
 

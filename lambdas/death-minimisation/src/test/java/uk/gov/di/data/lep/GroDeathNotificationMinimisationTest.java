@@ -3,10 +3,10 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import uk.gov.di.data.lep.classes.GroDeathEventEnrichedData;
+import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
+import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.GroSex;
-import uk.gov.di.data.lep.library.config.Config;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,6 +1,6 @@
 # 27. Recovery and Rollback Strategy
 
-[Next >>](9999-end.md)
+[Next >>](0028-secure-pipelines-and-control-tower.md)
 
 Date: 2023-06-18
 
@@ -40,4 +40,4 @@ roll-forward.
 To stick to this approach, care must be taken to make sure we do not have releases that contain both an update to the
 code and to the database.
 
-[Next >>](9999-end.md)
+[Next >>](0028-secure-pipelines-and-control-tower.md)

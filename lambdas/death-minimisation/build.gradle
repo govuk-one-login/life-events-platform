@@ -9,10 +9,10 @@ repositories {
 
 dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore",
-            project(":lib")
+                   project(":lib")
 
     testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.ext.dependencyVersions.junitJupiter",
-            "org.mockito:mockito-junit-jupiter:$rootProject.ext.dependencyVersions.mockitoJunitJupiter"
+                       "org.mockito:mockito-junit-jupiter:$rootProject.ext.dependencyVersions.mockitoJunitJupiter"
 }
 
 java {

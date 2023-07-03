@@ -50,8 +50,8 @@ class GroDeathNotificationMinimisationTest {
 
         var result = underTest.handleRequest(enrichedData, context);
 
-        assertEquals("Bob Burt", result.eventDetails.forenames());
-        assertEquals("Smith", result.eventDetails.surname());
-        assertNull(result.eventDetails.dateOfBirth());
+        assertEquals("Bob Burt", result.eventDetails().forenames());
+        assertEquals("Smith", result.eventDetails().surname());
+        assertNull(result.eventDetails().dateOfBirth());
     }
 }

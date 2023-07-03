@@ -36,6 +36,9 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 continuation_indent_size = 4
 
+[*.gradle]
+ij_any_align_multiline_parameters_in_calls = true
+
 
 [*.html]
 indent_size = 2

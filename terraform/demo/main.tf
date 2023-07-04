@@ -127,6 +127,22 @@ module "data_share_service" {
   ]
 }
 
+module "len" {
+  source                      = "../modules/len"
+  environment                 = local.env
+  region                      = data.aws_region.current.name
+  schedule                    = "rate(1 minute)"
+  cloudwatch_retention_period = 30
+  gdx_url                     = module.data_share_service.gdx_url
+  auth_url                    = module.data_share_service.token_auth_url
+  len_client_id               = module.data_share_service.len_client_id
+  len_client_secret           = module.data_share_service.len_client_secret
+  lev_rds_db_username         = module.lev_api.lev_rds_db_username
+  lev_rds_db_password         = module.lev_api.lev_rds_db_password
+  lev_rds_db_name             = module.lev_api.lev_rds_db_name
+  lev_rds_db_host             = module.lev_api.lev_rds_db_host
+}
+
 module "gro_ingestion_service" {
   source = "../modules/gro_ingestion_service"
 

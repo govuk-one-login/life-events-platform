@@ -1,0 +1,33 @@
+package uk.gov.di.data.lep.library.enums;
+
+public enum EnrichmentField {
+    SOURCE_ID,
+
+    SEX,
+    DATE_OF_BIRTH,
+    DATE_OF_DEATH,
+
+    REGISTRATION_DATE,
+    FIRST_NAMES,
+    LAST_NAME,
+    BIRTH_PLACE,
+    DEATH_PLACE,
+    MAIDEN_NAME,
+    OCCUPATION,
+    RETIRED,
+    ADDRESS,
+
+    REGISTRATION_ID,
+    EVENT_TIME,
+    VERIFICATION_LEVEL,
+    PARTIAL_MONTH_OF_DEATH,
+    PARTIAL_YEAR_OF_DEATH,
+    FORENAMES,
+    SURNAME,
+    MAIDEN_SURNAME,
+    ADDRESS_LINE_1,
+    ADDRESS_LINE_2,
+    ADDRESS_LINE_3,
+    ADDRESS_LINE_4,
+    POSTCODE,
+}

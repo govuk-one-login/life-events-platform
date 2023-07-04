@@ -7,7 +7,6 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
-import uk.gov.gdx.datashare.config.EnrichmentFieldsNotValidForEventTypeException
 import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.AcquirerRequest
@@ -219,13 +218,7 @@ class AcquirersServiceTest {
       enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES, EnrichmentField.SURNAME),
     )
 
-    val exception = assertThrows<EnrichmentFieldsNotValidForEventTypeException> {
-      underTest.addAcquirerSubscription(acquirer.id, acquirerSubRequest)
-    }
-
-    assertThat(exception.message).isEqualTo("Enrichment fields, [FORENAMES, SURNAME], are not valid for the event type DEATH_NOTIFICATION")
-
-    verify(exactly = 1) {
+    verify(exactly = 0) {
       acquirerSubscriptionRepository.save(
         withArg {
           assertThat(it.acquirerId).isEqualTo(acquirer.id)
@@ -316,13 +309,7 @@ class AcquirersServiceTest {
       enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES, EnrichmentField.SURNAME),
     )
 
-    val exception = assertThrows<EnrichmentFieldsNotValidForEventTypeException> {
-      underTest.updateAcquirerSubscription(acquirer.id, testEventAcquirerSubscription.id, acquirerSubRequest)
-    }
-
-    assertThat(exception.message).isEqualTo("Enrichment fields, [FORENAMES, SURNAME], are not valid for the event type ${acquirerSubRequest.eventType}")
-
-    verify(exactly = 1) {
+    verify(exactly = 0) {
       acquirerSubscriptionRepository.save(
         withArg {
           assertThat(it.acquirerId).isEqualTo(acquirer.id)

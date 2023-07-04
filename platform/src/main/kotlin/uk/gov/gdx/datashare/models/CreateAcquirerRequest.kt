@@ -9,11 +9,13 @@ import uk.gov.gdx.datashare.enums.EnrichmentField
 import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.enums.RegExConstants
 import uk.gov.gdx.datashare.enums.RegExConstants.CLIENT_NAME_REGEX
+import uk.gov.gdx.datashare.models.validators.ValidEnrichmentFieldsForEventType
 import uk.gov.gdx.datashare.models.validators.ValidQueueDetails
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Create Acquirer Request")
 @ValidQueueDetails
+@ValidEnrichmentFieldsForEventType
 class CreateAcquirerRequest(
   @Schema(
     description = "Name of acquirer, may only contain lowercase letters, numbers, and the following special characters: + = , . @ -",

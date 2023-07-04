@@ -16,7 +16,8 @@ data "aws_iam_policy_document" "dwp_user_access" {
       "sqs:ReceiveMessage",
     ]
     resources = [
-      "arn:aws:sqs:eu-west-2:776473272850:acq_dev_dwp-death-notifications"
+      "arn:aws:sqs:eu-west-2:776473272850:acq_dev_dwp-death-notifications",
+      "arn:aws:sqs:eu-west-2:776473272850:acq_demo_dwp-death-notifications-test"
     ]
     effect = "Allow"
   }
@@ -27,7 +28,8 @@ data "aws_iam_policy_document" "dwp_user_access" {
       "kms:GenerateDataKey",
     ]
     resources = [
-      "arn:aws:kms:eu-west-2:776473272850:key/8dc17eba-9e8f-44a6-8e11-c97c94acf526"
+      "arn:aws:kms:eu-west-2:776473272850:key/8dc17eba-9e8f-44a6-8e11-c97c94acf526",
+      "arn:aws:kms:eu-west-2:776473272850:key/d9fa2600-488a-4dfc-aa3c-73dfa59d7bcd"
     ]
     effect = "Allow"
   }

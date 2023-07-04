@@ -44,7 +44,7 @@ class Api {
     CreateAcquirerRequest(
       acquirerName = clientName,
       eventType = EventType.TEST_EVENT,
-      enrichmentFields = listOf(EnrichmentField.POSTCODE),
+      enrichmentFields = listOf(EnrichmentField.EVENT_TIME),
     ),
   )
 
@@ -54,7 +54,7 @@ class Api {
       CreateAcquirerRequest(
         acquirerName = clientName,
         eventType = EventType.TEST_EVENT,
-        enrichmentFields = listOf(EnrichmentField.POSTCODE),
+        enrichmentFields = listOf(EnrichmentField.EVENT_TIME),
         queueName = queueName,
         principalArn = principalArn,
       ),

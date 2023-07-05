@@ -75,7 +75,6 @@ class AcquirersService(
 
   private fun addAcquirerSubscriptionEnrichmentFields(
     acquirerSubscriptionId: UUID,
-    eventType: EventType,
     enrichmentFields: List<EnrichmentField>,
   ): List<AcquirerSubscriptionEnrichmentField> {
     return acquirerSubscriptionEnrichmentFieldRepository.saveAll(
@@ -92,7 +91,6 @@ class AcquirersService(
     acquirerId: UUID,
     acquirerSubRequest: AcquirerSubRequest,
   ): AcquirerSubscriptionDto {
-    // TODO validation here - thing.throwsIfInvalid
     adminActionAlertsService.noticeAction(
       AdminAction(
         "Add acquirer subscription",
@@ -114,7 +112,6 @@ class AcquirersService(
       )
       val enrichmentFields = addAcquirerSubscriptionEnrichmentFields(
         acquirerSubscription.acquirerSubscriptionId,
-        acquirerSubscription.eventType,
         enrichmentFields,
       )
 
@@ -132,7 +129,6 @@ class AcquirersService(
     subscriptionId: UUID,
     acquirerSubRequest: AcquirerSubRequest,
   ): AcquirerSubscriptionDto {
-    // TODO validation here
     adminActionAlertsService.noticeAction(
       AdminAction(
         "Update acquirer subscription",
@@ -157,7 +153,6 @@ class AcquirersService(
       val enrichmentFields =
         addAcquirerSubscriptionEnrichmentFields(
           acquirerSubscription.acquirerSubscriptionId,
-          acquirerSubscription.eventType,
           enrichmentFields,
         )
 

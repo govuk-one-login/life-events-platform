@@ -19,7 +19,3 @@ class ValidEnrichmentFieldsForEventTypeAcquirerSubRequestValidator :
     return invalidEnrichmentFields.isEmpty()
   }
 }
-
-/*if (invalidEnrichmentFields.isNotEmpty()) {
-  throw EnrichmentFieldsNotValidForEventTypeException("Enrichment fields, $invalidEnrichmentFields, are not valid for the event type $eventType")
-}*/

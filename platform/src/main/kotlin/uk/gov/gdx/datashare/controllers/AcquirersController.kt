@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -251,6 +252,7 @@ class AcquirersController(
       implementation = AcquirerSubRequest::class,
     )
     @RequestBody
+    @Valid
     acquirerSubRequest: AcquirerSubRequest,
   ) = acquirersService.addAcquirerSubscription(acquirerId, acquirerSubRequest)
 
@@ -298,6 +300,7 @@ class AcquirersController(
       implementation = AcquirerSubRequest::class,
     )
     @RequestBody
+    @Valid
     acquirerSubRequest: AcquirerSubRequest,
   ) = acquirersService.updateAcquirerSubscription(acquirerId, subscriptionId, acquirerSubRequest)
 }

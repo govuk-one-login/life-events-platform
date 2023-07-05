@@ -206,31 +206,6 @@ class AcquirersServiceTest {
   }
 
   @Test
-  fun `addAcquirerSubscription validates enrichmentFields for given eventType`() {
-    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
-    every { acquirerSubscriptionRepository.save(any()) }.returns(acquirerSubscription)
-    every { outboundEventQueueService.createAcquirerQueue(any(), any()) } returns ""
-    every { adminActionAlertsService.noticeAction(any()) } just runs
-
-    val acquirerSubRequest = AcquirerSubRequest(
-      EventType.TEST_EVENT,
-      oauthClientId = "",
-      enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES, EnrichmentField.SURNAME),
-    )
-
-    verify(exactly = 0) {
-      acquirerSubscriptionRepository.save(
-        withArg {
-          assertThat(it.acquirerId).isEqualTo(acquirer.id)
-          assertThat(it.oauthClientId).isEqualTo(acquirerSubRequest.oauthClientId)
-          assertThat(it.eventType).isEqualTo(acquirerSubRequest.eventType)
-        },
-      )
-    }
-    verify(exactly = 0) { acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>()) }
-  }
-
-  @Test
   fun `updateAcquirerSubscription updates subscription`() {
     every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
     every { acquirerSubscriptionRepository.findByIdOrNull(acquirerSubscription.id) }.returns(acquirerSubscription)
@@ -284,41 +259,6 @@ class AcquirersServiceTest {
     assertThat(exception.message).isEqualTo("Subscription ${acquirerSubscription.id} not found")
 
     verify(exactly = 0) { acquirerSubscriptionRepository.save(any()) }
-  }
-
-  @Test
-  fun `updateAcquirerSubscription validates enrichmentFields for given eventType`() {
-    every { acquirerRepository.findByIdOrNull(acquirer.id) }.returns(acquirer)
-    every { acquirerSubscriptionRepository.findByIdOrNull(testEventAcquirerSubscription.id) }.returns(
-      testEventAcquirerSubscription,
-    )
-
-    every { acquirerSubscriptionRepository.save(any()) }.returns(testEventAcquirerSubscription)
-    every {
-      acquirerSubscriptionEnrichmentFieldRepository.deleteAllByAcquirerSubscriptionId(
-        testEventAcquirerSubscription.id,
-      )
-    }.returns(
-      Unit,
-    )
-    every { adminActionAlertsService.noticeAction(any()) } just runs
-
-    val acquirerSubRequest = AcquirerSubRequest(
-      EventType.TEST_EVENT,
-      oauthClientId = "callbackClientIdNew",
-      enrichmentFields = listOf(EnrichmentField.SOURCE_ID, EnrichmentField.FORENAMES, EnrichmentField.SURNAME),
-    )
-
-    verify(exactly = 0) {
-      acquirerSubscriptionRepository.save(
-        withArg {
-          assertThat(it.acquirerId).isEqualTo(acquirer.id)
-          assertThat(it.oauthClientId).isEqualTo(acquirerSubRequest.oauthClientId)
-          assertThat(it.eventType).isEqualTo(acquirerSubRequest.eventType)
-        },
-      )
-    }
-    verify(exactly = 0) { acquirerSubscriptionEnrichmentFieldRepository.saveAll(any<Iterable<AcquirerSubscriptionEnrichmentField>>()) }
   }
 
   @Test

@@ -63,8 +63,18 @@ class OutboundEventQueueService(
   fun deleteAcquirerQueueAndDlq(queueName: String) {
     val dlqName = dlqName(queueName)
     log.info("Deleting queues: $queueName and $dlqName")
-    deleteQueueAndKey(queueName)
-    deleteQueueAndKey(dlqName)
+    try {
+      deleteQueueAndKey(queueName)
+    }
+    catch (_: QueueDoesNotExistException) {
+      log.info("Deleting queue $queueName failed, queue does not exist")
+    }
+    try {
+      deleteQueueAndKey(dlqName)
+    }
+    catch (_: QueueDoesNotExistException) {
+      log.info("Deleting queue $dlqName failed, queue does not exist")
+    }
   }
 
   fun getMetrics(): Map<String, QueueMetric> {

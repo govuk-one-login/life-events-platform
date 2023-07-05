@@ -304,7 +304,7 @@ class OutboundEventQueueService(
   }
 
   private fun deleteQueueAndKey(queueName: String) {
-    val queue: AwsQueue;
+    val queue: AwsQueue
     try {
       queue = getQueue(queueName)
     } catch (_: QueueDoesNotExistException) {

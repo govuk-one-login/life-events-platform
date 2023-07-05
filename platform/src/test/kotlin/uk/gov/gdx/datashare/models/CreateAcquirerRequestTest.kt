@@ -81,7 +81,6 @@ oauthClient,acq_test,principal,Exactly one of oauthClientId and queueUrl must be
 NULL       ,acq_test,NULL     ,Both queueName and principalArn must be specified or both must be null
 oauthClient,NULL    ,principal,Both queueName and principalArn must be specified or both must be null""",
   )
-
   @Test
   fun `valid enrichment fields for given event type are accepted`() {
     val underTest = CreateAcquirerRequest(

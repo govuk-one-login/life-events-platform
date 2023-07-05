@@ -110,6 +110,7 @@ oauthClient,NULL    ,principal,Both queueName and principalArn must be specified
     val violations = validator.validate(underTest)
     assertThat(violations).isEmpty()
   }
+
   @Test
   fun `invalid enrichment fields for given event type are rejected`() {
     val underTest = AcquirerSubRequest(

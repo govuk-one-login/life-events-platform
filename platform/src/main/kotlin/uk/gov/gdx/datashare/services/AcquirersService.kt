@@ -10,13 +10,11 @@ import uk.gov.gdx.datashare.config.AcquirerNotFoundException
 import uk.gov.gdx.datashare.config.AcquirerSubscriptionNotFoundException
 import uk.gov.gdx.datashare.config.DateTimeHandler
 import uk.gov.gdx.datashare.enums.EnrichmentField
-import uk.gov.gdx.datashare.enums.EventType
 import uk.gov.gdx.datashare.models.AcquirerRequest
 import uk.gov.gdx.datashare.models.AcquirerSubRequest
 import uk.gov.gdx.datashare.models.AcquirerSubscriptionDto
 import uk.gov.gdx.datashare.repositories.*
 import java.util.*
-
 
 @Service
 @Transactional

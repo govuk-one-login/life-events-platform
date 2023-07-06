@@ -1,8 +1,6 @@
 rootProject.name = "gdx-data-share-poc"
 include "lambdas",
         "lambdas:death-minimisation",
+        "lambdas:death-enrichment",
         "lib",
         "platform"
-include 'lambdas:death-enrichment'
-findProject(':lambdas:death-enrichment')?.name = 'death-enrichment'
-

@@ -21,6 +21,7 @@ java {
 }
 
 test {
+    environment "LAMBDA_TASK_ROOT", "handler"
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }

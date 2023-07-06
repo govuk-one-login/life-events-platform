@@ -118,3 +118,5 @@ oauth2-data/hsperfdata_root
 *.received.json
 
 node_modules
+
+.aws-sam

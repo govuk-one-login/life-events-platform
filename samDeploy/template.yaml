@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >-
+  This creates the necessary serverless components for the Life Events Platform.
+
+
+Globals:
+  Function:
+    Timeout: 40
+    Environment:
+      Variables:
+        JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+        POWERTOOLS_TRACER_CAPTURE_RESPONSE: false
+        POWERTOOLS_TRACER_CAPTURE_ERROR: false
+    CodeSigningConfigArn: !If
+      - UseCodeSigning
+      - !Ref CodeSigningConfigArn
+      - !Ref AWS::NoValue
+    PermissionsBoundary: !If
+      - UsePermissionsBoundary
+      - !Ref PermissionsBoundary
+      - !Ref AWS::NoValue
+
+Parameters:
+  Environment:
+    Type: String
+    Description: The name of the environment to deploy to
+  CodeSigningConfigArn:
+    Type: String
+    Description: The ARN of the Code Signing Config to use, provided by the deployment pipeline
+    Default: "none"
+  PermissionsBoundary:
+    Type: String
+    Description: The ARN of the permissions boundary to apply when creating IAM roles
+    Default: "none"
+
+Conditions:
+  UseCodeSigning:
+    Fn::Not:
+      - Fn::Equals:
+          - !Ref CodeSigningConfigArn
+          - "none"
+  UsePermissionsBoundary:
+    Fn::Not:
+      - Fn::Equals:
+          - !Ref PermissionsBoundary
+          - "none"
+
+Mappings:
+  EnvironmentConfiguration:
+    dev:
+      DomainName: "demoapp.build.platform.sandpit.account.gov.uk"
+    build:
+      DomainName: "demoapp.build.platform.sandpit.account.gov.uk"
+    staging:
+      DomainName: "demoapp.staging.platform.sandpit.account.gov.uk"
+    integration:
+      DomainName: "demoapp.integration.platform.sandpit.account.gov.uk"
+    production:
+      DomainName: "demoapp.platform.sandpit.account.gov.uk"
+
+Resources:
+  MasterKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: "kms:*"
+            Resource: "*"
+          - Effect: Allow
+            Principal:
+              Service: !Sub "logs.${AWS::Region}.amazonaws.com"
+            Action:
+              - "kms:Encrypt*"
+              - "kms:Decrypt*"
+              - "kms:ReEncrypt*"
+              - "kms:GenerateDataKey*"
+              - "kms:Describe*"
+            Resource: "*"
+            Condition:
+              ArnLike:
+                "kms:EncryptionContext:aws:logs:arn": !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+
+  DistributionTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathEnrichmentQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathMinimisationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathDeliveryQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathMinimisationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/death-minimisation
+      Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
+      Runtime: java17
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      KmsKeyArn: !GetAtt MasterKmsKey.Arn
+      Tracing: Active
+      Environment:
+        Variables:
+          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+      AutoPublishAlias: DeathMinimisationFunction

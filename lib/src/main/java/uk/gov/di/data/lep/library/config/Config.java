@@ -13,6 +13,7 @@ public class Config {
             return List.of();
         }
         return Arrays.stream(envEnrichmentFields.split("\\s*,\\s*"))
+            .map(String::strip)
             .map(EnrichmentField::valueOf)
             .toList();
     }

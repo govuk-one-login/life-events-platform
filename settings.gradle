@@ -3,3 +3,6 @@ include "lambdas",
         "lambdas:death-minimisation",
         "lib",
         "platform"
+include 'lambdas:death-enrichment'
+findProject(':lambdas:death-enrichment')?.name = 'death-enrichment'
+

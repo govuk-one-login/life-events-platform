@@ -1,6 +1,6 @@
 module "lambda_function_suppressor" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "5.1.0"
+  version = "5.2.0"
 
   function_name = "${var.environment}-securityhub-suppressor"
   handler       = "entry.lambda_handler"

@@ -1,6 +1,6 @@
 rootProject.name = "gdx-data-share-poc"
 include "lambdas",
-        "lambdas:death-minimisation",
         "lambdas:death-enrichment",
+        "lambdas:death-minimisation",
         "lib",
         "platform"

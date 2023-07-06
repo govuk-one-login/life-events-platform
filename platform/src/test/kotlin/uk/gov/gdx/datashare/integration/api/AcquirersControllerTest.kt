@@ -51,7 +51,7 @@ class AcquirersControllerTest : SqsIntegrationTestBase() {
     webTestClient.post()
       .uri("/acquirers/${UUID.randomUUID()}/subscriptions")
       .headers(setAuthorisation("len", listOf(""), listOf("events/consume")))
-      .bodyValue(mapOf("eventType" to "DEATH_NOTIFICATION", "enrichmentFields" to listOf("firstNames")))
+      .bodyValue(mapOf("eventType" to "DEATH_NOTIFICATION", "enrichmentFields" to listOf("firstNames"), "oauthClientId" to "abc"))
       .exchange()
       .expectStatus()
       .isForbidden
@@ -62,7 +62,7 @@ class AcquirersControllerTest : SqsIntegrationTestBase() {
     webTestClient.put()
       .uri("/acquirers/${UUID.randomUUID()}/subscriptions/${UUID.randomUUID()}")
       .headers(setAuthorisation("len", listOf(""), listOf("events/consume")))
-      .bodyValue(mapOf("eventType" to "DEATH_NOTIFICATION", "enrichmentFields" to listOf("firstNames")))
+      .bodyValue(mapOf("eventType" to "DEATH_NOTIFICATION", "enrichmentFields" to listOf("firstNames"), "oauthClientId" to "abc"))
       .exchange()
       .expectStatus()
       .isForbidden

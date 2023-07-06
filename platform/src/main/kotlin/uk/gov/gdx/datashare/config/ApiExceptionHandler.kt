@@ -113,20 +113,6 @@ class ApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(EnrichmentFieldsNotValidForEventTypeException::class)
-  fun handleEnrichmentFieldsNotValidForEventType(e: EnrichmentFieldsNotValidForEventTypeException): ResponseEntity<ErrorResponse?>? {
-    log.debug("Invalid enrichment field(s) for the given event type: {}", e.message)
-    return ResponseEntity
-      .status(BAD_REQUEST)
-      .body(
-        ErrorResponse(
-          status = BAD_REQUEST,
-          userMessage = e.message,
-          developerMessage = e.message,
-        ),
-      )
-  }
-
   @ExceptionHandler(EventNotFoundException::class)
   fun handleEventNotFoundException(e: EventNotFoundException): ResponseEntity<ErrorResponse?>? {
     log.debug("Event not found exception caught: {}", e.message)
@@ -243,8 +229,6 @@ class SupplierSubscriptionNotFoundException(message: String) : Exception(message
 }
 
 class NoDataFoundException(message: String) : Exception(message)
-
-class EnrichmentFieldsNotValidForEventTypeException(message: String) : Exception(message)
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Error Response")

@@ -106,6 +106,19 @@ Resources:
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
 
+  DeathEnrichmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/death-enrichment
+      Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
+      Runtime: java17
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      KmsKeyArn: !GetAtt MasterKmsKey.Arn
+      Tracing: Active
+      AutoPublishAlias: DeathEnrichmentFunction
+
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
     Properties:

@@ -1,7 +1,26 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 repositories {
     mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withSourcesJar()
+}
+
+tasks.withType(Jar).configureEach { Jar jar ->
+    jar.preserveFileTimestamps = false
+    jar.reproducibleFileOrder = true
+}
+
+tasks.named('jar') {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                   'Implementation-Version': project.version)
+    }
 }

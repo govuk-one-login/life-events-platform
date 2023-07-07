@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.99"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.100"))
   implementation("software.amazon.awssdk:cloudwatch")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:lambda")

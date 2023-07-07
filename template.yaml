@@ -109,7 +109,7 @@ Resources:
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/death-minimisation
+      CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
       Runtime: java17
       Architectures:

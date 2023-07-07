@@ -1,6 +1,6 @@
 # 28. Secure pipelines and Control tower
 
-[Next >>](9999-end.md)
+[Next >>](0029-di-alignment.md)
 
 Date: 2023-06-18
 
@@ -12,7 +12,7 @@ Proposed
 
 The existing platform is trying to align with the rest of DI, which uses AWS Control Tower to manage AWS accounts, and
 Secure Pipelines to deploy their systems. As a result, the platform is attempting to align to this flow, while
-also aligning our architecture (as laid out in [ADR 2#](Put link here)). DI also uses an environment per account flow,
+also aligning our architecture (as laid out in [ADR 29](0029-di-alignment.md)). DI also uses an environment per account flow,
 which is different from our approach of an account for all our non-prod environments, and an account for our prod
 environment.
 
@@ -46,4 +46,4 @@ We have 3 stages to our migration into this new account and deployment structure
 
 After we have completed stage 3, we will need to clean up our 2 old accounts and decommission the old system that will be running on the 5 new accounts
 
-[Next >>](9999-end.md)
+[Next >>](0029-di-alignment.md)

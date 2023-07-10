@@ -1,7 +1,6 @@
 package uk.gov.di.data.lep;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
+import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
@@ -9,10 +8,10 @@ import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
 
-public class GroDeathEnrichment implements RequestHandler<GroDeathEventBaseData, GroDeathEventEnrichedData> {
+public class GroDeathEnrichment extends LambdaHandler<GroDeathEventBaseData, GroDeathEventEnrichedData> {
 
     @Override
-    public GroDeathEventEnrichedData handleRequest(GroDeathEventBaseData baseData, Context context) {
+    public GroDeathEventEnrichedData process(GroDeathEventBaseData baseData) {
 
         var enrichmentData = getEnrichmentData(baseData.sourceId());
 

@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Config {
     private static final String envEnrichmentFields = System.getenv("ENRICHMENT_FIELDS");
+    public static final String targetQueue = System.getenv("TARGET_QUEUE");
+    public static final String targetTopic = System.getenv("TARGET_TOPIC");
 
     public static List<EnrichmentField> getEnrichmentFields() {
         if (envEnrichmentFields == null) {

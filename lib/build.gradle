@@ -1,26 +1,50 @@
 plugins {
-    id 'java-library'
+    id "java-library"
+    id "jacoco"
 }
 
 repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore",
+                   "com.google.code.gson:gson:$rootProject.ext.dependencyVersions.gson",
+                   "com.amazonaws:aws-java-sdk-sqs:1.12.504",
+                   "com.amazonaws:aws-java-sdk-sns:1.12.504"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.ext.dependencyVersions.junitJupiter",
+                       "org.mockito:mockito-junit-jupiter:$rootProject.ext.dependencyVersions.mockitoJunitJupiter"
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(javaVersion)
     }
-    withSourcesJar()
 }
+
+test {
+    environment "LAMBDA_TASK_ROOT", "handler"
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required.set(true)
+    }
+}
+
 
 tasks.withType(Jar).configureEach { Jar jar ->
     jar.preserveFileTimestamps = false
     jar.reproducibleFileOrder = true
 }
 
-tasks.named('jar') {
+tasks.named("jar") {
     manifest {
-        attributes('Implementation-Title': project.name,
-                   'Implementation-Version': project.version)
+        attributes("Implementation-Title": project.name,
+                   "Implementation-Version": project.version)
     }
 }

@@ -16,6 +16,10 @@ public class GroDeathValidation implements RequestHandler<APIGatewayProxyRequest
         var groDeathEvent = new Gson().fromJson(body, GroDeathEvent.class);
         var sourceId = groDeathEvent.sourceId();
 
+        if (sourceId == null) {
+            throw new IllegalArgumentException("sourceId cannot be null");
+        }
+
         return new GroDeathEventBaseData(sourceId);
 
     }

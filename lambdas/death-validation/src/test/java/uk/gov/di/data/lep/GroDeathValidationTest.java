@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GroDeathValidationTest {
     @Mock
     private Context context;
+    private final GroDeathValidation underTest = new GroDeathValidation();
 
     @Test
     void validateGroDeathEventDataReturnsBaseData() {
-        var underTest = new GroDeathValidation();
 
         var event = new APIGatewayProxyRequestEvent().withBody("{'sourceId':'123a1234-a12b-12a1-a123-123456789012'}");
 
@@ -25,12 +25,11 @@ class GroDeathValidationTest {
 
     @Test
     void validateGroDeathEventDataFailsIfNoSourceId() {
-        var underTest = new GroDeathValidation();
 
         var event = new APIGatewayProxyRequestEvent().withBody("{'notSourceId':'123a1234-a12b-12a1-a123-123456789012'}");
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-            underTest.handleRequest(event,context));
+        var exception = assertThrows(IllegalArgumentException.class, () -> underTest.handleRequest(event, context));
+
         assertEquals("sourceId cannot be null", exception.getMessage());
     }
 }

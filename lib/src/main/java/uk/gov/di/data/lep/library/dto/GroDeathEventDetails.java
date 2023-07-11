@@ -1,15 +1,20 @@
 package uk.gov.di.data.lep.library.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record GroDeathEventDetails(
     GroSex sex,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     LocalDate dateOfBirth,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     LocalDate dateOfDeath,
     String registrationId,
-    LocalDate eventTime,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    LocalDateTime eventTime,
     String verificationLevel,
     String partialMonthOfDeath,
     String partialYearOfDeath,

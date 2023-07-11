@@ -9,6 +9,7 @@ import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class GroDeathEnrichment
     extends LambdaHandler<GroDeathEventEnrichedData>
@@ -49,7 +50,7 @@ public class GroDeathEnrichment
             LocalDate.parse("1972-02-20"),
             LocalDate.parse("2021-12-31"),
             "123456789",
-            LocalDate.parse("2022-01-05"),
+            LocalDateTime.parse("2022-01-05T12:03:52"),
             "1",
             "12",
             "2021",

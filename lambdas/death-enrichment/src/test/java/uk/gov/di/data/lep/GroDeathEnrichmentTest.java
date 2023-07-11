@@ -7,6 +7,7 @@ import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,7 +30,7 @@ class GroDeathEnrichmentTest {
         assertEquals(LocalDate.parse("1972-02-20"), result.dateOfBirth());
         assertEquals(LocalDate.parse("2021-12-31"), result.dateOfDeath());
         assertEquals("123456789", result.registrationId());
-        assertEquals(LocalDate.parse("2022-01-05"), result.eventTime());
+        assertEquals(LocalDateTime.parse("2022-01-05T12:03:52"), result.eventTime());
         assertEquals("1", result.verificationLevel());
         assertEquals("12", result.partialMonthOfDeath());
         assertEquals("2021", result.partialYearOfDeath());

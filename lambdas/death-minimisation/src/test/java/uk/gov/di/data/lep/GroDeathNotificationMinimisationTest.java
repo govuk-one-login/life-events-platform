@@ -9,6 +9,7 @@ import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +32,7 @@ class GroDeathNotificationMinimisationTest {
             LocalDate.parse("1972-02-20"),
             LocalDate.parse("2021-12-31"),
             "123456789",
-            LocalDate.parse("2022-01-05"),
+            LocalDateTime.parse("2022-01-05T12:03:52"),
             "1",
             "12",
             "2021",
@@ -84,7 +85,7 @@ class GroDeathNotificationMinimisationTest {
             LocalDate.parse("1972-02-20"),
             LocalDate.parse("2021-12-31"),
             "123456789",
-            LocalDate.parse("2022-01-05"),
+            LocalDateTime.parse("2022-01-05T12:03:52"),
             "1",
             "12",
             "2021",
@@ -148,7 +149,7 @@ class GroDeathNotificationMinimisationTest {
             LocalDate.parse("1972-02-20"),
             LocalDate.parse("2021-12-31"),
             "123456789",
-            LocalDate.parse("2022-01-05"),
+            LocalDateTime.parse("2022-01-05T12:03:52"),
             "1",
             "12",
             "2021",
@@ -170,7 +171,7 @@ class GroDeathNotificationMinimisationTest {
         assertEquals(LocalDate.parse("1972-02-20"), result.eventDetails().dateOfBirth());
         assertEquals(LocalDate.parse("2021-12-31"), result.eventDetails().dateOfDeath());
         assertEquals("123456789", result.eventDetails().registrationId());
-        assertEquals(LocalDate.parse("2022-01-05"), result.eventDetails().eventTime());
+        assertEquals(LocalDateTime.parse("2022-01-05T12:03:52"), result.eventDetails().eventTime());
         assertEquals("1", result.eventDetails().verificationLevel());
         assertEquals("12", result.eventDetails().partialMonthOfDeath());
         assertEquals("2021", result.eventDetails().partialYearOfDeath());

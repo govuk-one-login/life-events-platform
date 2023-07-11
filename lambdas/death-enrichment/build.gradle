@@ -9,6 +9,7 @@ repositories {
 
 dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore",
+                   "com.fasterxml.jackson.core:jackson-annotations:$rootProject.ext.dependencyVersions.jacksonAnnotations",
                    project(":lib")
 
     testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.ext.dependencyVersions.junitJupiter",

@@ -2,18 +2,25 @@ package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public class GroDeathEnrichment implements RequestHandler<GroDeathEventBaseData, GroDeathEventEnrichedData> {
-
+public class GroDeathEnrichment
+    extends LambdaHandler<GroDeathEventEnrichedData>
+    implements RequestHandler<GroDeathEventBaseData, GroDeathEventEnrichedData> {
     @Override
     public GroDeathEventEnrichedData handleRequest(GroDeathEventBaseData baseData, Context context) {
+        var enrichedData = enrichData(baseData);
+        return publish(enrichedData);
+    }
 
+    public GroDeathEventEnrichedData enrichData(GroDeathEventBaseData baseData) {
         var enrichmentData = getEnrichmentData(baseData.sourceId());
 
         return new GroDeathEventEnrichedData(
@@ -43,7 +50,7 @@ public class GroDeathEnrichment implements RequestHandler<GroDeathEventBaseData,
             LocalDate.parse("1972-02-20"),
             LocalDate.parse("2021-12-31"),
             "123456789",
-            LocalDate.parse("2022-01-05"),
+            LocalDateTime.parse("2022-01-05T12:03:52"),
             "1",
             "12",
             "2021",

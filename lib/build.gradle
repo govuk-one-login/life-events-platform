@@ -1,16 +1,40 @@
 plugins {
-    id 'java-library'
+    id "java-library"
+    id "jacoco"
 }
 
 repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore",
+                   "com.amazonaws:aws-java-sdk-sns:$rootProject.ext.dependencyVersions.awsJavaSdkSns",
+                   "com.amazonaws:aws-java-sdk-sqs:$rootProject.ext.dependencyVersions.awsJavaSdkSqs",
+                   "com.fasterxml.jackson.core:jackson-annotations:$rootProject.ext.dependencyVersions.jacksonAnnotations",
+                   "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$rootProject.ext.dependencyVersions.jacksonDatatypeJsr310"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.ext.dependencyVersions.junitJupiter",
+                       "org.mockito:mockito-junit-jupiter:$rootProject.ext.dependencyVersions.mockitoJunitJupiter"
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(javaVersion)
     }
-    withSourcesJar()
+}
+
+test {
+    environment "LAMBDA_TASK_ROOT", "handler"
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required.set(true)
+    }
 }
 
 tasks.withType(Jar).configureEach { Jar jar ->
@@ -18,9 +42,9 @@ tasks.withType(Jar).configureEach { Jar jar ->
     jar.reproducibleFileOrder = true
 }
 
-tasks.named('jar') {
+tasks.named("jar") {
     manifest {
-        attributes('Implementation-Title': project.name,
-                   'Implementation-Version': project.version)
+        attributes("Implementation-Title": project.name,
+                   "Implementation-Version": project.version)
     }
 }

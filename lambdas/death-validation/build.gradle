@@ -10,7 +10,9 @@ repositories {
 dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore",
                    "com.amazonaws:aws-lambda-java-events:$rootProject.ext.dependencyVersions.awsLambdaJavaEvents",
-                   "com.google.code.gson:gson:$rootProject.ext.dependencyVersions.gson",
+                   "com.fasterxml.jackson.core:jackson-annotations:$rootProject.ext.dependencyVersions.jacksonAnnotations",
+                   "com.fasterxml.jackson.core:jackson-databind:$rootProject.ext.dependencyVersions.jacksonDatabind",
+                   "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$rootProject.ext.dependencyVersions.jacksonDatatypeJsr310",
                    project(":lib")
 
     testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.ext.dependencyVersions.junitJupiter",

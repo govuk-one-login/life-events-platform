@@ -1,6 +1,7 @@
 package uk.gov.di.data.lep.library.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import uk.gov.di.data.lep.library.config.Constants;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
@@ -8,12 +9,12 @@ import java.time.LocalDateTime;
 
 public record GroDeathEventDetails(
     GroSex sex,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.localDatePattern)
     LocalDate dateOfBirth,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.localDatePattern)
     LocalDate dateOfDeath,
     String registrationId,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.localDateTimePattern)
     LocalDateTime eventTime,
     String verificationLevel,
     String partialMonthOfDeath,

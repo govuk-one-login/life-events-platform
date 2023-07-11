@@ -7,6 +7,30 @@ updates:
     commit-message:
       prefix: "GPC-NONE"
   - package-ecosystem: gradle
+    directory: "/lambdas/death-enrichment"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "GPC-NONE"
+  - package-ecosystem: gradle
+    directory: "/lambdas/death-minimisation"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "GPC-NONE"
+  - package-ecosystem: gradle
+    directory: "/lambdas/death-validation"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "GPC-NONE"
+  - package-ecosystem: gradle
+    directory: "/lib"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "GPC-NONE"
+  - package-ecosystem: gradle
     directory: "/platform"
     schedule:
       interval: daily

@@ -1,25 +1,18 @@
 package uk.gov.di.data.lep.library;
 
-
-import com.amazonaws.services.lambda.runtime.Context;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 
 public class LambdaHandlerTest {
-    @Mock
-    private Context context;
-    
-    private LambdaHandler underTest = new TestLambda();
+    private final LambdaHandler<GroDeathEventEnrichedData> underTest = new TestLambda();
 
     @Test
-    public void fds(){
-        underTest.handleRequest("htdfdh", context);
+    public void publishPublishesMessageToQueue(){
+        var output = new GroDeathEventEnrichedData();
+
+        underTest.publish(output);
     }
 
-    class TestLambda extends LambdaHandler<String, String> {
-        @Override
-        public String process(String input){
-            return input;
-        }
+    static class TestLambda extends LambdaHandler<GroDeathEventEnrichedData> {
     }
 }

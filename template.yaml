@@ -6,7 +6,7 @@ Description: >-
 
 Globals:
   Function:
-    Timeout: 40
+    Timeout: 30
     Environment:
       Variables:
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
@@ -46,19 +46,6 @@ Conditions:
           - !Ref PermissionsBoundary
           - "none"
 
-Mappings:
-  EnvironmentConfiguration:
-    dev:
-      DomainName: "demoapp.build.platform.sandpit.account.gov.uk"
-    build:
-      DomainName: "demoapp.build.platform.sandpit.account.gov.uk"
-    staging:
-      DomainName: "demoapp.staging.platform.sandpit.account.gov.uk"
-    integration:
-      DomainName: "demoapp.integration.platform.sandpit.account.gov.uk"
-    production:
-      DomainName: "demoapp.platform.sandpit.account.gov.uk"
-
 Resources:
   MasterKmsKey:
     Type: AWS::KMS::Key
@@ -86,8 +73,8 @@ Resources:
               ArnLike:
                 "kms:EncryptionContext:aws:logs:arn": !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
 
-  DistributionTopic:
-    Type: AWS::SNS::Topic
+  DeathValidationDlq:
+    Type: AWS::SQS::Queue
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
 
@@ -96,7 +83,37 @@ Resources:
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
 
+  DeathEnrichmentDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathDistributionTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathDistributionDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathDistributionTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      Endpoint: !GetAtt DeathMinimisationQueue.Arn
+      TopicArn: !GetAtt DeathDistributionTopic.TopicArn
+      RawMessageDelivery: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathDistributionDlq.Arn
+
   DeathMinimisationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathMinimisationDlq:
     Type: AWS::SQS::Queue
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
@@ -106,9 +123,47 @@ Resources:
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
 
+  DeathValidationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "death-validation-${Environment}"
+      CodeUri: lambdas/death-validation
+      Handler: uk.gov.di.data.lep.GroDeathValidation::handleRequest
+      Runtime: java17
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      KmsKeyArn: !GetAtt MasterKmsKey.Arn
+      Tracing: Active
+      Environment:
+        Variables:
+          TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
+      AutoPublishAlias: DeathValidationFunction
+      Events:
+        DeathApiEvent:
+          Type: Api
+          Properties:
+            Method: POST
+            Path: /events/deathNotification/
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeathValidationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+                - 'kms:GenerateDataKey'
+              Resource:
+                - !GetAtt MasterKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DeathEnrichmentQueue.QueueName
+
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "death-enrichment-${Environment}"
       CodeUri: lambdas/death-enrichment
       Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
       Runtime: java17
@@ -117,11 +172,35 @@ Resources:
       MemorySize: 512
       KmsKeyArn: !GetAtt MasterKmsKey.Arn
       Tracing: Active
+      Environment:
+        Variables:
+          TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
       AutoPublishAlias: DeathEnrichmentFunction
+      Events:
+        DeathValidatedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DeathEnrichmentQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeathEnrichmentDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+                - 'kms:GenerateDataKey'
+              Resource:
+                - !GetAtt MasterKmsKey.Arn
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt DeathDistributionTopic.TopicName
 
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "death-minimisation-${Environment}"
       CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
       Runtime: java17
@@ -133,4 +212,25 @@ Resources:
       Environment:
         Variables:
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
+          TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
       AutoPublishAlias: DeathMinimisationFunction
+      Events:
+        DeathEnrichedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DeathMinimisationQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeathMinimisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+                - 'kms:GenerateDataKey'
+              Resource:
+                - !GetAtt MasterKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DeathMinimisationQueue.QueueName

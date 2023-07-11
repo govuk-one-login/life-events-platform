@@ -1,0 +1,10 @@
+version = 0.1
+
+[dev-oskwil.deploy.parameters]
+stack_name = "oskwil-lev"
+resolve_s3 = true
+s3_prefix = "oskwil-lev"
+region = "eu-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=\"dev-oskwil\""

@@ -60,6 +60,26 @@ Restart terminal then run in the project top directory
 sam build
 ```
 
+### Deploying
+
+To deploy our SAM to the dev environment, please create your own configuration and then apply with that. To create your own configuration, modify and add the following to `samconfig.toml`
+```
+[dev-<your-name>.deploy.parameters]
+stack_name = "<your-name>-lev"
+resolve_s3 = true
+s3_prefix = "<your-name>-lev"
+region = "eu-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=\"dev-<your-name>\""
+```
+
+Once you have added this, you can then run the below while logged into the dev environment via SSO to deploy to dev:
+```shell
+sam build
+sam deploy --config-env dev-<your-name>
+```
+
 ## Architecture
 
 Architecture decision records start [here](doc/architecture/decisions/0001-use-adr.md)

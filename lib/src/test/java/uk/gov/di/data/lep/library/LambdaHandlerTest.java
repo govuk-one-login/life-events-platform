@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.withSettings;
 
 public class LambdaHandlerTest {
     private final LambdaHandler<GroDeathEventEnrichedData> underTest = new TestLambda();
@@ -58,7 +59,7 @@ public class LambdaHandlerTest {
         underTest.publish(output);
 
         awsService.verify(() -> AwsService.putOnQueue(
-            "{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\",\"sex\":\"FEMALE\",\"dateOfBirth\":\"20-02-1972\",\"dateOfDeath\":\"31-12-2021\",\"registrationId\":\"123456789\",\"eventTime\":\"05-01-2022 12:03:52\",\"verificationLevel\":\"1\",\"partialMonthOfDeath\":\"12\",\"partialYearOfDeath\":\"2021\",\"forenames\":\"Bob Burt\",\"surname\":\"Smith\",\"maidenSurname\":\"Jane\",\"addressLine1\":\"888 Death House\",\"addressLine2\":\"8 Death lane\",\"addressLine3\":\"Deadington\",\"addressLine4\":\"Deadshire\",\"postcode\":\"XX1 1XX\"}"
+            "{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\",\"sex\":\"FEMALE\",\"dateOfBirth\":\"1972-02-20\",\"dateOfDeath\":\"2021-12-31\",\"registrationId\":\"123456789\",\"eventTime\":\"2022-01-05T12:03:52.000\",\"verificationLevel\":\"1\",\"partialMonthOfDeath\":\"12\",\"partialYearOfDeath\":\"2021\",\"forenames\":\"Bob Burt\",\"surname\":\"Smith\",\"maidenSurname\":\"Jane\",\"addressLine1\":\"888 Death House\",\"addressLine2\":\"8 Death lane\",\"addressLine3\":\"Deadington\",\"addressLine4\":\"Deadshire\",\"postcode\":\"XX1 1XX\"}"
         ));
     }
 
@@ -89,7 +90,7 @@ public class LambdaHandlerTest {
         underTest.publish(output);
 
         awsService.verify(() -> AwsService.putOnTopic(
-            "{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\",\"sex\":\"FEMALE\",\"dateOfBirth\":\"20-02-1972\",\"dateOfDeath\":\"31-12-2021\",\"registrationId\":\"123456789\",\"eventTime\":\"05-01-2022 12:03:52\",\"verificationLevel\":\"1\",\"partialMonthOfDeath\":\"12\",\"partialYearOfDeath\":\"2021\",\"forenames\":\"Bob Burt\",\"surname\":\"Smith\",\"maidenSurname\":\"Jane\",\"addressLine1\":\"888 Death House\",\"addressLine2\":\"8 Death lane\",\"addressLine3\":\"Deadington\",\"addressLine4\":\"Deadshire\",\"postcode\":\"XX1 1XX\"}"
+            "{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\",\"sex\":\"FEMALE\",\"dateOfBirth\":\"1972-02-20\",\"dateOfDeath\":\"2021-12-31\",\"registrationId\":\"123456789\",\"eventTime\":\"2022-01-05T12:03:52.000\",\"verificationLevel\":\"1\",\"partialMonthOfDeath\":\"12\",\"partialYearOfDeath\":\"2021\",\"forenames\":\"Bob Burt\",\"surname\":\"Smith\",\"maidenSurname\":\"Jane\",\"addressLine1\":\"888 Death House\",\"addressLine2\":\"8 Death lane\",\"addressLine3\":\"Deadington\",\"addressLine4\":\"Deadshire\",\"postcode\":\"XX1 1XX\"}"
         ));
     }
 

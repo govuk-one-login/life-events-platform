@@ -1,10 +1,9 @@
 rootProject.name = "gdx-data-share-poc"
 include "lambdas",
+        "lambdas:authorisation",
         "lambdas:death-enrichment",
         "lambdas:death-minimisation",
         "lambdas:death-validation",
         "lib",
         "platform"
-include 'lambdas:authorisation'
-findProject(':lambdas:authorisation')?.name = 'authorisation'
 

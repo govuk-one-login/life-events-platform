@@ -8,3 +8,13 @@ region = "eu-west-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"dev-oskwil\""
+
+
+[dev-mwillis.deploy.parameters]
+stack_name = "mwillis-lev"
+resolve_s3 = true
+s3_prefix = "mwillis-lev"
+region = "eu-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Environment=\"dev-mwillis\""

@@ -5,12 +5,9 @@ import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import uk.gov.di.data.lep.library.config.Config;
 
 public class AwsService {
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public static void putOnQueue(String message) {
         var sqsClient = AmazonSQSClientBuilder.standard()

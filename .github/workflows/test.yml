@@ -2,6 +2,9 @@ name: Run tests
 
 on:
   workflow_call:
+    secrets:
+      SAM_APP_VALIDATE_ROLE_ARN:
+        required: true
 
 jobs:
   test:

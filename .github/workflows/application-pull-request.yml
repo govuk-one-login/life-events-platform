@@ -24,6 +24,8 @@ concurrency:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
+    secrets:
+      SAM_APP_VALIDATE_ROLE_ARN: ${{ secrets.SAM_APP_VALIDATE_ROLE_ARN }}
 
   openapi-lint:
     uses: ./.github/workflows/openapi-lint.yml

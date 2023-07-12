@@ -12,6 +12,8 @@ ext {
             jacksonDatabind      : '2.12.7.1',
             jacksonDatatypeJsr310: '2.15.2',
             junitJupiter         : '5.9.3',
-            mockitoJunitJupiter  : '5.4.0'
+            mockitoJunitJupiter  : '5.4.0',
+            powertoolsLogging    : '1.15.0',
+            powertoolsTracing    : '1.15.0'
     ]
 }

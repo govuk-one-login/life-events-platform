@@ -8,7 +8,6 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import uk.gov.di.data.lep.library.config.Config;
 
 public class AwsService {
-
     public static void putOnQueue(String message) {
         var sqsClient = AmazonSQSClientBuilder.standard()
             .withRegion(Regions.EU_WEST_2)

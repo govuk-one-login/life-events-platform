@@ -8,7 +8,7 @@ jobs:
     permissions:
       contents: read
       checks: write
-      pull-requests: write
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -35,20 +35,11 @@ jobs:
           reporter: java-junit
           only-summary: true
 
-      - name: Report test coverage
-        uses: madrapps/jacoco-report@7ce0d588f6d00dd4a7b63a597383332e0c5c72d0
-        if: ${{ github.event_name == 'pull_request' }}
+      - name: Publish test results
+        uses: mikepenz/action-junit-report@959aefb7f095e717eb407fe917238d61ca323ff3
+        if: always() # always run even if the previous step fails
         with:
-          paths: ${{ github.workspace }}/**/build/reports/jacoco/test/jacocoTestReport.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: junit-test-results
-          path: '**/build/test-results/test/TEST-*.xml'
-          retention-days: 1
+          report_paths: '**/build/test-results/test/TEST-*.xml'
 
       - name: Set up SAM cli
         uses: aws-actions/setup-sam@v2

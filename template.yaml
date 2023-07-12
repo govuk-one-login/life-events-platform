@@ -72,6 +72,13 @@ Resources:
             Condition:
               ArnLike:
                 "kms:EncryptionContext:aws:logs:arn": !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+          - Effect: Allow
+            Principal:
+              Service: "sns.amazonaws.com"
+            Action:
+              - "kms:Decrypt"
+              - "kms:GenerateDataKey*"
+            Resource: "*"
 
   DeathValidationDlq:
     Type: AWS::SQS::Queue
@@ -82,6 +89,9 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
+        maxReceiveCount: 5
 
   DeathEnrichmentDlq:
     Type: AWS::SQS::Queue
@@ -92,6 +102,24 @@ Resources:
     Type: AWS::SNS::Topic
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
+
+  DeathSnsToSqsPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "Allow SNS publish to SQS"
+            Effect: Allow
+            Principal:
+              Service: "sns.amazonaws.com"
+            Resource: "*"
+            Action: SQS:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref DeathDistributionTopic
+      Queues:
+        - !GetAtt DeathMinimisationQueue.QueueUrl
 
   DeathDistributionDlq:
     Type: AWS::SQS::Queue
@@ -112,6 +140,9 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathMinimisationDlq.Arn
+        maxReceiveCount: 5
 
   DeathMinimisationDlq:
     Type: AWS::SQS::Queue
@@ -233,4 +264,4 @@ Resources:
               Resource:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
-            QueueName: !GetAtt DeathMinimisationQueue.QueueName
+            QueueName: !GetAtt DeathDeliveryQueue.QueueName

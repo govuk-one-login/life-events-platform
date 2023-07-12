@@ -31,7 +31,7 @@ class GroDeathValidationTest {
     }
 
     @BeforeEach
-    void refreshSetup(){
+    void refreshSetup() {
         clearInvocations(underTest);
     }
 
@@ -44,6 +44,7 @@ class GroDeathValidationTest {
 
         assertEquals(201, result.getStatusCode());
     }
+
     @Test
     void validateGroDeathEventDataPublishesBaseData() {
 

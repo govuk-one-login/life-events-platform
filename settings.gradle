@@ -5,3 +5,6 @@ include "lambdas",
         "lambdas:death-validation",
         "lib",
         "platform"
+include 'lambdas:authorisation'
+findProject(':lambdas:authorisation')?.name = 'authorisation'
+

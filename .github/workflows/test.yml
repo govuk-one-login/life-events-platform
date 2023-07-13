@@ -30,11 +30,14 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew clean test
 
-      - name: Publish test results
-        uses: mikepenz/action-junit-report@959aefb7f095e717eb407fe917238d61ca323ff3
-        if: always() # always run even if the previous step fails
+      - name: Report test results
+        uses: dorny/test-reporter@v1
+        if: always()
         with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+          name: Test results
+          path: ${{ github.workspace }}/**/build/test-results/test/TEST-*.xml
+          reporter: java-junit
+          only-summary: true
 
       - name: Report test coverage
         uses: madrapps/jacoco-report@7ce0d588f6d00dd4a7b63a597383332e0c5c72d0

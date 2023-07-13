@@ -12,6 +12,7 @@ jobs:
       contents: read
       checks: write
       id-token: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

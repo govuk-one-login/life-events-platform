@@ -35,6 +35,13 @@ jobs:
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
+      - name: Report test coverage
+        uses: madrapps/jacoco-report@7ce0d588f6d00dd4a7b63a597383332e0c5c72d0
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          paths: ${{ github.workspace }}/platform/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up SAM cli
         uses: aws-actions/setup-sam@v2
         if: always()

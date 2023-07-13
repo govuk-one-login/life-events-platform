@@ -15,12 +15,15 @@ public class GroDeathValidation
     implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent apiRequest, Context context) {
+        logger = context.getLogger();
         var event = validateRequest(apiRequest);
         publish(event);
         return new APIGatewayProxyResponseEvent().withStatusCode(201);
     }
 
     private GroDeathEventBaseData validateRequest(APIGatewayProxyRequestEvent event) {
+        logger.log("Validating request");
+
         GroDeathEvent groDeathEvent;
         try {
             groDeathEvent = new ObjectMapper().readValue(event.getBody(), GroDeathEvent.class);

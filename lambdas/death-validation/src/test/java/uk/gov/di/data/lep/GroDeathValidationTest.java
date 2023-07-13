@@ -1,7 +1,9 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,13 +16,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class GroDeathValidationTest {
     @Mock
-    private Context context;
+    private Context context = mock(Context.class);
+    @Mock
+    private LambdaLogger logger = mock(LambdaLogger.class);
     private static GroDeathValidation underTest;
 
     @BeforeAll
@@ -37,32 +40,52 @@ class GroDeathValidationTest {
 
     @Test
     void validateGroDeathEventDataReturnsAPIGatewayProxyResponseEventWithStatusCode201() {
+        when(context.getLogger()).thenReturn(logger);
 
         var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
 
         var result = underTest.handleRequest(event, context);
+
+        verify(logger).log("Validating request");
 
         assertEquals(201, result.getStatusCode());
     }
 
     @Test
     void validateGroDeathEventDataPublishesBaseData() {
+        when(context.getLogger()).thenReturn(logger);
 
         var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
 
         underTest.handleRequest(event, context);
 
+        verify(logger).log("Validating request");
+
         verify(underTest).publish(argThat(x -> x.sourceId().equals("123a1234-a12b-12a1-a123-123456789012")));
+    }
+    @Test
+    void validateGroDeathEventDataFailsIfNoSourceId() {
+        when(context.getLogger()).thenReturn(logger);
+
+        var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":null}");
+
+        var exception = assertThrows(IllegalArgumentException.class, () -> underTest.handleRequest(event, context));
+
+        verify(logger).log("Validating request");
+
+        assertEquals("sourceId cannot be null", exception.getMessage());
     }
 
     @Test
-    void validateGroDeathEventDataFailsIfNoSourceId() {
+    void validateGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() {
+        when(context.getLogger()).thenReturn(logger);
 
         var event = new APIGatewayProxyRequestEvent().withBody("{\"notSourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
 
         var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
 
-        assertEquals("com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field \"notSourceId\" (class uk.gov.di.data.lep.dto.GroDeathEvent), not marked as ignorable (one known property: \"sourceId\"])\n" +
-            " at [Source: (String)\"{\"notSourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}\"; line: 1, column: 55] (through reference chain: uk.gov.di.data.lep.dto.GroDeathEvent[\"notSourceId\"])", exception.getMessage());
+        verify(logger).log("Validating request");
+
+        assertEquals("<Unrecognized field \"notSourceId\" (class uk.gov.di.data.lep.dto.GroDeathEvent), not marked as ignorable>", ((UnrecognizedPropertyException) exception.getCause()).getOriginalMessage());
     }
 }

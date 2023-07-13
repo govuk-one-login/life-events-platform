@@ -1,6 +1,7 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
@@ -10,13 +11,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class GroDeathEnrichmentTest {
     @Mock
-    private Context context;
+    private Context context = mock(Context.class);
+    @Mock
+    private LambdaLogger logger = mock(LambdaLogger.class);
 
     @Test
     void enrichGroDeathEventDataReturnsEnrichedData() {
+        when(context.getLogger()).thenReturn(logger);
+
         var underTest = new GroDeathEnrichment();
 
         var baseData = new GroDeathEventBaseData(
@@ -24,6 +32,8 @@ class GroDeathEnrichmentTest {
         );
 
         var result = underTest.handleRequest(baseData, context);
+
+        verify(logger).log("Enriching data (sourceId: " + baseData.sourceId() + ")");
 
         assertEquals("123a1234-a12b-12a1-a123-123456789012", result.sourceId());
         assertEquals(GroSex.FEMALE, result.sex());

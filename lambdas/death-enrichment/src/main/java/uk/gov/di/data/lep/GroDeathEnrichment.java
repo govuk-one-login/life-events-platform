@@ -16,11 +16,13 @@ public class GroDeathEnrichment
     implements RequestHandler<GroDeathEventBaseData, GroDeathEventEnrichedData> {
     @Override
     public GroDeathEventEnrichedData handleRequest(GroDeathEventBaseData baseData, Context context) {
+        logger = context.getLogger();
         var enrichedData = enrichData(baseData);
         return publish(enrichedData);
     }
 
     public GroDeathEventEnrichedData enrichData(GroDeathEventBaseData baseData) {
+        logger.log("Enriching data (sourceId: " + baseData.sourceId() + ")");
         var enrichmentData = getEnrichmentData(baseData.sourceId());
 
         return new GroDeathEventEnrichedData(

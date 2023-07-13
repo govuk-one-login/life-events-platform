@@ -1,6 +1,7 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
@@ -14,14 +15,20 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class GroDeathNotificationMinimisationTest {
     @Mock
-    private Context context;
+    private Context context = mock(Context.class);
+    @Mock
+    private LambdaLogger logger = mock(LambdaLogger.class);
 
     @Test
     void minimiseGroDeathEventDataReturnsMinimisedDataWithNoEnrichmentFields() {
+        when(context.getLogger()).thenReturn(logger);
         var config = mockStatic(Config.class);
         config.when(Config::getEnrichmentFields).thenReturn(List.of());
         var underTest = new GroDeathNotificationMinimisation();
@@ -50,6 +57,8 @@ class GroDeathNotificationMinimisationTest {
 
         config.close();
 
+        verify(logger).log("Minimising enriched data (sourceId: " + enrichedData.sourceId() + ")");
+
         assertNull(result.eventDetails().sex());
         assertNull(result.eventDetails().dateOfBirth());
         assertNull(result.eventDetails().dateOfDeath());
@@ -69,6 +78,7 @@ class GroDeathNotificationMinimisationTest {
 
     @Test
     void minimiseGroDeathEventDataReturnsMinimisedDataWithPartialEnrichmentFields() {
+        when(context.getLogger()).thenReturn(logger);
         var config = mockStatic(Config.class);
         config.when(Config::getEnrichmentFields).thenReturn(List.of(
             EnrichmentField.SEX,
@@ -122,6 +132,7 @@ class GroDeathNotificationMinimisationTest {
 
     @Test
     void minimiseGroDeathEventDataReturnsMinimisedDataWithAllEnrichmentFields() {
+        when(context.getLogger()).thenReturn(logger);
         var config = mockStatic(Config.class);
         config.when(Config::getEnrichmentFields).thenReturn(List.of(
             EnrichmentField.SEX,

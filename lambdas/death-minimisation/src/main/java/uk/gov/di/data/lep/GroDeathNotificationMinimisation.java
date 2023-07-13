@@ -3,7 +3,6 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import uk.gov.di.data.lep.library.LambdaHandler;
-import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.dto.GroDeathEventNotification;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
@@ -21,11 +20,14 @@ public class GroDeathNotificationMinimisation
 
     @Override
     public GroDeathEventNotification handleRequest(GroDeathEventEnrichedData enrichedData, Context context) {
+        logger = context.getLogger();
         var minimisedData = minimiseEnrichedData(enrichedData);
         return publish(minimisedData);
     }
 
     private GroDeathEventNotification minimiseEnrichedData(GroDeathEventEnrichedData enrichedData) {
+        logger.log("Minimising enriched data (sourceId: " + enrichedData.sourceId() + ")");
+
         return new GroDeathEventNotification(
             UUID.randomUUID(),
             EventType.DEATH_NOTIFICATION,

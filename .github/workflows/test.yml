@@ -2,12 +2,16 @@ name: Run tests
 
 on:
   workflow_call:
+    secrets:
+      SAM_APP_VALIDATE_ROLE_ARN:
+        required: true
 
 jobs:
   test:
     permissions:
       contents: read
       checks: write
+      id-token: write
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
@@ -24,16 +28,13 @@ jobs:
         uses: gradle/gradle-build-action@v2.6.0
 
       - name: Execute Gradle build
-        run: ./gradlew clean platform:test
+        run: ./gradlew clean test
 
-      - name: Report
-        uses: dorny/test-reporter@v1
-        if: always()
+      - name: Publish test results
+        uses: mikepenz/action-junit-report@959aefb7f095e717eb407fe917238d61ca323ff3
+        if: always() # always run even if the previous step fails
         with:
-          name: Test results
-          path: ${{ github.workspace }}/platform/build/test-results/test/TEST-*.xml
-          reporter: java-junit
-          only-summary: true
+          report_paths: '**/build/test-results/test/TEST-*.xml'
 
       - name: Report test coverage
         uses: madrapps/jacoco-report@7ce0d588f6d00dd4a7b63a597383332e0c5c72d0
@@ -42,10 +43,17 @@ jobs:
           paths: ${{ github.workspace }}/platform/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v3
+      - name: Set up SAM cli
+        uses: aws-actions/setup-sam@v2
+        if: always()
+
+      - name: Set up AWS creds
+        uses: aws-actions/configure-aws-credentials@v1-node16
         if: always()
         with:
-          name: junit-test-results
-          path: '**/build/test-results/test/TEST-*.xml'
-          retention-days: 1
+          role-to-assume: ${{ secrets.SAM_APP_VALIDATE_ROLE_ARN }}
+          aws-region: eu-west-2
+
+      - name: SAM validate
+        if: always()
+        run: sam validate --lint

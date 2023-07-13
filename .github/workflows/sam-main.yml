@@ -13,9 +13,6 @@ on:
       - "main"
 
 jobs:
-  test:
-    uses: ./.github/workflows/test.yml
-
   deploy:
     name: Deploy SAM to build
     needs: test

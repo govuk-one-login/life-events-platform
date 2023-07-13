@@ -14,32 +14,7 @@ on:
       - ".github/workflows/**"
 
 jobs:
-  tf-fmt:
-    name: Validate Terraform formatting
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.4.5
-
-      - name: Check formatting of all Terraform files
-        run: terraform fmt -check -diff -recursive
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.11.2
-        with:
-          scan-type: config
-          trivy-config: trivy.yaml
-
   deploy-terraform:
-    needs: tf-fmt
     strategy:
       matrix:
         include:

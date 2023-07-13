@@ -42,7 +42,7 @@ jobs:
         uses: aws-actions/setup-sam@v2
 
       - name: Set up AWS creds
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v2.2.0
         with:
           role-to-assume: ${{ secrets.GH_ACTIONS_ROLE_ARN }}
           aws-region: eu-west-2

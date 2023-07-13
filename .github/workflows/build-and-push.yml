@@ -66,7 +66,7 @@ jobs:
           exit-code: 1
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v2.2.0
         with:
           role-to-assume: arn:aws:iam::776473272850:role/shared-github-oidc-deploy
           role-session-name: push-image

@@ -1,5 +1,18 @@
 plugins {
     id "java"
+    id "jacoco-report-aggregation"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCodeCoverageReportExecutionData subprojects
+}
+
+tasks.named('check') {
+    dependsOn testCodeCoverageReport
 }
 
 ext {

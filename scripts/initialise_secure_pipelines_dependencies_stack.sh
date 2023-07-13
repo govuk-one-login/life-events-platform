@@ -1,3 +1,6 @@
+## This file needs to be run in order to set up dependencies for secure pipelines to run. This includes GitHub OIDC
+## and the singing profile for our artifacts. This only needs to be run once and only against the build environment.
+
 aws cloudformation create-stack --stack-name github-identity \
   --template-url https://template-storage-templatebucket-1upzyw6v9cs42.s3.amazonaws.com/github-identity/template.yaml \
   --region eu-west-2 \

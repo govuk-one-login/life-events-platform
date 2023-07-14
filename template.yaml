@@ -12,6 +12,8 @@ Globals:
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
         POWERTOOLS_TRACER_CAPTURE_RESPONSE: false
         POWERTOOLS_TRACER_CAPTURE_ERROR: false
+    SnapStart:
+      ApplyOn: PublishedVersions
     CodeSigningConfigArn: !If
       - UseCodeSigning
       - !Ref CodeSigningConfigArn

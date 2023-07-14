@@ -1,0 +1,64 @@
+name: Pre-merge checks
+
+on:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+# Uncomment when we have a SONAR_TOKEN
+#      - name: Run SonarCloud Scan
+#        uses: SonarSource/sonarcloud-github-action@master
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
+#      - name: SonarQube Quality Gate check
+#        id: sonarqube-quality-gate-check
+#        uses: sonarsource/sonarqube-quality-gate-action@master
+#        timeout-minutes: 5
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#
+#      - name: SonarQube Quality Gate Status value
+#        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Cache Python packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip3.9-${{ hashFiles('.github/workflows/pre-merge-checks.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip3.9-
+
+      - name: Install linters
+        run: pip install 'cfn-lint~=0.74.0' 'poetry~=0.12.17' 'checkov~=2.2.130'
+
+      - name: Lint templates
+        run: '.github/scripts/lint.sh'
+        shell: bash
+
+      - name: Analyse templates
+        run: '.github/scripts/analyse.sh'
+        shell: bash
+
+      - name: Lint Python
+        uses: py-actions/flake8@v2
+
+      - name: Lint Shell
+        uses: ludeeus/action-shellcheck@master
+        env:
+          SHELLCHECK_OPTS: --shell=bash --external-sources

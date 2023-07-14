@@ -166,6 +166,7 @@ Resources:
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
 
+  #tfsec:ignore:aws-lambda-enable-tracing This is configured globally
   DeathValidationFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -197,6 +198,7 @@ Resources:
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
 
+  #tfsec:ignore:aws-lambda-enable-tracing This is configured globally
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -228,6 +230,7 @@ Resources:
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
 
+  #tfsec:ignore:aws-lambda-enable-tracing This is configured globally
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
     Properties:

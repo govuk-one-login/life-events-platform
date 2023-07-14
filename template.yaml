@@ -12,6 +12,18 @@ Globals:
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
         POWERTOOLS_TRACER_CAPTURE_RESPONSE: false
         POWERTOOLS_TRACER_CAPTURE_ERROR: false
+    Runtime: java17
+    Architectures:
+      - x86_64
+    MemorySize: 512
+    KmsKeyArn: !GetAtt MasterKmsKey.Arn
+    Tracing: Active
+    VpcConfig:
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      SecurityGroupIds:
+        - !Ref LambdaSecurityGroup
     CodeSigningConfigArn: !If
       - UseCodeSigning
       - !Ref CodeSigningConfigArn
@@ -160,22 +172,10 @@ Resources:
       FunctionName: !Sub "death-validation-${Environment}"
       CodeUri: lambdas/death-validation
       Handler: uk.gov.di.data.lep.GroDeathValidation::handleRequest
-      Runtime: java17
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      KmsKeyArn: !GetAtt MasterKmsKey.Arn
-      Tracing: Active
       Environment:
         Variables:
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
       AutoPublishAlias: DeathValidationFunction
-      VpcConfig:
-        SubnetIds:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
-        SecurityGroupIds:
-          - !Ref LambdaSecurityGroup
       Events:
         DeathApiEvent:
           Type: Api
@@ -203,22 +203,10 @@ Resources:
       FunctionName: !Sub "death-enrichment-${Environment}"
       CodeUri: lambdas/death-enrichment
       Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
-      Runtime: java17
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      KmsKeyArn: !GetAtt MasterKmsKey.Arn
-      Tracing: Active
       Environment:
         Variables:
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
       AutoPublishAlias: DeathEnrichmentFunction
-      VpcConfig:
-        SubnetIds:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
-        SecurityGroupIds:
-          - !Ref LambdaSecurityGroup
       Events:
         DeathValidatedEvent:
           Type: SQS
@@ -246,23 +234,11 @@ Resources:
       FunctionName: !Sub "death-minimisation-${Environment}"
       CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
-      Runtime: java17
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      KmsKeyArn: !GetAtt MasterKmsKey.Arn
-      Tracing: Active
       Environment:
         Variables:
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
           TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
       AutoPublishAlias: DeathMinimisationFunction
-      VpcConfig:
-        SubnetIds:
-          - !Ref PrivateSubnet1
-          - !Ref PrivateSubnet2
-        SecurityGroupIds:
-          - !Ref LambdaSecurityGroup
       Events:
         DeathEnrichedEvent:
           Type: SQS

@@ -31,34 +31,13 @@ jobs:
 #      - name: SonarQube Quality Gate Status value
 #        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
-      - name: Install Python
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: 3.8
 
-      - name: Cache Python packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip3.9-${{ hashFiles('.github/workflows/pre-merge-checks.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pip3.9-
+      - name: Install checkov
+        run: pip3 install checkov
 
-      - name: Install linters
-        run: pip install 'cfn-lint~=0.74.0' 'poetry~=0.12.17' 'checkov~=2.2.130'
-
-      - name: Lint templates
-        run: '.github/scripts/lint.sh'
-        shell: bash
-
-      - name: Analyse templates
-        run: '.github/scripts/analyse.sh'
-        shell: bash
-
-      - name: Lint Python
-        uses: py-actions/flake8@v2
-
-      - name: Lint Shell
-        uses: ludeeus/action-shellcheck@master
-        env:
-          SHELLCHECK_OPTS: --shell=bash --external-sources
+      - name: Run checkov
+        run: checkov

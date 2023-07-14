@@ -12,8 +12,20 @@ Globals:
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
         POWERTOOLS_TRACER_CAPTURE_RESPONSE: false
         POWERTOOLS_TRACER_CAPTURE_ERROR: false
+    Runtime: java17
+    Architectures:
+      - x86_64
+    MemorySize: 512
+    KmsKeyArn: !GetAtt MasterKmsKey.Arn
+    Tracing: Active
     SnapStart:
       ApplyOn: PublishedVersions
+    VpcConfig:
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      SecurityGroupIds:
+        - !Ref LambdaSecurityGroup
     CodeSigningConfigArn: !If
       - UseCodeSigning
       - !Ref CodeSigningConfigArn
@@ -162,12 +174,6 @@ Resources:
       FunctionName: !Sub "death-validation-${Environment}"
       CodeUri: lambdas/death-validation
       Handler: uk.gov.di.data.lep.GroDeathValidation::handleRequest
-      Runtime: java17
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      KmsKeyArn: !GetAtt MasterKmsKey.Arn
-      Tracing: Active
       Environment:
         Variables:
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
@@ -199,12 +205,6 @@ Resources:
       FunctionName: !Sub "death-enrichment-${Environment}"
       CodeUri: lambdas/death-enrichment
       Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
-      Runtime: java17
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      KmsKeyArn: !GetAtt MasterKmsKey.Arn
-      Tracing: Active
       Environment:
         Variables:
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
@@ -236,12 +236,6 @@ Resources:
       FunctionName: !Sub "death-minimisation-${Environment}"
       CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
-      Runtime: java17
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      KmsKeyArn: !GetAtt MasterKmsKey.Arn
-      Tracing: Active
       Environment:
         Variables:
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
@@ -267,3 +261,95 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathDeliveryQueue.QueueName
+
+  SQSEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Join
+        - ''
+        - - com.amazonaws.
+          - !Ref 'AWS::Region'
+          - .sqs
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      VpcId: !Ref Vpc
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref EndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  SNSEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Join
+        - ''
+        - - com.amazonaws.
+          - !Ref 'AWS::Region'
+          - .sns
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      VpcId: !Ref Vpc
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref EndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  EndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Endpoint Security Group
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - CidrIp: !GetAtt Vpc.CidrBlock
+          Description: Allow inbound traffic from VPC cidr to port 443
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Lambda Security Group
+      VpcId: !Ref Vpc
+      SecurityGroupEgress:
+        - DestinationSecurityGroupId: !Ref EndpointSecurityGroup
+          Description: Allow outbound traffic to VPC endpoints
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
+      CidrBlock: 10.0.0.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment} Private Subnet (AZ1)
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment} Private Subnet (AZ2)
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc

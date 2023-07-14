@@ -170,6 +170,12 @@ Resources:
         Variables:
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
       AutoPublishAlias: DeathValidationFunction
+      VpcConfig:
+        SubnetIds:
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
       Events:
         DeathApiEvent:
           Type: Api
@@ -207,6 +213,12 @@ Resources:
         Variables:
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
       AutoPublishAlias: DeathEnrichmentFunction
+      VpcConfig:
+        SubnetIds:
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
       Events:
         DeathValidatedEvent:
           Type: SQS
@@ -245,6 +257,12 @@ Resources:
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
           TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
       AutoPublishAlias: DeathMinimisationFunction
+      VpcConfig:
+        SubnetIds:
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
       Events:
         DeathEnrichedEvent:
           Type: SQS
@@ -265,3 +283,112 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathDeliveryQueue.QueueName
+
+  SQSEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Join
+        - ''
+        - - com.amazonaws.
+          - !Ref 'AWS::Region'
+          - .sqs
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      VpcId: !Ref Vpc
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref SQSSecurityGroup
+      PrivateDnsEnabled: true
+
+  SQSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SQS Security Group
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - CidrIp: !GetAtt Vpc.CidrBlock
+          Description: Allow inbound traffic from VPC cidr to port 443
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+
+  SNSEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Join
+        - ''
+        - - com.amazonaws.
+          - !Ref 'AWS::Region'
+          - .sns
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      VpcId: !Ref Vpc
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref SNSSecurityGroup
+      PrivateDnsEnabled: true
+
+  SNSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SNS Security Group
+      VpcId: !Ref Vpc
+      SecurityGroupIngress:
+        - CidrIp: !GetAtt Vpc.CidrBlock
+          Description: Allow inbound traffic from VPC cidr to port 443
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Lambda Security Group
+      VpcId: !Ref Vpc
+      SecurityGroupEgress:
+        - DestinationSecurityGroupId: !GetAtt SQSSecurityGroup.GroupId
+          Description: Allow outbound traffic to SQS VPC endpoint
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+        - DestinationSecurityGroupId: !GetAtt SNSSecurityGroup.GroupId
+          Description: Allow outbound traffic to SNS VPC endpoint
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
+      CidrBlock: 10.0.0.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment} Private Subnet (AZ1)
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment} Private Subnet (AZ2)
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc

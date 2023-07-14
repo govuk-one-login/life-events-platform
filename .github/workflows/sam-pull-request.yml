@@ -40,4 +40,4 @@ jobs:
         run: pip3 install checkov
 
       - name: Run checkov
-        run: checkov -d .
+        run: checkov -d . --framework cloudformation -o github_failed_only

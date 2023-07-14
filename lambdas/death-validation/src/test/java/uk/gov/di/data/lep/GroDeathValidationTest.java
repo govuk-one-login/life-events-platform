@@ -63,7 +63,7 @@ class GroDeathValidationTest {
     }
 
     @Test
-    void validateGroDeathEventDataFailsIfNoSourceId() {
+    void validateGroDeathEventDataFailsIfNullSourceId() {
         var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":null}");
 
         var exception = assertThrows(IllegalArgumentException.class, () -> underTest.handleRequest(event, context));

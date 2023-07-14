@@ -40,4 +40,4 @@ jobs:
         run: pip3 install checkov
 
       - name: Run checkov
-        run: checkov
+        run: checkov -d .

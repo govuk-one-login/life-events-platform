@@ -63,6 +63,22 @@ class GroDeathValidationTest {
     }
 
     @Test
+    void validateGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() {
+        var event = new APIGatewayProxyRequestEvent().withBody("{\"notSourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+
+        var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
+
+        verify(logger).log("Validating request");
+
+        verify(logger).log("Failed to validate request");
+
+        assertEquals(
+            "Unrecognized field \"notSourceId\" (class uk.gov.di.data.lep.dto.GroDeathEvent), not marked as ignorable",
+            ((UnrecognizedPropertyException) exception.getCause()).getOriginalMessage()
+        );
+    }
+
+    @Test
     void validateGroDeathEventDataFailsIfNullSourceId() {
         var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":null}");
 
@@ -71,19 +87,5 @@ class GroDeathValidationTest {
         verify(logger).log("Validating request");
 
         assertEquals("sourceId cannot be null", exception.getMessage());
-    }
-
-    @Test
-    void validateGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() {
-        var event = new APIGatewayProxyRequestEvent().withBody("{\"notSourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
-
-        var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
-
-        verify(logger).log("Validating request");
-
-        assertEquals(
-            "Unrecognized field \"notSourceId\" (class uk.gov.di.data.lep.dto.GroDeathEvent), not marked as ignorable",
-            ((UnrecognizedPropertyException) exception.getCause()).getOriginalMessage()
-        );
     }
 }

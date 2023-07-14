@@ -28,6 +28,7 @@ public class GroDeathValidation
         try {
             groDeathEvent = new ObjectMapper().readValue(event.getBody(), GroDeathEvent.class);
         } catch (JsonProcessingException e) {
+            logger.log("Failed to validate request");
             throw new RuntimeException(e);
         }
         var sourceId = groDeathEvent.sourceId();

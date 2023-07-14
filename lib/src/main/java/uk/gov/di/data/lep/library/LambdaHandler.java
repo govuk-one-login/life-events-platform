@@ -14,6 +14,7 @@ public abstract class LambdaHandler<O> {
         try {
             message = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(output);
         } catch (JsonProcessingException e) {
+            logger.log("Failed to map lambda output to string for publishing");
             throw new RuntimeException(e);
         }
 

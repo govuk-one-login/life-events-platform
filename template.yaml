@@ -18,6 +18,8 @@ Globals:
     MemorySize: 512
     KmsKeyArn: !GetAtt MasterKmsKey.Arn
     Tracing: Active
+    SnapStart:
+      ApplyOn: PublishedVersions
     VpcConfig:
       SubnetIds:
         - !Ref PrivateSubnet1

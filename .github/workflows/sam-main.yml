@@ -45,6 +45,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.GH_ACTIONS_ROLE_ARN }}
+          role-session-name: deploy-sam
           aws-region: eu-west-2
 
       - name: SAM validate

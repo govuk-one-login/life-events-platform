@@ -51,10 +51,11 @@ jobs:
         if: always()
 
       - name: Set up AWS creds
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v2
         if: always()
         with:
           role-to-assume: ${{ secrets.SAM_APP_VALIDATE_ROLE_ARN }}
+          role-session-name: validate-sam
           aws-region: eu-west-2
 
       - name: SAM validate

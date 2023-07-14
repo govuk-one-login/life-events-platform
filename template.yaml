@@ -171,6 +171,8 @@ Resources:
   DeathValidationFunction:
     Type: AWS::Serverless::Function
     Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: Lambdas will migrate to our own VPC in future work.
       FunctionName: !Sub "death-validation-${Environment}"
       CodeUri: lambdas/death-validation
       Handler: uk.gov.di.data.lep.GroDeathValidation::handleRequest
@@ -202,6 +204,8 @@ Resources:
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
     Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: Lambdas will migrate to our own VPC in future work.
       FunctionName: !Sub "death-enrichment-${Environment}"
       CodeUri: lambdas/death-enrichment
       Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
@@ -233,6 +237,8 @@ Resources:
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
     Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: Lambdas will migrate to our own VPC in future work.
       FunctionName: !Sub "death-minimisation-${Environment}"
       CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest

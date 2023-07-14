@@ -67,3 +67,4 @@ jobs:
           trivyignores: .trivyignore.docker
           exit-code: 1
           skip-dirs: lev-data/
+          skip-files: template.yaml

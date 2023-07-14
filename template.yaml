@@ -170,6 +170,7 @@ Resources:
         Variables:
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
       AutoPublishAlias: DeathValidationFunction
+      ReservedConcurrentExecutions: 0
       Events:
         DeathApiEvent:
           Type: Api
@@ -207,6 +208,7 @@ Resources:
         Variables:
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
       AutoPublishAlias: DeathEnrichmentFunction
+      ReservedConcurrentExecutions: 0
       Events:
         DeathValidatedEvent:
           Type: SQS
@@ -245,6 +247,7 @@ Resources:
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
           TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
       AutoPublishAlias: DeathMinimisationFunction
+      ReservedConcurrentExecutions: 0
       Events:
         DeathEnrichedEvent:
           Type: SQS

@@ -1,6 +1,9 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
@@ -14,11 +17,27 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class GroDeathNotificationMinimisationTest {
     @Mock
-    private Context context;
+    private static Context context = mock(Context.class);
+    @Mock
+    private static LambdaLogger logger = mock(LambdaLogger.class);
+
+    @BeforeAll
+    static void setup() {
+        when(context.getLogger()).thenReturn(logger);
+    }
+
+    @BeforeEach
+    void refreshSetup() {
+        clearInvocations(logger);
+    }
 
     @Test
     void minimiseGroDeathEventDataReturnsMinimisedDataWithNoEnrichmentFields() {
@@ -49,6 +68,8 @@ class GroDeathNotificationMinimisationTest {
         var result = underTest.handleRequest(enrichedData, context);
 
         config.close();
+
+        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
 
         assertNull(result.eventDetails().sex());
         assertNull(result.eventDetails().dateOfBirth());
@@ -102,6 +123,8 @@ class GroDeathNotificationMinimisationTest {
         var result = underTest.handleRequest(enrichedData, context);
 
         config.close();
+
+        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
 
         assertEquals(GroSex.FEMALE, result.eventDetails().sex());
         assertNull(result.eventDetails().dateOfBirth());
@@ -166,6 +189,8 @@ class GroDeathNotificationMinimisationTest {
         var result = underTest.handleRequest(enrichedData, context);
 
         config.close();
+
+        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
 
         assertEquals(GroSex.FEMALE, result.eventDetails().sex());
         assertEquals(LocalDate.parse("1972-02-20"), result.eventDetails().dateOfBirth());

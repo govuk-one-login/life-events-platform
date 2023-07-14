@@ -7,6 +7,8 @@ public class Authorisation implements RequestHandler {
 
     @Override
     public Object handleRequest(Object input, Context context) {
+        var logger = context.getLogger();
+        logger.log("Authenticating and authorising request");
         return null;
     }
 }

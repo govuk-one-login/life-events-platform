@@ -59,7 +59,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Deploy SAM app
-        uses: alphagov/di-devplatform-upload-action@v3.2
+        uses: alphagov/di-devplatform-upload-action@v3.3
         with:
           artifact-bucket-name: ${{ secrets.ARTIFACT_BUCKET_NAME }}
           signing-profile-name: ${{ secrets.SIGNING_PROFILE_NAME }}

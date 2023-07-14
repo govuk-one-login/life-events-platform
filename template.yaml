@@ -298,20 +298,8 @@ Resources:
       VpcId: !Ref Vpc
       VpcEndpointType: Interface
       SecurityGroupIds:
-        - !Ref SQSSecurityGroup
+        - !Ref EndpointSecurityGroup
       PrivateDnsEnabled: true
-
-  SQSSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: SQS Security Group
-      VpcId: !Ref Vpc
-      SecurityGroupIngress:
-        - CidrIp: !GetAtt Vpc.CidrBlock
-          Description: Allow inbound traffic from VPC cidr to port 443
-          FromPort: 443
-          IpProtocol: tcp
-          ToPort: 443
 
   SNSEndpoint:
     Type: AWS::EC2::VPCEndpoint
@@ -327,13 +315,13 @@ Resources:
       VpcId: !Ref Vpc
       VpcEndpointType: Interface
       SecurityGroupIds:
-        - !Ref SNSSecurityGroup
+        - !Ref EndpointSecurityGroup
       PrivateDnsEnabled: true
 
-  SNSSecurityGroup:
+  EndpointSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: SNS Security Group
+      GroupDescription: Endpoint Security Group
       VpcId: !Ref Vpc
       SecurityGroupIngress:
         - CidrIp: !GetAtt Vpc.CidrBlock
@@ -348,13 +336,8 @@ Resources:
       GroupDescription: Lambda Security Group
       VpcId: !Ref Vpc
       SecurityGroupEgress:
-        - DestinationSecurityGroupId: !GetAtt SQSSecurityGroup.GroupId
-          Description: Allow outbound traffic to SQS VPC endpoint
-          IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-        - DestinationSecurityGroupId: !GetAtt SNSSecurityGroup.GroupId
-          Description: Allow outbound traffic to SNS VPC endpoint
+        - DestinationSecurityGroupId: !Ref EndpointSecurityGroup
+          Description: Allow outbound traffic to VPC endpoints
           IpProtocol: tcp
           FromPort: 443
           ToPort: 443

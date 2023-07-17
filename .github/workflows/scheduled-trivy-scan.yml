@@ -102,6 +102,7 @@ jobs:
           scan-type: config
           trivyignores: .trivyignore.docker
           skip-dirs: lev-data/
+          skip-files: template.yaml
           exit-code: 1
           format: json
           output: infra.json

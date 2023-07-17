@@ -41,7 +41,7 @@ class GroDeathNotificationMinimisationTest {
         clearInvocations(logger);
     }
 
-    /*@Test
+    @Test
     void minimiseGroDeathEventDataReturnsMinimisedDataWithNoEnrichmentFields() {
         var config = mockStatic(Config.class);
         config.when(Config::getEnrichmentFields).thenReturn(List.of());
@@ -72,7 +72,6 @@ class GroDeathNotificationMinimisationTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
 
-
         var result = underTest.handleRequest(sqsEvent, context);
 
         config.close();
@@ -94,127 +93,137 @@ class GroDeathNotificationMinimisationTest {
         assertNull(result.eventDetails().addressLine2());
         assertNull(result.eventDetails().addressLine3());
         assertNull(result.eventDetails().addressLine4());
-    }*/
+    }
 
-//    @Test
-//    void minimiseGroDeathEventDataReturnsMinimisedDataWithPartialEnrichmentFields() {
-//        var config = mockStatic(Config.class);
-//        config.when(Config::getEnrichmentFields).thenReturn(List.of(
-//            EnrichmentField.SEX,
-//            EnrichmentField.DATE_OF_DEATH,
-//            EnrichmentField.FORENAMES,
-//            EnrichmentField.SURNAME,
-//            EnrichmentField.POSTCODE
-//        ));
-//        var underTest = new GroDeathNotificationMinimisation();
-//
-//        var enrichedData = new GroDeathEventEnrichedData(
-//            "123a1234-a12b-12a1-a123-123456789012",
-//            GroSex.FEMALE,
-//            LocalDate.parse("1972-02-20"),
-//            LocalDate.parse("2021-12-31"),
-//            "123456789",
-//            LocalDateTime.parse("2022-01-05T12:03:52"),
-//            "1",
-//            "12",
-//            "2021",
-//            "Bob Burt",
-//            "Smith",
-//            "Jane",
-//            "888 Death House",
-//            "8 Death lane",
-//            "Deadington",
-//            "Deadshire",
-//            "XX1 1XX"
-//        );
-//
-//        var result = underTest.handleRequest(enrichedData, context);
-//
-//        config.close();
-//
-//        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
-//
-//        assertEquals(GroSex.FEMALE, result.eventDetails().sex());
-//        assertNull(result.eventDetails().dateOfBirth());
-//        assertEquals(LocalDate.parse("2021-12-31"), result.eventDetails().dateOfDeath());
-//        assertNull(result.eventDetails().registrationId());
-//        assertNull(result.eventDetails().eventTime());
-//        assertNull(result.eventDetails().verificationLevel());
-//        assertNull(result.eventDetails().partialMonthOfDeath());
-//        assertNull(result.eventDetails().partialYearOfDeath());
-//        assertEquals("Bob Burt", result.eventDetails().forenames());
-//        assertEquals("Smith", result.eventDetails().surname());
-//        assertNull(result.eventDetails().maidenSurname());
-//        assertNull(result.eventDetails().addressLine1());
-//        assertNull(result.eventDetails().addressLine2());
-//        assertNull(result.eventDetails().addressLine3());
-//        assertNull(result.eventDetails().addressLine4());
-//    }
-//
-//    @Test
-//    void minimiseGroDeathEventDataReturnsMinimisedDataWithAllEnrichmentFields() {
-//        var config = mockStatic(Config.class);
-//        config.when(Config::getEnrichmentFields).thenReturn(List.of(
-//            EnrichmentField.SEX,
-//            EnrichmentField.DATE_OF_BIRTH,
-//            EnrichmentField.DATE_OF_DEATH,
-//            EnrichmentField.REGISTRATION_ID,
-//            EnrichmentField.EVENT_TIME,
-//            EnrichmentField.VERIFICATION_LEVEL,
-//            EnrichmentField.PARTIAL_MONTH_OF_DEATH,
-//            EnrichmentField.PARTIAL_YEAR_OF_DEATH,
-//            EnrichmentField.FORENAMES,
-//            EnrichmentField.SURNAME,
-//            EnrichmentField.MAIDEN_SURNAME,
-//            EnrichmentField.ADDRESS_LINE_1,
-//            EnrichmentField.ADDRESS_LINE_2,
-//            EnrichmentField.ADDRESS_LINE_3,
-//            EnrichmentField.ADDRESS_LINE_4,
-//            EnrichmentField.POSTCODE
-//        ));
-//        var underTest = new GroDeathNotificationMinimisation();
-//
-//        var enrichedData = new GroDeathEventEnrichedData(
-//            "123a1234-a12b-12a1-a123-123456789012",
-//            GroSex.FEMALE,
-//            LocalDate.parse("1972-02-20"),
-//            LocalDate.parse("2021-12-31"),
-//            "123456789",
-//            LocalDateTime.parse("2022-01-05T12:03:52"),
-//            "1",
-//            "12",
-//            "2021",
-//            "Bob Burt",
-//            "Smith",
-//            "Jane",
-//            "888 Death House",
-//            "8 Death lane",
-//            "Deadington",
-//            "Deadshire",
-//            "XX1 1XX"
-//        );
-//
-//        var result = underTest.handleRequest(enrichedData, context);
-//
-//        config.close();
-//
-//        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
-//
-//        assertEquals(GroSex.FEMALE, result.eventDetails().sex());
-//        assertEquals(LocalDate.parse("1972-02-20"), result.eventDetails().dateOfBirth());
-//        assertEquals(LocalDate.parse("2021-12-31"), result.eventDetails().dateOfDeath());
-//        assertEquals("123456789", result.eventDetails().registrationId());
-//        assertEquals(LocalDateTime.parse("2022-01-05T12:03:52"), result.eventDetails().eventTime());
-//        assertEquals("1", result.eventDetails().verificationLevel());
-//        assertEquals("12", result.eventDetails().partialMonthOfDeath());
-//        assertEquals("2021", result.eventDetails().partialYearOfDeath());
-//        assertEquals("Bob Burt", result.eventDetails().forenames());
-//        assertEquals("Smith", result.eventDetails().surname());
-//        assertEquals("Jane", result.eventDetails().maidenSurname());
-//        assertEquals("888 Death House", result.eventDetails().addressLine1());
-//        assertEquals("8 Death lane", result.eventDetails().addressLine2());
-//        assertEquals("Deadington", result.eventDetails().addressLine3());
-//        assertEquals("Deadshire", result.eventDetails().addressLine4());
-//        assertEquals("XX1 1XX", result.eventDetails().postcode());
-//    }
+    @Test
+    void minimiseGroDeathEventDataReturnsMinimisedDataWithPartialEnrichmentFields() {
+        var config = mockStatic(Config.class);
+        config.when(Config::getEnrichmentFields).thenReturn(List.of(
+            EnrichmentField.SEX,
+            EnrichmentField.DATE_OF_DEATH,
+            EnrichmentField.FORENAMES,
+            EnrichmentField.SURNAME,
+            EnrichmentField.POSTCODE
+        ));
+        var underTest = new GroDeathNotificationMinimisation();
+
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(
+            "{" +
+                "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
+                "\"sex\":\"FEMALE\"," +
+                "\"dateOfBirth\":\"1972-02-20\"," +
+                "\"dateOfDeath\":\"2021-12-31\"," +
+                "\"registrationId\":\"123456789\"," +
+                "\"eventTime\":\"2022-01-05T12:03:52\"," +
+                "\"verificationLevel\":\"1\"," +
+                "\"partialMonthOfDeath\":\"12\"," +
+                "\"partialYearOfDeath\":\"2021\"," +
+                "\"forenames\":\"Bob Burt\"," +
+                "\"surname\":\"Smith\"," +
+                "\"maidenSurname\":\"Jane\"," +
+                "\"addressLine1\":\"888 Death House\"," +
+                "\"addressLine2\":\"8 Death lane\"," +
+                "\"addressLine3\":\"Deadington\"," +
+                "\"addressLine4\":\"Deadshire\"," +
+                "\"postcode\":\"XX1 1XX\"" +
+                "}"
+        );
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
+        config.close();
+
+        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
+
+        assertEquals(GroSex.FEMALE, result.eventDetails().sex());
+        assertNull(result.eventDetails().dateOfBirth());
+        assertEquals(LocalDate.parse("2021-12-31"), result.eventDetails().dateOfDeath());
+        assertNull(result.eventDetails().registrationId());
+        assertNull(result.eventDetails().eventTime());
+        assertNull(result.eventDetails().verificationLevel());
+        assertNull(result.eventDetails().partialMonthOfDeath());
+        assertNull(result.eventDetails().partialYearOfDeath());
+        assertEquals("Bob Burt", result.eventDetails().forenames());
+        assertEquals("Smith", result.eventDetails().surname());
+        assertNull(result.eventDetails().maidenSurname());
+        assertNull(result.eventDetails().addressLine1());
+        assertNull(result.eventDetails().addressLine2());
+        assertNull(result.eventDetails().addressLine3());
+        assertNull(result.eventDetails().addressLine4());
+    }
+
+    @Test
+    void minimiseGroDeathEventDataReturnsMinimisedDataWithAllEnrichmentFields() {
+        var config = mockStatic(Config.class);
+        config.when(Config::getEnrichmentFields).thenReturn(List.of(
+            EnrichmentField.SEX,
+            EnrichmentField.DATE_OF_BIRTH,
+            EnrichmentField.DATE_OF_DEATH,
+            EnrichmentField.REGISTRATION_ID,
+            EnrichmentField.EVENT_TIME,
+            EnrichmentField.VERIFICATION_LEVEL,
+            EnrichmentField.PARTIAL_MONTH_OF_DEATH,
+            EnrichmentField.PARTIAL_YEAR_OF_DEATH,
+            EnrichmentField.FORENAMES,
+            EnrichmentField.SURNAME,
+            EnrichmentField.MAIDEN_SURNAME,
+            EnrichmentField.ADDRESS_LINE_1,
+            EnrichmentField.ADDRESS_LINE_2,
+            EnrichmentField.ADDRESS_LINE_3,
+            EnrichmentField.ADDRESS_LINE_4,
+            EnrichmentField.POSTCODE
+        ));
+        var underTest = new GroDeathNotificationMinimisation();
+
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(
+            "{" +
+                "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
+                "\"sex\":\"FEMALE\"," +
+                "\"dateOfBirth\":\"1972-02-20\"," +
+                "\"dateOfDeath\":\"2021-12-31\"," +
+                "\"registrationId\":\"123456789\"," +
+                "\"eventTime\":\"2022-01-05T12:03:52\"," +
+                "\"verificationLevel\":\"1\"," +
+                "\"partialMonthOfDeath\":\"12\"," +
+                "\"partialYearOfDeath\":\"2021\"," +
+                "\"forenames\":\"Bob Burt\"," +
+                "\"surname\":\"Smith\"," +
+                "\"maidenSurname\":\"Jane\"," +
+                "\"addressLine1\":\"888 Death House\"," +
+                "\"addressLine2\":\"8 Death lane\"," +
+                "\"addressLine3\":\"Deadington\"," +
+                "\"addressLine4\":\"Deadshire\"," +
+                "\"postcode\":\"XX1 1XX\"" +
+                "}"
+        );
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
+        config.close();
+
+        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
+
+        assertEquals(GroSex.FEMALE, result.eventDetails().sex());
+        assertEquals(LocalDate.parse("1972-02-20"), result.eventDetails().dateOfBirth());
+        assertEquals(LocalDate.parse("2021-12-31"), result.eventDetails().dateOfDeath());
+        assertEquals("123456789", result.eventDetails().registrationId());
+        assertEquals(LocalDateTime.parse("2022-01-05T12:03:52"), result.eventDetails().eventTime());
+        assertEquals("1", result.eventDetails().verificationLevel());
+        assertEquals("12", result.eventDetails().partialMonthOfDeath());
+        assertEquals("2021", result.eventDetails().partialYearOfDeath());
+        assertEquals("Bob Burt", result.eventDetails().forenames());
+        assertEquals("Smith", result.eventDetails().surname());
+        assertEquals("Jane", result.eventDetails().maidenSurname());
+        assertEquals("888 Death House", result.eventDetails().addressLine1());
+        assertEquals("8 Death lane", result.eventDetails().addressLine2());
+        assertEquals("Deadington", result.eventDetails().addressLine3());
+        assertEquals("Deadshire", result.eventDetails().addressLine4());
+        assertEquals("XX1 1XX", result.eventDetails().postcode());
+    }
 }

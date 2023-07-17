@@ -55,7 +55,7 @@ public class LambdaHandlerTest {
             LocalDate.parse("1972-02-20"),
             LocalDate.parse("2021-12-31"),
             "123456789",
-            LocalDateTime.parse("2022-01-05T12:03:52"),
+            LocalDateTime.parse("2022-01-05T12:03:52.123"),
             "1",
             "12",
             "2021",
@@ -74,7 +74,7 @@ public class LambdaHandlerTest {
         verify(logger).log("Putting message on target queue: targetQueueURL");
 
         awsService.verify(() -> AwsService.putOnQueue(
-            "{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\",\"sex\":\"FEMALE\",\"dateOfBirth\":\"1972-02-20\",\"dateOfDeath\":\"2021-12-31\",\"registrationId\":\"123456789\",\"eventTime\":\"2022-01-05T12:03:52.000\",\"verificationLevel\":\"1\",\"partialMonthOfDeath\":\"12\",\"partialYearOfDeath\":\"2021\",\"forenames\":\"Bob Burt\",\"surname\":\"Smith\",\"maidenSurname\":\"Jane\",\"addressLine1\":\"888 Death House\",\"addressLine2\":\"8 Death lane\",\"addressLine3\":\"Deadington\",\"addressLine4\":\"Deadshire\",\"postcode\":\"XX1 1XX\"}"
+            "{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\",\"sex\":\"FEMALE\",\"dateOfBirth\":\"1972-02-20\",\"dateOfDeath\":\"2021-12-31\",\"registrationId\":\"123456789\",\"eventTime\":\"2022-01-05T12:03:52.123\",\"verificationLevel\":\"1\",\"partialMonthOfDeath\":\"12\",\"partialYearOfDeath\":\"2021\",\"forenames\":\"Bob Burt\",\"surname\":\"Smith\",\"maidenSurname\":\"Jane\",\"addressLine1\":\"888 Death House\",\"addressLine2\":\"8 Death lane\",\"addressLine3\":\"Deadington\",\"addressLine4\":\"Deadshire\",\"postcode\":\"XX1 1XX\"}"
         ));
     }
 

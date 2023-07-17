@@ -1,28 +1,39 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import uk.gov.di.data.lep.library.LambdaHandler;
-import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import uk.gov.di.data.lep.dto.GroDeathEventNotification;
+import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.EventType;
-import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.LambdaHandler;
 
 import java.util.List;
 import java.util.UUID;
 
 public class GroDeathNotificationMinimisation
     extends LambdaHandler<GroDeathEventNotification>
-    implements RequestHandler<GroDeathEventEnrichedData, GroDeathEventNotification> {
+    implements RequestHandler<SQSEvent, GroDeathEventNotification> {
     private final List<EnrichmentField> enrichmentFields = Config.getEnrichmentFields();
 
     @Override
-    public GroDeathEventNotification handleRequest(GroDeathEventEnrichedData enrichedData, Context context) {
+    public GroDeathEventNotification handleRequest(SQSEvent sqsEvent, Context context) {
         logger = context.getLogger();
-        var minimisedData = minimiseEnrichedData(enrichedData);
-        return publish(minimisedData);
+        try {
+            var record = sqsEvent.getRecords().get(0);
+            var enrichedData = new ObjectMapper().registerModule(new JavaTimeModule()).readValue(record.getBody(), GroDeathEventEnrichedData.class);
+            var minimisedData = minimiseEnrichedData(enrichedData);
+            return publish(minimisedData);
+        } catch (JsonProcessingException e) {
+            logger.log("Failed to validate request");
+            throw new RuntimeException(e);
+        }
     }
 
     private GroDeathEventNotification minimiseEnrichedData(GroDeathEventEnrichedData enrichedData) {

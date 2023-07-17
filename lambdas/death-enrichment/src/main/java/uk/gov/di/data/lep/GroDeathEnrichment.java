@@ -1,24 +1,34 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import uk.gov.di.data.lep.library.LambdaHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.LambdaHandler;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class GroDeathEnrichment
     extends LambdaHandler<GroDeathEventEnrichedData>
-    implements RequestHandler<GroDeathEventBaseData, GroDeathEventEnrichedData> {
+    implements RequestHandler<SQSEvent, GroDeathEventEnrichedData> {
     @Override
-    public GroDeathEventEnrichedData handleRequest(GroDeathEventBaseData baseData, Context context) {
+    public GroDeathEventEnrichedData handleRequest(SQSEvent sqsEvent, Context context) {
         logger = context.getLogger();
-        var enrichedData = enrichData(baseData);
-        return publish(enrichedData);
+        try {
+            var record = sqsEvent.getRecords().get(0);
+            var baseData = new ObjectMapper().readValue(record.getBody(), GroDeathEventBaseData.class);
+            var enrichedData = enrichData(baseData);
+            return publish(enrichedData);
+        } catch (JsonProcessingException e) {
+            logger.log("Failed to validate request");
+            throw new RuntimeException(e);
+        }
     }
 
     public GroDeathEventEnrichedData enrichData(GroDeathEventBaseData baseData) {

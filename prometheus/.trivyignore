@@ -8,3 +8,6 @@ CVE-2023-2650
 
 # GPC-464: This is not an issue as it requires access to creating jaeger traces on our container that is not publicly accessible.
 GHSA-2w8w-qhg4-f78j
+
+# GPC-470: Only affect empty authentication data, which does not impact us
+CVE-2023-2975

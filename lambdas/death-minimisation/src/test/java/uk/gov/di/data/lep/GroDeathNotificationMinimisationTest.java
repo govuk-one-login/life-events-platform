@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.GroSex;
 

@@ -8,12 +8,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +25,7 @@ class GroDeathEnrichmentTest {
     private static Context context = mock(Context.class);
     @Mock
     private static LambdaLogger logger = mock(LambdaLogger.class);
+
     @BeforeAll
     static void setup() {
         when(context.getLogger()).thenReturn(logger);

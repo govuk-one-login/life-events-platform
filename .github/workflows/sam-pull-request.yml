@@ -1,7 +1,9 @@
-name: Pre-merge checks
+name: SAM pull request checks
 
 on:
+  workflow_dispatch:
   pull_request:
+  merge_group:
 
 jobs:
   check:

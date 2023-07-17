@@ -11,7 +11,7 @@ dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore",
                    "com.fasterxml.jackson.core:jackson-annotations:$rootProject.ext.dependencyVersions.jacksonAnnotations",
                    "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$rootProject.ext.dependencyVersions.jacksonDatatypeJsr310",
-                   platform("software.amazon.awssdk:bom:2.20.103"),
+                   platform("software.amazon.awssdk:bom:2.20.104"),
                    "software.amazon.awssdk:sns",
                    "software.amazon.awssdk:sqs"
 

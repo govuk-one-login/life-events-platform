@@ -1,6 +1,7 @@
 plugins {
     id "java-library"
     id "jacoco"
+    id "io.freefair.aspectj.post-compile-weaving" version "6.6.3"
 }
 
 repositories {
@@ -8,12 +9,16 @@ repositories {
 }
 
 dependencies {
+
     implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore",
                    "com.fasterxml.jackson.core:jackson-annotations:$rootProject.ext.dependencyVersions.jacksonAnnotations",
                    "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$rootProject.ext.dependencyVersions.jacksonDatatypeJsr310",
+                   "org.aspectj:aspectjrt:$rootProject.ext.dependencyVersions.aspectjrt",
                    platform("software.amazon.awssdk:bom:2.20.103"),
                    "software.amazon.awssdk:sns",
                    "software.amazon.awssdk:sqs"
+
+    aspect "software.amazon.lambda:powertools-tracing:$rootProject.ext.dependencyVersions.powertools"
 
     testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.ext.dependencyVersions.junitJupiter",
                        "org.mockito:mockito-junit-jupiter:$rootProject.ext.dependencyVersions.mockitoJunitJupiter"

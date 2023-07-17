@@ -7,8 +7,8 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.di.data.lep.dto.GroDeathEvent;
-import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
+import uk.gov.di.data.lep.library.LambdaHandler;
 
 public class GroDeathValidation
     extends LambdaHandler<GroDeathEventBaseData>

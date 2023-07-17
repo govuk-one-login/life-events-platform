@@ -9,6 +9,7 @@ import uk.gov.di.data.lep.library.services.AwsService;
 
 public abstract class LambdaHandler<O> {
     public LambdaLogger logger;
+
     public O publish(O output) {
         String message;
         try {

@@ -2,15 +2,17 @@ package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.clearInvocations;
@@ -23,6 +25,7 @@ class GroDeathEnrichmentTest {
     private static Context context = mock(Context.class);
     @Mock
     private static LambdaLogger logger = mock(LambdaLogger.class);
+
     @BeforeAll
     static void setup() {
         when(context.getLogger()).thenReturn(logger);
@@ -37,11 +40,12 @@ class GroDeathEnrichmentTest {
     void enrichGroDeathEventDataReturnsEnrichedData() {
         var underTest = new GroDeathEnrichment();
 
-        var baseData = new GroDeathEventBaseData(
-            "123a1234-a12b-12a1-a123-123456789012"
-        );
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
 
-        var result = underTest.handleRequest(baseData, context);
+        var result = underTest.handleRequest(sqsEvent, context);
 
         verify(logger).log("Enriching data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
 

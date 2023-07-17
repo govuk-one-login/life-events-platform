@@ -2,11 +2,12 @@ package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.GroSex;
@@ -45,27 +46,32 @@ class GroDeathNotificationMinimisationTest {
         config.when(Config::getEnrichmentFields).thenReturn(List.of());
         var underTest = new GroDeathNotificationMinimisation();
 
-        var enrichedData = new GroDeathEventEnrichedData(
-            "123a1234-a12b-12a1-a123-123456789012",
-            GroSex.FEMALE,
-            LocalDate.parse("1972-02-20"),
-            LocalDate.parse("2021-12-31"),
-            "123456789",
-            LocalDateTime.parse("2022-01-05T12:03:52"),
-            "1",
-            "12",
-            "2021",
-            "Bob Burt",
-            "Smith",
-            "Jane",
-            "888 Death House",
-            "8 Death lane",
-            "Deadington",
-            "Deadshire",
-            "XX1 1XX"
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(
+            "{" +
+                "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
+                "\"sex\":\"FEMALE\"," +
+                "\"dateOfBirth\":\"1972-02-20\"," +
+                "\"dateOfDeath\":\"2021-12-31\"," +
+                "\"registrationId\":\"123456789\"," +
+                "\"eventTime\":\"2022-01-05T12:03:52\"," +
+                "\"verificationLevel\":\"1\"," +
+                "\"partialMonthOfDeath\":\"12\"," +
+                "\"partialYearOfDeath\":\"2021\"," +
+                "\"forenames\":\"Bob Burt\"," +
+                "\"surname\":\"Smith\"," +
+                "\"maidenSurname\":\"Jane\"," +
+                "\"addressLine1\":\"888 Death House\"," +
+                "\"addressLine2\":\"8 Death lane\"," +
+                "\"addressLine3\":\"Deadington\"," +
+                "\"addressLine4\":\"Deadshire\"," +
+                "\"postcode\":\"XX1 1XX\"" +
+                "}"
         );
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
 
-        var result = underTest.handleRequest(enrichedData, context);
+        var result = underTest.handleRequest(sqsEvent, context);
 
         config.close();
 
@@ -100,27 +106,32 @@ class GroDeathNotificationMinimisationTest {
         ));
         var underTest = new GroDeathNotificationMinimisation();
 
-        var enrichedData = new GroDeathEventEnrichedData(
-            "123a1234-a12b-12a1-a123-123456789012",
-            GroSex.FEMALE,
-            LocalDate.parse("1972-02-20"),
-            LocalDate.parse("2021-12-31"),
-            "123456789",
-            LocalDateTime.parse("2022-01-05T12:03:52"),
-            "1",
-            "12",
-            "2021",
-            "Bob Burt",
-            "Smith",
-            "Jane",
-            "888 Death House",
-            "8 Death lane",
-            "Deadington",
-            "Deadshire",
-            "XX1 1XX"
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(
+            "{" +
+                "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
+                "\"sex\":\"FEMALE\"," +
+                "\"dateOfBirth\":\"1972-02-20\"," +
+                "\"dateOfDeath\":\"2021-12-31\"," +
+                "\"registrationId\":\"123456789\"," +
+                "\"eventTime\":\"2022-01-05T12:03:52\"," +
+                "\"verificationLevel\":\"1\"," +
+                "\"partialMonthOfDeath\":\"12\"," +
+                "\"partialYearOfDeath\":\"2021\"," +
+                "\"forenames\":\"Bob Burt\"," +
+                "\"surname\":\"Smith\"," +
+                "\"maidenSurname\":\"Jane\"," +
+                "\"addressLine1\":\"888 Death House\"," +
+                "\"addressLine2\":\"8 Death lane\"," +
+                "\"addressLine3\":\"Deadington\"," +
+                "\"addressLine4\":\"Deadshire\"," +
+                "\"postcode\":\"XX1 1XX\"" +
+                "}"
         );
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
 
-        var result = underTest.handleRequest(enrichedData, context);
+        var result = underTest.handleRequest(sqsEvent, context);
 
         config.close();
 
@@ -166,27 +177,32 @@ class GroDeathNotificationMinimisationTest {
         ));
         var underTest = new GroDeathNotificationMinimisation();
 
-        var enrichedData = new GroDeathEventEnrichedData(
-            "123a1234-a12b-12a1-a123-123456789012",
-            GroSex.FEMALE,
-            LocalDate.parse("1972-02-20"),
-            LocalDate.parse("2021-12-31"),
-            "123456789",
-            LocalDateTime.parse("2022-01-05T12:03:52"),
-            "1",
-            "12",
-            "2021",
-            "Bob Burt",
-            "Smith",
-            "Jane",
-            "888 Death House",
-            "8 Death lane",
-            "Deadington",
-            "Deadshire",
-            "XX1 1XX"
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(
+            "{" +
+                "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
+                "\"sex\":\"FEMALE\"," +
+                "\"dateOfBirth\":\"1972-02-20\"," +
+                "\"dateOfDeath\":\"2021-12-31\"," +
+                "\"registrationId\":\"123456789\"," +
+                "\"eventTime\":\"2022-01-05T12:03:52\"," +
+                "\"verificationLevel\":\"1\"," +
+                "\"partialMonthOfDeath\":\"12\"," +
+                "\"partialYearOfDeath\":\"2021\"," +
+                "\"forenames\":\"Bob Burt\"," +
+                "\"surname\":\"Smith\"," +
+                "\"maidenSurname\":\"Jane\"," +
+                "\"addressLine1\":\"888 Death House\"," +
+                "\"addressLine2\":\"8 Death lane\"," +
+                "\"addressLine3\":\"Deadington\"," +
+                "\"addressLine4\":\"Deadshire\"," +
+                "\"postcode\":\"XX1 1XX\"" +
+                "}"
         );
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
 
-        var result = underTest.handleRequest(enrichedData, context);
+        var result = underTest.handleRequest(sqsEvent, context);
 
         config.close();
 

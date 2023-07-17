@@ -1,8 +1,8 @@
 package uk.gov.di.data.lep.library.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import uk.gov.di.data.lep.library.enums.GroSex;
 import uk.gov.di.data.lep.library.config.Constants;
+import uk.gov.di.data.lep.library.enums.GroSex;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

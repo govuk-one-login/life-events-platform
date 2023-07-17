@@ -172,6 +172,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
       FunctionName: !Sub "death-validation-${Environment}"
       CodeUri: lambdas/death-validation
@@ -205,6 +206,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
       FunctionName: !Sub "death-enrichment-${Environment}"
       CodeUri: lambdas/death-enrichment
@@ -238,6 +240,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
       FunctionName: !Sub "death-minimisation-${Environment}"
       CodeUri: lambdas/death-minimisation

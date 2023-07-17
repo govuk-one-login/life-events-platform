@@ -49,6 +49,8 @@ jobs:
       - name: Set up SAM cli
         uses: aws-actions/setup-sam@v2
         if: always()
+        with:
+          use-installer: true
 
       - name: Set up AWS creds
         uses: aws-actions/configure-aws-credentials@v2

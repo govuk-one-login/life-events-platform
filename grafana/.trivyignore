@@ -11,3 +11,6 @@ CVE-2023-2650
 
 # GPC-444: This vulnerability is fairly difficult to execute, and only allows for data exfiltration from our Grafana monitoring, which contains no secure information.
 CVE-2023-32731
+
+# GPC-470: Only affect empty authentication data, which does not impact us
+CVE-2023-2975

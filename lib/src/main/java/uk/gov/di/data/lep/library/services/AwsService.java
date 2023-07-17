@@ -1,30 +1,32 @@
 package uk.gov.di.data.lep.library.services;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.sns.AmazonSNSClientBuilder;
-import com.amazonaws.services.sns.model.PublishRequest;
-import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import com.amazonaws.services.sqs.model.SendMessageRequest;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import uk.gov.di.data.lep.library.config.Config;
 
 public class AwsService {
     public static void putOnQueue(String message) {
-        var sqsClient = AmazonSQSClientBuilder.standard()
-            .withRegion(Regions.EU_WEST_2)
+        var sqsClient = SqsClient.builder()
+            .region(Region.EU_WEST_2)
             .build();
 
-        sqsClient.sendMessage(new SendMessageRequest()
-            .withQueueUrl(Config.getTargetQueue())
-            .withMessageBody(message));
+        sqsClient.sendMessage(SendMessageRequest.builder()
+            .queueUrl(Config.getTargetQueue())
+            .messageBody(message)
+            .build());
     }
 
     public static void putOnTopic(String message) {
-        var snsClient = AmazonSNSClientBuilder.standard()
-            .withRegion(Regions.EU_WEST_2)
+        var snsClient = SnsClient.builder()
+            .region(Region.EU_WEST_2)
             .build();
 
-        snsClient.publish(new PublishRequest()
-            .withTopicArn(Config.getTargetTopic())
-            .withMessage(message));
+        snsClient.publish(PublishRequest.builder()
+            .topicArn(Config.getTargetTopic())
+            .message(message)
+            .build());
     }
 }

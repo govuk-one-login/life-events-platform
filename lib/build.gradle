@@ -1,3 +1,7 @@
+buildscript {
+    apply from: '../dependencies.gradle'
+}
+
 plugins {
     id "java-library"
     id "jacoco"
@@ -9,19 +13,19 @@ repositories {
 }
 
 dependencies {
-    implementation "com.amazonaws:aws-lambda-java-core:$rootProject.ext.dependencyVersions.awsLambdaJavaCore",
-                   "com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2-instrumentor:$rootProject.ext.dependencyVersions.xrayInstrumentor",
-                   "com.fasterxml.jackson.core:jackson-annotations:$rootProject.ext.dependencyVersions.jacksonAnnotations",
-                   "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$rootProject.ext.dependencyVersions.jacksonDatatypeJsr310",
-                   "org.aspectj:aspectjrt:$rootProject.ext.dependencyVersions.aspectjrt",
-                   platform("software.amazon.awssdk:bom:$rootProject.ext.dependencyVersions.awsSdk"),
+    implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+                   "com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2-instrumentor:$dependencyVersions.xrayInstrumentor",
+                   "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jacksonAnnotations",
+                   "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$dependencyVersions.jacksonDatatypeJsr310",
+                   "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
+                   platform("software.amazon.awssdk:bom:$dependencyVersions.awsSdk"),
                    "software.amazon.awssdk:sns",
                    "software.amazon.awssdk:sqs"
 
-    aspect "software.amazon.lambda:powertools-tracing:$rootProject.ext.dependencyVersions.powertools"
+    aspect "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:$rootProject.ext.dependencyVersions.junitJupiter",
-                       "org.mockito:mockito-junit-jupiter:$rootProject.ext.dependencyVersions.mockitoJunitJupiter"
+    testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
+                       "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter"
 }
 
 java {

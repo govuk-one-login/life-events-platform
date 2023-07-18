@@ -13,10 +13,11 @@ repositories {
 }
 
 dependencies {
-    implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore"
+    implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+                   "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt"
 
-    aspect "software.amazon.lambda:powertools-logging:$rootProject.ext.dependencyVersions.powertools",
-           "software.amazon.lambda:powertools-tracing:$rootProject.ext.dependencyVersions.powertools"
+    aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
+           "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
 
     testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
                        "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter"

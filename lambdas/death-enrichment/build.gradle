@@ -17,11 +17,12 @@ dependencies {
                    "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
                    "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jacksonAnnotations",
                    "com.fasterxml.jackson.core:jackson-databind:$dependencyVersions.jacksonDatabind",
+                   "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
                    project(":lib")
 
-    aspect "software.amazon.lambda:powertools-logging:$rootProject.ext.dependencyVersions.powertools",
-           "software.amazon.lambda:powertools-tracing:$rootProject.ext.dependencyVersions.powertools",
-           "software.amazon.lambda:powertools-metrics:$rootProject.ext.dependencyVersions.powertools"
+    aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
+           "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools",
+           "software.amazon.lambda:powertools-metrics:$dependencyVersions.powertools"
 
     testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
                        "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter"

@@ -116,6 +116,7 @@ Resources:
     Type: AWS::SNS::Topic
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
+      TracingConfig: Active
 
   DeathSnsToSqsPolicy:
     Type: AWS::SQS::QueuePolicy
@@ -362,3 +363,35 @@ Resources:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref Vpc
+
+  XRayPolicy:
+    Type: AWS::XRay::ResourcePolicy
+    Properties:
+      BypassPolicyLockoutCheck: false
+      PolicyName: AllowSNSXrayTracing
+      PolicyDocument: !Sub "{
+          \"Version\": \"2012-10-17\",
+          \"Statement\": [
+            {
+              \"Sid\": \"SNSAccess\",
+              \"Effect\": \"Allow\",
+              \"Principal\": {
+                \"Service\": \"sns.amazonaws.com\"
+              },
+              \"Action\": [
+                \"xray:PutTraceSegments\",
+                \"xray:GetSamplingRules\",
+                \"xray:GetSamplingTargets\"
+              ],
+              \"Resource\": \"*\",
+              \"Condition\": {
+                \"StringEquals\": {
+                  \"aws:SourceAccount\": \"${AWS::AccountId}\"
+                },
+                \"StringLike\": {
+                  \"aws:SourceArn\": \"${DeathDistributionTopic.TopicArn}\"
+                }
+              }
+            }
+          ]
+        }"

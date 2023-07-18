@@ -1,5 +1,7 @@
 # Manual stacks - DNS Hosted Zones
 
+Edited from [here](https://github.com/alphagov/di-accounts-infra/blob/9ddff8f2f9683a518a6a844c3918bfa67cae53e1/platform-dns/README.md)
+
 ## Intro
 
 The CloudFormation template creates a hosted zone for `<subdomain>.account.gov.uk`

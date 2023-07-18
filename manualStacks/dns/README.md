@@ -1,6 +1,7 @@
 # Manual stacks - DNS Hosted Zones
 
-Edited from [here](https://github.com/alphagov/di-accounts-infra/blob/9ddff8f2f9683a518a6a844c3918bfa67cae53e1/platform-dns/README.md)
+Edited
+from [here](https://github.com/alphagov/di-accounts-infra/blob/9ddff8f2f9683a518a6a844c3918bfa67cae53e1/platform-dns/README.md)
 
 ## Intro
 
@@ -13,7 +14,8 @@ as part of the DNS set up process.
 Once the hosted zone(s) is created, there will be a nameserver record created for each zone.
 
 Once deployed, the nameserver record lists the name servers that need to be added to appropriate environment's
-terraform file in the [di-infrastucture](https://github.com/alphagov/di-infrastructure/tree/main/terraform/domain) repo.
+cloudformation file in
+the [di-domains](https://github.com/alphagov/di-domains/blob/main/cloudformation/domain/template.yaml) repo.
 
 N.B. the hosted zone(s) created by this template are retained even when the Stack is deleted.
 
@@ -63,7 +65,7 @@ aws cloudformation update-stack --stack-name dns-zones \
 
 ### Stack Outputs
 
-| Type          | Name                                         | Description                         |
-|---------------|----------------------------------------------|-------------------------------------|
-| Stack Export  | `HostedZoneNameServers`                      | Comma separated list of Nameservers |
-| Stack Export  | `HostedZoneId`                               | Id of the Route 53 Hosted Zone      |
+| Type         | Name                    | Description                         |
+|--------------|-------------------------|-------------------------------------|
+| Stack Export | `HostedZoneNameServers` | Comma separated list of Nameservers |
+| Stack Export | `HostedZoneId`          | Id of the Route 53 Hosted Zone      |

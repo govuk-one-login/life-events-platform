@@ -6,6 +6,8 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import software.amazon.lambda.powertools.logging.Logging;
+import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.GroDeathEvent;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.LambdaHandler;
@@ -14,6 +16,8 @@ public class GroDeathValidation
     extends LambdaHandler<GroDeathEventBaseData>
     implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     @Override
+    @Tracing
+    @Logging(clearState = true)
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent apiRequest, Context context) {
         logger = context.getLogger();
         var event = validateRequest(apiRequest);
@@ -21,6 +25,7 @@ public class GroDeathValidation
         return new APIGatewayProxyResponseEvent().withStatusCode(201);
     }
 
+    @Tracing
     private GroDeathEventBaseData validateRequest(APIGatewayProxyRequestEvent event) {
         logger.log("Validating request");
 

@@ -5,6 +5,9 @@ import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import software.amazon.lambda.powertools.logging.Logging;
+import software.amazon.lambda.powertools.tracing.Tracing;
+import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
@@ -18,6 +21,8 @@ public class GroDeathEnrichment
     extends LambdaHandler<GroDeathEventEnrichedData>
     implements RequestHandler<SQSEvent, GroDeathEventEnrichedData> {
     @Override
+    @Tracing
+    @Logging(clearState = true)
     public GroDeathEventEnrichedData handleRequest(SQSEvent sqsEvent, Context context) {
         logger = context.getLogger();
         try {
@@ -31,6 +36,7 @@ public class GroDeathEnrichment
         }
     }
 
+    @Tracing
     public GroDeathEventEnrichedData enrichData(GroDeathEventBaseData baseData) {
         logger.log("Enriching data (sourceId: " + baseData.sourceId() + ")");
         var enrichmentData = getEnrichmentData(baseData.sourceId());

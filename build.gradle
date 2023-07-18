@@ -4,14 +4,16 @@ plugins {
 
 ext {
     dependencyVersions = [
-            awsJavaSdkSns        : '1.12.504',
-            awsJavaSdkSqs        : '1.12.504',
-            awsLambdaJavaCore    : '1.2.2',
-            awsLambdaJavaEvents  : '3.11.2',
-            jacksonAnnotations   : '2.2.1',
-            jacksonDatabind      : '2.12.7.1',
-            jacksonDatatypeJsr310: '2.15.2',
-            junitJupiter         : '5.9.3',
-            mockitoJunitJupiter  : '5.4.0'
+            aspectjrt            : "1.9.19",
+            awsSdk               : "2.20.103",
+            awsLambdaJavaCore    : "1.2.2",
+            awsLambdaJavaEvents  : "3.11.2",
+            jacksonAnnotations   : "2.2.1",
+            jacksonDatabind      : "2.12.7.1",
+            jacksonDatatypeJsr310: "2.15.2",
+            junitJupiter         : "5.9.3",
+            mockitoJunitJupiter  : "5.4.0",
+            powertools           : "1.16.0",
+            xrayInstrumentor     : "2.14.0"
     ]
 }

@@ -6,8 +6,11 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import software.amazon.lambda.powertools.logging.Logging;
+import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.GroDeathEventNotification;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
@@ -23,6 +26,8 @@ public class GroDeathNotificationMinimisation
     private final List<EnrichmentField> enrichmentFields = Config.getEnrichmentFields();
 
     @Override
+    @Tracing
+    @Logging(clearState = true)
     public GroDeathEventNotification handleRequest(SQSEvent sqsEvent, Context context) {
         logger = context.getLogger();
         try {
@@ -36,6 +41,7 @@ public class GroDeathNotificationMinimisation
         }
     }
 
+    @Tracing
     private GroDeathEventNotification minimiseEnrichedData(GroDeathEventEnrichedData enrichedData) {
         logger.log("Minimising enriched data (sourceId: " + enrichedData.sourceId() + ")");
 

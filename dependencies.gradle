@@ -1,7 +1,9 @@
 ext {
+    postCompileWeavingVersion = "8.1.0"
+
     dependencyVersions = [
             aspectjrt            : "1.9.19",
-            awsSdk               : "2.20.103",
+            awsSdk               : "2.20.104",
             awsLambdaJavaCore    : "1.2.2",
             awsLambdaJavaEvents  : "3.11.2",
             jacksonAnnotations   : "2.15.2",

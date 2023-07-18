@@ -65,4 +65,3 @@ aws cloudformation update-stack --stack-name dns-zones \
 |---------------|----------------------------------------------|-------------------------------------|
 | Stack Export  | `HostedZoneNameServers`                      | Comma separated list of Nameservers |
 | Stack Export  | `HostedZoneId`                               | Id of the Route 53 Hosted Zone      |
-| SSM Parameter | `/<environment>/Platform/Route53/HostedZone` | Id of the Route 53 Hosted Zone      |

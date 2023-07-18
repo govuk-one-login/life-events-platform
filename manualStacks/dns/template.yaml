@@ -27,22 +27,14 @@ Resources:
         - life-events.account.gov.uk
         - !Sub life-events.${Environment}.account.gov.uk
 
-  HostedZoneSSM:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Description: The ID of hosted zone for the home domain
-      Name: !Sub "/${Environment}/Platform/Route53/HostedZone"
-      Type: String
-      Value: !GetAtt HostedZone.Id
-
 Outputs:
   HomeHostedZoneNameServers:
     Value: !Join
       - ","
       - !GetAtt HostedZone.NameServers
     Export:
-      Name: HomeHostedZoneNameServers
+      Name: HostedZoneNameServers
   HomeHostedZoneId:
     Value: !GetAtt HostedZone.Id
     Export:
-      Name: HomeHostedZoneId
+      Name: HostedZoneId

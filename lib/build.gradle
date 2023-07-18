@@ -5,7 +5,7 @@ buildscript {
 plugins {
     id "java-library"
     id "jacoco"
-    id "io.freefair.aspectj.post-compile-weaving" version "8.1.0"
+    id "io.freefair.aspectj.post-compile-weaving" version "${postCompileWeavingVersion}"
 }
 
 repositories {

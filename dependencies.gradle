@@ -1,4 +1,6 @@
 ext {
+    postCompileWeavingVersion = "8.1.0"
+
     dependencyVersions = [
             aspectjrt            : "1.9.19",
             awsSdk               : "2.20.104",

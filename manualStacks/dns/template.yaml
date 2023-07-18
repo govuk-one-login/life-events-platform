@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >-
+  All the DNS Hosted Zones for the Life events platform.
+Parameters:
+  Environment:
+    Description: The name of the environment to deploy to
+    Type: String
+    AllowedValues:
+      - dev
+      - build
+      - staging
+      - integration
+      - production
+
+Conditions:
+  IsProduction: !Equals [ !Ref Environment, production]
+
+Resources:
+  HostedZone:
+    Type: AWS::Route53::HostedZone
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !If
+        - IsProduction
+        - life-events.account.gov.uk
+        - !Sub life-events.${Environment}.account.gov.uk
+
+  HostedZoneSSM:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: The ID of hosted zone for the home domain
+      Name: !Sub "/${Environment}/Platform/Route53/HostedZone"
+      Type: String
+      Value: !GetAtt HostedZone.Id
+
+Outputs:
+  HomeHostedZoneNameServers:
+    Value: !Join
+      - ","
+      - !GetAtt HostedZone.NameServers
+    Export:
+      Name: HomeHostedZoneNameServers
+  HomeHostedZoneId:
+    Value: !GetAtt HostedZone.Id
+    Export:
+      Name: HomeHostedZoneId

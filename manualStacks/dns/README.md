@@ -1,0 +1,68 @@
+# Manual stacks - DNS Hosted Zones
+
+## Intro
+
+The CloudFormation template creates a hosted zone for `<subdomain>.account.gov.uk`
+or `<subdomain>.<environment>.account.gov.uk` if environment is not `production`.
+
+This Stack is deployed manually once per account/environment
+as part of the DNS set up process.
+
+Once the hosted zone(s) is created, there will be a nameserver record created for each zone.
+
+Once deployed, the nameserver record lists the name servers that need to be added to appropriate environment's
+terraform file in the [di-infrastucture](https://github.com/alphagov/di-infrastructure/tree/main/terraform/domain) repo.
+
+N.B. the hosted zone(s) created by this template are retained even when the Stack is deleted.
+
+### Domains
+
+The template creates a Hosted Zone for the following subdomain(s):
+
+- `life-events`
+
+## Deployment
+
+To deploy the template to the appropriate AWS account, ensure you are at the root of the project.
+
+Replace `<environment>` with `dev`, `build`, `staging`, `integration`, `production` in either of the commands below.
+
+### Creating a New Stack
+
+Set your AWS profile to the correct environment, the run:
+
+```bash
+aws cloudformation create-stack --stack-name dns-zones \
+  --template-body file://$(pwd)/template.yaml \
+  --region eu-west-2 \
+  --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
+  --parameters ParameterKey=Environment,ParameterValue="<environment>" \
+  --tags Key=Product,Value="GOV.UK Sign In" \
+         Key=System,Value="Life Events Platform" \
+         Key=Environment,Value="<environment>" \
+         Key=Owner,Value="di-life-events-platform@digital.cabinet-office.gov.uk"
+```
+
+### Updating the Stack
+
+Set your AWS profile to the correct environment, the run:
+
+```bash
+aws cloudformation update-stack --stack-name dns-zones \
+  --template-body file://$(pwd)/template.yaml \
+  --region eu-west-2 \
+  --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
+  --parameters ParameterKey=Environment,ParameterValue="<environment>" \
+  --tags Key=Product,Value="GOV.UK Sign In" \
+         Key=System,Value="Life Events Platform" \
+         Key=Environment,Value="<environment>" \
+         Key=Owner,Value="di-life-events-platform@digital.cabinet-office.gov.uk"
+```
+
+### Stack Outputs
+
+| Type          | Name                                         | Description                         |
+|---------------|----------------------------------------------|-------------------------------------|
+| Stack Export  | `HostedZoneNameServers`                      | Comma separated list of Nameservers |
+| Stack Export  | `HostedZoneId`                               | Id of the Route 53 Hosted Zone      |
+| SSM Parameter | `/<environment>/Platform/Route53/HostedZone` | Id of the Route 53 Hosted Zone      |

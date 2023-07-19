@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,11 +30,10 @@ class GroDeathValidationTest {
     private static final LambdaLogger logger = mock(LambdaLogger.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static MockedStatic<AwsService> awsService;
-    private static GroDeathValidation underTest;
+    private static final GroDeathValidation underTest = new GroDeathValidation(config, objectMapper);
 
     @BeforeAll
     static void setup() {
-        underTest = new GroDeathValidation(config, objectMapper);
         awsService = mockStatic(AwsService.class);
         when(context.getLogger()).thenReturn(logger);
     }
@@ -61,6 +61,21 @@ class GroDeathValidationTest {
         verify(logger).log("Validating request");
 
         assertEquals(201, result.getStatusCode());
+    }
+
+    @Test
+    void validateGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() throws JsonProcessingException {
+        var event = new APIGatewayProxyRequestEvent().withBody("{\"notSourceId\":\"an id but not a source id\"}");
+
+        when(objectMapper.readValue(event.getBody(), GroDeathEvent.class)).thenThrow(mock(UnrecognizedPropertyException.class));
+
+        var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
+
+        verify(logger).log("Validating request");
+        verify(logger).log("Failed to validate request");
+
+        assertEquals("Mock for UnrecognizedPropertyException, hashCode: 2108006254", exception.getMessage());
+
     }
 
     @Test

@@ -8,7 +8,6 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
-
 public abstract class LambdaHandler<O> {
     public LambdaLogger logger;
     protected final Config config;

@@ -23,5 +23,4 @@ public class Config {
             .map(EnrichmentField::valueOf)
             .toList();
     }
-
 }

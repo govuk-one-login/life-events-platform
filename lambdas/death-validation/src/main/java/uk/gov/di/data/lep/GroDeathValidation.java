@@ -9,12 +9,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.GroDeathEvent;
+import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.LambdaHandler;
 
 public class GroDeathValidation
     extends LambdaHandler<GroDeathEventBaseData>
     implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+    protected GroDeathValidation() {
+    }
+
+    protected GroDeathValidation(Config config, ObjectMapper objectMapper) {
+        super(config, objectMapper);
+
+    }
+
     @Override
     @Tracing
     @Logging(clearState = true)
@@ -31,7 +40,7 @@ public class GroDeathValidation
 
         GroDeathEvent groDeathEvent;
         try {
-            groDeathEvent = new ObjectMapper().readValue(event.getBody(), GroDeathEvent.class);
+            groDeathEvent = objectMapper.readValue(event.getBody(), GroDeathEvent.class);
         } catch (JsonProcessingException e) {
             logger.log("Failed to validate request");
             throw new RuntimeException(e);

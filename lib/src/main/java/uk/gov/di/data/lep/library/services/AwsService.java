@@ -9,6 +9,16 @@ import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.config.Config;
 
 public class AwsService {
+    private static Config config;
+
+    protected AwsService() {
+        this(new Config());
+    }
+
+    protected AwsService(Config _config) {
+        config = _config;
+    }
+
     @Tracing
     public static void putOnQueue(String message) {
         var sqsClient = SqsClient.builder()
@@ -16,7 +26,7 @@ public class AwsService {
             .build();
 
         sqsClient.sendMessage(SendMessageRequest.builder()
-            .queueUrl(Config.getTargetQueue())
+            .queueUrl(config.getTargetQueue())
             .messageBody(message)
             .build());
     }
@@ -28,7 +38,7 @@ public class AwsService {
             .build();
 
         snsClient.publish(PublishRequest.builder()
-            .topicArn(Config.getTargetTopic())
+            .topicArn(config.getTargetTopic())
             .message(message)
             .build());
     }

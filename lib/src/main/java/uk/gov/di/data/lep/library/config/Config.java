@@ -6,17 +6,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Config {
-    private static final String envEnrichmentFields = System.getenv("ENRICHMENT_FIELDS");
+    private final String envEnrichmentFields = System.getenv("ENRICHMENT_FIELDS");
 
-    public static String getTargetQueue() {
+    public String getTargetQueue() {
         return System.getenv("TARGET_QUEUE");
     }
-
-    public static String getTargetTopic() {
+    public String getTargetTopic() {
         return System.getenv("TARGET_TOPIC");
     }
-
-    public static List<EnrichmentField> getEnrichmentFields() {
+    public List<EnrichmentField> getEnrichmentFields() {
         if (envEnrichmentFields == null) {
             return List.of();
         }
@@ -25,4 +23,5 @@ public class Config {
             .map(EnrichmentField::valueOf)
             .toList();
     }
+
 }

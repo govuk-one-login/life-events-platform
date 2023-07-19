@@ -4,11 +4,13 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.GroSex;
 
@@ -18,64 +20,86 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class GroDeathNotificationMinimisationTest {
-    @Mock
-    private static Context context = mock(Context.class);
-    @Mock
-    private static LambdaLogger logger = mock(LambdaLogger.class);
+    private static final Context context = mock(Context.class);
+    private static final LambdaLogger logger = mock(LambdaLogger.class);
+    private static final Config config = mock(Config.class);
+    private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private static GroDeathNotificationMinimisation underTest;
+    private static final String enrichedDataJson = "{" +
+        "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
+        "\"sex\":\"FEMALE\"," +
+        "\"dateOfBirth\":\"1972-02-20\"," +
+        "\"dateOfDeath\":\"2021-12-31\"," +
+        "\"registrationId\":\"123456789\"," +
+        "\"eventTime\":\"2022-01-05T12:03:52\"," +
+        "\"verificationLevel\":\"1\"," +
+        "\"partialMonthOfDeath\":\"12\"," +
+        "\"partialYearOfDeath\":\"2021\"," +
+        "\"forenames\":\"Bob Burt\"," +
+        "\"surname\":\"Smith\"," +
+        "\"maidenSurname\":\"Jane\"," +
+        "\"addressLine1\":\"888 Death House\"," +
+        "\"addressLine2\":\"8 Death lane\"," +
+        "\"addressLine3\":\"Deadington\"," +
+        "\"addressLine4\":\"Deadshire\"," +
+        "\"postcode\":\"XX1 1XX\"" +
+        "}";
 
     @BeforeAll
-    static void setup() {
+    static void setup() throws JsonProcessingException {
         when(context.getLogger()).thenReturn(logger);
+        when(objectMapper.readValue(anyString(), eq(GroDeathEventEnrichedData.class))).thenReturn(new GroDeathEventEnrichedData(
+            "123a1234-a12b-12a1-a123-123456789012",
+            GroSex.FEMALE,
+            LocalDate.parse("1972-02-20"),
+            LocalDate.parse(
+                "2021-12-31"),
+            "123456789",
+            LocalDateTime.parse("2022-01-05T12:03:52"),
+            "1",
+            "12",
+            "2021",
+            "Bob Burt",
+            "Smith",
+            "Jane",
+            "888 Death House",
+            "8 Death lane",
+            "Deadington",
+            "Deadshire",
+            "XX1 1XX"
+        ));
     }
 
     @BeforeEach
     void refreshSetup() {
         clearInvocations(logger);
+        clearInvocations(config);
+        clearInvocations(objectMapper);
     }
 
     @Test
-    void minimiseGroDeathEventDataReturnsMinimisedDataWithNoEnrichmentFields() {
-        var config = mockStatic(Config.class);
-        config.when(Config::getEnrichmentFields).thenReturn(List.of());
-        var underTest = new GroDeathNotificationMinimisation();
+    void minimiseGroDeathEventDataReturnsMinimisedDataWithNoEnrichmentFields() throws JsonProcessingException {
+        when(config.getEnrichmentFields()).thenReturn(List.of());
+
+        underTest = new GroDeathNotificationMinimisation(config, objectMapper);
 
         var sqsMessage = new SQSMessage();
-        sqsMessage.setBody(
-            "{" +
-                "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfBirth\":\"1972-02-20\"," +
-                "\"dateOfDeath\":\"2021-12-31\"," +
-                "\"registrationId\":\"123456789\"," +
-                "\"eventTime\":\"2022-01-05T12:03:52\"," +
-                "\"verificationLevel\":\"1\"," +
-                "\"partialMonthOfDeath\":\"12\"," +
-                "\"partialYearOfDeath\":\"2021\"," +
-                "\"forenames\":\"Bob Burt\"," +
-                "\"surname\":\"Smith\"," +
-                "\"maidenSurname\":\"Jane\"," +
-                "\"addressLine1\":\"888 Death House\"," +
-                "\"addressLine2\":\"8 Death lane\"," +
-                "\"addressLine3\":\"Deadington\"," +
-                "\"addressLine4\":\"Deadshire\"," +
-                "\"postcode\":\"XX1 1XX\"" +
-                "}"
-        );
+        sqsMessage.setBody(enrichedDataJson);
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        config.close();
-
         verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
+        verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
         assertNull(result.eventDetails().sex());
         assertNull(result.eventDetails().dateOfBirth());
@@ -95,47 +119,26 @@ class GroDeathNotificationMinimisationTest {
     }
 
     @Test
-    void minimiseGroDeathEventDataReturnsMinimisedDataWithPartialEnrichmentFields() {
-        var config = mockStatic(Config.class);
-        config.when(Config::getEnrichmentFields).thenReturn(List.of(
+    void minimiseGroDeathEventDataReturnsMinimisedDataWithPartialEnrichmentFields() throws JsonProcessingException {
+        when(config.getEnrichmentFields()).thenReturn(List.of(
             EnrichmentField.SEX,
             EnrichmentField.DATE_OF_DEATH,
             EnrichmentField.FORENAMES,
             EnrichmentField.SURNAME,
             EnrichmentField.POSTCODE
         ));
-        var underTest = new GroDeathNotificationMinimisation();
+
+        underTest = new GroDeathNotificationMinimisation(config, objectMapper);
 
         var sqsMessage = new SQSMessage();
-        sqsMessage.setBody(
-            "{" +
-                "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfBirth\":\"1972-02-20\"," +
-                "\"dateOfDeath\":\"2021-12-31\"," +
-                "\"registrationId\":\"123456789\"," +
-                "\"eventTime\":\"2022-01-05T12:03:52\"," +
-                "\"verificationLevel\":\"1\"," +
-                "\"partialMonthOfDeath\":\"12\"," +
-                "\"partialYearOfDeath\":\"2021\"," +
-                "\"forenames\":\"Bob Burt\"," +
-                "\"surname\":\"Smith\"," +
-                "\"maidenSurname\":\"Jane\"," +
-                "\"addressLine1\":\"888 Death House\"," +
-                "\"addressLine2\":\"8 Death lane\"," +
-                "\"addressLine3\":\"Deadington\"," +
-                "\"addressLine4\":\"Deadshire\"," +
-                "\"postcode\":\"XX1 1XX\"" +
-                "}"
-        );
+        sqsMessage.setBody(enrichedDataJson);
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        config.close();
-
         verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
+        verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
         assertEquals(GroSex.FEMALE, result.eventDetails().sex());
         assertNull(result.eventDetails().dateOfBirth());
@@ -155,9 +158,8 @@ class GroDeathNotificationMinimisationTest {
     }
 
     @Test
-    void minimiseGroDeathEventDataReturnsMinimisedDataWithAllEnrichmentFields() {
-        var config = mockStatic(Config.class);
-        config.when(Config::getEnrichmentFields).thenReturn(List.of(
+    void minimiseGroDeathEventDataReturnsMinimisedDataWithAllEnrichmentFields() throws JsonProcessingException {
+        when(config.getEnrichmentFields()).thenReturn(List.of(
             EnrichmentField.SEX,
             EnrichmentField.DATE_OF_BIRTH,
             EnrichmentField.DATE_OF_DEATH,
@@ -175,38 +177,18 @@ class GroDeathNotificationMinimisationTest {
             EnrichmentField.ADDRESS_LINE_4,
             EnrichmentField.POSTCODE
         ));
-        var underTest = new GroDeathNotificationMinimisation();
+
+        underTest = new GroDeathNotificationMinimisation(config, objectMapper);
 
         var sqsMessage = new SQSMessage();
-        sqsMessage.setBody(
-            "{" +
-                "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfBirth\":\"1972-02-20\"," +
-                "\"dateOfDeath\":\"2021-12-31\"," +
-                "\"registrationId\":\"123456789\"," +
-                "\"eventTime\":\"2022-01-05T12:03:52\"," +
-                "\"verificationLevel\":\"1\"," +
-                "\"partialMonthOfDeath\":\"12\"," +
-                "\"partialYearOfDeath\":\"2021\"," +
-                "\"forenames\":\"Bob Burt\"," +
-                "\"surname\":\"Smith\"," +
-                "\"maidenSurname\":\"Jane\"," +
-                "\"addressLine1\":\"888 Death House\"," +
-                "\"addressLine2\":\"8 Death lane\"," +
-                "\"addressLine3\":\"Deadington\"," +
-                "\"addressLine4\":\"Deadshire\"," +
-                "\"postcode\":\"XX1 1XX\"" +
-                "}"
-        );
+        sqsMessage.setBody(enrichedDataJson);
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        config.close();
-
         verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
+        verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
         assertEquals(GroSex.FEMALE, result.eventDetails().sex());
         assertEquals(LocalDate.parse("1972-02-20"), result.eventDetails().dateOfBirth());

@@ -18,6 +18,7 @@ import uk.gov.di.data.lep.library.services.AwsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -74,7 +75,7 @@ class GroDeathValidationTest {
         verify(logger).log("Validating request");
         verify(logger).log("Failed to validate request");
 
-        assertEquals("Mock for UnrecognizedPropertyException, hashCode: 2108006254", exception.getMessage());
+        assert(exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
 
     }
 

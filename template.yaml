@@ -155,7 +155,9 @@ Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
+      # checkov:skip=CKV_AWS_120: We do not need gateway caching on a post only gateway.
       StageName: Prod
+      TracingEnabled: true
       Domain:
         DomainName: !If
           - IsDev
@@ -170,6 +172,28 @@ Resources:
             - Fn::ImportValue: HostedZoneId
           EvaluateTargetHealth: true
           IpV6: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiGatewayLogGroup.Arn
+        Format: >-
+          {
+          "requestId":"$context.requestId",
+          "ip":"$context.identity.sourceIp",
+          "requestTime":"$context.requestTime",
+          "httpMethod":"$context.httpMethod",
+          "path":"$context.path",
+          "routeKey":"$context.routeKey",
+          "status":"$context.status",
+          "protocol":"$context.protocol",
+          "responseLatency":"$context.responseLatency",
+          "responseLength":"$context.responseLength"
+          }
+
+  ApiGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/apigateway/${AWS::StackName}-access-logs"
+      RetentionInDays: 14
+      KmsKeyId: !GetAtt MasterKmsKey.Arn
 
   DeathValidationDlq:
     Type: AWS::SQS::Queue

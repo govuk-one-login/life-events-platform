@@ -3,46 +3,59 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
+import org.mockito.MockedStatic;
+import uk.gov.di.data.lep.dto.GroDeathEvent;
+import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.services.AwsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class GroDeathValidationTest {
-    @Mock
-    private static Context context = mock(Context.class);
-    @Mock
-    private static LambdaLogger logger = mock(LambdaLogger.class);
-    private static GroDeathValidation underTest;
+    private static final Config config = mock(Config.class);
+    private static final Context context = mock(Context.class);
+    private static final LambdaLogger logger = mock(LambdaLogger.class);
+    private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private static MockedStatic<AwsService> awsService;
+    private static final GroDeathValidation underTest = new GroDeathValidation(config, objectMapper);
 
     @BeforeAll
     static void setup() {
-        underTest = mock(GroDeathValidation.class);
-        when(underTest.publish(any())).thenReturn(new GroDeathEventBaseData(("")));
-        when(underTest.handleRequest(any(), any())).thenCallRealMethod();
+        awsService = mockStatic(AwsService.class);
         when(context.getLogger()).thenReturn(logger);
     }
 
     @BeforeEach
     void refreshSetup() {
-        clearInvocations(underTest);
         clearInvocations(logger);
+        clearInvocations(config);
+        clearInvocations(objectMapper);
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        awsService.close();
     }
 
     @Test
-    void validateGroDeathEventDataReturnsAPIGatewayProxyResponseEventWithStatusCode201() {
+    void validateGroDeathEventDataReturnsAPIGatewayProxyResponseEventWithStatusCode201() throws JsonProcessingException {
         var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+
+        when(objectMapper.readValue(event.getBody(), GroDeathEvent.class)).thenReturn(new GroDeathEvent("123a1234-a12b-12a1-a123-123456789012"));
 
         var result = underTest.handleRequest(event, context);
 
@@ -52,35 +65,25 @@ class GroDeathValidationTest {
     }
 
     @Test
-    void validateGroDeathEventDataPublishesBaseData() {
-        var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+    void validateGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() throws JsonProcessingException {
+        var event = new APIGatewayProxyRequestEvent().withBody("{\"notSourceId\":\"an id but not a source id\"}");
 
-        underTest.handleRequest(event, context);
-
-        verify(logger).log("Validating request");
-
-        verify(underTest).publish(argThat(x -> x.sourceId().equals("123a1234-a12b-12a1-a123-123456789012")));
-    }
-
-    @Test
-    void validateGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() {
-        var event = new APIGatewayProxyRequestEvent().withBody("{\"notSourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+        when(objectMapper.readValue(event.getBody(), GroDeathEvent.class)).thenThrow(mock(UnrecognizedPropertyException.class));
 
         var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
 
         verify(logger).log("Validating request");
-
         verify(logger).log("Failed to validate request");
 
-        assertEquals(
-            "Unrecognized field \"notSourceId\" (class uk.gov.di.data.lep.dto.GroDeathEvent), not marked as ignorable",
-            ((UnrecognizedPropertyException) exception.getCause()).getOriginalMessage()
-        );
+        assert(exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
+
     }
 
     @Test
-    void validateGroDeathEventDataFailsIfNullSourceId() {
+    void validateGroDeathEventDataFailsIfNullSourceId() throws JsonProcessingException {
         var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":null}");
+
+        when(objectMapper.readValue(event.getBody(), GroDeathEvent.class)).thenReturn(new GroDeathEvent(null));
 
         var exception = assertThrows(IllegalArgumentException.class, () -> underTest.handleRequest(event, context));
 

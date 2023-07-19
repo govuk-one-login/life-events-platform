@@ -1,8 +1,8 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import software.amazon.lambda.powertools.logging.Logging;
@@ -12,7 +12,6 @@ import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
-import uk.gov.di.data.lep.library.LambdaHandler;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

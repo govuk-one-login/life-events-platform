@@ -368,7 +368,7 @@ Resources:
     Type: AWS::XRay::ResourcePolicy
     Properties:
       BypassPolicyLockoutCheck: false
-      PolicyName: AllowSNSXrayTracing
+      PolicyName: AllowSNSXrayTracinghanleo
       PolicyDocument: !Sub "{
           \"Version\": \"2012-10-17\",
           \"Statement\": [

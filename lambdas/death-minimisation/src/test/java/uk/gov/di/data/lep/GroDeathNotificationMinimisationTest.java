@@ -12,6 +12,7 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class GroDeathNotificationMinimisationTest {
+    private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final Context context = mock(Context.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
@@ -76,6 +78,7 @@ class GroDeathNotificationMinimisationTest {
 
     @BeforeEach
     void refreshSetup() {
+        clearInvocations(awsService);
         clearInvocations(config);
         clearInvocations(objectMapper);
     }
@@ -84,7 +87,7 @@ class GroDeathNotificationMinimisationTest {
     void minimiseGroDeathEventDataReturnsMinimisedDataWithNoEnrichmentFields() throws JsonProcessingException {
         when(config.getEnrichmentFields()).thenReturn(List.of());
 
-        underTest = new GroDeathNotificationMinimisation(config, objectMapper);
+        underTest = new GroDeathNotificationMinimisation(awsService, config, objectMapper);
 
         var sqsMessage = new SQSMessage();
         sqsMessage.setBody(enrichedDataJson);
@@ -122,7 +125,7 @@ class GroDeathNotificationMinimisationTest {
             EnrichmentField.POSTCODE
         ));
 
-        underTest = new GroDeathNotificationMinimisation(config, objectMapper);
+        underTest = new GroDeathNotificationMinimisation(awsService, config, objectMapper);
 
         var sqsMessage = new SQSMessage();
         sqsMessage.setBody(enrichedDataJson);
@@ -171,7 +174,7 @@ class GroDeathNotificationMinimisationTest {
             EnrichmentField.POSTCODE
         ));
 
-        underTest = new GroDeathNotificationMinimisation(config, objectMapper);
+        underTest = new GroDeathNotificationMinimisation(awsService, config, objectMapper);
 
         var sqsMessage = new SQSMessage();
         sqsMessage.setBody(enrichedDataJson);

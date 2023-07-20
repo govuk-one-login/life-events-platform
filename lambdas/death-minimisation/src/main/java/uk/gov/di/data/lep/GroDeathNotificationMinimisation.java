@@ -14,6 +14,7 @@ import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.EventType;
+import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +27,8 @@ public class GroDeathNotificationMinimisation
     public GroDeathNotificationMinimisation() {
     }
 
-    public GroDeathNotificationMinimisation(Config config, ObjectMapper objectMapper) {
-        super(config, objectMapper);
+    public GroDeathNotificationMinimisation(AwsService awsService, Config config, ObjectMapper objectMapper) {
+        super(awsService, config, objectMapper);
     }
 
     @Override

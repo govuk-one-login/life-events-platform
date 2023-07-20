@@ -12,15 +12,16 @@ import uk.gov.di.data.lep.dto.GroDeathEvent;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.LambdaHandler;
+import uk.gov.di.data.lep.library.services.AwsService;
 
 public class GroDeathValidation
     extends LambdaHandler<GroDeathEventBaseData>
     implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-    protected GroDeathValidation() {
+    public GroDeathValidation() {
     }
 
-    protected GroDeathValidation(Config config, ObjectMapper objectMapper) {
-        super(config, objectMapper);
+    public GroDeathValidation(AwsService awsService, Config config, ObjectMapper objectMapper) {
+        super(awsService, config, objectMapper);
     }
 
     @Override

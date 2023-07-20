@@ -5,11 +5,8 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import uk.gov.di.data.lep.dto.GroDeathEvent;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -18,30 +15,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 class GroDeathValidationTest {
     private static final Config config = mock(Config.class);
     private static final Context context = mock(Context.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private static MockedStatic<AwsService> awsService;
-    private static final GroDeathValidation underTest = new GroDeathValidation(config, objectMapper);
-
-    @BeforeAll
-    static void setup() {
-        awsService = mockStatic(AwsService.class);
-    }
+    private static final AwsService awsService = mock(AwsService.class);
+    private static final GroDeathValidation underTest = new GroDeathValidation(awsService, config, objectMapper);
 
     @BeforeEach
     void refreshSetup() {
+        clearInvocations(awsService);
         clearInvocations(config);
         clearInvocations(objectMapper);
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        awsService.close();
     }
 
     @Test

@@ -11,16 +11,19 @@ import uk.gov.di.data.lep.library.services.Mapper;
 
 public abstract class LambdaHandler<O> {
     protected Logger logger = LogManager.getLogger();
+    protected final AwsService awsService;
     protected final Config config;
     protected final ObjectMapper objectMapper;
 
     protected LambdaHandler() {
         this(
+            new AwsService(),
             new Config(),
             new Mapper().objectMapper());
     }
 
-    protected LambdaHandler(Config config, ObjectMapper objectMapper) {
+    protected LambdaHandler(AwsService awsService, Config config, ObjectMapper objectMapper) {
+        this.awsService = awsService;
         this.config = config;
         this.objectMapper = objectMapper;
     }
@@ -37,11 +40,11 @@ public abstract class LambdaHandler<O> {
 
         if (config.getTargetQueue() != null) {
             logger.info("Putting message on target queue: " + config.getTargetQueue());
-            AwsService.putOnQueue(message);
+            awsService.putOnQueue(message);
         }
         if (config.getTargetTopic() != null) {
             logger.info("Putting message on target topic: " + config.getTargetTopic());
-            AwsService.putOnTopic(message);
+            awsService.putOnTopic(message);
         }
 
         return output;

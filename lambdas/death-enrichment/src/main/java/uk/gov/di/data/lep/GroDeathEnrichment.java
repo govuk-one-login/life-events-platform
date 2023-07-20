@@ -23,21 +23,20 @@ public class GroDeathEnrichment
     @Tracing
     @Logging(clearState = true)
     public GroDeathEventEnrichedData handleRequest(SQSEvent sqsEvent, Context context) {
-        logger = context.getLogger();
         try {
             var record = sqsEvent.getRecords().get(0);
             var baseData = new ObjectMapper().readValue(record.getBody(), GroDeathEventBaseData.class);
             var enrichedData = enrichData(baseData);
             return publish(enrichedData);
         } catch (JsonProcessingException e) {
-            logger.log("Failed to validate request");
+            logger.error("Failed to validate request");
             throw new RuntimeException(e);
         }
     }
 
     @Tracing
     public GroDeathEventEnrichedData enrichData(GroDeathEventBaseData baseData) {
-        logger.log("Enriching data (sourceId: " + baseData.sourceId() + ")");
+        logger.info("Enriching data (sourceId: " + baseData.sourceId() + ")");
         var enrichmentData = getEnrichmentData(baseData.sourceId());
 
         return new GroDeathEventEnrichedData(

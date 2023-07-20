@@ -21,14 +21,12 @@ public class GroDeathValidation
 
     protected GroDeathValidation(Config config, ObjectMapper objectMapper) {
         super(config, objectMapper);
-
     }
 
     @Override
     @Tracing
     @Logging(clearState = true)
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent apiRequest, Context context) {
-        logger = context.getLogger();
         var event = validateRequest(apiRequest);
         publish(event);
         return new APIGatewayProxyResponseEvent().withStatusCode(201);
@@ -36,18 +34,19 @@ public class GroDeathValidation
 
     @Tracing
     private GroDeathEventBaseData validateRequest(APIGatewayProxyRequestEvent event) {
-        logger.log("Validating request");
+        logger.info("Validating request");
 
         GroDeathEvent groDeathEvent;
         try {
             groDeathEvent = objectMapper.readValue(event.getBody(), GroDeathEvent.class);
         } catch (JsonProcessingException e) {
-            logger.log("Failed to validate request");
+            logger.error("Failed to validate request");
             throw new RuntimeException(e);
         }
         var sourceId = groDeathEvent.sourceId();
 
         if (sourceId == null) {
+            logger.warn("sourceId cannot be null");
             throw new IllegalArgumentException("sourceId cannot be null");
         }
 

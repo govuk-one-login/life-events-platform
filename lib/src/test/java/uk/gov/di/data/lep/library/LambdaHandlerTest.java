@@ -1,8 +1,8 @@
 package uk.gov.di.data.lep.library;
 
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class LambdaHandlerTest {
     private static final Config config = mock(Config.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private static final LambdaLogger logger = mock(LambdaLogger.class);
+    private static final Logger logger = mock(Logger.class);
     private static MockedStatic<AwsService> awsService;
     private static final LambdaHandler<GroDeathEventEnrichedData> underTest = new TestLambda(config, objectMapper);
 
@@ -74,7 +74,7 @@ public class LambdaHandlerTest {
 
         underTest.publish(output);
 
-        verify(logger).log("Putting message on target queue: targetQueueURL");
+        verify(logger).info("Putting message on target queue: targetQueueURL");
 
         awsService.verify(() -> AwsService.putOnQueue("mappedQueueOutput"));
     }
@@ -105,7 +105,7 @@ public class LambdaHandlerTest {
 
         underTest.publish(output);
 
-        verify(logger).log("Putting message on target topic: targetTopicARN");
+        verify(logger).info("Putting message on target topic: targetTopicARN");
 
         awsService.verify(() -> AwsService.putOnTopic("mappedTopicOutput"));
     }

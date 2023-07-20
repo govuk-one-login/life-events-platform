@@ -34,21 +34,20 @@ public class GroDeathNotificationMinimisation
     @Tracing
     @Logging(clearState = true)
     public GroDeathEventNotification handleRequest(SQSEvent sqsEvent, Context context) {
-        logger = context.getLogger();
         try {
             var record = sqsEvent.getRecords().get(0);
             var enrichedData = objectMapper.readValue(record.getBody(), GroDeathEventEnrichedData.class);
             var minimisedData = minimiseEnrichedData(enrichedData);
             return publish(minimisedData);
         } catch (JsonProcessingException e) {
-            logger.log("Failed to validate request");
+            logger.error("Failed to validate request");
             throw new RuntimeException(e);
         }
     }
 
     @Tracing
     private GroDeathEventNotification minimiseEnrichedData(GroDeathEventEnrichedData enrichedData) {
-        logger.log("Minimising enriched data (sourceId: " + enrichedData.sourceId() + ")");
+        logger.info("Minimising enriched data (sourceId: " + enrichedData.sourceId() + ")");
 
         return new GroDeathEventNotification(
             UUID.randomUUID(),

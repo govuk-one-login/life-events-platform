@@ -24,17 +24,6 @@ import static org.mockito.Mockito.when;
 
 class GroDeathEnrichmentTest {
     private static final Context context = mock(Context.class);
-    private static final LambdaLogger logger = mock(LambdaLogger.class);
-
-    @BeforeAll
-    static void setup() {
-        when(context.getLogger()).thenReturn(logger);
-    }
-
-    @BeforeEach
-    void refreshSetup() {
-        clearInvocations(logger);
-    }
 
     @Test
     void enrichGroDeathEventDataReturnsEnrichedData() {
@@ -46,8 +35,6 @@ class GroDeathEnrichmentTest {
         sqsEvent.setRecords(List.of(sqsMessage));
 
         var result = underTest.handleRequest(sqsEvent, context);
-
-        verify(logger).log("Enriching data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
 
         assertEquals("123a1234-a12b-12a1-a123-123456789012", result.sourceId());
         assertEquals(GroSex.FEMALE, result.sex());

@@ -1,15 +1,16 @@
 package uk.gov.di.data.lep.library;
 
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 public abstract class LambdaHandler<O> {
-    public LambdaLogger logger;
+    protected Logger logger = LogManager.getLogger();
     protected final Config config;
     protected final ObjectMapper objectMapper;
 
@@ -30,16 +31,16 @@ public abstract class LambdaHandler<O> {
         try {
             message = objectMapper.writeValueAsString(output);
         } catch (JsonProcessingException e) {
-            logger.log("Failed to map lambda output to string for publishing");
+            logger.info("Failed to map lambda output to string for publishing");
             throw new RuntimeException(e);
         }
 
         if (config.getTargetQueue() != null) {
-            logger.log("Putting message on target queue: " + config.getTargetQueue());
+            logger.info("Putting message on target queue: " + config.getTargetQueue());
             AwsService.putOnQueue(message);
         }
         if (config.getTargetTopic() != null) {
-            logger.log("Putting message on target topic: " + config.getTargetTopic());
+            logger.info("Putting message on target topic: " + config.getTargetTopic());
             AwsService.putOnTopic(message);
         }
 

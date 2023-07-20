@@ -1,7 +1,6 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,9 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class GroDeathNotificationMinimisationTest {
-    private static final Context context = mock(Context.class);
-    private static final LambdaLogger logger = mock(LambdaLogger.class);
     private static final Config config = mock(Config.class);
+    private static final Context context = mock(Context.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static GroDeathNotificationMinimisation underTest;
     private static final String enrichedDataJson = "{" +
@@ -55,13 +53,11 @@ class GroDeathNotificationMinimisationTest {
 
     @BeforeAll
     static void setup() throws JsonProcessingException {
-        when(context.getLogger()).thenReturn(logger);
         when(objectMapper.readValue(anyString(), eq(GroDeathEventEnrichedData.class))).thenReturn(new GroDeathEventEnrichedData(
             "123a1234-a12b-12a1-a123-123456789012",
             GroSex.FEMALE,
             LocalDate.parse("1972-02-20"),
-            LocalDate.parse(
-                "2021-12-31"),
+            LocalDate.parse("2021-12-31"),
             "123456789",
             LocalDateTime.parse("2022-01-05T12:03:52"),
             "1",
@@ -80,7 +76,6 @@ class GroDeathNotificationMinimisationTest {
 
     @BeforeEach
     void refreshSetup() {
-        clearInvocations(logger);
         clearInvocations(config);
         clearInvocations(objectMapper);
     }
@@ -98,7 +93,6 @@ class GroDeathNotificationMinimisationTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
         verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
         assertNull(result.eventDetails().sex());
@@ -137,7 +131,6 @@ class GroDeathNotificationMinimisationTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
         verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
         assertEquals(GroSex.FEMALE, result.eventDetails().sex());
@@ -187,7 +180,6 @@ class GroDeathNotificationMinimisationTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        verify(logger).log("Minimising enriched data (sourceId: 123a1234-a12b-12a1-a123-123456789012)");
         verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
         assertEquals(GroSex.FEMALE, result.eventDetails().sex());

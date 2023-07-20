@@ -3,22 +3,48 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
+import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class GroDeathEnrichmentTest {
+    private static final AwsService awsService = mock(AwsService.class);
+    private static final Config config = mock(Config.class);
     private static final Context context = mock(Context.class);
-
+    private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private static final GroDeathEnrichment underTest = new GroDeathEnrichment(awsService, config, objectMapper);
+    @BeforeAll
+    static void setup() throws JsonProcessingException {
+        when(objectMapper.readValue(anyString(), eq(GroDeathEventBaseData.class))).thenReturn(new GroDeathEventBaseData(
+            "123a1234-a12b-12a1-a123-123456789012"
+        ));
+    }
+    @BeforeEach
+    void refreshSetup() {
+        clearInvocations(awsService);
+        clearInvocations(config);
+        clearInvocations(objectMapper);
+    }
     @Test
     void enrichGroDeathEventDataReturnsEnrichedData() {
-        var underTest = new GroDeathEnrichment();
 
         var sqsMessage = new SQSMessage();
         sqsMessage.setBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");

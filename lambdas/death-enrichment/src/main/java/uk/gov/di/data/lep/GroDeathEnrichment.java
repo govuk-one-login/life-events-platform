@@ -8,10 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
+import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,13 +21,19 @@ import java.time.LocalDateTime;
 public class GroDeathEnrichment
     extends LambdaHandler<GroDeathEventEnrichedData>
     implements RequestHandler<SQSEvent, GroDeathEventEnrichedData> {
+    public GroDeathEnrichment() {
+    }
+
+    public GroDeathEnrichment(AwsService awsService, Config config, ObjectMapper objectMapper) {
+        super(awsService, config, objectMapper);
+    }
     @Override
     @Tracing
     @Logging(clearState = true)
     public GroDeathEventEnrichedData handleRequest(SQSEvent sqsEvent, Context context) {
         try {
             var record = sqsEvent.getRecords().get(0);
-            var baseData = new ObjectMapper().readValue(record.getBody(), GroDeathEventBaseData.class);
+            var baseData = objectMapper.readValue(record.getBody(), GroDeathEventBaseData.class);
             var enrichedData = enrichData(baseData);
             return publish(enrichedData);
         } catch (JsonProcessingException e) {

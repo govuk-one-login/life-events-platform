@@ -6,7 +6,7 @@ dependencyLocking {
 }
 
 plugins {
-  id("org.springframework.boot") version "3.1.1"
+  id("org.springframework.boot") version "3.1.2"
   id("io.spring.dependency-management") version "1.1.2"
   id("org.jmailen.kotlinter") version "3.15.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.105"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.106"))
   implementation("software.amazon.awssdk:cloudwatch")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:lambda")
@@ -89,7 +89,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.18.3"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.508") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.509") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(module = "mockito-core")

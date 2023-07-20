@@ -39,6 +39,10 @@ Parameters:
   Environment:
     Type: String
     Description: The name of the environment to deploy to
+  Developer:
+    Type: String
+    Description: The name of the developer running the stack in dev
+    Default: ""
   CodeSigningConfigArn:
     Type: String
     Description: The ARN of the Code Signing Config to use, provided by the deployment pipeline
@@ -59,6 +63,23 @@ Conditions:
       - Fn::Equals:
           - !Ref PermissionsBoundary
           - "none"
+  IsDev:
+    Fn::Equals:
+      - !Ref Environment
+      - "dev"
+
+Mappings:
+  EnvironmentConfiguration:
+    dev:
+      domainName: life-events.dev.account.gov.uk
+    build:
+      domainName: life-events.build.account.gov.uk
+    staging:
+      domainName: life-events.staging.account.gov.uk
+    integration:
+      domainName: life-events.integration.account.gov.uk
+    production:
+      domainName: life-events.account.gov.uk
 
 Resources:
   MasterKmsKey:
@@ -93,6 +114,86 @@ Resources:
               - "kms:Decrypt"
               - "kms:GenerateDataKey*"
             Resource: "*"
+
+  DeveloperHostedZone:
+    Type: AWS::Route53::HostedZone
+    Condition: IsDev
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+
+  DeveloperRecordSet:
+    Type: AWS::Route53::RecordSet
+    Condition: IsDev
+    Properties:
+      Name: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+      Type: NS
+      HostedZoneId: !ImportValue HostedZoneId
+      ResourceRecords: !GetAtt DeveloperHostedZone.NameServers
+      TTL: 60
+
+  ApiGatewayCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !If
+        - IsDev
+        - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+        - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+      DomainValidationOptions:
+        - DomainName: !If
+            - IsDev
+            - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+            - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+          HostedZoneId: !If
+            - IsDev
+            - !Ref DeveloperHostedZone
+            - !ImportValue HostedZoneId
+      ValidationMethod: DNS
+      CertificateTransparencyLoggingPreference: ENABLED
+
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      # checkov:skip=CKV_AWS_120: We do not need gateway caching on a post only gateway.
+      StageName: Prod
+      TracingEnabled: true
+      Domain:
+        DomainName: !If
+          - IsDev
+          - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+          - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+        CertificateArn: !Ref ApiGatewayCertificate
+        EndpointConfiguration: REGIONAL
+        Route53:
+          HostedZoneId: !If
+            - IsDev
+            - !Ref DeveloperHostedZone
+            - Fn::ImportValue: HostedZoneId
+          EvaluateTargetHealth: true
+          IpV6: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiGatewayLogGroup.Arn
+        Format: >-
+          {
+          "requestId":"$context.requestId",
+          "ip":"$context.identity.sourceIp",
+          "requestTime":"$context.requestTime",
+          "httpMethod":"$context.httpMethod",
+          "path":"$context.path",
+          "routeKey":"$context.routeKey",
+          "status":"$context.status",
+          "protocol":"$context.protocol",
+          "responseLatency":"$context.responseLatency",
+          "responseLength":"$context.responseLength"
+          }
+
+  ApiGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/apigateway/${AWS::StackName}-access-logs"
+      RetentionInDays: 14
+      KmsKeyId: !GetAtt MasterKmsKey.Arn
 
   DeathValidationDlq:
     Type: AWS::SQS::Queue
@@ -175,17 +276,18 @@ Resources:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub "death-validation-${Environment}"
+      FunctionName: !Sub "death-validation-${Environment}${Developer}"
       CodeUri: lambdas/death-validation
       Handler: uk.gov.di.data.lep.GroDeathValidation::handleRequest
       Environment:
         Variables:
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
-      AutoPublishAlias: DeathValidationFunction
+      AutoPublishAlias: latest
       Events:
         DeathApiEvent:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGateway
             Method: POST
             Path: /events/deathNotification/
       DeadLetterQueue:
@@ -209,13 +311,13 @@ Resources:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub "death-enrichment-${Environment}"
+      FunctionName: !Sub "death-enrichment-${Environment}${Developer}"
       CodeUri: lambdas/death-enrichment
       Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
       Environment:
         Variables:
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
-      AutoPublishAlias: DeathEnrichmentFunction
+      AutoPublishAlias: latest
       Events:
         DeathValidatedEvent:
           Type: SQS
@@ -243,14 +345,14 @@ Resources:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub "death-minimisation-${Environment}"
+      FunctionName: !Sub "death-minimisation-${Environment}${Developer}"
       CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
       Environment:
         Variables:
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
           TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
-      AutoPublishAlias: DeathMinimisationFunction
+      AutoPublishAlias: latest
       Events:
         DeathEnrichedEvent:
           Type: SQS
@@ -346,7 +448,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${Environment} Private Subnet (AZ1)
+          Value: !Sub "${Environment}${Developer} Private Subnet (AZ1)"
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
@@ -357,7 +459,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${Environment} Private Subnet (AZ2)
+          Value: !Sub "${Environment}${Developer} Private Subnet (AZ2)"
 
   RouteTable:
     Type: AWS::EC2::RouteTable
@@ -368,7 +470,7 @@ Resources:
     Type: AWS::XRay::ResourcePolicy
     Properties:
       BypassPolicyLockoutCheck: false
-      PolicyName: AllowSNSXrayTracinghanleo
+      PolicyName: !Sub "AllowSNSXrayTracing${Developer}"
       PolicyDocument: !Sub "{
           \"Version\": \"2012-10-17\",
           \"Statement\": [

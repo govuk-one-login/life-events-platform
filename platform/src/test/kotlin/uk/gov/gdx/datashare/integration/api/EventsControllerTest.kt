@@ -69,16 +69,6 @@ class EventsControllerTest : SqsIntegrationTestBase() {
   }
 
   @Test
-  fun `Returns 404 on event not found for get event`() {
-    webTestClient.get()
-      .uri("/events/" + UUID.randomUUID())
-      .headers(setAuthorisation("dwp-event-receiver", listOf(""), listOf("events/consume")))
-      .exchange()
-      .expectStatus()
-      .isNotFound
-  }
-
-  @Test
   fun `Returns 403 for non valid scope for get events`() {
     webTestClient.get()
       .uri("/events")

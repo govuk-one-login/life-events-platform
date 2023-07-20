@@ -81,7 +81,7 @@ s3_prefix = "<your-name>-lev"
 region = "eu-west-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "Environment=\"dev-<your-name>\""
+parameter_overrides = "Environment=\"dev\" Developer=\"<your-name>\""
 ```
 
 Once you have added this, you can then run the below while logged into the dev environment via SSO to deploy to dev:

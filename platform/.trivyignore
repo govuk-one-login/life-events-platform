@@ -12,3 +12,10 @@ CVE-2023-2975
 
 # GPC-472: We are not using Spring as a reactive web app so this is not a vulnerability exposed for us
 CVE-2023-34036
+
+# GPC-496: Not vulnerable as we don't use OpenSSLs DH check function with unvalidated key lengths
+CVE-2023-3446
+
+# GPC-499: There is currently no fix for this, as soon as there is an update to spring security we will upgrade our version
+CVE-2023-34035
+

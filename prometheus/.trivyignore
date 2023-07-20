@@ -11,3 +11,6 @@ GHSA-2w8w-qhg4-f78j
 
 # GPC-470: Only affect empty authentication data, which does not impact us
 CVE-2023-2975
+
+# GPC-496: Not vulnerable as we don't use OpenSSLs DH check function with unvalidated key lengths
+CVE-2023-3446

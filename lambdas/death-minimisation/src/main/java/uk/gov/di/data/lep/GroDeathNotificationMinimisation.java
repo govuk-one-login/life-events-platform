@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.GroDeathEventNotification;
@@ -22,6 +23,10 @@ import java.util.UUID;
 public class GroDeathNotificationMinimisation
     extends LambdaHandler<GroDeathEventNotification>
     implements RequestHandler<SQSEvent, GroDeathEventNotification> {
+    static {
+        logger = LogManager.getLogger();
+    }
+
     private final List<EnrichmentField> enrichmentFields = config.getEnrichmentFields();
 
     public GroDeathNotificationMinimisation() {

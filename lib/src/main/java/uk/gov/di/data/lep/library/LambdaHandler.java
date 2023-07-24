@@ -2,7 +2,6 @@ package uk.gov.di.data.lep.library;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.config.Config;
@@ -10,7 +9,7 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 public abstract class LambdaHandler<O> {
-    protected Logger logger = LogManager.getLogger();
+    protected static Logger logger;
     protected final AwsService awsService;
     protected final Config config;
     protected final ObjectMapper objectMapper;

@@ -9,7 +9,7 @@ ext {
             jacksonAnnotations   : "2.15.2",
             jacksonDatabind      : "2.15.2",
             jacksonDatatypeJsr310: "2.15.2",
-            junitJupiter         : "5.9.3",
+            junitJupiter         : "5.10.0",
             mockitoJunitJupiter  : "5.4.0",
             powertools           : "1.16.1",
             xrayInstrumentor     : "2.14.0"

@@ -283,8 +283,8 @@ Resources:
       Handler: uk.gov.di.data.lep.GroDeathValidation::handleRequest
       Environment:
         Variables:
-          TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
           POWERTOOLS_SERVICE_NAME: death-validation
+          TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
       AutoPublishAlias: latest
       Events:
         DeathApiEvent:
@@ -321,8 +321,8 @@ Resources:
       Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
       Environment:
         Variables:
-          TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
           POWERTOOLS_SERVICE_NAME: death-enrichment
+          TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
       AutoPublishAlias: latest
       Events:
         DeathValidatedEvent:
@@ -358,8 +358,9 @@ Resources:
       Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
       Environment:
         Variables:
-          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+          POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
+          ENRICHMENT_FIELDS: FORENAMES, SURNAME
       AutoPublishAlias: latest
       Events:
         DeathEnrichedEvent:

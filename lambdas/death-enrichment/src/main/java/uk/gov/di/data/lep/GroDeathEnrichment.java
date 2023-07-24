@@ -5,7 +5,6 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
@@ -22,9 +21,6 @@ import java.time.LocalDateTime;
 public class GroDeathEnrichment
     extends LambdaHandler<GroDeathEventEnrichedData>
     implements RequestHandler<SQSEvent, GroDeathEventEnrichedData> {
-    static {
-        logger = LogManager.getLogger();
-    }
 
     public GroDeathEnrichment() {
     }
@@ -32,6 +28,7 @@ public class GroDeathEnrichment
     public GroDeathEnrichment(AwsService awsService, Config config, ObjectMapper objectMapper) {
         super(awsService, config, objectMapper);
     }
+
     @Override
     @Tracing
     @Logging(clearState = true)

@@ -18,9 +18,6 @@ import uk.gov.di.data.lep.library.services.AwsService;
 public class GroDeathValidation
     extends LambdaHandler<GroDeathEventBaseData>
     implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-    static {
-        logger = LogManager.getLogger(GroDeathValidation.class);
-    }
 
     public GroDeathValidation() {
     }

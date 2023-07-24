@@ -28,13 +28,13 @@ Resources:
         - !Sub life-events.${Environment}.account.gov.uk
 
 Outputs:
-  HomeHostedZoneNameServers:
+  HostedZoneNameServers:
     Value: !Join
       - ","
       - !GetAtt HostedZone.NameServers
     Export:
       Name: HostedZoneNameServers
-  HomeHostedZoneId:
+  HostedZoneId:
     Value: !GetAtt HostedZone.Id
     Export:
       Name: HostedZoneId

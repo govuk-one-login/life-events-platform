@@ -19,10 +19,13 @@ Slack Channel ID for build notifications in either of the commands below.
 
 ### Creating a New Stack
 
+The name of the stack is `ia`, this is due to limitations in the allowed length of the nested stacks when calling them
+from secure pipelines.
+
 Set your AWS profile to the correct environment, the run:
 
 ```bash
-aws cloudformation create-stack --stack-name initialise-account \
+aws cloudformation create-stack --stack-name ia \
   --template-body file://$(pwd)/template.yaml \
   --region eu-west-2 \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
@@ -39,7 +42,7 @@ aws cloudformation create-stack --stack-name initialise-account \
 Set your AWS profile to the correct environment, the run:
 
 ```bash
-aws cloudformation update-stack --stack-name initialise-account \
+aws cloudformation update-stack --stack-name ia \
   --template-body file://$(pwd)/template.yaml \
   --region eu-west-2 \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
@@ -50,14 +53,3 @@ aws cloudformation update-stack --stack-name initialise-account \
          Key=Environment,Value="<environment>" \
          Key=Owner,Value="di-life-events-platform@digital.cabinet-office.gov.uk"
 ```
-
-
-aws cloudformation update-stack --stack-name initialise-account \
-  --template-body file://$(pwd)/template.yaml \
-  --region eu-west-2 \
-  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
-  --parameters ParameterKey=Environment,ParameterValue="dev" \
-  --tags Key=Product,Value="GOV.UK Sign In" \
-  Key=System,Value="Life Events Platform" \
-  Key=Environment,Value="dev" \
-  Key=Owner,Value="di-life-events-platform@digital.cabinet-office.gov.uk"

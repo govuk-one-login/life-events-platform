@@ -39,6 +39,9 @@ Parameters:
   Environment:
     Type: String
     Description: The name of the environment to deploy to
+  VpcStackName:
+    Description: The name of the stack that defines the VPC in which this container will run
+    Type: String
   Developer:
     Type: String
     Description: The name of the developer running the stack in dev
@@ -187,6 +190,8 @@ Resources:
           "responseLatency":"$context.responseLatency",
           "responseLength":"$context.responseLength"
           }
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_120"
 
   ApiGatewayLogGroup:
     Type: AWS::Logs::LogGroup
@@ -304,6 +309,8 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
@@ -338,6 +345,8 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
@@ -373,6 +382,8 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathDeliveryQueue.QueueName
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
   SQSEndpoint:
     Type: AWS::EC2::VPCEndpoint

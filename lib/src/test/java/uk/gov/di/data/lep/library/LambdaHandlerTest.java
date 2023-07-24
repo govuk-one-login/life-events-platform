@@ -1,13 +1,11 @@
 package uk.gov.di.data.lep.library;
 
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterAll;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
@@ -18,33 +16,25 @@ import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class LambdaHandlerTest {
     private static final Config config = mock(Config.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private static final LambdaLogger logger = mock(LambdaLogger.class);
-    private static MockedStatic<AwsService> awsService;
-    private static final LambdaHandler<GroDeathEventEnrichedData> underTest = new TestLambda(config, objectMapper);
+    private static final Logger logger = mock(Logger.class);
+    private static final AwsService awsService = mock(AwsService.class);
+    private static final LambdaHandler<GroDeathEventEnrichedData> underTest = new TestLambda(awsService, config, objectMapper);
 
     @BeforeAll
     public static void setup() {
-        awsService = mockStatic(AwsService.class);
         underTest.logger = logger;
     }
-
     @BeforeEach
     public void refreshSetup() {
         clearInvocations(config);
         clearInvocations(logger);
         clearInvocations(objectMapper);
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        awsService.close();
     }
 
     @Test
@@ -74,9 +64,9 @@ public class LambdaHandlerTest {
 
         underTest.publish(output);
 
-        verify(logger).log("Putting message on target queue: targetQueueURL");
+        verify(logger).info("Putting message on target queue: targetQueueURL");
 
-        awsService.verify(() -> AwsService.putOnQueue("mappedQueueOutput"));
+        verify(awsService).putOnQueue("mappedQueueOutput");
     }
 
     @Test
@@ -105,14 +95,14 @@ public class LambdaHandlerTest {
 
         underTest.publish(output);
 
-        verify(logger).log("Putting message on target topic: targetTopicARN");
+        verify(logger).info("Putting message on target topic: targetTopicARN");
 
-        awsService.verify(() -> AwsService.putOnTopic("mappedTopicOutput"));
+        verify(awsService).putOnTopic("mappedTopicOutput");
     }
 
     static class TestLambda extends LambdaHandler<GroDeathEventEnrichedData> {
-        public TestLambda(Config config, ObjectMapper objectMapper) {
-            super(config, objectMapper);
+        public TestLambda(AwsService awsService,Config config, ObjectMapper objectMapper) {
+            super(awsService, config, objectMapper);
         }
     }
 }

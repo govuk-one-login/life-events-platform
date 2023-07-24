@@ -14,6 +14,7 @@ import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.EventType;
+import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,29 +27,28 @@ public class GroDeathNotificationMinimisation
     public GroDeathNotificationMinimisation() {
     }
 
-    public GroDeathNotificationMinimisation(Config config, ObjectMapper objectMapper) {
-        super(config, objectMapper);
+    public GroDeathNotificationMinimisation(AwsService awsService, Config config, ObjectMapper objectMapper) {
+        super(awsService, config, objectMapper);
     }
 
     @Override
     @Tracing
     @Logging(clearState = true)
     public GroDeathEventNotification handleRequest(SQSEvent sqsEvent, Context context) {
-        logger = context.getLogger();
         try {
             var record = sqsEvent.getRecords().get(0);
             var enrichedData = objectMapper.readValue(record.getBody(), GroDeathEventEnrichedData.class);
             var minimisedData = minimiseEnrichedData(enrichedData);
             return publish(minimisedData);
         } catch (JsonProcessingException e) {
-            logger.log("Failed to validate request");
+            logger.error("Failed to validate request");
             throw new RuntimeException(e);
         }
     }
 
     @Tracing
     private GroDeathEventNotification minimiseEnrichedData(GroDeathEventEnrichedData enrichedData) {
-        logger.log("Minimising enriched data (sourceId: " + enrichedData.sourceId() + ")");
+        logger.info("Minimising enriched data (sourceId: " + enrichedData.sourceId() + ")");
 
         return new GroDeathEventNotification(
             UUID.randomUUID(),

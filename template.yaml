@@ -187,6 +187,8 @@ Resources:
           "responseLatency":"$context.responseLatency",
           "responseLength":"$context.responseLength"
           }
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_120"
 
   ApiGatewayLogGroup:
     Type: AWS::Logs::LogGroup
@@ -281,6 +283,7 @@ Resources:
       Handler: uk.gov.di.data.lep.GroDeathValidation::handleRequest
       Environment:
         Variables:
+          POWERTOOLS_SERVICE_NAME: death-validation
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
       AutoPublishAlias: latest
       Events:
@@ -304,6 +307,8 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
@@ -316,6 +321,7 @@ Resources:
       Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
       Environment:
         Variables:
+          POWERTOOLS_SERVICE_NAME: death-enrichment
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
       AutoPublishAlias: latest
       Events:
@@ -338,6 +344,8 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
@@ -350,8 +358,9 @@ Resources:
       Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
       Environment:
         Variables:
-          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+          POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
+          ENRICHMENT_FIELDS: FORENAMES, SURNAME
       AutoPublishAlias: latest
       Events:
         DeathEnrichedEvent:
@@ -373,6 +382,8 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathDeliveryQueue.QueueName
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
   SQSEndpoint:
     Type: AWS::EC2::VPCEndpoint

@@ -11,16 +11,16 @@ import uk.gov.di.data.lep.library.config.Config;
 public class AwsService {
     private static Config config;
 
-    protected AwsService() {
+    public AwsService() {
         this(new Config());
     }
 
-    protected AwsService(Config _config) {
+    public AwsService(Config _config) {
         config = _config;
     }
 
     @Tracing
-    public static void putOnQueue(String message) {
+    public void putOnQueue(String message) {
         var sqsClient = SqsClient.builder()
             .region(Region.EU_WEST_2)
             .build();
@@ -32,7 +32,7 @@ public class AwsService {
     }
 
     @Tracing
-    public static void putOnTopic(String message) {
+    public void putOnTopic(String message) {
         var snsClient = SnsClient.builder()
             .region(Region.EU_WEST_2)
             .build();

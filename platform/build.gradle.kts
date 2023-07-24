@@ -75,7 +75,7 @@ dependencies {
   implementation("io.micrometer:micrometer-registry-prometheus:1.11.2")
   implementation("io.opentelemetry:opentelemetry-api:1.28.0")
 
-  implementation("net.javacrumbs.shedlock:shedlock-spring:5.5.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:5.6.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.6.0")
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.5")

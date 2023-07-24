@@ -39,9 +39,6 @@ Parameters:
   Environment:
     Type: String
     Description: The name of the environment to deploy to
-  VpcStackName:
-    Description: The name of the stack that defines the VPC in which this container will run
-    Type: String
   Developer:
     Type: String
     Description: The name of the developer running the stack in dev

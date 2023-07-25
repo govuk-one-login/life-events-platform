@@ -33,7 +33,7 @@ Replace `<environment>` with `dev`, `build`, `staging`, `integration`, `producti
 
 ### Creating a New Stack
 
-Set your AWS profile to the correct environment, run `export ENVIRONMENT=<environment>` then run:
+Set your AWS profile to the correct environment, then run `export ENVIRONMENT=<environment>`, then run:
 
 ```bash
 aws cloudformation create-stack --stack-name dns-zones \

@@ -1,5 +1,4 @@
 package uk.gov.di.data.lep;
-import com.amazonaws.services.lambda.runtime.events.IamPolicyResponse.PolicyDocument;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;

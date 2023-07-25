@@ -23,13 +23,9 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
         var headers = event.getHeaders();
         var authorisationToken = headers.get("Authorization");
         var auth = "Deny";
-        logger.info(authorisationToken);
         var sub = JWT.decode(authorisationToken).getSubject();
         if (sub != null) {
             auth = "Allow";
-            logger.info("Auth allowed");
-        } else {
-            logger.info("Auth denied");
         }
 
         var eventContext = new HashMap<String, String>();
@@ -40,9 +36,7 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
 
         var arn = String.format("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", System.getenv("AWS_REGION"), proxyContext.getAccountId(), proxyContext.getApiId(), proxyContext.getStage(), proxyContext.getHttpMethod(), "*");
         var statement = Statement.builder().effect(auth).resource(arn).build();
-
         var policyDocument = PolicyDocument.builder().statements(Collections.singletonList(statement)).build();
-        logger.info(policyDocument);
 
         return AuthoriserResponse.builder().principalId(identity.getAccountId()).policyDocument(policyDocument).context(eventContext).build();
     }

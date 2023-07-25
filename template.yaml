@@ -22,8 +22,9 @@ Globals:
       ApplyOn: PublishedVersions
     VpcConfig:
       SubnetIds:
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
+        - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+        - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+        - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       SecurityGroupIds:
         - !Ref LambdaSecurityGroup
     CodeSigningConfigArn: !If
@@ -39,6 +40,9 @@ Parameters:
   Environment:
     Type: String
     Description: The name of the environment to deploy to
+  VpcStackName:
+    Type: String
+    Description: The name of the stack used to create the VPC
   Developer:
     Type: String
     Description: The name of the developer running the stack in dev
@@ -385,97 +389,19 @@ Resources:
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
-  SQSEndpoint:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      ServiceName: !Join
-        - ''
-        - - com.amazonaws.
-          - !Ref 'AWS::Region'
-          - .sqs
-      SubnetIds:
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
-      VpcId: !Ref Vpc
-      VpcEndpointType: Interface
-      SecurityGroupIds:
-        - !Ref EndpointSecurityGroup
-      PrivateDnsEnabled: true
-
-  SNSEndpoint:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      ServiceName: !Join
-        - ''
-        - - com.amazonaws.
-          - !Ref 'AWS::Region'
-          - .sns
-      SubnetIds:
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
-      VpcId: !Ref Vpc
-      VpcEndpointType: Interface
-      SecurityGroupIds:
-        - !Ref EndpointSecurityGroup
-      PrivateDnsEnabled: true
-
-  EndpointSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Endpoint Security Group
-      VpcId: !Ref Vpc
-      SecurityGroupIngress:
-        - CidrIp: !GetAtt Vpc.CidrBlock
-          Description: Allow inbound traffic from VPC cidr to port 443
-          FromPort: 443
-          IpProtocol: tcp
-          ToPort: 443
-
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Lambda Security Group
-      VpcId: !Ref Vpc
+      GroupDescription: Lambda Security Group permissions ruleset
+      VpcId:
+        Fn::ImportValue: !Sub ${VpcStackName}-VpcId
       SecurityGroupEgress:
-        - DestinationSecurityGroupId: !Ref EndpointSecurityGroup
-          Description: Allow outbound traffic to VPC endpoints
+        - DestinationSecurityGroupId:
+            Fn::ImportValue: !Sub ${VpcStackName}-AWSServicesEndpointSecurityGroupId
+          Description: Allow outbound traffic to vpc endpoints
           IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-
-  Vpc:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsHostnames: true
-      EnableDnsSupport: true
-
-  PrivateSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref Vpc
-      AvailabilityZone: !Select [ 0, !GetAZs  '' ]
-      CidrBlock: 10.0.0.0/24
-      MapPublicIpOnLaunch: false
-      Tags:
-        - Key: Name
-          Value: !Sub "${Environment}${Developer} Private Subnet (AZ1)"
-
-  PrivateSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref Vpc
-      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
-      CidrBlock: 10.0.1.0/24
-      MapPublicIpOnLaunch: false
-      Tags:
-        - Key: Name
-          Value: !Sub "${Environment}${Developer} Private Subnet (AZ2)"
-
-  RouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref Vpc
 
   XRayPolicy:
     Type: AWS::XRay::ResourcePolicy

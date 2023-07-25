@@ -29,8 +29,7 @@ aws cloudformation create-stack --stack-name ia \
   --template-body file://$(pwd)/template.yaml \
   --region eu-west-2 \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
-  --parameters ParameterKey=Environment,ParameterValue="<environment>" \
-  --parameters ParameterKey=SlackChannelId,ParameterValue="<channel-id>" \
+  --parameters ParameterKey=Environment,ParameterValue="<environment>" ParameterKey=SlackChannelId,ParameterValue="<channel-id>" \
   --tags Key=Product,Value="GOV.UK Sign In" \
          Key=System,Value="Life Events Platform" \
          Key=Environment,Value="<environment>" \
@@ -46,8 +45,7 @@ aws cloudformation update-stack --stack-name ia \
   --template-body file://$(pwd)/template.yaml \
   --region eu-west-2 \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
-  --parameters ParameterKey=Environment,ParameterValue="<environment>" \
-  --parameters ParameterKey=SlackChannelId,ParameterValue="<channel-id>" \
+  --parameters ParameterKey=Environment,ParameterValue="<environment>" ParameterKey=SlackChannelId,ParameterValue="<channel-id>" \
   --tags Key=Product,Value="GOV.UK Sign In" \
          Key=System,Value="Life Events Platform" \
          Key=Environment,Value="<environment>" \

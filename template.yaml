@@ -434,3 +434,25 @@ Resources:
             }
           ]
         }"
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub "UserPool-${Environment}${Developer}"
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      AccessTokenValidity: 60
+      AllowedOAuthFlows:
+        - "client_credentials"
+      AllowedOAuthFlowsUserPoolClient: true
+      EnableTokenRevocation: false
+      ExplicitAuthFlows:
+        - "ALLOW_USER_PASSWORD_AUTH"
+        - "ALLOW_REFRESH_TOKEN_AUTH"
+      GenerateSecret: true
+      PreventUserExistenceErrors: "ENABLED"
+      UserPoolId: !Ref CognitoUserPool
+      TokenValidityUnits:
+        AccessToken: "minutes"

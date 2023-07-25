@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.util.Map;
 
-@JsonDeserialize(builder = Response.Builder.class)
-public class Response {
+@JsonDeserialize(builder = AuthoriserResponse.Builder.class)
+public class AuthoriserResponse {
 
     @JsonProperty("principalId")
     private String principalId;
@@ -17,7 +17,7 @@ public class Response {
     @JsonProperty("context")
     private Map<String, String> context;
 
-    private Response(Builder builder) {
+    private AuthoriserResponse(Builder builder) {
         this.principalId = builder.principalId;
         this.policyDocument = builder.policyDocument;
         this.context = builder.context;
@@ -62,8 +62,8 @@ public class Response {
             return this;
         }
 
-        public Response build() {
-            return new Response(this);
+        public AuthoriserResponse build() {
+            return new AuthoriserResponse(this);
         }
     }
 }

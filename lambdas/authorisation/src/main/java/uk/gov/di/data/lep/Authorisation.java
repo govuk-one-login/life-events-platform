@@ -11,15 +11,14 @@ import software.amazon.lambda.powertools.tracing.Tracing;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
-public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent, Response> {
+public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent, AuthoriserResponse> {
     protected static Logger logger = LogManager.getLogger();
 
     @Override
     @Tracing
     @Logging(clearState = true)
-    public Response handleRequest(APIGatewayProxyRequestEvent event, Context context) {
+    public AuthoriserResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {
         logger.info("Authenticating and authorising request. Event parameter: " + event.toString());
         var headers = event.getHeaders();
         var authorisationToken = headers.get("Authorization");
@@ -45,6 +44,6 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
         var policyDocument = PolicyDocument.builder().statements(Collections.singletonList(statement)).build();
         logger.info(policyDocument);
 
-        return Response.builder().principalId(identity.getAccountId()).policyDocument(policyDocument).context(eventContext).build();
+        return AuthoriserResponse.builder().principalId(identity.getAccountId()).policyDocument(policyDocument).context(eventContext).build();
     }
 }

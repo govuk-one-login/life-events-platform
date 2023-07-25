@@ -201,6 +201,11 @@ Resources:
       RetentionInDays: 14
       KmsKeyId: !GetAtt MasterKmsKey.Arn
 
+  AuthorisationDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MasterKmsKey
+
   DeathValidationDlq:
     Type: AWS::SQS::Queue
     Properties:
@@ -275,6 +280,34 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       KmsMasterKeyId: !Ref MasterKmsKey
+
+  AuthorisationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub "authorisation-${Environment}${Developer}"
+      CodeUri: lambdas/authorisation
+      Handler: uk.gov.di.data.lep.Authorisation::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: authorisation
+      AutoPublishAlias: latest
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt AuthorisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+                - 'kms:GenerateDataKey'
+              Resource:
+                - !GetAtt MasterKmsKey.Arn
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
   DeathValidationFunction:
     Type: AWS::Serverless::Function

@@ -240,67 +240,6 @@ module "grafana" {
   hosted_zone_name = module.route53.name
 }
 
-module "security" {
-  source = "../modules/security"
-  providers = {
-    aws           = aws
-    aws.us-east-1 = aws.us-east-1
-  }
-
-  region      = data.aws_region.current.name
-  environment = local.env
-  account_id  = data.aws_caller_identity.current.account_id
-
-  s3_event_notification_sns_topic_arn = module.sns.topic_arn
-
-  lambda_cloudwatch_retention_days = 365
-
-  rules = [
-    {
-      rule            = "cis-aws-foundations-benchmark/v/1.4.0/1.6"
-      disabled_reason = "For this GDS created account this is not possible to enforce"
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECS.5"
-      disabled_reason = "Our ECS containers need write access to the root filesystem."
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECS.10"
-      disabled_reason = "Our ECS containers run on the latest fargate versions, as shown in the ci appspec template, however Security Hub is not picking this up."
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/ECR.2"
-      disabled_reason = "For grafana our tags needs to be mutable so that our latest and deployed version tracks the most recent, lev-api and aws-xray-daemon are both pull through repos so we cannot enforce immutable tags."
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/EC2.10"
-      disabled_reason = "GPC-315: We only use EC2 as bastions for access to our RDS, so we do not need to configure VPC endpoints for EC2."
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"
-      disabled_reason = "For this GDS created account this is not possible to enforce"
-    },
-  ]
-  global_rules = [
-    {
-      rule            = "cis-aws-foundations-benchmark/v/1.4.0/1.6"
-      disabled_reason = "For this GDS created account this is not possible to enforce"
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/CloudFront.1"
-      disabled_reason = "We do not use default root objects, as our CloudFronts direct all traffic through to the ALB and then to the servers, so default root objects don't make sense."
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/CloudFront.4"
-      disabled_reason = "Origin failover is not something we want with our system, as there is no useful static page for our API."
-    },
-    {
-      rule            = "aws-foundational-security-best-practices/v/1.0.0/IAM.6"
-      disabled_reason = "For this GDS created account this is not possible to enforce"
-    },
-  ]
-}
-
 module "ecr" {
   source = "../modules/ecr"
 }

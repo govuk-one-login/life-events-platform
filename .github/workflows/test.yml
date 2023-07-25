@@ -40,7 +40,7 @@ jobs:
           only-summary: true
 
       - name: Report test coverage
-        uses: madrapps/jacoco-report@7ce0d588f6d00dd4a7b63a597383332e0c5c72d0
+        uses: madrapps/jacoco-report@840f42ece53dc43fff0c026828358b1f541835b3
         if: ${{ github.event_name == 'pull_request' }}
         with:
           paths: ${{ github.workspace }}/platform/build/reports/jacoco/test/jacocoTestReport.xml

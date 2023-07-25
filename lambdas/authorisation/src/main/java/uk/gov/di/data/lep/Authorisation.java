@@ -34,10 +34,22 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
         var proxyContext = event.getRequestContext();
         var identity = proxyContext.getIdentity();
 
-        var arn = String.format("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", System.getenv("AWS_REGION"), proxyContext.getAccountId(), proxyContext.getApiId(), proxyContext.getStage(), proxyContext.getHttpMethod(), "*");
+        var arn = String.format(
+            "arn:aws:execute-api:%s:%s:%s/%s/%s/%s",
+            System.getenv("AWS_REGION"),
+            proxyContext.getAccountId(),
+            proxyContext.getApiId(),
+            proxyContext.getStage(),
+            proxyContext.getHttpMethod(),
+            "*"
+        );
         var statement = Statement.builder().effect(auth).resource(arn).build();
         var policyDocument = PolicyDocument.builder().statements(Collections.singletonList(statement)).build();
 
-        return AuthoriserResponse.builder().principalId(identity.getAccountId()).policyDocument(policyDocument).context(eventContext).build();
+        return AuthoriserResponse.builder()
+            .principalId(identity.getAccountId())
+            .policyDocument(policyDocument)
+            .context(eventContext)
+            .build();
     }
 }

@@ -18,7 +18,6 @@ dependencies {
                    "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
                    "com.auth0:java-jwt:4.4.0"
 
-
     aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
            "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
 

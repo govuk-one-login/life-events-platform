@@ -435,24 +435,38 @@ Resources:
           ]
         }"
 
-  CognitoUserPool:
+  UserPoolResourceServer:
+    Type: AWS::Cognito::UserPoolResourceServer
+    Properties:
+      Identifier: EventType
+      Name: UserPoolResourceServer
+      Scopes:
+        - ScopeDescription: "Can publish death notification events"
+          ScopeName: "DeathNotification"
+      UserPoolId: !Ref UserPool
+
+  UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: !Sub "UserPool-${Environment}${Developer}"
 
-  CognitoUserPoolClient:
+  DeathNotificationClient:
     Type: AWS::Cognito::UserPoolClient
+    DependsOn:
+      - UserPoolResourceServer
     Properties:
       AccessTokenValidity: 60
       AllowedOAuthFlows:
         - "client_credentials"
       AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - EventType/DeathNotification
       EnableTokenRevocation: false
       ExplicitAuthFlows:
         - "ALLOW_USER_PASSWORD_AUTH"
         - "ALLOW_REFRESH_TOKEN_AUTH"
       GenerateSecret: true
       PreventUserExistenceErrors: "ENABLED"
-      UserPoolId: !Ref CognitoUserPool
+      UserPoolId: !Ref UserPool
       TokenValidityUnits:
         AccessToken: "minutes"

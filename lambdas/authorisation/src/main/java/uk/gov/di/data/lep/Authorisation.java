@@ -20,7 +20,7 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
     public AuthoriserResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {   // This is placeholder logic
         logger.info("Authenticating and authorising request");
         var headers = event.getHeaders();
-        var authorisationToken = headers.get("Authorization");
+        var authorisationToken = headers.get("Authorization").replace("Bearer ","");
         var auth = "Deny";
         var sub = JWT.decode(authorisationToken).getSubject();
         if (sub != null) {

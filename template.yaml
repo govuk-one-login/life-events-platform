@@ -435,6 +435,11 @@ Resources:
           ]
         }"
 
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub "UserPool-${Environment}${Developer}"
+
   UserPoolResourceServer:
     Type: AWS::Cognito::UserPoolResourceServer
     Properties:
@@ -444,11 +449,6 @@ Resources:
         - ScopeDescription: "Can publish death notification events"
           ScopeName: "DeathNotification"
       UserPoolId: !Ref UserPool
-
-  UserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      UserPoolName: !Sub "UserPool-${Environment}${Developer}"
 
   DeathNotificationClient:
     Type: AWS::Cognito::UserPoolClient

@@ -18,7 +18,8 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
     @Override
     @Tracing
     @Logging(clearState = true)
-    public AuthoriserResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {   // This is placeholder logic
+    public AuthoriserResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {
+        // This is placeholder logic
         logger.info("Authenticating and authorising request");
         var headers = event.getHeaders();
         var authorisationToken = headers.get("Authorization").replace("Bearer ","");

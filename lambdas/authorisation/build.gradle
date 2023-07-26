@@ -14,6 +14,8 @@ repositories {
 
 dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+                   "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
+                   "com.auth0:java-jwt:$dependencyVersions.javaJwt",
                    "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt"
 
     aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",

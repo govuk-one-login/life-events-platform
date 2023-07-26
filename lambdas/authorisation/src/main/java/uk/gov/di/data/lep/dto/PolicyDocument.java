@@ -1,4 +1,4 @@
-package uk.gov.di.data.lep;
+package uk.gov.di.data.lep.dto;
 
 import java.util.Collections;
 import java.util.List;

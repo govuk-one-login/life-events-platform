@@ -1,4 +1,4 @@
-package uk.gov.di.data.lep;
+package uk.gov.di.data.lep.dto;
 
 public class Statement {
     public final String Action = "execute-api:Invoke";

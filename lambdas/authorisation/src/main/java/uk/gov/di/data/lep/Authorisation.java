@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 
-import java.util.Collections;
 import java.util.HashMap;
 
 public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent, AuthoriserResponse> {
@@ -18,8 +17,8 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
     @Override
     @Tracing
     @Logging(clearState = true)
-    public AuthoriserResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {
-        logger.info("Authenticating and authorising request. Event parameter: " + event.toString());
+    public AuthoriserResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {   // This is placeholder logic
+        logger.info("Authenticating and authorising request");
         var headers = event.getHeaders();
         var authorisationToken = headers.get("Authorization");
         var auth = "Deny";
@@ -43,13 +42,7 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
             proxyContext.getHttpMethod(),
             "*"
         );
-        var statement = Statement.builder().effect(auth).resource(arn).build();
-        var policyDocument = PolicyDocument.builder().statements(Collections.singletonList(statement)).build();
 
-        return AuthoriserResponse.builder()
-            .principalId(identity.getAccountId())
-            .policyDocument(policyDocument)
-            .context(eventContext)
-            .build();
+        return new AuthoriserResponse(identity.getAccountId(), auth, arn, eventContext);
     }
 }

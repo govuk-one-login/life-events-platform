@@ -1,8 +1,0 @@
-apply plugin: "org.sonarqube"
-
-sonar {
-    properties {
-        property 'sonar.projectName', 'Life Events Platform'
-        property 'sonar.projectKey', 'di-data-life-events-platform'
-    }
-}

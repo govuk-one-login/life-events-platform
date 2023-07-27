@@ -1,0 +1,18 @@
+[
+  {
+    "Key": "Product",
+    "Value": "GOV.UK Sign In"
+  },
+  {
+    "Key": "System",
+    "Value": "Life Events Platform"
+  },
+  {
+    "Key": "Environment",
+    "Value": "dev"
+  },
+  {
+    "Key": "Owner",
+    "Value": "di-life-events-platform@digital.cabinet-office.gov.uk"
+  }
+]

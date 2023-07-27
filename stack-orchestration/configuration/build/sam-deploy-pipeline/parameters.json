@@ -1,0 +1,46 @@
+[
+  {
+    "ParameterKey": "AllowedAccounts",
+    "ParameterValue": "074138398575,344411318064,473199035299"
+  },
+  {
+    "ParameterKey": "BuildNotificationStackName",
+    "ParameterValue": "build-notifications"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "build"
+  },
+  {
+    "ParameterKey": "GitHubRepositoryName",
+    "ParameterValue": "di-data-life-events-platform"
+  },
+  {
+    "ParameterKey": "IncludePromotion",
+    "ParameterValue": "Yes"
+  },
+  {
+    "ParameterKey": "RequireManualApproval",
+    "ParameterValue": "No"
+  },
+  {
+    "ParameterKey": "SAMStackName",
+    "ParameterValue": "life-events-deployment"
+  },
+  {
+    "ParameterKey": "SigningProfileArn",
+    "ParameterValue": "arn:aws:signer:eu-west-2:229268448826:/signing-profiles/SigningProfile_UA4XSbwTDnOK"
+  },
+  {
+    "ParameterKey": "SigningProfileVersionArn",
+    "ParameterValue": "arn:aws:signer:eu-west-2:229268448826:/signing-profiles/SigningProfile_UA4XSbwTDnOK/EQVvozLrbE"
+  },
+  {
+    "ParameterKey": "SlackNotificationType",
+    "ParameterValue": "Failures"
+  },
+  {
+    "ParameterKey": "VpcStackName",
+    "ParameterValue": "vpc"
+  }
+]

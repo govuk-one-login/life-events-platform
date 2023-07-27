@@ -6,6 +6,7 @@
 .idea/
 .gradle/
 build/
+!stack-orchestration/configuration/build/
 
 # CMake
 cmake-build-debug/

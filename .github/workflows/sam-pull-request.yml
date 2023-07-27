@@ -38,12 +38,15 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
+      - name: Build and unit tests
+        run: ./gradlew clean build
+
       - name: Perform Static Analysis
         if: ${{ github.actor != 'dependabot[bot]' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew clean sonar
+        run: ./gradlew sonar
 
       - name: Install checkov
         run: pip3 install checkov

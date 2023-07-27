@@ -137,22 +137,14 @@ Resources:
       ResourceRecords: !GetAtt DeveloperHostedZone.NameServers
       TTL: 60
 
-  ApiGatewayCertificate:
+  DevCertificate:
     Type: AWS::CertificateManager::Certificate
+    Condition: IsDev
     Properties:
-      DomainName: !If
-        - IsDev
-        - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
-        - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+      DomainName: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
       DomainValidationOptions:
-        - DomainName: !If
-            - IsDev
-            - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
-            - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
-          HostedZoneId: !If
-            - IsDev
-            - !Ref DeveloperHostedZone
-            - !ImportValue HostedZoneId
+        - DomainName: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+          HostedZoneId: !Ref DeveloperHostedZone
       ValidationMethod: DNS
       CertificateTransparencyLoggingPreference: ENABLED
 
@@ -167,7 +159,10 @@ Resources:
           - IsDev
           - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
           - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
-        CertificateArn: !Ref ApiGatewayCertificate
+        CertificateArn: !If
+          - IsDev
+          - !Ref DevCertificate
+          - !ImportValue CertificateArn
         EndpointConfiguration: REGIONAL
         Route53:
           HostedZoneId: !If

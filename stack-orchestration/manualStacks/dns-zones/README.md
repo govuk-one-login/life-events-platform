@@ -65,7 +65,8 @@ aws cloudformation update-stack --stack-name dns-zones \
 
 ### Stack Outputs
 
-| Type         | Name                    | Description                         |
-|--------------|-------------------------|-------------------------------------|
-| Stack Export | `HostedZoneNameServers` | Comma separated list of Nameservers |
-| Stack Export | `HostedZoneId`          | Id of the Route 53 Hosted Zone      |
+| Type         | Name                    | Description                           |
+|--------------|-------------------------|---------------------------------------|
+| Stack Export | `HostedZoneNameServers` | Comma separated list of Nameservers   |
+| Stack Export | `HostedZoneId`          | Id of the Route 53 Hosted Zone        |
+| Stack Export | `CertifcateArn`         | Arn of the Certificate for the domain |

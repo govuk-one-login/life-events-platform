@@ -16,6 +16,19 @@ Parameters:
 Conditions:
   IsProduction: !Equals [ !Ref Environment, production]
 
+Mappings:
+  EnvironmentConfiguration:
+    dev:
+      domainName: life-events.dev.account.gov.uk
+    build:
+      domainName: life-events.build.account.gov.uk
+    staging:
+      domainName: life-events.staging.account.gov.uk
+    integration:
+      domainName: life-events.integration.account.gov.uk
+    production:
+      domainName: life-events.account.gov.uk
+
 Resources:
   HostedZone:
     Type: AWS::Route53::HostedZone
@@ -26,6 +39,16 @@ Resources:
         - IsProduction
         - life-events.account.gov.uk
         - !Sub life-events.${Environment}.account.gov.uk
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+      DomainValidationOptions:
+        - DomainName: !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+          HostedZoneId: !GetAtt HostedZone.Id
+      ValidationMethod: DNS
+      CertificateTransparencyLoggingPreference: ENABLED
 
 Outputs:
   HostedZoneNameServers:
@@ -38,3 +61,7 @@ Outputs:
     Value: !GetAtt HostedZone.Id
     Export:
       Name: HostedZoneId
+  CertificateArn:
+    Value: !Ref Certificate
+    Export:
+      Name: CertificateArn

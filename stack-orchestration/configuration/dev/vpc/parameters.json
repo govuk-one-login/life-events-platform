@@ -1,0 +1,10 @@
+[
+  {
+    "ParameterKey": "SNSApiEnabled",
+    "ParameterValue": "Yes"
+  },
+  {
+    "ParameterKey": "SQSApiEnabled",
+    "ParameterValue": "Yes"
+  }
+]

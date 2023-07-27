@@ -1,0 +1,6 @@
+[
+  {
+    "ParameterKey": "GrafanaEnvironment",
+    "ParameterValue": "prod"
+  }
+]

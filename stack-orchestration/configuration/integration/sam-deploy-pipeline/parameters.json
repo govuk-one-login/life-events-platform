@@ -1,0 +1,46 @@
+[
+  {
+    "ParameterKey": "ArtifactSourceBucketArn",
+    "ParameterValue": "arn:aws:s3:::sam-deploy-pipeline-artifactpromotionbucket-17akvnix4bgjz"
+  },
+  {
+    "ParameterKey": "ArtifactSourceBucketEventTriggerRoleArn",
+    "ParameterValue": "arn:aws:iam::473199035299:role/PL-sam-deploy-pipeline-PromoTrigRole-021e567958f0"
+  },
+  {
+    "ParameterKey": "BuildNotificationStackName",
+    "ParameterValue": "build-notifications"
+  },
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "integration"
+  },
+  {
+    "ParameterKey": "IncludePromotion",
+    "ParameterValue": "No"
+  },
+  {
+    "ParameterKey": "RequireManualApproval",
+    "ParameterValue": "No"
+  },
+  {
+    "ParameterKey": "SAMStackName",
+    "ParameterValue": "life-events-deployment"
+  },
+  {
+    "ParameterKey": "SigningProfileArn",
+    "ParameterValue": "arn:aws:signer:eu-west-2:229268448826:/signing-profiles/SigningProfile_UA4XSbwTDnOK"
+  },
+  {
+    "ParameterKey": "SigningProfileVersionArn",
+    "ParameterValue": "arn:aws:signer:eu-west-2:229268448826:/signing-profiles/SigningProfile_UA4XSbwTDnOK/EQVvozLrbE"
+  },
+  {
+    "ParameterKey": "SlackNotificationType",
+    "ParameterValue": "All"
+  },
+  {
+    "ParameterKey": "VpcStackName",
+    "ParameterValue": "vpc"
+  }
+]

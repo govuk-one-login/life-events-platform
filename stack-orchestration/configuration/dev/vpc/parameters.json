@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "AllowedDomains",
+    "ParameterValue": "cognito-idp.eu-west-2.amazonaws.com"
+  },
+  {
     "ParameterKey": "SNSApiEnabled",
     "ParameterValue": "Yes"
   },

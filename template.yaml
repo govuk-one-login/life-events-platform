@@ -620,7 +620,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !Ref MainKmsKey
+                - !GetAtt MainKmsKey.Arn
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 

@@ -215,13 +215,14 @@ Resources:
       RetentionInDays: 14
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-  ApiGatewayLogGroupSubscriptionFilter:
-    Type: AWS::Logs::SubscriptionFilter
-    Condition: IsNotDev
-    Properties:
-      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
-      FilterPattern: ""
-      LogGroupName: !Ref ApiGatewayLogGroup
+# Comment out CSLS subscription filters until accounts have been granted access
+#  ApiGatewayLogGroupSubscriptionFilter:
+#    Type: AWS::Logs::SubscriptionFilter
+#    Condition: IsNotDev
+#    Properties:
+#      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+#      FilterPattern: ""
+#      LogGroupName: !Ref ApiGatewayLogGroup
 
   AuthorisationDlq:
     Type: AWS::SQS::Queue

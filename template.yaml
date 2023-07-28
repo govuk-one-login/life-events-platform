@@ -349,7 +349,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub "/aws/lambda/authorisation-${Environment}"
+      LogGroupName: !Sub "/aws/lambda/authorisation-${Environment}${Developer}"
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   AuthorisationFunctionLogGroupSubscriptionFilter:
@@ -407,7 +407,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub "/aws/lambda/death-validation-${Environment}"
+      LogGroupName: !Sub "/aws/lambda/death-validation-${Environment}${Developer}"
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   DeathValidationFunctionLogGroupSubscriptionFilter:
@@ -464,7 +464,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub "/aws/lambda/death-enrichment-${Environment}"
+      LogGroupName: !Sub "/aws/lambda/death-enrichment-${Environment}${Developer}"
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   DeathEnrichmentFunctionLogGroupSubscriptionFilter:
@@ -522,7 +522,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub "/aws/lambda/death-minimisation-${Environment}"
+      LogGroupName: !Sub "/aws/lambda/death-minimisation-${Environment}${Developer}"
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   DeathMinimisationFunctionLogGroupSubscriptionFilter:
@@ -731,7 +731,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub "/aws/lambda/gro-split-file-${Environment}"
+      LogGroupName: !Sub "/aws/lambda/gro-split-file-${Environment}${Developer}"
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   GroSplitFileFunctionLogGroupSubscriptionFilter:

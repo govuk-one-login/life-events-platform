@@ -67,7 +67,7 @@ Conditions:
     Fn::Equals:
       - !Ref Environment
       - "dev"
-  IsNotDev: !Not [ !Condition IsDev ]
+#  IsNotDev: !Not [ !Condition IsDev ]
 
 Mappings:
   EnvironmentConfiguration:

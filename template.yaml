@@ -128,7 +128,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: 'aws:kms'
-              KMSMasterKeyID: !Ref MasterKmsKey
+              KMSMasterKeyID: !Ref MainKmsKey
       BucketName: !Sub "${Environment}${Developer}-logs-bucket"
       NotificationConfiguration:
         EventBridgeConfiguration:
@@ -539,7 +539,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: "aws:kms"
-              KMSMasterKeyID: !Ref MasterKmsKey
+              KMSMasterKeyID: !Ref MainKmsKey
       BucketName: !Sub "${Environment}${Developer}-life-events-gro-ingestion-bucket"
       LoggingConfiguration:
         DestinationBucketName: !Ref LogsBucket
@@ -620,7 +620,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !Ref MainKmsKey
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 

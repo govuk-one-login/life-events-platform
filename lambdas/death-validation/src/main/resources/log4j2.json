@@ -6,7 +6,7 @@
         "name": "JsonAppender",
         "target": "SYSTEM_OUT",
         "JsonTemplateLayout": {
-          "eventTemplateUri": "classpath:LepLambdaJsonLayout.json"
+          "eventTemplateUri": "classpath:LepLambdaLoggingJsonLayout.json"
         }
       }
     },

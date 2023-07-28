@@ -16,8 +16,8 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 public class AuthorisationTest {
@@ -29,10 +29,10 @@ public class AuthorisationTest {
 
     @BeforeEach
     void refreshSetup() {
-        clearInvocations(config);
-        clearInvocations(context);
-        clearInvocations(decodedJwt);
-        clearInvocations(jwtService);
+        reset(config);
+        reset(context);
+        reset(decodedJwt);
+        reset(jwtService);
     }
 
     @Test

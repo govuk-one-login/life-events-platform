@@ -16,7 +16,7 @@ Globals:
     Architectures:
       - x86_64
     MemorySize: 512
-    KmsKeyArn: !GetAtt MasterKmsKey.Arn
+    KmsKeyArn: !Ref MainKmsKey
     Tracing: Active
     SnapStart:
       ApplyOn: PublishedVersions
@@ -86,7 +86,7 @@ Mappings:
       domainName: life-events.account.gov.uk
 
 Resources:
-  MasterKmsKey:
+  MainKmsKey:
     Type: AWS::KMS::Key
     Properties:
       EnableKeyRotation: true
@@ -194,22 +194,22 @@ Resources:
     Properties:
       LogGroupName: !Sub "/aws/apigateway/${AWS::StackName}-access-logs"
       RetentionInDays: 14
-      KmsKeyId: !GetAtt MasterKmsKey.Arn
+      KmsKeyId: !Ref MainKmsKey
 
   AuthorisationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathValidationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathEnrichmentQueue:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
         maxReceiveCount: 5
@@ -217,12 +217,12 @@ Resources:
   DeathEnrichmentDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathDistributionTopic:
     Type: AWS::SNS::Topic
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
       TracingConfig: Active
 
   DeathSnsToSqsPolicy:
@@ -246,7 +246,7 @@ Resources:
   DeathDistributionDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathDistributionTopicSubscription:
     Type: AWS::SNS::Subscription
@@ -261,7 +261,7 @@ Resources:
   DeathMinimisationQueue:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DeathMinimisationDlq.Arn
         maxReceiveCount: 5
@@ -269,12 +269,20 @@ Resources:
   DeathMinimisationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathDeliveryQueue:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathDeliveryDlq.Arn
+        maxReceiveCount: 5
+
+  DeathDeliveryDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MainKmsKey
 
   AuthorisationFunction:
     Type: AWS::Serverless::Function
@@ -300,7 +308,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !GetAtt MainKmsKey.Arn
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
@@ -336,7 +344,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !GetAtt MainKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
       Tags:
@@ -373,7 +381,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !GetAtt MainKmsKey.Arn
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
       Tags:
@@ -411,7 +419,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !GetAtt MainKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathDeliveryQueue.QueueName
       Tags:

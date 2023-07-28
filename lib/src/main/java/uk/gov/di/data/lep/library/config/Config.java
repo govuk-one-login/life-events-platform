@@ -8,12 +8,10 @@ import java.util.List;
 public class Config {
     private final String envEnrichmentFields = System.getenv("ENRICHMENT_FIELDS");
 
-    public String getTargetQueue() {
-        return System.getenv("TARGET_QUEUE");
+    public String getAwsRegion() {
+        return System.getenv("AWS_REGION");
     }
-    public String getTargetTopic() {
-        return System.getenv("TARGET_TOPIC");
-    }
+
     public List<EnrichmentField> getEnrichmentFields() {
         if (envEnrichmentFields == null) {
             return List.of();
@@ -22,5 +20,17 @@ public class Config {
             .map(String::strip)
             .map(EnrichmentField::valueOf)
             .toList();
+    }
+
+    public String getTargetQueue() {
+        return System.getenv("TARGET_QUEUE");
+    }
+
+    public String getTargetTopic() {
+        return System.getenv("TARGET_TOPIC");
+    }
+
+    public String getUserPoolId() {
+        return System.getenv("USER_POOL_ID");
     }
 }

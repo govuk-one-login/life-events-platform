@@ -81,7 +81,7 @@ dependencies {
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.5")
 
   implementation("org.javers:javers-spring:7.3.1")
-  implementation("org.javers:javers-persistence-sql:7.3.0")
+  implementation("org.javers:javers-persistence-sql:7.3.1")
 
   implementation("net.logstash.logback:logstash-logback-encoder:7.4")
 

@@ -16,7 +16,7 @@ Globals:
     Architectures:
       - x86_64
     MemorySize: 512
-    KmsKeyArn: !Ref MainKmsKey
+    KmsKeyArn: !GetAtt MainKmsKey.Arn
     Tracing: Active
     SnapStart:
       ApplyOn: PublishedVersions

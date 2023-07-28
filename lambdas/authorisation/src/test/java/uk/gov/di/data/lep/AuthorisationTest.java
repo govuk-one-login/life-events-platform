@@ -28,18 +28,18 @@ public class AuthorisationTest {
     @BeforeEach
     void refreshSetup() {
         clearInvocations(config);
-        clearInvocations(jwtService);
         clearInvocations(context);
         clearInvocations(decodedJwt);
+        clearInvocations(jwtService);
     }
 
     @Test
     void authorisationReturnsAnAuthorisorResponseWithCorrectActionAndEffect() {
-        when(context.getIdentity()).thenReturn(null);
         when(config.getAwsRegion()).thenReturn("eu-west-2");
         when(config.getUserPoolId()).thenReturn("userPoolId");
-        when(jwtService.decode(anyString())).thenReturn(decodedJwt);
+        when(context.getIdentity()).thenReturn(null);
         when(decodedJwt.getSubject()).thenReturn("testSubject");
+        when(jwtService.decode(anyString())).thenReturn(decodedJwt);
 
         var event = new APIGatewayProxyRequestEvent()
             .withHeaders(

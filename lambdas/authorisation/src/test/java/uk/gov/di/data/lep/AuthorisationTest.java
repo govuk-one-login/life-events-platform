@@ -67,7 +67,9 @@ public class AuthorisationTest {
                     "Bearer accessToken"))
             .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()));
 
-        assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
+        var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
 
+        assertEquals(JWTVerificationException.class, exception.getClass());
+        assertEquals("Exception message", exception.getMessage());
     }
 }

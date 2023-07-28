@@ -4,5 +4,6 @@ include "lambdas",
         "lambdas:death-enrichment",
         "lambdas:death-minimisation",
         "lambdas:death-validation",
+        "lambdas:gro-split-file",
         "lib",
         "platform"

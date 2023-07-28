@@ -119,6 +119,28 @@ Resources:
               - "kms:GenerateDataKey*"
             Resource: "*"
 
+  LogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # checkov:skip=CKV_AWS_18: The logs bucket doesn't need logging.
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'aws:kms'
+              KMSMasterKeyID: !Ref MasterKmsKey
+      BucketName: !Sub "${Environment}${Developer}-logs-bucket"
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+
   DeveloperHostedZone:
     Type: AWS::Route53::HostedZone
     Condition: IsDev
@@ -507,3 +529,99 @@ Resources:
       UserPoolId: !Ref UserPool
       TokenValidityUnits:
         AccessToken: "minutes"
+
+  GroIngestionBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # checkov:skip=CKV_AWS_21: We do not want to have versioning in this bucket as are treating it as a temporary store
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "aws:kms"
+              KMSMasterKeyID: !Ref MasterKmsKey
+      BucketName: !Sub "${Environment}${Developer}-life-events-gro-ingestion-bucket"
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LogsBucket
+        LogFilePrefix: "gro-ingestion-bucket/log"
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  GroIngestionStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: groIngestionStepFunction.asl.json
+      DefinitionSubstitutions:
+        GroSplitFileFunctionArn: !GetAtt GroSplitFileFunction.Arn
+      Events:
+        GroIngestionTrigger:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              source:
+                - "aws.s3"
+              detail-type:
+                - "Object Created"
+              detail:
+                bucket:
+                  name:
+                    - !Ref GroIngestionBucket
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GroSplitFileFunction
+        - Statement:
+            - Sid: CloudWatchLogsAccess
+              Effect: Allow
+              Action:
+                - "logs:CreateLogDelivery"
+                - "logs:GetLogDelivery"
+                - "logs:UpdateLogDelivery"
+                - "logs:DeleteLogDelivery"
+                - "logs:ListLogDeliveries"
+                - "logs:PutLogEvents"
+                - "logs:PutResourcePolicy"
+                - "logs:DescribeResourcePolicies"
+                - "logs:DescribeLogGroups"
+              Resource: "*"
+      Tracing:
+        Enabled: true
+      PermissionsBoundary: !If
+        - UsePermissionsBoundary
+        - !Ref PermissionsBoundary
+        - !Ref AWS::NoValue
+
+  GroSplitFileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub "gro-split-file-${Environment}${Developer}"
+      CodeUri: lambdas/gro-split-file
+      Handler: uk.gov.di.data.lep.SplitFile::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: authorisation
+      AutoPublishAlias: latest
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt AuthorisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+                - 'kms:GenerateDataKey'
+              Resource:
+                - !GetAtt MasterKmsKey.Arn
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
+
+

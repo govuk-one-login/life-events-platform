@@ -1,0 +1,29 @@
+{
+  "Comment": "Ingest and delete GRO file",
+  "StartAt": "GroSplitFile",
+  "States": {
+    "GroSplitFile": {
+      "Type": "Task",
+      "Resource": "${GroSplitFileFunctionArn}",
+      "OutputPath": "$",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException",
+            "Lambda.Unknown"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 6,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "Success"
+    },
+    "Success": {
+      "Type": "Succeed"
+    }
+  }
+}

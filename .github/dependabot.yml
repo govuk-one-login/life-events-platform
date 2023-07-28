@@ -253,18 +253,6 @@ updates:
     commit-message:
       prefix: "GPC-NONE"
   - package-ecosystem: terraform
-    directory: "/terraform/modules/security"
-    schedule:
-      interval: daily
-    commit-message:
-      prefix: "GPC-NONE"
-  - package-ecosystem: terraform
-    directory: "/terraform/modules/securityhub"
-    schedule:
-      interval: daily
-    commit-message:
-      prefix: "GPC-NONE"
-  - package-ecosystem: terraform
     directory: "/terraform/modules/simple_user_pool_client"
     schedule:
       interval: daily

@@ -16,7 +16,7 @@ Globals:
     Architectures:
       - x86_64
     MemorySize: 512
-    KmsKeyArn: !GetAtt MasterKmsKey.Arn
+    KmsKeyArn: !Ref MainKmsKey
     Tracing: Active
     SnapStart:
       ApplyOn: PublishedVersions
@@ -82,7 +82,7 @@ Mappings:
       domainName: life-events.account.gov.uk
 
 Resources:
-  MasterKmsKey:
+  MainKmsKey:
     Type: AWS::KMS::Key
     Properties:
       EnableKeyRotation: true
@@ -114,6 +114,28 @@ Resources:
               - "kms:Decrypt"
               - "kms:GenerateDataKey*"
             Resource: "*"
+
+  LogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # checkov:skip=CKV_AWS_18: The logs bucket doesn't need logging.
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'aws:kms'
+              KMSMasterKeyID: !Ref MainKmsKey
+      BucketName: !Sub "${Environment}${Developer}-life-events-logs-bucket"
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
 
   DeveloperHostedZone:
     Type: AWS::Route53::HostedZone
@@ -190,22 +212,22 @@ Resources:
     Properties:
       LogGroupName: !Sub "/aws/apigateway/${AWS::StackName}-access-logs"
       RetentionInDays: 14
-      KmsKeyId: !GetAtt MasterKmsKey.Arn
+      KmsKeyId: !GetAtt MainKmsKey.Arn
 
   AuthorisationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathValidationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathEnrichmentQueue:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
         maxReceiveCount: 5
@@ -213,12 +235,12 @@ Resources:
   DeathEnrichmentDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathDistributionTopic:
     Type: AWS::SNS::Topic
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
       TracingConfig: Active
 
   DeathSnsToSqsPolicy:
@@ -242,7 +264,7 @@ Resources:
   DeathDistributionDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathDistributionTopicSubscription:
     Type: AWS::SNS::Subscription
@@ -257,7 +279,7 @@ Resources:
   DeathMinimisationQueue:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DeathMinimisationDlq.Arn
         maxReceiveCount: 5
@@ -265,12 +287,20 @@ Resources:
   DeathMinimisationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
 
   DeathDeliveryQueue:
     Type: AWS::SQS::Queue
     Properties:
-      KmsMasterKeyId: !Ref MasterKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathDeliveryDlq.Arn
+        maxReceiveCount: 5
+
+  DeathDeliveryDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MainKmsKey
 
   AuthorisationFunction:
     Type: AWS::Serverless::Function
@@ -297,7 +327,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !GetAtt MainKmsKey.Arn
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -338,7 +368,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !GetAtt MainKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
       VpcConfig:
@@ -380,7 +410,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !GetAtt MainKmsKey.Arn
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
       VpcConfig:
@@ -423,7 +453,7 @@ Resources:
                 - 'kms:Decrypt'
                 - 'kms:GenerateDataKey'
               Resource:
-                - !GetAtt MasterKmsKey.Arn
+                - !GetAtt MainKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathDeliveryQueue.QueueName
       VpcConfig:
@@ -528,3 +558,99 @@ Resources:
       UserPoolId: !Ref UserPool
       TokenValidityUnits:
         AccessToken: "minutes"
+
+  GroIngestionBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # checkov:skip=CKV_AWS_21: We do not want to have versioning in this bucket as are treating it as a temporary store
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "aws:kms"
+              KMSMasterKeyID: !Ref MainKmsKey
+      BucketName: !Sub "${Environment}${Developer}-life-events-gro-ingestion-bucket"
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LogsBucket
+        LogFilePrefix: "gro-ingestion-bucket/log"
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  GroIngestionStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: groIngestionStepFunction.asl.json
+      DefinitionSubstitutions:
+        GroSplitFileFunctionArn: !GetAtt GroSplitFileFunction.Arn
+      Events:
+        GroIngestionTrigger:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              source:
+                - "aws.s3"
+              detail-type:
+                - "Object Created"
+              detail:
+                bucket:
+                  name:
+                    - !Ref GroIngestionBucket
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GroSplitFileFunction
+        - Statement:
+            - Sid: CloudWatchLogsAccess
+              Effect: Allow
+              Action:
+                - "logs:CreateLogDelivery"
+                - "logs:GetLogDelivery"
+                - "logs:UpdateLogDelivery"
+                - "logs:DeleteLogDelivery"
+                - "logs:ListLogDeliveries"
+                - "logs:PutLogEvents"
+                - "logs:PutResourcePolicy"
+                - "logs:DescribeResourcePolicies"
+                - "logs:DescribeLogGroups"
+              Resource: "*"
+      Tracing:
+        Enabled: true
+      PermissionsBoundary: !If
+        - UsePermissionsBoundary
+        - !Ref PermissionsBoundary
+        - !Ref AWS::NoValue
+
+  GroSplitFileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub "gro-split-file-${Environment}${Developer}"
+      CodeUri: lambdas/gro-split-file
+      Handler: uk.gov.di.data.lep.SplitFile::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: authorisation
+      AutoPublishAlias: latest
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt AuthorisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+                - 'kms:GenerateDataKey'
+              Resource:
+                - !Ref MainKmsKey
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
+
+

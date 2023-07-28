@@ -1,0 +1,44 @@
+buildscript {
+    apply from: '../../dependencies.gradle'
+}
+
+plugins {
+    id "java"
+    id "jacoco"
+    id "io.freefair.aspectj.post-compile-weaving" version "${postCompileWeavingVersion}"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+                   "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
+                   "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt"
+
+    aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
+           "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
+                       "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
+}
+
+test {
+    environment "LAMBDA_TASK_ROOT", "handler"
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required.set(true)
+    }
+}

@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.111"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.114"))
   implementation("software.amazon.awssdk:cloudwatch")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:lambda")
@@ -80,8 +80,8 @@ dependencies {
 
   implementation("com.toedter:spring-hateoas-jsonapi:2.0.5")
 
-  implementation("org.javers:javers-spring:7.3.0")
-  implementation("org.javers:javers-persistence-sql:7.3.0")
+  implementation("org.javers:javers-spring:7.3.1")
+  implementation("org.javers:javers-persistence-sql:7.3.1")
 
   implementation("net.logstash.logback:logstash-logback-encoder:7.4")
 
@@ -89,7 +89,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.18.3"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.514") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.517") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(module = "mockito-core")

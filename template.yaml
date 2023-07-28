@@ -313,6 +313,8 @@ Resources:
 
   AuthorisationFunction:
     Type: AWS::Serverless::Function
+    DependsOn:
+      - AuthorisationFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
@@ -363,6 +365,8 @@ Resources:
 
   DeathValidationFunction:
     Type: AWS::Serverless::Function
+    DependsOn:
+      - DeathValidationFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
@@ -422,6 +426,8 @@ Resources:
 
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
+    DependsOn:
+      - DeathEnrichmentFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
@@ -480,6 +486,8 @@ Resources:
 
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
+    DependsOn:
+      - DeathMinimisationFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
@@ -700,6 +708,8 @@ Resources:
 
   GroSplitFileFunction:
     Type: AWS::Serverless::Function
+    DependsOn:
+      - GroSplitFileFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.

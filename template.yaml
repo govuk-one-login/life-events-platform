@@ -21,10 +21,6 @@ Globals:
     SnapStart:
       ApplyOn: PublishedVersions
     VpcConfig:
-      SubnetIds:
-        - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-        - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-        - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       SecurityGroupIds:
         - !Ref LambdaSecurityGroup
     CodeSigningConfigArn: !If
@@ -288,6 +284,7 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: authorisation
+          USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
       DeadLetterQueue:
         Type: SQS
@@ -301,6 +298,11 @@ Resources:
                 - 'kms:GenerateDataKey'
               Resource:
                 - !GetAtt MasterKmsKey.Arn
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
@@ -339,6 +341,11 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
@@ -376,6 +383,11 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
@@ -414,6 +426,11 @@ Resources:
                 - !GetAtt MasterKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathDeliveryQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
@@ -429,6 +446,11 @@ Resources:
           Description: Allow outbound traffic to vpc endpoints
           IpProtocol: tcp
           FromPort: 443
+          ToPort: 443
+        - CidrIp: 0.0.0.0/0
+          Description: Allow outbound HTTPS traffic to Internet - Network Firewall will allow only to CRIs
+          FromPort: 443
+          IpProtocol: tcp
           ToPort: 443
 
 # Uncomment when GPC-509 is done and XRay resource policies are allowed in secure pipelines
@@ -469,6 +491,12 @@ Resources:
     Properties:
       UserPoolName: !Sub "UserPool-${Environment}${Developer}"
 
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref UserPool
+      Domain: !Sub "${Environment}${Developer}-life-events"
+
   UserPoolResourceServer:
     Type: AWS::Cognito::UserPoolResourceServer
     Properties:
@@ -490,6 +518,7 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes:
         - EventType/DeathNotification
+      ClientName: "DeathNotificationClient"
       EnableTokenRevocation: false
       ExplicitAuthFlows:
         - "ALLOW_USER_PASSWORD_AUTH"

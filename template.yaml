@@ -129,7 +129,7 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: 'aws:kms'
               KMSMasterKeyID: !Ref MainKmsKey
-      BucketName: !Sub "${Environment}${Developer}-logs-bucket"
+      BucketName: !Sub "${Environment}${Developer}-life-events-logs-bucket"
       NotificationConfiguration:
         EventBridgeConfiguration:
           EventBridgeEnabled: true

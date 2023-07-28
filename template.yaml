@@ -71,6 +71,7 @@ Conditions:
     Fn::Equals:
       - !Ref Environment
       - "dev"
+  IsNotDev: !Not [ !Condition IsDev ]
 
 Mappings:
   EnvironmentConfiguration:
@@ -218,6 +219,14 @@ Resources:
       RetentionInDays: 14
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
+  ApiGatewayLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Condition: IsNotDev
+    Properties:
+      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+      FilterPattern: ""
+      LogGroupName: !Ref ApiGatewayLogGroup
+
   AuthorisationDlq:
     Type: AWS::SQS::Queue
     Properties:
@@ -334,6 +343,21 @@ Resources:
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
+  AuthorisationFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub "/aws/lambda/authorisation-${Environment}"
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  AuthorisationFunctionLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Condition: IsNotDev
+    Properties:
+      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+      FilterPattern: ""
+      LogGroupName: !Ref AuthorisationFunctionLogGroup
+
   DeathValidationFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -372,6 +396,21 @@ Resources:
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
 
+  DeathValidationFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub "/aws/lambda/death-validation-${Environment}"
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DeathValidationFunctionLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Condition: IsNotDev
+    Properties:
+      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+      FilterPattern: ""
+      LogGroupName: !Ref DeathValidationFunctionLogGroup
+
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -408,6 +447,21 @@ Resources:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
+
+  DeathEnrichmentFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub "/aws/lambda/death-enrichment-${Environment}"
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DeathEnrichmentFunctionLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Condition: IsNotDev
+    Properties:
+      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+      FilterPattern: ""
+      LogGroupName: !Ref DeathEnrichmentFunctionLogGroup
 
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
@@ -446,6 +500,21 @@ Resources:
             QueueName: !GetAtt DeathDeliveryQueue.QueueName
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
+
+  DeathMinimisationFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub "/aws/lambda/death-minimisation-${Environment}"
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DeathMinimisationFunctionLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Condition: IsNotDev
+    Properties:
+      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+      FilterPattern: ""
+      LogGroupName: !Ref DeathMinimisationFunctionLogGroup
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -623,5 +692,20 @@ Resources:
                 - !Ref MainKmsKey
       Tags:
         CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
+
+  GroSplitFileFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub "/aws/lambda/gro-split-file-${Environment}"
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  GroSplitFileFunctionLogGroupSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Condition: IsNotDev
+    Properties:
+      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+      FilterPattern: ""
+      LogGroupName: !Ref GroSplitFileFunctionLogGroup
 
 

@@ -194,7 +194,7 @@ Resources:
     Properties:
       LogGroupName: !Sub "/aws/apigateway/${AWS::StackName}-access-logs"
       RetentionInDays: 14
-      KmsKeyId: !Ref MainKmsKey
+      KmsKeyId: !GetAtt MainKmsKey.Arn
 
   AuthorisationDlq:
     Type: AWS::SQS::Queue

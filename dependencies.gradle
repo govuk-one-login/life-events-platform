@@ -11,7 +11,7 @@ ext {
             jacksonDatatypeJsr310: "2.15.2",
             javaJwt              : "4.4.0",
             junitJupiter         : "5.10.0",
-            jwksRsa              : "0.22.0",
+            jwksRsa              : "0.22.1",
             mockitoJunitJupiter  : "5.4.0",
             powertools           : "1.16.1",
             xrayInstrumentor     : "2.14.0"

@@ -39,19 +39,10 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
     public AuthoriserResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {
         logger.info("Authenticating and authorising request");
 
-        var auth = "Deny";
         var decodedJwt = getDecodedJwt(event.getHeaders());
-        var scope = decodedJwt.getClaim("scope").asString();
-        var allowedPath = scope != null ? scopeMatchup.get(scope) : null;
-
-        if (Objects.equals(allowedPath, event.getPath())) {
-            auth = "Allow";
-        }
-
-        var eventContext = Map.of("sub", decodedJwt.getSubject());
         var proxyContext = event.getRequestContext();
         var identity = proxyContext.getIdentity();
-
+        var auth = isAllowedPath(decodedJwt, event) ? "Allow" : "Deny";
         var arn = String.format(
             "arn:aws:execute-api:%s:%s:%s/%s/%s/%s",
             config.getAwsRegion(),
@@ -61,11 +52,19 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
             proxyContext.getHttpMethod(),
             "*"
         );
+        var eventContext = Map.of("sub", decodedJwt.getSubject());
+
         return new AuthoriserResponse(identity.getAccountId(), auth, arn, eventContext);
     }
 
-    private DecodedJWT getDecodedJwt(Map<String, String> headers){
+    private DecodedJWT getDecodedJwt(Map<String, String> headers) {
         var authorisationToken = headers.get("authorization").replace("Bearer ", "");
         return jwtService.decode(authorisationToken);
+    }
+
+    private boolean isAllowedPath(DecodedJWT decodedJwt, APIGatewayProxyRequestEvent event) {
+        var scope = decodedJwt.getClaim("scope").asString();
+        var allowedPath = scope != null ? scopeMatchup.get(scope) : null;
+        return Objects.equals(allowedPath, event.getPath());
     }
 }

@@ -3,6 +3,7 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.logging.Logging;
@@ -12,15 +13,17 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.services.JwtService;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent, AuthoriserResponse> {
     private final static Logger logger = LogManager.getLogger();
     protected final Config config;
     protected final JwtService jwtService;
-    private final HashMap<String, String> scopeMatchup = new HashMap<String, String>() {{
-        put("\"EventType/DeathNotification\"", "/events/deathNotification");
-        put("\"EventType/TestEvent\"", "events/testEvent");
-    }};
+    private final Map<String, String> scopeMatchup = Map.of(
+        "\"EventType/DeathNotification\"", "/events/deathNotification",
+        "\"EventType/TestEvent\"", "events/testEvent"
+    );
 
     public Authorisation() {
         this(new Config(), new JwtService());
@@ -36,12 +39,13 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
     @Logging(clearState = true)
     public AuthoriserResponse handleRequest(APIGatewayProxyRequestEvent event, Context context) {
         logger.info("Authenticating and authorising request");
-        var headers = event.getHeaders();
-        var authorisationToken = headers.get("authorization").replace("Bearer ", "");
+
         var auth = "Deny";
-        var decodedJwt = jwtService.decode(authorisationToken);
-        var scope = decodedJwt.getClaim("scope").toString();
-        if (scopeMatchup.get(scope) != null && scopeMatchup.get(scope).equals(event.getPath())) {
+        var decodedJwt = getDecodedJwt(event.getHeaders());
+        var scope = decodedJwt.getClaim("scope").asString();
+        var allowedPath = scope != null ? scopeMatchup.get(scope) : null;
+
+        if (Objects.equals(allowedPath, event.getPath())) {
             auth = "Allow";
         }
 
@@ -54,7 +58,7 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
 
         var arn = String.format(
             "arn:aws:execute-api:%s:%s:%s/%s/%s/%s",
-            System.getenv("AWS_REGION"),
+            config.getAwsRegion(),
             proxyContext.getAccountId(),
             proxyContext.getApiId(),
             proxyContext.getStage(),
@@ -63,4 +67,10 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
         );
         return new AuthoriserResponse(identity.getAccountId(), auth, arn, eventContext);
     }
+
+    private DecodedJWT getDecodedJwt(Map<String, String> headers){
+        var authorisationToken = headers.get("authorization").replace("Bearer ", "");
+        return jwtService.decode(authorisationToken);
+    }
+
 }

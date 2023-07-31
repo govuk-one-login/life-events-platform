@@ -23,8 +23,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 public class AuthorisationTest {
-    private static final Config config = mock(Config.class);
     private static final JwtService jwtService = mock(JwtService.class);
+    private static final Config config = mock(Config.class);
     private static final Authorisation underTest = new Authorisation(config, jwtService);
     private static final Context context = mock(Context.class);
     private static final DecodedJWT decodedJwt = mock(DecodedJWT.class);
@@ -32,31 +32,30 @@ public class AuthorisationTest {
 
     @BeforeAll
     static void setup() {
-        when(config.getAwsRegion()).thenReturn("eu-west-2");
-        when(config.getUserPoolId()).thenReturn("userPoolId");
         when(context.getIdentity()).thenReturn(null);
         when(decodedJwt.getSubject()).thenReturn("testSubject");
-        when(decodedJwt.getClaim("scope")).thenReturn(claim);
     }
 
     @BeforeEach
     void refreshSetup() {
-        reset(jwtService);
         reset(claim);
+        reset(config);
+        reset(jwtService);
     }
 
     @Test
     void authorisationAllowsAccessWithValidScope() {
         when(jwtService.decode(anyString())).thenReturn(decodedJwt);
-        when(claim.toString()).thenReturn("\"EventType/TestEvent\"");
+        when(decodedJwt.getClaim("scope")).thenReturn(claim);
+        when(claim.asString()).thenReturn("\"EventType/TestEvent\"");
 
         var event = new APIGatewayProxyRequestEvent()
             .withHeaders(
                 Map.of(
                     "authorization",
                     "Bearer accessToken"))
-            .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()))
-            .withPath("events/testEvent");
+            .withPath("events/testEvent")
+            .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()));
 
         var result = underTest.handleRequest(event, context);
 
@@ -67,15 +66,16 @@ public class AuthorisationTest {
     @Test
     void authorisationDeniesAccessWithInvalidScope() {
         when(jwtService.decode(anyString())).thenReturn(decodedJwt);
-        when(claim.toString()).thenReturn("\"EventType/TestEvent\"");
+        when(decodedJwt.getClaim("scope")).thenReturn(claim);
+        when(claim.asString()).thenReturn("\"EventType/TestEvent\"");
 
         var event = new APIGatewayProxyRequestEvent()
             .withHeaders(
                 Map.of(
                     "authorization",
                     "Bearer accessToken"))
-            .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()))
-            .withPath("events/notTestEvent");
+            .withPath("events/notTestEvent")
+            .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()));
 
         var result = underTest.handleRequest(event, context);
 
@@ -86,15 +86,35 @@ public class AuthorisationTest {
     @Test
     void authorisationDeniesAccessWithIncorrectScope() {
         when(jwtService.decode(anyString())).thenReturn(decodedJwt);
-        when(claim.toString()).thenReturn("\"EventType/NotTestEvent\"");
+        when(decodedJwt.getClaim("scope")).thenReturn(claim);
+        when(claim.asString()).thenReturn("\"EventType/NotTestEvent\"");
 
         var event = new APIGatewayProxyRequestEvent()
             .withHeaders(
                 Map.of(
                     "authorization",
                     "Bearer accessToken"))
-            .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()))
-            .withPath("events/testEvent");
+            .withPath("events/testEvent")
+            .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()));
+
+        var result = underTest.handleRequest(event, context);
+
+        assertEquals("execute-api:Invoke", result.policyDocument.Statement.get(0).Action);
+        assertEquals("Deny", result.policyDocument.Statement.get(0).Effect);
+    }
+
+    @Test
+    void authorisationDeniesAccessIfTokenHasNoScope() {
+        when(jwtService.decode(anyString())).thenReturn(decodedJwt);
+        when(decodedJwt.getClaim("scope")).thenReturn(claim);
+
+        var event = new APIGatewayProxyRequestEvent()
+            .withHeaders(
+                Map.of(
+                    "authorization",
+                    "Bearer accessToken"))
+            .withPath("events/testEvent")
+            .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()));
 
         var result = underTest.handleRequest(event, context);
 
@@ -118,4 +138,50 @@ public class AuthorisationTest {
         assertEquals(JWTVerificationException.class, exception.getClass());
         assertEquals("Exception message", exception.getMessage());
     }
+
+    @Test
+    void authorisationGenerateCorrectARN() {
+        when(jwtService.decode(anyString())).thenReturn(decodedJwt);
+        when(decodedJwt.getClaim("scope")).thenReturn(claim);
+        when(claim.asString()).thenReturn("\"EventType/TestEvent\"");
+        when(config.getAwsRegion()).thenReturn("awsRegion");
+
+        var event = new APIGatewayProxyRequestEvent()
+            .withHeaders(
+                Map.of(
+                    "authorization",
+                    "Bearer accessToken"))
+            .withRequestContext(
+                new ProxyRequestContext()
+                    .withIdentity(new RequestIdentity())
+                    .withAccountId("accountId")
+                    .withApiId("apiId")
+                    .withStage("stage")
+                    .withHttpMethod("httpMethod")
+            );
+
+        var result = underTest.handleRequest(event, context);
+
+        assertEquals("arn:aws:execute-api:awsRegion:accountId:apiId/stage/httpMethod/*", result.policyDocument.Statement.get(0).Resource);
+    }
+
+    @Test
+    void authorisationPassesCorrectSubjectInResponseContext() {
+        when(jwtService.decode(anyString())).thenReturn(decodedJwt);
+        when(decodedJwt.getSubject()).thenReturn("subjectContent");
+        when(decodedJwt.getClaim("scope")).thenReturn(claim);
+        when(claim.asString()).thenReturn("\"EventType/TestEvent\"");
+
+        var event = new APIGatewayProxyRequestEvent()
+            .withHeaders(
+                Map.of(
+                    "authorization",
+                    "Bearer accessToken"))
+            .withRequestContext(new ProxyRequestContext().withIdentity(new RequestIdentity()));
+
+        var result = underTest.handleRequest(event, context);
+
+        assertEquals("subjectContent", result.context.get("sub"));
+    }
+
 }

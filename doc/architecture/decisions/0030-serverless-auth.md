@@ -17,8 +17,8 @@ so we will be going ahead with a similar approach.
 ## Approach
 
 We will have 2 separate approaches both based around the logic of having boundaries that we authenticate at, but
-different for the supplying of data, and the acquiring of data. For supplying, our boundary will be our API Gateway, all
-data supplied will enter the system via API Gateway. For acquiring, the boundary is the SQS queues that the acquirers
+different for the supplying of data, and the acquiring of data. For data supplied to the system, our boundary will be our API Gateway, all
+data supplied will enter the system via API Gateway. For data acquired from the system, the boundary is the SQS queues that the acquirers
 will pull data off of.
 
 ### Suppliers

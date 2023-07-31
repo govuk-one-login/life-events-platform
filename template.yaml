@@ -718,7 +718,7 @@ Resources:
         - StepFunctionsExecutionPolicy:
             StateMachineName: !Sub "${Environment}${Developer}-ingestion-state-machine"
         - Statement:
-            - Sid: KmsMasterKeyAccess
+            - Sid: KmsMainKeyAccess
               Effect: Allow
               Action:
                 - 'kms:Decrypt'
@@ -814,7 +814,7 @@ Resources:
       AutoPublishAlias: latest
       Policies:
         - Statement:
-            - Sid: KmsMasterKeyAccess
+            - Sid: KmsMainKeyAccess
               Effect: Allow
               Action:
                 - 'kms:Decrypt'

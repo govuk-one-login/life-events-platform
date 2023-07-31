@@ -752,6 +752,7 @@ Resources:
       - GroConvertToJsonFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
       FunctionName: !Sub "gro-convert-to-json-${Environment}${Developer}"
@@ -777,7 +778,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173"
 
   GroConvertToJsonFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -801,6 +802,7 @@ Resources:
       - GroPublishRecordFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
       FunctionName: !Sub "gro-publish-record-${Environment}${Developer}"
@@ -825,7 +827,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173"
 
   GroPublishRecordFunctionLogGroup:
     Type: AWS::Logs::LogGroup

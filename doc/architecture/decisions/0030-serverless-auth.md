@@ -53,3 +53,5 @@ that will each be published through our API Gateway. We will generate our own co
 relevant claims, and this will be attached on the header for these requests to the API Gateway.
 
 ### Diagram
+
+![image](../img/serverless-auth.png)

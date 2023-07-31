@@ -4,6 +4,7 @@ include "lambdas",
         "lambdas:death-enrichment",
         "lambdas:death-minimisation",
         "lambdas:death-validation",
-        "lambdas:gro-split-file",
+        "lambdas:gro-convert-to-json",
+        "lambdas:gro-publish-record",
         "lib",
         "platform"

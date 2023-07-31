@@ -12,7 +12,6 @@ import uk.gov.di.data.lep.dto.AuthoriserResponse;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.services.JwtService;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -69,5 +68,4 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
         var authorisationToken = headers.get("authorization").replace("Bearer ", "");
         return jwtService.decode(authorisationToken);
     }
-
 }

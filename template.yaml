@@ -171,6 +171,15 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       # checkov:skip=CKV_AWS_120: We do not need gateway caching on a post only gateway.
+      Auth:
+        Authorizers:
+          LambdaAuthoriser:
+            FunctionPayloadType: REQUEST
+            FunctionArn: !GetAtt AuthorisationFunction.Arn
+            Identity:
+              Headers:
+                - Authorization
+        DefaultAuthorizer: LambdaAuthoriser
       StageName: Prod
       TracingEnabled: true
       Domain:

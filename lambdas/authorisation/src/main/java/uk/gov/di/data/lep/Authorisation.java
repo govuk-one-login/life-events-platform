@@ -49,10 +49,7 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
             auth = "Allow";
         }
 
-        var sub = decodedJwt.getSubject();
-        var eventContext = new HashMap<String, String>();
-        eventContext.put("sub", sub);
-
+        var eventContext = Map.of("sub", decodedJwt.getSubject());
         var proxyContext = event.getRequestContext();
         var identity = proxyContext.getIdentity();
 

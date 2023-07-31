@@ -565,37 +565,38 @@ Resources:
           IpProtocol: tcp
           ToPort: 443
 
-  XRayPolicy:
-    Type: AWS::XRay::ResourcePolicy
-    Properties:
-      BypassPolicyLockoutCheck: false
-      PolicyName: !Sub "AllowSNSXrayTracing${Developer}"
-      PolicyDocument: !Sub "{
-          \"Version\": \"2012-10-17\",
-          \"Statement\": [
-            {
-              \"Sid\": \"SNSAccess\",
-              \"Effect\": \"Allow\",
-              \"Principal\": {
-                \"Service\": \"sns.amazonaws.com\"
-              },
-              \"Action\": [
-                \"xray:PutTraceSegments\",
-                \"xray:GetSamplingRules\",
-                \"xray:GetSamplingTargets\"
-              ],
-              \"Resource\": \"*\",
-              \"Condition\": {
-                \"StringEquals\": {
-                  \"aws:SourceAccount\": \"${AWS::AccountId}\"
-                },
-                \"StringLike\": {
-                  \"aws:SourceArn\": \"${DeathDistributionTopic.TopicArn}\"
-                }
-              }
-            }
-          ]
-        }"
+# Uncomment when GPC-509 is done and XRay resource policies are allowed in secure pipelines
+#  XRayPolicy:
+#    Type: AWS::XRay::ResourcePolicy
+#    Properties:
+#      BypassPolicyLockoutCheck: false
+#      PolicyName: !Sub "AllowSNSXrayTracing${Developer}"
+#      PolicyDocument: !Sub "{
+#          \"Version\": \"2012-10-17\",
+#          \"Statement\": [
+#            {
+#              \"Sid\": \"SNSAccess\",
+#              \"Effect\": \"Allow\",
+#              \"Principal\": {
+#                \"Service\": \"sns.amazonaws.com\"
+#              },
+#              \"Action\": [
+#                \"xray:PutTraceSegments\",
+#                \"xray:GetSamplingRules\",
+#                \"xray:GetSamplingTargets\"
+#              ],
+#              \"Resource\": \"*\",
+#              \"Condition\": {
+#                \"StringEquals\": {
+#                  \"aws:SourceAccount\": \"${AWS::AccountId}\"
+#                },
+#                \"StringLike\": {
+#                  \"aws:SourceArn\": \"${DeathDistributionTopic.TopicArn}\"
+#                }
+#              }
+#            }
+#          ]
+#        }"
 
   UserPool:
     Type: AWS::Cognito::UserPool

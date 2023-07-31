@@ -1,10 +1,10 @@
 {
   "Comment": "Ingest and delete GRO file",
-  "StartAt": "GroSplitFile",
+  "StartAt": "ConvertToJson",
   "States": {
-    "GroSplitFile": {
+    "ConvertToJson": {
       "Type": "Task",
-      "Resource": "${GroSplitFileFunctionArn}",
+      "Resource": "${GroConvertToJsonFunctionArn}",
       "OutputPath": "$",
       "Retry": [
         {
@@ -20,7 +20,63 @@
           "BackoffRate": 2
         }
       ],
-      "Next": "Success"
+      "Next": "UploadToS3"
+    },
+    "UploadToS3": {
+      "Type": "Task",
+      "Next": "Map",
+      "Parameters": {
+        "Body.$": "$.payload",
+        "Bucket.$": "$.bucket",
+        "Key.$": "$.key"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
+      "ResultPath": "$.Result"
+    },
+    "Map": {
+      "Type": "Map",
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "DISTRIBUTED",
+          "ExecutionType": "STANDARD"
+        },
+        "StartAt": "GroPublishRecord",
+        "States": {
+          "GroPublishRecord": {
+            "Type": "Task",
+            "Resource": "${GroPublishRecordFunctionArn}",
+            "OutputPath": "$",
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "Lambda.ServiceException",
+                  "Lambda.AWSLambdaException",
+                  "Lambda.SdkClientException",
+                  "Lambda.TooManyRequestsException",
+                  "Lambda.Unknown"
+                ],
+                "IntervalSeconds": 2,
+                "MaxAttempts": 6,
+                "BackoffRate": 2
+              }
+            ],
+            "End": true
+          }
+        }
+      },
+      "Next": "Success",
+      "Label": "Map",
+      "MaxConcurrency": 1000,
+      "ItemReader": {
+        "Resource": "arn:aws:states:::s3:getObject",
+        "ReaderConfig": {
+          "InputType": "JSON"
+        },
+        "Parameters": {
+          "Bucket.$": "$.bucket",
+          "Key.$": "$.key"
+        }
+      }
     },
     "Success": {
       "Type": "Succeed"

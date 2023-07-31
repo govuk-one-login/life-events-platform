@@ -22,6 +22,10 @@ public class Config {
             .toList();
     }
 
+    public String getGroRecordsBucketName() {
+        return System.getenv("GRO_RECORDS_BUCKET_NAME");
+    }
+
     public String getTargetQueue() {
         return System.getenv("TARGET_QUEUE");
     }

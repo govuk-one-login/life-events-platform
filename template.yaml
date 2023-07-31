@@ -664,12 +664,37 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
+  GroRecordsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # checkov:skip=CKV_AWS_21: We do not want to have versioning in this bucket as are treating it as a temporary store
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "aws:kms"
+              KMSMasterKeyID: !Ref MainKmsKey
+      BucketName: !Sub "${Environment}${Developer}-life-events-gro-records-bucket"
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LogsBucket
+        LogFilePrefix: "gro-records-bucket/log"
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
   GroIngestionStateMachine:
     Type: AWS::Serverless::StateMachine
     Properties:
+      Name: !Sub "${Environment}${Developer}-ingestion-state-machine"
       DefinitionUri: groIngestionStepFunction.asl.json
       DefinitionSubstitutions:
-        GroSplitFileFunctionArn: !GetAtt GroSplitFileFunction.Arn
+        GroConvertToJsonFunctionArn: !GetAtt GroConvertToJsonFunction.Arn
+        GroPublishRecordFunctionArn: !GetAtt GroPublishRecordFunction.Arn
       Events:
         GroIngestionTrigger:
           Type: EventBridgeRule
@@ -685,7 +710,21 @@ Resources:
                     - !Ref GroIngestionBucket
       Policies:
         - LambdaInvokePolicy:
-            FunctionName: !Ref GroSplitFileFunction
+            FunctionName: !Ref GroConvertToJsonFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GroPublishRecordFunction
+        - S3FullAccessPolicy:
+            BucketName: !Ref GroRecordsBucket
+        - StepFunctionsExecutionPolicy:
+            StateMachineName: !Sub "${Environment}${Developer}-ingestion-state-machine"
+        - Statement:
+            - Sid: KmsMainKeyAccess
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+                - 'kms:GenerateDataKey'
+              Resource:
+                - !GetAtt MainKmsKey.Arn
         - Statement:
             - Sid: CloudWatchLogsAccess
               Effect: Allow
@@ -707,24 +746,23 @@ Resources:
         - !Ref PermissionsBoundary
         - !Ref AWS::NoValue
 
-  GroSplitFileFunction:
+  GroConvertToJsonFunction:
     Type: AWS::Serverless::Function
     DependsOn:
-      - GroSplitFileFunctionLogGroup
+      - GroConvertToJsonFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub "gro-split-file-${Environment}${Developer}"
-      CodeUri: lambdas/gro-split-file
-      Handler: uk.gov.di.data.lep.SplitFile::handleRequest
+      FunctionName: !Sub "gro-convert-to-json-${Environment}${Developer}"
+      CodeUri: lambdas/gro-convert-to-json
+      Handler: uk.gov.di.data.lep.ConvertToJson::handleRequest
       Environment:
         Variables:
-          POWERTOOLS_SERVICE_NAME: authorisation
+          POWERTOOLS_SERVICE_NAME: gro-convert-to-json
+          GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
       AutoPublishAlias: latest
-      DeadLetterQueue:
-        Type: SQS
-        TargetArn: !GetAtt AuthorisationDlq.Arn
       Policies:
         - Statement:
             - Sid: KmsMasterKeyAccess
@@ -740,20 +778,69 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_117.CKV_AWS_173"
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173"
 
-  GroSplitFileFunctionLogGroup:
+  GroConvertToJsonFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub "/aws/lambda/gro-split-file-${Environment}${Developer}"
+      LogGroupName: !Sub "/aws/lambda/gro-convert-to-json-${Environment}${Developer}"
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
 # Comment out CSLS subscription filters until accounts have been granted access
-#  GroSplitFileFunctionLogGroupSubscriptionFilter:
+#  GroConvertToJsonFunctionLogGroupSubscriptionFilter:
 #    Type: AWS::Logs::SubscriptionFilter
 #    Condition: IsNotDev
 #    Properties:
 #      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
 #      FilterPattern: ""
-#      LogGroupName: !Ref GroSplitFileFunctionLogGroup
+#      LogGroupName: !Ref GroConvertToJsonFunctionLogGroup
+
+  GroPublishRecordFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - GroPublishRecordFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub "gro-publish-record-${Environment}${Developer}"
+      CodeUri: lambdas/gro-publish-record
+      Handler: uk.gov.di.data.lep.PublishRecord::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: gro-publish-record
+      AutoPublishAlias: latest
+      Policies:
+        - Statement:
+            - Sid: KmsMainKeyAccess
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+                - 'kms:GenerateDataKey'
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: "CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173"
+
+  GroPublishRecordFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub "/aws/lambda/gro-publish-record-${Environment}${Developer}"
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+# Comment out CSLS subscription filters until accounts have been granted access
+#  GroPublishRecordFunctionLogGroupSubscriptionFilter:
+#    Type: AWS::Logs::SubscriptionFilter
+#    Condition: IsNotDev
+#    Properties:
+#      DestinationArn: "arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython"
+#      FilterPattern: ""
+#      LogGroupName: !Ref GroPublishRecordFunctionLogGroup

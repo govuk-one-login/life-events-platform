@@ -19,7 +19,7 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
     private final static Logger logger = LogManager.getLogger();
     protected final Config config;
     protected final JwtService jwtService;
-    private final Map<String, String> scopeMatchup = Map.of(
+    private final Map<String, String> scopePathMap = Map.of(
         "\"EventType/DeathNotification\"", "/events/deathNotification",
         "\"EventType/TestEvent\"", "events/testEvent"
     );
@@ -41,12 +41,13 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
 
         var decodedJwt = getDecodedJwt(event.getHeaders());
         var proxyContext = event.getRequestContext();
-        var identity = proxyContext.getIdentity();
+
+        var accountId = proxyContext.getAccountId();
         var auth = isAllowedPath(decodedJwt, event) ? "Allow" : "Deny";
         var arn = String.format(
             "arn:aws:execute-api:%s:%s:%s/%s/%s/%s",
             config.getAwsRegion(),
-            proxyContext.getAccountId(),
+            accountId,
             proxyContext.getApiId(),
             proxyContext.getStage(),
             proxyContext.getHttpMethod(),
@@ -54,7 +55,7 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
         );
         var eventContext = Map.of("sub", decodedJwt.getSubject());
 
-        return new AuthoriserResponse(identity.getAccountId(), auth, arn, eventContext);
+        return new AuthoriserResponse(accountId, auth, arn, eventContext);
     }
 
     private DecodedJWT getDecodedJwt(Map<String, String> headers) {
@@ -64,7 +65,7 @@ public class Authorisation implements RequestHandler<APIGatewayProxyRequestEvent
 
     private boolean isAllowedPath(DecodedJWT decodedJwt, APIGatewayProxyRequestEvent event) {
         var scope = decodedJwt.getClaim("scope").asString();
-        var allowedPath = scope != null ? scopeMatchup.get(scope) : null;
+        var allowedPath = scope != null ? scopePathMap.get(scope) : null;
         return Objects.equals(allowedPath, event.getPath());
     }
 }

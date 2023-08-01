@@ -1,6 +1,8 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
@@ -22,15 +25,16 @@ import static org.mockito.Mockito.when;
 public class ConvertToJsonTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
-    private static final ConvertToJson underTest = new ConvertToJson(awsService, config);
+    private static final ObjectMapper mapper = mock(ObjectMapper.class);
+    private static final ConvertToJson underTest = new ConvertToJson(awsService, config, mapper);
     private static final Context context = mock(Context.class);
     private static final S3ObjectCreatedNotificationEvent event = new S3ObjectCreatedNotificationEvent();
 
 
     @BeforeAll
-    static void setup(){
+    static void setup() throws JsonProcessingException {
         when(config.getGroRecordsBucketName()).thenReturn("JsonBucketName");
-
+        when(mapper.writeValueAsString(any())).thenReturn("jsonString");
         event.detail = new S3ObjectCreatedNotificationEventDetail();
         event.detail.bucket = new S3ObjectCreatedNotificationEventBucket();
         event.detail.bucket.name = "XMLBucketName";
@@ -57,6 +61,6 @@ public class ConvertToJsonTest {
     void convertToJsonUploadsToS3() {
         underTest.handleRequest(event, context);
 
-        verify(awsService).putInBucket(eq("JsonBucketName"), anyString(), anyString());
+        verify(awsService).putInBucket(eq("JsonBucketName"), anyString(), eq("jsonString"));
     }
 }

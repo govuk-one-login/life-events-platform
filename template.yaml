@@ -722,7 +722,7 @@ Resources:
             FunctionName: !Ref GroConvertToJsonFunction
         - LambdaInvokePolicy:
             FunctionName: !Ref GroPublishRecordFunction
-        - S3FullAccessPolicy:
+        - S3ReadPolicy:
             BucketName: !Ref GroRecordsBucket
         - StepFunctionsExecutionPolicy:
             StateMachineName: !Sub "${Environment}${Developer}-ingestion-state-machine"
@@ -773,6 +773,8 @@ Resources:
           GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
       AutoPublishAlias: latest
       Policies:
+        - S3WritePolicy:
+            BucketName: !Ref GroRecordsBucket
         - Statement:
             - Sid: KmsMasterKeyAccess
               Effect: Allow

@@ -19,7 +19,6 @@ public class AwsService {
     private final static SnsClient snsClient = SnsClient.builder()
         .region(Region.EU_WEST_2)
         .build();
-
     private final static S3Client s3Client = S3Client.builder()
         .region(Region.EU_WEST_2)
         .build();

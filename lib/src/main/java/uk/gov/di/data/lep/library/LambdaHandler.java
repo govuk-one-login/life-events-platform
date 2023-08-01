@@ -34,7 +34,7 @@ public abstract class LambdaHandler<O> {
         try {
             message = objectMapper.writeValueAsString(output);
         } catch (JsonProcessingException e) {
-            logger.info("Failed to map lambda output to string for publishing");
+            logger.error("Failed to map lambda output to string for publishing");
             throw new RuntimeException(e);
         }
 

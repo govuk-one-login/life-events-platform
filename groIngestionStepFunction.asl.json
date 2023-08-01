@@ -20,18 +20,7 @@
           "BackoffRate": 2
         }
       ],
-      "Next": "UploadToS3"
-    },
-    "UploadToS3": {
-      "Type": "Task",
-      "Next": "Map",
-      "Parameters": {
-        "Body.$": "$.payload",
-        "Bucket.$": "$.bucket",
-        "Key.$": "$.key"
-      },
-      "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
-      "ResultPath": "$.Result"
+      "Next": "Map"
     },
     "Map": {
       "Type": "Map",
@@ -73,8 +62,8 @@
           "InputType": "JSON"
         },
         "Parameters": {
-          "Bucket.$": "$.bucket",
-          "Key.$": "$.key"
+          "Bucket.$": "$.jsonBucket",
+          "Key.$": "$.jsonKey"
         }
       }
     },

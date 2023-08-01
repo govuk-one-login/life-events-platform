@@ -722,8 +722,10 @@ Resources:
             FunctionName: !Ref GroConvertToJsonFunction
         - LambdaInvokePolicy:
             FunctionName: !Ref GroPublishRecordFunction
-        - S3ReadPolicy:
+        - S3FullAccessPolicy:
             BucketName: !Ref GroRecordsBucket
+        - S3WritePolicy:
+            BucketName: !Ref GroIngestionBucket
         - StepFunctionsExecutionPolicy:
             StateMachineName: !Sub ${Environment}${Developer}-ingestion-state-machine
         - Statement:

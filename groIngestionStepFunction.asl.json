@@ -53,7 +53,7 @@
           }
         }
       },
-      "Next": "Success",
+      "Next": "SuccessDeleteJsonRecords",
       "Label": "Map",
       "MaxConcurrency": 1000,
       "ItemReader": {
@@ -65,7 +65,47 @@
           "Bucket.$": "$.jsonBucket",
           "Key.$": "$.jsonKey"
         }
-      }
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "FailureDeleteJsonRecords"
+        }
+      ],
+      "ResultPath": null
+    },
+    "FailureDeleteJsonRecords": {
+      "Type": "Task",
+      "Next": "Fail",
+      "Parameters": {
+        "Bucket.$": "$.jsonBucket",
+        "Key.$": "$.jsonKey"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:s3:deleteObject"
+    },
+    "Fail": {
+      "Type": "Fail"
+    },
+    "SuccessDeleteJsonRecords": {
+      "Type": "Task",
+      "Next": "SuccessDeleteXml",
+      "Parameters": {
+        "Bucket.$": "$.jsonBucket",
+        "Key.$": "$.jsonKey"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:s3:deleteObject",
+      "ResultPath": null
+    },
+    "SuccessDeleteXml": {
+      "Type": "Task",
+      "Next": "Success",
+      "Parameters": {
+        "Bucket.$": "$.xmlBucket",
+        "Key.$": "$.xmlKey"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:s3:deleteObject"
     },
     "Success": {
       "Type": "Succeed"

@@ -38,9 +38,6 @@ public class ConvertToJson implements RequestHandler<S3ObjectCreatedNotification
     @Tracing
     @Logging(clearState = true)
     public GroFileLocations handleRequest(S3ObjectCreatedNotificationEvent event, Context context) {
-        logger.info("Splitting file");
-        logger.info("Bucket: " + event.detail.bucket.name + " has new file: " + event.detail.object.key);
-
         var xmlBucket = event.detail.bucket.name;
         var xmlKey = event.detail.object.key;
 

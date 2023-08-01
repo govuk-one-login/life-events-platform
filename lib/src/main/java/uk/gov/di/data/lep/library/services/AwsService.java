@@ -1,11 +1,9 @@
 package uk.gov.di.data.lep.library.services;
 
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
@@ -14,10 +12,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.config.Config;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 
 public class AwsService {
     private static Config config;
@@ -61,7 +56,7 @@ public class AwsService {
 
     @Tracing
     public String getFromBucket(String bucket, String key) {
-        var response =  s3Client.getObjectAsBytes(
+        var response = s3Client.getObjectAsBytes(
             GetObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)

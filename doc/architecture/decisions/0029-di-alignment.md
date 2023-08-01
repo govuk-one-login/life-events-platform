@@ -1,6 +1,6 @@
 # 29. DI Alignment
 
-[Next >>](9999-end.md)
+[Next >>](0030-serverless-auth.md)
 
 Date: 2023-06-16
 
@@ -85,4 +85,4 @@ details of that acquirer if relevant. This is shown in the image below.
 
 ![Image](di-alignment-acquirer-management.svg)
 
-[Next >>](9999-end.md)
+[Next >>](0030-serverless-auth.md)

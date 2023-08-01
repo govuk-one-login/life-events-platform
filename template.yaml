@@ -773,6 +773,8 @@ Resources:
           GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
       AutoPublishAlias: latest
       Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref GroIngestionBucket
         - S3WritePolicy:
             BucketName: !Ref GroRecordsBucket
         - Statement:

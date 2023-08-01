@@ -15,6 +15,10 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -37,9 +41,15 @@ public class ConvertToJson implements RequestHandler<S3ObjectCreatedNotification
     @Override
     @Tracing
     @Logging(clearState = true)
-    public GroFileLocations handleRequest(S3ObjectCreatedNotificationEvent event, Context context){
+    public GroFileLocations handleRequest(S3ObjectCreatedNotificationEvent event, Context context) {
         logger.info("Splitting file");
         logger.info("Bucket: " + event.detail.bucket.name + " has new file: " + event.detail.object.key);
+
+        var xmlBucket = event.detail.bucket.name;
+        var xmlKey = event.detail.object.key;
+
+        var s3objectResponse = awsService.getFromBucket(xmlBucket, xmlKey);
+
         var jsonRecords = new ArrayList<GroJsonRecord>();
         for (int i = 0; i < 5; i++) {
             var record = new GroJsonRecord();
@@ -56,6 +66,6 @@ public class ConvertToJson implements RequestHandler<S3ObjectCreatedNotification
             throw new RuntimeException(e);
         }
 
-        return new GroFileLocations(event.detail.bucket.name, event.detail.object.key, jsonBucket, jsonKey);
+        return new GroFileLocations(xmlBucket, xmlKey, jsonBucket, jsonKey);
     }
 }

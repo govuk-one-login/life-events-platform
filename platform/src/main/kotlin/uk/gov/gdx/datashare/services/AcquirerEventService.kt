@@ -103,8 +103,12 @@ class AcquirerEventService(
     )
 
     val eventModels = events.map { event ->
-      val subscription = acquirerSubscriptionIdMap[event.acquirerSubscriptionId]!!
-      val enrichmentFieldNames = acquirerSubscriptionEnrichmentFieldsById[event.acquirerSubscriptionId]!!
+      val subscription = acquirerSubscriptionIdMap.getOrElse(event.acquirerSubscriptionId) {
+        throw NoSuchElementException("Acquirer subscription ID does not exist in acquirer subscription map")
+      }
+      val enrichmentFieldNames = acquirerSubscriptionEnrichmentFieldsById.getOrElse(event.acquirerSubscriptionId) {
+        throw NoSuchElementException("Acquirer subscription ID does not exist in enrichment field map")
+      }
       mapEventNotification(event, subscription, enrichmentFieldNames, subscription.enrichmentFieldsIncludedInPoll)
     }
 

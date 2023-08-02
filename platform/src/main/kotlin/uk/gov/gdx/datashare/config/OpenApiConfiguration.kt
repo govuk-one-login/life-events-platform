@@ -93,7 +93,7 @@ class OpenApiConfiguration(
       schema.additionalProperties = false
       val properties = schema.properties ?: mutableMapOf()
       for (propertyName in properties.keys) {
-        val propertySchema = properties[propertyName]!!
+        val propertySchema = properties[propertyName]
         if (propertySchema is DateTimeSchema) {
           properties.replace(
             propertyName,

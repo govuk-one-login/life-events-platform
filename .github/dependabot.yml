@@ -7,12 +7,6 @@ updates:
     commit-message:
       prefix: "GPC-NONE"
   - package-ecosystem: gradle
-    directory: "/lambdas/authorisation"
-    schedule:
-      interval: daily
-    commit-message:
-      prefix: "GPC-NONE"
-  - package-ecosystem: gradle
     directory: "/lambdas/death-enrichment"
     schedule:
       interval: daily

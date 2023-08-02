@@ -253,23 +253,8 @@ module "policies" {
   source = "../modules/policies"
 }
 
-locals {
-  gdx_admins = [
-    "carly.gilson",
-    "ethan.mills",
-    "oliver.levett",
-    "oskar.williams"
-  ]
-
-  gdx_read_only = [
-  ]
-}
-
 module "iam_user_roles" {
   source = "../modules/iam_user_roles"
-
-  admin_users     = local.gdx_admins
-  read_only_users = concat(local.gdx_admins, local.gdx_read_only)
 
   terraform_lock_table_name = "gdx-data-share-poc-lock"
   account_id                = data.aws_caller_identity.current.account_id

@@ -160,20 +160,8 @@ module "assume_admin_role_alert" {
   eu_west_1_sns_arn = module.sns_eu_west_1.topic_arn
 }
 
-locals {
-  gdx_admins = [
-    "oskar.williams"
-  ]
-
-  gdx_read_only = [
-  ]
-}
-
 module "iam_user_roles" {
   source = "../modules/iam_user_roles"
-
-  admin_users     = local.gdx_admins
-  read_only_users = concat(local.gdx_admins, local.gdx_read_only)
 
   terraform_lock_table_name = "gdx-data-share-lock"
   account_id                = data.aws_caller_identity.current.account_id

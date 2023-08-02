@@ -67,6 +67,10 @@ public class ConvertToJsonTest {
     void convertToJsonUploadsToS3() {
         underTest.handleRequest(event, context);
 
-        verify(awsService).putInBucket(eq("JsonBucketName"), anyString(), anyString());
+        verify(awsService).putInBucket(
+            eq("JsonBucketName"),
+            anyString(),
+            eq("[{\"RegistrationID\":1},{\"RegistrationID\":2}]")
+        );
     }
 }

@@ -1,4 +1,4 @@
-rootProject.name = "gdx-data-share-poc"
+rootProject.name = "di-data-life-events-platform"
 include "lambdas",
         "lambdas:authorisation",
         "lambdas:death-enrichment",

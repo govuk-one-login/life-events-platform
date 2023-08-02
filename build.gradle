@@ -1,3 +1,22 @@
 plugins {
     id "java"
+    id "org.sonarqube" version "4.2.1.3168"
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "alphagov_di-data-life-events-platform"
+        property "sonar.organization", "alphagov"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }

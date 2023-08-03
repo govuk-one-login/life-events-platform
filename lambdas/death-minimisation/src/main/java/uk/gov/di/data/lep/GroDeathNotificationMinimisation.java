@@ -36,8 +36,8 @@ public class GroDeathNotificationMinimisation
     @Logging(clearState = true)
     public GroDeathEventNotification handleRequest(SQSEvent sqsEvent, Context context) {
         try {
-            var record = sqsEvent.getRecords().get(0);
-            var enrichedData = objectMapper.readValue(record.getBody(), GroDeathEventEnrichedData.class);
+            var sqsMessage = sqsEvent.getRecords().get(0);
+            var enrichedData = objectMapper.readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
             var minimisedData = minimiseEnrichedData(enrichedData);
             return publish(minimisedData);
         } catch (JsonProcessingException e) {
@@ -48,7 +48,7 @@ public class GroDeathNotificationMinimisation
 
     @Tracing
     private GroDeathEventNotification minimiseEnrichedData(GroDeathEventEnrichedData enrichedData) {
-        logger.info("Minimising enriched data (sourceId: " + enrichedData.sourceId() + ")");
+        logger.info("Minimising enriched data (sourceId: {})", enrichedData.sourceId());
 
         return new GroDeathEventNotification(
             UUID.randomUUID(),

@@ -7,7 +7,7 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
-public class PublishRecordTest {
+class PublishRecordTest {
     private static final PublishRecord underTest = new PublishRecord();
     private static final Context context = mock(Context.class);
 

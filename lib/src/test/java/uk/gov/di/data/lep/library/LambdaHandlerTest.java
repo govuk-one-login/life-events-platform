@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LambdaHandlerTest {
+class LambdaHandlerTest {
     private static final Config config = mock(Config.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final Logger logger = mock(Logger.class);
@@ -38,7 +38,7 @@ public class LambdaHandlerTest {
     }
 
     @Test
-    public void publishPublishesMessageToQueue() throws JsonProcessingException {
+    void publishPublishesMessageToQueue() throws JsonProcessingException {
         var output = new GroDeathEventEnrichedData(
             "123a1234-a12b-12a1-a123-123456789012",
             GroSex.FEMALE,
@@ -70,7 +70,7 @@ public class LambdaHandlerTest {
     }
 
     @Test
-    public void publishPublishesMessageToTopic() throws JsonProcessingException {
+    void publishPublishesMessageToTopic() throws JsonProcessingException {
         var output = new GroDeathEventEnrichedData(
             "123a1234-a12b-12a1-a123-123456789012",
             GroSex.FEMALE,

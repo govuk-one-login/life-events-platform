@@ -33,14 +33,14 @@ public class ConvertToJson implements RequestHandler<S3ObjectCreatedNotification
     @Logging(clearState = true)
     public GroFileLocations handleRequest(S3ObjectCreatedNotificationEvent event, Context context) {
         logger.info("Converting XML to JSON");
-        var xmlBucket = event.detail.bucket.name;
-        var xmlKey = event.detail.object.key;
+        var xmlBucket = event.detail().bucket().name();
+        var xmlKey = event.detail().object().key();
         var xmlData = awsService.getFromBucket(xmlBucket, xmlKey);
         var deathRegistrations = convertXmlDataToJson(xmlData);
 
         var jsonBucket = config.getGroRecordsBucketName();
         var jsonKey = UUID.randomUUID() + ".json";
-        logger.info("Putting DeathRegistrations in bucket: " + jsonBucket);
+        logger.info("Putting DeathRegistrations in bucket: {}", jsonBucket);
         awsService.putInBucket(jsonBucket, jsonKey, deathRegistrations);
 
         return new GroFileLocations(xmlBucket, xmlKey, jsonBucket, jsonKey);

@@ -1,5 +1,6 @@
 package uk.gov.di.data.lep.library.services;
 
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -15,23 +16,26 @@ import uk.gov.di.data.lep.library.config.Config;
 import java.nio.charset.StandardCharsets;
 
 public class AwsService {
-    private static Config config;
-    private final static SqsClient sqsClient = SqsClient.builder()
+    private final Config config;
+    private static final SqsClient sqsClient = SqsClient.builder()
         .region(Region.EU_WEST_2)
+        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();
-    private final static SnsClient snsClient = SnsClient.builder()
+    private static final SnsClient snsClient = SnsClient.builder()
         .region(Region.EU_WEST_2)
+        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();
-    private final static S3Client s3Client = S3Client.builder()
+    private static final S3Client s3Client = S3Client.builder()
         .region(Region.EU_WEST_2)
+        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();
 
     public AwsService() {
         this(new Config());
     }
 
-    public AwsService(Config _config) {
-        config = _config;
+    public AwsService(Config config) {
+        this.config = config;
     }
 
     @Tracing

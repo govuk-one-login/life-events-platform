@@ -14,12 +14,12 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LambdaHandlerTest {
+class LambdaHandlerTest {
     private static final Config config = mock(Config.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final Logger logger = mock(Logger.class);
@@ -30,15 +30,16 @@ public class LambdaHandlerTest {
     public static void setup() {
         underTest.logger = logger;
     }
+
     @BeforeEach
     public void refreshSetup() {
-        clearInvocations(config);
-        clearInvocations(logger);
-        clearInvocations(objectMapper);
+        reset(config);
+        reset(logger);
+        reset(objectMapper);
     }
 
     @Test
-    public void publishPublishesMessageToQueue() throws JsonProcessingException {
+    void publishPublishesMessageToQueue() throws JsonProcessingException {
         var output = new GroDeathEventEnrichedData(
             "123a1234-a12b-12a1-a123-123456789012",
             GroSex.FEMALE,
@@ -64,13 +65,13 @@ public class LambdaHandlerTest {
 
         underTest.publish(output);
 
-        verify(logger).info("Putting message on target queue: targetQueueURL");
+        verify(logger).info("Putting message on target queue: {}", "targetQueueURL");
 
         verify(awsService).putOnQueue("mappedQueueOutput");
     }
 
     @Test
-    public void publishPublishesMessageToTopic() throws JsonProcessingException {
+    void publishPublishesMessageToTopic() throws JsonProcessingException {
         var output = new GroDeathEventEnrichedData(
             "123a1234-a12b-12a1-a123-123456789012",
             GroSex.FEMALE,
@@ -95,13 +96,13 @@ public class LambdaHandlerTest {
 
         underTest.publish(output);
 
-        verify(logger).info("Putting message on target topic: targetTopicARN");
+        verify(logger).info("Putting message on target topic: {}", "targetTopicARN");
 
         verify(awsService).putOnTopic("mappedTopicOutput");
     }
 
     static class TestLambda extends LambdaHandler<GroDeathEventEnrichedData> {
-        public TestLambda(AwsService awsService,Config config, ObjectMapper objectMapper) {
+        public TestLambda(AwsService awsService, Config config, ObjectMapper objectMapper) {
             super(awsService, config, objectMapper);
         }
     }

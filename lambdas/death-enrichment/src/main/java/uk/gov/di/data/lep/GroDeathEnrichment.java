@@ -34,8 +34,8 @@ public class GroDeathEnrichment
     @Logging(clearState = true)
     public GroDeathEventEnrichedData handleRequest(SQSEvent sqsEvent, Context context) {
         try {
-            var record = sqsEvent.getRecords().get(0);
-            var baseData = objectMapper.readValue(record.getBody(), GroDeathEventBaseData.class);
+            var sqsMessage = sqsEvent.getRecords().get(0);
+            var baseData = objectMapper.readValue(sqsMessage.getBody(), GroDeathEventBaseData.class);
             var enrichedData = enrichData(baseData);
             return publish(enrichedData);
         } catch (JsonProcessingException e) {
@@ -46,8 +46,8 @@ public class GroDeathEnrichment
 
     @Tracing
     public GroDeathEventEnrichedData enrichData(GroDeathEventBaseData baseData) {
-        logger.info("Enriching data (sourceId: " + baseData.sourceId() + ")");
-        var enrichmentData = getEnrichmentData(baseData.sourceId());
+        logger.info("Enriching data (sourceId: {})", baseData.sourceId());
+        var enrichmentData = getEnrichmentData();
 
         return new GroDeathEventEnrichedData(
             baseData.sourceId(),
@@ -70,7 +70,7 @@ public class GroDeathEnrichment
         );
     }
 
-    private GroDeathEventDetails getEnrichmentData(String sourceId) {
+    private GroDeathEventDetails getEnrichmentData() {
         return new GroDeathEventDetails(
             GroSex.FEMALE,
             LocalDate.parse("1972-02-20"),

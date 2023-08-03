@@ -39,11 +39,11 @@ public abstract class LambdaHandler<O> {
         }
 
         if (config.getTargetQueue() != null) {
-            logger.info("Putting message on target queue: " + config.getTargetQueue());
+            logger.info("Putting message on target queue: {}", config.getTargetQueue());
             awsService.putOnQueue(message);
         }
         if (config.getTargetTopic() != null) {
-            logger.info("Putting message on target topic: " + config.getTargetTopic());
+            logger.info("Putting message on target topic: {}", config.getTargetTopic());
             awsService.putOnTopic(message);
         }
 

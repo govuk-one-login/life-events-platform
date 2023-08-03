@@ -4,15 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class S3ObjectCreatedNotificationEvent {
-    public String version;
-    public String id;
+public record S3ObjectCreatedNotificationEvent(
+    String version,
+    String id,
     @JsonProperty("detail-type")
-    public String detailType;
-    public String source;
-    public String account;
-    public String time;
-    public String region;
-    public List<String> resources;
-    public S3ObjectCreatedNotificationEventDetail detail;
+    String detailType,
+    String source,
+    String account,
+    String time,
+    String region,
+    List<String> resources,
+    S3ObjectCreatedNotificationEventDetail detail
+) {
 }

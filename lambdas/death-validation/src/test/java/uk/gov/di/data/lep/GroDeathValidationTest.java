@@ -10,11 +10,13 @@ import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.dto.GroDeathEvent;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.when;
 
 class GroDeathValidationTest {
@@ -29,6 +31,17 @@ class GroDeathValidationTest {
         clearInvocations(awsService);
         clearInvocations(config);
         clearInvocations(objectMapper);
+    }
+
+    @Test
+    void constructionCallsCorrectInstantiation() {
+        var awsService = mockConstruction(AwsService.class);
+        var config = mockConstruction(Config.class);
+        var mapper = mockConstruction(Mapper.class);
+        new GroDeathValidation();
+        assertEquals(1, awsService.constructed().size());
+        assertEquals(1, config.constructed().size());
+        assertEquals(1, mapper.constructed().size());
     }
 
     @Test
@@ -51,7 +64,6 @@ class GroDeathValidationTest {
         var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
 
         assert(exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
-
     }
 
     @Test

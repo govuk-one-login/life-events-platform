@@ -1,11 +1,11 @@
 [
   {
     "ParameterKey": "AllowedDomains",
-    "ParameterValue": "cognito-idp.eu-west-2.amazonaws.com"
+    "ParameterValue": "*.auth.eu-west-2.amazoncognito.com,*.life-events.dev.account.gov.uk"
   },
   {
     "ParameterKey": "AllowRules",
-    "ParameterValue": "pass tls $HOME_NET any -> $EXTERNAL_NET 443 (tls.sni; content:\"cognito-idp.eu-west-2.amazonaws.com\"; startswith; endswith; msg:\"Pass TLS to cognito-idp.eu-west-2.amazonaws.com\"; flow:established; sid:2001; rev:1;)"
+    "ParameterValue": "pass tls $HOME_NET any -> $EXTERNAL_NET 443 (tls.sni; content:\".auth.eu-west-2.amazoncognito.com\"; endswith; msg:\"Pass TLS to *.auth.eu-west-2.amazoncognito.com\"; flow:established; sid:2001; rev:1;)\npass tls $HOME_NET any -> $EXTERNAL_NET 443 (tls.sni; content:\".life-events.dev.account.gov.uk\"; endswith; msg:\"Pass TLS to *.life-events.dev.account.gov.uk\"; flow:established; sid:2002; rev:1;)"
   },
   {
     "ParameterKey": "S3ApiEnabled",

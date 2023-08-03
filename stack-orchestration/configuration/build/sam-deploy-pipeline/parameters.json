@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "AllowedAccounts",
-    "ParameterValue": "074138398575,344411318064,473199035299"
+    "ParameterValue": "473199035299"
   },
   {
     "ParameterKey": "BuildNotificationStackName",

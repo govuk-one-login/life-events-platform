@@ -14,8 +14,8 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,11 +30,12 @@ class LambdaHandlerTest {
     public static void setup() {
         underTest.logger = logger;
     }
+
     @BeforeEach
     public void refreshSetup() {
-        clearInvocations(config);
-        clearInvocations(logger);
-        clearInvocations(objectMapper);
+        reset(config);
+        reset(logger);
+        reset(objectMapper);
     }
 
     @Test
@@ -64,7 +65,7 @@ class LambdaHandlerTest {
 
         underTest.publish(output);
 
-        verify(logger).info("Putting message on target queue: targetQueueURL");
+        verify(logger).info("Putting message on target queue: {}", "targetQueueURL");
 
         verify(awsService).putOnQueue("mappedQueueOutput");
     }
@@ -95,13 +96,13 @@ class LambdaHandlerTest {
 
         underTest.publish(output);
 
-        verify(logger).info("Putting message on target topic: targetTopicARN");
+        verify(logger).info("Putting message on target topic: {}", "targetTopicARN");
 
         verify(awsService).putOnTopic("mappedTopicOutput");
     }
 
     static class TestLambda extends LambdaHandler<GroDeathEventEnrichedData> {
-        public TestLambda(AwsService awsService,Config config, ObjectMapper objectMapper) {
+        public TestLambda(AwsService awsService, Config config, ObjectMapper objectMapper) {
             super(awsService, config, objectMapper);
         }
     }

@@ -9,12 +9,12 @@ import java.time.LocalDateTime;
 
 public record GroDeathEventDetails(
     GroSex sex,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.localDatePattern)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_PATTERN)
     LocalDate dateOfBirth,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.localDatePattern)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_PATTERN)
     LocalDate dateOfDeath,
     String registrationId,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.localDateTimePattern)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN)
     LocalDateTime eventTime,
     String verificationLevel,
     String partialMonthOfDeath,

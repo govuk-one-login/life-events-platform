@@ -71,7 +71,8 @@
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "FailureDeleteJsonRecords"
+          "Next": "FailureDeleteJsonRecords",
+          "ResultPath": "$.Error"
         }
       ],
       "ResultPath": null

@@ -1,7 +1,6 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,32 @@ class ConvertToJsonTest {
     private static final Config config = mock(Config.class);
     private static final ConvertToJson underTest = new ConvertToJson(awsService, config);
     private static final Context context = mock(Context.class);
-    private static S3ObjectCreatedNotificationEvent event;
+    private static final S3ObjectCreatedNotificationEvent event =  new S3ObjectCreatedNotificationEvent(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        List.of(),
+        new S3ObjectCreatedNotificationEventDetail(
+            "",
+            new S3ObjectCreatedNotificationEventBucket(
+                "XMLBucketName"
+            ),
+            new S3ObjectCreatedNotificationEventObject(
+                "File.xml",
+                0,
+                "",
+                ""
+            ),
+            "",
+            "",
+            "",
+            ""
+        )
+    );
     private static final String mockS3objectResponse =
         "<DeathRegistrationGroup>" +
             "<DeathRegistration>" +
@@ -39,36 +63,9 @@ class ConvertToJsonTest {
             "</DeathRegistrationGroup>";
 
     @BeforeAll
-    static void setup() throws JsonProcessingException {
+    static void setup() {
         when(config.getGroRecordsBucketName()).thenReturn("JsonBucketName");
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponse);
-
-        event = new S3ObjectCreatedNotificationEvent(
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            List.of(),
-            new S3ObjectCreatedNotificationEventDetail(
-                "",
-                new S3ObjectCreatedNotificationEventBucket(
-                    "XMLBucketName"
-                ),
-                new S3ObjectCreatedNotificationEventObject(
-                    "File.xml",
-                    0,
-                    "",
-                    ""
-                ),
-                "",
-                "",
-                "",
-                ""
-            )
-        );
     }
 
     @BeforeEach

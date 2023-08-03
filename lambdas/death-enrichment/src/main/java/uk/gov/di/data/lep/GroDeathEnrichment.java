@@ -13,6 +13,7 @@ import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.time.LocalDate;
@@ -39,8 +40,8 @@ public class GroDeathEnrichment
             var enrichedData = enrichData(baseData);
             return publish(enrichedData);
         } catch (JsonProcessingException e) {
-            logger.error("Failed to validate request");
-            throw new RuntimeException(e);
+            logger.error("Failed to enrich request due to mapping error");
+            throw new MappingException(e);
         }
     }
 

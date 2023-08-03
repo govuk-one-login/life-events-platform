@@ -12,6 +12,7 @@ import uk.gov.di.data.lep.dto.GroDeathEvent;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 public class GroDeathValidation
@@ -42,8 +43,8 @@ public class GroDeathValidation
         try {
             groDeathEvent = objectMapper.readValue(event.getBody(), GroDeathEvent.class);
         } catch (JsonProcessingException e) {
-            logger.error("Failed to validate request");
-            throw new RuntimeException(e);
+            logger.error("Failed to validate request due to mapping error");
+            throw new MappingException(e);
         }
         var sourceId = groDeathEvent.sourceId();
 

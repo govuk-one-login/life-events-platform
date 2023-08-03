@@ -14,6 +14,7 @@ import uk.gov.di.data.lep.library.dto.GroDeathEventDetails;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.EventType;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.util.List;
@@ -41,8 +42,8 @@ public class GroDeathNotificationMinimisation
             var minimisedData = minimiseEnrichedData(enrichedData);
             return publish(minimisedData);
         } catch (JsonProcessingException e) {
-            logger.error("Failed to validate request");
-            throw new RuntimeException(e);
+            logger.error("Failed to minimise request due to mapping error");
+            throw new MappingException(e);
         }
     }
 

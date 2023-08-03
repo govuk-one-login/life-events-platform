@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -35,7 +36,7 @@ public abstract class LambdaHandler<O> {
             message = objectMapper.writeValueAsString(output);
         } catch (JsonProcessingException e) {
             logger.error("Failed to map lambda output to string for publishing");
-            throw new RuntimeException(e);
+            throw new MappingException(e);
         }
 
         if (config.getTargetQueue() != null) {

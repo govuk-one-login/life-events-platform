@@ -13,6 +13,7 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -29,12 +30,12 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class GroDeathNotificationMinimisationTest {
+class GroDeathMinimisationTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final Context context = mock(Context.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private static GroDeathNotificationMinimisation underTest;
+    private static GroDeathMinimisation underTest;
     private static final String enrichedDataJson = "{" +
         "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
         "\"sex\":\"FEMALE\"," +
@@ -97,7 +98,7 @@ class GroDeathNotificationMinimisationTest {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
         var mapper = mockConstruction(Mapper.class);
-        new GroDeathNotificationMinimisation();
+        new GroDeathMinimisation();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
         assertEquals(1, mapper.constructed().size());
@@ -107,7 +108,7 @@ class GroDeathNotificationMinimisationTest {
     void minimiseGroDeathEventDataReturnsMinimisedDataWithNoEnrichmentFields() throws JsonProcessingException {
         when(config.getEnrichmentFields()).thenReturn(List.of());
 
-        underTest = new GroDeathNotificationMinimisation(awsService, config, objectMapper);
+        underTest = new GroDeathMinimisation(awsService, config, objectMapper);
 
         var result = underTest.handleRequest(sqsEvent, context);
 
@@ -140,7 +141,7 @@ class GroDeathNotificationMinimisationTest {
             EnrichmentField.POSTCODE
         ));
 
-        underTest = new GroDeathNotificationMinimisation(awsService, config, objectMapper);
+        underTest = new GroDeathMinimisation(awsService, config, objectMapper);
 
         var result = underTest.handleRequest(sqsEvent, context);
 
@@ -184,7 +185,7 @@ class GroDeathNotificationMinimisationTest {
             EnrichmentField.POSTCODE
         ));
 
-        underTest = new GroDeathNotificationMinimisation(awsService, config, objectMapper);
+        underTest = new GroDeathMinimisation(awsService, config, objectMapper);
 
         var result = underTest.handleRequest(sqsEvent, context);
 
@@ -214,7 +215,7 @@ class GroDeathNotificationMinimisationTest {
         when(objectMapper.readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class))
             .thenThrow(mock(UnrecognizedPropertyException.class));
 
-        var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(sqsEvent, context));
+        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
         assert (exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
     }

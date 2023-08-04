@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.dto.GroDeathEvent;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -61,7 +62,7 @@ class GroDeathValidationTest {
 
         when(objectMapper.readValue(event.getBody(), GroDeathEvent.class)).thenThrow(mock(UnrecognizedPropertyException.class));
 
-        var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
+        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
 
         assert(exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
     }

@@ -46,7 +46,7 @@ public class GroDeathEnrichment
     }
 
     @Tracing
-    public GroDeathEventEnrichedData enrichData(GroDeathEventBaseData baseData) {
+    private GroDeathEventEnrichedData enrichData(GroDeathEventBaseData baseData) {
         logger.info("Enriching data (sourceId: {})", baseData.sourceId());
         var enrichmentData = getEnrichmentData();
 

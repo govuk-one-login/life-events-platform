@@ -230,14 +230,14 @@ Resources:
       RetentionInDays: 14
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-# Comment out CSLS subscription filters until accounts have been granted access
-#  ApiGatewayLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref ApiGatewayLogGroup
+  # Comment out CSLS subscription filters until accounts have been granted access
+  #  ApiGatewayLogGroupSubscriptionFilter:
+  #    Type: AWS::Logs::SubscriptionFilter
+  #    Condition: IsNotDev
+  #    Properties:
+  #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
+  #      FilterPattern: ""
+  #      LogGroupName: !Ref ApiGatewayLogGroup
 
   DeathValidationDlq:
     Type: AWS::SQS::Queue
@@ -376,14 +376,14 @@ Resources:
       LogGroupName: !Sub /aws/lambda/death-validation-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-# Comment out CSLS subscription filters until accounts have been granted access
-#  DeathValidationFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref DeathValidationFunctionLogGroup
+  # Comment out CSLS subscription filters until accounts have been granted access
+  #  DeathValidationFunctionLogGroupSubscriptionFilter:
+  #    Type: AWS::Logs::SubscriptionFilter
+  #    Condition: IsNotDev
+  #    Properties:
+  #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
+  #      FilterPattern: ""
+  #      LogGroupName: !Ref DeathValidationFunctionLogGroup
 
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
@@ -436,14 +436,14 @@ Resources:
       LogGroupName: !Sub /aws/lambda/death-enrichment-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-# Comment out CSLS subscription filters until accounts have been granted access
-#  DeathEnrichmentFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref DeathEnrichmentFunctionLogGroup
+  # Comment out CSLS subscription filters until accounts have been granted access
+  #  DeathEnrichmentFunctionLogGroupSubscriptionFilter:
+  #    Type: AWS::Logs::SubscriptionFilter
+  #    Condition: IsNotDev
+  #    Properties:
+  #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
+  #      FilterPattern: ""
+  #      LogGroupName: !Ref DeathEnrichmentFunctionLogGroup
 
   DeathMinimisationFunction:
     Type: AWS::Serverless::Function
@@ -497,14 +497,14 @@ Resources:
       LogGroupName: !Sub /aws/lambda/death-minimisation-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-# Comment out CSLS subscription filters until accounts have been granted access
-#  DeathMinimisationFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref DeathMinimisationFunctionLogGroup
+  # Comment out CSLS subscription filters until accounts have been granted access
+  #  DeathMinimisationFunctionLogGroupSubscriptionFilter:
+  #    Type: AWS::Logs::SubscriptionFilter
+  #    Condition: IsNotDev
+  #    Properties:
+  #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
+  #      FilterPattern: ""
+  #      LogGroupName: !Ref DeathMinimisationFunctionLogGroup
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -784,14 +784,14 @@ Resources:
       LogGroupName: !Sub /aws/lambda/gro-convert-to-json-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-# Comment out CSLS subscription filters until accounts have been granted access
-#  GroConvertToJsonFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref GroConvertToJsonFunctionLogGroup
+  # Comment out CSLS subscription filters until accounts have been granted access
+  #  GroConvertToJsonFunctionLogGroupSubscriptionFilter:
+  #    Type: AWS::Logs::SubscriptionFilter
+  #    Condition: IsNotDev
+  #    Properties:
+  #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
+  #      FilterPattern: ""
+  #      LogGroupName: !Ref GroConvertToJsonFunctionLogGroup
 
   GroPublishRecordFunction:
     Type: AWS::Serverless::Function
@@ -808,8 +808,22 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-publish-record
+          ACCOUNT_URI: !If
+            - IsDev
+            - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+            - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
+          COGNITO_URI: !Sub ${Environment}${Developer}-life-events
+          USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
       Policies:
+        - Statement:
+          - Sid: DeathNotificationCognitoAccess
+            Effect: Allow
+            Action:
+              - cognito-idp:DescribeUserPoolClient
+            Resource:
+              - !GetAtt UserPool.Arn
         - Statement:
             - Sid: KmsMainKeyAccess
               Effect: Allow
@@ -820,9 +834,9 @@ Resources:
                 - !GetAtt MainKmsKey.Arn
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 

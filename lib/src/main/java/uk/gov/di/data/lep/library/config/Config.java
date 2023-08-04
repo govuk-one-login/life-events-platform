@@ -8,10 +8,6 @@ import java.util.List;
 public class Config {
     private final String envEnrichmentFields = System.getenv("ENRICHMENT_FIELDS");
 
-    public String getAwsRegion() {
-        return System.getenv("AWS_REGION");
-    }
-
     public List<EnrichmentField> getEnrichmentFields() {
         if (envEnrichmentFields == null) {
             return List.of();
@@ -20,6 +16,22 @@ public class Config {
             .map(String::strip)
             .map(EnrichmentField::valueOf)
             .toList();
+    }
+
+    public String getAccountUri() {
+        return System.getenv("ACCOUNT_URI");
+    }
+
+    public String getAwsRegion() {
+        return System.getenv("AWS_REGION");
+    }
+
+    public String getCognitoClientId() {
+        return System.getenv("COGNITO_CLIENT_ID");
+    }
+
+    public String getCognitoUri() {
+        return System.getenv("COGNITO_URI");
     }
 
     public String getGroRecordsBucketName() {

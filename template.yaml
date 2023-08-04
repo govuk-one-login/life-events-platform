@@ -455,7 +455,7 @@ Resources:
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
       FunctionName: !Sub death-minimisation-${Environment}${Developer}
       CodeUri: lambdas/death-minimisation
-      Handler: uk.gov.di.data.lep.GroDeathNotificationMinimisation::handleRequest
+      Handler: uk.gov.di.data.lep.GroDeathMinimisation::handleRequest
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation

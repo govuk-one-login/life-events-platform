@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
 import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -91,7 +92,7 @@ class GroDeathEnrichmentTest {
         when(objectMapper.readValue(sqsMessage.getBody(), GroDeathEventBaseData.class))
             .thenThrow(mock(UnrecognizedPropertyException.class));
 
-        var exception = assertThrows(RuntimeException.class, () -> underTest.handleRequest(sqsEvent, context));
+        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
         assert (exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
     }

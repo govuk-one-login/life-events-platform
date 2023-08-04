@@ -20,15 +20,15 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import java.util.List;
 import java.util.UUID;
 
-public class GroDeathNotificationMinimisation
+public class GroDeathMinimisation
     extends LambdaHandler<GroDeathEventNotification>
     implements RequestHandler<SQSEvent, GroDeathEventNotification> {
     private final List<EnrichmentField> enrichmentFields = config.getEnrichmentFields();
 
-    public GroDeathNotificationMinimisation() {
+    public GroDeathMinimisation() {
     }
 
-    public GroDeathNotificationMinimisation(AwsService awsService, Config config, ObjectMapper objectMapper) {
+    public GroDeathMinimisation(AwsService awsService, Config config, ObjectMapper objectMapper) {
         super(awsService, config, objectMapper);
     }
 

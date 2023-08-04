@@ -18,6 +18,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,6 +72,15 @@ class ConvertToJsonTest {
     @BeforeEach
     void refreshSetup() {
         clearInvocations(awsService);
+    }
+
+    @Test
+    void constructionCallsCorrectInstantiation() {
+        var awsService = mockConstruction(AwsService.class);
+        var config = mockConstruction(Config.class);
+        new ConvertToJson();
+        assertEquals(1, awsService.constructed().size());
+        assertEquals(1, config.constructed().size());
     }
 
     @Test

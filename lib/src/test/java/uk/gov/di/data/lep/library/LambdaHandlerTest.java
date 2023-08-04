@@ -10,11 +10,14 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.enums.GroSex;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,6 +39,17 @@ class LambdaHandlerTest {
         reset(config);
         reset(logger);
         reset(objectMapper);
+    }
+
+    @Test
+    void constructionCallsCorrectInstantiation() {
+        var awsService = mockConstruction(AwsService.class);
+        var config = mockConstruction(Config.class);
+        var mapper = mockConstruction(Mapper.class);
+        new TestLambda();
+        assertEquals(1, awsService.constructed().size());
+        assertEquals(1, config.constructed().size());
+        assertEquals(1, mapper.constructed().size());
     }
 
     @Test
@@ -102,6 +116,10 @@ class LambdaHandlerTest {
     }
 
     static class TestLambda extends LambdaHandler<GroDeathEventEnrichedData> {
+        public TestLambda() {
+            super();
+        }
+
         public TestLambda(AwsService awsService, Config config, ObjectMapper objectMapper) {
             super(awsService, config, objectMapper);
         }

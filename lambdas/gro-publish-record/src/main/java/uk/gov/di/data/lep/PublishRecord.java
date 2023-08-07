@@ -19,20 +19,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final HttpClient httpClient;
     protected static Logger logger = LogManager.getLogger();
     private final AwsService awsService;
     private final Config config;
-    private final ObjectMapper mapper;
+    private final ObjectMapper objectMapper;
 
     public PublishRecord() {
-        this(new AwsService(), new Config(), new Mapper().objectMapper());
+        this(new AwsService(), new Config(), HttpClient.newHttpClient(), new Mapper().objectMapper());
     }
 
-    public PublishRecord(AwsService awsService, Config config, ObjectMapper mapper) {
+    public PublishRecord(AwsService awsService, Config config, HttpClient httpClient, ObjectMapper objectMapper) {
         this.awsService = awsService;
         this.config = config;
-        this.mapper = mapper;
+        this.httpClient = httpClient;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -40,7 +41,6 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
     @Logging(clearState = true)
     public Object handleRequest(GroJsonRecord event, Context context) {
         logger.info("Received record: {}", event.RegistrationID());
-
         try {
             var request = HttpRequest.newBuilder()
                 .uri(URI.create("https://" + config.getAccountUri() + "/events/deathNotification"))
@@ -51,7 +51,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             logger.info("Sending GRO record request: {}", request);
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to send request");
+            logger.error("Failed to send GRO record request");
             throw new RuntimeException(e);
         }
 
@@ -78,6 +78,6 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             .build();
         var response = httpClient.send(authorisationRequest, HttpResponse.BodyHandlers.ofString());
 
-        return ((mapper.readValue(response.body(), CognitoTokenResponse.class)).access_token());
+        return ((objectMapper.readValue(response.body(), CognitoTokenResponse.class)).access_token());
     }
 }

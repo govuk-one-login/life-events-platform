@@ -808,7 +808,7 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-publish-record
-          DOMAIN_NAME: !If
+          LIFE_EVENTS_PLATFORM_DOMAIN: !If
             - IsDev
             - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
             - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]

@@ -1,8 +1,13 @@
 package uk.gov.di.data.lep;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record CognitoTokenResponse (
-    String access_token,
-    String expires_in,
-    String token_type
+    @JsonProperty("access_token")
+    String accessToken,
+    @JsonProperty("expires_in")
+    String expiresIn,
+    @JsonProperty("token_type")
+    String tokenType
 ){
 }

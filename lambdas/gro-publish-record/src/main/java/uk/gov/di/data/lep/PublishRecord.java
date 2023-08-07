@@ -19,11 +19,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
-    private final HttpClient httpClient;
-    protected static Logger logger = LogManager.getLogger();
     private final AwsService awsService;
     private final Config config;
+    private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
+    protected static Logger logger = LogManager.getLogger();
 
     public PublishRecord() {
         this(new AwsService(), new Config(), HttpClient.newHttpClient(), new Mapper().objectMapper());
@@ -42,14 +42,8 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
     public Object handleRequest(GroJsonRecord event, Context context) {
         logger.info("Received record: {}", event.RegistrationID());
         try {
-            var request = HttpRequest.newBuilder()
-                .uri(URI.create("https://" + config.getDomainName() + "/events/deathNotification"))
-                .header("Authorization", getAuthorisationToken())
-                .POST(HttpRequest.BodyPublishers.ofString("{\"sourceId\": \"" + event.RegistrationID() + "\"}"))
-                .build();
-
-            logger.info("Sending GRO record request: {}", request);
-            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var authorisationToken = getAuthorisationToken();
+            postRecordToLifeEvents(event, authorisationToken);
         } catch (IOException | InterruptedException e) {
             logger.error("Failed to send GRO record request");
             throw new RuntimeException(e);
@@ -61,23 +55,27 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
     private String getAuthorisationToken() throws IOException, InterruptedException {
         logger.info("Sending request to get authorisation token");
         var authorisationRequest = HttpRequest.newBuilder()
-            .uri(URI.create(
-                "https://"
-                    + config.getCognitoDomainName()
-                    + ".auth."
-                    + config.getAwsRegion()
-                    + ".amazoncognito.com/oauth2/token"
-            ))
+            .uri(URI.create(config.getCognitoOauth2TokenUri()))
             .header("Content-Type", "application/x-www-form-urlencoded")
-            .POST(HttpRequest.BodyPublishers.ofString(
-                "grant_type=client_credentials&client_id="
-                    + config.getCognitoClientId()
-                    + "&client_secret="
-                    + awsService.getCognitoClientSecret(config.getUserPoolId(), config.getCognitoClientId()))
-            )
+            .POST(HttpRequest.BodyPublishers.ofString(String.format(
+                "grant_type=client_credentials&client_id=%s&client_secret=%s",
+                config.getCognitoClientId(),
+                awsService.getCognitoClientSecret(config.getUserPoolId(), config.getCognitoClientId())
+            )))
             .build();
         var response = httpClient.send(authorisationRequest, HttpResponse.BodyHandlers.ofString());
 
-        return ((objectMapper.readValue(response.body(), CognitoTokenResponse.class)).access_token());
+        return objectMapper.readValue(response.body(), CognitoTokenResponse.class).accessToken();
+    }
+
+    private void postRecordToLifeEvents(GroJsonRecord event, String authorisationToken) throws IOException, InterruptedException {
+        var request = HttpRequest.newBuilder()
+            .uri(URI.create(String.format("https://%s/events/deathNotification", config.getLifeEventsPlatformDomain())))
+            .header("Authorization", authorisationToken)
+            .POST(HttpRequest.BodyPublishers.ofString(String.format("{\"sourceId\": \"%s\"}", event.RegistrationID())))
+            .build();
+
+        logger.info("Sending GRO record request: {}", event.RegistrationID());
+        httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

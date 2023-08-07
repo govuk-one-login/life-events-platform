@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +16,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,6 +24,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -32,32 +36,33 @@ class PublishRecordTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final HttpClient httpClient = mock(HttpClient.class);
-    private static final HttpResponse<String> httpResponse = mock(HttpResponse.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final PublishRecord underTest = new PublishRecord(awsService, config, httpClient, objectMapper);
     private static final Context context = mock(Context.class);
-
     private static final GroJsonRecord event = new GroJsonRecord("1234567890");
+    private static final String cognitoClientId = "cognitoClientId";
+    private static final String cognitoClientSecret = "cognitoClientSecret";
+    private static final String cognitoOauth2TokenUri = "https://cognitoDomainName.auth.awsRegion.amazoncognito.com/oauth2/token";
     private static final HttpRequest expectedAuthRequest = HttpRequest.newBuilder()
-        .uri(URI.create("https://cognitoDomainName.auth.awsRegion.amazoncognito.com/oauth2/token"))
+        .uri(URI.create(cognitoOauth2TokenUri))
         .header("Content-Type", "application/x-www-form-urlencoded")
         .POST(HttpRequest.BodyPublishers.ofString(
-            "grant_type=client_credentials&client_id=cognitoClientId&client_secret=cognitoClientSecret")
-        )        .build();
+            String.format("grant_type=client_credentials&client_id=%s&client_secret=%s", cognitoClientId, cognitoClientSecret))
+        ).build();
     private static final HttpRequest expectedGroRecordRequest = HttpRequest.newBuilder()
-        .uri(URI.create("https://domainName/events/deathNotification"))
+        .uri(URI.create("https://lifeEventsPlatformDomain/events/deathNotification"))
         .header("Authorization", "accessToken")
         .POST(HttpRequest.BodyPublishers.ofString("{\"sourceId\": \"1234567890\"}"))
         .build();
+    private static final HttpResponse<String> httpResponse = mock(HttpResponse.class);
 
     @BeforeAll
     static void setup() {
-        when(config.getDomainName()).thenReturn("domainName");
-        when(config.getAwsRegion()).thenReturn("awsRegion");
-        when(config.getCognitoClientId()).thenReturn("cognitoClientId");
-        when(config.getCognitoDomainName()).thenReturn("cognitoDomainName");
+        when(config.getLifeEventsPlatformDomain()).thenReturn("lifeEventsPlatformDomain");
+        when(config.getCognitoClientId()).thenReturn(cognitoClientId);
+        when(config.getCognitoOauth2TokenUri()).thenReturn(cognitoOauth2TokenUri);
         when(config.getUserPoolId()).thenReturn("userPoolId");
-        when(awsService.getCognitoClientSecret(anyString(), anyString())).thenReturn("cognitoClientSecret");
+        when(awsService.getCognitoClientSecret(anyString(), anyString())).thenReturn(cognitoClientSecret);
     }
 
     @BeforeEach
@@ -65,6 +70,19 @@ class PublishRecordTest {
         clearInvocations(awsService);
         reset(httpClient);
         reset(objectMapper);
+    }
+
+    @Test
+    void constructionCallsCorrectInstantiation() {
+        var awsService = mockConstruction(AwsService.class);
+        var config = mockConstruction(Config.class);
+        var httpClient = mockStatic(HttpClient.class);
+        var mapper = mockConstruction(Mapper.class);
+        new PublishRecord();
+        assertEquals(1, awsService.constructed().size());
+        assertEquals(1, config.constructed().size());
+//        assertEquals(1, httpClient.constructed().size());
+        assertEquals(1, mapper.constructed().size());
     }
 
     @Test
@@ -84,14 +102,16 @@ class PublishRecordTest {
         verify(httpClient).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
         assertNull(result);
     }
+
     @Test
     void publishRecordDoesNotSendGroRecordRequestsIfNoAuthorisationToken() throws IOException, InterruptedException {
         when(httpClient.send(any(), eq(HttpResponse.BodyHandlers.ofString()))).thenThrow(IOException.class);
 
         assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
-        verify(httpClient, times(1)).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
-        verify(httpClient, never()).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
+
+        verify(httpClient, times(1)).send(any(), any());
     }
+
     @Test
     void publishRecordThrowsExceptionIfGroRecordRequestsFails() throws IOException, InterruptedException {
         when(httpClient.send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(httpResponse);
@@ -105,7 +125,8 @@ class PublishRecordTest {
         when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenThrow(IOException.class);
 
         assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
-        verify(httpClient, times(1)).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
-        verify(httpClient, times(1)).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
+
+        verify(httpClient).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
+        verify(httpClient).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
     }
 }

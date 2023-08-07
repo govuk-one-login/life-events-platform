@@ -16,6 +16,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static java.net.http.HttpClient.newHttpClient;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -81,8 +82,8 @@ class PublishRecordTest {
         new PublishRecord();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
-//        assertEquals(1, httpClient.constructed().size());
         assertEquals(1, mapper.constructed().size());
+        httpClient.verify(HttpClient::newHttpClient);
     }
 
     @Test

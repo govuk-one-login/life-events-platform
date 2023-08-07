@@ -14,3 +14,6 @@ CVE-2023-2975
 
 # GPC-496: Not vulnerable as we don't use OpenSSLs DH check function with unvalidated key lengths
 CVE-2023-3446
+
+# GPC-528: Not vulnerable as we don't use OpenSSLs DH check function with unvalidated key lengths
+CVE-2023-3817

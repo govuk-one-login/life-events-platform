@@ -53,7 +53,7 @@ class ConvertToJsonTest {
             ""
         )
     );
-    private static final String mockS3objectResponse =
+    private static final String mockS3objectResponseMultipleRecords =
         "<DeathRegistrationGroup>" +
             "<DeathRegistration>" +
             "<RegistrationID>1</RegistrationID>" +
@@ -62,11 +62,16 @@ class ConvertToJsonTest {
             "<RegistrationID>2</RegistrationID>" +
             "</DeathRegistration>" +
             "</DeathRegistrationGroup>";
+    private static final String mockS3objectResponseOneRecord =
+        "<DeathRegistrationGroup>" +
+            "<DeathRegistration>" +
+            "<RegistrationID>1</RegistrationID>" +
+            "</DeathRegistration>" +
+            "</DeathRegistrationGroup>";
 
     @BeforeAll
     static void setup() {
         when(config.getGroRecordsBucketName()).thenReturn("JsonBucketName");
-        when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponse);
     }
 
     @BeforeEach
@@ -85,6 +90,7 @@ class ConvertToJsonTest {
 
     @Test
     void convertToJsonReturnsBucketsDetails() {
+        when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
         var result = underTest.handleRequest(event, context);
 
         assertEquals("XMLBucketName", result.xmlBucket());
@@ -94,13 +100,25 @@ class ConvertToJsonTest {
     }
 
     @Test
-    void convertToJsonUploadsToS3() {
+    void convertToJsonUploadsMultipleRecordsToS3() {
+        when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
         underTest.handleRequest(event, context);
 
         verify(awsService).putInBucket(
             eq("JsonBucketName"),
             anyString(),
             eq("[{\"RegistrationID\":1},{\"RegistrationID\":2}]")
+        );
+    }
+    @Test
+    void convertToJsonUploadsOneRecordToS3() {
+        when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseOneRecord);
+        underTest.handleRequest(event, context);
+
+        verify(awsService).putInBucket(
+            eq("JsonBucketName"),
+            anyString(),
+            eq("[{\"RegistrationID\":1}]")
         );
     }
 }

@@ -808,12 +808,12 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-publish-record
-          ACCOUNT_URI: !If
+          DOMAIN_NAME: !If
             - IsDev
             - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
             - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
           COGNITO_CLIENT_ID: !Ref DeathNotificationClient
-          COGNITO_URI: !Sub ${Environment}${Developer}-life-events
+          COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
           USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
       Policies:
@@ -825,13 +825,13 @@ Resources:
             Resource:
               - !GetAtt UserPool.Arn
         - Statement:
-            - Sid: KmsMainKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
+          - Sid: KmsMainKeyAccess
+            Effect: Allow
+            Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey
+            Resource:
+              - !GetAtt MainKmsKey.Arn
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA

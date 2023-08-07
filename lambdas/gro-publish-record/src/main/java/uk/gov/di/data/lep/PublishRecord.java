@@ -43,7 +43,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         logger.info("Received record: {}", event.RegistrationID());
         try {
             var request = HttpRequest.newBuilder()
-                .uri(URI.create("https://" + config.getAccountUri() + "/events/deathNotification"))
+                .uri(URI.create("https://" + config.getDomainName() + "/events/deathNotification"))
                 .header("Authorization", getAuthorisationToken())
                 .POST(HttpRequest.BodyPublishers.ofString("{\"sourceId\": \"" + event.RegistrationID() + "\"}"))
                 .build();
@@ -63,7 +63,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         var authorisationRequest = HttpRequest.newBuilder()
             .uri(URI.create(
                 "https://"
-                    + config.getCognitoUri()
+                    + config.getCognitoDomainName()
                     + ".auth."
                     + config.getAwsRegion()
                     + ".amazoncognito.com/oauth2/token"

@@ -1,16 +1,13 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
-import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
-import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,7 +15,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,7 +22,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -44,23 +39,23 @@ class PublishRecordTest {
 
     private static final GroJsonRecord event = new GroJsonRecord("1234567890");
     private static final HttpRequest expectedAuthRequest = HttpRequest.newBuilder()
-        .uri(URI.create("https://cognitoUri.auth.awsRegion.amazoncognito.com/oauth2/token"))
+        .uri(URI.create("https://cognitoDomainName.auth.awsRegion.amazoncognito.com/oauth2/token"))
         .header("Content-Type", "application/x-www-form-urlencoded")
         .POST(HttpRequest.BodyPublishers.ofString(
             "grant_type=client_credentials&client_id=cognitoClientId&client_secret=cognitoClientSecret")
         )        .build();
     private static final HttpRequest expectedGroRecordRequest = HttpRequest.newBuilder()
-        .uri(URI.create("https://accountUri/events/deathNotification"))
+        .uri(URI.create("https://domainName/events/deathNotification"))
         .header("Authorization", "accessToken")
         .POST(HttpRequest.BodyPublishers.ofString("{\"sourceId\": \"1234567890\"}"))
         .build();
 
     @BeforeAll
     static void setup() {
-        when(config.getAccountUri()).thenReturn("accountUri");
+        when(config.getDomainName()).thenReturn("domainName");
         when(config.getAwsRegion()).thenReturn("awsRegion");
         when(config.getCognitoClientId()).thenReturn("cognitoClientId");
-        when(config.getCognitoUri()).thenReturn("cognitoUri");
+        when(config.getCognitoDomainName()).thenReturn("cognitoDomainName");
         when(config.getUserPoolId()).thenReturn("userPoolId");
         when(awsService.getCognitoClientSecret(anyString(), anyString())).thenReturn("cognitoClientSecret");
     }

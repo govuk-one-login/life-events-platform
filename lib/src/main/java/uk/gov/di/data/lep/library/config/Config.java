@@ -18,8 +18,8 @@ public class Config {
             .toList();
     }
 
-    public String getAccountUri() {
-        return System.getenv("ACCOUNT_URI");
+    public String getDomainName() {
+        return System.getenv("DOMAIN_NAME");
     }
 
     public String getAwsRegion() {
@@ -30,8 +30,8 @@ public class Config {
         return System.getenv("COGNITO_CLIENT_ID");
     }
 
-    public String getCognitoUri() {
-        return System.getenv("COGNITO_URI");
+    public String getCognitoDomainName() {
+        return System.getenv("COGNITO_DOMAIN_NAME");
     }
 
     public String getGroRecordsBucketName() {

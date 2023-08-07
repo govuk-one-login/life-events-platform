@@ -4,7 +4,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.XML;
 import software.amazon.lambda.powertools.logging.Logging;
@@ -55,7 +54,7 @@ public class ConvertToJson implements RequestHandler<S3ObjectCreatedNotification
             return deathRegistrationGroup.getJSONArray("DeathRegistration").toString();
         } catch (JSONException e) {
             logger.info(e);
-            return(Arrays.toString(new Object[]{deathRegistrationGroup.get("DeathRegistration")}));
+            return (Arrays.toString(new Object[]{deathRegistrationGroup.get("DeathRegistration")}));
         }
     }
 }

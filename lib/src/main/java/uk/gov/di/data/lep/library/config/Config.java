@@ -42,8 +42,28 @@ public class Config {
             .toList();
     }
 
+    public String getGroIngestionBucketName() {
+        return System.getenv("GRO_INGESTION_BUCKET_NAME");
+    }
+
     public String getGroRecordsBucketName() {
         return System.getenv("GRO_RECORDS_BUCKET_NAME");
+    }
+
+    public String getGroSftpServerHost() {
+        return System.getenv("GRO_SFTP_SERVER_HOST");
+    }
+
+    public String getGroSftpServerPrivateKeySecretId() {
+        return System.getenv("GRO_SFTP_SERVER_PRIVATE_KEY_SECRET_ID");
+    }
+
+    public String getGroSftpServerSourceDir() {
+        return System.getenv("GRO_SFTP_SERVER_SOURCE_DIR");
+    }
+
+    public String getGroSftpServerUsername() {
+        return System.getenv("GRO_SFTP_SERVER_USERNAME");
     }
 
     public String getTargetQueue() {

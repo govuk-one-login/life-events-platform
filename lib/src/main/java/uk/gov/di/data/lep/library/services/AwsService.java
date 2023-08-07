@@ -8,6 +8,8 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.DescribeUse
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
+import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -15,11 +17,16 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.config.Config;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 public class AwsService {
     private final Config config;
     private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
+        .region(Region.EU_WEST_2)
+        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .build();
+    private static final SecretsManagerClient secretsManagerClient = SecretsManagerClient.builder()
         .region(Region.EU_WEST_2)
         .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();
@@ -84,6 +91,25 @@ public class AwsService {
                 .build(),
             RequestBody.fromString(file)
         );
+    }
+
+    @Tracing
+    public void putInBucket(String bucket, String key, File file) {
+        s3Client.putObject(
+            PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build(),
+            RequestBody.fromFile(file)
+        );
+    }
+
+    @Tracing
+    public String getSecret(String secretId) {
+        return secretsManagerClient.getSecretValue(GetSecretValueRequest.builder()
+                .secretId(secretId)
+                .build())
+            .secretString();
     }
 
     @Tracing

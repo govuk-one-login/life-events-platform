@@ -1,4 +1,4 @@
-package uk.gov.di.data.lep.dto;
+package uk.gov.di.data.lep.library.dto;
 
 public record GroFileLocations(
     String xmlBucket,

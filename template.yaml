@@ -855,3 +855,73 @@ Resources:
 #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
 #      FilterPattern: ""
 #      LogGroupName: !Ref GroPublishRecordFunctionLogGroup
+
+  GroPullFileFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - GroPullFileFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub gro-pull-file-${Environment}${Developer}
+      CodeUri: lambdas/gro-pull-file
+      Handler: uk.gov.di.data.lep.PullFile::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: gro-pull-file
+          GRO_INGESTION_BUCKET_NAME: !Ref GroIngestionBucket
+          GRO_SFTP_SERVER_HOST: TEMP
+          GRO_SFTP_SERVER_PRIVATE_KEY_SECRET_ID: !GetAtt GroSftpPrivateKeySecret.Id
+          GRO_SFTP_SERVER_SOURCE_DIR: TEMP
+          GRO_SFTP_SERVER_USERNAME: TEMP
+      Events:
+        DailyJob:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: "cron(0 6 * * ? *)" # 06:00 every day
+      AutoPublishAlias: latest
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref GroSftpPrivateKeySecret
+        - S3WritePolicy:
+            BucketName: !Ref GroIngestionBucket
+        - Statement:
+            - Sid: KmsMainKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+
+  GroPullFileFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/gro-pull-file-${Environment}${Developer}
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+# Comment out CSLS subscription filters until accounts have been granted access
+#  GroPullFileFunctionLogGroupSubscriptionFilter:
+#    Type: AWS::Logs::SubscriptionFilter
+#    Condition: IsNotDev
+#    Properties:
+#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
+#      FilterPattern: ""
+#      LogGroupName: !Ref GroPullFileFunctionLogGroup
+
+  GroSftpPrivateKeySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The Private Key used to access the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sft-private-key

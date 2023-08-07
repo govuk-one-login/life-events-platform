@@ -93,7 +93,7 @@ class PublishRecordTest {
         verify(httpClient, never()).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
     }
     @Test
-    void publishRecordThrowExceptionIfGroRecordRequestsFails() throws IOException, InterruptedException {
+    void publishRecordThrowsExceptionIfGroRecordRequestsFails() throws IOException, InterruptedException {
         when(httpClient.send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(httpResponse);
         when(httpResponse.body()).thenReturn("httpBody");
         when(objectMapper.readValue("httpBody", CognitoTokenResponse.class))

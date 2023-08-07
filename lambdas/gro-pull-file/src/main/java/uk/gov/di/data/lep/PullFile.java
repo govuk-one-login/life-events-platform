@@ -56,16 +56,16 @@ public class PullFile implements RequestHandler<Object, GroFileLocations> {
         var sourceDir = config.getGroSftpServerSourceDir();
         var username = config.getGroSftpServerUsername();
 
-        var privateKey = awsService.getSecret(privateKeyId);
+        var privateKeyContent = awsService.getSecret(privateKeyId);
+        var privateKeyFile = new File("/keys/privateKey");
 
         try (var client = new SSHClient()) {
-            var privateKeyFile = File.createTempFile("privateKey", "tmp").toPath();
-            Files.writeString(privateKeyFile, privateKey);
+            Files.writeString(privateKeyFile.toPath(), privateKeyContent);
+            var privateKeyProvider = client.loadKeys(privateKeyFile.getPath());
 
             client.addHostKeyVerifier(new PromiscuousVerifier());
+            client.authPublickey(username, privateKeyProvider);
             client.connect(hostname);
-            var keys = client.loadKeys(privateKeyFile.toString());
-            client.authPublickey(username, keys);
 
             try (var sftpClient = client.newSFTPClient()) {
                 var resources = sftpClient.ls(sourceDir);

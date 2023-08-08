@@ -48,7 +48,10 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         postRecordToLifeEvents(event, authorisationToken);
         return null;
     }
-
+    
+    // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,
+    // and we do not need to rethrow the same exception
+    @SuppressWarnings("java:S2142")
     private String getAuthorisationToken() {
         var clientId = config.getCognitoClientId();
         var clientSecret = awsService.getCognitoClientSecret(config.getUserPoolId(), clientId);
@@ -66,12 +69,15 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             logger.info("Sending authorisation request");
             var response = httpClient.send(authorisationRequest, HttpResponse.BodyHandlers.ofString());
             return objectMapper.readValue(response.body(), CognitoTokenResponse.class).accessToken();
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             logger.error("Failed to send authorisation request");
             throw new AuthException("Failed to send authorisation request", e);
         }
     }
 
+    // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,
+    // and we do not need to rethrow the same exception
+    @SuppressWarnings("java:S2142")
     private void postRecordToLifeEvents(GroJsonRecord event, String authorisationToken) {
         var request = HttpRequest.newBuilder()
             .uri(URI.create(String.format("https://%s/events/deathNotification", config.getLifeEventsPlatformDomain())))
@@ -82,7 +88,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         try {
             logger.info("Sending GRO record request: {}", event.RegistrationID());
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             logger.error("Failed to send GRO record request");
             throw new GroApiCallException("Failed to send GRO record request", e);
         }

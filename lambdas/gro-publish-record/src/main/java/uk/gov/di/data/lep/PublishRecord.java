@@ -44,8 +44,11 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         try {
             var authorisationToken = getAuthorisationToken();
             postRecordToLifeEvents(event, authorisationToken);
-        } catch (IOException | InterruptedException e) {
-            logger.error("Failed to send GRO record request");
+        } catch (IOException e) {
+            logger.error("Failed to send GRO record request due to an IOException");
+            throw new RuntimeException(e);
+        } catch (InterruptedException e){
+            logger.error("Failed to send GRO record request due to an InterruptedException");
             throw new RuntimeException(e);
         }
 

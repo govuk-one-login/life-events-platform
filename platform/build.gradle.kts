@@ -64,7 +64,7 @@ dependencies {
   implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.2.3")
   implementation("org.postgresql:postgresql:42.6.0")
 
-  implementation("org.springdoc:springdoc-openapi-starter-common:2.1.0")
+  implementation("org.springdoc:springdoc-openapi-starter-common:2.2.0")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.2.0")
 

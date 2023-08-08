@@ -20,6 +20,7 @@ dependencies {
                    "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
                    platform("software.amazon.awssdk:bom:$dependencyVersions.awsSdk"),
                    "software.amazon.awssdk:cognitoidentityprovider",
+                   "software.amazon.awssdk:secretsmanager",
                    "software.amazon.awssdk:s3",
                    "software.amazon.awssdk:sns",
                    "software.amazon.awssdk:sqs"

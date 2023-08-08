@@ -19,12 +19,13 @@ public class Config {
     public String getCognitoDomainName() {
         return System.getenv("COGNITO_DOMAIN_NAME");
     }
-    public String getCognitoOauth2TokenUri(){
-        return "https://"
-            + this.getCognitoDomainName()
-            + ".auth."
-            + this.getAwsRegion()
-            + ".amazoncognito.com/oauth2/token";
+
+    public String getCognitoOauth2TokenUri() {
+        return String.format(
+            "https://%s.auth.%s.amazoncognito.com/oauth2/token",
+            this.getCognitoDomainName(),
+            this.getAwsRegion()
+        );
     }
 
     public String getLifeEventsPlatformDomain() {

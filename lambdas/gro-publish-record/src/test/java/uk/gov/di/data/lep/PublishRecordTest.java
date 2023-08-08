@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.dto.CognitoTokenResponse;
+import uk.gov.di.data.lep.exceptions.AuthException;
+import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -82,7 +84,7 @@ class PublishRecordTest {
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
         assertEquals(1, mapper.constructed().size());
-        httpClient.verify(HttpClient::newHttpClient);
+        httpClient.verify(HttpClient::newHttpClient, times(1));
     }
 
     @Test
@@ -107,7 +109,7 @@ class PublishRecordTest {
     void publishRecordDoesNotSendGroRecordRequestsIfNoAuthorisationToken() throws IOException, InterruptedException {
         when(httpClient.send(any(), eq(HttpResponse.BodyHandlers.ofString()))).thenThrow(IOException.class);
 
-        assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
+        assertThrows(AuthException.class, () -> underTest.handleRequest(event, context));
 
         verify(httpClient, times(1)).send(any(), any());
     }
@@ -124,7 +126,7 @@ class PublishRecordTest {
             ));
         when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenThrow(IOException.class);
 
-        assertThrows(RuntimeException.class, () -> underTest.handleRequest(event, context));
+        assertThrows(GroApiCallException.class, () -> underTest.handleRequest(event, context));
 
         verify(httpClient).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
         verify(httpClient).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());

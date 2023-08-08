@@ -84,12 +84,9 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             logger.info("Sending GRO record request: {}", event.RegistrationID());
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw handleGroApiCallException(e);
+            logger.error("Failed to send GRO record request");
+            Thread.currentThread().interrupt();
+            throw new GroApiCallException("Failed to send GRO record request", e);
         }
-    }
-    private GroApiCallException handleGroApiCallException(Exception e){
-        logger.error("Failed to send GRO record request");
-        Thread.currentThread().interrupt();
-        return new GroApiCallException("Failed to send GRO record request", e);
     }
 }

@@ -107,9 +107,13 @@ class PublishRecordTest {
 
     @Test
     void publishRecordDoesNotSendGroRecordRequestsIfNoAuthorisationToken() throws IOException, InterruptedException {
-        when(httpClient.send(any(), eq(HttpResponse.BodyHandlers.ofString()))).thenThrow(IOException.class);
+        var ioException = new IOException();
+        when(httpClient.send(any(), eq(HttpResponse.BodyHandlers.ofString()))).thenThrow(ioException);
 
-        assertThrows(AuthException.class, () -> underTest.handleRequest(event, context));
+        var exception = assertThrows(AuthException.class, () -> underTest.handleRequest(event, context));
+
+        assertEquals("Failed to send authorisation request", exception.getMessage());
+        assertEquals(ioException, exception.getCause());
 
         verify(httpClient, times(1)).send(any(), any());
     }
@@ -124,9 +128,13 @@ class PublishRecordTest {
                 "expiresIn",
                 "tokenType"
             ));
-        when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenThrow(IOException.class);
+        var ioException = new IOException();
+        when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenThrow(ioException);
 
-        assertThrows(GroApiCallException.class, () -> underTest.handleRequest(event, context));
+        var exception = assertThrows(GroApiCallException.class, () -> underTest.handleRequest(event, context));
+
+        assertEquals("Failed to send GRO record request", exception.getMessage());
+        assertEquals(ioException, exception.getCause());
 
         verify(httpClient).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
         verify(httpClient).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());

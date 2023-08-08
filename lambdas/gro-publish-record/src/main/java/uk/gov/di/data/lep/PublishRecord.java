@@ -68,7 +68,6 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             return objectMapper.readValue(response.body(), CognitoTokenResponse.class).accessToken();
         } catch (IOException | InterruptedException e) {
             logger.error("Failed to send authorisation request");
-            Thread.currentThread().interrupt();
             throw new AuthException("Failed to send authorisation request", e);
         }
     }
@@ -85,7 +84,6 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
             logger.error("Failed to send GRO record request");
-            Thread.currentThread().interrupt();
             throw new GroApiCallException("Failed to send GRO record request", e);
         }
     }

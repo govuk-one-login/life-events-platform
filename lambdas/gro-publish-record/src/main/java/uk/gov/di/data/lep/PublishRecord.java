@@ -50,7 +50,6 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
     }
 
     private String getAuthorisationToken() {
-        logger.info("Sending request to get authorisation token");
         var clientId = config.getCognitoClientId();
         var clientSecret = awsService.getCognitoClientSecret(config.getUserPoolId(), clientId);
         var authorisationRequest = HttpRequest.newBuilder()
@@ -64,6 +63,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             .build();
 
         try {
+            logger.info("Sending authorisation request");
             var response = httpClient.send(authorisationRequest, HttpResponse.BodyHandlers.ofString());
             return objectMapper.readValue(response.body(), CognitoTokenResponse.class).accessToken();
         } catch (IOException | InterruptedException e) {

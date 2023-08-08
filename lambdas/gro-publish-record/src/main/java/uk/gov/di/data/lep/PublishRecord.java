@@ -67,11 +67,8 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             var response = httpClient.send(authorisationRequest, HttpResponse.BodyHandlers.ofString());
             return objectMapper.readValue(response.body(), CognitoTokenResponse.class).accessToken();
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to send GRO record request");
-            Thread.currentThread().interrupt();
-            throw new AuthException("Failed to send GRO record request", e);
+            throw handleGroApiCallException(e);
         }
-
     }
 
     private void postRecordToLifeEvents(GroJsonRecord event, String authorisationToken) {
@@ -85,9 +82,12 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             logger.info("Sending GRO record request: {}", event.RegistrationID());
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to send GRO record request");
-            Thread.currentThread().interrupt();
-            throw new GroApiCallException("Failed to send GRO record request", e);
+            throw handleGroApiCallException(e);
         }
+    }
+    private GroApiCallException handleGroApiCallException(Exception e){
+        logger.error("Failed to send GRO record request");
+        Thread.currentThread().interrupt();
+        return new GroApiCallException("Failed to send GRO record request", e);
     }
 }

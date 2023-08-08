@@ -1,34 +1,51 @@
-name: Run tests
+name: Test
 
 on:
   workflow_call:
     secrets:
       SAM_APP_VALIDATE_ROLE_ARN:
         required: true
+      SONAR_TOKEN:
+        required: true
 
 jobs:
-  test:
+  sonarcloud:
+    name: Run SonarCloud
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       checks: write
       id-token: write
       pull-requests: write
-    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # This is needed for SonarCloud scanning
 
-      - name: Setup Java
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: corretto
-          java-version: 17
+          java-version: '17'
+          distribution: 'corretto'
+          cache: gradle
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2.7.0
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
 
-      - name: Execute Gradle build
-        run: ./gradlew clean test
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Build and unit tests
+        run: ./gradlew clean build
 
       - name: Report test results
         uses: dorny/test-reporter@v1
@@ -39,16 +56,40 @@ jobs:
           reporter: java-junit
           only-summary: true
 
-      - name: Report test coverage
-        uses: madrapps/jacoco-report@94dfcf8dae9680be2cfa714ca37fb37790bd7663
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          paths: ${{ github.workspace }}/platform/build/reports/jacoco/test/jacocoTestReport.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Perform Static Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar
+
+  checkov:
+    name: SAM checkov
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install checkov
+        run: pip3 install checkov
+
+      - name: Run checkov
+        run: checkov -d . --framework cloudformation -o github_failed_only
+
+  validate:
+    name: SAM validate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Set up SAM cli
         uses: aws-actions/setup-sam@v2
-        if: always()
         with:
           use-installer: true
 
@@ -61,5 +102,4 @@ jobs:
           aws-region: eu-west-2
 
       - name: SAM validate
-        if: always()
         run: sam validate --lint

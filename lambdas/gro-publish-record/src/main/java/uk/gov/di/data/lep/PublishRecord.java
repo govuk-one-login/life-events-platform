@@ -66,7 +66,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
             logger.info("Sending authorisation request");
             var response = httpClient.send(authorisationRequest, HttpResponse.BodyHandlers.ofString());
             return objectMapper.readValue(response.body(), CognitoTokenResponse.class).accessToken();
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             logger.error("Failed to send authorisation request");
             throw new AuthException("Failed to send authorisation request", e);
         }
@@ -82,7 +82,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         try {
             logger.info("Sending GRO record request: {}", event.RegistrationID());
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             logger.error("Failed to send GRO record request");
             throw new GroApiCallException("Failed to send GRO record request", e);
         }

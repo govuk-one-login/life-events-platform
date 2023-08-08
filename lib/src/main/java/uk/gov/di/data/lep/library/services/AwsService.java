@@ -1,6 +1,5 @@
 package uk.gov.di.data.lep.library.services;
 
-import com.amazonaws.util.IOUtils;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
@@ -18,10 +17,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.config.Config;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class AwsService {

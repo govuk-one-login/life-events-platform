@@ -3,8 +3,9 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.sftp.OpenMode;
+import net.schmizz.sshj.sftp.RemoteFile;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
-import net.schmizz.sshj.xfer.FileSystemFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.logging.Logging;
@@ -15,7 +16,7 @@ import uk.gov.di.data.lep.library.dto.GroFileLocations;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.util.EnumSet;
 
 public class PullFile implements RequestHandler<Object, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
@@ -38,25 +39,23 @@ public class PullFile implements RequestHandler<Object, GroFileLocations> {
     @Tracing
     @Logging(clearState = true)
     public GroFileLocations handleRequest(Object event, Context context) {
-        logger.info("Pulling file {} from GRO", groFileName);
-        var inFile = new FileSystemFile(groFileName);
-        downloadFile(inFile);
-
-        logger.info("Uploading file {} to S3", groFileName);
         var xmlBucket = config.getGroIngestionBucketName();
-        awsService.putInBucket(xmlBucket, groFileName, inFile.getFile());
 
-        try {
-            Files.delete(inFile.getFile().toPath());
-        }
-        catch (IOException e) {
-            logger.info("Failed to delete file {}", groFileName);
+        logger.info("Pulling file {} from GRO", groFileName);
+        try (var file = downloadFile()) {
+            logger.info("Uploading file {} to S3", groFileName);
+            awsService.putInBucket(xmlBucket, groFileName, file.new RemoteFileInputStream(), file.length());
+        } catch (IOException e) {
+            throw new GroSftpException(
+                    String.format("Failed to calculate file %s length", groFileName),
+                    e
+            );
         }
 
         return new GroFileLocations(xmlBucket, groFileName, null, null);
     }
 
-    private void downloadFile(FileSystemFile inFile) {
+    private RemoteFile downloadFile() {
         var hostname = config.getGroSftpServerHost();
         var privateKeyId = config.getGroSftpServerPrivateKeySecretId();
         var sourceDir = config.getGroSftpServerSourceDir();
@@ -76,10 +75,10 @@ public class PullFile implements RequestHandler<Object, GroFileLocations> {
                 var sourceFileSearch = resources.stream().filter(r -> r.getPath().endsWith(groFileName)).findFirst();
 
                 if (sourceFileSearch.isPresent()) {
-                    sftpClient.get(sourceFileSearch.get().getPath(), inFile);
+                    return sftpClient.open(sourceFileSearch.get().getPath(), EnumSet.of(OpenMode.READ));
                 } else {
                     throw new GroSftpException(
-                        String.format("File: %s not found on GRO SFTP Server in directory: %s", groFileName, sourceDir)
+                            String.format("File: %s not found on GRO SFTP Server in directory: %s", groFileName, sourceDir)
                     );
                 }
             }

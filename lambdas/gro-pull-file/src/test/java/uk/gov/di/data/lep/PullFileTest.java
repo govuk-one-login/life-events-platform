@@ -1,6 +1,8 @@
 package uk.gov.di.data.lep;
 
 import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.sftp.OpenMode;
+import net.schmizz.sshj.sftp.RemoteFile;
 import net.schmizz.sshj.sftp.RemoteResourceInfo;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
@@ -13,6 +15,7 @@ import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,12 +69,15 @@ class PullFileTest {
             when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
             when(client.newSFTPClient()).thenReturn(sftpClient);
         })) {
+            var remoteFile = mock(RemoteFile.class);
             when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
             when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/dept_d_date.xml", sourceDir));
+            when(sftpClient.open(remoteResourceInfo.getPath(), EnumSet.of(OpenMode.READ))).thenReturn(remoteFile);
+            when(remoteFile.length()).thenReturn(5L);
 
             underTest.handleRequest(null, null);
 
-            verify(awsService).putInBucket(eq(ingestionBucket), eq("dept_d_date.xml"), any(File.class));
+            verify(awsService).putInBucket(eq(ingestionBucket), eq("dept_d_date.xml"), any(), eq(5L));
         }
     }
 
@@ -86,7 +92,7 @@ class PullFileTest {
             var exception = assertThrows(GroSftpException.class, () -> underTest.handleRequest(null, null));
 
             assertEquals(String.format("File: dept_d_date.xml not found on GRO SFTP Server in directory: %s", sourceDir), exception.getMessage());
-            verify(awsService, never()).putInBucket(any(), any(), any(File.class));
+            verify(awsService, never()).putInBucket(any(), any(), any(), anyLong());
         }
     }
 
@@ -102,7 +108,7 @@ class PullFileTest {
             var exception = assertThrows(GroSftpException.class, () -> underTest.handleRequest(null, null));
 
             assertEquals(innerException, exception.getCause());
-            verify(awsService, never()).putInBucket(any(), any(), any(File.class));
+            verify(awsService, never()).putInBucket(any(), any(), any(), anyLong());
         }
     }
 }

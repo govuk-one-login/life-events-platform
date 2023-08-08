@@ -3,7 +3,6 @@ package uk.gov.di.data.lep;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.RemoteResourceInfo;
 import net.schmizz.sshj.sftp.SFTPClient;
-import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ class PullFileTest {
         when(config.getGroSftpServerPrivateKeySecretId()).thenReturn("SecretId");
         when(config.getGroSftpServerSourceDir()).thenReturn(sourceDir);
         when(config.getGroSftpServerUsername()).thenReturn("test_user");
-        when(awsService.getSecret("SecretId")).thenReturn("PrivateSSHKEy");
+        when(awsService.getSecret("SecretId")).thenReturn("PrivateSSHKey");
 
         when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
         when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/dept_d_date.xml", sourceDir));
@@ -53,13 +52,13 @@ class PullFileTest {
 
     @Test
     void pullFileDownloadsFile() {
-        try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
-            when(client.loadKeys(anyString())).thenReturn(keyProvider);
+        mockConstruction(SSHClient.class, (client, context) -> {
+            when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
             when(client.newSFTPClient()).thenReturn(sftpClient);
-        })) {
-            underTest.handleRequest(null, null);
+        });
 
-            verify(awsService).putInBucket(eq(ingestionBucket), eq("dept_d_date.xml"), any(File.class));
-        }
+        underTest.handleRequest(null, null);
+
+        verify(awsService).putInBucket(eq(ingestionBucket), eq("dept_d_date.xml"), any(File.class));
     }
 }

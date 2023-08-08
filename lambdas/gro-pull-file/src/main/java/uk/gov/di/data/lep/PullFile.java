@@ -3,7 +3,6 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +14,6 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;
 import uk.gov.di.data.lep.library.services.AwsService;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -64,12 +62,10 @@ public class PullFile implements RequestHandler<Object, GroFileLocations> {
         var sourceDir = config.getGroSftpServerSourceDir();
         var username = config.getGroSftpServerUsername();
 
-        var privateKeyContent = awsService.getSecret(privateKeyId);
+        var privateKey = awsService.getSecret(privateKeyId);
 
         try (var client = new SSHClient()) {
-            var privateKeyFile = File.createTempFile("privateKey", ".pem");
-            Files.writeString(privateKeyFile.toPath(), privateKeyContent);
-            var privateKeyProvider = client.loadKeys(privateKeyFile.getPath());
+            var privateKeyProvider = client.loadKeys(privateKey, null, null);
 
             client.addHostKeyVerifier(new PromiscuousVerifier());
             client.connect(hostname);

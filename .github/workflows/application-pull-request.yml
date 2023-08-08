@@ -9,13 +9,7 @@ permissions:
 on:
   workflow_dispatch:
   pull_request:
-    paths-ignore:
-      - "terraform/**"
-      - "!terraform/modules/data-share-service/ecs.tf"
   merge_group:
-    paths-ignore:
-      - "terraform/**"
-      - "!terraform/modules/data-share-service/ecs.tf"
 
 concurrency:
   group: application-pipeline-${{ github.ref_name }}
@@ -25,7 +19,9 @@ jobs:
   test:
     uses: ./.github/workflows/test.yml
     secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SAM_APP_VALIDATE_ROLE_ARN: ${{ secrets.SAM_APP_VALIDATE_ROLE_ARN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   openapi-lint:
     uses: ./.github/workflows/openapi-lint.yml

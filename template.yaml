@@ -881,6 +881,10 @@ Resources:
           Type: ScheduleV2
           Properties:
             ScheduleExpression: "cron(0 6 * * ? *)" # 06:00 every day
+            PermissionsBoundary: !If
+              - UsePermissionsBoundary
+              - !Ref PermissionsBoundary
+              - !Ref AWS::NoValue
       AutoPublishAlias: latest
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:

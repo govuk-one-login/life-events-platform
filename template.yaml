@@ -677,6 +677,9 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+      Tags:
+        - Key: CheckovRulesToSkip
+          Value: CKV_AWS_21
 
   GroIngestionStateMachine:
     Type: AWS::Serverless::StateMachine

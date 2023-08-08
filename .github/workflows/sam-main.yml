@@ -16,7 +16,6 @@ jobs:
   test:
     uses: ./.github/workflows/test.yml
     secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SAM_APP_VALIDATE_ROLE_ARN: ${{ secrets.SAM_APP_VALIDATE_ROLE_ARN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 

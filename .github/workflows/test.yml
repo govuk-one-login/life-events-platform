@@ -3,8 +3,6 @@ name: Test
 on:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
-        required: true
       SAM_APP_VALIDATE_ROLE_ARN:
         required: true
       SONAR_TOKEN:

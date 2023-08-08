@@ -12,6 +12,26 @@ public class Config {
         return System.getenv("AWS_REGION");
     }
 
+    public String getCognitoClientId() {
+        return System.getenv("COGNITO_CLIENT_ID");
+    }
+
+    public String getCognitoDomainName() {
+        return System.getenv("COGNITO_DOMAIN_NAME");
+    }
+
+    public String getCognitoOauth2TokenUri() {
+        return String.format(
+            "https://%s.auth.%s.amazoncognito.com/oauth2/token",
+            this.getCognitoDomainName(),
+            this.getAwsRegion()
+        );
+    }
+
+    public String getLifeEventsPlatformDomain() {
+        return System.getenv("LIFE_EVENTS_PLATFORM_DOMAIN");
+    }
+
     public List<EnrichmentField> getEnrichmentFields() {
         if (envEnrichmentFields == null) {
             return List.of();

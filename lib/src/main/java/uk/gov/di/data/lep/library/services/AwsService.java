@@ -3,6 +3,8 @@ package uk.gov.di.data.lep.library.services;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.DescribeUserPoolClientRequest;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -17,6 +19,10 @@ import java.nio.charset.StandardCharsets;
 
 public class AwsService {
     private final Config config;
+    private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
+        .region(Region.EU_WEST_2)
+        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .build();
     private static final SqsClient sqsClient = SqsClient.builder()
         .region(Region.EU_WEST_2)
         .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
@@ -78,5 +84,15 @@ public class AwsService {
                 .build(),
             RequestBody.fromString(file)
         );
+    }
+
+    @Tracing
+    public String getCognitoClientSecret(String userPoolId, String clientId) {
+        var client = cognitoClient.describeUserPoolClient(DescribeUserPoolClientRequest.builder()
+            .userPoolId(userPoolId)
+            .clientId(clientId)
+            .build());
+
+        return client.userPoolClient().clientSecret();
     }
 }

@@ -808,21 +808,35 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-publish-record
+          LIFE_EVENTS_PLATFORM_DOMAIN: !If
+            - IsDev
+            - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+            - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
+          COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
+          USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
       Policies:
         - Statement:
-            - Sid: KmsMainKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
+          - Sid: DeathNotificationCognitoAccess
+            Effect: Allow
+            Action:
+              - cognito-idp:DescribeUserPoolClient
+            Resource:
+              - !GetAtt UserPool.Arn
+        - Statement:
+          - Sid: KmsMainKeyAccess
+            Effect: Allow
+            Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey
+            Resource:
+              - !GetAtt MainKmsKey.Arn
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 

@@ -879,15 +879,16 @@ Resources:
           GRO_SFTP_SERVER_PRIVATE_KEY_SECRET_ID: !GetAtt GroSftpPrivateKeySecret.Id
           GRO_SFTP_SERVER_SOURCE_DIR: TEMP
           GRO_SFTP_SERVER_USERNAME: TEMP
-      Events:
-        DailyJob:
-          Type: ScheduleV2
-          Properties:
-            ScheduleExpression: "cron(0 6 * * ? *)" # 06:00 every day
-            PermissionsBoundary: !If
-              - UsePermissionsBoundary
-              - !Ref PermissionsBoundary
-              - !Ref AWS::NoValue
+# PLAT-2133: Uncomment when scheduling allowed
+#      Events:
+#        DailyJob:
+#          Type: ScheduleV2
+#          Properties:
+#            ScheduleExpression: "cron(0 6 * * ? *)" # 06:00 every day
+#            PermissionsBoundary: !If
+#              - UsePermissionsBoundary
+#              - !Ref PermissionsBoundary
+#              - !Ref AWS::NoValue
       AutoPublishAlias: latest
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:

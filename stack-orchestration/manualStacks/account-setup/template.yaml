@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Initial account setup
+
+Resources:
+  DynatraceApiToken:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: Dynatrace API token for secure pipeline metrics
+      Name: dynatrace-api-token

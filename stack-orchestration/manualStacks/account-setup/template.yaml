@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Initial account setup
+
+Resources:
+  DynatraceApiToken:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      # checkov:skip=CKV_AWS_149: We are using a secrets manager default key to allow secure pipelines integration.
+      Description: Dynatrace API token for secure pipeline metrics
+      Name: dynatrace-api-token
+      Tags:
+        - Key: CheckovRulesToSkip
+          Value: CKV_AWS_149

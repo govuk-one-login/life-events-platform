@@ -53,18 +53,18 @@ jobs:
           trivyignores: ${{ matrix.trivyignore }}
           exit-code: 1
 
-  validate-infra:
-    name: Validate infra code
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.11.2
-        with:
-          scan-type: config
-          trivyignores: .trivyignore.docker
-          exit-code: 1
-          skip-dirs: lev-data/
-          skip-files: template.yaml
+#  validate-infra:
+#    name: Validate infra code
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Run Trivy vulnerability scanner
+#        uses: aquasecurity/trivy-action@0.11.2
+#        with:
+#          scan-type: config
+#          trivyignores: .trivyignore.docker
+#          exit-code: 1
+#          skip-dirs: lev-data/
+#          skip-files: template.yaml

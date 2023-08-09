@@ -5,3 +5,6 @@ AVD-DS-0026
 
 # Root user is needed in Adot.Dockerfile
 AVD-DS-0002
+
+# Temporarily ignore broken config rule
+AVD-AWS-0177

@@ -40,12 +40,3 @@ aws cloudformation update-stack --stack-name account-setup \
          Key=System,Value="Life Events Platform" \
          Key=Environment,Value="$ENVIRONMENT" \
          Key=Owner,Value="di-life-events-platform@digital.cabinet-office.gov.uk"
-```
-
-### Stack Outputs
-
-| Type         | Name                    | Description                           |
-|--------------|-------------------------|---------------------------------------|
-| Stack Export | `HostedZoneNameServers` | Comma separated list of Nameservers   |
-| Stack Export | `HostedZoneId`          | Id of the Route 53 Hosted Zone        |
-| Stack Export | `CertifcateArn`         | Arn of the Certificate for the domain |

@@ -60,7 +60,7 @@ public class ConvertToJson implements RequestHandler<S3ObjectCreatedNotification
             var deathRegistrationGroup = xmlMapper.readValue(xmlData, DeathRegistrationGroup.class);
             return objectMapper.writeValueAsString(deathRegistrationGroup.deathRegistrations);
         } catch (JsonProcessingException e) {
-            logger.info("Failed to map deathRegistrations to GroJsonRecord list");
+            logger.info("Failed to map DeathRegistrations xml to GroJsonRecord list");
             throw new MappingException(e);
         }
     }

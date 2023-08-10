@@ -7,9 +7,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class Mapper {
     public ObjectMapper objectMapper() {
-        return new ObjectMapper()
-            .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
-            .registerModule(new JavaTimeModule());
+        var mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
 
     public XmlMapper xmlMapper() {

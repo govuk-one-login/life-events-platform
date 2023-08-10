@@ -10,4 +10,6 @@ public class DeathRegistrationGroup {
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("DeathRegistration")
     public List<GroJsonRecord> deathRegistrations;
+    @JsonProperty("RecordCount")
+    public int recordCount;
 }

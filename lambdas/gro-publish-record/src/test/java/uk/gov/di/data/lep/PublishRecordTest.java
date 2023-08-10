@@ -25,6 +25,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -54,7 +55,7 @@ class PublishRecordTest {
         LocalDateTime.parse("2023-03-06T09:30:50"),
         LocalDateTime.parse("2023-03-06T09:30:50"),
         1,
-        new GROPersonNameStructure("Mrs", new String[]{"ERICA"}, "BLOGG", null, null),
+        new GROPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null, null),
         null,
         null,
         null,
@@ -68,7 +69,7 @@ class PublishRecordTest {
         3,
         1967,
         null,
-        new GROAddressStructure(null, null, new String[]{"123 Street"}, "GT8 5HG")
+        new GROAddressStructure(null, null, List.of("123 Street"), "GT8 5HG")
         );
     private static final String cognitoClientId = "cognitoClientId";
     private static final String cognitoClientSecret = "cognitoClientSecret";

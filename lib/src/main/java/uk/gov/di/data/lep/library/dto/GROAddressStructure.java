@@ -1,15 +1,14 @@
 package uk.gov.di.data.lep.library.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+
+import java.util.List;
 
 public record GROAddressStructure(
-    @JsonIgnoreProperties(ignoreUnknown = true)
     String Flat,
-    @JsonIgnoreProperties(ignoreUnknown = true)
     String Building,
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    String[] Line,
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JacksonXmlElementWrapper(useWrapping = false)
+    List<String> Line,
     String Postcode
 ) {
 }

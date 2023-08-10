@@ -1,18 +1,15 @@
 package uk.gov.di.data.lep.library.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 
-@JsonIgnoreProperties
+import java.util.List;
+
 public record GROPersonNameStructure(
-    @JsonIgnoreProperties(ignoreUnknown = true)
     String PersonNameTitle,
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    String[] PersonGivenName,
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JacksonXmlElementWrapper(useWrapping = false)
+    List<String> PersonGivenName,
     String PersonFamilyName,
-    @JsonIgnoreProperties(ignoreUnknown = true)
     String PersonNameSuffix,
-    @JsonIgnoreProperties(ignoreUnknown = true)
     String PersonRequestedName
 ) {
 }

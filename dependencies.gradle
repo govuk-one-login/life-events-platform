@@ -8,6 +8,7 @@ ext {
             awsLambdaJavaEvents  : "3.11.2",
             jacksonAnnotations   : "2.15.2",
             jacksonDatabind      : "2.15.2",
+            jacksonDataformatXml : "2.15.2",
             jacksonDatatypeJsr310: "2.15.2",
             javaJwt              : "4.4.0",
             json                 : "20230618",

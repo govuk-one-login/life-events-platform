@@ -16,6 +16,7 @@ dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
                    "com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2-instrumentor:$dependencyVersions.xrayInstrumentor",
                    "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jacksonAnnotations",
+                   "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$dependencyVersions.jacksonDataformatXml",
                    "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$dependencyVersions.jacksonDatatypeJsr310",
                    "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
                    platform("software.amazon.awssdk:bom:$dependencyVersions.awsSdk"),

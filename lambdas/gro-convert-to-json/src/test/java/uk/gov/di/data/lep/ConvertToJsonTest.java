@@ -3,6 +3,8 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +33,8 @@ class ConvertToJsonTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private static final ConvertToJson underTest = new ConvertToJson(awsService, config, objectMapper);
+    private static final XmlMapper xmlMapper = mock(XmlMapper.class);
+    private static ConvertToJson underTest = new ConvertToJson(awsService, config, objectMapper, xmlMapper);
     private static final Context context = mock(Context.class);
     private static final S3ObjectCreatedNotificationEvent event = new S3ObjectCreatedNotificationEvent(
         "",
@@ -83,6 +86,10 @@ class ConvertToJsonTest {
     @BeforeAll
     static void setup() {
         when(config.getGroRecordsBucketName()).thenReturn("JsonBucketName");
+
+        var mapper = new XmlMapper();
+        mapper.registerModule(new JavaTimeModule());
+        underTest = new ConvertToJson(awsService, config, objectMapper, mapper);
     }
 
     @BeforeEach
@@ -99,7 +106,7 @@ class ConvertToJsonTest {
         new ConvertToJson();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
-        assertEquals(1, mapper.constructed().size());
+        assertEquals(2, mapper.constructed().size());
     }
 
     @Test

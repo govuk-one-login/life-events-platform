@@ -1,6 +1,8 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,12 +12,15 @@ import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventDetail;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventObject;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
@@ -25,9 +30,10 @@ import static org.mockito.Mockito.when;
 class ConvertToJsonTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
-    private static final ConvertToJson underTest = new ConvertToJson(awsService, config);
+    private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private static final ConvertToJson underTest = new ConvertToJson(awsService, config, objectMapper);
     private static final Context context = mock(Context.class);
-    private static final S3ObjectCreatedNotificationEvent event =  new S3ObjectCreatedNotificationEvent(
+    private static final S3ObjectCreatedNotificationEvent event = new S3ObjectCreatedNotificationEvent(
         "",
         "",
         "",
@@ -53,6 +59,12 @@ class ConvertToJsonTest {
             ""
         )
     );
+    private static final String mockS3objectResponseOneRecord =
+        "<DeathRegistrationGroup>" +
+            "<DeathRegistration>" +
+            "<RegistrationID>1</RegistrationID>" +
+            "</DeathRegistration>" +
+            "</DeathRegistrationGroup>";
     private static final String mockS3objectResponseMultipleRecords =
         "<DeathRegistrationGroup>" +
             "<DeathRegistration>" +
@@ -60,12 +72,11 @@ class ConvertToJsonTest {
             "</DeathRegistration>" +
             "<DeathRegistration>" +
             "<RegistrationID>2</RegistrationID>" +
-            "</DeathRegistration>" +
-            "</DeathRegistrationGroup>";
-    private static final String mockS3objectResponseOneRecord =
-        "<DeathRegistrationGroup>" +
-            "<DeathRegistration>" +
-            "<RegistrationID>1</RegistrationID>" +
+            "<DeceasedGender>2</DeceasedGender>" +
+            "<DeceasedBirthDate>" +
+            "<PersonBirthDate>1958-06-06</PersonBirthDate>" +
+            "<VerificationLevel>02</VerificationLevel>" +
+            "</DeceasedBirthDate>" +
             "</DeathRegistration>" +
             "</DeathRegistrationGroup>";
 
@@ -77,20 +88,24 @@ class ConvertToJsonTest {
     @BeforeEach
     void refreshSetup() {
         clearInvocations(awsService);
+        clearInvocations(objectMapper);
     }
 
     @Test
     void constructionCallsCorrectInstantiation() {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
+        var mapper = mockConstruction(Mapper.class);
         new ConvertToJson();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
+        assertEquals(1, mapper.constructed().size());
     }
 
     @Test
     void convertToJsonReturnsBucketsDetails() {
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
+
         var result = underTest.handleRequest(event, context);
 
         assertEquals("XMLBucketName", result.xmlBucket());
@@ -100,25 +115,99 @@ class ConvertToJsonTest {
     }
 
     @Test
-    void convertToJsonUploadsMultipleRecordsToS3() {
+    void convertToJsonUploadsMultipleRecordsToS3() throws JsonProcessingException {
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+            "\"[" +
+                "{" +
+                "\"RegistrationID\":1," +
+                "\"RegistrationType\":0," +
+                "\"RecordLockedDateTime\":null," +
+                "\"RecordUpdateDateTime\":null," +
+                "\"RecordUpdateReason\":0," +
+                "\"DeceasedName\":null," +
+                "\"DeceasedAliasName\":null," +
+                "\"DeceasedAliasNameType\":null," +
+                "\"DeceasedMaidenName\":null," +
+                "\"DeceasedGender\":null," +
+                "\"DeceasedDeathDate\":null," +
+                "\"PartialMonthOfDeath\":0," +
+                "\"PartialYearOfDeath\":0," +
+                "\"QualifierText\":null," +
+                "\"FreeFormatDeathDate\":null," +
+                "\"DeceasedBirthDate\":null," +
+                "\"PartialMonthOfBirth\":0," +
+                "\"PartialYearOfBirth\":0," +
+                "\"FreeFormatBirthDate\":null," +
+                "\"DeceasedAddress\":null" +
+                "}," +
+                "{" +
+                "\"RegistrationID\":2," +
+                "\"RegistrationType\":0," +
+                "\"RecordLockedDateTime\":null," +
+                "\"RecordUpdateDateTime\":null," +
+                "\"RecordUpdateReason\":0," +
+                "\"DeceasedName\":null," +
+                "\"DeceasedAliasName\":null," +
+                "\"DeceasedAliasNameType\":null," +
+                "\"DeceasedMaidenName\":null," +
+                "\"DeceasedGender\":2," +
+                "\"DeceasedDeathDate\":null," +
+                "\"PartialMonthOfDeath\":0," +
+                "\"PartialYearOfDeath\":0," +
+                "\"QualifierText\":null," +
+                "\"FreeFormatDeathDate\":null," +
+                "\"DeceasedBirthDate\":{\"PersonBirthDate\":[1958,6,6]," +
+                "\"VerificationLevel\":\"02\"}," +
+                "\"PartialMonthOfBirth\":0," +
+                "\"PartialYearOfBirth\":0," +
+                "\"FreeFormatBirthDate\":null," +
+                "\"DeceasedAddress\":null}" +
+                "]\"");
+
         underTest.handleRequest(event, context);
 
         verify(awsService).putInBucket(
             eq("JsonBucketName"),
             anyString(),
-            eq("[{\"RegistrationID\":1},{\"RegistrationID\":2}]")
+            matches(".*\"RegistrationID\":1.*\"RegistrationID\":2.*")
         );
     }
+
     @Test
-    void convertToJsonUploadsOneRecordToS3() {
+    void convertToJsonUploadsOneRecordToS3() throws JsonProcessingException {
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseOneRecord);
+        when(objectMapper.writeValueAsString(any())).thenReturn(
+            "\"[" +
+                "{" +
+                "\"RegistrationID\":1," +
+                "\"RegistrationType\":0," +
+                "\"RecordLockedDateTime\":null," +
+                "\"RecordUpdateDateTime\":null," +
+                "\"RecordUpdateReason\":0," +
+                "\"DeceasedName\":null," +
+                "\"DeceasedAliasName\":null," +
+                "\"DeceasedAliasNameType\":null," +
+                "\"DeceasedMaidenName\":null," +
+                "\"DeceasedGender\":null," +
+                "\"DeceasedDeathDate\":null," +
+                "\"PartialMonthOfDeath\":0," +
+                "\"PartialYearOfDeath\":0," +
+                "\"QualifierText\":null," +
+                "\"FreeFormatDeathDate\":null," +
+                "\"DeceasedBirthDate\":null," +
+                "\"PartialMonthOfBirth\":0," +
+                "\"PartialYearOfBirth\":0," +
+                "\"FreeFormatBirthDate\":null," +
+                "\"DeceasedAddress\":null" +
+                "}]\"");
+
         underTest.handleRequest(event, context);
 
         verify(awsService).putInBucket(
             eq("JsonBucketName"),
             anyString(),
-            eq("[{\"RegistrationID\":1}]")
+            matches("\"RegistrationID\":1")
         );
     }
 }

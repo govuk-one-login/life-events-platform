@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
                    "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
+                   "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$dependencyVersions.jacksonDatatypeJsr310",
                    "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
                    "org.json:json:$dependencyVersions.json",
                    project(":lib")

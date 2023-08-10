@@ -8,10 +8,10 @@ import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.CognitoTokenResponse;
+import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
-import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -48,7 +48,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         postRecordToLifeEvents(event, authorisationToken);
         return null;
     }
-    
+
     // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,
     // and we do not need to rethrow the same exception
     @SuppressWarnings("java:S2142")

@@ -2,6 +2,8 @@ package uk.gov.di.data.lep.library.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import uk.gov.di.data.lep.library.enums.GroVerificationLevel;
 
@@ -12,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class MapperTest {
     @Test
-    void ObjectMapperSerialisesStringToDateTimeFormat() throws JsonProcessingException {
+    void objectMapperSerialisesStringToDateTimeFormat() throws JsonProcessingException {
         var objectMapperUnderTest = new Mapper().objectMapper();
 
         var result = objectMapperUnderTest.readValue("{\"dateTime\":\"1958-06-06T12:30:57\"}", MapperTestObject.class);
@@ -20,36 +22,28 @@ class MapperTest {
         assertEquals(LocalDateTime.parse("1958-06-06T12:30:57"), result.dateTime);
     }
 
-    @Test
-    void ObjectMapperSerialisesIntToGenderEnum() throws JsonProcessingException {
+    @ParameterizedTest
+    @CsvSource(value = {"1:MALE", "2:FEMALE", "9:INDETERMINATE"}, delimiter = ':')
+    void objectMapperSerialisesIntToGenderEnum(String input, GenderAtRegistration expected) throws JsonProcessingException {
         var objectMapperUnderTest = new Mapper().objectMapper();
 
-        var maleTest = objectMapperUnderTest.readValue("{\"gender\":1}", MapperTestObject.class);
-        var femaleTest = objectMapperUnderTest.readValue("{\"gender\":2}", MapperTestObject.class);
-        var indeterminateTest = objectMapperUnderTest.readValue("{\"gender\":9}", MapperTestObject.class);
+        var result = objectMapperUnderTest.readValue(String.format("{\"gender\":%s}", input), MapperTestObject.class);
 
-        assertEquals(GenderAtRegistration.MALE, maleTest.gender);
-        assertEquals(GenderAtRegistration.FEMALE, femaleTest.gender);
-        assertEquals(GenderAtRegistration.INDETERMINATE, indeterminateTest.gender);
+        assertEquals(expected, result.gender);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"00:LEVEL_0", "01:LEVEL_1", "02:LEVEL_2", "03:LEVEL_3"}, delimiter = ':')
+    void objectMapperSerialisesStringToGroVerificationLevelEnum(String input, GroVerificationLevel expected) throws JsonProcessingException {
+        var objectMapperUnderTest = new Mapper().objectMapper();
+
+        var result = objectMapperUnderTest.readValue(String.format("{\"verificationLevel\":\"%s\"}", input), MapperTestObject.class);
+
+        assertEquals(expected, result.verificationLevel);
     }
 
     @Test
-    void ObjectMapperSerialisesStringToGroVerificationLevelEnum() throws JsonProcessingException {
-        var objectMapperUnderTest = new Mapper().objectMapper();
-
-        var level0Test = objectMapperUnderTest.readValue("{\"verificationLevel\":\"00\"}", MapperTestObject.class);
-        var level1Test = objectMapperUnderTest.readValue("{\"verificationLevel\":\"01\"}", MapperTestObject.class);
-        var level2Test = objectMapperUnderTest.readValue("{\"verificationLevel\":\"02\"}", MapperTestObject.class);
-        var level3Test = objectMapperUnderTest.readValue("{\"verificationLevel\":\"03\"}", MapperTestObject.class);
-
-        assertEquals(GroVerificationLevel.Level_0, level0Test.verificationLevel);
-        assertEquals(GroVerificationLevel.Level_1, level1Test.verificationLevel);
-        assertEquals(GroVerificationLevel.Level_2, level2Test.verificationLevel);
-        assertEquals(GroVerificationLevel.Level_3, level3Test.verificationLevel);
-    }
-
-    @Test
-    void ObjectMapperReturnsNullForUnknownEnumValuesDuringSerialisation() throws JsonProcessingException {
+    void objectMapperReturnsNullForUnknownEnumValuesDuringSerialisation() throws JsonProcessingException {
         var objectMapperUnderTest = new Mapper().objectMapper();
 
         var genderResult = objectMapperUnderTest.readValue("{\"gender\":\"\"}", MapperTestObject.class);
@@ -60,12 +54,12 @@ class MapperTest {
     }
 
     @Test
-    void XmlMapperSerialisesXmlToObject() throws JsonProcessingException {
+    void xmlMapperSerialisesXmlToObject() throws JsonProcessingException {
         var xmlMapperUnderTest = new Mapper().xmlMapper();
         var expected = new MapperTestObject();
         expected.dateTime = (LocalDateTime.parse("2023-06-03T12:34:56"));
         expected.gender = GenderAtRegistration.MALE;
-        expected.verificationLevel = GroVerificationLevel.Level_2;
+        expected.verificationLevel = GroVerificationLevel.LEVEL_2;
 
         var result = xmlMapperUnderTest.readValue(
             "<MapperTestObject>" +

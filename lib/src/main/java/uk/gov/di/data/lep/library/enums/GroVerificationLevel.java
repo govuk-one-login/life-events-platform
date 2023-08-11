@@ -3,10 +3,10 @@ package uk.gov.di.data.lep.library.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum GroVerificationLevel {
-    Level_0("00"),
-    Level_1("01"),
-    Level_2("02"),
-    Level_3("03");
+    LEVEL_0("00"),
+    LEVEL_1("01"),
+    LEVEL_2("02"),
+    LEVEL_3("03");
     private final String value;
 
     GroVerificationLevel(final String value) {

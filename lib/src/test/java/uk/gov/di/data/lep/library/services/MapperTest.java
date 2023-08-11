@@ -3,6 +3,7 @@ package uk.gov.di.data.lep.library.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import uk.gov.di.data.lep.library.enums.GroVerificationLevel;
@@ -13,11 +14,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class MapperTest {
-    private static final ObjectMapper objectMapperUnderTest = new Mapper().objectMapper();
-    private static final XmlMapper xmlMapperUnderTest = new Mapper().xmlMapper();
+    private static ObjectMapper objectMapperUnderTest;
+    private static XmlMapper xmlMapperUnderTest;
+
+    @BeforeAll
+    static void setup() {
+        objectMapperUnderTest = new Mapper().objectMapper();
+        xmlMapperUnderTest = new Mapper().xmlMapper();
+    }
 
     @Test
-    void ObjectMapperHandlesDateTimeFormat() throws JsonProcessingException {
+    void ObjectMapperSerialisesStringToDateTimeFormat() throws JsonProcessingException {
         var result = objectMapperUnderTest.readValue("{\"dateTime\":\"1958-06-06T12:30:57\"}", MapperTestObject.class);
 
         assertEquals(LocalDateTime.parse("1958-06-06T12:30:57"), result.dateTime);

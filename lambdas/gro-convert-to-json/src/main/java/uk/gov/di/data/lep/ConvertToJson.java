@@ -27,7 +27,7 @@ public class ConvertToJson implements RequestHandler<S3ObjectCreatedNotification
     private final XmlMapper xmlMapper;
 
     public ConvertToJson() {
-        this(new AwsService(), new Config(), new Mapper().objectMapper(),  new Mapper().xmlMapper());
+        this(new AwsService(), new Config(), Mapper.objectMapper(),  Mapper.xmlMapper());
     }
 
     public ConvertToJson(AwsService awsService, Config config, ObjectMapper objectMapper, XmlMapper xmlMapper) {

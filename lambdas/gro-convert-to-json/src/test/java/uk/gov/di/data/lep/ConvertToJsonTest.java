@@ -17,6 +17,7 @@ import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
+import java.net.http.HttpClient;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +29,9 @@ import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,8 +41,8 @@ class ConvertToJsonTest {
     private static final ConvertToJson underTest = new ConvertToJson(
         awsService,
         config,
-        new Mapper().objectMapper(),
-        new Mapper().xmlMapper()
+        Mapper.objectMapper(),
+        Mapper.xmlMapper()
     );
     private static final Context context = mock(Context.class);
     private static final S3ObjectCreatedNotificationEvent event = new S3ObjectCreatedNotificationEvent(
@@ -76,6 +79,7 @@ class ConvertToJsonTest {
             "<PersonGivenName>ERICA</PersonGivenName>" +
             "<PersonGivenName>CHRISTINA</PersonGivenName>" +
             "</DeceasedName>" +
+            "<DeceasedGender>2</DeceasedGender>" +
             "</DeathRegistration>" +
             "</DeathRegistrationGroup>";
     private static final String mockS3objectResponseMultipleRecords =
@@ -86,13 +90,14 @@ class ConvertToJsonTest {
             "<PersonGivenName>ERICA</PersonGivenName>" +
             "<PersonGivenName>CHRISTINA</PersonGivenName>" +
             "</DeceasedName>" +
+            "<DeceasedGender>2</DeceasedGender>" +
             "</DeathRegistration>" +
             "<DeathRegistration>" +
             "<RegistrationID>2</RegistrationID>" +
             "<DeceasedName>" +
             "<PersonGivenName>BOB</PersonGivenName>" +
             "</DeceasedName>" +
-            "<DeceasedGender>2</DeceasedGender>" +
+            "<DeceasedGender>1</DeceasedGender>" +
             "<DeceasedBirthDate>" +
             "<PersonBirthDate>1958-06-06</PersonBirthDate>" +
             "<VerificationLevel>02</VerificationLevel>" +
@@ -114,11 +119,12 @@ class ConvertToJsonTest {
     void constructionCallsCorrectInstantiation() {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
-        var mapper = mockConstruction(Mapper.class);
+        var mapper = mockStatic(Mapper.class);
         new ConvertToJson();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
-        assertEquals(2, mapper.constructed().size());
+        mapper.verify(Mapper::objectMapper, times(1));
+        mapper.verify(Mapper::xmlMapper, times(1));
     }
 
     @Test
@@ -142,7 +148,15 @@ class ConvertToJsonTest {
         verify(awsService).putInBucket(
             eq("JsonBucketName"),
             anyString(),
-            matches(".*\"RegistrationID\":1.*\"RegistrationID\":2.*")
+            matches(
+                ".*\"RegistrationID\":1.*" +
+                    "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                    "\"DeceasedGender\":2.*" +
+                    "\"RegistrationID\":2.*" +
+                    "\"PersonGivenName\":\\[\"BOB\"\\].*" +
+                    "\"DeceasedGender\":1.*" +
+                    "\"DeceasedBirthDate\":\\{\"PersonBirthDate\":\\[1958,6,6\\],\"VerificationLevel\":\"02\"\\}.*"
+            )
         );
     }
 
@@ -155,7 +169,9 @@ class ConvertToJsonTest {
         verify(awsService).putInBucket(
             eq("JsonBucketName"),
             anyString(),
-            matches("\"RegistrationID\":1")
+            matches(".*\"RegistrationID\":1.*" +
+                "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                "\"DeceasedGender\":2.*")
         );
     }
 

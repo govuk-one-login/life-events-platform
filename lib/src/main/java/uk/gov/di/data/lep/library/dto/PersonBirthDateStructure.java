@@ -1,13 +1,16 @@
 package uk.gov.di.data.lep.library.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.di.data.lep.library.enums.GroVerificationLevel;
 
 import java.time.LocalDate;
 
 public record PersonBirthDateStructure(
-    LocalDate PersonBirthDate,
+    @JsonProperty("PersonBirthDate")
+    LocalDate personBirthDate,
     @JsonIgnoreProperties(ignoreUnknown = true)
-    GroVerificationLevel VerificationLevel
+    @JsonProperty("VerificationLevel")
+    GroVerificationLevel verificationLevel
 ) {
 }

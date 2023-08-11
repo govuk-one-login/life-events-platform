@@ -108,12 +108,14 @@ class PublishRecordTest {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
         var httpClient = mockStatic(HttpClient.class);
-        var mapper = mockConstruction(Mapper.class);
+        var mapper = mockStatic(Mapper.class);
         new PublishRecord();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
-        assertEquals(1, mapper.constructed().size());
         httpClient.verify(HttpClient::newHttpClient, times(1));
+        mapper.verify(Mapper::objectMapper, times(1));
+        httpClient.close();
+        mapper.close();
     }
 
     @Test

@@ -18,7 +18,9 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,11 +47,12 @@ class LambdaHandlerTest {
     void constructionCallsCorrectInstantiation() {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
-        var mapper = mockConstruction(Mapper.class);
+        var mapper = mockStatic(Mapper.class);
         new TestLambda();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
-        assertEquals(1, mapper.constructed().size());
+        mapper.verify(Mapper::objectMapper, times(1));
+        mapper.close();
     }
 
     @Test

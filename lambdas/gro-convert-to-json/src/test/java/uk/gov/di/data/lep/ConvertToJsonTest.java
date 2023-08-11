@@ -125,6 +125,7 @@ class ConvertToJsonTest {
         assertEquals(1, config.constructed().size());
         mapper.verify(Mapper::objectMapper, times(1));
         mapper.verify(Mapper::xmlMapper, times(1));
+        mapper.close();
     }
 
     @Test

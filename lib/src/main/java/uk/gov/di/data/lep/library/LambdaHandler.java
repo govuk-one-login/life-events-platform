@@ -20,7 +20,7 @@ public abstract class LambdaHandler<O> {
         this(
             new AwsService(),
             new Config(),
-            new Mapper().objectMapper());
+            Mapper.objectMapper());
     }
 
     protected LambdaHandler(AwsService awsService, Config config, ObjectMapper objectMapper) {

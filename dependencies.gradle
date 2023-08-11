@@ -1,5 +1,5 @@
 ext {
-    postCompileWeavingVersion = "8.1.0"
+    postCompileWeavingVersion = "8.2.1"
 
     dependencyVersions = [
             aspectjrt            : "1.9.19",

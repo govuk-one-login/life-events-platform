@@ -66,5 +66,5 @@ jobs:
 #          scan-type: config
 #          trivyignores: .trivyignore.docker
 #          exit-code: 1
-#          skip-dirs: lev-data/
+#          skip-dirs: lev-data/,stack-orchestration/
 #          skip-files: template.yaml

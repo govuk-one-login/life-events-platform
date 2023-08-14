@@ -1,6 +1,7 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,12 +10,9 @@ import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroAddressStructure;
-import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
-import uk.gov.di.data.lep.library.dto.PersonBirthDateStructure;
-import uk.gov.di.data.lep.library.dto.PersonDeathDateStructure;
-import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -23,9 +21,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -37,6 +32,7 @@ import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,28 +45,8 @@ class PublishRecordTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final PublishRecord underTest = new PublishRecord(awsService, config, httpClient, objectMapper);
     private static final Context context = mock(Context.class);
-    private static final GroJsonRecord event = new GroJsonRecord(
-        1234567890,
-        1,
-        LocalDateTime.parse("2023-03-06T09:30:50"),
-        LocalDateTime.parse("2023-03-06T09:30:50"),
-        1,
-        new GroPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null, null),
-        null,
-        null,
-        null,
-        GenderAtRegistration.FEMALE,
-        new PersonDeathDateStructure(LocalDate.parse("2007-03-06"), null),
-        3,
-        2007,
-        null,
-        null,
-        new PersonBirthDateStructure(LocalDate.parse("1967-03-06"), null),
-        3,
-        1967,
-        null,
-        new GroAddressStructure(null, null, List.of("123 Street"), "GT8 5HG")
-        );
+    private static final GroJsonRecord event = new GroJsonRecordBuilder().build();
+    private static final String eventAsString = "EventInStringRepresentation";
     private static final String cognitoClientId = "cognitoClientId";
     private static final String cognitoClientSecret = "cognitoClientSecret";
     private static final String cognitoOauth2TokenUri = "https://cognitoDomainName.auth.awsRegion.amazoncognito.com/oauth2/token";
@@ -83,7 +59,7 @@ class PublishRecordTest {
     private static final HttpRequest expectedGroRecordRequest = HttpRequest.newBuilder()
         .uri(URI.create("https://lifeEventsPlatformDomain/events/deathNotification"))
         .header("Authorization", "accessToken")
-        .POST(HttpRequest.BodyPublishers.ofString("{\"sourceId\": \"1234567890\"}"))
+        .POST(HttpRequest.BodyPublishers.ofString(eventAsString))
         .build();
     private static final HttpResponse<String> httpResponse = mock(HttpResponse.class);
 
@@ -128,6 +104,7 @@ class PublishRecordTest {
                 "expiresIn",
                 "tokenType"
             ));
+        when(objectMapper.writeValueAsString(event)).thenReturn(eventAsString);
 
         var result = underTest.handleRequest(event, context);
 
@@ -146,6 +123,7 @@ class PublishRecordTest {
         assertEquals("Failed to send authorisation request", exception.getMessage());
         assertEquals(ioException, exception.getCause());
 
+        verify(httpClient, times(1)).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
         verify(httpClient, times(1)).send(any(), any());
     }
 
@@ -159,6 +137,7 @@ class PublishRecordTest {
                 "expiresIn",
                 "tokenType"
             ));
+        when(objectMapper.writeValueAsString(event)).thenReturn(eventAsString);
         var ioException = new IOException();
         when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenThrow(ioException);
 
@@ -167,7 +146,28 @@ class PublishRecordTest {
         assertEquals("Failed to send GRO record request", exception.getMessage());
         assertEquals(ioException, exception.getCause());
 
-        verify(httpClient).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
-        verify(httpClient).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
+        verify(httpClient, times(1)).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
+        verify(httpClient, times(1)).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Test
+    void publishRecordThrowsMappingExceptionIfGroRecordFailsToMap() throws IOException, InterruptedException {
+        when(httpClient.send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(httpResponse);
+        when(httpResponse.body()).thenReturn("httpBody");
+        when(objectMapper.readValue("httpBody", CognitoTokenResponse.class))
+            .thenReturn(new CognitoTokenResponse(
+                "accessToken",
+                "expiresIn",
+                "tokenType"
+            ));
+        var jsonProcessingException = mock(JsonProcessingException.class);
+        when(objectMapper.writeValueAsString(event)).thenThrow(jsonProcessingException);
+
+        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
+
+        assertEquals(jsonProcessingException, exception.getCause());
+
+        verify(httpClient, times(1)).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
+        verify(httpClient, never()).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
     }
 }

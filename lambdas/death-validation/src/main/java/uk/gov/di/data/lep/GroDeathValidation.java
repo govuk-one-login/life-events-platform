@@ -8,15 +8,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
-import uk.gov.di.data.lep.dto.GroDeathEvent;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
+import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 public class GroDeathValidation
-    extends LambdaHandler<GroDeathEventBaseData>
+    extends LambdaHandler<GroJsonRecord>
     implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     public GroDeathValidation() {
@@ -36,23 +35,14 @@ public class GroDeathValidation
     }
 
     @Tracing
-    private GroDeathEventBaseData validateRequest(APIGatewayProxyRequestEvent event) {
+    private GroJsonRecord validateRequest(APIGatewayProxyRequestEvent event) {
         logger.info("Validating request");
 
-        GroDeathEvent groDeathEvent;
         try {
-            groDeathEvent = objectMapper.readValue(event.getBody(), GroDeathEvent.class);
+            return objectMapper.readValue(event.getBody(), GroJsonRecord.class);
         } catch (JsonProcessingException e) {
             logger.error("Failed to validate request due to mapping error");
             throw new MappingException(e);
         }
-        var sourceId = groDeathEvent.sourceId();
-
-        if (sourceId == null) {
-            logger.warn("sourceId cannot be null");
-            throw new IllegalArgumentException("sourceId cannot be null");
-        }
-
-        return new GroDeathEventBaseData(sourceId);
     }
 }

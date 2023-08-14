@@ -9,7 +9,12 @@ import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.GroAddressStructure;
+import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.PersonBirthDateStructure;
+import uk.gov.di.data.lep.library.dto.PersonDeathDateStructure;
+import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -18,6 +23,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -41,7 +49,28 @@ class PublishRecordTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final PublishRecord underTest = new PublishRecord(awsService, config, httpClient, objectMapper);
     private static final Context context = mock(Context.class);
-    private static final GroJsonRecord event = new GroJsonRecord("1234567890");
+    private static final GroJsonRecord event = new GroJsonRecord(
+        1234567890,
+        1,
+        LocalDateTime.parse("2023-03-06T09:30:50"),
+        LocalDateTime.parse("2023-03-06T09:30:50"),
+        1,
+        new GroPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null, null),
+        null,
+        null,
+        null,
+        GenderAtRegistration.FEMALE,
+        new PersonDeathDateStructure(LocalDate.parse("2007-03-06"), null),
+        3,
+        2007,
+        null,
+        null,
+        new PersonBirthDateStructure(LocalDate.parse("1967-03-06"), null),
+        3,
+        1967,
+        null,
+        new GroAddressStructure(null, null, List.of("123 Street"), "GT8 5HG")
+        );
     private static final String cognitoClientId = "cognitoClientId";
     private static final String cognitoClientSecret = "cognitoClientSecret";
     private static final String cognitoOauth2TokenUri = "https://cognitoDomainName.auth.awsRegion.amazoncognito.com/oauth2/token";
@@ -79,12 +108,14 @@ class PublishRecordTest {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
         var httpClient = mockStatic(HttpClient.class);
-        var mapper = mockConstruction(Mapper.class);
+        var mapper = mockStatic(Mapper.class);
         new PublishRecord();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
-        assertEquals(1, mapper.constructed().size());
         httpClient.verify(HttpClient::newHttpClient, times(1));
+        mapper.verify(Mapper::objectMapper, times(1));
+        httpClient.close();
+        mapper.close();
     }
 
     @Test

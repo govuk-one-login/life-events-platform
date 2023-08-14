@@ -8,10 +8,10 @@ import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.CognitoTokenResponse;
+import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
-import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -29,7 +29,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
     protected static Logger logger = LogManager.getLogger();
 
     public PublishRecord() {
-        this(new AwsService(), new Config(), HttpClient.newHttpClient(), new Mapper().objectMapper());
+        this(new AwsService(), new Config(), HttpClient.newHttpClient(), Mapper.objectMapper());
     }
 
     public PublishRecord(AwsService awsService, Config config, HttpClient httpClient, ObjectMapper objectMapper) {
@@ -43,12 +43,12 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
     @Tracing
     @Logging(clearState = true)
     public Object handleRequest(GroJsonRecord event, Context context) {
-        logger.info("Received record: {}", event.RegistrationID());
+        logger.info("Received record: {}", event.registrationId());
         var authorisationToken = getAuthorisationToken();
         postRecordToLifeEvents(event, authorisationToken);
         return null;
     }
-    
+
     // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,
     // and we do not need to rethrow the same exception
     @SuppressWarnings("java:S2142")
@@ -82,11 +82,11 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         var request = HttpRequest.newBuilder()
             .uri(URI.create(String.format("https://%s/events/deathNotification", config.getLifeEventsPlatformDomain())))
             .header("Authorization", authorisationToken)
-            .POST(HttpRequest.BodyPublishers.ofString(String.format("{\"sourceId\": \"%s\"}", event.RegistrationID())))
+            .POST(HttpRequest.BodyPublishers.ofString(String.format("{\"sourceId\": \"%s\"}", event.registrationId())))
             .build();
 
         try {
-            logger.info("Sending GRO record request: {}", event.RegistrationID());
+            logger.info("Sending GRO record request: {}", event.registrationId());
             httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
             logger.error("Failed to send GRO record request");

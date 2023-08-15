@@ -8,12 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
-import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedDataBuilder;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -57,25 +54,7 @@ class LambdaHandlerTest {
 
     @Test
     void publishPublishesMessageToQueue() throws JsonProcessingException {
-        var output = new GroDeathEventEnrichedData(
-            "123a1234-a12b-12a1-a123-123456789012",
-            GroSex.FEMALE,
-            LocalDate.parse("1972-02-20"),
-            LocalDate.parse("2021-12-31"),
-            "123456789",
-            LocalDateTime.parse("2022-01-05T12:03:52.123"),
-            "1",
-            "12",
-            "2021",
-            "Bob Burt",
-            "Smith",
-            "Jane",
-            "888 Death House",
-            "8 Death lane",
-            "Deadington",
-            "Deadshire",
-            "XX1 1XX"
-        );
+        var output = new GroDeathEventEnrichedDataBuilder().build();
 
         when(config.getTargetQueue()).thenReturn("targetQueueURL");
         when(objectMapper.writeValueAsString(output)).thenReturn("mappedQueueOutput");
@@ -89,25 +68,8 @@ class LambdaHandlerTest {
 
     @Test
     void publishPublishesMessageToTopic() throws JsonProcessingException {
-        var output = new GroDeathEventEnrichedData(
-            "123a1234-a12b-12a1-a123-123456789012",
-            GroSex.FEMALE,
-            LocalDate.parse("1972-02-20"),
-            LocalDate.parse("2021-12-31"),
-            "123456789",
-            LocalDateTime.parse("2022-01-05T12:03:52"),
-            "1",
-            "12",
-            "2021",
-            "Bob Burt",
-            "Smith",
-            "Jane",
-            "888 Death House",
-            "8 Death lane",
-            "Deadington",
-            "Deadshire",
-            "XX1 1XX"
-        );
+        var output = new GroDeathEventEnrichedDataBuilder().build();
+
         when(config.getTargetTopic()).thenReturn("targetTopicARN");
         when(objectMapper.writeValueAsString(output)).thenReturn("mappedTopicOutput");
 

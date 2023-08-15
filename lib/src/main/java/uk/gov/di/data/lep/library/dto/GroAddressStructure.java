@@ -12,7 +12,7 @@ public record GroAddressStructure(
     String building,
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("Line")
-    List<String> line,
+    List<String> lines,
     @JsonProperty("Postcode")
     String postcode
 ) {

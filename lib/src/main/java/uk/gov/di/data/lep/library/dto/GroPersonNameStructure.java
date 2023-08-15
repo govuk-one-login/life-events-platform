@@ -10,7 +10,7 @@ public record GroPersonNameStructure(
     String personNameTitle,
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("PersonGivenName")
-    List<String> personGivenName,
+    List<String> personGivenNames,
     @JsonProperty("PersonFamilyName")
     String personFamilyName,
     @JsonProperty("PersonNameSuffix")

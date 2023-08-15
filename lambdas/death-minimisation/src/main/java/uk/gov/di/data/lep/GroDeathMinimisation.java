@@ -54,7 +54,7 @@ public class GroDeathMinimisation
         return new GroDeathEventNotification(
             UUID.randomUUID(),
             EventType.DEATH_NOTIFICATION,
-            enrichedData.sourceId(),
+            Integer.toString(enrichedData.sourceId()),
             enrichmentFields,
             new GroDeathEventDetails(
                 minimiseIfRequired(enrichedData.sex(), EnrichmentField.SEX),
@@ -62,16 +62,14 @@ public class GroDeathMinimisation
                 minimiseIfRequired(enrichedData.dateOfDeath(), EnrichmentField.DATE_OF_DEATH),
                 minimiseIfRequired(enrichedData.registrationId(), EnrichmentField.REGISTRATION_ID),
                 minimiseIfRequired(enrichedData.eventTime(), EnrichmentField.EVENT_TIME),
-                minimiseIfRequired(enrichedData.verificationLevel(), EnrichmentField.VERIFICATION_LEVEL),
                 minimiseIfRequired(enrichedData.partialMonthOfDeath(), EnrichmentField.PARTIAL_MONTH_OF_DEATH),
                 minimiseIfRequired(enrichedData.partialYearOfDeath(), EnrichmentField.PARTIAL_YEAR_OF_DEATH),
                 minimiseIfRequired(enrichedData.forenames(), EnrichmentField.FORENAMES),
                 minimiseIfRequired(enrichedData.surname(), EnrichmentField.SURNAME),
                 minimiseIfRequired(enrichedData.maidenSurname(), EnrichmentField.MAIDEN_SURNAME),
-                minimiseIfRequired(enrichedData.addressLine1(), EnrichmentField.ADDRESS_LINE_1),
-                minimiseIfRequired(enrichedData.addressLine2(), EnrichmentField.ADDRESS_LINE_2),
-                minimiseIfRequired(enrichedData.addressLine3(), EnrichmentField.ADDRESS_LINE_3),
-                minimiseIfRequired(enrichedData.addressLine4(), EnrichmentField.ADDRESS_LINE_4),
+                minimiseIfRequired(enrichedData.flat(), EnrichmentField.FLAT),
+                minimiseIfRequired(enrichedData.building(), EnrichmentField.BUILDING),
+                minimiseIfRequired(enrichedData.lines(), EnrichmentField.LINES),
                 minimiseIfRequired(enrichedData.postcode(), EnrichmentField.POSTCODE)
             ));
     }

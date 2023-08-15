@@ -9,8 +9,9 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroDeathEventBaseData;
-import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.dto.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
+import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
@@ -55,44 +57,40 @@ class GroDeathEnrichmentTest {
     @Test
     void enrichGroDeathEventDataReturnsEnrichedData() throws JsonProcessingException {
         var sqsMessage = new SQSMessage();
-        sqsMessage.setBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+        sqsMessage.setBody("A message body");
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
 
-        when(objectMapper.readValue(sqsMessage.getBody(), GroDeathEventBaseData.class))
-            .thenReturn(new GroDeathEventBaseData(
-                "123a1234-a12b-12a1-a123-123456789012"
-            ));
+        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class))
+            .thenReturn(new GroJsonRecordBuilder().build());
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertEquals("123a1234-a12b-12a1-a123-123456789012", result.sourceId());
-        assertEquals(GroSex.FEMALE, result.sex());
-        assertEquals(LocalDate.parse("1972-02-20"), result.dateOfBirth());
-        assertEquals(LocalDate.parse("2021-12-31"), result.dateOfDeath());
-        assertEquals("123456789", result.registrationId());
-        assertEquals(LocalDateTime.parse("2022-01-05T12:03:52"), result.eventTime());
-        assertEquals("1", result.verificationLevel());
-        assertEquals("12", result.partialMonthOfDeath());
-        assertEquals("2021", result.partialYearOfDeath());
-        assertEquals("Bob Burt", result.forenames());
-        assertEquals("Smith", result.surname());
-        assertEquals("Jane", result.maidenSurname());
-        assertEquals("888 Death House", result.addressLine1());
-        assertEquals("8 Death lane", result.addressLine2());
-        assertEquals("Deadington", result.addressLine3());
-        assertEquals("Deadshire", result.addressLine4());
-        assertEquals("XX1 1XX", result.postcode());
+        assertEquals(1234567890, result.sourceId());
+        assertEquals(GenderAtRegistration.FEMALE, result.sex());
+        assertEquals(LocalDate.parse("1967-03-06"), result.dateOfBirth());
+        assertEquals(LocalDate.parse("2007-03-06"), result.dateOfDeath());
+        assertEquals(1234567890, result.registrationId());
+        assertEquals(LocalDateTime.parse("2023-03-06T09:30:50"), result.eventTime());
+        assertEquals(3, result.partialMonthOfDeath());
+        assertEquals(2007, result.partialYearOfDeath());
+        assertEquals(List.of("ERICA"), result.forenames());
+        assertEquals("BLOGG", result.surname());
+        assertNull(result.maidenSurname());
+        assertNull(result.flat());
+        assertNull(result.building());
+        assertEquals(List.of("123 Street"), result.lines());
+        assertEquals("GT8 5HG", result.postcode());
     }
 
     @Test
     void enrichGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() throws JsonProcessingException {
         var sqsMessage = new SQSMessage();
-        sqsMessage.setBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+        sqsMessage.setBody("A message body");
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
 
-        when(objectMapper.readValue(sqsMessage.getBody(), GroDeathEventBaseData.class))
+        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class))
             .thenThrow(mock(UnrecognizedPropertyException.class));
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));

@@ -11,8 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
+import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedDataBuilder;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
-import uk.gov.di.data.lep.library.enums.GroSex;
+import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -39,27 +40,27 @@ class GroDeathMinimisationTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static GroDeathMinimisation underTest;
     private static final String enrichedDataJson = "{" +
-        "\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"," +
-        "\"sex\":\"FEMALE\"," +
+        "\"sourceId\":123456789," +
+        "\"gender\":\"FEMALE\"," +
         "\"dateOfBirth\":\"1972-02-20\"," +
         "\"dateOfDeath\":\"2021-12-31\"," +
-        "\"registrationId\":\"123456789\"," +
+        "\"registrationId\":123456789," +
         "\"eventTime\":\"2022-01-05T12:03:52\"," +
-        "\"verificationLevel\":\"1\"," +
-        "\"partialMonthOfDeath\":\"12\"," +
-        "\"partialYearOfDeath\":\"2021\"," +
-        "\"forenames\":\"Bob Burt\"," +
+        "\"partialMonthOfDeath\":12," +
+        "\"partialYearOfDeath\":2021," +
+        "\"forenames\":[\"Bob\",\"Burt\"]," +
         "\"surname\":\"Smith\"," +
         "\"maidenSurname\":\"Jane\"," +
-        "\"addressLine1\":\"888 Death House\"," +
-        "\"addressLine2\":\"8 Death lane\"," +
-        "\"addressLine3\":\"Deadington\"," +
-        "\"addressLine4\":\"Deadshire\"," +
+        "\"flat\":\"888\"," +
+        "\"building\":\"Death House\"," +
+        "\"lines\":[\"8 Death lane\",\"Deadington\",\"Deadshire\"]," +
         "\"postcode\":\"XX1 1XX\"" +
         "}";
 
     private static final SQSMessage sqsMessage = new SQSMessage();
     private static final SQSEvent sqsEvent = new SQSEvent();
+    private final GroDeathEventEnrichedData enrichedData = new GroDeathEventEnrichedDataBuilder().build();
+
 
     @BeforeAll
     static void setup() {
@@ -74,25 +75,7 @@ class GroDeathMinimisationTest {
         reset(objectMapper);
 
         when(objectMapper.readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class))
-            .thenReturn(new GroDeathEventEnrichedData(
-                "123a1234-a12b-12a1-a123-123456789012",
-                GroSex.FEMALE,
-                LocalDate.parse("1972-02-20"),
-                LocalDate.parse("2021-12-31"),
-                "123456789",
-                LocalDateTime.parse("2022-01-05T12:03:52"),
-                "1",
-                "12",
-                "2021",
-                "Bob Burt",
-                "Smith",
-                "Jane",
-                "888 Death House",
-                "8 Death lane",
-                "Deadington",
-                "Deadshire",
-                "XX1 1XX"
-            ));
+            .thenReturn(enrichedData);
     }
 
     @Test
@@ -117,21 +100,20 @@ class GroDeathMinimisationTest {
 
         verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
-        assertNull(result.eventDetails().sex());
+        assertNull(result.eventDetails().gender());
         assertNull(result.eventDetails().dateOfBirth());
         assertNull(result.eventDetails().dateOfDeath());
         assertNull(result.eventDetails().registrationId());
         assertNull(result.eventDetails().eventTime());
-        assertNull(result.eventDetails().verificationLevel());
         assertNull(result.eventDetails().partialMonthOfDeath());
         assertNull(result.eventDetails().partialYearOfDeath());
         assertNull(result.eventDetails().forenames());
         assertNull(result.eventDetails().surname());
         assertNull(result.eventDetails().maidenSurname());
-        assertNull(result.eventDetails().addressLine1());
-        assertNull(result.eventDetails().addressLine2());
-        assertNull(result.eventDetails().addressLine3());
-        assertNull(result.eventDetails().addressLine4());
+        assertNull(result.eventDetails().flat());
+        assertNull(result.eventDetails().building());
+        assertNull(result.eventDetails().lines());
+        assertNull(result.eventDetails().postcode());
     }
 
     @Test
@@ -150,21 +132,20 @@ class GroDeathMinimisationTest {
 
         verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
-        assertEquals(GroSex.FEMALE, result.eventDetails().sex());
+        assertEquals(GenderAtRegistration.FEMALE, result.eventDetails().gender());
         assertNull(result.eventDetails().dateOfBirth());
         assertEquals(LocalDate.parse("2021-12-31"), result.eventDetails().dateOfDeath());
         assertNull(result.eventDetails().registrationId());
         assertNull(result.eventDetails().eventTime());
-        assertNull(result.eventDetails().verificationLevel());
         assertNull(result.eventDetails().partialMonthOfDeath());
         assertNull(result.eventDetails().partialYearOfDeath());
-        assertEquals("Bob Burt", result.eventDetails().forenames());
+        assertEquals(List.of("Bob", "Burt"), result.eventDetails().forenames());
         assertEquals("Smith", result.eventDetails().surname());
         assertNull(result.eventDetails().maidenSurname());
-        assertNull(result.eventDetails().addressLine1());
-        assertNull(result.eventDetails().addressLine2());
-        assertNull(result.eventDetails().addressLine3());
-        assertNull(result.eventDetails().addressLine4());
+        assertNull(result.eventDetails().flat());
+        assertNull(result.eventDetails().building());
+        assertNull(result.eventDetails().lines());
+        assertEquals("XX1 1XX", result.eventDetails().postcode());
     }
 
     @Test
@@ -175,16 +156,14 @@ class GroDeathMinimisationTest {
             EnrichmentField.DATE_OF_DEATH,
             EnrichmentField.REGISTRATION_ID,
             EnrichmentField.EVENT_TIME,
-            EnrichmentField.VERIFICATION_LEVEL,
             EnrichmentField.PARTIAL_MONTH_OF_DEATH,
             EnrichmentField.PARTIAL_YEAR_OF_DEATH,
             EnrichmentField.FORENAMES,
             EnrichmentField.SURNAME,
             EnrichmentField.MAIDEN_SURNAME,
-            EnrichmentField.ADDRESS_LINE_1,
-            EnrichmentField.ADDRESS_LINE_2,
-            EnrichmentField.ADDRESS_LINE_3,
-            EnrichmentField.ADDRESS_LINE_4,
+            EnrichmentField.FLAT,
+            EnrichmentField.BUILDING,
+            EnrichmentField.LINES,
             EnrichmentField.POSTCODE
         ));
 
@@ -194,21 +173,19 @@ class GroDeathMinimisationTest {
 
         verify(objectMapper).readValue(sqsMessage.getBody(), GroDeathEventEnrichedData.class);
 
-        assertEquals(GroSex.FEMALE, result.eventDetails().sex());
+        assertEquals(GenderAtRegistration.FEMALE, result.eventDetails().gender());
         assertEquals(LocalDate.parse("1972-02-20"), result.eventDetails().dateOfBirth());
         assertEquals(LocalDate.parse("2021-12-31"), result.eventDetails().dateOfDeath());
-        assertEquals("123456789", result.eventDetails().registrationId());
+        assertEquals(123456789, result.eventDetails().registrationId());
         assertEquals(LocalDateTime.parse("2022-01-05T12:03:52"), result.eventDetails().eventTime());
-        assertEquals("1", result.eventDetails().verificationLevel());
-        assertEquals("12", result.eventDetails().partialMonthOfDeath());
-        assertEquals("2021", result.eventDetails().partialYearOfDeath());
-        assertEquals("Bob Burt", result.eventDetails().forenames());
+        assertEquals(12, result.eventDetails().partialMonthOfDeath());
+        assertEquals(2021, result.eventDetails().partialYearOfDeath());
+        assertEquals(List.of("Bob", "Burt"), result.eventDetails().forenames());
         assertEquals("Smith", result.eventDetails().surname());
         assertEquals("Jane", result.eventDetails().maidenSurname());
-        assertEquals("888 Death House", result.eventDetails().addressLine1());
-        assertEquals("8 Death lane", result.eventDetails().addressLine2());
-        assertEquals("Deadington", result.eventDetails().addressLine3());
-        assertEquals("Deadshire", result.eventDetails().addressLine4());
+        assertEquals("888", result.eventDetails().flat());
+        assertEquals("Death House", result.eventDetails().building());
+        assertEquals(List.of("8 Death lane", "Deadington", "Deadshire"), result.eventDetails().lines());
         assertEquals("XX1 1XX", result.eventDetails().postcode());
     }
 

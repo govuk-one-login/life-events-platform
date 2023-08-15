@@ -7,8 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.gov.di.data.lep.dto.GroDeathEvent;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -28,6 +29,8 @@ class GroDeathValidationTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final AwsService awsService = mock(AwsService.class);
     private static final GroDeathValidation underTest = new GroDeathValidation(awsService, config, objectMapper);
+
+    private final GroJsonRecord record = new GroJsonRecordBuilder().build();
 
     @BeforeEach
     void refreshSetup() {
@@ -52,7 +55,7 @@ class GroDeathValidationTest {
     void validateGroDeathEventDataReturnsAPIGatewayProxyResponseEventWithStatusCode201() throws JsonProcessingException {
         var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
 
-        when(objectMapper.readValue(event.getBody(), GroDeathEvent.class)).thenReturn(new GroDeathEvent("123a1234-a12b-12a1-a123-123456789012"));
+        when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenReturn(record);
 
         var result = underTest.handleRequest(event, context);
 
@@ -63,21 +66,10 @@ class GroDeathValidationTest {
     void validateGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() throws JsonProcessingException {
         var event = new APIGatewayProxyRequestEvent().withBody("{\"notSourceId\":\"an id but not a source id\"}");
 
-        when(objectMapper.readValue(event.getBody(), GroDeathEvent.class)).thenThrow(mock(UnrecognizedPropertyException.class));
+        when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenThrow(mock(UnrecognizedPropertyException.class));
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
 
         assert(exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
-    }
-
-    @Test
-    void validateGroDeathEventDataFailsIfNullSourceId() throws JsonProcessingException {
-        var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":null}");
-
-        when(objectMapper.readValue(event.getBody(), GroDeathEvent.class)).thenReturn(new GroDeathEvent(null));
-
-        var exception = assertThrows(IllegalArgumentException.class, () -> underTest.handleRequest(event, context));
-
-        assertEquals("sourceId cannot be null", exception.getMessage());
     }
 }

@@ -1,2 +1,0 @@
-ignore_checks:
-  - W3002 # We ignore this check as sam package is run during deploy now

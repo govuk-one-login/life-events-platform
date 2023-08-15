@@ -263,65 +263,6 @@ Resources:
       KmsMasterKeyId: !Ref MainKmsKey
       TracingConfig: Active
 
-  DeathSnsToSqsPolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Sid: Allow SNS publish to SQS
-            Effect: Allow
-            Principal:
-              Service: sns.amazonaws.com
-            Resource: "*"
-            Action: SQS:SendMessage
-            Condition:
-              ArnEquals:
-                aws:SourceArn: !Ref DeathDistributionTopic
-      Queues:
-        - !GetAtt DeathMinimisationQueue.QueueUrl
-
-  DeathDistributionDlq:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-
-  DeathDistributionTopicSubscription:
-    Type: AWS::SNS::Subscription
-    Properties:
-      Protocol: sqs
-      Endpoint: !GetAtt DeathMinimisationQueue.Arn
-      TopicArn: !GetAtt DeathDistributionTopic.TopicArn
-      RawMessageDelivery: true
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathDistributionDlq.Arn
-
-  DeathMinimisationQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathMinimisationDlq.Arn
-        maxReceiveCount: 5
-
-  DeathMinimisationDlq:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-
-  DeathDeliveryQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathDeliveryDlq.Arn
-        maxReceiveCount: 5
-
-  DeathDeliveryDlq:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-
   DeathValidationFunction:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -444,67 +385,6 @@ Resources:
 #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
 #      FilterPattern: ""
 #      LogGroupName: !Ref DeathEnrichmentFunctionLogGroup
-
-  DeathMinimisationFunction:
-    Type: AWS::Serverless::Function
-    DependsOn:
-      - DeathMinimisationFunctionLogGroup
-    Properties:
-      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
-      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
-      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub death-minimisation-${Environment}${Developer}
-      CodeUri: lambdas/death-minimisation
-      Handler: uk.gov.di.data.lep.GroDeathMinimisation::handleRequest
-      Environment:
-        Variables:
-          POWERTOOLS_SERVICE_NAME: death-minimisation
-          TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: FORENAMES, SURNAME
-      AutoPublishAlias: latest
-      Events:
-        DeathEnrichedEvent:
-          Type: SQS
-          Properties:
-            Queue: !GetAtt DeathMinimisationQueue.Arn
-            BatchSize: 1
-      DeadLetterQueue:
-        Type: SQS
-        TargetArn: !GetAtt DeathMinimisationDlq.Arn
-      Policies:
-        - Statement:
-            - Sid: KmsMasterKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
-        - SQSSendMessagePolicy:
-            QueueName: !GetAtt DeathDeliveryQueue.QueueName
-      VpcConfig:
-        SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
-      Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
-
-  DeathMinimisationFunctionLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/death-minimisation-${Environment}${Developer}
-      KmsKeyId: !GetAtt MainKmsKey.Arn
-
-# Comment out CSLS subscription filters until accounts have been granted access
-#  DeathMinimisationFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref DeathMinimisationFunctionLogGroup
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -940,3 +820,19 @@ Resources:
       Description: The Public Key used to access the GRO SFTP server
       KmsKeyId: !Ref MainKmsKey
       Name: !Sub ${Environment}${Developer}-gro-sft-public-key
+
+  DwpDeathAcquirer:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: sam/deathAcquirerTemplate.yaml
+      Parameters:
+        Environment: !Ref Environment
+        VpcStackName: !Ref VpcStackName
+        Developer: !Ref Developer
+        DistributionTopicArn: !Ref DeathDistributionTopic
+        MainKmsKeyId: !Ref MainKmsKey
+        MainKmsKeyArn: !GetAtt MainKmsKey.Arn
+        LambdaSecurityGroupId: !Ref LambdaSecurityGroup
+        NamePrefix: dwp
+        CodeSigningConfigArn: !Ref CodeSigningConfigArn
+        PermissionsBoundary: !Ref PermissionsBoundary

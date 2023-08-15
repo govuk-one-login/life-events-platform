@@ -1,0 +1,208 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >-
+  This creates the necessary serverless components for a Death Notification Acquirer for the Life Events Platform.
+
+
+Globals:
+  Function:
+    Timeout: 30
+    Environment:
+      Variables:
+        JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+        POWERTOOLS_TRACER_CAPTURE_RESPONSE: false
+        POWERTOOLS_TRACER_CAPTURE_ERROR: false
+    Runtime: java17
+    Architectures:
+      - x86_64
+    MemorySize: 512
+    KmsKeyArn: !Ref MainKmsKeyArn
+    Tracing: Active
+    SnapStart:
+      ApplyOn: PublishedVersions
+    VpcConfig:
+      SecurityGroupIds:
+        - !Ref LambdaSecurityGroupId
+    CodeSigningConfigArn: !If
+      - UseCodeSigning
+      - !Ref CodeSigningConfigArn
+      - !Ref AWS::NoValue
+    PermissionsBoundary: !If
+      - UsePermissionsBoundary
+      - !Ref PermissionsBoundary
+      - !Ref AWS::NoValue
+
+Parameters:
+  Environment:
+    Type: String
+    Description: The name of the environment to deploy to
+  VpcStackName:
+    Type: String
+    Description: The name of the stack used to create the VPC
+  Developer:
+    Type: String
+    Description: The name of the developer running the stack in dev
+    Default: ""
+  DistributionTopicArn:
+    Type: String
+    Description: The distribution topic to subscribe to
+  MainKmsKeyId:
+    Type: String
+    Description: The main KMS key ID
+  MainKmsKeyArn:
+    Type: String
+    Description: The main KMS key ARN
+  LambdaSecurityGroupId:
+    Type: String
+    Description: The ID of the lambda security group
+  NamePrefix:
+    Type: String
+    Description: The name to prefix the resources with
+  CodeSigningConfigArn:
+    Type: String
+    Description: The ARN of the Code Signing Config to use, provided by the deployment pipeline
+    Default: none
+  PermissionsBoundary:
+    Type: String
+    Description: The ARN of the permissions boundary to apply when creating IAM roles
+    Default: none
+
+Conditions:
+  UseCodeSigning:
+    Fn::Not:
+      - Fn::Equals:
+          - !Ref CodeSigningConfigArn
+          - none
+  UsePermissionsBoundary:
+    Fn::Not:
+      - Fn::Equals:
+          - !Ref PermissionsBoundary
+          - none
+  IsDev:
+    Fn::Equals:
+      - !Ref Environment
+      - dev
+#  IsNotDev: !Not [ !Condition IsDev ]
+
+Resources:
+  DeathSnsToSqsPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow SNS publish to SQS
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Resource: "*"
+            Action: SQS:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref DistributionTopicArn
+      Queues:
+        - !GetAtt DeathMinimisationQueue.QueueUrl
+
+  DeathDistributionDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MainKmsKeyId
+
+  DeathDistributionTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      Endpoint: !GetAtt DeathMinimisationQueue.Arn
+      TopicArn: !Ref DistributionTopicArn
+      RawMessageDelivery: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathDistributionDlq.Arn
+
+  DeathMinimisationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MainKmsKeyId
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathMinimisationDlq.Arn
+        maxReceiveCount: 5
+
+  DeathMinimisationDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: !Ref MainKmsKeyId
+
+  DeathDeliveryQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${NamePrefix}-delivery-queue-${Environment}${Developer}
+      KmsMasterKeyId: !Ref MainKmsKeyId
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathDeliveryDlq.Arn
+        maxReceiveCount: 5
+
+  DeathDeliveryDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${NamePrefix}-delivery-queue-dlq-${Environment}${Developer}
+      KmsMasterKeyId: !Ref MainKmsKeyId
+
+  DeathMinimisationFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DeathMinimisationFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${NamePrefix}-death-minimisation-${Environment}${Developer}
+      CodeUri: ../lambdas/death-minimisation
+      Handler: uk.gov.di.data.lep.GroDeathMinimisation::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: death-minimisation
+          TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
+          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+      AutoPublishAlias: latest
+      Events:
+        DeathEnrichedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DeathMinimisationQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeathMinimisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !Ref MainKmsKeyArn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DeathDeliveryQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  DeathMinimisationFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${NamePrefix}-death-minimisation-${Environment}${Developer}
+      KmsKeyId: !Ref MainKmsKeyArn
+
+  # Comment out CSLS subscription filters until accounts have been granted access
+  #  DeathMinimisationFunctionLogGroupSubscriptionFilter:
+  #    Type: AWS::Logs::SubscriptionFilter
+  #    Condition: IsNotDev
+  #    Properties:
+  #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
+  #      FilterPattern: ""
+  #      LogGroupName: !Ref DeathMinimisationFunctionLogGroup

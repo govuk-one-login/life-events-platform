@@ -85,7 +85,7 @@ resolve_s3 = true
 s3_prefix = "<your-name>-lev"
 region = "eu-west-2"
 confirm_changeset = true
-capabilities = "CAPABILITY_IAM"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"ia-Vpc-E5N71SHB6HRJ\" Developer=\"<your-name>\""
 ```
 

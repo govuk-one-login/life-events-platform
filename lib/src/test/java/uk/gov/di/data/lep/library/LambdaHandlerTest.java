@@ -9,13 +9,18 @@ import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedDataBuilder;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,6 +43,7 @@ class LambdaHandlerTest {
         reset(config);
         reset(logger);
         reset(objectMapper);
+        clearInvocations(awsService);
     }
 
     @Test
@@ -50,6 +56,21 @@ class LambdaHandlerTest {
         assertEquals(1, config.constructed().size());
         mapper.verify(Mapper::objectMapper, times(1));
         mapper.close();
+    }
+
+    @Test
+    void failingToWriteAsStringThrowsException() throws JsonProcessingException {
+        var output = new GroDeathEventEnrichedDataBuilder().build();
+
+        var jsonException = mock(JsonProcessingException.class);
+        when(objectMapper.writeValueAsString(output)).thenThrow(jsonException);
+
+        var exception = assertThrows(MappingException.class, () -> underTest.publish(output));
+
+        assertEquals(jsonException, exception.getCause());
+
+        verify(awsService, never()).putOnQueue(any());
+        verify(awsService, never()).putOnTopic(any());
     }
 
     @Test

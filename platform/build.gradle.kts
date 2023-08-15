@@ -102,7 +102,7 @@ dependencies {
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.16")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("io.mockk:mockk:1.13.5")
+  testImplementation("io.mockk:mockk:1.13.7")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("com.approvaltests:approvaltests:18.7.1")
   testImplementation("com.google.code.gson:gson:2.10.1") // Needed for JsonApprovals

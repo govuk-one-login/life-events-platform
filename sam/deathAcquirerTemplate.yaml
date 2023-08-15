@@ -82,7 +82,6 @@ Conditions:
     Fn::Equals:
       - !Ref Environment
       - dev
-#  IsNotDev: !Not [ !Condition IsDev ]
 
 Resources:
   DeathSnsToSqsPolicy:
@@ -197,12 +196,3 @@ Resources:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/${NamePrefix}-death-minimisation-${Environment}${Developer}
       KmsKeyId: !Ref MainKmsKeyArn
-
-  # Comment out CSLS subscription filters until accounts have been granted access
-  #  DeathMinimisationFunctionLogGroupSubscriptionFilter:
-  #    Type: AWS::Logs::SubscriptionFilter
-  #    Condition: IsNotDev
-  #    Properties:
-  #      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-  #      FilterPattern: ""
-  #      LogGroupName: !Ref DeathMinimisationFunctionLogGroup

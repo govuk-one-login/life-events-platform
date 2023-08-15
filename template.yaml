@@ -67,7 +67,6 @@ Conditions:
     Fn::Equals:
       - !Ref Environment
       - dev
-#  IsNotDev: !Not [ !Condition IsDev ]
 
 Mappings:
   EnvironmentConfiguration:
@@ -230,15 +229,6 @@ Resources:
       RetentionInDays: 14
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-# Comment out CSLS subscription filters until accounts have been granted access
-#  ApiGatewayLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref ApiGatewayLogGroup
-
   DeathValidationDlq:
     Type: AWS::SQS::Queue
     Properties:
@@ -317,15 +307,6 @@ Resources:
       LogGroupName: !Sub /aws/lambda/death-validation-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-# Comment out CSLS subscription filters until accounts have been granted access
-#  DeathValidationFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref DeathValidationFunctionLogGroup
-
   DeathEnrichmentFunction:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -376,15 +357,6 @@ Resources:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/death-enrichment-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
-
-# Comment out CSLS subscription filters until accounts have been granted access
-#  DeathEnrichmentFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref DeathEnrichmentFunctionLogGroup
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -667,15 +639,6 @@ Resources:
       LogGroupName: !Sub /aws/lambda/gro-convert-to-json-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-# Comment out CSLS subscription filters until accounts have been granted access
-#  GroConvertToJsonFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref GroConvertToJsonFunctionLogGroup
-
   GroPublishRecordFunction:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -729,15 +692,6 @@ Resources:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/gro-publish-record-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
-
-# Comment out CSLS subscription filters until accounts have been granted access
-#  GroPublishRecordFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref GroPublishRecordFunctionLogGroup
 
   GroPullFileFunction:
     Type: AWS::Serverless::Function
@@ -797,15 +751,6 @@ Resources:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/gro-pull-file-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
-
-# Comment out CSLS subscription filters until accounts have been granted access
-#  GroPullFileFunctionLogGroupSubscriptionFilter:
-#    Type: AWS::Logs::SubscriptionFilter
-#    Condition: IsNotDev
-#    Properties:
-#      DestinationArn: arn:aws:logs:eu-west-2:885513274347:destination:csls_cw_logs_destination_prodpython
-#      FilterPattern: ""
-#      LogGroupName: !Ref GroPullFileFunctionLogGroup
 
   GroSftpPrivateKeySecret:
     Type: AWS::SecretsManager::Secret

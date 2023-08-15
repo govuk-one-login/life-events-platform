@@ -1,3 +1,8 @@
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=alphagov_di-data-life-events-platform&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=alphagov_di-data-life-events-platform)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=alphagov_di-data-life-events-platform&metric=coverage)](https://sonarcloud.io/summary/new_code?id=alphagov_di-data-life-events-platform)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=alphagov_di-data-life-events-platform&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=alphagov_di-data-life-events-platform)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=alphagov_di-data-life-events-platform&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=alphagov_di-data-life-events-platform)
+
 # GDX Data Share Platform
 
 Cross governmental data sharing platform, to simplify data acquisition and sharing in an event driven way.

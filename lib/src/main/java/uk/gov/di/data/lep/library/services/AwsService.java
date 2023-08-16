@@ -22,23 +22,23 @@ import java.nio.charset.StandardCharsets;
 
 public class AwsService {
     private final Config config;
-    private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
+    private final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
         .region(Region.EU_WEST_2)
         .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();
-    private static final SecretsManagerClient secretsManagerClient = SecretsManagerClient.builder()
+    private final SecretsManagerClient secretsManagerClient = SecretsManagerClient.builder()
         .region(Region.EU_WEST_2)
         .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();
-    private static final SqsClient sqsClient = SqsClient.builder()
+    private final SqsClient sqsClient = SqsClient.builder()
         .region(Region.EU_WEST_2)
         .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();
-    private static final SnsClient snsClient = SnsClient.builder()
+    private final SnsClient snsClient = SnsClient.builder()
         .region(Region.EU_WEST_2)
         .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();
-    private static final S3Client s3Client = S3Client.builder()
+    private final S3Client s3Client = S3Client.builder()
         .region(Region.EU_WEST_2)
         .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
         .build();

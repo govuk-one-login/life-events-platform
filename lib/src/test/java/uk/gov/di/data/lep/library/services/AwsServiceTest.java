@@ -37,9 +37,10 @@ public class AwsServiceTest {
 
     @Test
     void constructionCallsCorrectInstantiation() {
-        var config = mockConstruction(Config.class);
-        new AwsService();
-        assertEquals(1, config.constructed().size());
+        try (var config = mockConstruction(Config.class)) {
+            new AwsService();
+            assertEquals(1, config.constructed().size());
+        }
     }
 
     @Test

@@ -48,14 +48,15 @@ class LambdaHandlerTest {
 
     @Test
     void constructionCallsCorrectInstantiation() {
-        var awsService = mockConstruction(AwsService.class);
-        var config = mockConstruction(Config.class);
-        var mapper = mockStatic(Mapper.class);
-        new TestLambda();
-        assertEquals(1, awsService.constructed().size());
-        assertEquals(1, config.constructed().size());
-        mapper.verify(Mapper::objectMapper, times(1));
-        mapper.close();
+        try (var awsService = mockConstruction(AwsService.class);
+             var config = mockConstruction(Config.class)) {
+            var mapper = mockStatic(Mapper.class);
+            new TestLambda();
+            assertEquals(1, awsService.constructed().size());
+            assertEquals(1, config.constructed().size());
+            mapper.verify(Mapper::objectMapper, times(1));
+            mapper.close();
+        }
     }
 
     @Test

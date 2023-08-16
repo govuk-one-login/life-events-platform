@@ -32,7 +32,7 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class AwsServiceTest {
+class AwsServiceTest {
     private final Config config = mock(Config.class);
 
     @Test

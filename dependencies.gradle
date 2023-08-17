@@ -3,7 +3,7 @@ ext {
 
     dependencyVersions = [
             aspectjrt          : "1.9.20",
-            awsSdk             : "2.20.127",
+            awsSdk             : "2.20.128",
             awsLambdaJavaCore  : "1.2.2",
             awsLambdaJavaEvents: "3.11.2",
             jackson            : "2.15.2",

@@ -1,7 +1,9 @@
 package uk.gov.di.data.lep.library.dto.deathnotification;
 
+import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
+import uk.gov.di.data.lep.library.enums.EnrichmentField;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -19,6 +21,7 @@ public class DeathNotificationSetMapper {
         throw new IllegalStateException("Utility class");
     }
 
+    @Tracing
     public static DeathNotificationSet generateDeathNotificationSet(GroJsonRecord groRecord) {
         var iat = Instant.now().getEpochSecond();
         var jti = UUID.randomUUID().toString();
@@ -41,6 +44,66 @@ public class DeathNotificationSetMapper {
         );
     }
 
+    @Tracing
+    public static DeathNotificationSet generateMinimisedDeathNotificationSet(
+        DeathNotificationSet oldDeathNotificationSet,
+        List<EnrichmentField> enrichmentFields
+    ) {
+        if (oldDeathNotificationSet.events().deathRegistrationEvent() != null) {
+            var minimisedDeathRegistrationEvent = minimiseNewDeathRegistration(
+                oldDeathNotificationSet.events().deathRegistrationEvent(),
+                enrichmentFields
+            );
+            return new DeathNotificationSet(
+                oldDeathNotificationSet.aud(),
+                new DeathRegistrationEventMapping(minimisedDeathRegistrationEvent, null),
+                oldDeathNotificationSet.exp(),
+                oldDeathNotificationSet.iat(),
+                oldDeathNotificationSet.iss(),
+                oldDeathNotificationSet.jti(),
+                oldDeathNotificationSet.nbf(),
+                oldDeathNotificationSet.sub(),
+                oldDeathNotificationSet.toe(),
+                oldDeathNotificationSet.txn()
+            );
+        } else if (oldDeathNotificationSet.events().deathRegistrationUpdateEvent() != null) {
+            var minimisedDeathRegistrationUpdateEvent = minimiseUpdateDeathRegistration(
+                oldDeathNotificationSet.events().deathRegistrationUpdateEvent(),
+                enrichmentFields
+            );
+            return new DeathNotificationSet(
+                oldDeathNotificationSet.aud(),
+                new DeathRegistrationEventMapping(null, minimisedDeathRegistrationUpdateEvent),
+                oldDeathNotificationSet.exp(),
+                oldDeathNotificationSet.iat(),
+                oldDeathNotificationSet.iss(),
+                oldDeathNotificationSet.jti(),
+                oldDeathNotificationSet.nbf(),
+                oldDeathNotificationSet.sub(),
+                oldDeathNotificationSet.toe(),
+                oldDeathNotificationSet.txn()
+            );
+        }
+        throw new IllegalStateException("Both event types cannot be null");
+    }
+
+    @Tracing
+    private static DeathRegistrationUpdateEvent minimiseUpdateDeathRegistration(
+        DeathRegistrationUpdateEvent deathRegistrationUpdateEvent,
+        List<EnrichmentField> ignoredEnrichmentFields
+    ) {
+        return deathRegistrationUpdateEvent;
+    }
+
+    @Tracing
+    private static DeathRegistrationEvent minimiseNewDeathRegistration(
+        DeathRegistrationEvent deathRegistrationEvent,
+        List<EnrichmentField> ignoredEnrichmentFields
+    ) {
+        return deathRegistrationEvent;
+    }
+
+    @Tracing
     private static DeathRegistrationEventMapping generateDeathRegistrationEventMapping(GroJsonRecord groJsonRecord) {
         var isUpdate = groJsonRecord.recordLockedDateTime() == null;
         var dateOfDeath = generateDate(
@@ -56,6 +119,7 @@ public class DeathNotificationSetMapper {
         );
     }
 
+    @Tracing
     private static DeathRegistrationEvent generateDeathRegistrationEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
         return new DeathRegistrationEvent(
             deathDate,
@@ -65,6 +129,8 @@ public class DeathNotificationSetMapper {
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }
+
+    @Tracing
     private static DeathRegistrationUpdateEvent generateDeathRegistrationUpdateEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
         return new DeathRegistrationUpdateEvent(
             deathDate,
@@ -76,6 +142,7 @@ public class DeathNotificationSetMapper {
         );
     }
 
+    @Tracing
     private static DeathRegistrationSubject generateDeathRegistrationSubject(GroJsonRecord groJsonRecord) {
         var address = new PostalAddress(
             null,
@@ -112,6 +179,7 @@ public class DeathNotificationSetMapper {
         );
     }
 
+    @Tracing
     private static TemporalAccessor generateDate(LocalDate localDate, Integer year, Integer month) {
         if (localDate != null) {
             return localDate;
@@ -125,6 +193,7 @@ public class DeathNotificationSetMapper {
         return null;
     }
 
+    @Tracing
     private static List<Name> generateNames(GroJsonRecord groJsonRecord) {
         var groName = groJsonRecord.deceasedName();
         var groAliasNames = groJsonRecord.deceasedAliasNames();
@@ -154,12 +223,14 @@ public class DeathNotificationSetMapper {
         return names.toList();
     }
 
+    @Tracing
     private static String getAliasNameTypeOrNull(List<String> deceasedAliasNameTypes, Integer index) {
         return deceasedAliasNameTypes.size() > index
             ? deceasedAliasNameTypes.get(index)
             : null;
     }
 
+    @Tracing
     private static Name generateName(GroPersonNameStructure nameStructure, String description) {
         var givenNameParts = nameStructure.personGivenNames().stream().map(n ->
             new NamePart(NamePartType.GIVEN_NAME, n)

@@ -9,14 +9,15 @@ import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 public class GroDeathEnrichment
-    extends LambdaHandler<GroDeathEventEnrichedData>
-    implements RequestHandler<SQSEvent, GroDeathEventEnrichedData> {
+    extends LambdaHandler<DeathNotificationSet>
+    implements RequestHandler<SQSEvent, DeathNotificationSet> {
 
     public GroDeathEnrichment() {
     }
@@ -28,7 +29,7 @@ public class GroDeathEnrichment
     @Override
     @Tracing
     @Logging(clearState = true)
-    public GroDeathEventEnrichedData handleRequest(SQSEvent sqsEvent, Context context) {
+    public DeathNotificationSet handleRequest(SQSEvent sqsEvent, Context context) {
         try {
             var sqsMessage = sqsEvent.getRecords().get(0);
             var baseData = objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class);
@@ -41,25 +42,9 @@ public class GroDeathEnrichment
     }
 
     @Tracing
-    private GroDeathEventEnrichedData enrichData(GroJsonRecord baseData) {
+    private DeathNotificationSet enrichData(GroJsonRecord baseData) {
         logger.info("Enriching and mapping data (sourceId: {})", baseData.registrationID());
 
-        return new GroDeathEventEnrichedData(
-            baseData.registrationID(),
-            baseData.deceasedGender(),
-            baseData.deceasedBirthDate().personBirthDate(),
-            baseData.deceasedDeathDate().personDeathDate(),
-            baseData.registrationID(),
-            baseData.recordLockedDateTime() == null ? baseData.recordUpdateDateTime() : baseData.recordLockedDateTime(),
-            baseData.partialMonthOfDeath(),
-            baseData.partialYearOfDeath(),
-            baseData.deceasedName().personGivenNames(),
-            baseData.deceasedName().personFamilyName(),
-            baseData.deceasedMaidenName(),
-            baseData.deceasedAddress().flat(),
-            baseData.deceasedAddress().building(),
-            baseData.deceasedAddress().lines(),
-            baseData.deceasedAddress().postcode()
-        );
+        return DeathNotificationSetMapper.generateDeathNotificationSet(baseData);
     }
 }

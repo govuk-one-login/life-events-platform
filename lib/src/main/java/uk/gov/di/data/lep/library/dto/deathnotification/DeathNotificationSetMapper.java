@@ -132,7 +132,7 @@ public class DeathNotificationSetMapper {
             IntStream.range(0, groAliasNames.size())
                 .mapToObj(i -> generateName(
                     groAliasNames.get(i),
-                    groJsonRecord.deceasedAliasNameTypes().size() > i ? groJsonRecord.deceasedAliasNameTypes().get(i) : null
+                    getAliasNameTypeOrNull(groJsonRecord.deceasedAliasNameTypes(), i)
                 ));
 
         var givenNameParts = groName.personGivenNames().stream().map(n ->
@@ -146,6 +146,12 @@ public class DeathNotificationSetMapper {
         );
 
         return Stream.concat(Stream.of(name, maidenName), aliasNames).toList();
+    }
+
+    private static String getAliasNameTypeOrNull(List<String> deceasedAliasNameTypes, Integer index) {
+        return deceasedAliasNameTypes.size() > index
+            ? deceasedAliasNameTypes.get(index)
+            : null;
     }
 
     private static Name generateName(GroPersonNameStructure nameStructure, String description) {

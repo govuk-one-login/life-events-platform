@@ -19,7 +19,7 @@ class MapperTest {
 
         var result = objectMapperUnderTest.readValue("{\"dateTime\":\"1958-06-06T12:30:57\"}", MapperTestObject.class);
 
-        assertEquals(LocalDateTime.parse("1958-06-06T12:30:57"), result.dateTime);
+        assertEquals(LocalDateTime.parse("1958-06-06T12:30:57"), result.dateTime());
     }
 
     @ParameterizedTest
@@ -29,7 +29,7 @@ class MapperTest {
 
         var result = objectMapperUnderTest.readValue(String.format("{\"gender\":%s}", input), MapperTestObject.class);
 
-        assertEquals(expected, result.gender);
+        assertEquals(expected, result.gender());
     }
 
     @ParameterizedTest
@@ -39,7 +39,7 @@ class MapperTest {
 
         var result = objectMapperUnderTest.readValue(String.format("{\"verificationLevel\":\"%s\"}", input), MapperTestObject.class);
 
-        assertEquals(expected, result.verificationLevel);
+        assertEquals(expected, result.verificationLevel());
     }
 
     @Test
@@ -49,17 +49,18 @@ class MapperTest {
         var genderResult = objectMapperUnderTest.readValue("{\"gender\":\"\"}", MapperTestObject.class);
         var verificationLevelResult = objectMapperUnderTest.readValue("{\"verificationLevel\":\"\"}", MapperTestObject.class);
 
-        assertNull(genderResult.gender);
-        assertNull(verificationLevelResult.verificationLevel);
+        assertNull(genderResult.gender());
+        assertNull(verificationLevelResult.verificationLevel());
     }
 
     @Test
     void xmlMapperSerialisesXmlToObject() throws JsonProcessingException {
         var xmlMapperUnderTest = Mapper.xmlMapper();
-        var expected = new MapperTestObject();
-        expected.dateTime = (LocalDateTime.parse("2023-06-03T12:34:56"));
-        expected.gender = GenderAtRegistration.MALE;
-        expected.verificationLevel = GroVerificationLevel.LEVEL_2;
+        var expected = new MapperTestObject(
+            LocalDateTime.parse("2023-06-03T12:34:56"),
+            GenderAtRegistration.MALE,
+            GroVerificationLevel.LEVEL_2
+        );
 
         var result = xmlMapperUnderTest.readValue(
             "<MapperTestObject>" +
@@ -70,8 +71,8 @@ class MapperTest {
             MapperTestObject.class
         );
 
-        assertEquals(expected.dateTime, result.dateTime);
-        assertEquals(expected.gender, result.gender);
-        assertEquals(expected.verificationLevel, result.verificationLevel);
+        assertEquals(expected.dateTime(), result.dateTime());
+        assertEquals(expected.gender(), result.gender());
+        assertEquals(expected.verificationLevel(), result.verificationLevel());
     }
 }

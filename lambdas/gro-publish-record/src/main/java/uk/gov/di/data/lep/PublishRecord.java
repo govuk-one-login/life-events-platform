@@ -45,7 +45,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
     @Tracing
     @Logging(clearState = true)
     public Object handleRequest(GroJsonRecord event, Context context) {
-        logger.info("Received record: {}", event.registrationId());
+        logger.info("Received record: {}", event.registrationID());
         var authorisationToken = getAuthorisationToken();
         postRecordToLifeEvents(event, authorisationToken);
         return null;
@@ -94,7 +94,7 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         }
 
         try {
-            logger.info("Sending GRO record request: {}", event.registrationId());
+            logger.info("Sending GRO record request: {}", event.registrationID());
             httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
             logger.error("Failed to send GRO record request");

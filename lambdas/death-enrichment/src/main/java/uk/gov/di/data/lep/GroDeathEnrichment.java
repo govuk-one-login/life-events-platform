@@ -42,15 +42,15 @@ public class GroDeathEnrichment
 
     @Tracing
     private GroDeathEventEnrichedData enrichData(GroJsonRecord baseData) {
-        logger.info("Enriching and mapping data (sourceId: {})", baseData.registrationId());
+        logger.info("Enriching and mapping data (sourceId: {})", baseData.registrationID());
 
         return new GroDeathEventEnrichedData(
-            baseData.registrationId(),
+            baseData.registrationID(),
             baseData.deceasedGender(),
             baseData.deceasedBirthDate().personBirthDate(),
             baseData.deceasedDeathDate().personDeathDate(),
-            baseData.registrationId(),
-            baseData.recordUpdateDateTime(),
+            baseData.registrationID(),
+            baseData.recordLockedDateTime() == null ? baseData.recordUpdateDateTime() : baseData.recordLockedDateTime(),
             baseData.partialMonthOfDeath(),
             baseData.partialYearOfDeath(),
             baseData.deceasedName().personGivenNames(),

@@ -72,8 +72,8 @@ class GroDeathEnrichmentTest {
         assertEquals(LocalDate.parse("2007-03-06"), result.dateOfDeath());
         assertEquals(1234567890, result.registrationId());
         assertEquals(LocalDateTime.parse("2023-03-06T09:30:50"), result.eventTime());
-        assertEquals(3, result.partialMonthOfDeath());
-        assertEquals(2007, result.partialYearOfDeath());
+        assertNull(result.partialMonthOfDeath());
+        assertNull(result.partialYearOfDeath());
         assertEquals(List.of("ERICA"), result.forenames());
         assertEquals("BLOGG", result.surname());
         assertNull(result.maidenSurname());

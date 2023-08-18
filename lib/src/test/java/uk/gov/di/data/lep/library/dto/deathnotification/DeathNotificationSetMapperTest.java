@@ -8,6 +8,7 @@ import java.time.Year;
 import java.time.YearMonth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DeathNotificationSetMapperTest {
     @Test
@@ -61,6 +62,6 @@ public class DeathNotificationSetMapperTest {
             .withDeathMonth(testMonth)
             .build());
 
-        assertEquals(null, actual.events().deathRegistrationEvent().deathDate().value());
+        assertNull(actual.events().deathRegistrationEvent().deathDate().value());
     }
 }

@@ -10,7 +10,7 @@ import java.time.YearMonth;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DeathNotificationSetMapperTest {
+class DeathNotificationSetMapperTest {
     @Test
     void mapperMapsCompleteDateCorrectly() {
         var testDate = LocalDate.parse("2007-03-06");

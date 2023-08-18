@@ -4,10 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import uk.gov.di.data.lep.library.dto.deathnotification.IsoDate;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import uk.gov.di.data.lep.library.enums.GroVerificationLevel;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -73,5 +77,53 @@ class MapperTest {
         assertEquals(expected.dateTime, result.dateTime);
         assertEquals(expected.gender, result.gender);
         assertEquals(expected.verificationLevel, result.verificationLevel);
+    }
+
+    @Test
+    void objectMapperMapsCompleteIsoDateCorrectly() throws JsonProcessingException {
+        var objectMapperUnderTest = Mapper.objectMapper();
+
+        var result = objectMapperUnderTest.readValue("{\"isoDate\":{\"value\":\"1958-06-06\"}}", MapperTestObject.class);
+
+        assertEquals(LocalDate.parse("1958-06-06"), result.isoDate.value());
+        assertNull(result.isoDate.description());
+    }
+
+    @Test
+    void objectMapperMapsYearOnlyIsoDateCorrectly() throws JsonProcessingException {
+        var objectMapperUnderTest = Mapper.objectMapper();
+
+        var result = objectMapperUnderTest.readValue("{\"isoDate\":{\"value\":\"1958\",\"description\":\"Year only\"}}", MapperTestObject.class);
+
+        assertEquals(Year.of(1958), result.isoDate.value());
+        assertEquals("Year only", result.isoDate.description());
+    }
+
+    @Test
+    void objectMapperMapsYearOnlyIsoDateToStringCorrectly() throws JsonProcessingException {
+        var objectMapperUnderTest = Mapper.objectMapper();
+
+        var result = objectMapperUnderTest.writeValueAsString(new IsoDate("Year only", Year.of(1958)));
+
+        assertEquals("{\"description\":\"Year only\",\"value\":\"1958\"}", result);
+    }
+
+    @Test
+    void objectMapperMapsMonthYearIsoDateCorrectly() throws JsonProcessingException {
+        var objectMapperUnderTest = Mapper.objectMapper();
+
+        var result = objectMapperUnderTest.readValue("{\"isoDate\":{\"value\":\"1958-06\",\"description\":\"Year and month only\"}}", MapperTestObject.class);
+
+        assertEquals(YearMonth.of(1958, 6), result.isoDate.value());
+        assertEquals("Year and month only", result.isoDate.description());
+    }
+
+    @Test
+    void objectMapperMapsMonthYearIsoDateToStringCorrectly() throws JsonProcessingException {
+        var objectMapperUnderTest = Mapper.objectMapper();
+
+        var result = objectMapperUnderTest.writeValueAsString(new IsoDate("Year and month only", YearMonth.of(1958, 6)));
+
+        assertEquals("{\"description\":\"Year and month only\",\"value\":\"1958-06\"}", result);
     }
 }

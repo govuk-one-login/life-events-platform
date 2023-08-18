@@ -14,14 +14,9 @@ public class Mapper {
     }
 
     public static ObjectMapper objectMapper() {
-        var temporalAccessorModule = new SimpleModule();
-        temporalAccessorModule.addSerializer(TemporalAccessor.class, new TemporalAccessorSerializer());
-        temporalAccessorModule.addDeserializer(TemporalAccessor.class, new TemporalAccessorDeserializer());
-
         var mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
         mapper.registerModule(new JavaTimeModule());
-        mapper.registerModule(temporalAccessorModule);
         return mapper;
     }
 

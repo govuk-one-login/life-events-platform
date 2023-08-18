@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 
-public class TemporalAccessorSerializer extends JsonSerializer<TemporalAccessor> {
+public class PartialDateSerialiser extends JsonSerializer<TemporalAccessor> {
     @Override
     public void serialize(TemporalAccessor value, JsonGenerator jsonGenerator, SerializerProvider provider) throws IOException {
         if (value.isSupported(ChronoField.YEAR) && value.isSupported(ChronoField.MONTH_OF_YEAR) && value.isSupported(ChronoField.DAY_OF_WEEK)){

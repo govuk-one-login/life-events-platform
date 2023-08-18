@@ -12,7 +12,7 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.time.temporal.TemporalAccessor;
 
-public class TemporalAccessorDeserializer extends JsonDeserializer<TemporalAccessor> {
+public class PartialDateDeserialiser extends JsonDeserializer<TemporalAccessor> {
     @Override
     public TemporalAccessor deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         var token = jsonParser.getCurrentToken();

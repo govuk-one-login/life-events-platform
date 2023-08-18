@@ -17,11 +17,15 @@ public class GroJsonRecordBuilder {
     private PersonDeathDateStructure deceasedDeathDate;
     private Integer partialMonthOfDeath;
     private Integer partialYearOfDeath;
+    private PersonBirthDateStructure deceasedBirthDate;
+    private Integer partialMonthOfBirth;
+    private Integer partialYearOfBirth;
 
     public GroJsonRecordBuilder() {
         recordLockedDateTime = LocalDateTime.parse("2023-03-06T09:30:50");
         deceasedName = new GroPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null, null);
         deceasedDeathDate = new PersonDeathDateStructure(LocalDate.parse("2007-03-06"), null);
+        deceasedBirthDate = new PersonBirthDateStructure(LocalDate.parse("1967-03-06"), null);
     }
 
     public GroJsonRecordBuilder withLockedDateTime(LocalDateTime recordLockedDateTime) {
@@ -74,6 +78,25 @@ public class GroJsonRecordBuilder {
         return this;
     }
 
+    public GroJsonRecordBuilder withBirthDate(LocalDate birthDate) {
+        if (birthDate == null) {
+            deceasedBirthDate = null;
+        } else {
+            deceasedBirthDate = new PersonBirthDateStructure(birthDate, null);
+        }
+        return this;
+    }
+
+    public GroJsonRecordBuilder withBirthYear(Integer partialYearOfBirth) {
+        this.partialYearOfBirth = partialYearOfBirth;
+        return this;
+    }
+
+    public GroJsonRecordBuilder withBirthMonth(Integer partialMonthOfBirth) {
+        this.partialMonthOfBirth = partialMonthOfBirth;
+        return this;
+    }
+
     public GroJsonRecord build() {
         return new GroJsonRecord(
             1234567890,
@@ -91,9 +114,9 @@ public class GroJsonRecordBuilder {
             partialYearOfDeath,
             null,
             null,
-            new PersonBirthDateStructure(LocalDate.parse("1967-03-06"), null),
-            null,
-            null,
+            deceasedBirthDate,
+            partialMonthOfBirth,
+            partialYearOfBirth,
             null,
             new GroAddressStructure(null, null, List.of("123 Street"), "GT8 5HG")
         );

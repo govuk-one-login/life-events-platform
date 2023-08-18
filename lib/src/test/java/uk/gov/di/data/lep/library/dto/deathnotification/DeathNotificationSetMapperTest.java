@@ -200,7 +200,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsCompleteDateCorrectly() {
+    void mapperMapsCompleteDeathDateCorrectly() {
         var testDate = LocalDate.parse("2007-03-06");
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
@@ -211,7 +211,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsYearOnlyDateCorrectly() {
+    void mapperMapsYearOnlyDeathDateCorrectly() {
         var testYear = 2023;
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
@@ -225,7 +225,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsMonthYearDateCorrectly() {
+    void mapperMapsMonthYearDeathDateCorrectly() {
         var testYear = 2023;
         var testMonth = 12;
 
@@ -241,7 +241,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsMonthOnlyDateCorrectly() {
+    void mapperMapsMonthOnlyDeathDateCorrectly() {
         var testMonth = 12;
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(new GroJsonRecordBuilder()
@@ -251,5 +251,59 @@ class DeathNotificationSetMapperTest {
             .build());
 
         assertNull(actual.events().deathRegistrationEvent().deathDate().value());
+    }
+
+    @Test
+    void mapperMapsCompleteBirthDateCorrectly() {
+        var testDate = LocalDate.parse("2007-03-06");
+
+        var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
+            new GroJsonRecordBuilder().withBirthDate(testDate).build()
+        );
+
+        assertEquals(testDate, actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
+    }
+
+    @Test
+    void mapperMapsYearOnlyBirthDateCorrectly() {
+        var testYear = 2023;
+
+        var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
+            new GroJsonRecordBuilder()
+                .withBirthDate(null)
+                .withBirthYear(testYear)
+                .build()
+        );
+
+        assertEquals(Year.of(2023), actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
+    }
+
+    @Test
+    void mapperMapsMonthYearBirthDateCorrectly() {
+        var testYear = 2023;
+        var testMonth = 12;
+
+        var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
+            new GroJsonRecordBuilder()
+                .withBirthDate(null)
+                .withBirthYear(testYear)
+                .withBirthMonth(testMonth)
+                .build()
+        );
+
+        assertEquals(YearMonth.of(2023, 12), actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
+    }
+
+    @Test
+    void mapperMapsMonthOnlyBirthDateCorrectly() {
+        var testMonth = 12;
+
+        var actual = DeathNotificationSetMapper.generateDeathNotificationSet(new GroJsonRecordBuilder()
+            .withBirthDate(null)
+            .withBirthYear(null)
+            .withBirthMonth(testMonth)
+            .build());
+
+        assertNull(actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
     }
 }

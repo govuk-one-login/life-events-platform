@@ -60,7 +60,7 @@ class PartialDateDeserialiserTest {
         );
 
         assertEquals(
-            "For input string: \"asdasdasd\" (through reference chain: uk.gov.di.data.lep.library.dto.deathnotification.IsoDate[\"value\"])",
+            "For input string: \"asdasdasd\" (through reference chain: uk.gov.di.data.lep.library.dto.deathnotification.DateWithDescription[\"value\"])",
             exception.getLocalizedMessage()
         );
     }
@@ -76,7 +76,7 @@ class PartialDateDeserialiserTest {
 
         assertEquals(
             "Cannot deserialize value of type `java.time.temporal.TemporalAccessor` from String \"1958-06-06-06\": Not a valid temporal accessor string\n" +
-            " at [Source: (String)\"{\"value\":\"1958-06-06-06\",\"description\":\"Year and month only\"}\"; line: 1, column: 10] (through reference chain: uk.gov.di.data.lep.library.dto.deathnotification.IsoDate[\"value\"])",
+            " at [Source: (String)\"{\"value\":\"1958-06-06-06\",\"description\":\"Year and month only\"}\"; line: 1, column: 10] (through reference chain: uk.gov.di.data.lep.library.dto.deathnotification.DateWithDescription[\"value\"])",
             exception.getLocalizedMessage()
         );
     }
@@ -92,7 +92,7 @@ class PartialDateDeserialiserTest {
 
         assertEquals(
             "Unexpected token (VALUE_NUMBER_INT), expected VALUE_STRING: Not a valid temporal accessor string\n" +
-            " at [Source: (String)\"{\"value\":12345,\"description\":\"Year and month only\"}\"; line: 1, column: 10] (through reference chain: uk.gov.di.data.lep.library.dto.deathnotification.IsoDate[\"value\"])",
+            " at [Source: (String)\"{\"value\":12345,\"description\":\"Year and month only\"}\"; line: 1, column: 10] (through reference chain: uk.gov.di.data.lep.library.dto.deathnotification.DateWithDescription[\"value\"])",
             exception.getLocalizedMessage()
         );
     }

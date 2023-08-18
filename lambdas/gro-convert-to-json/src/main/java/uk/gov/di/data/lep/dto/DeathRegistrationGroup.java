@@ -6,10 +6,12 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 
 import java.util.List;
 
-public class DeathRegistrationGroup {
+public record DeathRegistrationGroup(
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("DeathRegistration")
-    public List<GroJsonRecord> deathRegistrations;
+     List<GroJsonRecord> deathRegistrations,
     @JsonProperty("RecordCount")
-    public int recordCount;
+     int recordCount
+){
 }
+

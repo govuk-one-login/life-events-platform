@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class GroDeathEventEnrichedDataBuilder {
-    public final GroDeathEventEnrichedData data;
+    private final GroDeathEventEnrichedData data;
 
     public GroDeathEventEnrichedDataBuilder() {
         data = new GroDeathEventEnrichedData(

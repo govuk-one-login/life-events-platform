@@ -6,9 +6,9 @@ import uk.gov.di.data.lep.library.enums.GroVerificationLevel;
 
 import java.time.LocalDateTime;
 
-public class MapperTestObject {
-    public LocalDateTime dateTime;
-    public GenderAtRegistration gender;
-    public GroVerificationLevel verificationLevel;
-    public IsoDate isoDate;
+public record MapperTestObject (
+    LocalDateTime dateTime,
+    GenderAtRegistration gender,
+    GroVerificationLevel verificationLevel
+){
 }

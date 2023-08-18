@@ -19,17 +19,17 @@ public class PartialDateDeserialiser extends JsonDeserializer<TemporalAccessor> 
 
         if (token.equals(JsonToken.VALUE_STRING)) {
             var text = jsonParser.getText().trim();
-            var countOfDashes = text.split("-", -1).length - 1;
+            var splitText = text.split("-");
+            var countOfDashes = splitText.length - 1;
             return switch (countOfDashes) {
                 case 0 -> Year.of(Integer.parseInt(text));
                 case 1 -> {
-                    var splitString = text.split("-");
-                    var year = splitString[0];
-                    var month = splitString[1];
+                    var year = splitText[0];
+                    var month = splitText[1];
                     yield YearMonth.of(Integer.parseInt(year), Integer.parseInt(month));
                 }
                 case 2 -> LocalDate.parse(text);
-                default -> throw new JsonParseException("");
+                default -> throw deserializationContext.weirdStringException(text, TemporalAccessor.class, "Not a valid temporal accessor string");
             };
         }
 

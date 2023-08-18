@@ -2,11 +2,8 @@ package uk.gov.di.data.lep.library.services;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.time.temporal.TemporalAccessor;
 
 public class Mapper {
     private Mapper() {

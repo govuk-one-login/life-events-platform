@@ -7,7 +7,7 @@ import uk.gov.di.data.lep.library.services.PartialDateSerialiser;
 
 import java.time.temporal.TemporalAccessor;
 
-public record IsoDate(
+public record DateWithDescription(
     String description,
     @JsonDeserialize(using = PartialDateDeserialiser.class)
     @JsonSerialize(using = PartialDateSerialiser.class)

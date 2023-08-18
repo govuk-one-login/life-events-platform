@@ -4,7 +4,7 @@ import java.util.List;
 
 public record DeathRegistrationSubject (
     List<PostalAddress> address,
-    List<IsoDate> birthDate,
+    List<DateWithDescription> birthDate,
     List<Name> name,
     List<Sex> sex
 ){

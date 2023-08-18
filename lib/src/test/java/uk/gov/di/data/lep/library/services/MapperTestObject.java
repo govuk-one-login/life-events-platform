@@ -1,6 +1,5 @@
 package uk.gov.di.data.lep.library.services;
 
-import uk.gov.di.data.lep.library.dto.deathnotification.IsoDate;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import uk.gov.di.data.lep.library.enums.GroVerificationLevel;
 

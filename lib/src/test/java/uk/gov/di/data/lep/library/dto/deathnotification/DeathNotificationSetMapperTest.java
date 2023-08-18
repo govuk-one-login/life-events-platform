@@ -32,8 +32,6 @@ class DeathNotificationSetMapperTest {
         assertNull(actual.events().deathRegistrationUpdateEvent());
 
         assertEquals(eventTime, actual.events().deathRegistrationEvent().deathRegistrationTime().value());
-        assertNull(actual.events().deathRegistrationEvent().recordUpdateTime());
-        assertNull(actual.events().deathRegistrationEvent().deathRegistrationUpdateReason());
         assertEquals(eventTime.toEpochSecond(ZoneOffset.UTC), actual.toe());
     }
 
@@ -51,7 +49,6 @@ class DeathNotificationSetMapperTest {
         assertNull(actual.events().deathRegistrationEvent());
         assertNotNull(actual.events().deathRegistrationUpdateEvent());
 
-        assertNull(actual.events().deathRegistrationUpdateEvent().deathRegistrationTime());
         assertEquals(eventTime, actual.events().deathRegistrationUpdateEvent().recordUpdateTime().value());
         assertEquals(DeathRegistrationUpdateReasonType.CANCELLATION_REMOVED, actual.events().deathRegistrationUpdateEvent().deathRegistrationUpdateReason());
         assertEquals(eventTime.toEpochSecond(ZoneOffset.UTC), actual.toe());

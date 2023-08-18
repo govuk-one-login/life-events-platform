@@ -3,7 +3,7 @@ package uk.gov.di.data.lep.library.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.Test;
-import uk.gov.di.data.lep.library.dto.deathnotification.IsoDate;
+import uk.gov.di.data.lep.library.dto.deathnotification.DateWithDescription;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -18,7 +18,7 @@ class PartialDateDeserialiserTest {
     void objectMapperMapsCompleteIsoDateCorrectly() throws JsonProcessingException {
         var objectMapperUnderTest = Mapper.objectMapper();
 
-        var result = objectMapperUnderTest.readValue("{\"value\":\"1958-06-06\"}", IsoDate.class);
+        var result = objectMapperUnderTest.readValue("{\"value\":\"1958-06-06\"}", DateWithDescription.class);
 
         assertEquals(LocalDate.parse("1958-06-06"), result.value());
         assertNull(result.description());
@@ -30,7 +30,7 @@ class PartialDateDeserialiserTest {
 
         var result = objectMapperUnderTest.readValue(
             "{\"value\":\"1958\",\"description\":\"Year only\"}",
-            IsoDate.class
+            DateWithDescription.class
         );
 
         assertEquals(Year.of(1958), result.value());
@@ -43,7 +43,7 @@ class PartialDateDeserialiserTest {
 
         var result = objectMapperUnderTest.readValue(
             "{\"value\":\"1958-06\",\"description\":\"Year and month only\"}",
-            IsoDate.class
+            DateWithDescription.class
         );
 
         assertEquals(YearMonth.of(1958, 6), result.value());
@@ -56,7 +56,7 @@ class PartialDateDeserialiserTest {
 
         var exception = assertThrows(
             JsonMappingException.class,
-            () -> objectMapperUnderTest.readValue("{\"value\":\"asdasdasd\",\"description\":\"Year and month only\"}", IsoDate.class)
+            () -> objectMapperUnderTest.readValue("{\"value\":\"asdasdasd\",\"description\":\"Year and month only\"}", DateWithDescription.class)
         );
 
         assertEquals(
@@ -71,7 +71,7 @@ class PartialDateDeserialiserTest {
 
         var exception = assertThrows(
             JsonMappingException.class,
-            () -> objectMapperUnderTest.readValue("{\"value\":\"1958-06-06-06\",\"description\":\"Year and month only\"}", IsoDate.class)
+            () -> objectMapperUnderTest.readValue("{\"value\":\"1958-06-06-06\",\"description\":\"Year and month only\"}", DateWithDescription.class)
         );
 
         assertEquals(
@@ -87,7 +87,7 @@ class PartialDateDeserialiserTest {
 
         var exception = assertThrows(
             JsonMappingException.class,
-            () -> objectMapperUnderTest.readValue("{\"value\":12345,\"description\":\"Year and month only\"}", IsoDate.class)
+            () -> objectMapperUnderTest.readValue("{\"value\":12345,\"description\":\"Year and month only\"}", DateWithDescription.class)
         );
 
         assertEquals(

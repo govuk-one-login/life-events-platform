@@ -1,10 +1,11 @@
 package uk.gov.di.data.lep.library.dto.deathnotification;
 
-public record DeathRegistrationEvent(
+public record DeathRegistrationUpdateEvent(
     DateWithDescription deathDate,
     Integer deathRegistrationID,
+    DeathRegistrationUpdateReasonType deathRegistrationUpdateReason,
     String freeFormatDeathDate,
-    StructuredDateTime deathRegistrationTime,
+    StructuredDateTime recordUpdateTime,
     DeathRegistrationSubject subject
 ) {
 }

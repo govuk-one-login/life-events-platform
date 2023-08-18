@@ -20,23 +20,16 @@ public class DeathNotificationSetMapper {
     }
 
     public static DeathNotificationSet generateDeathNotificationSet(GroJsonRecord groRecord) {
-        var newEvent = generateDeathRegistrationEvent(groRecord);
-
-        var isUpdate = groRecord.recordLockedDateTime() == null;
-        var events = new DeathRegistrationEventMapping(
-            isUpdate ? null : newEvent,
-            isUpdate ? newEvent : null
-        );
         var iat = Instant.now().getEpochSecond();
         var jti = UUID.randomUUID().toString();
-        var toe = isUpdate
+        var toe = groRecord.recordLockedDateTime() == null
             ? groRecord.recordUpdateDateTime().toEpochSecond(ZoneOffset.UTC)
             : groRecord.recordLockedDateTime().toEpochSecond(ZoneOffset.UTC);
         var txn = UUID.randomUUID().toString();
 
         return new DeathNotificationSet(
             null,
-            events,
+            generateDeathRegistrationEventMapping(groRecord),
             null,
             iat,
             null,
@@ -48,33 +41,37 @@ public class DeathNotificationSetMapper {
         );
     }
 
-    private static DeathRegistrationEvent generateDeathRegistrationEvent(GroJsonRecord groJsonRecord) {
+    private static DeathRegistrationEventMapping generateDeathRegistrationEventMapping(GroJsonRecord groJsonRecord) {
+        var isUpdate = groJsonRecord.recordLockedDateTime() == null;
         var dateOfDeath = generateDate(
             groJsonRecord.deceasedDeathDate() == null ? null : groJsonRecord.deceasedDeathDate().personDeathDate(),
             groJsonRecord.partialYearOfDeath(),
             groJsonRecord.partialMonthOfDeath()
         );
+        var deathDate = new DateWithDescription(groJsonRecord.qualifierText(), dateOfDeath);
 
-        var deathDate = new IsoDate(groJsonRecord.qualifierText(), dateOfDeath);
-        var deathRegistrationID = groJsonRecord.registrationID();
-        var deathRegistrationUpdateReason = groJsonRecord.recordUpdateReason() != null
-            ? DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason())
-            : null;
-        var freeFormatDeathDate = groJsonRecord.freeFormatDeathDate();
-        var recordUpdateTime = groJsonRecord.recordUpdateDateTime() != null
-            ? new StructuredDateTime(groJsonRecord.recordUpdateDateTime())
-            : null;
-        var deathRegistrationTime = groJsonRecord.recordLockedDateTime() != null
-            ? new StructuredDateTime(groJsonRecord.recordLockedDateTime())
-            : null;
+        return new DeathRegistrationEventMapping(
+            isUpdate ? null : generateDeathRegistrationEvent(groJsonRecord, deathDate),
+            isUpdate ? generateDeathRegistrationUpdateEvent(groJsonRecord, deathDate) : null
+        );
+    }
 
+    private static DeathRegistrationEvent generateDeathRegistrationEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
         return new DeathRegistrationEvent(
             deathDate,
-            deathRegistrationID,
-            deathRegistrationUpdateReason,
-            freeFormatDeathDate,
-            recordUpdateTime,
-            deathRegistrationTime,
+            groJsonRecord.registrationID(),
+            groJsonRecord.freeFormatDeathDate(),
+            new StructuredDateTime(groJsonRecord.recordLockedDateTime()),
+            generateDeathRegistrationSubject(groJsonRecord)
+        );
+    }
+    private static DeathRegistrationUpdateEvent generateDeathRegistrationUpdateEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
+        return new DeathRegistrationUpdateEvent(
+            deathDate,
+            groJsonRecord.registrationID(),
+            DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason()),
+            groJsonRecord.freeFormatDeathDate(),
+            new StructuredDateTime(groJsonRecord.recordUpdateDateTime()),
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }
@@ -103,7 +100,7 @@ public class DeathNotificationSetMapper {
             groJsonRecord.partialMonthOfBirth()
         );
 
-        var birthDate = new IsoDate(null, dateOfBirth);
+        var birthDate = new DateWithDescription(null, dateOfBirth);
         var names = generateNames(groJsonRecord);
         var sex = Sex.fromGro(groJsonRecord.deceasedGender());
 

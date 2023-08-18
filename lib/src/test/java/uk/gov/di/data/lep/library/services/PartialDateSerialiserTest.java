@@ -2,7 +2,7 @@ package uk.gov.di.data.lep.library.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
-import uk.gov.di.data.lep.library.dto.deathnotification.IsoDate;
+import uk.gov.di.data.lep.library.dto.deathnotification.DateWithDescription;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -16,7 +16,7 @@ class PartialDateSerialiserTest {
     void objectMapperMapsCompleteIsoDateToStringCorrectly() throws JsonProcessingException {
         var objectMapperUnderTest = Mapper.objectMapper();
 
-        var result = objectMapperUnderTest.writeValueAsString(new IsoDate(null, LocalDate.parse("1958-06-06")));
+        var result = objectMapperUnderTest.writeValueAsString(new DateWithDescription(null, LocalDate.parse("1958-06-06")));
 
         assertEquals("{\"description\":null,\"value\":\"1958-06-06\"}", result);
     }
@@ -25,7 +25,7 @@ class PartialDateSerialiserTest {
     void objectMapperMapsYearOnlyIsoDateToStringCorrectly() throws JsonProcessingException {
         var objectMapperUnderTest = Mapper.objectMapper();
 
-        var result = objectMapperUnderTest.writeValueAsString(new IsoDate("Year only", Year.of(1958)));
+        var result = objectMapperUnderTest.writeValueAsString(new DateWithDescription("Year only", Year.of(1958)));
 
         assertEquals("{\"description\":\"Year only\",\"value\":\"1958\"}", result);
     }
@@ -34,7 +34,7 @@ class PartialDateSerialiserTest {
     void objectMapperMapsMonthYearIsoDateToStringCorrectly() throws JsonProcessingException {
         var objectMapperUnderTest = Mapper.objectMapper();
 
-        var result = objectMapperUnderTest.writeValueAsString(new IsoDate("Year and month only", YearMonth.of(1958, 6)));
+        var result = objectMapperUnderTest.writeValueAsString(new DateWithDescription("Year and month only", YearMonth.of(1958, 6)));
 
         assertEquals("{\"description\":\"Year and month only\",\"value\":\"1958-06\"}", result);
     }
@@ -43,7 +43,7 @@ class PartialDateSerialiserTest {
     void objectMapperWritesDirectlyToStringIfNotDefinedType() throws JsonProcessingException {
         var objectMapperUnderTest = Mapper.objectMapper();
 
-        var result = objectMapperUnderTest.writeValueAsString(new IsoDate("Month only", Month.of(6)));
+        var result = objectMapperUnderTest.writeValueAsString(new DateWithDescription("Month only", Month.of(6)));
 
         assertEquals("{\"description\":\"Month only\",\"value\":\"JUNE\"}", result);
     }

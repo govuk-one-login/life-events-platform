@@ -6,6 +6,6 @@ public record DeathRegistrationEventMapping(
     @JsonProperty("https://ssf.account.gov.uk/v1/deathRegistration")
     DeathRegistrationEvent deathRegistrationEvent,
     @JsonProperty("https://ssf.account.gov.uk/v1/deathRegistrationUpdate")
-    DeathRegistrationEvent deathRegistrationUpdateEvent
+    DeathRegistrationUpdateEvent deathRegistrationUpdateEvent
 ) {
 }

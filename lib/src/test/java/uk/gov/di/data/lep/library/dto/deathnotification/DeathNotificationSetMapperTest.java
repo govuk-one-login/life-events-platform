@@ -2,7 +2,6 @@ package uk.gov.di.data.lep.library.dto.deathnotification;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -19,7 +18,7 @@ public class DeathNotificationSetMapperTest {
             new GroJsonRecordBuilder().withDeathDate(testDate).build()
         );
 
-        Assertions.assertEquals(testDate, actual.events().deathRegistrationEvent().deathDate().value());
+        assertEquals(testDate, actual.events().deathRegistrationEvent().deathDate().value());
     }
 
     @Test
@@ -33,7 +32,7 @@ public class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        Assertions.assertEquals(Year.of(2023), actual.events().deathRegistrationEvent().deathDate().value());
+        assertEquals(Year.of(2023), actual.events().deathRegistrationEvent().deathDate().value());
     }
 
     @Test
@@ -49,7 +48,7 @@ public class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        Assertions.assertEquals(YearMonth.of(2023, 12), actual.events().deathRegistrationEvent().deathDate().value());
+        assertEquals(YearMonth.of(2023, 12), actual.events().deathRegistrationEvent().deathDate().value());
     }
 
     @Test
@@ -62,6 +61,6 @@ public class DeathNotificationSetMapperTest {
             .withDeathMonth(testMonth)
             .build());
 
-        Assertions.assertEquals(null, actual.events().deathRegistrationEvent().deathDate().value());
+        assertEquals(null, actual.events().deathRegistrationEvent().deathDate().value());
     }
 }

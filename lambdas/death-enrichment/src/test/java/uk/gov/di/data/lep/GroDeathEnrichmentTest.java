@@ -43,7 +43,7 @@ class GroDeathEnrichmentTest {
     @Test
     void constructionCallsCorrectInstantiation() {
         try (var awsService = mockConstruction(AwsService.class);
-        var config = mockConstruction(Config.class)) {
+             var config = mockConstruction(Config.class)) {
             var mapper = mockStatic(Mapper.class);
             new GroDeathEnrichment();
             assertEquals(1, awsService.constructed().size());

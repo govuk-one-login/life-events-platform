@@ -51,7 +51,7 @@ public class DeathNotificationSetMapper {
 
     private static DeathRegistrationEvent generateDeathRegistrationEvent(GroJsonRecord groJsonRecord) {
         var dateOfDeath = generateDate(
-            groJsonRecord.deceasedDeathDate().personDeathDate(),
+            groJsonRecord.deceasedDeathDate() == null ? null : groJsonRecord.deceasedDeathDate().personDeathDate(),
             groJsonRecord.partialYearOfDeath(),
             groJsonRecord.partialMonthOfDeath()
         );
@@ -74,7 +74,6 @@ public class DeathNotificationSetMapper {
         );
     }
 
-
     private static DeathRegistrationSubject generateDeathRegistrationSubject(GroJsonRecord groJsonRecord) {
         var address = new PostalAddress(
             null,
@@ -94,7 +93,7 @@ public class DeathNotificationSetMapper {
             null
         );
         var dateOfBirth = generateDate(
-            groJsonRecord.deceasedBirthDate().personBirthDate(),
+            groJsonRecord.deceasedBirthDate() == null ? null : groJsonRecord.deceasedBirthDate().personBirthDate(),
             groJsonRecord.partialYearOfBirth(),
             groJsonRecord.partialMonthOfBirth()
         );
@@ -110,7 +109,6 @@ public class DeathNotificationSetMapper {
             List.of(sex)
         );
     }
-
 
     private static TemporalAccessor generateDate(LocalDate localDate, Integer year, Integer month) {
         if (localDate != null) {
@@ -131,11 +129,12 @@ public class DeathNotificationSetMapper {
         var groMaidenName = groJsonRecord.deceasedMaidenName();
 
         var name = generateName(groName, null);
-        var aliasNames = IntStream.range(0, groAliasNames.size())
-            .mapToObj(i -> generateName(
-                groAliasNames.get(i),
-                groJsonRecord.deceasedAliasNameTypes().size() > i ? groJsonRecord.deceasedAliasNameTypes().get(i) : null
-            ));
+        Stream<Name> aliasNames = groAliasNames == null ? Stream.of() :
+            IntStream.range(0, groAliasNames.size())
+                .mapToObj(i -> generateName(
+                    groAliasNames.get(i),
+                    groJsonRecord.deceasedAliasNameTypes().size() > i ? groJsonRecord.deceasedAliasNameTypes().get(i) : null
+                ));
 
         var givenNameParts = groName.personGivenNames().stream().map(n ->
             new NamePart(NamePartType.GIVEN_NAME, n)

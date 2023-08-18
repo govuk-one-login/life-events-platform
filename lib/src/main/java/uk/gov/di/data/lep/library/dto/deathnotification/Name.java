@@ -8,4 +8,7 @@ public record Name(
     String validFrom,
     String validUntil
 ) {
+    public Name(String description, List<NamePart> nameParts) {
+        this(description, nameParts, null, null);
+    }
 }

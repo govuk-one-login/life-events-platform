@@ -11,7 +11,7 @@ import java.util.List;
 
 public record GroJsonRecord(
     @JsonProperty("RegistrationID")
-    Integer registrationId,
+    Integer registrationID,
     @JsonProperty("RegistrationType")
     Integer registrationType,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN)

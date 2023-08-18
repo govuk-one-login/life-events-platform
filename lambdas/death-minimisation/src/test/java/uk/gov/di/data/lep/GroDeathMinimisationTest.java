@@ -44,7 +44,7 @@ class GroDeathMinimisationTest {
         "\"gender\":\"FEMALE\"," +
         "\"dateOfBirth\":\"1972-02-20\"," +
         "\"dateOfDeath\":\"2021-12-31\"," +
-        "\"registrationId\":123456789," +
+        "\"registrationID\":123456789," +
         "\"eventTime\":\"2022-01-05T12:03:52\"," +
         "\"partialMonthOfDeath\":12," +
         "\"partialYearOfDeath\":2021," +

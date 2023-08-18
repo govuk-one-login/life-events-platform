@@ -7,19 +7,59 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class GroJsonRecordBuilder {
-    private Integer partialYearOfDeath;
+    private LocalDateTime recordLockedDateTime;
+    private LocalDateTime recordUpdateDateTime;
+    private Integer recordUpdateReason;
+    private GroPersonNameStructure deceasedName;
+    private List<GroPersonNameStructure> deceasedAliasNames;
+    private List<String> deceasedAliasNameTypes;
+    private String deceasedMaidenName;
+    private PersonDeathDateStructure deceasedDeathDate;
     private Integer partialMonthOfDeath;
-    private PersonDeathDateStructure personDeathDate;
+    private Integer partialYearOfDeath;
 
     public GroJsonRecordBuilder() {
-        personDeathDate = new PersonDeathDateStructure(LocalDate.parse("2007-03-06"), null);
+        recordLockedDateTime = LocalDateTime.parse("2023-03-06T09:30:50");
+        deceasedName = new GroPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null, null);
+        deceasedDeathDate = new PersonDeathDateStructure(LocalDate.parse("2007-03-06"), null);
+    }
+
+    public GroJsonRecordBuilder withLockedDateTime(LocalDateTime recordLockedDateTime) {
+        this.recordLockedDateTime = recordLockedDateTime;
+        return this;
+    }
+
+    public GroJsonRecordBuilder withUpdateDateTime(LocalDateTime recordUpdateDateTime) {
+        this.recordUpdateDateTime = recordUpdateDateTime;
+        return this;
+    }
+
+    public GroJsonRecordBuilder withUpdateReason(Integer recordUpdateReason) {
+        this.recordUpdateReason = recordUpdateReason;
+        return this;
+    }
+
+    public GroJsonRecordBuilder withName(GroPersonNameStructure name) {
+        this.deceasedName = name;
+        return this;
+    }
+
+    public GroJsonRecordBuilder withAliases(List<GroPersonNameStructure> names, List<String> types) {
+        this.deceasedAliasNames = names;
+        this.deceasedAliasNameTypes = types;
+        return this;
+    }
+
+    public GroJsonRecordBuilder withMaidenName(String maidenName) {
+        this.deceasedMaidenName = maidenName;
+        return this;
     }
 
     public GroJsonRecordBuilder withDeathDate(LocalDate deathDate) {
         if (deathDate == null) {
-            personDeathDate = null;
+            deceasedDeathDate = null;
         } else {
-            personDeathDate = new PersonDeathDateStructure(deathDate, null);
+            deceasedDeathDate = new PersonDeathDateStructure(deathDate, null);
         }
         return this;
     }
@@ -38,15 +78,15 @@ public class GroJsonRecordBuilder {
         return new GroJsonRecord(
             1234567890,
             1,
-            LocalDateTime.parse("2023-03-06T09:30:50"),
-            null,
-            null,
-            new GroPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null, null),
-            null,
-            null,
-            null,
+            recordLockedDateTime,
+            recordUpdateDateTime,
+            recordUpdateReason,
+            deceasedName,
+            deceasedAliasNames,
+            deceasedAliasNameTypes,
+            deceasedMaidenName,
             GenderAtRegistration.FEMALE,
-            personDeathDate,
+            deceasedDeathDate,
             partialMonthOfDeath,
             partialYearOfDeath,
             null,

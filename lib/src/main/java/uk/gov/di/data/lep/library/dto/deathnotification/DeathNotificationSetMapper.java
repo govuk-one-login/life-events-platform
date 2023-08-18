@@ -1,6 +1,6 @@
-package uk.gov.di.data.lep.library.dto.DeathNotification;
+package uk.gov.di.data.lep.library.dto.deathnotification;
 
-import uk.gov.di.data.lep.library.dto.DeathNotification.NamePart.NamePartType;
+import uk.gov.di.data.lep.library.dto.deathnotification.NamePart.NamePartType;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
 
@@ -13,6 +13,10 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class DeathNotificationSetMapper {
+    private DeathNotificationSetMapper() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static DeathNotificationSet generateDeathNotificationSet(GroJsonRecord groRecord) {
         var newEvent = generateDeathRegistrationEvent(groRecord);
 

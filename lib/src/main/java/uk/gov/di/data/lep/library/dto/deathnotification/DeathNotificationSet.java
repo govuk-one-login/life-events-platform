@@ -1,4 +1,4 @@
-package uk.gov.di.data.lep.library.dto.DeathNotification;
+package uk.gov.di.data.lep.library.dto.deathnotification;
 
 public record DeathNotificationSet(
     String aud,

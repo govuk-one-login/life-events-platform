@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class GroJsonRecordBuilder {
-    private final GroJsonRecord record;
+    private final GroJsonRecord groJsonRecord;
 
     public GroJsonRecordBuilder() {
-        record = new GroJsonRecord(
+        groJsonRecord = new GroJsonRecord(
             1234567890,
             1,
             LocalDateTime.parse("2023-03-06T09:30:50"),
@@ -35,6 +35,6 @@ public class GroJsonRecordBuilder {
     }
 
     public GroJsonRecord build() {
-        return record;
+        return groJsonRecord;
     }
 }

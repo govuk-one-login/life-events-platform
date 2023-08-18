@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.di.data.lep.library.enums.GroVerificationLevel;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public record PersonDeathDateStructure(
     @JsonProperty("PersonDeathDate")

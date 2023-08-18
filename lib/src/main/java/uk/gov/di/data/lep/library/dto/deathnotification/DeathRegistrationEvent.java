@@ -1,9 +1,4 @@
-package uk.gov.di.data.lep.library.dto.DeathNotification;
-
-import uk.gov.di.data.lep.library.dto.GroJsonRecord;
-
-import java.util.HashMap;
-import java.util.Map;
+package uk.gov.di.data.lep.library.dto.deathnotification;
 
 public record DeathRegistrationEvent(
     IsoDate deathDate,

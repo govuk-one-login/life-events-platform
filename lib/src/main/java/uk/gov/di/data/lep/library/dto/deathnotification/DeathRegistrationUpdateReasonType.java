@@ -1,7 +1,6 @@
-package uk.gov.di.data.lep.library.dto.DeathNotification;
+package uk.gov.di.data.lep.library.dto.deathnotification;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 
 import java.util.Arrays;
 import java.util.Objects;

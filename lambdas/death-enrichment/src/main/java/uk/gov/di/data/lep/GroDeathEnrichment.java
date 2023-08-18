@@ -50,7 +50,7 @@ public class GroDeathEnrichment
             baseData.deceasedBirthDate().personBirthDate(),
             baseData.deceasedDeathDate().personDeathDate(),
             baseData.registrationId(),
-            baseData.recordUpdateDateTime(),
+            baseData.recordLockedDateTime() == null ? baseData.recordUpdateDateTime() : baseData.recordLockedDateTime(),
             baseData.partialMonthOfDeath(),
             baseData.partialYearOfDeath(),
             baseData.deceasedName().personGivenNames(),

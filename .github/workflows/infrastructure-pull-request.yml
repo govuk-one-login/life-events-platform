@@ -19,6 +19,7 @@ jobs:
   tf-fmt:
     name: Validate Terraform formatting
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: terraform
@@ -49,6 +50,7 @@ jobs:
       fail-fast: false
     name: Validate ${{ matrix.env }} Terraform
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: terraform/${{ matrix.env }}

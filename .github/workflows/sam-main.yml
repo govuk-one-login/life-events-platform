@@ -22,7 +22,7 @@ jobs:
   deploy:
     name: Deploy SAM to build
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
     permissions:
       id-token: write
       contents: read

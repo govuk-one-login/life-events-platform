@@ -80,6 +80,10 @@ git, so that we maintain a history of these stacks.
 
 ```ini
 [dev-<your-name>.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-west-2"
 stack_name = "<your-name>-lev"
 s3_prefix = "<your-name>-lev"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"ia-Vpc-E5N71SHB6HRJ\" Developer=\"<your-name>\""

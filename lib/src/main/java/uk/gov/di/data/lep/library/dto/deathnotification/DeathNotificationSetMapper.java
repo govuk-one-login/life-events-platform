@@ -92,6 +92,7 @@ public class DeathNotificationSetMapper {
         DeathRegistrationUpdateEvent deathRegistrationUpdateEvent,
         List<EnrichmentField> ignoredEnrichmentFields
     ) {
+        // TODO: GPC-536 implement minimisation
         return deathRegistrationUpdateEvent;
     }
 
@@ -100,6 +101,7 @@ public class DeathNotificationSetMapper {
         DeathRegistrationEvent deathRegistrationEvent,
         List<EnrichmentField> ignoredEnrichmentFields
     ) {
+        // TODO: GPC-536 implement minimisation
         return deathRegistrationEvent;
     }
 

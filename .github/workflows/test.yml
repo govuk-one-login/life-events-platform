@@ -105,4 +105,4 @@ jobs:
           aws-region: eu-west-2
 
       - name: SAM validate
-        run: sam validate --lint
+        run: sam validate

@@ -3,6 +3,7 @@ package uk.gov.di.data.lep.library.dto.deathnotification;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
+import uk.gov.di.data.lep.library.enums.EnrichmentField;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DeathNotificationSetMapperTest {
     @Test
@@ -305,5 +307,51 @@ class DeathNotificationSetMapperTest {
             .build());
 
         assertNull(actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
+    }
+
+    @Test
+    void minimiseDeathNotificationSetCorrectlySetsNewEvent() {
+        var originalSet = DeathNotificationSetMapper.generateDeathNotificationSet(new GroJsonRecordBuilder().build());
+
+        var actual = DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, List.of(EnrichmentField.EVENT_TIME));
+
+        assertNull(actual.events().deathRegistrationUpdateEvent());
+    }
+
+    @Test
+    void minimiseDeathNotificationSetCorrectlySetsUpdateEvent() {
+        var originalSet = DeathNotificationSetMapper.generateDeathNotificationSet(new GroJsonRecordBuilder()
+            .withLockedDateTime(null)
+            .withUpdateDateTime(LocalDateTime.parse("2020-03-06T09:30:50"))
+            .withUpdateReason(5)
+            .build());
+
+        var actual = DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, List.of(EnrichmentField.EVENT_TIME));
+
+        assertNull(actual.events().deathRegistrationEvent());
+    }
+
+    @Test
+    void minimiseDeathNotificationThrowsIfNoEvent() {
+        var originalSet = new DeathNotificationSet(
+            null,
+            new DeathRegistrationEventMapping(null, null),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        var enrichmentFields = List.of(EnrichmentField.EVENT_TIME);
+
+        var exception = assertThrows(
+            IllegalStateException.class,
+            () -> DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, enrichmentFields)
+        );
+
+        assertEquals("Both event types cannot be null", exception.getMessage());
     }
 }

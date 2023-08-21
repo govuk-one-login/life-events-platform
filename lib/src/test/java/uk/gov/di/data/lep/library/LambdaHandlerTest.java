@@ -7,8 +7,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedData;
-import uk.gov.di.data.lep.library.dto.GroDeathEventEnrichedDataBuilder;
+import uk.gov.di.data.lep.library.dto.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -31,7 +31,7 @@ class LambdaHandlerTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final Logger logger = mock(Logger.class);
     private static final AwsService awsService = mock(AwsService.class);
-    private static final LambdaHandler<GroDeathEventEnrichedData> underTest = new TestLambda(awsService, config, objectMapper);
+    private static final LambdaHandler<GroJsonRecord> underTest = new TestLambda(awsService, config, objectMapper);
 
     @BeforeAll
     public static void setup() {
@@ -61,7 +61,7 @@ class LambdaHandlerTest {
 
     @Test
     void failingToWriteAsStringThrowsException() throws JsonProcessingException {
-        var output = new GroDeathEventEnrichedDataBuilder().build();
+        var output = new GroJsonRecordBuilder().build();
 
         var jsonException = mock(JsonProcessingException.class);
         when(objectMapper.writeValueAsString(output)).thenThrow(jsonException);
@@ -76,7 +76,7 @@ class LambdaHandlerTest {
 
     @Test
     void publishPublishesMessageToQueue() throws JsonProcessingException {
-        var output = new GroDeathEventEnrichedDataBuilder().build();
+        var output = new GroJsonRecordBuilder().build();
 
         when(config.getTargetQueue()).thenReturn("targetQueueURL");
         when(objectMapper.writeValueAsString(output)).thenReturn("mappedQueueOutput");
@@ -90,7 +90,7 @@ class LambdaHandlerTest {
 
     @Test
     void publishPublishesMessageToTopic() throws JsonProcessingException {
-        var output = new GroDeathEventEnrichedDataBuilder().build();
+        var output = new GroJsonRecordBuilder().build();
 
         when(config.getTargetTopic()).thenReturn("targetTopicARN");
         when(objectMapper.writeValueAsString(output)).thenReturn("mappedTopicOutput");
@@ -102,7 +102,7 @@ class LambdaHandlerTest {
         verify(awsService).putOnTopic("mappedTopicOutput");
     }
 
-    static class TestLambda extends LambdaHandler<GroDeathEventEnrichedData> {
+    static class TestLambda extends LambdaHandler<GroJsonRecord> {
         public TestLambda() {
             super();
         }

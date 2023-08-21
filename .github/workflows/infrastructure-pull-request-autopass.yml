@@ -14,6 +14,7 @@ jobs:
   tf-fmt:
     name: Validate Terraform formatting
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - run: 'echo "No build required"'
 
@@ -24,5 +25,6 @@ jobs:
       fail-fast: false
     name: Validate ${{ matrix.env }} Terraform
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - run: 'echo "No build required"'

@@ -17,6 +17,7 @@ jobs:
     name: Build Docker image and push to ECR
     environment: shared
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       image: ${{ steps.push-image.outputs.image }}
       registry: ${{ steps.login-ecr.outputs.registry }}

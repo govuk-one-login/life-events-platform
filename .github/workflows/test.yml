@@ -12,6 +12,7 @@ jobs:
   sonarcloud:
     name: Run SonarCloud
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       checks: write
@@ -65,6 +66,7 @@ jobs:
   checkov:
     name: SAM checkov
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       id-token: write
       contents: read
@@ -81,6 +83,7 @@ jobs:
   validate:
     name: SAM validate
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       id-token: write
       contents: read

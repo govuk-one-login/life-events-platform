@@ -22,6 +22,7 @@ jobs:
       fail-fast: false
     name: Validate ${{ matrix.image }} image
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       gdx-outcome: ${{ steps.output.outputs.gdx-outcome || '' }}
       gdx-json: ${{ steps.output.outputs.gdx-json || '' }}
@@ -87,6 +88,7 @@ jobs:
   validate-infra:
     name: Validate infra code
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       infra-outcome: ${{ steps.output.outputs.infra-outcome }}
       infra-json: ${{ steps.output.outputs.infra-json }}
@@ -131,6 +133,7 @@ jobs:
     name: Notify Slack
     needs: [validate-images, validate-infra]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - id: payload
         name: Construct payload

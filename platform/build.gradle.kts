@@ -86,7 +86,7 @@ dependencies {
   implementation("net.logstash.logback:logstash-logback-encoder:7.4")
 
   // test containers
-  testImplementation(platform("org.testcontainers:testcontainers-bom:1.18.3"))
+  testImplementation(platform("org.testcontainers:testcontainers-bom:1.19.0"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
   testImplementation("com.amazonaws:aws-java-sdk-core:1.12.533") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883

@@ -1,28 +1,31 @@
 version = 0.1
 
+[default]
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-west-2"
+
 [dev-oskwil.deploy.parameters]
 stack_name = "oskwil-lev"
-resolve_s3 = true
 s3_prefix = "oskwil-lev"
-region = "eu-west-2"
-confirm_changeset = true
-capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"oskwil\""
 
 [dev-hanleo.deploy.parameters]
 stack_name = "hanleo-lev"
-resolve_s3 = true
 s3_prefix = "hanleo-lev"
-region = "eu-west-2"
-confirm_changeset = true
-capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"hanleo\""
 
 [dev-mwillis.deploy.parameters]
 stack_name = "mwillis-lev"
-resolve_s3 = true
 s3_prefix = "mwillis-lev"
-region = "eu-west-2"
-confirm_changeset = true
-capabilities = "CAPABILITY_IAM"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"mwillis\""

@@ -12,7 +12,7 @@ ext {
             junitJupiter       : "5.10.0",
             jwksRsa            : "0.22.1",
             mockitoJunitJupiter: "5.4.0",
-            powertools         : "1.16.1",
+            powertools         : "1.17.0",
             sshj               : "0.35.0",
             xrayInstrumentor   : "2.14.0"
     ]

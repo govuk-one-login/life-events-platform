@@ -10,8 +10,8 @@ import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -23,7 +23,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -106,11 +105,10 @@ class PublishRecordTest {
             ));
         when(objectMapper.writeValueAsString(event)).thenReturn(eventAsString);
 
-        var result = underTest.handleRequest(event, context);
+        underTest.handleRequest(event, context);
 
         verify(httpClient).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
         verify(httpClient).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
-        assertNull(result);
     }
 
     @Test

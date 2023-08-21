@@ -1,7 +1,6 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +22,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
+public class PublishRecord {
     private final AwsService awsService;
     private final Config config;
     private final HttpClient httpClient;
@@ -41,14 +40,12 @@ public class PublishRecord implements RequestHandler<GroJsonRecord, Object> {
         this.objectMapper = objectMapper;
     }
 
-    @Override
     @Tracing
     @Logging(clearState = true)
-    public Object handleRequest(GroJsonRecord event, Context context) {
+    public void handleRequest(GroJsonRecord event, Context ignoredContext) {
         logger.info("Received record: {}", event.registrationID());
         var authorisationToken = getAuthorisationToken();
         postRecordToLifeEvents(event, authorisationToken);
-        return null;
     }
 
     // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,

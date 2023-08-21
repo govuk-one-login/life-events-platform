@@ -2,7 +2,7 @@ package uk.gov.di.data.lep.library.services;
 
 import org.junit.jupiter.api.Test;
 
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
@@ -46,17 +46,17 @@ class AwsServiceTest {
     @Test
     void putOnQueuePutsMessageOnQueue() {
         try (var staticClient = mockStatic(SqsClient.class);
-             var staticCredentialsProvider = mockStatic(EnvironmentVariableCredentialsProvider.class);
+             var staticCredentialsProvider = mockStatic(DefaultCredentialsProvider.class);
              var staticRequest = mockStatic(SendMessageRequest.class)) {
 
             var client = mock(SqsClient.class);
             var clientBuilder = mock(SqsClientBuilder.class);
-            var credentialsProvider = mock(EnvironmentVariableCredentialsProvider.class);
+            var credentialsProvider = mock(DefaultCredentialsProvider.class);
             var request = mock(SendMessageRequest.class);
             var requestBuilder = mock(SendMessageRequest.Builder.class);
 
             staticClient.when(SqsClient::builder).thenReturn(clientBuilder);
-            staticCredentialsProvider.when(EnvironmentVariableCredentialsProvider::create).thenReturn(credentialsProvider);
+            staticCredentialsProvider.when(DefaultCredentialsProvider::create).thenReturn(credentialsProvider);
             staticRequest.when(SendMessageRequest::builder).thenReturn(requestBuilder);
 
             when(config.getTargetQueue()).thenReturn("Target Queue");
@@ -83,17 +83,17 @@ class AwsServiceTest {
     @Test
     void putOnTopicPutsMessageOnTopic() {
         try (var staticClient = mockStatic(SnsClient.class);
-             var staticCredentialsProvider = mockStatic(EnvironmentVariableCredentialsProvider.class);
+             var staticCredentialsProvider = mockStatic(DefaultCredentialsProvider.class);
              var staticRequest = mockStatic(PublishRequest.class)) {
 
             var client = mock(SnsClient.class);
             var clientBuilder = mock(SnsClientBuilder.class);
-            var credentialsProvider = mock(EnvironmentVariableCredentialsProvider.class);
+            var credentialsProvider = mock(DefaultCredentialsProvider.class);
             var request = mock(PublishRequest.class);
             var requestBuilder = mock(PublishRequest.Builder.class);
 
             staticClient.when(SnsClient::builder).thenReturn(clientBuilder);
-            staticCredentialsProvider.when(EnvironmentVariableCredentialsProvider::create).thenReturn(credentialsProvider);
+            staticCredentialsProvider.when(DefaultCredentialsProvider::create).thenReturn(credentialsProvider);
             staticRequest.when(PublishRequest::builder).thenReturn(requestBuilder);
 
             when(config.getTargetTopic()).thenReturn("Target Topic");
@@ -120,18 +120,18 @@ class AwsServiceTest {
     @Test
     void getFromBucketGetsStringFromBucket() {
         try (var staticClient = mockStatic(S3Client.class);
-             var staticCredentialsProvider = mockStatic(EnvironmentVariableCredentialsProvider.class);
+             var staticCredentialsProvider = mockStatic(DefaultCredentialsProvider.class);
              var staticRequest = mockStatic(GetObjectRequest.class)) {
             var client = mock(S3Client.class);
             var clientBuilder = mock(S3ClientBuilder.class);
-            var credentialsProvider = mock(EnvironmentVariableCredentialsProvider.class);
+            var credentialsProvider = mock(DefaultCredentialsProvider.class);
             var request = mock(GetObjectRequest.class);
             var requestBuilder = mock(GetObjectRequest.Builder.class);
 
             var responseBytes = mock(ResponseBytes.class);
 
             staticClient.when(S3Client::builder).thenReturn(clientBuilder);
-            staticCredentialsProvider.when(EnvironmentVariableCredentialsProvider::create).thenReturn(credentialsProvider);
+            staticCredentialsProvider.when(DefaultCredentialsProvider::create).thenReturn(credentialsProvider);
             staticRequest.when(GetObjectRequest::builder).thenReturn(requestBuilder);
 
             when(clientBuilder.region(Region.EU_WEST_2)).thenReturn(clientBuilder);
@@ -160,18 +160,18 @@ class AwsServiceTest {
     @Test
     void putInBucketPutsStringInBucket() {
         try (var staticClient = mockStatic(S3Client.class);
-             var staticCredentialsProvider = mockStatic(EnvironmentVariableCredentialsProvider.class);
+             var staticCredentialsProvider = mockStatic(DefaultCredentialsProvider.class);
              var staticRequest = mockStatic(PutObjectRequest.class);
              var staticRequestBody = mockStatic(RequestBody.class)) {
             var client = mock(S3Client.class);
             var clientBuilder = mock(S3ClientBuilder.class);
-            var credentialsProvider = mock(EnvironmentVariableCredentialsProvider.class);
+            var credentialsProvider = mock(DefaultCredentialsProvider.class);
             var request = mock(PutObjectRequest.class);
             var requestBuilder = mock(PutObjectRequest.Builder.class);
             var requestBody = mock(RequestBody.class);
 
             staticClient.when(S3Client::builder).thenReturn(clientBuilder);
-            staticCredentialsProvider.when(EnvironmentVariableCredentialsProvider::create).thenReturn(credentialsProvider);
+            staticCredentialsProvider.when(DefaultCredentialsProvider::create).thenReturn(credentialsProvider);
             staticRequest.when(PutObjectRequest::builder).thenReturn(requestBuilder);
 
             staticRequestBody.when(() -> RequestBody.fromString("Content")).thenReturn(requestBody);
@@ -198,12 +198,12 @@ class AwsServiceTest {
     @Test
     void putInBucketPutsStreamInBucket() {
         try (var staticClient = mockStatic(S3Client.class);
-             var staticCredentialsProvider = mockStatic(EnvironmentVariableCredentialsProvider.class);
+             var staticCredentialsProvider = mockStatic(DefaultCredentialsProvider.class);
              var staticRequest = mockStatic(PutObjectRequest.class);
              var staticRequestBody = mockStatic(RequestBody.class)) {
             var client = mock(S3Client.class);
             var clientBuilder = mock(S3ClientBuilder.class);
-            var credentialsProvider = mock(EnvironmentVariableCredentialsProvider.class);
+            var credentialsProvider = mock(DefaultCredentialsProvider.class);
             var request = mock(PutObjectRequest.class);
             var requestBuilder = mock(PutObjectRequest.Builder.class);
             var requestBody = mock(RequestBody.class);
@@ -211,7 +211,7 @@ class AwsServiceTest {
             var inputStream = mock(InputStream.class);
 
             staticClient.when(S3Client::builder).thenReturn(clientBuilder);
-            staticCredentialsProvider.when(EnvironmentVariableCredentialsProvider::create).thenReturn(credentialsProvider);
+            staticCredentialsProvider.when(DefaultCredentialsProvider::create).thenReturn(credentialsProvider);
             staticRequest.when(PutObjectRequest::builder).thenReturn(requestBuilder);
 
             staticRequestBody.when(() -> RequestBody.fromInputStream(inputStream, 10)).thenReturn(requestBody);
@@ -238,18 +238,18 @@ class AwsServiceTest {
     @Test
     void getSecretGetsSecretValue() {
         try (var staticClient = mockStatic(SecretsManagerClient.class);
-             var staticCredentialsProvider = mockStatic(EnvironmentVariableCredentialsProvider.class);
+             var staticCredentialsProvider = mockStatic(DefaultCredentialsProvider.class);
              var staticRequest = mockStatic(GetSecretValueRequest.class)) {
             var client = mock(SecretsManagerClient.class);
             var clientBuilder = mock(SecretsManagerClientBuilder.class);
-            var credentialsProvider = mock(EnvironmentVariableCredentialsProvider.class);
+            var credentialsProvider = mock(DefaultCredentialsProvider.class);
             var request = mock(GetSecretValueRequest.class);
             var requestBuilder = mock(GetSecretValueRequest.Builder.class);
 
             var response = mock(GetSecretValueResponse.class);
 
             staticClient.when(SecretsManagerClient::builder).thenReturn(clientBuilder);
-            staticCredentialsProvider.when(EnvironmentVariableCredentialsProvider::create).thenReturn(credentialsProvider);
+            staticCredentialsProvider.when(DefaultCredentialsProvider::create).thenReturn(credentialsProvider);
             staticRequest.when(GetSecretValueRequest::builder).thenReturn(requestBuilder);
 
             when(clientBuilder.region(Region.EU_WEST_2)).thenReturn(clientBuilder);
@@ -276,11 +276,11 @@ class AwsServiceTest {
     @Test
     void getCognitoClientSecretGetsClientSecret() {
         try (var staticClient = mockStatic(CognitoIdentityProviderClient.class);
-             var staticCredentialsProvider = mockStatic(EnvironmentVariableCredentialsProvider.class);
+             var staticCredentialsProvider = mockStatic(DefaultCredentialsProvider.class);
              var staticRequest = mockStatic(DescribeUserPoolClientRequest.class)) {
             var client = mock(CognitoIdentityProviderClient.class);
             var clientBuilder = mock(CognitoIdentityProviderClientBuilder.class);
-            var credentialsProvider = mock(EnvironmentVariableCredentialsProvider.class);
+            var credentialsProvider = mock(DefaultCredentialsProvider.class);
             var request = mock(DescribeUserPoolClientRequest.class);
             var requestBuilder = mock(DescribeUserPoolClientRequest.Builder.class);
 
@@ -288,7 +288,7 @@ class AwsServiceTest {
             var userPoolClient = mock(UserPoolClientType.class);
 
             staticClient.when(CognitoIdentityProviderClient::builder).thenReturn(clientBuilder);
-            staticCredentialsProvider.when(EnvironmentVariableCredentialsProvider::create).thenReturn(credentialsProvider);
+            staticCredentialsProvider.when(DefaultCredentialsProvider::create).thenReturn(credentialsProvider);
             staticRequest.when(DescribeUserPoolClientRequest::builder).thenReturn(requestBuilder);
 
             when(clientBuilder.region(Region.EU_WEST_2)).thenReturn(clientBuilder);

@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+                   "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
                    "com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2-instrumentor:$dependencyVersions.xrayInstrumentor",
                    "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jackson",
                    "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$dependencyVersions.jackson",

@@ -7,17 +7,16 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.gov.di.data.lep.dto.DeathRegistrationGroup;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventBucket;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventDetail;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventObject;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.DeathRegistrationGroup;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
-import java.net.http.HttpClient;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -156,7 +155,7 @@ class ConvertToJsonTest {
                     "\"registrationID\":2.*" +
                     "\"personGivenNames\":\\[\"BOB\"\\].*" +
                     "\"deceasedGender\":1.*" +
-                    "\"deceasedBirthDate\":\\{\"personBirthDate\":\\[1958,6,6\\],\"verificationLevel\":\"02\"\\}"
+                    "\"deceasedBirthDate\":\\{\"personBirthDate\":\"1958-06-06\",\"verificationLevel\":\"02\"\\}"
             )
         );
     }

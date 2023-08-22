@@ -774,6 +774,49 @@ Resources:
       LogGroupName: !Sub /aws/lambda/gro-convert-to-json-${Environment}${Developer}
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
+  GenerateGroXmlFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - GenerateGroXmlFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub generate-gro-xml-${Environment}${Developer}
+      CodeUri: lambdas/generate-gro-xml
+      Handler: uk.gov.di.data.lep.GenerateGroXml::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: generate-gro-xml
+          GRO_INGESTION_BUCKET_NAME: !Ref GroIngestionBucket
+      AutoPublishAlias: latest
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref GroIngestionBucket
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+
+  GenerateGroXmlFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/generate-gro-xml-${Environment}${Developer}
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
   GroPublishRecordFunction:
     Type: AWS::Serverless::Function
     DependsOn:

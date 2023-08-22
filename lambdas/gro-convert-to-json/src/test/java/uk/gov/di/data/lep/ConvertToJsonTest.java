@@ -150,13 +150,13 @@ class ConvertToJsonTest {
             eq("JsonBucketName"),
             anyString(),
             matches(
-                "\"RegistrationID\":1.*" +
-                    "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
-                    "\"DeceasedGender\":2.*" +
-                    "\"RegistrationID\":2.*" +
-                    "\"PersonGivenName\":\\[\"BOB\"\\].*" +
-                    "\"DeceasedGender\":1.*" +
-                    "\"DeceasedBirthDate\":\\{\"PersonBirthDate\":\\[1958,6,6\\],\"VerificationLevel\":\"02\"\\}"
+                "\"registrationID\":1.*" +
+                    "\"personGivenNames\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                    "\"deceasedGender\":2.*" +
+                    "\"registrationID\":2.*" +
+                    "\"personGivenNames\":\\[\"BOB\"\\].*" +
+                    "\"deceasedGender\":1.*" +
+                    "\"deceasedBirthDate\":\\{\"personBirthDate\":\\[1958,6,6\\],\"verificationLevel\":\"02\"\\}"
             )
         );
     }
@@ -170,9 +170,9 @@ class ConvertToJsonTest {
         verify(awsService).putInBucket(
             eq("JsonBucketName"),
             anyString(),
-            matches("\"RegistrationID\":1.*" +
-                "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
-                "\"DeceasedGender\":2")
+            matches("\"registrationID\":1.*" +
+                "\"personGivenNames\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                "\"deceasedGender\":2")
         );
     }
 

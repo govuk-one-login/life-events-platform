@@ -1,6 +1,6 @@
 package uk.gov.di.data.lep.library.services;
 
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
@@ -24,23 +24,23 @@ public class AwsService {
     private final Config config;
     private final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
         .region(Region.EU_WEST_2)
-        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .credentialsProvider(DefaultCredentialsProvider.create())
         .build();
     private final SecretsManagerClient secretsManagerClient = SecretsManagerClient.builder()
         .region(Region.EU_WEST_2)
-        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .credentialsProvider(DefaultCredentialsProvider.create())
         .build();
     private final SqsClient sqsClient = SqsClient.builder()
         .region(Region.EU_WEST_2)
-        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .credentialsProvider(DefaultCredentialsProvider.create())
         .build();
     private final SnsClient snsClient = SnsClient.builder()
         .region(Region.EU_WEST_2)
-        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .credentialsProvider(DefaultCredentialsProvider.create())
         .build();
     private final S3Client s3Client = S3Client.builder()
         .region(Region.EU_WEST_2)
-        .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+        .credentialsProvider(DefaultCredentialsProvider.create())
         .build();
 
     public AwsService() {

@@ -13,20 +13,27 @@ repositories {
 }
 
 dependencies {
-    implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
-                   "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
-                   "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jackson",
-                   "com.fasterxml.jackson.core:jackson-databind:$dependencyVersions.jackson",
-                   "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$dependencyVersions.jackson",
-                   "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
-                   project(":lib")
+    implementation "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt"
+
+    compileOnly "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+                "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
+                "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jackson",
+                "com.fasterxml.jackson.core:jackson-databind:$dependencyVersions.jackson",
+                "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$dependencyVersions.jackson",
+                project(":lib")
 
     aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
            "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools",
            "software.amazon.lambda:powertools-metrics:$dependencyVersions.powertools"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
+    testImplementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+                       "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
+                       "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jackson",
+                       "com.fasterxml.jackson.core:jackson-databind:$dependencyVersions.jackson",
+                       "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$dependencyVersions.jackson",
+                       "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
                        "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
+                       project(":lib"),
                        testFixtures(project(":lib"))
 }
 

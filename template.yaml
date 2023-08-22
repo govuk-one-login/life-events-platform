@@ -312,6 +312,16 @@ Resources:
     Properties:
       KmsMasterKeyId: !Ref MainKmsKey
 
+  LibLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: lib
+      CompatibleRuntimes:
+        - java17
+      LayerName: !Sub lib-layer-${Environment}${Developer}
+    Metadata:
+      BuildMethod: java17
+
   DeathValidationFunction:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -323,6 +333,8 @@ Resources:
       FunctionName: !Sub death-validation-${Environment}${Developer}
       CodeUri: lambdas/death-validation
       Handler: uk.gov.di.data.lep.GroDeathValidation::handleRequest
+      Layers:
+        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-validation
@@ -377,6 +389,8 @@ Resources:
       FunctionName: !Sub death-enrichment-${Environment}${Developer}
       CodeUri: lambdas/death-enrichment
       Handler: uk.gov.di.data.lep.GroDeathEnrichment::handleRequest
+      Layers:
+        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-enrichment
@@ -428,6 +442,8 @@ Resources:
       FunctionName: !Sub death-minimisation-${Environment}${Developer}
       CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.GroDeathMinimisation::handleRequest
+      Layers:
+        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
@@ -717,6 +733,8 @@ Resources:
       FunctionName: !Sub gro-convert-to-json-${Environment}${Developer}
       CodeUri: lambdas/gro-convert-to-json
       Handler: uk.gov.di.data.lep.ConvertToJson::handleRequest
+      Layers:
+        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-convert-to-json
@@ -762,6 +780,8 @@ Resources:
       FunctionName: !Sub gro-publish-record-${Environment}${Developer}
       CodeUri: lambdas/gro-publish-record
       Handler: uk.gov.di.data.lep.PublishRecord::handleRequest
+      Layers:
+        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-publish-record
@@ -816,6 +836,8 @@ Resources:
       FunctionName: !Sub gro-pull-file-${Environment}${Developer}
       CodeUri: lambdas/gro-pull-file
       Handler: uk.gov.di.data.lep.PullFile::handleRequest
+      Layers:
+        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-pull-file

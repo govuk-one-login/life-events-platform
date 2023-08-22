@@ -38,23 +38,23 @@ public class FieldOptions {
     );
     public static final List<List<GroPersonNameStructure>> ALIAS_NAME = List.of(
         List.of(
-            new GroPersonNameStructure("Ms", List.of("CLARISSA"), "DE BASTIANI", null, null)
+            new GroPersonNameStructure("Ms", List.of("CLARISSA"), "DE BASTIANI", null)
         ),
         List.of(
-            new GroPersonNameStructure("Mx", List.of("SAMUEL"), "WILLS", null, "SAM")
+            new GroPersonNameStructure("Mx", List.of("SAMUEL"), "WILLS", null)
         ),
         List.of(
-            new GroPersonNameStructure("Mrs", List.of("CHRISTINA"), "CHETWORTH", "OBE", null),
-            new GroPersonNameStructure("Mr", List.of("CHRIS"), "CHETWORTH", null, null)
+            new GroPersonNameStructure("Mrs", List.of("CHRISTINA"), "CHETWORTH", "OBE"),
+            new GroPersonNameStructure("Mr", List.of("CHRIS"), "CHETWORTH", null)
         ),
         List.of(
-            new GroPersonNameStructure("Mr", List.of("JIM", "JACK"), "BARON", null, null)
+            new GroPersonNameStructure("Mr", List.of("JIM", "JACK"), "BARON", null)
         ),
         List.of(
-            new GroPersonNameStructure("Dr", List.of("JANE"), "GROVES", "PhD", null),
-            new GroPersonNameStructure("Mrs", List.of("JANE"), "GROVES", null, null),
-            new GroPersonNameStructure("Ms", List.of("JANE"), "PARR", null, null),
-            new GroPersonNameStructure("Ms", List.of("JANE", "AMY"), "PARR", null, null)
+            new GroPersonNameStructure("Dr", List.of("JANE"), "GROVES", "PhD"),
+            new GroPersonNameStructure("Mrs", List.of("JANE"), "GROVES", null),
+            new GroPersonNameStructure("Ms", List.of("JANE"), "PARR", null),
+            new GroPersonNameStructure("Ms", List.of("JANE", "AMY"), "PARR", null)
         )
     );
     public static final List<List<String>> ALIAS_NAME_TYPE = List.of(

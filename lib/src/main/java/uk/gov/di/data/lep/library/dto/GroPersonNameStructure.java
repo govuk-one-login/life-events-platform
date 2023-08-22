@@ -14,8 +14,6 @@ public record GroPersonNameStructure(
     @JsonAlias("PersonFamilyName")
     String personFamilyName,
     @JsonAlias("PersonNameSuffix")
-    String personNameSuffix,
-    @JsonAlias("PersonRequestedName")
-    String personRequestedName
+    String personNameSuffix
 ) {
 }

@@ -23,7 +23,7 @@ public class GroJsonRecordBuilder {
 
     public GroJsonRecordBuilder() {
         recordLockedDateTime = LocalDateTime.parse("2023-03-06T09:30:50");
-        deceasedName = new GroPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null, null);
+        deceasedName = new GroPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null);
         deceasedDeathDate = new PersonDeathDateStructure(LocalDate.parse("2007-03-06"), null);
         deceasedBirthDate = new PersonBirthDateStructure(LocalDate.parse("1967-03-06"), null);
     }

@@ -62,8 +62,7 @@ class DeathNotificationSetMapperTest {
             "Title",
             List.of("Bob", "Rob", "Robert"),
             "Smith",
-            "Suffix",
-            "RequestedName"
+            "Suffix"
         );
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
@@ -92,8 +91,7 @@ class DeathNotificationSetMapperTest {
             "Title",
             List.of("Bob", "Rob", "Robert"),
             "Smith",
-            "Suffix",
-            "RequestedName"
+            "Suffix"
         );
         var maidenName = "Jones";
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
@@ -136,21 +134,18 @@ class DeathNotificationSetMapperTest {
             "Title",
             List.of("Bob", "Rob"),
             "Smith",
-            "Suffix",
-            "RequestedName"
+            "Suffix"
         );
         var firstAliasName = new GroPersonNameStructure(
             null,
             List.of("Alias1"),
             "AliasSurname1",
-            null,
             null
         );
         var secondAliasName = new GroPersonNameStructure(
             null,
             List.of("Alias2"),
             "AliasSurname2",
-            null,
             null
         );
         var aliasNames = List.of(firstAliasName, secondAliasName);

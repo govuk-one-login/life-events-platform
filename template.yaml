@@ -72,19 +72,25 @@ Mappings:
   EnvironmentConfiguration:
     dev:
       domainName: life-events.dev.account.gov.uk
+      txmaAccountArn: arn:aws:iam::248098332657:root
     build:
       domainName: life-events.build.account.gov.uk
+      txmaAccountArn: arn:aws:iam::750703655225:root
     staging:
       domainName: life-events.staging.account.gov.uk
+      txmaAccountArn: arn:aws:iam::178023842775:root
     integration:
       domainName: life-events.integration.account.gov.uk
+      txmaAccountArn: arn:aws:iam::729485541398:root
     production:
       domainName: life-events.account.gov.uk
+      txmaAccountArn: arn:aws:iam::451773080033:root
 
 Resources:
   MainKmsKey:
     Type: AWS::KMS::Key
     Properties:
+      Description: Key used to encrypt the Life Events Platform
       EnableKeyRotation: true
       KeyPolicy:
         Version: 2012-10-17
@@ -898,3 +904,68 @@ Resources:
       Description: The Public Key used to access the GRO SFTP server
       KmsKeyId: !Ref MainKmsKey
       Name: !Sub ${Environment}${Developer}-gro-sft-public-key
+
+  AuditKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Symmetric key used to encrypt TxMA audit messages at rest in SQS
+      EnableKeyRotation: true
+      KeySpec: SYMMETRIC_DEFAULT
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+          - Sid: AllowTxMADecryption
+            Effect: Allow
+            Principal:
+              AWS: !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
+            Action:
+              - kms:Decrypt*
+            Resource: '*'
+
+  AuditKmsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${Environment}${Developer}/AuditEncryptionKey
+      TargetKeyId: !Ref AuditKmsKey
+
+  AuditQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-audit
+      MessageRetentionPeriod: 1209600
+      KmsMasterKeyId: !Ref AuditKmsKeyAlias
+      RedriveAllowPolicy:
+        redrivePermission: denyAll
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
+        maxReceiveCount: 10
+
+  AuditQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref AuditQueue
+      PolicyDocument:
+        Statement:
+          - Sid: AllowReadByTxMAAccount
+            Effect: Allow
+            Principal:
+              AWS:  !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
+            Action:
+              - sqs:ChangeMessageVisibility
+              - sqs:ReceiveMessage
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Resource: !GetAtt AuditQueue.Arn
+
+  AuditDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-audit-dlq
+      MessageRetentionPeriod: 1209600
+      KmsMasterKeyId: !Ref AuditKmsKeyAlias

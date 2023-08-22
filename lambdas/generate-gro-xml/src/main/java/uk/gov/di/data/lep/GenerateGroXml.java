@@ -91,8 +91,8 @@ public class GenerateGroXml
                 getRandomElement(FieldOptions.TITLE),
                 getRandomElement(FieldOptions.FORENAME),
                 getRandomElement(FieldOptions.SURNAME),
-                "",
-                ""),
+                ""
+            ),
             aliasName ? getRandomElement(FieldOptions.ALIAS_NAME) : null,
             aliasName ? getRandomElement(FieldOptions.ALIAS_NAME_TYPE) : null,
             getRandomElementOrNull(FieldOptions.MAIDEN_NAME),

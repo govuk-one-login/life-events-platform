@@ -57,4 +57,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "GPC-NONE: Automatically lint files"
-          file_pattern: '*.kt *.ts *.tf platform/gradle.lockfile'
+          file_pattern: '*.kt *.ts *.tf platform/gradle.lockfile *.java'

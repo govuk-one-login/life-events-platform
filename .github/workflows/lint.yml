@@ -42,6 +42,9 @@ jobs:
       - name: Fix formatting of all Kotlin files
         run: ./gradlew clean platform:formatKotlin
 
+      - name: Fix formatting of java files
+        run: ./gradlew spotlessApply
+
       - name: Fix formatting of all Terraform files
         run: terraform fmt -recursive
 

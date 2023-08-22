@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "org.sonarqube" version "4.2.1.3168"
+    id "com.diffplug.spotless" version "6.20.0"
 }
 
 repositories {
@@ -18,5 +19,14 @@ sonar {
         property "sonar.projectKey", "alphagov_di-data-life-events-platform"
         property "sonar.organization", "alphagov"
         property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
+spotless {
+    java {
+        target 'lib/src/*/java/**/*.java', 'lambdas/**/src/*/java/**/*.java'
+
+        importOrder( 'com.acme', '','java|javax', '\\#com.acme', '\\#')
+        removeUnusedImports()
     }
 }

@@ -318,6 +318,7 @@ Resources:
       ContentUri: lib
       CompatibleRuntimes:
         - java17
+      LayerName: !Sub lib-layer-${Environment}${Developer}
     Metadata:
       BuildMethod: java17
 

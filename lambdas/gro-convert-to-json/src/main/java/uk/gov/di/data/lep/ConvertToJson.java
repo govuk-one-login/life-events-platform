@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
-import uk.gov.di.data.lep.dto.DeathRegistrationGroup;
+import uk.gov.di.data.lep.library.dto.DeathRegistrationGroup;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;

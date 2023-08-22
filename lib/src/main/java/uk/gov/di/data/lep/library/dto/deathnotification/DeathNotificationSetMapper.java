@@ -49,42 +49,35 @@ public class DeathNotificationSetMapper {
         DeathNotificationSet oldDeathNotificationSet,
         List<EnrichmentField> enrichmentFields
     ) {
-        if (oldDeathNotificationSet.events().deathRegistrationEvent() != null) {
-            var minimisedDeathRegistrationEvent = minimiseNewDeathRegistration(
-                oldDeathNotificationSet.events().deathRegistrationEvent(),
+        DeathRegistrationBaseEvent minimisedDeathRegistrationEvent;
+        var oldDeathRegistrationBaseEvent = oldDeathNotificationSet.events().deathRegistrationEvent();
+
+        if (oldDeathRegistrationBaseEvent instanceof DeathRegistrationEvent oldDeathRegistrationEvent) {
+            minimisedDeathRegistrationEvent = minimiseNewDeathRegistration(
+                oldDeathRegistrationEvent,
                 enrichmentFields
             );
-            return new DeathNotificationSet(
-                oldDeathNotificationSet.aud(),
-                new DeathRegistrationEventMapping(minimisedDeathRegistrationEvent, null),
-                oldDeathNotificationSet.exp(),
-                oldDeathNotificationSet.iat(),
-                oldDeathNotificationSet.iss(),
-                oldDeathNotificationSet.jti(),
-                oldDeathNotificationSet.nbf(),
-                oldDeathNotificationSet.sub(),
-                oldDeathNotificationSet.toe(),
-                oldDeathNotificationSet.txn()
-            );
-        } else if (oldDeathNotificationSet.events().deathRegistrationUpdateEvent() != null) {
-            var minimisedDeathRegistrationUpdateEvent = minimiseUpdateDeathRegistration(
-                oldDeathNotificationSet.events().deathRegistrationUpdateEvent(),
+        } else if (oldDeathRegistrationBaseEvent instanceof DeathRegistrationUpdateEvent oldDeathRegistrationEvent) {
+            minimisedDeathRegistrationEvent = minimiseUpdateDeathRegistration(
+                oldDeathRegistrationEvent,
                 enrichmentFields
-            );
-            return new DeathNotificationSet(
-                oldDeathNotificationSet.aud(),
-                new DeathRegistrationEventMapping(null, minimisedDeathRegistrationUpdateEvent),
-                oldDeathNotificationSet.exp(),
-                oldDeathNotificationSet.iat(),
-                oldDeathNotificationSet.iss(),
-                oldDeathNotificationSet.jti(),
-                oldDeathNotificationSet.nbf(),
-                oldDeathNotificationSet.sub(),
-                oldDeathNotificationSet.toe(),
-                oldDeathNotificationSet.txn()
             );
         }
-        throw new IllegalStateException("Both event types cannot be null");
+        else {
+            throw new IllegalStateException("Event must be of type DeathRegistrationEvent or DeathRegistrationUpdateEvent");
+        }
+        return new DeathNotificationSet(
+            oldDeathNotificationSet.aud(),
+            new DeathRegistrationEventMapping(minimisedDeathRegistrationEvent),
+            oldDeathNotificationSet.exp(),
+            oldDeathNotificationSet.iat(),
+            oldDeathNotificationSet.iss(),
+            oldDeathNotificationSet.jti(),
+            oldDeathNotificationSet.nbf(),
+            oldDeathNotificationSet.sub(),
+            oldDeathNotificationSet.toe(),
+            oldDeathNotificationSet.txn()
+        );
     }
 
     @Tracing
@@ -107,18 +100,17 @@ public class DeathNotificationSetMapper {
 
     @Tracing
     private static DeathRegistrationEventMapping generateDeathRegistrationEventMapping(GroJsonRecord groJsonRecord) {
-        var isUpdate = groJsonRecord.recordLockedDateTime() == null;
         var dateOfDeath = generateDate(
             groJsonRecord.deceasedDeathDate() == null ? null : groJsonRecord.deceasedDeathDate().personDeathDate(),
             groJsonRecord.partialYearOfDeath(),
             groJsonRecord.partialMonthOfDeath()
         );
         var deathDate = new DateWithDescription(groJsonRecord.qualifierText(), dateOfDeath);
+        var event = groJsonRecord.recordLockedDateTime() == null
+            ? generateDeathRegistrationUpdateEvent(groJsonRecord, deathDate)
+            : generateDeathRegistrationEvent(groJsonRecord, deathDate);
 
-        return new DeathRegistrationEventMapping(
-            isUpdate ? null : generateDeathRegistrationEvent(groJsonRecord, deathDate),
-            isUpdate ? generateDeathRegistrationUpdateEvent(groJsonRecord, deathDate) : null
-        );
+        return new DeathRegistrationEventMapping(event);
     }
 
     @Tracing

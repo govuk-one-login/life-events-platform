@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -30,10 +29,10 @@ class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        assertNotNull(actual.events().deathRegistrationEvent());
-        assertNull(actual.events().deathRegistrationUpdateEvent());
+        assertEquals(DeathRegistrationEvent.class, actual.events().deathRegistrationEvent().getClass());
+        var event = (DeathRegistrationEvent) actual.events().deathRegistrationEvent();
 
-        assertEquals(eventTime, actual.events().deathRegistrationEvent().deathRegistrationTime().value());
+        assertEquals(eventTime, event.deathRegistrationTime().value());
         assertEquals(eventTime.toEpochSecond(ZoneOffset.UTC), actual.toe());
     }
 
@@ -48,11 +47,11 @@ class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        assertNull(actual.events().deathRegistrationEvent());
-        assertNotNull(actual.events().deathRegistrationUpdateEvent());
+        assertEquals(DeathRegistrationUpdateEvent.class, actual.events().deathRegistrationEvent().getClass());
+        var event = (DeathRegistrationUpdateEvent) actual.events().deathRegistrationEvent();
 
-        assertEquals(eventTime, actual.events().deathRegistrationUpdateEvent().recordUpdateTime().value());
-        assertEquals(DeathRegistrationUpdateReasonType.CANCELLATION_REMOVED, actual.events().deathRegistrationUpdateEvent().deathRegistrationUpdateReason());
+        assertEquals(eventTime, event.recordUpdateTime().value());
+        assertEquals(DeathRegistrationUpdateReasonType.CANCELLATION_REMOVED, event.deathRegistrationUpdateReason());
         assertEquals(eventTime.toEpochSecond(ZoneOffset.UTC), actual.toe());
     }
 
@@ -310,7 +309,7 @@ class DeathNotificationSetMapperTest {
 
         var actual = DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, List.of(EnrichmentField.EVENT_TIME));
 
-        assertNull(actual.events().deathRegistrationUpdateEvent());
+        assertEquals(DeathRegistrationEvent.class, actual.events().deathRegistrationEvent().getClass());
     }
 
     @Test
@@ -323,14 +322,14 @@ class DeathNotificationSetMapperTest {
 
         var actual = DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, List.of(EnrichmentField.EVENT_TIME));
 
-        assertNull(actual.events().deathRegistrationEvent());
+        assertEquals(DeathRegistrationUpdateEvent.class, actual.events().deathRegistrationEvent().getClass());
     }
 
     @Test
     void minimiseDeathNotificationThrowsIfNoEvent() {
         var originalSet = new DeathNotificationSet(
             null,
-            new DeathRegistrationEventMapping(null, null),
+            new DeathRegistrationEventMapping(null),
             null,
             null,
             null,
@@ -347,6 +346,6 @@ class DeathNotificationSetMapperTest {
             () -> DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, enrichmentFields)
         );
 
-        assertEquals("Both event types cannot be null", exception.getMessage());
+        assertEquals("Event must be of type DeathRegistrationEvent or DeathRegistrationUpdateEvent", exception.getMessage());
     }
 }

@@ -17,6 +17,7 @@ import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class GenerateGroXml
 
     private final FieldOptions options = new FieldOptions();
     private final XmlMapper xmlMapper;
-    private final Random randomiser = new Random();
+    private final SecureRandom randomiser = new SecureRandom();
 
     public GenerateGroXml() {
         this(
@@ -79,9 +80,9 @@ public class GenerateGroXml
 
     private GroJsonRecord createDeathRecord() {
         var genericDateTime = getRandomLocalDateTime();
-        var fullDeathDate = Math.random() > 0.2;
-        var fullBirthDate = Math.random() > 0.3;
-        var aliasName = Math.random() > 0.1;
+        var fullDeathDate = randomiser.nextInt(10) > 2;
+        var fullBirthDate = randomiser.nextInt(10) > 3;
+        var aliasName = randomiser.nextInt(10) > 1;
 
         return new GroJsonRecord(
             randomiser.nextInt(10000000, 99999999),
@@ -114,7 +115,7 @@ public class GenerateGroXml
 
     private LocalDateTime getRandomLocalDateTime() {
         return LocalDateTime.ofInstant(
-            Instant.ofEpochSecond((long) (Math.random() * 1692614010)), TimeZone.getDefault().toZoneId()
+            Instant.ofEpochSecond(randomiser.nextLong(1692614010)), TimeZone.getDefault().toZoneId()
         );
     }
 
@@ -123,6 +124,6 @@ public class GenerateGroXml
     }
 
     private <T> T getRandomElementOrNull(List<T> options) {
-        return Math.random() > 0.5 ? getRandomElement(options) : null;
+        return randomiser.nextInt(10) > 5 ? getRandomElement(options) : null;
     }
 }

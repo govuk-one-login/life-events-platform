@@ -6,5 +6,5 @@ public record DeathRegistrationEvent(
     String freeFormatDeathDate,
     StructuredDateTime deathRegistrationTime,
     DeathRegistrationSubject subject
-) {
+) implements DeathRegistrationBaseEvent {
 }

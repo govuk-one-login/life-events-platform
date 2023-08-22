@@ -786,6 +786,8 @@ Resources:
       FunctionName: !Sub gro-generate-xml-${Environment}${Developer}
       CodeUri: lambdas/gro-generate-xml
       Handler: uk.gov.di.data.lep.GroGenerateXml::handleRequest
+      Layers:
+        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-generate-xml

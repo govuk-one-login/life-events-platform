@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.IntStream;
 
-public class GenerateGroXml
+public class GroGenerateXml
     extends LambdaHandler<GroJsonRecord> {
     private final SecureRandom randomiser = new SecureRandom();
     private final XmlMapper xmlMapper;
 
-    public GenerateGroXml() {
+    public GroGenerateXml() {
         this(
             new AwsService(),
             new Config(),
@@ -39,7 +39,7 @@ public class GenerateGroXml
         );
     }
 
-    public GenerateGroXml(AwsService awsService, Config config, ObjectMapper objectMapper, XmlMapper xmlMapper) {
+    public GroGenerateXml(AwsService awsService, Config config, ObjectMapper objectMapper, XmlMapper xmlMapper) {
         super(awsService, config, objectMapper);
         this.xmlMapper = xmlMapper;
     }

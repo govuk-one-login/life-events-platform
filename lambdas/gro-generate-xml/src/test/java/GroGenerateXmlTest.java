@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import uk.gov.di.data.lep.GenerateGroXml;
+import uk.gov.di.data.lep.GroGenerateXml;
 import uk.gov.di.data.lep.dto.InsertDeathXmlRequest;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.DeathRegistrationGroup;
@@ -30,13 +30,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class GenerateGroXmlTest {
+class GroGenerateXmlTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final XmlMapper xmlMapper = mock(XmlMapper.class);
     private static final Context context = mock(Context.class);
-    private static final GenerateGroXml underTest = new GenerateGroXml(
+    private static final GroGenerateXml underTest = new GroGenerateXml(
         awsService,
         config,
         objectMapper,
@@ -62,7 +62,7 @@ class GenerateGroXmlTest {
         try (var awsService = mockConstruction(AwsService.class);
              var config = mockConstruction(Config.class)) {
             var mapper = mockStatic(Mapper.class);
-            new GenerateGroXml();
+            new GroGenerateXml();
             assertEquals(1, awsService.constructed().size());
             assertEquals(1, config.constructed().size());
             mapper.verify(Mapper::objectMapper, times(1));

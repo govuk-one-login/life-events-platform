@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class PullFileTest {
+class GroPullFileTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
-    private static final PullFile underTest = new PullFile(awsService, config);
+    private static final GroPullFile underTest = new GroPullFile(awsService, config);
 
     private static final String ingestionBucket = "GroIngestionBucket";
     private static final String hostname = "hostname";
@@ -57,7 +57,7 @@ class PullFileTest {
     void constructionCallsCorrectInstantiation() {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
-        new PullFile();
+        new GroPullFile();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
     }

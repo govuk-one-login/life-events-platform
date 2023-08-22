@@ -23,12 +23,12 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-class GroDeathValidationTest {
+class DeathValidationTest {
     private static final Config config = mock(Config.class);
     private static final Context context = mock(Context.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final AwsService awsService = mock(AwsService.class);
-    private static final GroDeathValidation underTest = new GroDeathValidation(awsService, config, objectMapper);
+    private static final DeathValidation underTest = new DeathValidation(awsService, config, objectMapper);
 
     private final GroJsonRecord record = new GroJsonRecordBuilder().build();
 
@@ -44,7 +44,7 @@ class GroDeathValidationTest {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
         var mapper = mockStatic(Mapper.class);
-        new GroDeathValidation();
+        new DeathValidation();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
         mapper.verify(Mapper::objectMapper, times(1));

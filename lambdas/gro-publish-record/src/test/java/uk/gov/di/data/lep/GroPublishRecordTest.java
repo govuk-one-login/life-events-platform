@@ -37,12 +37,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class PublishRecordTest {
+class GroPublishRecordTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final HttpClient httpClient = mock(HttpClient.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private static final PublishRecord underTest = new PublishRecord(awsService, config, httpClient, objectMapper);
+    private static final GroPublishRecord underTest = new GroPublishRecord(awsService, config, httpClient, objectMapper);
     private static final Context context = mock(Context.class);
     private static final GroJsonRecord event = new GroJsonRecordBuilder().build();
     private static final String eventAsString = "EventInStringRepresentation";
@@ -84,7 +84,7 @@ class PublishRecordTest {
         var config = mockConstruction(Config.class);
         var httpClient = mockStatic(HttpClient.class);
         var mapper = mockStatic(Mapper.class);
-        new PublishRecord();
+        new GroPublishRecord();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
         httpClient.verify(HttpClient::newHttpClient, times(1));

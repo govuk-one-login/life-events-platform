@@ -1,7 +1,6 @@
 package uk.gov.di.data.lep.library.services;
 
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;

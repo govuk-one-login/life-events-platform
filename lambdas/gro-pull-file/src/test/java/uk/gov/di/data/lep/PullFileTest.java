@@ -13,7 +13,6 @@ import uk.gov.di.data.lep.exceptions.GroSftpException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.services.AwsService;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;

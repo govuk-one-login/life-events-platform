@@ -42,6 +42,9 @@ jobs:
       - name: Fix formatting of all Kotlin files
         run: ./gradlew clean platform:formatKotlin
 
+      - name: Fix formatting of java files
+        run: ./gradlew spotlessApply
+
       - name: Fix formatting of all Terraform files
         run: terraform fmt -recursive
 
@@ -54,4 +57,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "GPC-NONE: Automatically lint files"
-          file_pattern: '*.kt *.ts *.tf platform/gradle.lockfile'
+          file_pattern: '*.kt *.ts *.tf platform/gradle.lockfile *.java'

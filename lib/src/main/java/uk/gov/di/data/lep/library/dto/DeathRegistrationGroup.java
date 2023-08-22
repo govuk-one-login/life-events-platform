@@ -8,8 +8,8 @@ import java.util.List;
 public record DeathRegistrationGroup(
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("DeathRegistration")
-     List<GroJsonRecord> deathRegistrations,
+    List<GroJsonRecord> deathRegistrations,
     @JsonProperty("RecordCount")
-     int recordCount
-){
+    int recordCount
+) {
 }

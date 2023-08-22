@@ -35,10 +35,10 @@ public class FieldOptions {
     public final List<List<GroPersonNameStructure>> aliasName = List.of(
         List.of(
             new GroPersonNameStructure("Ms", List.of("CLARISSA"), "DE BASTIANI", null, null)
-            ),
+        ),
         List.of(
             new GroPersonNameStructure("Mx", List.of("SAM"), "WILLS", null, null)
-            ),
+        ),
         List.of(
             new GroPersonNameStructure("Mrs", List.of("CHRISTINA"), "CHETWORTH", null, null),
             new GroPersonNameStructure("Mr", List.of("CHRIS"), "CHETWORTH", null, null)
@@ -72,12 +72,12 @@ public class FieldOptions {
         new PersonBirthDateStructure(null, null)
     );
     public final List<PartialDateStructure> partialDateOfBirth = List.of(
-        new PartialDateStructure(4,1987,"Free format birth date", null),
-        new PartialDateStructure(3,1965,"", null),
-        new PartialDateStructure(6,2007,null, null),
-        new PartialDateStructure(9,2021,null, null),
-        new PartialDateStructure(12,2019,"freeformatbirthdate", null)
-        );
+        new PartialDateStructure(4, 1987, "Free format birth date", null),
+        new PartialDateStructure(3, 1965, "", null),
+        new PartialDateStructure(6, 2007, null, null),
+        new PartialDateStructure(9, 2021, null, null),
+        new PartialDateStructure(12, 2019, "freeformatbirthdate", null)
+    );
     public final List<PersonDeathDateStructure> dateOfDeath = List.of(
         new PersonDeathDateStructure(LocalDate.parse("2009-01-11"), null),
         new PersonDeathDateStructure(LocalDate.parse("2000-08-28"), GroVerificationLevel.LEVEL_1),

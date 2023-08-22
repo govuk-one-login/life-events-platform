@@ -79,7 +79,6 @@ public class GenerateGroXml
 
     private GroJsonRecord createDeathRecord() {
         var genericDateTime = getRandomLocalDateTime();
-
         var fullDeathDate = Math.random() > 0.2;
         var fullBirthDate = Math.random() > 0.3;
         var aliasName = Math.random() > 0.1;

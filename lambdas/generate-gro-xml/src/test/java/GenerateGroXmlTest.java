@@ -42,18 +42,19 @@ class GenerateGroXmlTest {
         objectMapper,
         xmlMapper
     );
+    private static final String bucketName = "groIngestionBucketName";
 
     @BeforeAll
     static void setup() {
         doNothing().when(awsService).putInBucket(any(), any(), any());
-        when(config.getGroIngestionBucketName()).thenReturn("groIngestionBucketName");
+        when(config.getGroIngestionBucketName()).thenReturn(bucketName);
     }
 
     @BeforeEach
     void refreshSetup() {
         clearInvocations(awsService);
-        reset(xmlMapper);
         clearInvocations(config);
+        reset(xmlMapper);
     }
 
     @Test
@@ -82,7 +83,7 @@ class GenerateGroXmlTest {
             var group = (DeathRegistrationGroup) a;
             return group.deathRegistrations().size() == numberOfRecords;
         }));
-        verify(awsService).putInBucket(eq("groIngestionBucketName"), any(), eq("XmlFile"));
+        verify(awsService).putInBucket(eq(bucketName), any(), eq("XmlFile"));
     }
 
     @Test
@@ -96,7 +97,7 @@ class GenerateGroXmlTest {
             var group = (DeathRegistrationGroup) a;
             return group.deathRegistrations().size() == 25;
         }));
-        verify(awsService).putInBucket(eq("groIngestionBucketName"), any(), eq("XmlFile"));
+        verify(awsService).putInBucket(eq(bucketName), any(), eq("XmlFile"));
     }
 
     @Test

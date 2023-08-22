@@ -22,18 +22,18 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class PublishRecord {
+public class GroPublishRecord {
     private final AwsService awsService;
     private final Config config;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     protected static Logger logger = LogManager.getLogger();
 
-    public PublishRecord() {
+    public GroPublishRecord() {
         this(new AwsService(), new Config(), HttpClient.newHttpClient(), Mapper.objectMapper());
     }
 
-    public PublishRecord(AwsService awsService, Config config, HttpClient httpClient, ObjectMapper objectMapper) {
+    public GroPublishRecord(AwsService awsService, Config config, HttpClient httpClient, ObjectMapper objectMapper) {
         this.awsService = awsService;
         this.config = config;
         this.httpClient = httpClient;

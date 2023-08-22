@@ -18,17 +18,17 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import java.io.IOException;
 import java.util.EnumSet;
 
-public class PullFile implements RequestHandler<Object, GroFileLocations> {
+public class GroPullFile implements RequestHandler<Object, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
     private final AwsService awsService;
     private final Config config;
     private final String groFileName;
 
-    public PullFile() {
+    public GroPullFile() {
         this(new AwsService(), new Config());
     }
 
-    public PullFile(AwsService awsService, Config config) {
+    public GroPullFile(AwsService awsService, Config config) {
         this.awsService = awsService;
         this.config = config;
 

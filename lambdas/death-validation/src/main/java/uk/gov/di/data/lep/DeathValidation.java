@@ -14,14 +14,14 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 
-public class GroDeathValidation
+public class DeathValidation
     extends LambdaHandler<GroJsonRecord>
     implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
-    public GroDeathValidation() {
+    public DeathValidation() {
     }
 
-    public GroDeathValidation(AwsService awsService, Config config, ObjectMapper objectMapper) {
+    public DeathValidation(AwsService awsService, Config config, ObjectMapper objectMapper) {
         super(awsService, config, objectMapper);
     }
 

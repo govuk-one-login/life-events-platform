@@ -22,16 +22,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 import java.util.TimeZone;
 import java.util.stream.IntStream;
 
 public class GenerateGroXml
     extends LambdaHandler<GroJsonRecord> {
-
-    private final FieldOptions options = new FieldOptions();
-    private final XmlMapper xmlMapper;
     private final SecureRandom randomiser = new SecureRandom();
+    private final XmlMapper xmlMapper;
 
     public GenerateGroXml() {
         this(
@@ -91,25 +88,25 @@ public class GenerateGroXml
             genericDateTime,
             null,
             new GroPersonNameStructure(
-                getRandomElement(options.title),
-                getRandomElement(options.forename),
-                getRandomElement(options.surname),
+                getRandomElement(FieldOptions.TITLE),
+                getRandomElement(FieldOptions.FORENAME),
+                getRandomElement(FieldOptions.SURNAME),
                 "",
                 ""),
-            aliasName ? getRandomElement(options.aliasName) : null,
-            aliasName ? getRandomElement(options.aliasNameType) : null,
-            getRandomElementOrNull(options.maidenName),
-            getRandomElement(options.gender),
-            fullDeathDate ? getRandomElement(options.dateOfDeath) : null,
-            !fullDeathDate ? getRandomElement(options.partialDateOfDeath).partialMonth() : null,
-            !fullDeathDate ? getRandomElement(options.partialDateOfDeath).partialYear() : null,
-            !fullDeathDate ? getRandomElement(options.partialDateOfDeath).freeFormatDescription() : null,
-            !fullDeathDate ? getRandomElement(options.partialDateOfDeath).qualifierText() : null,
-            fullBirthDate ? getRandomElement(options.dateOfBirth) : null,
-            !fullBirthDate ? getRandomElement(options.partialDateOfBirth).partialMonth() : null,
-            !fullBirthDate ? getRandomElement(options.partialDateOfBirth).partialYear() : null,
-            !fullBirthDate ? getRandomElement(options.partialDateOfBirth).freeFormatDescription() : null,
-            getRandomElement(options.address)
+            aliasName ? getRandomElement(FieldOptions.ALIAS_NAME) : null,
+            aliasName ? getRandomElement(FieldOptions.ALIAS_NAME_TYPE) : null,
+            getRandomElementOrNull(FieldOptions.MAIDEN_NAME),
+            getRandomElement(FieldOptions.GENDER),
+            fullDeathDate ? getRandomElement(FieldOptions.DATE_OF_DEATH) : null,
+            !fullDeathDate ? getRandomElement(FieldOptions.PARTIAL_DATE_OF_DEATH).partialMonth() : null,
+            !fullDeathDate ? getRandomElement(FieldOptions.PARTIAL_DATE_OF_DEATH).partialYear() : null,
+            !fullDeathDate ? getRandomElement(FieldOptions.PARTIAL_DATE_OF_DEATH).freeFormatDescription() : null,
+            !fullDeathDate ? getRandomElement(FieldOptions.PARTIAL_DATE_OF_DEATH).qualifierText() : null,
+            fullBirthDate ? getRandomElement(FieldOptions.DATE_OF_BIRTH) : null,
+            !fullBirthDate ? getRandomElement(FieldOptions.PARTIAL_DATE_OF_BIRTH).partialMonth() : null,
+            !fullBirthDate ? getRandomElement(FieldOptions.PARTIAL_DATE_OF_BIRTH).partialYear() : null,
+            !fullBirthDate ? getRandomElement(FieldOptions.PARTIAL_DATE_OF_BIRTH).freeFormatDescription() : null,
+            getRandomElement(FieldOptions.ADDRESS)
         );
     }
 

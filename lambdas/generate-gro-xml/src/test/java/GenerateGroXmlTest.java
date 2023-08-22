@@ -103,10 +103,11 @@ class GenerateGroXmlTest {
     @Test
     void failingToWriteAsXmlThrowsError() throws JsonProcessingException {
         var event = new InsertDeathXmlRequest("Test", 10);
-        when(xmlMapper.writeValueAsString(any())).thenThrow(mock(MappingException.class));
+        var mappingException = mock(JsonProcessingException.class);
+        when(xmlMapper.writeValueAsString(any())).thenThrow(mappingException);
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
 
-        assert (exception.toString().startsWith("Mock for MappingException"));
+        assertEquals(mappingException, exception.getCause());
     }
 }

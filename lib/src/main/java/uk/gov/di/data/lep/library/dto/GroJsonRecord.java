@@ -1,7 +1,9 @@
 package uk.gov.di.data.lep.library.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import uk.gov.di.data.lep.library.config.Constants;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
@@ -9,50 +11,51 @@ import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonInclude(Include.NON_EMPTY)
 public record GroJsonRecord(
-    @JsonAlias("RegistrationID")
+    @JsonProperty("RegistrationID")
     Integer registrationID,
-    @JsonAlias("RegistrationType")
+    @JsonProperty("RegistrationType")
     Integer registrationType,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN)
-    @JsonAlias("RecordLockedDateTime")
+    @JsonProperty("RecordLockedDateTime")
     LocalDateTime recordLockedDateTime,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN)
-    @JsonAlias("RecordUpdateDateTime")
+    @JsonProperty("RecordUpdateDateTime")
     LocalDateTime recordUpdateDateTime,
-    @JsonAlias("RecordUpdateReason")
+    @JsonProperty("RecordUpdateReason")
     Integer recordUpdateReason,
-    @JsonAlias("DeceasedName")
+    @JsonProperty("DeceasedName")
     GroPersonNameStructure deceasedName,
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JsonAlias("DeceasedAliasName")
+    @JsonProperty("DeceasedAliasName")
     List<GroPersonNameStructure> deceasedAliasNames,
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JsonAlias("DeceasedAliasNameType")
+    @JsonProperty("DeceasedAliasNameType")
     List<String> deceasedAliasNameTypes,
-    @JsonAlias("DeceasedMaidenName")
+    @JsonProperty("DeceasedMaidenName")
     String deceasedMaidenName,
-    @JsonAlias("DeceasedGender")
+    @JsonProperty("DeceasedGender")
     GenderAtRegistration deceasedGender,
-    @JsonAlias("DeceasedDeathDate")
+    @JsonProperty("DeceasedDeathDate")
     PersonDeathDateStructure deceasedDeathDate,
-    @JsonAlias("PartialMonthOfDeath")
+    @JsonProperty("PartialMonthOfDeath")
     Integer partialMonthOfDeath,
-    @JsonAlias("PartialYearOfDeath")
+    @JsonProperty("PartialYearOfDeath")
     Integer partialYearOfDeath,
-    @JsonAlias("QualifierText")
+    @JsonProperty("QualifierText")
     String qualifierText,
-    @JsonAlias("FreeFormatDeathDate")
+    @JsonProperty("FreeFormatDeathDate")
     String freeFormatDeathDate,
-    @JsonAlias("DeceasedBirthDate")
+    @JsonProperty("DeceasedBirthDate")
     PersonBirthDateStructure deceasedBirthDate,
-    @JsonAlias("PartialMonthOfBirth")
+    @JsonProperty("PartialMonthOfBirth")
     Integer partialMonthOfBirth,
-    @JsonAlias("PartialYearOfBirth")
+    @JsonProperty("PartialYearOfBirth")
     Integer partialYearOfBirth,
-    @JsonAlias("FreeFormatBirthDate")
+    @JsonProperty("FreeFormatBirthDate")
     String freeFormatBirthDate,
-    @JsonAlias("DeceasedAddress")
+    @JsonProperty("DeceasedAddress")
     GroAddressStructure deceasedAddress
 ) {
 }

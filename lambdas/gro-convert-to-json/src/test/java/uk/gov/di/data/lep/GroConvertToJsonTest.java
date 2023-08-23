@@ -34,75 +34,75 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ConvertToJsonTest {
+class GroConvertToJsonTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final GroConvertToJson underTest = new GroConvertToJson(
-        awsService,
-        config,
-        Mapper.objectMapper(),
-        Mapper.xmlMapper()
+            awsService,
+            config,
+            Mapper.objectMapper(),
+            Mapper.xmlMapper()
     );
     private static final Context context = mock(Context.class);
     private static final S3ObjectCreatedNotificationEvent event = new S3ObjectCreatedNotificationEvent(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        List.of(),
-        new S3ObjectCreatedNotificationEventDetail(
-            "",
-            new S3ObjectCreatedNotificationEventBucket(
-                "XMLBucketName"
-            ),
-            new S3ObjectCreatedNotificationEventObject(
-                "File.xml",
-                0,
-                "",
-                ""
-            ),
             "",
             "",
             "",
-            ""
-        )
+            "",
+            "",
+            "",
+            "",
+            List.of(),
+            new S3ObjectCreatedNotificationEventDetail(
+                    "",
+                    new S3ObjectCreatedNotificationEventBucket(
+                            "XMLBucketName"
+                    ),
+                    new S3ObjectCreatedNotificationEventObject(
+                            "File.xml",
+                            0,
+                            "",
+                            ""
+                    ),
+                    "",
+                    "",
+                    "",
+                    ""
+            )
     );
     private static final String mockS3objectResponseOneRecord =
-        "<DeathRegistrationGroup>" +
-            "<DeathRegistration>" +
-            "<RegistrationID>1</RegistrationID>" +
-            "<DeceasedName>" +
-            "<PersonGivenName>ERICA</PersonGivenName>" +
-            "<PersonGivenName>CHRISTINA</PersonGivenName>" +
-            "</DeceasedName>" +
-            "<DeceasedGender>2</DeceasedGender>" +
-            "</DeathRegistration>" +
-            "</DeathRegistrationGroup>";
+            "<DeathRegistrationGroup>" +
+                    "<DeathRegistration>" +
+                    "<RegistrationID>1</RegistrationID>" +
+                    "<DeceasedName>" +
+                    "<PersonGivenName>ERICA</PersonGivenName>" +
+                    "<PersonGivenName>CHRISTINA</PersonGivenName>" +
+                    "</DeceasedName>" +
+                    "<DeceasedGender>2</DeceasedGender>" +
+                    "</DeathRegistration>" +
+                    "</DeathRegistrationGroup>";
     private static final String mockS3objectResponseMultipleRecords =
-        "<DeathRegistrationGroup>" +
-            "<DeathRegistration>" +
-            "<RegistrationID>1</RegistrationID>" +
-            "<DeceasedName>" +
-            "<PersonGivenName>ERICA</PersonGivenName>" +
-            "<PersonGivenName>CHRISTINA</PersonGivenName>" +
-            "</DeceasedName>" +
-            "<DeceasedGender>2</DeceasedGender>" +
-            "</DeathRegistration>" +
-            "<DeathRegistration>" +
-            "<RegistrationID>2</RegistrationID>" +
-            "<DeceasedName>" +
-            "<PersonGivenName>BOB</PersonGivenName>" +
-            "</DeceasedName>" +
-            "<DeceasedGender>1</DeceasedGender>" +
-            "<DeceasedBirthDate>" +
-            "<PersonBirthDate>1958-06-06</PersonBirthDate>" +
-            "<VerificationLevel>02</VerificationLevel>" +
-            "</DeceasedBirthDate>" +
-            "</DeathRegistration>" +
-            "</DeathRegistrationGroup>";
+            "<DeathRegistrationGroup>" +
+                    "<DeathRegistration>" +
+                    "<RegistrationID>1</RegistrationID>" +
+                    "<DeceasedName>" +
+                    "<PersonGivenName>ERICA</PersonGivenName>" +
+                    "<PersonGivenName>CHRISTINA</PersonGivenName>" +
+                    "</DeceasedName>" +
+                    "<DeceasedGender>2</DeceasedGender>" +
+                    "</DeathRegistration>" +
+                    "<DeathRegistration>" +
+                    "<RegistrationID>2</RegistrationID>" +
+                    "<DeceasedName>" +
+                    "<PersonGivenName>BOB</PersonGivenName>" +
+                    "</DeceasedName>" +
+                    "<DeceasedGender>1</DeceasedGender>" +
+                    "<DeceasedBirthDate>" +
+                    "<PersonBirthDate>1958-06-06</PersonBirthDate>" +
+                    "<VerificationLevel>02</VerificationLevel>" +
+                    "</DeceasedBirthDate>" +
+                    "</DeathRegistration>" +
+                    "</DeathRegistrationGroup>";
 
     @BeforeAll
     static void setup() {
@@ -116,15 +116,16 @@ class ConvertToJsonTest {
 
     @Test
     void constructionCallsCorrectInstantiation() {
-        var awsService = mockConstruction(AwsService.class);
-        var config = mockConstruction(Config.class);
-        var mapper = mockStatic(Mapper.class);
-        new GroConvertToJson();
-        assertEquals(1, awsService.constructed().size());
-        assertEquals(1, config.constructed().size());
-        mapper.verify(Mapper::objectMapper, times(1));
-        mapper.verify(Mapper::xmlMapper, times(1));
-        mapper.close();
+        try (var awsService = mockConstruction(AwsService.class);
+             var config = mockConstruction(Config.class)) {
+            var mapper = mockStatic(Mapper.class);
+            new GroConvertToJson();
+            assertEquals(1, awsService.constructed().size());
+            assertEquals(1, config.constructed().size());
+            mapper.verify(Mapper::objectMapper, times(1));
+            mapper.verify(Mapper::xmlMapper, times(1));
+            mapper.close();
+        }
     }
 
     @Test
@@ -146,17 +147,17 @@ class ConvertToJsonTest {
         underTest.handleRequest(event, context);
 
         verify(awsService).putInBucket(
-            eq("JsonBucketName"),
-            anyString(),
-            matches(
-                "\"registrationID\":1.*" +
-                    "\"personGivenNames\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
-                    "\"deceasedGender\":2.*" +
-                    "\"registrationID\":2.*" +
-                    "\"personGivenNames\":\\[\"BOB\"\\].*" +
-                    "\"deceasedGender\":1.*" +
-                    "\"deceasedBirthDate\":\\{\"personBirthDate\":\"1958-06-06\",\"verificationLevel\":\"02\"\\}"
-            )
+                eq("JsonBucketName"),
+                anyString(),
+                matches(
+                        "\"RegistrationID\":1.*" +
+                                "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                                "\"DeceasedGender\":2.*" +
+                                "\"RegistrationID\":2.*" +
+                                "\"PersonGivenName\":\\[\"BOB\"\\].*" +
+                                "\"DeceasedGender\":1.*" +
+                                "\"DeceasedBirthDate\":\\{\"PersonBirthDate\":\"1958-06-06\",\"VerificationLevel\":\"02\"\\}"
+                )
         );
     }
 
@@ -167,11 +168,11 @@ class ConvertToJsonTest {
         underTest.handleRequest(event, context);
 
         verify(awsService).putInBucket(
-            eq("JsonBucketName"),
-            anyString(),
-            matches("\"registrationID\":1.*" +
-                "\"personGivenNames\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
-                "\"deceasedGender\":2")
+                eq("JsonBucketName"),
+                anyString(),
+                matches("\"RegistrationID\":1.*" +
+                        "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                        "\"DeceasedGender\":2")
         );
     }
 

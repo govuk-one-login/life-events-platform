@@ -318,16 +318,6 @@ Resources:
     Properties:
       KmsMasterKeyId: !Ref MainKmsKey
 
-  LibLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      ContentUri: lib
-      CompatibleRuntimes:
-        - java17
-      LayerName: !Sub lib-layer-${Environment}${Developer}
-    Metadata:
-      BuildMethod: java17
-
   DeathValidationFunction:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -339,13 +329,12 @@ Resources:
       FunctionName: !Sub death-validation-${Environment}${Developer}
       CodeUri: lambdas/death-validation
       Handler: uk.gov.di.data.lep.DeathValidation::handleRequest
-      Layers:
-        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-validation
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Events:
         DeathApiEvent:
           Type: Api
@@ -395,13 +384,12 @@ Resources:
       FunctionName: !Sub death-enrichment-${Environment}${Developer}
       CodeUri: lambdas/death-enrichment
       Handler: uk.gov.di.data.lep.DeathEnrichment::handleRequest
-      Layers:
-        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-enrichment
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Events:
         DeathValidatedEvent:
           Type: SQS
@@ -448,14 +436,13 @@ Resources:
       FunctionName: !Sub death-minimisation-${Environment}${Developer}
       CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.DeathMinimisation::handleRequest
-      Layers:
-        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Events:
         DeathEnrichedEvent:
           Type: SQS
@@ -739,13 +726,12 @@ Resources:
       FunctionName: !Sub gro-convert-to-json-${Environment}${Developer}
       CodeUri: lambdas/gro-convert-to-json
       Handler: uk.gov.di.data.lep.GroConvertToJson::handleRequest
-      Layers:
-        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-convert-to-json
           GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Policies:
         - S3ReadPolicy:
             BucketName: !Ref GroIngestionBucket
@@ -786,13 +772,12 @@ Resources:
       FunctionName: !Sub gro-generate-xml-${Environment}${Developer}
       CodeUri: lambdas/gro-generate-xml
       Handler: uk.gov.di.data.lep.GroGenerateXml::handleRequest
-      Layers:
-        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-generate-xml
           GRO_INGESTION_BUCKET_NAME: !Ref GroIngestionBucket
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Policies:
         - S3WritePolicy:
             BucketName: !Ref GroIngestionBucket
@@ -831,8 +816,6 @@ Resources:
       FunctionName: !Sub gro-publish-record-${Environment}${Developer}
       CodeUri: lambdas/gro-publish-record
       Handler: uk.gov.di.data.lep.GroPublishRecord::handleRequest
-      Layers:
-        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-publish-record
@@ -844,6 +827,7 @@ Resources:
           COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
           USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Policies:
         - Statement:
           - Sid: DeathNotificationCognitoAccess
@@ -887,8 +871,6 @@ Resources:
       FunctionName: !Sub gro-pull-file-${Environment}${Developer}
       CodeUri: lambdas/gro-pull-file
       Handler: uk.gov.di.data.lep.GroPullFile::handleRequest
-      Layers:
-        - Ref: LibLayer
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-pull-file
@@ -908,6 +890,7 @@ Resources:
 #              - !Ref PermissionsBoundary
 #              - !Ref AWS::NoValue
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref GroSftpPrivateKeySecret

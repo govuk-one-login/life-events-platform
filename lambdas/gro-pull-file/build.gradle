@@ -14,18 +14,15 @@ repositories {
 
 dependencies {
     implementation "com.hierynomus:sshj:$dependencyVersions.sshj",
-                   "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt"
-
-    compileOnly "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
-                project(":lib")
+            "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
+            "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+            project(":lib")
 
     aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
-           "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
+            "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
 
-    testImplementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
-                       "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
-                       "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
-                       project(":lib")
+    testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
+            "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter"
 }
 
 java {

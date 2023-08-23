@@ -3,7 +3,6 @@ version = 0.1
 [default]
 
 [default.build.parameters]
-cached = true
 parallel = true
 
 [default.validate.parameters]

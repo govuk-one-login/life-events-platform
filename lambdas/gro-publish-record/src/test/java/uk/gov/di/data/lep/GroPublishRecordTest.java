@@ -1,6 +1,5 @@
 package uk.gov.di.data.lep;
 
-import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,6 +16,7 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -43,8 +43,8 @@ class GroPublishRecordTest {
     private static final HttpClient httpClient = mock(HttpClient.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final GroPublishRecord underTest = new GroPublishRecord(awsService, config, httpClient, objectMapper);
-    private static final Context context = mock(Context.class);
     private static final GroJsonRecord event = new GroJsonRecordBuilder().build();
+    private static final InputStream eventAsInputStream = mock(InputStream.class);
     private static final String eventAsString = "EventInStringRepresentation";
     private static final String cognitoClientId = "cognitoClientId";
     private static final String cognitoClientSecret = "cognitoClientSecret";
@@ -80,17 +80,18 @@ class GroPublishRecordTest {
 
     @Test
     void constructionCallsCorrectInstantiation() {
-        var awsService = mockConstruction(AwsService.class);
-        var config = mockConstruction(Config.class);
-        var httpClient = mockStatic(HttpClient.class);
-        var mapper = mockStatic(Mapper.class);
-        new GroPublishRecord();
-        assertEquals(1, awsService.constructed().size());
-        assertEquals(1, config.constructed().size());
-        httpClient.verify(HttpClient::newHttpClient, times(1));
-        mapper.verify(Mapper::objectMapper, times(1));
-        httpClient.close();
-        mapper.close();
+        try (var awsService = mockConstruction(AwsService.class);
+        var config = mockConstruction(Config.class)) {
+            var httpClient = mockStatic(HttpClient.class);
+            var mapper = mockStatic(Mapper.class);
+            new GroPublishRecord();
+            assertEquals(1, awsService.constructed().size());
+            assertEquals(1, config.constructed().size());
+            httpClient.verify(HttpClient::newHttpClient, times(1));
+            mapper.verify(Mapper::objectMapper, times(1));
+            httpClient.close();
+            mapper.close();
+        }
     }
 
     @Test
@@ -103,9 +104,10 @@ class GroPublishRecordTest {
                 "expiresIn",
                 "tokenType"
             ));
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecord.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event)).thenReturn(eventAsString);
 
-        underTest.handleRequest(event, context);
+        underTest.handleRequest(eventAsInputStream, null, null);
 
         verify(httpClient).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
         verify(httpClient).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
@@ -113,10 +115,11 @@ class GroPublishRecordTest {
 
     @Test
     void publishRecordDoesNotSendGroRecordRequestsIfNoAuthorisationToken() throws IOException, InterruptedException {
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecord.class)).thenReturn(event);
         var ioException = new IOException();
         when(httpClient.send(any(), eq(HttpResponse.BodyHandlers.ofString()))).thenThrow(ioException);
 
-        var exception = assertThrows(AuthException.class, () -> underTest.handleRequest(event, context));
+        var exception = assertThrows(AuthException.class, () -> underTest.handleRequest(eventAsInputStream, null, null));
 
         assertEquals("Failed to send authorisation request", exception.getMessage());
         assertEquals(ioException, exception.getCause());
@@ -135,11 +138,12 @@ class GroPublishRecordTest {
                 "expiresIn",
                 "tokenType"
             ));
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecord.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event)).thenReturn(eventAsString);
         var ioException = new IOException();
         when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenThrow(ioException);
 
-        var exception = assertThrows(GroApiCallException.class, () -> underTest.handleRequest(event, context));
+        var exception = assertThrows(GroApiCallException.class, () -> underTest.handleRequest(eventAsInputStream, null, null));
 
         assertEquals("Failed to send GRO record request", exception.getMessage());
         assertEquals(ioException, exception.getCause());
@@ -158,14 +162,28 @@ class GroPublishRecordTest {
                 "expiresIn",
                 "tokenType"
             ));
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecord.class)).thenReturn(event);
         var jsonProcessingException = mock(JsonProcessingException.class);
         when(objectMapper.writeValueAsString(event)).thenThrow(jsonProcessingException);
 
-        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
+        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(eventAsInputStream, null, null));
 
         assertEquals(jsonProcessingException, exception.getCause());
 
         verify(httpClient, times(1)).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
+        verify(httpClient, never()).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Test
+    void publishRecordThrowsMappingExceptionIfInputStreamFailsToMap() throws IOException, InterruptedException {
+        var ioException = mock(IOException.class);
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecord.class)).thenThrow(ioException);
+
+        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(eventAsInputStream, null, null));
+
+        assertEquals(ioException, exception.getCause());
+
+        verify(httpClient, never()).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
         verify(httpClient, never()).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
     }
 }

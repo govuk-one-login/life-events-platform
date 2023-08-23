@@ -13,7 +13,7 @@ import java.util.List;
 
 @JsonInclude(Include.NON_EMPTY)
 public record GroJsonRecord(
-    @JsonProperty("RegistrationID")
+    @JsonProperty("RegistrationID2")
     Integer registrationID,
     @JsonProperty("RegistrationType")
     Integer registrationType,

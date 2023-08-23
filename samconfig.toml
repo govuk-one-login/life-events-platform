@@ -26,7 +26,7 @@ stack_name = "hanleo-lev"
 s3_prefix = "hanleo-lev"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"hanleo\""
 
-[dev-mwillis.deploy.parameters]¦
+[dev-mwillis.deploy.parameters]
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true

@@ -1,6 +1,7 @@
 package uk.gov.di.data.lep.library.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -28,6 +29,16 @@ class MapperTest {
         var objectMapperUnderTest = Mapper.objectMapper();
 
         var result = objectMapperUnderTest.readValue(String.format("{\"gender\":%s}", input), MapperTestObject.class);
+
+        assertEquals(expected, result.gender());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"1:MALE", "2:FEMALE", "9:INDETERMINATE"}, delimiter = ':')
+    void objectMapperSerialisesIntToGenderEnum2(String input, GenderAtRegistration expected) throws JsonProcessingException {
+        var objectMapperUnderTest = Mapper.objectMapper();
+
+        var result = new ObjectMapper().readValue(String.format("{\"gender\":%s}", input), MapperTestObject.class);
 
         assertEquals(expected, result.gender());
     }

@@ -346,6 +346,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: death-validation
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Events:
         DeathApiEvent:
           Type: Api
@@ -402,6 +403,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: death-enrichment
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Events:
         DeathValidatedEvent:
           Type: SQS
@@ -456,6 +458,7 @@ Resources:
           TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Events:
         DeathEnrichedEvent:
           Type: SQS
@@ -746,6 +749,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: gro-convert-to-json
           GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Policies:
         - S3ReadPolicy:
             BucketName: !Ref GroIngestionBucket
@@ -793,6 +797,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: gro-generate-xml
           GRO_INGESTION_BUCKET_NAME: !Ref GroIngestionBucket
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Policies:
         - S3WritePolicy:
             BucketName: !Ref GroIngestionBucket
@@ -844,6 +849,7 @@ Resources:
           COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
           USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Policies:
         - Statement:
           - Sid: DeathNotificationCognitoAccess
@@ -908,6 +914,7 @@ Resources:
 #              - !Ref PermissionsBoundary
 #              - !Ref AWS::NoValue
       AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref GroSftpPrivateKeySecret

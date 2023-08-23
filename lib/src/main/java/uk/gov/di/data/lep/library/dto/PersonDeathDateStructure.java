@@ -1,6 +1,6 @@
 package uk.gov.di.data.lep.library.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import uk.gov.di.data.lep.library.config.Constants;
@@ -10,10 +10,10 @@ import java.time.LocalDate;
 
 public record PersonDeathDateStructure(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_PATTERN)
-    @JsonAlias("PersonDeathDate")
+    @JsonProperty("PersonDeathDate")
     LocalDate personDeathDate,
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonAlias("VerificationLevel")
+    @JsonProperty("VerificationLevel")
     GroVerificationLevel verificationLevel
 ) {
 }

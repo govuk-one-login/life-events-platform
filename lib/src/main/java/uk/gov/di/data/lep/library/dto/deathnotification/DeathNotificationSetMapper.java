@@ -195,7 +195,7 @@ public class DeathNotificationSetMapper {
 
         var names = Stream.of(generateName(groName, null));
 
-        if (groAliasNames != null) {
+        if (groAliasNames != null && !groAliasNames.isEmpty()) {
             var aliasNames = IntStream.range(0, groAliasNames.size())
                 .mapToObj(i -> generateName(
                     groAliasNames.get(i),

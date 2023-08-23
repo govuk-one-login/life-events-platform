@@ -1,19 +1,19 @@
 package uk.gov.di.data.lep.library.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 
 import java.util.List;
 
 public record GroPersonNameStructure(
-    @JsonAlias("PersonNameTitle")
+    @JsonProperty("PersonNameTitle")
     String personNameTitle,
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JsonAlias("PersonGivenName")
+    @JsonProperty("PersonGivenName")
     List<String> personGivenNames,
-    @JsonAlias("PersonFamilyName")
+    @JsonProperty("PersonFamilyName")
     String personFamilyName,
-    @JsonAlias("PersonNameSuffix")
+    @JsonProperty("PersonNameSuffix")
     String personNameSuffix
 ) {
 }

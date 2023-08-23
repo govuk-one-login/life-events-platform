@@ -34,7 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ConvertToJsonTest {
+class GroConvertToJsonTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final GroConvertToJson underTest = new GroConvertToJson(
@@ -149,13 +149,13 @@ class ConvertToJsonTest {
             eq("JsonBucketName"),
             anyString(),
             matches(
-                "\"registrationID\":1.*" +
-                    "\"personGivenNames\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
-                    "\"deceasedGender\":2.*" +
-                    "\"registrationID\":2.*" +
-                    "\"personGivenNames\":\\[\"BOB\"\\].*" +
-                    "\"deceasedGender\":1.*" +
-                    "\"deceasedBirthDate\":\\{\"personBirthDate\":\"1958-06-06\",\"verificationLevel\":\"02\"\\}"
+                "\"RegistrationID\":1.*" +
+                    "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                    "\"DeceasedGender\":2.*" +
+                    "\"RegistrationID\":2.*" +
+                    "\"PersonGivenName\":\\[\"BOB\"\\].*" +
+                    "\"DeceasedGender\":1.*" +
+                    "\"DeceasedBirthDate\":\\{\"PersonBirthDate\":\"1958-06-06\",\"VerificationLevel\":\"02\"\\}"
             )
         );
     }
@@ -169,9 +169,9 @@ class ConvertToJsonTest {
         verify(awsService).putInBucket(
             eq("JsonBucketName"),
             anyString(),
-            matches("\"registrationID\":1.*" +
-                "\"personGivenNames\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
-                "\"deceasedGender\":2")
+            matches("\"RegistrationID\":1.*" +
+                "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                "\"DeceasedGender\":2")
         );
     }
 

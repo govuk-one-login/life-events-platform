@@ -1,6 +1,7 @@
 package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -17,12 +18,14 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class GroPublishRecord {
+public class GroPublishRecord implements RequestStreamHandler {
     private final AwsService awsService;
     private final Config config;
     private final HttpClient httpClient;
@@ -40,17 +43,30 @@ public class GroPublishRecord {
         this.objectMapper = objectMapper;
     }
 
+    @Override
     @Tracing
     @Logging(clearState = true)
-    public void handleRequest(GroJsonRecord event, Context ignoredContext) {
+    public void handleRequest(InputStream input, OutputStream output, Context context) {
+        var event = readInputStream(input);
         logger.info("Received record: {}", event.registrationID());
         var authorisationToken = getAuthorisationToken();
         postRecordToLifeEvents(event, authorisationToken);
     }
 
+    @Tracing
+    private GroJsonRecord readInputStream(InputStream input) {
+        try {
+            return objectMapper.readValue(input, GroJsonRecord.class);
+        } catch (IOException e) {
+            logger.error("Failed to map Input Stream to GRO JSON record");
+            throw new MappingException(e);
+        }
+    }
+
     // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,
     // and we do not need to rethrow the same exception
     @SuppressWarnings("java:S2142")
+    @Tracing
     private String getAuthorisationToken() {
         var clientId = config.getCognitoClientId();
         var clientSecret = awsService.getCognitoClientSecret(config.getUserPoolId(), clientId);
@@ -77,6 +93,7 @@ public class GroPublishRecord {
     // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,
     // and we do not need to rethrow the same exception
     @SuppressWarnings("java:S2142")
+    @Tracing
     private void postRecordToLifeEvents(GroJsonRecord event, String authorisationToken) {
 
         var requestBuilder = HttpRequest.newBuilder()

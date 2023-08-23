@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.stream.IntStream;
 
@@ -47,7 +48,7 @@ public class GroGenerateXml
     @Tracing
     @Logging(clearState = true)
     public void handleRequest(InsertDeathXmlRequest event, Context context) {
-        var numberOfRecords = event.detailType().equals("Scheduled Event") || event.numberOfRecords() == null
+        var numberOfRecords = Objects.equals(event.detailType(), "Scheduled Event") || event.numberOfRecords() == null
             ? 25
             : event.numberOfRecords();
         var fileKey = String.format("fake_gro_d_%s.xml", LocalDate.now());
@@ -77,6 +78,7 @@ public class GroGenerateXml
 
     private GroJsonRecord createDeathRecord() {
         var genericDateTime = getRandomLocalDateTime();
+        var isUpdateRecord = randomiser.nextInt(10) > 5;
         var fullDeathDate = randomiser.nextInt(10) > 2;
         var fullBirthDate = randomiser.nextInt(10) > 3;
         var aliasName = randomiser.nextInt(10) > 1;
@@ -84,9 +86,9 @@ public class GroGenerateXml
         return new GroJsonRecord(
             randomiser.nextInt(10000000, 99999999),
             null,
-            genericDateTime,
-            genericDateTime,
-            null,
+            isUpdateRecord ? null : genericDateTime,
+            isUpdateRecord ? genericDateTime : null,
+            isUpdateRecord ? getRandomElement(FieldOptions.RECORD_UPDATE_REASON) : null,
             new GroPersonNameStructure(
                 getRandomElement(FieldOptions.TITLE),
                 getRandomElement(FieldOptions.FORENAME),

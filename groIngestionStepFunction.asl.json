@@ -1,8 +1,8 @@
 {
   "Comment": "Ingest and delete GRO file",
-  "StartAt": "ConvertToJson",
+  "StartAt": "GroConvertToJson",
   "States": {
-    "ConvertToJson": {
+    "GroConvertToJson": {
       "Type": "Task",
       "Resource": "${GroConvertToJsonFunctionArn}",
       "OutputPath": "$",

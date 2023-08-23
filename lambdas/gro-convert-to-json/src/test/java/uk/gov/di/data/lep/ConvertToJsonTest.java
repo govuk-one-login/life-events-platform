@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 class ConvertToJsonTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
-    private static final ConvertToJson underTest = new ConvertToJson(
+    private static final GroConvertToJson underTest = new GroConvertToJson(
         awsService,
         config,
         Mapper.objectMapper(),
@@ -119,7 +119,7 @@ class ConvertToJsonTest {
         var awsService = mockConstruction(AwsService.class);
         var config = mockConstruction(Config.class);
         var mapper = mockStatic(Mapper.class);
-        new ConvertToJson();
+        new GroConvertToJson();
         assertEquals(1, awsService.constructed().size());
         assertEquals(1, config.constructed().size());
         mapper.verify(Mapper::objectMapper, times(1));
@@ -179,7 +179,7 @@ class ConvertToJsonTest {
     void convertToJsonThrowsMappingException() throws JsonProcessingException {
         var objectMapper = mock(ObjectMapper.class);
         var xmlMapper = mock(XmlMapper.class);
-        var underTest = new ConvertToJson(awsService, config, objectMapper, xmlMapper);
+        var underTest = new GroConvertToJson(awsService, config, objectMapper, xmlMapper);
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseOneRecord);
         when(xmlMapper.readValue(mockS3objectResponseOneRecord, DeathRegistrationGroup.class)).thenThrow(JsonProcessingException.class);
 

@@ -19,18 +19,18 @@ import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.util.UUID;
 
-public class ConvertToJson implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
+public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
     private final AwsService awsService;
     private final Config config;
     private final ObjectMapper objectMapper;
     private final XmlMapper xmlMapper;
 
-    public ConvertToJson() {
+    public GroConvertToJson() {
         this(new AwsService(), new Config(), Mapper.objectMapper(), Mapper.xmlMapper());
     }
 
-    public ConvertToJson(AwsService awsService, Config config, ObjectMapper objectMapper, XmlMapper xmlMapper) {
+    public GroConvertToJson(AwsService awsService, Config config, ObjectMapper objectMapper, XmlMapper xmlMapper) {
         this.awsService = awsService;
         this.config = config;
         this.objectMapper = objectMapper;

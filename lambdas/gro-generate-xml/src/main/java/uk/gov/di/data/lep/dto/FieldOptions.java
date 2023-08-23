@@ -15,6 +15,13 @@ public class FieldOptions {
         throw new IllegalStateException("Utility class");
     }
 
+    public static final List<Integer> RECORD_UPDATE_REASON = List.of(
+        1,
+        2,
+        3,
+        4,
+        5
+    );
     public static final List<String> TITLE = List.of(
         "Mr",
         "Mrs",

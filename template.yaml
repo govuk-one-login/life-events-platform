@@ -186,7 +186,7 @@ Resources:
           FromPort: 443
           ToPort: 443
         - CidrIp: 0.0.0.0/0
-          Description: Allow outbound HTTPS traffic to Internet - Network Firewall will allow only to CRIs
+          Description: Allow outbound HTTPS traffic to Internet - The Network Firewall rules will prevent access to anything other than the allowed rules of our VPC
           FromPort: 443
           IpProtocol: tcp
           ToPort: 443
@@ -474,7 +474,7 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-death-enrichment
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-  DeathDwpKmsKey:
+  DwpDeathKmsKey:
     Type: AWS::KMS::Key
     Properties:
       Description: Key used to encrypt the Death notification delivery queue for DWP
@@ -501,13 +501,13 @@ Resources:
               ArnLike:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
 
-  DeathDwpKmsKeyAlias:
+  DwpDeathKmsKeyAlias:
     Type: AWS::KMS::Alias
     Properties:
-      AliasName: !Sub alias/${Environment}${Developer}/DeathDwpKmsKey
-      TargetKeyId: !Ref DeathDwpKmsKey
+      AliasName: !Sub alias/${Environment}${Developer}/DwpDeathKmsKey
+      TargetKeyId: !Ref DwpDeathKmsKey
 
-  DeathDwpSnsToSqsPolicy:
+  DwpDeathSnsToSqsPolicy:
     Type: AWS::SQS::QueuePolicy
     Properties:
       PolicyDocument:
@@ -523,69 +523,69 @@ Resources:
               ArnEquals:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
-        - !GetAtt DeathDwpMinimisationQueue.QueueUrl
+        - !GetAtt DwpDeathMinimisationQueue.QueueUrl
 
-  DeathDwpDistributionDlq:
+  DwpDeathDistributionDlq:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-death-distribution-dlq-dwp
+      QueueName: !Sub ${Environment}${Developer}-dwp-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
   DeathDwpDistributionTopicSubscription:
     Type: AWS::SNS::Subscription
     Properties:
       Protocol: sqs
-      Endpoint: !GetAtt DeathDwpMinimisationQueue.Arn
+      Endpoint: !GetAtt DwpDeathMinimisationQueue.Arn
       TopicArn: !GetAtt DeathDistributionTopic.TopicArn
       RawMessageDelivery: true
       RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathDwpDistributionDlq.Arn
+        deadLetterTargetArn: !GetAtt DwpDeathDistributionDlq.Arn
 
-  DeathDwpMinimisationQueue:
+  DwpDeathMinimisationQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-death-minimisation-dwp
+      QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathDwpMinimisationDlq.Arn
+        deadLetterTargetArn: !GetAtt DwpDeathMinimisationDlq.Arn
         maxReceiveCount: 5
 
-  DeathDwpMinimisationDlq:
+  DwpDeathMinimisationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-death-minimisation-dlq-dwp
+      QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
-  DeathDwpDeliveryQueue:
+  DwpDeathDeliveryQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-death-delivery-dwp
+      QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathDwpDeliveryDlq.Arn
+        deadLetterTargetArn: !GetAtt DwpDeathDeliveryDlq.Arn
         maxReceiveCount: 5
 
-  DeathDwpDeliveryDlq:
+  DwpDeathDeliveryDlq:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-death-delivery-dlq-dwp
+      QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
-  DeathDwpMinimisationFunction:
+  DwpDeathMinimisationFunction:
     Type: AWS::Serverless::Function
     DependsOn:
-      - DeathDwpMinimisationFunctionLogGroup
+      - DwpDeathMinimisationFunctionLogGroup
     Properties:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub ${Environment}${Developer}-death-minimisation-dwp
+      FunctionName: !Sub ${Environment}${Developer}-dwp-death-minimisation
       CodeUri: lambdas/death-minimisation
       Handler: uk.gov.di.data.lep.DeathMinimisation::handleRequest
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
-          TARGET_QUEUE: !GetAtt DeathDwpDeliveryQueue.QueueUrl
+          TARGET_QUEUE: !GetAtt DwpDeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: FORENAMES, SURNAME
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
@@ -593,11 +593,11 @@ Resources:
         DeathEnrichedEvent:
           Type: SQS
           Properties:
-            Queue: !GetAtt DeathDwpMinimisationQueue.Arn
+            Queue: !GetAtt DwpDeathMinimisationQueue.Arn
             BatchSize: 1
       DeadLetterQueue:
         Type: SQS
-        TargetArn: !GetAtt DeathDwpMinimisationDlq.Arn
+        TargetArn: !GetAtt DwpDeathMinimisationDlq.Arn
       Policies:
         - Statement:
             - Sid: KmsMasterKeyAccess
@@ -608,7 +608,7 @@ Resources:
               Resource:
                 - !GetAtt MainKmsKey.Arn
         - SQSSendMessagePolicy:
-            QueueName: !GetAtt DeathDwpDeliveryQueue.QueueName
+            QueueName: !GetAtt DwpDeathDeliveryQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
@@ -617,34 +617,12 @@ Resources:
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
-  DeathDwpMinimisationFunctionLogGroup:
+  DwpDeathMinimisationFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-death-minimisation-dwp
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-dwp-death-minimisation
       KmsKeyId: !GetAtt MainKmsKey.Arn
-
-  DeathDwpNotificationClient:
-    Type: AWS::Cognito::UserPoolClient
-    DependsOn:
-      - UserPoolResourceServer
-    Properties:
-      AccessTokenValidity: 60
-      AllowedOAuthFlows:
-        - client_credentials
-      AllowedOAuthFlowsUserPoolClient: true
-      AllowedOAuthScopes:
-        - EventType/DeathNotification
-      ClientName: !Sub ${Environment}${Developer}-DeathDwpNotificationClient
-      EnableTokenRevocation: false
-      ExplicitAuthFlows:
-        - ALLOW_USER_PASSWORD_AUTH
-        - ALLOW_REFRESH_TOKEN_AUTH
-      GenerateSecret: true
-      PreventUserExistenceErrors: ENABLED
-      UserPoolId: !Ref UserPool
-      TokenValidityUnits:
-        AccessToken: minutes
 
   GroIngestionBucket:
     Type: AWS::S3::Bucket
@@ -846,6 +824,28 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-generate-xml
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
+  DeathNotificationClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn:
+      - UserPoolResourceServer
+    Properties:
+      AccessTokenValidity: 60
+      AllowedOAuthFlows:
+        - client_credentials
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - EventType/DeathNotification
+      ClientName: !Sub ${Environment}${Developer}-DeathNotificationClient
+      EnableTokenRevocation: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: true
+      PreventUserExistenceErrors: ENABLED
+      UserPoolId: !Ref UserPool
+      TokenValidityUnits:
+        AccessToken: minutes
+
   GroPublishRecordFunction:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -865,7 +865,7 @@ Resources:
             - IsDev
             - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
             - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
-          COGNITO_CLIENT_ID: !Ref DeathDwpNotificationClient
+          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
           COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
           USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest

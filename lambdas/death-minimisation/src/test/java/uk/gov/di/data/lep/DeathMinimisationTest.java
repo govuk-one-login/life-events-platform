@@ -103,7 +103,6 @@ class DeathMinimisationTest {
 
         var result = underTest.handleRequest(exampleSqsEvent, context);
 
-        System.out.println(result);
         assertTrue(result.contains("address"));
         assertTrue(result.contains("name"));
         assertFalse(result.contains("deathDate"));

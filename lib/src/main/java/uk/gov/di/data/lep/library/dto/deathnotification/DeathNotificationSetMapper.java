@@ -51,7 +51,6 @@ public class DeathNotificationSetMapper {
             groJsonRecord.partialMonthOfDeath()
         );
         var deathDate = new DateWithDescription(groJsonRecord.qualifierText(), dateOfDeath);
-
         return groJsonRecord.recordLockedDateTime() == null
             ? generateDeathRegistrationUpdateEvent(groJsonRecord, deathDate)
             : generateDeathRegistrationEvent(groJsonRecord, deathDate);

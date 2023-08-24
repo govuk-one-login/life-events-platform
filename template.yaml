@@ -590,7 +590,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpDeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+          ENRICHMENT_FIELDS: NAME, ADDRESS
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:

@@ -2,7 +2,7 @@ package uk.gov.di.data.lep.library.dto.deathnotification;
 
 public record DeathNotificationSet(
     String aud,
-    DeathRegistrationEventMapping events,
+    DeathRegistrationBaseEvent events,
     Long exp,
     Long iat,
     String iss,

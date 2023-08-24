@@ -3,7 +3,6 @@ package uk.gov.di.data.lep.library.dto.deathnotification;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
-import uk.gov.di.data.lep.library.enums.EnrichmentField;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -32,7 +31,7 @@ public class DeathNotificationSetMapper {
 
         return new DeathNotificationSet(
             null,
-            generateDeathRegistrationEventMapping(groRecord),
+            generateDeathRegistrationBaseEvent(groRecord),
             null,
             iat,
             null,
@@ -45,72 +44,17 @@ public class DeathNotificationSetMapper {
     }
 
     @Tracing
-    public static DeathNotificationSet generateMinimisedDeathNotificationSet(
-        DeathNotificationSet oldDeathNotificationSet,
-        List<EnrichmentField> enrichmentFields
-    ) {
-        DeathRegistrationBaseEvent minimisedDeathRegistrationEvent;
-        var oldDeathRegistrationBaseEvent = oldDeathNotificationSet.events().deathRegistrationEvent();
-
-        if (oldDeathRegistrationBaseEvent instanceof DeathRegistrationEvent oldDeathRegistrationEvent) {
-            minimisedDeathRegistrationEvent = minimiseNewDeathRegistration(
-                oldDeathRegistrationEvent,
-                enrichmentFields
-            );
-        } else if (oldDeathRegistrationBaseEvent instanceof DeathRegistrationUpdateEvent oldDeathRegistrationEvent) {
-            minimisedDeathRegistrationEvent = minimiseUpdateDeathRegistration(
-                oldDeathRegistrationEvent,
-                enrichmentFields
-            );
-        }
-        else {
-            throw new IllegalStateException("Event must be of type DeathRegistrationEvent or DeathRegistrationUpdateEvent");
-        }
-        return new DeathNotificationSet(
-            oldDeathNotificationSet.aud(),
-            new DeathRegistrationEventMapping(minimisedDeathRegistrationEvent),
-            oldDeathNotificationSet.exp(),
-            oldDeathNotificationSet.iat(),
-            oldDeathNotificationSet.iss(),
-            oldDeathNotificationSet.jti(),
-            oldDeathNotificationSet.nbf(),
-            oldDeathNotificationSet.sub(),
-            oldDeathNotificationSet.toe(),
-            oldDeathNotificationSet.txn()
-        );
-    }
-
-    @Tracing
-    private static DeathRegistrationUpdateEvent minimiseUpdateDeathRegistration(
-        DeathRegistrationUpdateEvent deathRegistrationUpdateEvent,
-        List<EnrichmentField> ignoredEnrichmentFields
-    ) {
-        // TODO: GPC-536 implement minimisation
-        return deathRegistrationUpdateEvent;
-    }
-
-    @Tracing
-    private static DeathRegistrationEvent minimiseNewDeathRegistration(
-        DeathRegistrationEvent deathRegistrationEvent,
-        List<EnrichmentField> ignoredEnrichmentFields
-    ) {
-        // TODO: GPC-536 implement minimisation
-        return deathRegistrationEvent;
-    }
-
-    @Tracing
-    private static DeathRegistrationEventMapping generateDeathRegistrationEventMapping(GroJsonRecord groJsonRecord) {
+    private static DeathRegistrationBaseEvent generateDeathRegistrationBaseEvent(GroJsonRecord groJsonRecord) {
         var dateOfDeath = generateDate(
-            groJsonRecord.deceasedDeathDate() == null ? null : groJsonRecord.deceasedDeathDate().personDeathDate(),
+            (groJsonRecord.deceasedDeathDate() == null ? null : groJsonRecord.deceasedDeathDate().personDeathDate()),
             groJsonRecord.partialYearOfDeath(),
             groJsonRecord.partialMonthOfDeath()
         );
         var deathDate = new DateWithDescription(groJsonRecord.qualifierText(), dateOfDeath);
-        var event = groJsonRecord.recordLockedDateTime() == null
+
+        return groJsonRecord.recordLockedDateTime() == null
             ? generateDeathRegistrationUpdateEvent(groJsonRecord, deathDate)
             : generateDeathRegistrationEvent(groJsonRecord, deathDate);
-
-        return new DeathRegistrationEventMapping(event);
     }
 
     @Tracing

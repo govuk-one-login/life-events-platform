@@ -5,13 +5,14 @@ import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -20,7 +21,10 @@ import uk.gov.di.data.lep.library.services.Mapper;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
@@ -34,6 +38,7 @@ class DeathMinimisationTest {
     private static final Config config = mock(Config.class);
     private static final Context context = mock(Context.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private static final ObjectWriter writer = mock(ObjectWriter.class);
     private static final SQSMessage sqsMessage = new SQSMessage();
     private static final SQSEvent sqsEvent = new SQSEvent();
     private final DeathNotificationSet oldDeathNotificationSet = mock(DeathNotificationSet.class);
@@ -49,6 +54,7 @@ class DeathMinimisationTest {
         reset(awsService);
         reset(config);
         reset(objectMapper);
+        reset(writer);
 
         when(objectMapper.readValue(sqsMessage.getBody(), DeathNotificationSet.class))
             .thenReturn(oldDeathNotificationSet);
@@ -68,32 +74,59 @@ class DeathMinimisationTest {
     }
 
     @Test
-    void minimiseGroDeathEventDataReturnsMinimisedData() throws JsonProcessingException {
-        var deathNotificationSet = mock(DeathNotificationSet.class);
-        var enrichmentFields = List.of(EnrichmentField.DATE_OF_DEATH, EnrichmentField.POSTCODE);
+    void minimiseEnrichedDataReturnsMinimisedDataAsString() {
+        var exampleBody =
+            "{\"events\":" +
+                "{" +
+                "\"https://ssf.account.gov.uk/v1/deathRegistrationUpdate\":{" +
+                "\"deathRegistrationID\":123456," +
+                "\"deathDate\":{\"value\":\"2011-11-29\"}," +
+                "\"recordUpdateTime\":{\"value\":\"2022-11-02T12:00:00\"}," +
+                "\"subject\":{" +
+                "\"address\":[{" +
+                "\"buildingNumber\":\"10\"," +
+                "\"streetName\":\"Alesham Avenue\"," +
+                "\"postalCode\":\"OX33 1DF\"" +
+                "}]," +
+                "\"birthDate\":[{\"value\":\"1954-11-13\"}]," +
+                "\"name\":[{\"nameParts\":[{\"type\":\"GivenName\", \"value\":\"JEREMY\"}]}]," +
+                "\"sex\":[\"Male\"]" +
+                "}}}}";
+        var exampleSqsMessage = new SQSMessage();
+        var exampleSqsEvent = new SQSEvent();
+        exampleSqsMessage.setBody(exampleBody);
+        exampleSqsEvent.setRecords(List.of(exampleSqsMessage));
 
-        var deathNotificationSetMapper = mockStatic(DeathNotificationSetMapper.class);
+        when(config.getEnrichmentFields()).thenReturn(List.of(EnrichmentField.ADDRESS, EnrichmentField.NAME));
 
-        when(config.getEnrichmentFields()).thenReturn(enrichmentFields);
-        deathNotificationSetMapper.when(
-            () -> DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(oldDeathNotificationSet, enrichmentFields)
-        ).thenReturn(deathNotificationSet);
+        var underTest = new DeathMinimisation(awsService, config, Mapper.objectMapper());
+
+        var result = underTest.handleRequest(exampleSqsEvent, context);
+
+        System.out.println(result);
+        assertTrue(result.contains("address"));
+        assertTrue(result.contains("name"));
+        assertFalse(result.contains("deathDate"));
+        assertFalse(result.contains("birthDate"));
+        assertFalse(result.contains("sex"));
+    }
+
+    @Test
+    void minimiseEnrichedDataReturnsMinimisedData() throws JsonProcessingException {
+        when(objectMapper.writer(any(SimpleFilterProvider.class))).thenReturn(writer);
+        when(writer.writeValueAsString(any())).thenReturn("Minimised death notification set");
 
         var underTest = new DeathMinimisation(awsService, config, objectMapper);
 
         var result = underTest.handleRequest(sqsEvent, context);
 
         verify(objectMapper).readValue(sqsMessage.getBody(), DeathNotificationSet.class);
-        deathNotificationSetMapper.verify(() ->
-            DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(oldDeathNotificationSet, enrichmentFields)
-        );
 
-        assertEquals(deathNotificationSet, result);
-        deathNotificationSetMapper.close();
+        assertEquals("Minimised death notification set", result);
     }
 
     @Test
-    void minimiseGroDeathEventDataFailsIfBodyHasUnrecognisedProperties() throws JsonProcessingException {
+    void minimiseEnrichedDataFailsIfBodyHasUnrecognisedProperties() throws JsonProcessingException {
         reset(objectMapper);
         when(objectMapper.readValue(sqsMessage.getBody(), DeathNotificationSet.class))
             .thenThrow(mock(UnrecognizedPropertyException.class));
@@ -102,7 +135,6 @@ class DeathMinimisationTest {
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
-        assert(exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
+        assert (exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
     }
-
 }

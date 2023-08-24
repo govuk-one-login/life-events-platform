@@ -39,13 +39,30 @@ class DeathMinimisationTest {
     private static final Context context = mock(Context.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final ObjectWriter writer = mock(ObjectWriter.class);
+    private static final String sqsMessageBody =
+        "{\"events\":" +
+            "{" +
+            "\"https://ssf.account.gov.uk/v1/deathRegistrationUpdate\":{" +
+            "\"deathRegistrationID\":123456," +
+            "\"deathDate\":{\"value\":\"2011-11-29\"}," +
+            "\"recordUpdateTime\":{\"value\":\"2022-11-02T12:00:00\"}," +
+            "\"subject\":{" +
+            "\"address\":[{" +
+            "\"buildingNumber\":\"10\"," +
+            "\"streetName\":\"Alesham Avenue\"," +
+            "\"postalCode\":\"OX33 1DF\"" +
+            "}]," +
+            "\"birthDate\":[{\"value\":\"1954-11-13\"}]," +
+            "\"name\":[{\"nameParts\":[{\"type\":\"GivenName\", \"value\":\"JEREMY\"}]}]," +
+            "\"sex\":[\"Male\"]" +
+            "}}}}";
     private static final SQSMessage sqsMessage = new SQSMessage();
     private static final SQSEvent sqsEvent = new SQSEvent();
     private final DeathNotificationSet oldDeathNotificationSet = mock(DeathNotificationSet.class);
 
     @BeforeAll
     static void setup() {
-        sqsMessage.setBody("Body Message");
+        sqsMessage.setBody(sqsMessageBody);
         sqsEvent.setRecords(List.of(sqsMessage));
     }
 
@@ -75,38 +92,54 @@ class DeathMinimisationTest {
 
     @Test
     void minimiseEnrichedDataReturnsMinimisedDataAsString() {
-        var exampleBody =
-            "{\"events\":" +
-                "{" +
-                "\"https://ssf.account.gov.uk/v1/deathRegistrationUpdate\":{" +
-                "\"deathRegistrationID\":123456," +
-                "\"deathDate\":{\"value\":\"2011-11-29\"}," +
-                "\"recordUpdateTime\":{\"value\":\"2022-11-02T12:00:00\"}," +
-                "\"subject\":{" +
-                "\"address\":[{" +
-                "\"buildingNumber\":\"10\"," +
-                "\"streetName\":\"Alesham Avenue\"," +
-                "\"postalCode\":\"OX33 1DF\"" +
-                "}]," +
-                "\"birthDate\":[{\"value\":\"1954-11-13\"}]," +
-                "\"name\":[{\"nameParts\":[{\"type\":\"GivenName\", \"value\":\"JEREMY\"}]}]," +
-                "\"sex\":[\"Male\"]" +
-                "}}}}";
-        var exampleSqsMessage = new SQSMessage();
-        var exampleSqsEvent = new SQSEvent();
-        exampleSqsMessage.setBody(exampleBody);
-        exampleSqsEvent.setRecords(List.of(exampleSqsMessage));
-
         when(config.getEnrichmentFields()).thenReturn(List.of(EnrichmentField.ADDRESS, EnrichmentField.NAME));
 
         var underTest = new DeathMinimisation(awsService, config, Mapper.objectMapper());
 
-        var result = underTest.handleRequest(exampleSqsEvent, context);
+        var result = underTest.handleRequest(sqsEvent, context);
 
         assertTrue(result.contains("address"));
         assertTrue(result.contains("name"));
-        assertFalse(result.contains("deathDate"));
         assertFalse(result.contains("birthDate"));
+        assertFalse(result.contains("deathDate"));
+        assertFalse(result.contains("freeFormatDeathDate"));
+        assertFalse(result.contains("sex"));
+    }
+
+    @Test
+    void minimiseEnrichedDataReturnsMinimisedDataAsStringAllFields() {
+        when(config.getEnrichmentFields()).thenReturn(List.of(
+            EnrichmentField.ADDRESS,
+            EnrichmentField.BIRTH_DATE,
+            EnrichmentField.DEATH_DATE,
+            EnrichmentField.NAME,
+            EnrichmentField.SEX
+        ));
+
+        var underTest = new DeathMinimisation(awsService, config, Mapper.objectMapper());
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
+        assertTrue(result.contains("address"));
+        assertTrue(result.contains("birthDate"));
+        assertTrue(result.contains("deathDate"));
+        assertTrue(result.contains("freeFormatDeathDate"));
+        assertTrue(result.contains("name"));
+        assertTrue(result.contains("sex"));
+    }
+    @Test
+    void minimiseEnrichedDataReturnsMinimisedDataAsStringNoFields() {
+        when(config.getEnrichmentFields()).thenReturn(List.of());
+
+        var underTest = new DeathMinimisation(awsService, config, Mapper.objectMapper());
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
+        assertFalse(result.contains("address"));
+        assertFalse(result.contains("birthDate"));
+        assertFalse(result.contains("deathDate"));
+        assertFalse(result.contains("freeFormatDeathDate"));
+        assertFalse(result.contains("name"));
         assertFalse(result.contains("sex"));
     }
 

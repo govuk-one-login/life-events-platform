@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.398.0",
-    "@aws-sdk/client-s3": "3.397.0",
+    "@aws-sdk/client-s3": "3.398.0",
     "@aws-sdk/util-dynamodb": "3.398.0",
     "@types/aws-lambda": "8.10.119",
     "@types/es-aggregate-error": "1.0.2",

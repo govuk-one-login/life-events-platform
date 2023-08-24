@@ -67,6 +67,10 @@ Conditions:
     Fn::Equals:
       - !Ref Environment
       - dev
+  IsIntegration:
+    Fn::Equals:
+      - !Ref Environment
+      - integration
 
 Mappings:
   EnvironmentConfiguration:
@@ -632,6 +636,7 @@ Resources:
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   OgdDeathKmsKey:
+    Condition: IsIntegration
     Type: AWS::KMS::Key
     Properties:
       Description: Key used to encrypt the Death notification delivery queue for OGD
@@ -659,12 +664,14 @@ Resources:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
 
   OgdDeathKmsKeyAlias:
+    Condition: IsIntegration
     Type: AWS::KMS::Alias
     Properties:
       AliasName: !Sub alias/${Environment}${Developer}/OgdDeathKmsKey
       TargetKeyId: !Ref OgdDeathKmsKey
 
   OgdDeathSnsToSqsPolicy:
+    Condition: IsIntegration
     Type: AWS::SQS::QueuePolicy
     Properties:
       PolicyDocument:
@@ -683,12 +690,14 @@ Resources:
         - !GetAtt OgdDeathMinimisationQueue.QueueUrl
 
   OgdDeathDistributionDlq:
+    Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
   OgdDeathDistributionTopicSubscription:
+    Condition: IsIntegration
     Type: AWS::SNS::Subscription
     Properties:
       Protocol: sqs
@@ -699,6 +708,7 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathDistributionDlq.Arn
 
   OgdDeathMinimisationQueue:
+    Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation
@@ -708,12 +718,14 @@ Resources:
         maxReceiveCount: 5
 
   OgdDeathMinimisationDlq:
+    Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
   OgdDeathDeliveryQueue:
+    Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery
@@ -723,12 +735,14 @@ Resources:
         maxReceiveCount: 5
 
   OgdDeathDeliveryDlq:
+    Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
   OgdDeathMinimisationFunction:
+    Condition: IsIntegration
     Type: AWS::Serverless::Function
     DependsOn:
       - OgdDeathMinimisationFunctionLogGroup
@@ -782,11 +796,35 @@ Resources:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   OgdDeathMinimisationFunctionLogGroup:
+    Condition: IsIntegration
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-ogd-death-minimisation
       KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  OgdDeathNotificationClient:
+    Condition: IsIntegration
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn:
+      - UserPoolResourceServer
+    Properties:
+      AccessTokenValidity: 60
+      AllowedOAuthFlows:
+        - client_credentials
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - EventType/DeathNotification
+      ClientName: !Sub ${Environment}${Developer}-DeathNotificationClient-OGD
+      EnableTokenRevocation: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: true
+      PreventUserExistenceErrors: ENABLED
+      UserPoolId: !Ref UserPool
+      TokenValidityUnits:
+        AccessToken: minutes
 
   GroIngestionBucket:
     Type: AWS::S3::Bucket

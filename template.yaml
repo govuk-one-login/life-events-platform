@@ -172,312 +172,6 @@ Resources:
       ValidationMethod: DNS
       CertificateTransparencyLoggingPreference: ENABLED
 
-  ApiGateway:
-    Type: AWS::Serverless::Api
-    Properties:
-      # checkov:skip=CKV_AWS_120: We do not need gateway caching on a post only gateway.
-      Auth:
-        Authorizers:
-          AdminCognitoAuthoriser:
-            AuthorizationScopes:
-              - Admin/Manage
-            UserPoolArn: !GetAtt UserPool.Arn
-            Identity:
-              Header: Authorization
-          DeathCognitoAuthoriser:
-            AuthorizationScopes:
-              - EventType/DeathNotification
-            UserPoolArn: !GetAtt UserPool.Arn
-            Identity:
-              Header: Authorization
-        DefaultAuthorizer: AdminCognitoAuthoriser
-      StageName: Prod
-      TracingEnabled: true
-      Domain:
-        DomainName: !If
-          - IsDev
-          - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
-          - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
-        CertificateArn: !If
-          - IsDev
-          - !Ref DevCertificate
-          - !ImportValue CertificateArn
-        EndpointConfiguration: REGIONAL
-        Route53:
-          HostedZoneId: !If
-            - IsDev
-            - !Ref DeveloperHostedZone
-            - Fn::ImportValue: HostedZoneId
-          EvaluateTargetHealth: true
-          IpV6: true
-      AccessLogSetting:
-        DestinationArn: !GetAtt ApiGatewayLogGroup.Arn
-        Format: >-
-          {
-          "requestId":"$context.requestId",
-          "ip":"$context.identity.sourceIp",
-          "requestTime":"$context.requestTime",
-          "httpMethod":"$context.httpMethod",
-          "path":"$context.path",
-          "routeKey":"$context.routeKey",
-          "status":"$context.status",
-          "protocol":"$context.protocol",
-          "responseLatency":"$context.responseLatency",
-          "responseLength":"$context.responseLength"
-          }
-      Tags:
-        CheckovRulesToSkip: CKV_AWS_120
-
-  ApiGatewayLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/apigateway/${AWS::StackName}-access-logs
-      RetentionInDays: 14
-      KmsKeyId: !GetAtt MainKmsKey.Arn
-
-  DeathValidationDlq:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-
-  DeathEnrichmentQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
-        maxReceiveCount: 5
-
-  DeathEnrichmentDlq:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-
-  DeathDistributionTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-      TracingConfig: Active
-
-  DeathSnsToSqsPolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Sid: Allow SNS publish to SQS
-            Effect: Allow
-            Principal:
-              Service: sns.amazonaws.com
-            Resource: "*"
-            Action: SQS:SendMessage
-            Condition:
-              ArnEquals:
-                aws:SourceArn: !Ref DeathDistributionTopic
-      Queues:
-        - !GetAtt DeathMinimisationQueue.QueueUrl
-
-  DeathDistributionDlq:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-
-  DeathDistributionTopicSubscription:
-    Type: AWS::SNS::Subscription
-    Properties:
-      Protocol: sqs
-      Endpoint: !GetAtt DeathMinimisationQueue.Arn
-      TopicArn: !GetAtt DeathDistributionTopic.TopicArn
-      RawMessageDelivery: true
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathDistributionDlq.Arn
-
-  DeathMinimisationQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathMinimisationDlq.Arn
-        maxReceiveCount: 5
-
-  DeathMinimisationDlq:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-
-  DeathDeliveryQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DeathDeliveryDlq.Arn
-        maxReceiveCount: 5
-
-  DeathDeliveryDlq:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: !Ref MainKmsKey
-
-  DeathValidationFunction:
-    Type: AWS::Serverless::Function
-    DependsOn:
-      - DeathValidationFunctionLogGroup
-    Properties:
-      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
-      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
-      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub death-validation-${Environment}${Developer}
-      CodeUri: lambdas/death-validation
-      Handler: uk.gov.di.data.lep.DeathValidation::handleRequest
-      Environment:
-        Variables:
-          POWERTOOLS_SERVICE_NAME: death-validation
-          TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
-      AutoPublishAlias: latest
-      AutoPublishAliasAllProperties: true
-      Events:
-        DeathApiEvent:
-          Type: Api
-          Properties:
-            Auth:
-              Authorizer: DeathCognitoAuthoriser
-            RestApiId: !Ref ApiGateway
-            Method: POST
-            Path: /events/deathNotification/
-      DeadLetterQueue:
-        Type: SQS
-        TargetArn: !GetAtt DeathValidationDlq.Arn
-      Policies:
-        - Statement:
-            - Sid: KmsMasterKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
-        - SQSSendMessagePolicy:
-            QueueName: !GetAtt DeathEnrichmentQueue.QueueName
-      VpcConfig:
-        SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
-      Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
-
-  DeathValidationFunctionLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/death-validation-${Environment}${Developer}
-      KmsKeyId: !GetAtt MainKmsKey.Arn
-
-  DeathEnrichmentFunction:
-    Type: AWS::Serverless::Function
-    DependsOn:
-      - DeathEnrichmentFunctionLogGroup
-    Properties:
-      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
-      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
-      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub death-enrichment-${Environment}${Developer}
-      CodeUri: lambdas/death-enrichment
-      Handler: uk.gov.di.data.lep.DeathEnrichment::handleRequest
-      Environment:
-        Variables:
-          POWERTOOLS_SERVICE_NAME: death-enrichment
-          TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
-      AutoPublishAlias: latest
-      AutoPublishAliasAllProperties: true
-      Events:
-        DeathValidatedEvent:
-          Type: SQS
-          Properties:
-            Queue: !GetAtt DeathEnrichmentQueue.Arn
-            BatchSize: 1
-      DeadLetterQueue:
-        Type: SQS
-        TargetArn: !GetAtt DeathEnrichmentDlq.Arn
-      Policies:
-        - Statement:
-            - Sid: KmsMasterKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
-        - SNSPublishMessagePolicy:
-            TopicName: !GetAtt DeathDistributionTopic.TopicName
-      VpcConfig:
-        SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
-      Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
-
-  DeathEnrichmentFunctionLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/death-enrichment-${Environment}${Developer}
-      KmsKeyId: !GetAtt MainKmsKey.Arn
-
-  DeathMinimisationFunction:
-    Type: AWS::Serverless::Function
-    DependsOn:
-      - DeathMinimisationFunctionLogGroup
-    Properties:
-      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
-      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
-      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub death-minimisation-${Environment}${Developer}
-      CodeUri: lambdas/death-minimisation
-      Handler: uk.gov.di.data.lep.DeathMinimisation::handleRequest
-      Environment:
-        Variables:
-          POWERTOOLS_SERVICE_NAME: death-minimisation
-          TARGET_QUEUE: !GetAtt DeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: FORENAMES, SURNAME
-      AutoPublishAlias: latest
-      AutoPublishAliasAllProperties: true
-      Events:
-        DeathEnrichedEvent:
-          Type: SQS
-          Properties:
-            Queue: !GetAtt DeathMinimisationQueue.Arn
-            BatchSize: 1
-      DeadLetterQueue:
-        Type: SQS
-        TargetArn: !GetAtt DeathMinimisationDlq.Arn
-      Policies:
-        - Statement:
-            - Sid: KmsMasterKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
-        - SQSSendMessagePolicy:
-            QueueName: !GetAtt DeathDeliveryQueue.QueueName
-      VpcConfig:
-        SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
-      Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
-
-  DeathMinimisationFunctionLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/death-minimisation-${Environment}${Developer}
-      KmsKeyId: !GetAtt MainKmsKey.Arn
-
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -561,7 +255,7 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes:
         - Admin/Manage
-      ClientName: DeathNotificationClient
+      ClientName: DeathDwpNotificationClient
       EnableTokenRevocation: false
       ExplicitAuthFlows:
         - ALLOW_USER_PASSWORD_AUTH
@@ -582,7 +276,355 @@ Resources:
           ScopeName: DeathNotification
       UserPoolId: !Ref UserPool
 
-  DeathNotificationClient:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      # checkov:skip=CKV_AWS_120: We do not need gateway caching on a post only gateway.
+      Auth:
+        Authorizers:
+          AdminCognitoAuthoriser:
+            AuthorizationScopes:
+              - Admin/Manage
+            UserPoolArn: !GetAtt UserPool.Arn
+            Identity:
+              Header: Authorization
+          DeathCognitoAuthoriser:
+            AuthorizationScopes:
+              - EventType/DeathNotification
+            UserPoolArn: !GetAtt UserPool.Arn
+            Identity:
+              Header: Authorization
+        DefaultAuthorizer: AdminCognitoAuthoriser
+      StageName: Prod
+      TracingEnabled: true
+      Domain:
+        DomainName: !If
+          - IsDev
+          - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+          - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+        CertificateArn: !If
+          - IsDev
+          - !Ref DevCertificate
+          - !ImportValue CertificateArn
+        EndpointConfiguration: REGIONAL
+        Route53:
+          HostedZoneId: !If
+            - IsDev
+            - !Ref DeveloperHostedZone
+            - Fn::ImportValue: HostedZoneId
+          EvaluateTargetHealth: true
+          IpV6: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiGatewayLogGroup.Arn
+        Format: >-
+          {
+          "requestId":"$context.requestId",
+          "ip":"$context.identity.sourceIp",
+          "requestTime":"$context.requestTime",
+          "httpMethod":"$context.httpMethod",
+          "path":"$context.path",
+          "routeKey":"$context.routeKey",
+          "status":"$context.status",
+          "protocol":"$context.protocol",
+          "responseLatency":"$context.responseLatency",
+          "responseLength":"$context.responseLength"
+          }
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_120
+
+  ApiGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/apigateway/${AWS::StackName}-access-logs
+      RetentionInDays: 14
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DeathValidationDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-death-validation-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DeathEnrichmentQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-death-enrichment
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
+        maxReceiveCount: 5
+
+  DeathEnrichmentDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-death-enrichment-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DeathDistributionTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: !Sub ${Environment}${Developer}-death-distribution-topic
+      KmsMasterKeyId: !Ref MainKmsKey
+      TracingConfig: Active
+
+  DeathValidationFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DeathValidationFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-death-validation
+      CodeUri: lambdas/death-validation
+      Handler: uk.gov.di.data.lep.DeathValidation::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: death-validation
+          TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Events:
+        DeathApiEvent:
+          Type: Api
+          Properties:
+            Auth:
+              Authorizer: DeathCognitoAuthoriser
+            RestApiId: !Ref ApiGateway
+            Method: POST
+            Path: /events/deathNotification/
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeathValidationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DeathEnrichmentQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  DeathValidationFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-death-validation
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DeathEnrichmentFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DeathEnrichmentFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-death-enrichment
+      CodeUri: lambdas/death-enrichment
+      Handler: uk.gov.di.data.lep.DeathEnrichment::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: death-enrichment
+          TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Events:
+        DeathValidatedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DeathEnrichmentQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeathEnrichmentDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt DeathDistributionTopic.TopicName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  DeathEnrichmentFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-death-enrichment
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DeathDwpKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Key used to encrypt the Death notification delivery queue for DWP
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+          - Effect: Allow
+            Principal:
+              Service: !Sub logs.${AWS::Region}.amazonaws.com
+            Action:
+              - kms:Encrypt*
+              - kms:Decrypt*
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:Describe*
+            Resource: "*"
+            Condition:
+              ArnLike:
+                kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+
+  DeathDwpKmsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${Environment}${Developer}/DeathDwpKmsKey
+      TargetKeyId: !Ref DeathDwpKmsKey
+
+  DeathDwpSnsToSqsPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow SNS publish to SQS
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Resource: "*"
+            Action: SQS:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref DeathDistributionTopic
+      Queues:
+        - !GetAtt DeathDwpMinimisationQueue.QueueUrl
+
+  DeathDwpDistributionDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-death-distribution-dlq-dwp
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DeathDwpDistributionTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      Endpoint: !GetAtt DeathDwpMinimisationQueue.Arn
+      TopicArn: !GetAtt DeathDistributionTopic.TopicArn
+      RawMessageDelivery: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathDwpDistributionDlq.Arn
+
+  DeathDwpMinimisationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-death-minimisation-dwp
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathDwpMinimisationDlq.Arn
+        maxReceiveCount: 5
+
+  DeathDwpMinimisationDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-death-minimisation-dlq-dwp
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DeathDwpDeliveryQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-death-delivery-dwp
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeathDwpDeliveryDlq.Arn
+        maxReceiveCount: 5
+
+  DeathDwpDeliveryDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-death-delivery-dlq-dwp
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DeathDwpMinimisationFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DeathDwpMinimisationFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-death-minimisation-dwp
+      CodeUri: lambdas/death-minimisation
+      Handler: uk.gov.di.data.lep.DeathMinimisation::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: death-minimisation
+          TARGET_QUEUE: !GetAtt DeathDwpDeliveryQueue.QueueUrl
+          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Events:
+        DeathEnrichedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DeathDwpMinimisationQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DeathDwpMinimisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: KmsMasterKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DeathDwpDeliveryQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  DeathDwpMinimisationFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-death-minimisation-dwp
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DeathDwpNotificationClient:
     Type: AWS::Cognito::UserPoolClient
     DependsOn:
       - UserPoolResourceServer
@@ -593,7 +635,7 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes:
         - EventType/DeathNotification
-      ClientName: DeathNotificationClient
+      ClientName: !Sub ${Environment}${Developer}-DeathDwpNotificationClient
       EnableTokenRevocation: false
       ExplicitAuthFlows:
         - ALLOW_USER_PASSWORD_AUTH
@@ -723,7 +765,7 @@ Resources:
       # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub gro-convert-to-json-${Environment}${Developer}
+      FunctionName: !Sub ${Environment}${Developer}-gro-convert-to-json
       CodeUri: lambdas/gro-convert-to-json
       Handler: uk.gov.di.data.lep.GroConvertToJson::handleRequest
       Environment:
@@ -757,7 +799,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/gro-convert-to-json-${Environment}${Developer}
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-convert-to-json
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   GroGenerateXmlFunction:
@@ -769,7 +811,7 @@ Resources:
       # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub gro-generate-xml-${Environment}${Developer}
+      FunctionName: !Sub ${Environment}${Developer}-gro-generate-xml
       CodeUri: lambdas/gro-generate-xml
       Handler: uk.gov.di.data.lep.GroGenerateXml::handleRequest
       Environment:
@@ -801,7 +843,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/gro-generate-xml-${Environment}${Developer}
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-generate-xml
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   GroPublishRecordFunction:
@@ -813,7 +855,7 @@ Resources:
       # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub gro-publish-record-${Environment}${Developer}
+      FunctionName: !Sub ${Environment}${Developer}-gro-publish-record
       CodeUri: lambdas/gro-publish-record
       Handler: uk.gov.di.data.lep.GroPublishRecord::handleRequest
       Environment:
@@ -823,7 +865,7 @@ Resources:
             - IsDev
             - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
             - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
-          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
+          COGNITO_CLIENT_ID: !Ref DeathDwpNotificationClient
           COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
           USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
@@ -856,7 +898,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/gro-publish-record-${Environment}${Developer}
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-publish-record
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   GroPullFileFunction:
@@ -868,7 +910,7 @@ Resources:
       # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub gro-pull-file-${Environment}${Developer}
+      FunctionName: !Sub ${Environment}${Developer}-gro-pull-file
       CodeUri: lambdas/gro-pull-file
       Handler: uk.gov.di.data.lep.GroPullFile::handleRequest
       Environment:
@@ -916,7 +958,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/gro-pull-file-${Environment}${Developer}
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-pull-file
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   GroSftpPrivateKeySecret:

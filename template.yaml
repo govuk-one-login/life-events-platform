@@ -255,7 +255,7 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes:
         - Admin/Manage
-      ClientName: AdminnClient
+      ClientName: AdminClient
       EnableTokenRevocation: false
       ExplicitAuthFlows:
         - ALLOW_USER_PASSWORD_AUTH

@@ -255,7 +255,7 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes:
         - Admin/Manage
-      ClientName: DeathDwpNotificationClient
+      ClientName: AdminnClient
       EnableTokenRevocation: false
       ExplicitAuthFlows:
         - ALLOW_USER_PASSWORD_AUTH
@@ -398,7 +398,7 @@ Resources:
         TargetArn: !GetAtt DeathValidationDlq.Arn
       Policies:
         - Statement:
-            - Sid: KmsMasterKeyAccess
+            - Sid: MainKmsKeyAccess
               Effect: Allow
               Action:
                 - kms:Decrypt
@@ -450,7 +450,7 @@ Resources:
         TargetArn: !GetAtt DeathEnrichmentDlq.Arn
       Policies:
         - Statement:
-            - Sid: KmsMasterKeyAccess
+            - Sid: MainKmsKeyAccess
               Effect: Allow
               Action:
                 - kms:Decrypt
@@ -531,7 +531,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
-  DeathDwpDistributionTopicSubscription:
+  DwpDeathDistributionTopicSubscription:
     Type: AWS::SNS::Subscription
     Properties:
       Protocol: sqs
@@ -560,7 +560,7 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery
-      KmsMasterKeyId: !Ref MainKmsKey
+      KmsMasterKeyId: !Ref DwpDeathKmsKey
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpDeathDeliveryDlq.Arn
         maxReceiveCount: 5
@@ -600,13 +600,20 @@ Resources:
         TargetArn: !GetAtt DwpDeathMinimisationDlq.Arn
       Policies:
         - Statement:
-            - Sid: KmsMasterKeyAccess
+            - Sid: MainKmsKeyAccess
               Effect: Allow
               Action:
                 - kms:Decrypt
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: DwpKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt DwpDeathKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DwpDeathDeliveryQueue.QueueName
       VpcConfig:
@@ -622,6 +629,163 @@ Resources:
     Properties:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-dwp-death-minimisation
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  OgdDeathKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Key used to encrypt the Death notification delivery queue for OGD
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+          - Effect: Allow
+            Principal:
+              Service: !Sub logs.${AWS::Region}.amazonaws.com
+            Action:
+              - kms:Encrypt*
+              - kms:Decrypt*
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:Describe*
+            Resource: "*"
+            Condition:
+              ArnLike:
+                kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+
+  OgdDeathKmsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${Environment}${Developer}/OgdDeathKmsKey
+      TargetKeyId: !Ref OgdDeathKmsKey
+
+  OgdDeathSnsToSqsPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow SNS publish to SQS
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Resource: "*"
+            Action: SQS:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref DeathDistributionTopic
+      Queues:
+        - !GetAtt OgdDeathMinimisationQueue.QueueUrl
+
+  OgdDeathDistributionDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-ogd-death-distribution-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  OgdDeathDistributionTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      Endpoint: !GetAtt OgdDeathMinimisationQueue.Arn
+      TopicArn: !GetAtt DeathDistributionTopic.TopicArn
+      RawMessageDelivery: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt OgdDeathDistributionDlq.Arn
+
+  OgdDeathMinimisationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt OgdDeathMinimisationDlq.Arn
+        maxReceiveCount: 5
+
+  OgdDeathMinimisationDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  OgdDeathDeliveryQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery
+      KmsMasterKeyId: !Ref OgdDeathKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt OgdDeathDeliveryDlq.Arn
+        maxReceiveCount: 5
+
+  OgdDeathDeliveryDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  OgdDeathMinimisationFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - OgdDeathMinimisationFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-ogd-death-minimisation
+      CodeUri: lambdas/death-minimisation
+      Handler: uk.gov.di.data.lep.DeathMinimisation::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: death-minimisation
+          TARGET_QUEUE: !GetAtt OgdDeathDeliveryQueue.QueueUrl
+          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Events:
+        DeathEnrichedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt OgdDeathMinimisationQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt OgdDeathMinimisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+            - Sid: OgdKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt OgdDeathKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt OgdDeathDeliveryQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  OgdDeathMinimisationFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-ogd-death-minimisation
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   GroIngestionBucket:
@@ -706,7 +870,7 @@ Resources:
         - StepFunctionsExecutionPolicy:
             StateMachineName: !Sub ${Environment}${Developer}-ingestion-state-machine
         - Statement:
-            - Sid: KmsMainKeyAccess
+            - Sid: MainKmsKeyAccess
               Effect: Allow
               Action:
                 - kms:Decrypt
@@ -758,7 +922,7 @@ Resources:
         - S3WritePolicy:
             BucketName: !Ref GroRecordsBucket
         - Statement:
-            - Sid: KmsMasterKeyAccess
+            - Sid: MainKmsKeyAccess
               Effect: Allow
               Action:
                 - kms:Decrypt
@@ -802,7 +966,7 @@ Resources:
         - S3WritePolicy:
             BucketName: !Ref GroIngestionBucket
         - Statement:
-            - Sid: KmsMasterKeyAccess
+            - Sid: MainKmsKeyAccess
               Effect: Allow
               Action:
                 - kms:Decrypt
@@ -879,7 +1043,7 @@ Resources:
             Resource:
               - !GetAtt UserPool.Arn
         - Statement:
-          - Sid: KmsMainKeyAccess
+          - Sid: MainKmsKeyAccess
             Effect: Allow
             Action:
               - kms:Decrypt
@@ -939,7 +1103,7 @@ Resources:
         - S3WritePolicy:
             BucketName: !Ref GroIngestionBucket
         - Statement:
-            - Sid: KmsMainKeyAccess
+            - Sid: MainKmsKeyAccess
               Effect: Allow
               Action:
                 - kms:Decrypt

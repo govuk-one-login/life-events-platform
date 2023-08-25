@@ -1120,10 +1120,10 @@ Resources:
           POWERTOOLS_SERVICE_NAME: gro-pull-file
           GRO_INGESTION_BUCKET_NAME: !Ref GroIngestionBucket
           GRO_SFTP_SERVER_FINGERPRINT_SECRET_ID: !GetAtt GroSftpFingerprintSecret.Id
-          GRO_SFTP_SERVER_HOST: TEMP
+          GRO_SFTP_SERVER_HOST_SECRET_ID: !GetAtt GroSftpHostSecret.Id
           GRO_SFTP_SERVER_PRIVATE_KEY_SECRET_ID: !GetAtt GroSftpPrivateKeySecret.Id
-          GRO_SFTP_SERVER_SOURCE_DIR: TEMP
-          GRO_SFTP_SERVER_USERNAME: TEMP
+          GRO_SFTP_SERVER_SOURCE_DIR_SECRET_ID: !GetAtt GroSftpSourceDirSecret.Id
+          GRO_SFTP_SERVER_USERNAME_SECRET_ID: !GetAtt GroSftpUsernameSecret.Id
 # PLAT-2133: Uncomment when scheduling allowed
 #      Events:
 #        DailyJob:
@@ -1140,7 +1140,13 @@ Resources:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref GroSftpFingerprintSecret
         - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref GroSftpHostSecret
+        - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref GroSftpPrivateKeySecret
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref GroSftpSourceDirSecret
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref GroSftpUsernameSecret
         - S3WritePolicy:
             BucketName: !Ref GroIngestionBucket
         - Statement:
@@ -1173,6 +1179,13 @@ Resources:
       KmsKeyId: !Ref MainKmsKey
       Name: !Sub ${Environment}${Developer}-gro-sftp-fingerprint
 
+  GroSftpHostSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The host for the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sftp-host
+
   GroSftpPrivateKeySecret:
     Type: AWS::SecretsManager::Secret
     Properties:
@@ -1186,6 +1199,20 @@ Resources:
       Description: The Public Key used to access the GRO SFTP server
       KmsKeyId: !Ref MainKmsKey
       Name: !Sub ${Environment}${Developer}-gro-sft-public-key
+
+  GroSftpSourceDirSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The source directory for the GRO file on the for the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sftp-source-dir
+
+  GroSftpUsernameSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The username for the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sftp-username
 
   AuditKmsKey:
     Type: AWS::KMS::Key

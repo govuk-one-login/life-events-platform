@@ -56,20 +56,23 @@ public class GroPullFile implements RequestHandler<Object, GroFileLocations> {
     }
 
     private RemoteFile downloadFile() {
-        var fingerprintId = config.getGroSftpServerFingerprintSecretID();
-        var hostname = config.getGroSftpServerHost();
-        var privateKeyId = config.getGroSftpServerPrivateKeySecretID();
-        var sourceDir = config.getGroSftpServerSourceDir();
-        var username = config.getGroSftpServerUsername();
+        var fingerprintID = config.getGroSftpServerFingerprintSecretID();
+        var hostID = config.getGroSftpServerHostSecretID();
+        var privateKeyID = config.getGroSftpServerPrivateKeySecretID();
+        var sourceDirID = config.getGroSftpServerSourceDirSecretID();
+        var usernameID = config.getGroSftpServerUsernameSecretID();
 
-        var fingerprint = awsService.getSecret(fingerprintId);
-        var privateKey = awsService.getSecret(privateKeyId);
+        var fingerprint = awsService.getSecret(fingerprintID);
+        var host = awsService.getSecret(hostID);
+        var privateKey = awsService.getSecret(privateKeyID);
+        var sourceDir = awsService.getSecret(sourceDirID);
+        var username = awsService.getSecret(usernameID);
 
         try (var client = new SSHClient()) {
             var privateKeyProvider = client.loadKeys(privateKey, null, null);
 
             client.addHostKeyVerifier(FingerprintVerifier.getInstance(fingerprint));
-            client.connect(hostname);
+            client.connect(host);
             client.authPublickey(username, privateKeyProvider);
 
             try (var sftpClient = client.newSFTPClient()) {

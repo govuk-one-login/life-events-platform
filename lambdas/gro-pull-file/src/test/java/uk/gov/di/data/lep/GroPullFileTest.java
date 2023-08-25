@@ -40,13 +40,16 @@ class GroPullFileTest {
     @BeforeAll
     static void setup() {
         when(config.getGroIngestionBucketName()).thenReturn("GroIngestionBucket");
-        when(config.getGroSftpServerFingerprintSecretID()).thenReturn("FingerprintSecretId");
-        when(config.getGroSftpServerHost()).thenReturn(hostname);
-        when(config.getGroSftpServerPrivateKeySecretID()).thenReturn("PrivateKeySecretId");
-        when(config.getGroSftpServerSourceDir()).thenReturn(sourceDir);
-        when(config.getGroSftpServerUsername()).thenReturn(username);
-        when(awsService.getSecret("FingerprintSecretId")).thenReturn(fingerprint);
-        when(awsService.getSecret("PrivateKeySecretId")).thenReturn(privateKey);
+        when(config.getGroSftpServerFingerprintSecretID()).thenReturn("FingerprintSecretID");
+        when(config.getGroSftpServerHostSecretID()).thenReturn("HostSecretID");
+        when(config.getGroSftpServerPrivateKeySecretID()).thenReturn("PrivateKeySecretID");
+        when(config.getGroSftpServerSourceDirSecretID()).thenReturn("SourceDirSecretID");
+        when(config.getGroSftpServerUsernameSecretID()).thenReturn("UsernameSecretID");
+        when(awsService.getSecret("FingerprintSecretID")).thenReturn(fingerprint);
+        when(awsService.getSecret("HostSecretID")).thenReturn(hostname);
+        when(awsService.getSecret("PrivateKeySecretID")).thenReturn(privateKey);
+        when(awsService.getSecret("SourceDirSecretID")).thenReturn(sourceDir);
+        when(awsService.getSecret("UsernameSecretID")).thenReturn(username);
     }
 
     @BeforeEach

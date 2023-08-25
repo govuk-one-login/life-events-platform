@@ -54,20 +54,20 @@ public class Config {
         return System.getenv("GRO_SFTP_SERVER_FINGERPRINT_SECRET_ID");
     }
 
-    public String getGroSftpServerHost() {
-        return System.getenv("GRO_SFTP_SERVER_HOST");
+    public String getGroSftpServerHostSecretID() {
+        return System.getenv("GRO_SFTP_SERVER_HOST_SECRET_ID");
     }
 
     public String getGroSftpServerPrivateKeySecretID() {
         return System.getenv("GRO_SFTP_SERVER_PRIVATE_KEY_SECRET_ID");
     }
 
-    public String getGroSftpServerSourceDir() {
-        return System.getenv("GRO_SFTP_SERVER_SOURCE_DIR");
+    public String getGroSftpServerSourceDirSecretID() {
+        return System.getenv("GRO_SFTP_SERVER_SOURCE_DIR_SECRET_ID");
     }
 
-    public String getGroSftpServerUsername() {
-        return System.getenv("GRO_SFTP_SERVER_USERNAME");
+    public String getGroSftpServerUsernameSecretID() {
+        return System.getenv("GRO_SFTP_SERVER_USERNAME_SECRET_ID");
     }
 
     public String getTargetQueue() {

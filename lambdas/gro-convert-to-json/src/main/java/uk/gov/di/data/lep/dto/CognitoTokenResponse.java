@@ -9,5 +9,5 @@ public record CognitoTokenResponse(
     String expiresIn,
     @JsonProperty("token_type")
     String tokenType
-){
+) {
 }

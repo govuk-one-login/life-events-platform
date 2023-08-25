@@ -3,7 +3,6 @@ package uk.gov.di.data.lep.library.dto.deathnotification;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
-import uk.gov.di.data.lep.library.enums.EnrichmentField;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DeathNotificationSetMapperTest {
     @Test
@@ -29,8 +27,8 @@ class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        assertEquals(DeathRegistrationEvent.class, actual.events().deathRegistrationEvent().getClass());
-        var event = (DeathRegistrationEvent) actual.events().deathRegistrationEvent();
+        assertEquals(DeathRegistrationEvent.class, actual.events().getClass());
+        var event = (DeathRegistrationEvent) actual.events();
 
         assertEquals(eventTime, event.deathRegistrationTime().value());
         assertEquals(eventTime.toEpochSecond(ZoneOffset.UTC), actual.toe());
@@ -47,8 +45,8 @@ class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        assertEquals(DeathRegistrationUpdateEvent.class, actual.events().deathRegistrationEvent().getClass());
-        var event = (DeathRegistrationUpdateEvent) actual.events().deathRegistrationEvent();
+        assertEquals(DeathRegistrationUpdateEvent.class, actual.events().getClass());
+        var event = (DeathRegistrationUpdateEvent) actual.events();
 
         assertEquals(eventTime, event.recordUpdateTime().value());
         assertEquals(DeathRegistrationUpdateReasonType.CANCELLATION_REMOVED, event.deathRegistrationUpdateReason());
@@ -70,14 +68,14 @@ class DeathNotificationSetMapperTest {
                 .withMaidenName(null)
                 .build()
         );
-        var actualName = actual.events().deathRegistrationEvent().subject().name().get(0);
+        var actualName = actual.events().subject().name().get(0);
         var actualFamilyName = actualName.nameParts().stream().filter(n -> n.type() == NamePartType.FAMILY_NAME).toList().get(0).value();
         var actualGivenNames = actualName.nameParts().stream().filter(n -> n.type() == NamePartType.GIVEN_NAME).map(NamePart::value).toList();
 
         assertNull(actualName.description());
         assertNull(actualName.validFrom());
         assertNull(actualName.validUntil());
-        assertEquals(1, actual.events().deathRegistrationEvent().subject().name().size());
+        assertEquals(1, actual.events().subject().name().size());
 
         assertEquals(name.personFamilyName(), actualFamilyName);
         assertEquals(name.personGivenNames(), actualGivenNames);
@@ -100,7 +98,7 @@ class DeathNotificationSetMapperTest {
                 .withMaidenName(maidenName)
                 .build()
         );
-        var actualNames = actual.events().deathRegistrationEvent().subject().name();
+        var actualNames = actual.events().subject().name();
 
         var actualName = actualNames.stream().filter(n -> n.description() == null).toList().get(0);
         var actualFamilyName = actualName.nameParts().stream().filter(n -> n.type() == NamePartType.FAMILY_NAME).toList().get(0).value();
@@ -155,7 +153,7 @@ class DeathNotificationSetMapperTest {
                 .withMaidenName(null)
                 .build()
         );
-        var actualNames = actual.events().deathRegistrationEvent().subject().name();
+        var actualNames = actual.events().subject().name();
 
         var actualName = actualNames.stream().filter(n -> n.nameParts().size() == 3).toList().get(0);
         var actualFamilyName = actualName.nameParts().stream().filter(n -> n.type() == NamePartType.FAMILY_NAME).toList().get(0).value();
@@ -203,7 +201,7 @@ class DeathNotificationSetMapperTest {
             new GroJsonRecordBuilder().withDeathDate(testDate).build()
         );
 
-        assertEquals(testDate, actual.events().deathRegistrationEvent().deathDate().value());
+        assertEquals(testDate, actual.events().deathDate().value());
     }
 
     @Test
@@ -217,7 +215,7 @@ class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        assertEquals(Year.of(2023), actual.events().deathRegistrationEvent().deathDate().value());
+        assertEquals(Year.of(2023), actual.events().deathDate().value());
     }
 
     @Test
@@ -233,7 +231,7 @@ class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        assertEquals(YearMonth.of(2023, 12), actual.events().deathRegistrationEvent().deathDate().value());
+        assertEquals(YearMonth.of(2023, 12), actual.events().deathDate().value());
     }
 
     @Test
@@ -246,7 +244,7 @@ class DeathNotificationSetMapperTest {
             .withDeathMonth(testMonth)
             .build());
 
-        assertNull(actual.events().deathRegistrationEvent().deathDate().value());
+        assertNull(actual.events().deathDate().value());
     }
 
     @Test
@@ -257,7 +255,7 @@ class DeathNotificationSetMapperTest {
             new GroJsonRecordBuilder().withBirthDate(testDate).build()
         );
 
-        assertEquals(testDate, actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
+        assertEquals(testDate, actual.events().subject().birthDate().get(0).value());
     }
 
     @Test
@@ -271,7 +269,7 @@ class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        assertEquals(Year.of(2023), actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
+        assertEquals(Year.of(2023), actual.events().subject().birthDate().get(0).value());
     }
 
     @Test
@@ -287,7 +285,7 @@ class DeathNotificationSetMapperTest {
                 .build()
         );
 
-        assertEquals(YearMonth.of(2023, 12), actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
+        assertEquals(YearMonth.of(2023, 12), actual.events().subject().birthDate().get(0).value());
     }
 
     @Test
@@ -300,52 +298,6 @@ class DeathNotificationSetMapperTest {
             .withBirthMonth(testMonth)
             .build());
 
-        assertNull(actual.events().deathRegistrationEvent().subject().birthDate().get(0).value());
-    }
-
-    @Test
-    void minimiseDeathNotificationSetCorrectlySetsNewEvent() {
-        var originalSet = DeathNotificationSetMapper.generateDeathNotificationSet(new GroJsonRecordBuilder().build());
-
-        var actual = DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, List.of(EnrichmentField.EVENT_TIME));
-
-        assertEquals(DeathRegistrationEvent.class, actual.events().deathRegistrationEvent().getClass());
-    }
-
-    @Test
-    void minimiseDeathNotificationSetCorrectlySetsUpdateEvent() {
-        var originalSet = DeathNotificationSetMapper.generateDeathNotificationSet(new GroJsonRecordBuilder()
-            .withLockedDateTime(null)
-            .withUpdateDateTime(LocalDateTime.parse("2020-03-06T09:30:50"))
-            .withUpdateReason(5)
-            .build());
-
-        var actual = DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, List.of(EnrichmentField.EVENT_TIME));
-
-        assertEquals(DeathRegistrationUpdateEvent.class, actual.events().deathRegistrationEvent().getClass());
-    }
-
-    @Test
-    void minimiseDeathNotificationThrowsIfNoEvent() {
-        var originalSet = new DeathNotificationSet(
-            null,
-            new DeathRegistrationEventMapping(null),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        );
-        var enrichmentFields = List.of(EnrichmentField.EVENT_TIME);
-
-        var exception = assertThrows(
-            IllegalStateException.class,
-            () -> DeathNotificationSetMapper.generateMinimisedDeathNotificationSet(originalSet, enrichmentFields)
-        );
-
-        assertEquals("Event must be of type DeathRegistrationEvent or DeathRegistrationUpdateEvent", exception.getMessage());
+        assertNull(actual.events().subject().birthDate().get(0).value());
     }
 }

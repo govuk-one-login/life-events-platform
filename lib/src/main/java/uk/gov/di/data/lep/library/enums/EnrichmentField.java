@@ -1,18 +1,24 @@
 package uk.gov.di.data.lep.library.enums;
 
+import java.util.List;
+
 public enum EnrichmentField {
-    SEX,
-    DATE_OF_BIRTH,
-    DATE_OF_DEATH,
-    REGISTRATION_ID,
-    EVENT_TIME,
-    PARTIAL_MONTH_OF_DEATH,
-    PARTIAL_YEAR_OF_DEATH,
-    FORENAMES,
-    SURNAME,
-    MAIDEN_SURNAME,
-    FLAT,
-    BUILDING,
-    LINES,
-    POSTCODE,
+    NAME("name"),
+    SEX("sex"),
+    DEATH_DATE(List.of("deathDate", "freeFormatDeathDate")),
+    BIRTH_DATE("birthDate"),
+    ADDRESS("address");
+    private final List<String> fieldNames;
+
+    EnrichmentField(final String fieldNames) {
+        this.fieldNames = List.of(fieldNames);
+    }
+
+    EnrichmentField(final List<String> fieldNames) {
+        this.fieldNames = fieldNames;
+    }
+
+    public List<String> getFieldNames() {
+        return fieldNames;
+    }
 }

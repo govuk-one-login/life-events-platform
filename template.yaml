@@ -590,7 +590,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpDeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+          ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -757,7 +757,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt OgdDeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: FORENAMES, SURNAME
+          ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:

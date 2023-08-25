@@ -956,6 +956,9 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-convert-to-json
+          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
+          COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
+          USER_POOL_ID: !Ref UserPool
           GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
@@ -964,6 +967,13 @@ Resources:
             BucketName: !Ref GroIngestionBucket
         - S3WritePolicy:
             BucketName: !Ref GroRecordsBucket
+        - Statement:
+            - Sid: DeathNotificationCognitoAccess
+              Effect: Allow
+              Action:
+                - cognito-idp:DescribeUserPoolClient
+              Resource:
+                - !GetAtt UserPool.Arn
         - Statement:
             - Sid: MainKmsKeyAccess
               Effect: Allow
@@ -974,9 +984,9 @@ Resources:
                 - !GetAtt MainKmsKey.Arn
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
@@ -1072,27 +1082,17 @@ Resources:
             - IsDev
             - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
             - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
-          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
-          COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
-          USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Policies:
         - Statement:
-          - Sid: DeathNotificationCognitoAccess
-            Effect: Allow
-            Action:
-              - cognito-idp:DescribeUserPoolClient
-            Resource:
-              - !GetAtt UserPool.Arn
-        - Statement:
-          - Sid: MainKmsKeyAccess
-            Effect: Allow
-            Action:
-              - kms:Decrypt
-              - kms:GenerateDataKey
-            Resource:
-              - !GetAtt MainKmsKey.Arn
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -1129,16 +1129,16 @@ Resources:
           GRO_SFTP_SERVER_PRIVATE_KEY_SECRET_ID: !GetAtt GroSftpPrivateKeySecret.Id
           GRO_SFTP_SERVER_SOURCE_DIR_SECRET_ID: !GetAtt GroSftpSourceDirSecret.Id
           GRO_SFTP_SERVER_USERNAME_SECRET_ID: !GetAtt GroSftpUsernameSecret.Id
-# PLAT-2133: Uncomment when scheduling allowed
-#      Events:
-#        DailyJob:
-#          Type: ScheduleV2
-#          Properties:
-#            ScheduleExpression: "cron(0 6 * * ? *)" # 06:00 every day
-#            PermissionsBoundary: !If
-#              - UsePermissionsBoundary
-#              - !Ref PermissionsBoundary
-#              - !Ref AWS::NoValue
+      # PLAT-2133: Uncomment when scheduling allowed
+      #      Events:
+      #        DailyJob:
+      #          Type: ScheduleV2
+      #          Properties:
+      #            ScheduleExpression: "cron(0 6 * * ? *)" # 06:00 every day
+      #            PermissionsBoundary: !If
+      #              - UsePermissionsBoundary
+      #              - !Ref PermissionsBoundary
+      #              - !Ref AWS::NoValue
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Policies:
@@ -1269,7 +1269,7 @@ Resources:
           - Sid: AllowReadByTxMAAccount
             Effect: Allow
             Principal:
-              AWS:  !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
+              AWS: !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
             Action:
               - sqs:ChangeMessageVisibility
               - sqs:ReceiveMessage

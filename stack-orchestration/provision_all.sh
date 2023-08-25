@@ -4,12 +4,13 @@ PROVISION_COMMAND="../../di-devplatform-deploy/stack-orchestration-tool/provisio
 
 export AUTO_APPLY_CHANGESET=true
 export SKIP_AWS_AUTHENTICATION=true
+export AWS_PAGER=""
 
 ## Provision dependencies
 for dir in configuration/"$AWS_ACCOUNT"/*/; do
   STACK=$(basename "$dir")
   if [[ $STACK != "sam-deploy-pipeline" ]]; then
-    $PROVISION_COMMAND "$AWS_ACCOUNT" "$STACK" "$STACK" LATEST
+    $PROVISION_COMMAND "$AWS_ACCOUNT" "$STACK" "$STACK" LATEST &
   fi
 done
 

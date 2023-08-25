@@ -8,8 +8,4 @@ public class GroSftpException extends RuntimeException {
     public GroSftpException(String message) {
         super(message);
     }
-
-    public GroSftpException(String message, Exception e) {
-        super(message, e);
-    }
 }

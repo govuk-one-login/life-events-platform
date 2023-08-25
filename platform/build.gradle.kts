@@ -9,7 +9,7 @@ plugins {
   id("org.springframework.boot") version "3.1.3"
   id("io.spring.dependency-management") version "1.1.3"
   id("org.jmailen.kotlinter") version "3.16.0"
-  id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
+  id("org.springdoc.openapi-gradle-plugin") version "1.7.0"
   kotlin("jvm") version "1.9.10"
   kotlin("plugin.spring") version "1.9.10"
   jacoco

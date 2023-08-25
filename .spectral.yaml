@@ -1,9 +1,0 @@
-extends:
-  - https://raw.githubusercontent.com/co-cddo/api-standards-linting/spectral-ruleset-govuk-public-v0.3.0/spectral-ruleset-govuk-public/ruleset.yaml
-formats:
-  - "oas3.1"
-overrides:
-  - files:
-      - "**"
-    rules:
-      oas3-always-use-https: "off"

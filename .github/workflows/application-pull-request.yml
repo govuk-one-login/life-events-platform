@@ -21,7 +21,3 @@ jobs:
     secrets:
       SAM_APP_VALIDATE_ROLE_ARN: ${{ secrets.SAM_APP_VALIDATE_ROLE_ARN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  openapi-lint:
-    uses: ./.github/workflows/openapi-lint.yml
-

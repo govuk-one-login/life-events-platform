@@ -956,6 +956,9 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-convert-to-json
+          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
+          COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
+          USER_POOL_ID: !Ref UserPool
           GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
@@ -964,6 +967,13 @@ Resources:
             BucketName: !Ref GroIngestionBucket
         - S3WritePolicy:
             BucketName: !Ref GroRecordsBucket
+        - Statement:
+            - Sid: DeathNotificationCognitoAccess
+              Effect: Allow
+              Action:
+                - cognito-idp:DescribeUserPoolClient
+              Resource:
+                - !GetAtt UserPool.Arn
         - Statement:
             - Sid: MainKmsKeyAccess
               Effect: Allow
@@ -974,9 +984,9 @@ Resources:
                 - !GetAtt MainKmsKey.Arn
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
@@ -1072,19 +1082,9 @@ Resources:
             - IsDev
             - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
             - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
-          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
-          COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
-          USER_POOL_ID: !Ref UserPool
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Policies:
-        - Statement:
-          - Sid: DeathNotificationCognitoAccess
-            Effect: Allow
-            Action:
-              - cognito-idp:DescribeUserPoolClient
-            Resource:
-              - !GetAtt UserPool.Arn
         - Statement:
           - Sid: MainKmsKeyAccess
             Effect: Allow

@@ -194,6 +194,11 @@ Resources:
           FromPort: 443
           IpProtocol: tcp
           ToPort: 443
+        - CidrIp: 0.0.0.0/0
+          Description: Allow outbound SSH traffic to Internet - The Network Firewall rules will prevent access to anything other than the allowed rules of our VPC
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
 
   XRayPolicy:
     Type: AWS::XRay::ResourcePolicy

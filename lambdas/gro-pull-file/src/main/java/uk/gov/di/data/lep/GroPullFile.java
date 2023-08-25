@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.OpenMode;
 import net.schmizz.sshj.sftp.RemoteFile;
-import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
+import net.schmizz.sshj.transport.verification.FingerprintVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.logging.Logging;
@@ -56,18 +56,23 @@ public class GroPullFile implements RequestHandler<Object, GroFileLocations> {
     }
 
     private RemoteFile downloadFile() {
-        var hostname = config.getGroSftpServerHost();
-        var privateKeyId = config.getGroSftpServerPrivateKeySecretId();
-        var sourceDir = config.getGroSftpServerSourceDir();
-        var username = config.getGroSftpServerUsername();
+        var fingerprintID = config.getGroSftpServerFingerprintSecretID();
+        var hostID = config.getGroSftpServerHostSecretID();
+        var privateKeyID = config.getGroSftpServerPrivateKeySecretID();
+        var sourceDirID = config.getGroSftpServerSourceDirSecretID();
+        var usernameID = config.getGroSftpServerUsernameSecretID();
 
-        var privateKey = awsService.getSecret(privateKeyId);
+        var fingerprint = awsService.getSecret(fingerprintID);
+        var host = awsService.getSecret(hostID);
+        var privateKey = awsService.getSecret(privateKeyID);
+        var sourceDir = awsService.getSecret(sourceDirID);
+        var username = awsService.getSecret(usernameID);
 
         try (var client = new SSHClient()) {
             var privateKeyProvider = client.loadKeys(privateKey, null, null);
 
-            client.addHostKeyVerifier(new PromiscuousVerifier());
-            client.connect(hostname);
+            client.addHostKeyVerifier(FingerprintVerifier.getInstance(fingerprint));
+            client.connect(host);
             client.authPublickey(username, privateKeyProvider);
 
             try (var sftpClient = client.newSFTPClient()) {

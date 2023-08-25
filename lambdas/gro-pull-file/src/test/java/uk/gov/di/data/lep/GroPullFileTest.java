@@ -5,6 +5,7 @@ import net.schmizz.sshj.sftp.OpenMode;
 import net.schmizz.sshj.sftp.RemoteFile;
 import net.schmizz.sshj.sftp.RemoteResourceInfo;
 import net.schmizz.sshj.sftp.SFTPClient;
+import net.schmizz.sshj.transport.verification.FingerprintVerifier;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ class GroPullFileTest {
     private static final GroPullFile underTest = new GroPullFile(awsService, config);
 
     private static final String ingestionBucket = "GroIngestionBucket";
+    private static final String fingerprint = "fingerprint";
     private static final String hostname = "hostname";
     private static final String sourceDir = "sourceDir";
     private static final String privateKey = "PrivateSSHKey";
@@ -38,11 +40,16 @@ class GroPullFileTest {
     @BeforeAll
     static void setup() {
         when(config.getGroIngestionBucketName()).thenReturn("GroIngestionBucket");
-        when(config.getGroSftpServerHost()).thenReturn(hostname);
-        when(config.getGroSftpServerPrivateKeySecretId()).thenReturn("SecretId");
-        when(config.getGroSftpServerSourceDir()).thenReturn(sourceDir);
-        when(config.getGroSftpServerUsername()).thenReturn(username);
-        when(awsService.getSecret("SecretId")).thenReturn(privateKey);
+        when(config.getGroSftpServerFingerprintSecretID()).thenReturn("FingerprintSecretID");
+        when(config.getGroSftpServerHostSecretID()).thenReturn("HostSecretID");
+        when(config.getGroSftpServerPrivateKeySecretID()).thenReturn("PrivateKeySecretID");
+        when(config.getGroSftpServerSourceDirSecretID()).thenReturn("SourceDirSecretID");
+        when(config.getGroSftpServerUsernameSecretID()).thenReturn("UsernameSecretID");
+        when(awsService.getSecret("FingerprintSecretID")).thenReturn(fingerprint);
+        when(awsService.getSecret("HostSecretID")).thenReturn(hostname);
+        when(awsService.getSecret("PrivateKeySecretID")).thenReturn(privateKey);
+        when(awsService.getSecret("SourceDirSecretID")).thenReturn(sourceDir);
+        when(awsService.getSecret("UsernameSecretID")).thenReturn(username);
     }
 
     @BeforeEach
@@ -55,19 +62,25 @@ class GroPullFileTest {
 
     @Test
     void constructionCallsCorrectInstantiation() {
-        var awsService = mockConstruction(AwsService.class);
-        var config = mockConstruction(Config.class);
-        new GroPullFile();
-        assertEquals(1, awsService.constructed().size());
-        assertEquals(1, config.constructed().size());
+        try (var awsService = mockConstruction(AwsService.class);
+             var config = mockConstruction(Config.class)) {
+            new GroPullFile();
+            assertEquals(1, awsService.constructed().size());
+            assertEquals(1, config.constructed().size());
+        }
     }
 
     @Test
     void pullFileDownloadsFile() throws IOException {
         try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
-            when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
-            when(client.newSFTPClient()).thenReturn(sftpClient);
-        })) {
+                when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
+                when(client.newSFTPClient()).thenReturn(sftpClient);
+            });
+             var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class)) {
+            var fingerprintVerifier = mock(FingerprintVerifier.class);
+
+            staticMockFingerprintVerifier.when(() -> FingerprintVerifier.getInstance(fingerprint)).thenReturn(fingerprintVerifier);
+
             var remoteFile = mock(RemoteFile.class);
             when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
             when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/dept_d_date.xml", sourceDir));
@@ -85,7 +98,11 @@ class GroPullFileTest {
         try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
             when(client.loadKeys(privateKey, null, null)).thenReturn(keyProvider);
             when(client.newSFTPClient()).thenReturn(sftpClient);
-        })) {
+        });
+             var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class)) {
+            var fingerprintVerifier = mock(FingerprintVerifier.class);
+
+            staticMockFingerprintVerifier.when(() -> FingerprintVerifier.getInstance(fingerprint)).thenReturn(fingerprintVerifier);
             when(sftpClient.ls(sourceDir)).thenReturn(List.of());
 
             var exception = assertThrows(GroSftpException.class, () -> underTest.handleRequest(null, null));
@@ -100,7 +117,11 @@ class GroPullFileTest {
         try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
             when(client.loadKeys(privateKey, null, null)).thenReturn(keyProvider);
             when(client.newSFTPClient()).thenReturn(sftpClient);
-        })) {
+        });
+             var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class)) {
+            var fingerprintVerifier = mock(FingerprintVerifier.class);
+
+            staticMockFingerprintVerifier.when(() -> FingerprintVerifier.getInstance(fingerprint)).thenReturn(fingerprintVerifier);
             var innerException = new IOException();
             when(sftpClient.ls(sourceDir)).thenThrow(innerException);
 

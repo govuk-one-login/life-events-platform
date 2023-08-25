@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import uk.gov.di.data.lep.GroGenerateXml;
 import uk.gov.di.data.lep.dto.InsertDeathXmlRequest;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.DeathRegistrationGroup;
+import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;

@@ -2,7 +2,7 @@ package uk.gov.di.data.lep.library.dto.deathnotification;
 
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
-import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
+import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -12,7 +12,7 @@ import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventDetail;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventObject;
 import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.DeathRegistrationGroup;
+import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;

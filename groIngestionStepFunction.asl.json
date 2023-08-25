@@ -55,7 +55,7 @@
       },
       "Next": "SuccessDeleteJsonRecords",
       "Label": "Map",
-      "MaxConcurrency": 1000,
+      "MaxConcurrency": 100,
       "ItemReader": {
         "Resource": "arn:aws:states:::s3:getObject",
         "ReaderConfig": {

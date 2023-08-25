@@ -1171,7 +1171,7 @@ Resources:
     Properties:
       Description: The fingerprint for the GRO SFTP server
       KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sft-private-key
+      Name: !Sub ${Environment}${Developer}-gro-sftp-fingerprint
 
   GroSftpPrivateKeySecret:
     Type: AWS::SecretsManager::Secret

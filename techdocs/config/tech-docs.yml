@@ -38,4 +38,4 @@ show_contribution_banner: true
 github_repo: alphagov/di-data-life-events-platform
 github_branch: main
 
-api_path: https://demo.share-life-events.service.gov.uk/v3/api-docs.yaml
+api_path: ./openapi.yaml

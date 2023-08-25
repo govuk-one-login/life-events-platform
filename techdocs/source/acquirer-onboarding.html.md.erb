@@ -14,6 +14,37 @@ Contact the GDX team by email at
 [di-life-events-platform@digital.cabinet-office.gov.uk](mailto:di-life-events-platform@digital.cabinet-office.gov.uk)
 to be issued credentials for a test environment. We will also discuss your specific data and technology needs.
 
-Once you have been issued credentials, you can follow the steps in
-[How to generate an access token](how-to-generate-an-access-token) and
-[How to consume events](how-to-consume-events)
+To consume events directly from SQS you will need to create a role in your AWS account which we can grant access to.
+Once we have set up queues for you, we will provide you with a queue ARN and a key ARN. You will need to add the following
+policy to the role you create (or otherwise grant these permissions):
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:GetQueueUrl",
+                "sqs:GetQueueAttributes",
+                "sqs:DeleteMessage",
+                "sqs:ChangeMessageVisibility"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "<QUEUE_ARN>"
+            ]
+        },
+        {
+            "Action": [
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "<KEY_ARN>"
+            ]
+        }
+    ]
+}
+```

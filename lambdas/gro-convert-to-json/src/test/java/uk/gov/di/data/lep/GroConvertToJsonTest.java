@@ -48,7 +48,6 @@ class GroConvertToJsonTest {
     private static final GroConvertToJson underTest = new GroConvertToJson(
         awsService,
         config,
-        httpClient,
         Mapper.objectMapper(),
         Mapper.xmlMapper()
     );
@@ -143,12 +142,10 @@ class GroConvertToJsonTest {
     void constructionCallsCorrectInstantiation() {
         try (var awsService = mockConstruction(AwsService.class);
              var config = mockConstruction(Config.class)) {
-            var httpClient = mockStatic(HttpClient.class);
             var mapper = mockStatic(Mapper.class);
             new GroConvertToJson();
             assertEquals(1, awsService.constructed().size());
             assertEquals(1, config.constructed().size());
-            httpClient.verify(HttpClient::newHttpClient, times(1));
             mapper.verify(Mapper::objectMapper, times(1));
             mapper.verify(Mapper::xmlMapper, times(1));
             mapper.close();
@@ -157,15 +154,21 @@ class GroConvertToJsonTest {
 
     @Test
     void convertToJsonSendsAuthRequest() throws IOException, InterruptedException {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
 
         underTest.handleRequest(event, context);
 
         verify(httpClient).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
+
+        httpClientMock.close();
     }
 
     @Test
     void publishRecordDoesNotSendGroRecordRequestsIfNoAuthorisationToken() throws IOException, InterruptedException {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         var ioException = new IOException();
         when(httpClient.send(any(), eq(HttpResponse.BodyHandlers.ofString()))).thenThrow(ioException);
 
@@ -176,10 +179,14 @@ class GroConvertToJsonTest {
 
         verify(httpClient, times(1)).send(expectedAuthRequest, HttpResponse.BodyHandlers.ofString());
         verify(httpClient, times(1)).send(any(), any());
+
+        httpClientMock.close();
     }
 
     @Test
     void convertToJsonReturnsBucketsDetails() {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
 
         var result = underTest.handleRequest(event, context);
@@ -188,10 +195,14 @@ class GroConvertToJsonTest {
         assertEquals("File.xml", result.xmlKey());
         assertEquals("JsonBucketName", result.jsonBucket());
         assertEquals(".json", result.jsonKey().substring(result.jsonKey().length() - 5));
+
+        httpClientMock.close();
     }
 
     @Test
     void convertToJsonUploadsMultipleRecordsToS3() {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
 
         underTest.handleRequest(event, context);
@@ -209,10 +220,14 @@ class GroConvertToJsonTest {
                     "\"DeceasedBirthDate\":\\{\"PersonBirthDate\":\"1958-06-06\",\"VerificationLevel\":\"02\"\\}"
             )
         );
+
+        httpClientMock.close();
     }
 
     @Test
     void convertToJsonUploadsOneRecordToS3() {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseOneRecord);
 
         underTest.handleRequest(event, context);
@@ -224,17 +239,23 @@ class GroConvertToJsonTest {
                 "\"PersonGivenName\":.*\\[\"ERICA\",\"CHRISTINA\"\\].*" +
                 "\"DeceasedGender\":2")
         );
+
+        httpClientMock.close();
     }
 
     @Test
     void convertToJsonThrowsMappingException() throws JsonProcessingException {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         var xmlMapper = mock(XmlMapper.class);
-        var underTest = new GroConvertToJson(awsService, config, httpClient, Mapper.objectMapper(), xmlMapper);
+        var underTest = new GroConvertToJson(awsService, config, Mapper.objectMapper(), xmlMapper);
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseOneRecord);
         when(xmlMapper.readValue(mockS3objectResponseOneRecord, DeathRegistrationGroup.class)).thenThrow(JsonProcessingException.class);
 
         assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
 
         verify(awsService, never()).putInBucket(any(), any(), any());
+
+        httpClientMock.close();
     }
 }

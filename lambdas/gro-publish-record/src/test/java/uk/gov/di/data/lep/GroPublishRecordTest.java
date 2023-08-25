@@ -34,7 +34,7 @@ class GroPublishRecordTest {
     private static final Config config = mock(Config.class);
     private static final HttpClient httpClient = mock(HttpClient.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private static final GroPublishRecord underTest = new GroPublishRecord(config, httpClient, objectMapper);
+    private static final GroPublishRecord underTest = new GroPublishRecord(config, objectMapper);
     private static final GroJsonRecordWithAuth event = new GroJsonRecordWithAuth(new GroJsonRecordBuilder().build(), "accessToken");
     private static final InputStream eventAsInputStream = mock(InputStream.class);
     private static final String eventAsString = "EventInStringRepresentation";
@@ -58,29 +58,32 @@ class GroPublishRecordTest {
     @Test
     void constructionCallsCorrectInstantiation() {
         try (var config = mockConstruction(Config.class)) {
-            var httpClient = mockStatic(HttpClient.class);
             var mapper = mockStatic(Mapper.class);
             new GroPublishRecord();
             assertEquals(1, config.constructed().size());
-            httpClient.verify(HttpClient::newHttpClient, times(1));
             mapper.verify(Mapper::objectMapper, times(1));
-            httpClient.close();
             mapper.close();
         }
     }
 
     @Test
     void publishRecordSendsGroRecordRequestsAndReturnsNull() throws IOException, InterruptedException {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithAuth.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn(eventAsString);
 
         underTest.handleRequest(eventAsInputStream, null, null);
 
         verify(httpClient).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
+
+        httpClientMock.close();
     }
 
     @Test
     void publishRecordThrowsExceptionIfGroRecordRequestsFails() throws IOException, InterruptedException {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithAuth.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn(eventAsString);
         var ioException = new IOException();
@@ -92,6 +95,8 @@ class GroPublishRecordTest {
         assertEquals(ioException, exception.getCause());
 
         verify(httpClient, times(1)).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
+
+        httpClientMock.close();
     }
 
     @Test

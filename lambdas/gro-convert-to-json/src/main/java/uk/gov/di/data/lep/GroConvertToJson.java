@@ -31,18 +31,16 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
     protected static Logger logger = LogManager.getLogger();
     private final AwsService awsService;
     private final Config config;
-    private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     private final XmlMapper xmlMapper;
 
     public GroConvertToJson() {
-        this(new AwsService(), new Config(), HttpClient.newHttpClient(), Mapper.objectMapper(), Mapper.xmlMapper());
+        this(new AwsService(), new Config(), Mapper.objectMapper(), Mapper.xmlMapper());
     }
 
-    public GroConvertToJson(AwsService awsService, Config config, HttpClient httpClient, ObjectMapper objectMapper, XmlMapper xmlMapper) {
+    public GroConvertToJson(AwsService awsService, Config config, ObjectMapper objectMapper, XmlMapper xmlMapper) {
         this.awsService = awsService;
         this.config = config;
-        this.httpClient = httpClient;
         this.objectMapper = objectMapper;
         this.xmlMapper = xmlMapper;
     }
@@ -87,6 +85,7 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
     @SuppressWarnings("java:S2142")
     @Tracing
     private String getAuthorisationToken() {
+        var httpClient = HttpClient.newHttpClient();
         var clientId = config.getCognitoClientId();
         var clientSecret = awsService.getCognitoClientSecret(config.getUserPoolId(), clientId);
         var authorisationRequest = HttpRequest.newBuilder()

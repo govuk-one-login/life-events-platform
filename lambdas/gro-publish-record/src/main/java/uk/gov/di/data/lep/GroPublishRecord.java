@@ -25,17 +25,15 @@ import java.net.http.HttpResponse;
 
 public class GroPublishRecord implements RequestStreamHandler {
     private final Config config;
-    private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     protected static Logger logger = LogManager.getLogger();
 
     public GroPublishRecord() {
-        this(new Config(), HttpClient.newHttpClient(), Mapper.objectMapper());
+        this(new Config(), Mapper.objectMapper());
     }
 
-    public GroPublishRecord(Config config, HttpClient httpClient, ObjectMapper objectMapper) {
+    public GroPublishRecord(Config config, ObjectMapper objectMapper) {
         this.config = config;
-        this.httpClient = httpClient;
         this.objectMapper = objectMapper;
     }
 
@@ -63,7 +61,7 @@ public class GroPublishRecord implements RequestStreamHandler {
     @SuppressWarnings("java:S2142")
     @Tracing
     private void postRecordToLifeEvents(GroJsonRecord event, String authorisationToken) {
-
+        var httpClient = HttpClient.newHttpClient();
         var requestBuilder = HttpRequest.newBuilder()
             .uri(URI.create(String.format("https://%s/events/deathNotification", config.getLifeEventsPlatformDomain())))
             .header("Authorization", authorisationToken);

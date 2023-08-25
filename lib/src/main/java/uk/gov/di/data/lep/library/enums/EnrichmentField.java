@@ -13,6 +13,7 @@ public enum EnrichmentField {
     EnrichmentField(final String fieldNames) {
         this.fieldNames = List.of(fieldNames);
     }
+
     EnrichmentField(final List<String> fieldNames) {
         this.fieldNames = fieldNames;
     }

@@ -4,7 +4,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.OpenMode;
-import net.schmizz.sshj.sftp.RemoteFile;
 import net.schmizz.sshj.transport.verification.FingerprintVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,21 +40,12 @@ public class GroPullFile implements RequestHandler<Object, GroFileLocations> {
     public GroFileLocations handleRequest(Object event, Context context) {
         var xmlBucket = config.getGroIngestionBucketName();
 
-        logger.info("Pulling file {} from GRO", groFileName);
-        try (var file = downloadFile()) {
-            logger.info("Uploading file {} to S3", groFileName);
-            awsService.putInBucket(xmlBucket, groFileName, file.new RemoteFileInputStream(), file.length());
-        } catch (IOException e) {
-            throw new GroSftpException(
-                    String.format("Failed to calculate file %s length", groFileName),
-                    e
-            );
-        }
+        transferFile(xmlBucket);
 
         return new GroFileLocations(xmlBucket, groFileName, null, null);
     }
 
-    private RemoteFile downloadFile() {
+    private void transferFile(String xmlBucket) {
         var fingerprintID = config.getGroSftpServerFingerprintSecretID();
         var hostID = config.getGroSftpServerHostSecretID();
         var privateKeyID = config.getGroSftpServerPrivateKeySecretID();
@@ -72,19 +62,26 @@ public class GroPullFile implements RequestHandler<Object, GroFileLocations> {
             var privateKeyProvider = client.loadKeys(privateKey, null, null);
 
             client.addHostKeyVerifier(FingerprintVerifier.getInstance(fingerprint));
+            logger.info("Connecting to GRO host");
             client.connect(host);
             client.authPublickey(username, privateKeyProvider);
 
+            logger.info("Pulling file {} from GRO", groFileName);
             try (var sftpClient = client.newSFTPClient()) {
                 var resources = sftpClient.ls(sourceDir);
                 var sourceFileSearch = resources.stream().filter(r -> r.getPath().endsWith(groFileName)).findFirst();
 
-                if (sourceFileSearch.isPresent()) {
-                    return sftpClient.open(sourceFileSearch.get().getPath(), EnumSet.of(OpenMode.READ));
-                } else {
+                if (sourceFileSearch.isEmpty()) {
                     throw new GroSftpException(
                             String.format("File: %s not found on GRO SFTP Server in directory: %s", groFileName, sourceDir)
                     );
+                }
+
+                try (var file = sftpClient.open(sourceFileSearch.get().getPath(), EnumSet.of(OpenMode.READ));
+                    var fileStream = file.new RemoteFileInputStream()) {
+                    logger.info("Uploading file {} to S3", groFileName);
+
+                    awsService.putInBucket(xmlBucket, groFileName, fileStream, file.length());
                 }
             }
         } catch (IOException e) {

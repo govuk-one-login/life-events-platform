@@ -9,7 +9,7 @@ import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
 import uk.gov.di.data.lep.library.exceptions.MappingException;

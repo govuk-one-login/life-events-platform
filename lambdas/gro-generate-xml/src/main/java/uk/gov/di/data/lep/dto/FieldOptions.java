@@ -1,9 +1,9 @@
 package uk.gov.di.data.lep.dto;
 
-import uk.gov.di.data.lep.library.dto.GroAddressStructure;
-import uk.gov.di.data.lep.library.dto.GroPersonNameStructure;
-import uk.gov.di.data.lep.library.dto.PersonBirthDateStructure;
-import uk.gov.di.data.lep.library.dto.PersonDeathDateStructure;
+import uk.gov.di.data.lep.library.dto.gro.GroAddressStructure;
+import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
+import uk.gov.di.data.lep.library.dto.gro.PersonBirthDateStructure;
+import uk.gov.di.data.lep.library.dto.gro.PersonDeathDateStructure;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 import uk.gov.di.data.lep.library.enums.GroVerificationLevel;
 

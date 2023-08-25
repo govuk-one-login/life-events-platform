@@ -13,7 +13,7 @@ import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
 import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.DeathRegistrationGroup;
+import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithAuth;
 import uk.gov.di.data.lep.library.exceptions.MappingException;

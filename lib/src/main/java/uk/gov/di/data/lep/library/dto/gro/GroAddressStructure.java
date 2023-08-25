@@ -1,4 +1,4 @@
-package uk.gov.di.data.lep.library.dto;
+package uk.gov.di.data.lep.library.dto.gro;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;

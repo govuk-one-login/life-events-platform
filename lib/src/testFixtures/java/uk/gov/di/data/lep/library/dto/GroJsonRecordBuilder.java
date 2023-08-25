@@ -1,5 +1,10 @@
 package uk.gov.di.data.lep.library.dto;
 
+import uk.gov.di.data.lep.library.dto.gro.GroAddressStructure;
+import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
+import uk.gov.di.data.lep.library.dto.gro.PersonBirthDateStructure;
+import uk.gov.di.data.lep.library.dto.gro.PersonDeathDateStructure;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 
 import java.time.LocalDate;

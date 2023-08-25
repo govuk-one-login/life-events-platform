@@ -10,12 +10,10 @@ import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecord;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
-import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
@@ -68,8 +66,8 @@ class DeathValidationTest {
 
         when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenThrow(mock(UnrecognizedPropertyException.class));
 
-        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
+        var result = underTest.handleRequest(event, context);
 
-        assert(exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
+        assertEquals(400, result.getStatusCode());
     }
 }

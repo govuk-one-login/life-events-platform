@@ -15,6 +15,8 @@ paths:
       responses:
         '201':
           description: Event accepted
+        '400':
+          description: Bad request. Object body failed validation.
       security:
         - DeathCognitoAuthoriser:
             - EventType/DeathNotification

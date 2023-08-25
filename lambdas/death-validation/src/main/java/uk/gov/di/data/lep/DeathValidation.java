@@ -29,9 +29,13 @@ public class DeathValidation
     @Tracing
     @Logging(clearState = true)
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent apiRequest, Context context) {
-        var event = validateRequest(apiRequest);
-        publish(event);
-        return new APIGatewayProxyResponseEvent().withStatusCode(201);
+        try {
+            var event = validateRequest(apiRequest);
+            publish(event);
+            return new APIGatewayProxyResponseEvent().withStatusCode(201);
+        } catch (MappingException e) {
+            return new APIGatewayProxyResponseEvent().withStatusCode(400);
+        }
     }
 
     @Tracing

@@ -9,24 +9,16 @@ in [How to generate an access token](how-to-generate-an-access-token).
 
 All requests to the below endpoint must be authorised by including an `Authorization: Bearer <access_token>` header.
 
-<%= inset_text("The following information is also available as <a href=\"https://dev.share-life-events.service.gov.uk/swagger-ui/index.html\">Swagger docs</a>") %>
-
 ### Service API urls
 
-| environment | url                                           | swagger url                                                   |
-|-------------|-----------------------------------------------|---------------------------------------------------------------|
-| dev         | https://dev.share-life-events.service.gov.uk  | https://dev.share-life-events.service.gov.uk/swagger-ui.html  |
-| demo        | https://demo.share-life-events.service.gov.uk | https://demo.share-life-events.service.gov.uk/swagger-ui.html |
+| environment | url                                            |
+|-------------|------------------------------------------------|
+| integration | https://life-events.integration.account.gov.uk |
+
 
 ## Basic procedure
-1. Call POST [/events](#supply-an-event) to supply an event
+1. Call POST [/events/deathNotification](#supply-an-event) to supply an event
 
 ## Supply an event
 
-The fields required for supplying an event are:
-
-- eventType: The type of the event being supplied, currently this is just `DEATH_NOTIFICATION`
-- eventTime: The time of the event, this should be the time the event is created in the supplier system, not the record
-- id: The idempotent ID of the event being supplied
-
-api_operation> /events post
+api>

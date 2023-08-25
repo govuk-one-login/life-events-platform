@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.OpenMode;
 import net.schmizz.sshj.sftp.RemoteFile;
+import net.schmizz.sshj.transport.verification.FingerprintVerifier;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,17 +57,19 @@ public class GroPullFile implements RequestHandler<Object, GroFileLocations> {
     }
 
     private RemoteFile downloadFile() {
+        var fingerprintId = config.getGroSftpServerFingerprintSecretID();
         var hostname = config.getGroSftpServerHost();
-        var privateKeyId = config.getGroSftpServerPrivateKeySecretId();
+        var privateKeyId = config.getGroSftpServerPrivateKeySecretID();
         var sourceDir = config.getGroSftpServerSourceDir();
         var username = config.getGroSftpServerUsername();
 
+        var fingerprint = awsService.getSecret(fingerprintId);
         var privateKey = awsService.getSecret(privateKeyId);
 
         try (var client = new SSHClient()) {
             var privateKeyProvider = client.loadKeys(privateKey, null, null);
 
-            client.addHostKeyVerifier(new PromiscuousVerifier());
+            client.addHostKeyVerifier(FingerprintVerifier.getInstance(fingerprint));
             client.connect(hostname);
             client.authPublickey(username, privateKeyProvider);
 

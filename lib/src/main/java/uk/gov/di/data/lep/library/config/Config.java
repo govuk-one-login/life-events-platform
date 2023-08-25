@@ -50,11 +50,15 @@ public class Config {
         return System.getenv("GRO_RECORDS_BUCKET_NAME");
     }
 
+    public String getGroSftpServerFingerprintSecretID() {
+        return System.getenv("GRO_SFTP_SERVER_FINGERPRINT_SECRET_ID");
+    }
+
     public String getGroSftpServerHost() {
         return System.getenv("GRO_SFTP_SERVER_HOST");
     }
 
-    public String getGroSftpServerPrivateKeySecretId() {
+    public String getGroSftpServerPrivateKeySecretID() {
         return System.getenv("GRO_SFTP_SERVER_PRIVATE_KEY_SECRET_ID");
     }
 

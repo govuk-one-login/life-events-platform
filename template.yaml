@@ -1119,6 +1119,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: gro-pull-file
           GRO_INGESTION_BUCKET_NAME: !Ref GroIngestionBucket
+          GRO_SFTP_SERVER_FINGERPRINT_SECRET_ID: !GetAtt GroSftpFingerprintSecret.Id
           GRO_SFTP_SERVER_HOST: TEMP
           GRO_SFTP_SERVER_PRIVATE_KEY_SECRET_ID: !GetAtt GroSftpPrivateKeySecret.Id
           GRO_SFTP_SERVER_SOURCE_DIR: TEMP
@@ -1136,6 +1137,8 @@ Resources:
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref GroSftpFingerprintSecret
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref GroSftpPrivateKeySecret
         - S3WritePolicy:
@@ -1162,6 +1165,13 @@ Resources:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-pull-file
       KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  GroSftpFingerprintSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The fingerprint for the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sft-private-key
 
   GroSftpPrivateKeySecret:
     Type: AWS::SecretsManager::Secret

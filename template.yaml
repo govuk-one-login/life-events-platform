@@ -705,6 +705,510 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-dwp-death-minimisation
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
+  DwpDevDeathKmsKey:
+    Condition: IsIntegration
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Key used to encrypt the Death notification delivery queue for DWP Dev
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+          - Effect: Allow
+            Principal:
+              Service: !Sub logs.${AWS::Region}.amazonaws.com
+            Action:
+              - kms:Encrypt*
+              - kms:Decrypt*
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:Describe*
+            Resource: "*"
+            Condition:
+              ArnLike:
+                kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+
+  DwpDevDeathKmsKeyAlias:
+    Condition: IsIntegration
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${Environment}${Developer}/DwpDevDeathKmsKey
+      TargetKeyId: !Ref DwpDevDeathKmsKey
+
+  DwpDevDeathSnsToSqsPolicy:
+    Condition: IsIntegration
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow SNS publish to SQS
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Resource: "*"
+            Action: SQS:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref DeathDistributionTopic
+      Queues:
+        - !GetAtt DwpDevDeathMinimisationQueue.QueueUrl
+
+  DwpDevDeathDistributionDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-distribution-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpDevDeathDistributionTopicSubscription:
+    Condition: IsIntegration
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      Endpoint: !GetAtt DwpDevDeathMinimisationQueue.Arn
+      TopicArn: !GetAtt DeathDistributionTopic.TopicArn
+      RawMessageDelivery: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpDevDeathDistributionDlq.Arn
+
+  DwpDevDeathMinimisationQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpDevDeathMinimisationDlq.Arn
+        maxReceiveCount: 5
+
+  DwpDevDeathMinimisationDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpDevDeathDeliveryQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery
+      KmsMasterKeyId: !Ref DwpDevDeathKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpDevDeathDeliveryDlq.Arn
+        maxReceiveCount: 5
+
+  DwpDevDeathDeliveryDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpDevDeathMinimisationFunction:
+    Condition: IsIntegration
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DwpDevDeathMinimisationFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation
+      CodeUri: lambdas/death-minimisation
+      Handler: uk.gov.di.data.lep.DeathMinimisation::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: death-minimisation
+          TARGET_QUEUE: !GetAtt DwpDevDeathDeliveryQueue.QueueUrl
+          ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Events:
+        DeathEnrichedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DwpDevDeathMinimisationQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DwpDevDeathMinimisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+            - Sid: DwpDevKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt DwpDevDeathKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DwpDevDeathDeliveryQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  DwpDevDeathMinimisationFunctionLogGroup:
+    Condition: IsIntegration
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-dwp-dev-death-minimisation
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DwpTestDeathKmsKey:
+    Condition: IsIntegration
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Key used to encrypt the Death notification delivery queue for DWP Test
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+          - Effect: Allow
+            Principal:
+              Service: !Sub logs.${AWS::Region}.amazonaws.com
+            Action:
+              - kms:Encrypt*
+              - kms:Decrypt*
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:Describe*
+            Resource: "*"
+            Condition:
+              ArnLike:
+                kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+
+  DwpTestDeathKmsKeyAlias:
+    Condition: IsIntegration
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${Environment}${Developer}/DwpTestDeathKmsKey
+      TargetKeyId: !Ref DwpTestDeathKmsKey
+
+  DwpTestDeathSnsToSqsPolicy:
+    Condition: IsIntegration
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow SNS publish to SQS
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Resource: "*"
+            Action: SQS:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref DeathDistributionTopic
+      Queues:
+        - !GetAtt DwpTestDeathMinimisationQueue.QueueUrl
+
+  DwpTestDeathDistributionDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-test-death-distribution-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpTestDeathDistributionTopicSubscription:
+    Condition: IsIntegration
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      Endpoint: !GetAtt DwpTestDeathMinimisationQueue.Arn
+      TopicArn: !GetAtt DeathDistributionTopic.TopicArn
+      RawMessageDelivery: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpTestDeathDistributionDlq.Arn
+
+  DwpTestDeathMinimisationQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpTestDeathMinimisationDlq.Arn
+        maxReceiveCount: 5
+
+  DwpTestDeathMinimisationDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpTestDeathDeliveryQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery
+      KmsMasterKeyId: !Ref DwpTestDeathKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpTestDeathDeliveryDlq.Arn
+        maxReceiveCount: 5
+
+  DwpTestDeathDeliveryDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpTestDeathMinimisationFunction:
+    Condition: IsIntegration
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DwpTestDeathMinimisationFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation
+      CodeUri: lambdas/death-minimisation
+      Handler: uk.gov.di.data.lep.DeathMinimisation::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: death-minimisation
+          TARGET_QUEUE: !GetAtt DwpTestDeathDeliveryQueue.QueueUrl
+          ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Events:
+        DeathEnrichedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DwpTestDeathMinimisationQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DwpTestDeathMinimisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+            - Sid: DwpTestKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt DwpTestDeathKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DwpTestDeathDeliveryQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  DwpTestDeathMinimisationFunctionLogGroup:
+    Condition: IsIntegration
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-dwp-test-death-minimisation
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  DwpStageDeathKmsKey:
+    Condition: IsIntegration
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Key used to encrypt the Death notification delivery queue for DWP Stage
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+          - Effect: Allow
+            Principal:
+              Service: !Sub logs.${AWS::Region}.amazonaws.com
+            Action:
+              - kms:Encrypt*
+              - kms:Decrypt*
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:Describe*
+            Resource: "*"
+            Condition:
+              ArnLike:
+                kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+
+  DwpStageDeathKmsKeyAlias:
+    Condition: IsIntegration
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${Environment}${Developer}/DwpStageDeathKmsKey
+      TargetKeyId: !Ref DwpStageDeathKmsKey
+
+  DwpStageDeathSnsToSqsPolicy:
+    Condition: IsIntegration
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow SNS publish to SQS
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Resource: "*"
+            Action: SQS:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref DeathDistributionTopic
+      Queues:
+        - !GetAtt DwpStageDeathMinimisationQueue.QueueUrl
+
+  DwpStageDeathDistributionDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-distribution-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpStageDeathDistributionTopicSubscription:
+    Condition: IsIntegration
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      Endpoint: !GetAtt DwpStageDeathMinimisationQueue.Arn
+      TopicArn: !GetAtt DeathDistributionTopic.TopicArn
+      RawMessageDelivery: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpStageDeathDistributionDlq.Arn
+
+  DwpStageDeathMinimisationQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation
+      KmsMasterKeyId: !Ref MainKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpStageDeathMinimisationDlq.Arn
+        maxReceiveCount: 5
+
+  DwpStageDeathMinimisationDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpStageDeathDeliveryQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery
+      KmsMasterKeyId: !Ref DwpStageDeathKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpStageDeathDeliveryDlq.Arn
+        maxReceiveCount: 5
+
+  DwpStageDeathDeliveryDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpStageDeathMinimisationFunction:
+    Condition: IsIntegration
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - DwpStageDeathMinimisationFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation
+      CodeUri: lambdas/death-minimisation
+      Handler: uk.gov.di.data.lep.DeathMinimisation::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: death-minimisation
+          TARGET_QUEUE: !GetAtt DwpStageDeathDeliveryQueue.QueueUrl
+          ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Events:
+        DeathEnrichedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DwpStageDeathMinimisationQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DwpStageDeathMinimisationDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+            - Sid: DwpStageKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt DwpStageDeathKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DwpStageDeathDeliveryQueue.QueueName
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  DwpStageDeathMinimisationFunctionLogGroup:
+    Condition: IsIntegration
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-dwp-stage-death-minimisation
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
   OgdDeathKmsKey:
     Condition: IsIntegration
     Type: AWS::KMS::Key

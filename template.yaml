@@ -10,8 +10,8 @@ Globals:
     Environment:
       Variables:
         JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
-        POWERTOOLS_TRACER_CAPTURE_RESPONSE: false
         POWERTOOLS_TRACER_CAPTURE_ERROR: false
+        POWERTOOLS_TRACER_CAPTURE_RESPONSE: false
     Runtime: java17
     Architectures:
       - x86_64
@@ -53,6 +53,14 @@ Parameters:
     Default: none
 
 Conditions:
+  IsDev:
+    Fn::Equals:
+      - !Ref Environment
+      - dev
+  IsIntegration:
+    Fn::Equals:
+      - !Ref Environment
+      - integration
   UseCodeSigning:
     Fn::Not:
       - Fn::Equals:
@@ -63,14 +71,6 @@ Conditions:
       - Fn::Equals:
           - !Ref PermissionsBoundary
           - none
-  IsDev:
-    Fn::Equals:
-      - !Ref Environment
-      - dev
-  IsIntegration:
-    Fn::Equals:
-      - !Ref Environment
-      - integration
 
 Mappings:
   EnvironmentConfiguration:
@@ -146,35 +146,6 @@ Resources:
         RestrictPublicBuckets: true
       VersioningConfiguration:
         Status: Enabled
-
-  DeveloperHostedZone:
-    Type: AWS::Route53::HostedZone
-    Condition: IsDev
-    DeletionPolicy: Retain
-    UpdateReplacePolicy: Retain
-    Properties:
-      Name: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
-
-  DeveloperRecordSet:
-    Type: AWS::Route53::RecordSet
-    Condition: IsDev
-    Properties:
-      Name: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
-      Type: NS
-      HostedZoneId: !ImportValue HostedZoneId
-      ResourceRecords: !GetAtt DeveloperHostedZone.NameServers
-      TTL: 60
-
-  DevCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Condition: IsDev
-    Properties:
-      DomainName: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
-      DomainValidationOptions:
-        - DomainName: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
-          HostedZoneId: !Ref DeveloperHostedZone
-      ValidationMethod: DNS
-      CertificateTransparencyLoggingPreference: ENABLED
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -284,6 +255,100 @@ Resources:
         - ScopeDescription: Can publish death notification events
           ScopeName: DeathNotification
       UserPoolId: !Ref UserPool
+
+  DeveloperHostedZone:
+    Type: AWS::Route53::HostedZone
+    Condition: IsDev
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+
+  DeveloperRecordSet:
+    Type: AWS::Route53::RecordSet
+    Condition: IsDev
+    Properties:
+      Name: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+      Type: NS
+      HostedZoneId: !ImportValue HostedZoneId
+      ResourceRecords: !GetAtt DeveloperHostedZone.NameServers
+      TTL: 60
+
+  DevCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Condition: IsDev
+    Properties:
+      DomainName: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+      DomainValidationOptions:
+        - DomainName: !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+          HostedZoneId: !Ref DeveloperHostedZone
+      ValidationMethod: DNS
+      CertificateTransparencyLoggingPreference: ENABLED
+
+  AuditKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Symmetric key used to encrypt TxMA audit messages at rest in SQS
+      EnableKeyRotation: true
+      KeySpec: SYMMETRIC_DEFAULT
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+          - Sid: AllowTxMADecryption
+            Effect: Allow
+            Principal:
+              AWS: !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
+            Action:
+              - kms:Decrypt*
+            Resource: '*'
+
+  AuditKmsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${Environment}${Developer}/AuditEncryptionKey
+      TargetKeyId: !Ref AuditKmsKey
+
+  AuditQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-audit
+      MessageRetentionPeriod: 1209600
+      KmsMasterKeyId: !Ref AuditKmsKeyAlias
+      RedriveAllowPolicy:
+        redrivePermission: denyAll
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
+        maxReceiveCount: 10
+
+  AuditQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref AuditQueue
+      PolicyDocument:
+        Statement:
+          - Sid: AllowReadByTxMAAccount
+            Effect: Allow
+            Principal:
+              AWS: !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
+            Action:
+              - sqs:ChangeMessageVisibility
+              - sqs:ReceiveMessage
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Resource: !GetAtt AuditQueue.Arn
+
+  AuditDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-audit-dlq
+      MessageRetentionPeriod: 1209600
+      KmsMasterKeyId: !Ref AuditKmsKeyAlias
 
   ApiGateway:
     Type: AWS::Serverless::Api
@@ -941,107 +1006,7 @@ Resources:
         - !Ref PermissionsBoundary
         - !Ref AWS::NoValue
 
-  GroConvertToJsonFunction:
-    Type: AWS::Serverless::Function
-    DependsOn:
-      - GroConvertToJsonFunctionLogGroup
-    Properties:
-      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
-      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
-      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
-      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub ${Environment}${Developer}-gro-convert-to-json
-      CodeUri: lambdas/gro-convert-to-json
-      Handler: uk.gov.di.data.lep.GroConvertToJson::handleRequest
-      Environment:
-        Variables:
-          POWERTOOLS_SERVICE_NAME: gro-convert-to-json
-          COGNITO_CLIENT_ID: !Ref DeathNotificationClient
-          COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
-          USER_POOL_ID: !Ref UserPool
-          GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
-      AutoPublishAlias: latest
-      AutoPublishAliasAllProperties: true
-      Policies:
-        - S3ReadPolicy:
-            BucketName: !Ref GroIngestionBucket
-        - S3WritePolicy:
-            BucketName: !Ref GroRecordsBucket
-        - Statement:
-            - Sid: DeathNotificationCognitoAccess
-              Effect: Allow
-              Action:
-                - cognito-idp:DescribeUserPoolClient
-              Resource:
-                - !GetAtt UserPool.Arn
-        - Statement:
-            - Sid: MainKmsKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
-      VpcConfig:
-        SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
-      Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
-
-  GroConvertToJsonFunctionLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-convert-to-json
-      KmsKeyId: !GetAtt MainKmsKey.Arn
-
-  GroGenerateXmlFunction:
-    Type: AWS::Serverless::Function
-    DependsOn:
-      - GroGenerateXmlFunctionLogGroup
-    Properties:
-      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
-      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
-      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
-      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub ${Environment}${Developer}-gro-generate-xml
-      CodeUri: lambdas/gro-generate-xml
-      Handler: uk.gov.di.data.lep.GroGenerateXml::handleRequest
-      Environment:
-        Variables:
-          POWERTOOLS_SERVICE_NAME: gro-generate-xml
-          GRO_INGESTION_BUCKET_NAME: !Ref GroIngestionBucket
-      AutoPublishAlias: latest
-      AutoPublishAliasAllProperties: true
-      Policies:
-        - S3WritePolicy:
-            BucketName: !Ref GroIngestionBucket
-        - Statement:
-            - Sid: MainKmsKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
-      VpcConfig:
-        SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
-      Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
-
-  GroGenerateXmlFunctionLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-generate-xml
-      KmsKeyId: !GetAtt MainKmsKey.Arn
-
-  DeathNotificationClient:
+  GroDeathNotificationClient:
     Type: AWS::Cognito::UserPoolClient
     DependsOn:
       - UserPoolResourceServer
@@ -1052,7 +1017,7 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes:
         - EventType/DeathNotification
-      ClientName: !Sub ${Environment}${Developer}-DeathNotificationClient
+      ClientName: !Sub ${Environment}${Developer}-GroDeathNotificationClient
       EnableTokenRevocation: false
       ExplicitAuthFlows:
         - ALLOW_USER_PASSWORD_AUTH
@@ -1063,50 +1028,47 @@ Resources:
       TokenValidityUnits:
         AccessToken: minutes
 
-  GroPublishRecordFunction:
-    Type: AWS::Serverless::Function
-    DependsOn:
-      - GroPublishRecordFunctionLogGroup
+  GroSftpFingerprintSecret:
+    Type: AWS::SecretsManager::Secret
     Properties:
-      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
-      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
-      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
-      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub ${Environment}${Developer}-gro-publish-record
-      CodeUri: lambdas/gro-publish-record
-      Handler: uk.gov.di.data.lep.GroPublishRecord::handleRequest
-      Environment:
-        Variables:
-          POWERTOOLS_SERVICE_NAME: gro-publish-record
-          LIFE_EVENTS_PLATFORM_DOMAIN: !If
-            - IsDev
-            - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
-            - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
-      AutoPublishAlias: latest
-      AutoPublishAliasAllProperties: true
-      Policies:
-        - Statement:
-            - Sid: MainKmsKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt MainKmsKey.Arn
-      VpcConfig:
-        SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
-      Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+      Description: The fingerprint for the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sftp-fingerprint
 
-  GroPublishRecordFunctionLogGroup:
-    Type: AWS::Logs::LogGroup
+  GroSftpHostSecret:
+    Type: AWS::SecretsManager::Secret
     Properties:
-      RetentionInDays: 14
-      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-publish-record
-      KmsKeyId: !GetAtt MainKmsKey.Arn
+      Description: The host for the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sftp-host
+
+  GroSftpPrivateKeySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The Private Key used to access the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sft-private-key
+
+  GroSftpPublicKeySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The Public Key used to access the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sft-public-key
+
+  GroSftpSourceDirSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The source directory for the GRO file on the for the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sftp-source-dir
+
+  GroSftpUsernameSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: The username for the GRO SFTP server
+      KmsKeyId: !Ref MainKmsKey
+      Name: !Sub ${Environment}${Developer}-gro-sftp-username
 
   GroPullFileFunction:
     Type: AWS::Serverless::Function
@@ -1177,109 +1139,147 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-pull-file
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
-  GroSftpFingerprintSecret:
-    Type: AWS::SecretsManager::Secret
+  GroGenerateXmlFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - GroGenerateXmlFunctionLogGroup
     Properties:
-      Description: The fingerprint for the GRO SFTP server
-      KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sftp-fingerprint
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-gro-generate-xml
+      CodeUri: lambdas/gro-generate-xml
+      Handler: uk.gov.di.data.lep.GroGenerateXml::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: gro-generate-xml
+          GRO_INGESTION_BUCKET_NAME: !Ref GroIngestionBucket
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref GroIngestionBucket
+        - Statement:
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
-  GroSftpHostSecret:
-    Type: AWS::SecretsManager::Secret
+  GroGenerateXmlFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
     Properties:
-      Description: The host for the GRO SFTP server
-      KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sftp-host
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-generate-xml
+      KmsKeyId: !GetAtt MainKmsKey.Arn
 
-  GroSftpPrivateKeySecret:
-    Type: AWS::SecretsManager::Secret
+  GroConvertToJsonFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - GroConvertToJsonFunctionLogGroup
     Properties:
-      Description: The Private Key used to access the GRO SFTP server
-      KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sft-private-key
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-gro-convert-to-json
+      CodeUri: lambdas/gro-convert-to-json
+      Handler: uk.gov.di.data.lep.GroConvertToJson::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: gro-convert-to-json
+          COGNITO_CLIENT_ID: !Ref GroDeathNotificationClient
+          COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
+          USER_POOL_ID: !Ref UserPool
+          GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref GroIngestionBucket
+        - S3WritePolicy:
+            BucketName: !Ref GroRecordsBucket
+        - Statement:
+            - Sid: DeathNotificationCognitoAccess
+              Effect: Allow
+              Action:
+                - cognito-idp:DescribeUserPoolClient
+              Resource:
+                - !GetAtt UserPool.Arn
+        - Statement:
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
-  GroSftpPublicKeySecret:
-    Type: AWS::SecretsManager::Secret
+  GroConvertToJsonFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
     Properties:
-      Description: The Public Key used to access the GRO SFTP server
-      KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sft-public-key
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-convert-to-json
+      KmsKeyId: !GetAtt MainKmsKey.Arn
 
-  GroSftpSourceDirSecret:
-    Type: AWS::SecretsManager::Secret
+  GroPublishRecordFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - GroPublishRecordFunctionLogGroup
     Properties:
-      Description: The source directory for the GRO file on the for the GRO SFTP server
-      KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sftp-source-dir
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_116: We do not want this function to have a DLQ that could contain PII Data, on failure there should be no saved data.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-gro-publish-record
+      CodeUri: lambdas/gro-publish-record
+      Handler: uk.gov.di.data.lep.GroPublishRecord::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: gro-publish-record
+          LIFE_EVENTS_PLATFORM_DOMAIN: !If
+            - IsDev
+            - !Join [ ".", [ !Ref Developer, !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ] ] ]
+            - !FindInMap [ EnvironmentConfiguration, !Ref Environment, domainName ]
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Policies:
+        - Statement:
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
-  GroSftpUsernameSecret:
-    Type: AWS::SecretsManager::Secret
+  GroPublishRecordFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
     Properties:
-      Description: The username for the GRO SFTP server
-      KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sftp-username
-
-  AuditKmsKey:
-    Type: AWS::KMS::Key
-    Properties:
-      Description: Symmetric key used to encrypt TxMA audit messages at rest in SQS
-      EnableKeyRotation: true
-      KeySpec: SYMMETRIC_DEFAULT
-      KeyPolicy:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
-            Action: kms:*
-            Resource: "*"
-          - Sid: AllowTxMADecryption
-            Effect: Allow
-            Principal:
-              AWS: !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
-            Action:
-              - kms:Decrypt*
-            Resource: '*'
-
-  AuditKmsKeyAlias:
-    Type: AWS::KMS::Alias
-    Properties:
-      AliasName: !Sub alias/${Environment}${Developer}/AuditEncryptionKey
-      TargetKeyId: !Ref AuditKmsKey
-
-  AuditQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: !Sub ${Environment}${Developer}-audit
-      MessageRetentionPeriod: 1209600
-      KmsMasterKeyId: !Ref AuditKmsKeyAlias
-      RedriveAllowPolicy:
-        redrivePermission: denyAll
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
-        maxReceiveCount: 10
-
-  AuditQueuePolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      Queues:
-        - !Ref AuditQueue
-      PolicyDocument:
-        Statement:
-          - Sid: AllowReadByTxMAAccount
-            Effect: Allow
-            Principal:
-              AWS: !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
-            Action:
-              - sqs:ChangeMessageVisibility
-              - sqs:ReceiveMessage
-              - sqs:DeleteMessage
-              - sqs:GetQueueAttributes
-            Resource: !GetAtt AuditQueue.Arn
-
-  AuditDeadLetterQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: !Sub ${Environment}${Developer}-audit-dlq
-      MessageRetentionPeriod: 1209600
-      KmsMasterKeyId: !Ref AuditKmsKeyAlias
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-publish-record
+      KmsKeyId: !GetAtt MainKmsKey.Arn

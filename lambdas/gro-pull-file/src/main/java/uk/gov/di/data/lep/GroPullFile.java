@@ -9,19 +9,23 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
+import uk.gov.di.data.lep.dto.Overrides;
 import uk.gov.di.data.lep.exceptions.GroSftpException;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.config.Constants;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 
-public class GroPullFile implements RequestHandler<Object, GroFileLocations> {
+public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
     private final AwsService awsService;
     private final Config config;
-    private final String groFileName;
+    private String groFileName;
 
     public GroPullFile() {
         this(new AwsService(), new Config());
@@ -30,19 +34,28 @@ public class GroPullFile implements RequestHandler<Object, GroFileLocations> {
     public GroPullFile(AwsService awsService, Config config) {
         this.awsService = awsService;
         this.config = config;
-
-        groFileName = "dept_d_date.xml";
     }
 
     @Override
     @Tracing
     @Logging(clearState = true)
-    public GroFileLocations handleRequest(Object event, Context context) {
+    public GroFileLocations handleRequest(Overrides overrides, Context context) {
+        groFileName = getGroFileName(overrides.fileName());
+
         var xmlBucket = config.getGroIngestionBucketName();
 
         transferFile(xmlBucket);
 
         return new GroFileLocations(xmlBucket, groFileName, null, null);
+    }
+
+    private String getGroFileName(String override) {
+        var calculatedName = String.format(
+            "DI_D_%s.xml",
+            LocalDate.now().format(DateTimeFormatter.ofPattern(Constants.LOCAL_DATE_PATTERN))
+        );
+
+        return override == null || override.isEmpty() ? calculatedName : override;
     }
 
     private void transferFile(String xmlBucket) {

@@ -29,7 +29,7 @@ class GroPullFileTest {
     private static final Config config = mock(Config.class);
     private static final GroPullFile underTest = new GroPullFile(awsService, config);
 
-    private final Overrides emptyOverrides = new Overrides(null);
+    private final Overrides emptyOverrides = new Overrides("");
     private static final String ingestionBucket = "GroIngestionBucket";
     private static final String fingerprint = "fingerprint";
     private static final String hostname = "hostname";
@@ -74,12 +74,38 @@ class GroPullFileTest {
     }
 
     @Test
-    void pullFileDownloadsFile() throws IOException {
+    void pullFileWithNullFilenameDownloadsFile() throws IOException {
         var testDate = LocalDate.parse("2022-01-01");
         try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
                 when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
                 when(client.newSFTPClient()).thenReturn(sftpClient);
             });
+             var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class);
+             var staticMockLocalDate = mockStatic(LocalDate.class)) {
+            var fingerprintVerifier = mock(FingerprintVerifier.class);
+
+            staticMockFingerprintVerifier.when(() -> FingerprintVerifier.getInstance(fingerprint)).thenReturn(fingerprintVerifier);
+            staticMockLocalDate.when(LocalDate::now).thenReturn(testDate);
+
+            var remoteFile = mock(RemoteFile.class);
+            when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
+            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/DI_D_2022-01-01.xml", sourceDir));
+            when(sftpClient.open(remoteResourceInfo.getPath(), EnumSet.of(OpenMode.READ))).thenReturn(remoteFile);
+            when(remoteFile.length()).thenReturn(5L);
+
+            underTest.handleRequest(new Overrides(null), null);
+
+            verify(awsService).putInBucket(eq(ingestionBucket), eq("DI_D_2022-01-01.xml"), any(), eq(5L));
+        }
+    }
+
+    @Test
+    void pullFileWithEmptyFilenameDownloadsFile() throws IOException {
+        var testDate = LocalDate.parse("2022-01-01");
+        try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
+            when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
+            when(client.newSFTPClient()).thenReturn(sftpClient);
+        });
              var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class);
              var staticMockLocalDate = mockStatic(LocalDate.class)) {
             var fingerprintVerifier = mock(FingerprintVerifier.class);

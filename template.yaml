@@ -602,7 +602,7 @@ Resources:
               ArnEquals:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
-        - !GetAtt DwpDeathMinimisationQueue.QueueUrl
+        - !Ref DwpDeathMinimisationQueue
 
   DwpDeathDistributionDlq:
     Type: AWS::SQS::Queue
@@ -710,6 +710,36 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-dwp-death-minimisation
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
+  IntegrationDeathDeliveryQueuePolicy:
+    Condition: IsIntegration
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: acquirerAccess
+            Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Resource: "*"
+            Action:
+              - SQS:GetQueueURl
+              - SQS:GetQueueAttributes
+              - SQS:ChangeMessageVisibility
+              - SQS:ReceiveMessage
+              - SQS:DeleteMessage
+          - Sid: httpsonly
+            Effect: Deny
+            Action: sqs:*
+            Resource: "*"
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+      Queues:
+        - !Ref DwpDevDeathDeliveryQueue
+        - !Ref DwpTestDeathDeliveryQueue
+        - !Ref DwpStageDeathDeliveryQueue
+
   DwpDevDeathKmsKey:
     Condition: IsIntegration
     Type: AWS::KMS::Key
@@ -762,7 +792,7 @@ Resources:
               ArnEquals:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
-        - !GetAtt DwpDevDeathMinimisationQueue.QueueUrl
+        - !Ref DwpDevDeathMinimisationQueue
 
   DwpDevDeathDistributionDlq:
     Condition: IsIntegration
@@ -930,7 +960,7 @@ Resources:
               ArnEquals:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
-        - !GetAtt DwpTestDeathMinimisationQueue.QueueUrl
+        - !Ref DwpTestDeathMinimisationQueue
 
   DwpTestDeathDistributionDlq:
     Condition: IsIntegration
@@ -1098,7 +1128,7 @@ Resources:
               ArnEquals:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
-        - !GetAtt DwpStageDeathMinimisationQueue.QueueUrl
+        - !Ref DwpStageDeathMinimisationQueue
 
   DwpStageDeathDistributionDlq:
     Condition: IsIntegration
@@ -1266,7 +1296,7 @@ Resources:
               ArnEquals:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
-        - !GetAtt OgdDeathMinimisationQueue.QueueUrl
+        - !Ref OgdDeathMinimisationQueue
 
   OgdDeathDistributionDlq:
     Condition: IsIntegration

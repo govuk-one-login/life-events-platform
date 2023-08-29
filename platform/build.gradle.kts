@@ -61,7 +61,7 @@ dependencies {
   runtimeOnly("org.flywaydb:flyway-core")
 
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
-  implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.2.3")
+  implementation("software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.2.4")
   implementation("org.postgresql:postgresql:42.6.0")
 
   implementation("org.springdoc:springdoc-openapi-starter-common:2.2.0")

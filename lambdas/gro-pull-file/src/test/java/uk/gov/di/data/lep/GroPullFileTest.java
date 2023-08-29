@@ -10,11 +10,13 @@ import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.gov.di.data.lep.dto.Overrides;
 import uk.gov.di.data.lep.exceptions.GroSftpException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -27,6 +29,7 @@ class GroPullFileTest {
     private static final Config config = mock(Config.class);
     private static final GroPullFile underTest = new GroPullFile(awsService, config);
 
+    private final Overrides emptyOverrides = new Overrides("");
     private static final String ingestionBucket = "GroIngestionBucket";
     private static final String fingerprint = "fingerprint";
     private static final String hostname = "hostname";
@@ -71,11 +74,63 @@ class GroPullFileTest {
     }
 
     @Test
-    void pullFileDownloadsFile() throws IOException {
+    void pullFileWithNullFilenameDownloadsFile() throws IOException {
+        var testDate = LocalDate.parse("2022-01-01");
         try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
                 when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
                 when(client.newSFTPClient()).thenReturn(sftpClient);
             });
+             var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class);
+             var staticMockLocalDate = mockStatic(LocalDate.class)) {
+            var fingerprintVerifier = mock(FingerprintVerifier.class);
+
+            staticMockFingerprintVerifier.when(() -> FingerprintVerifier.getInstance(fingerprint)).thenReturn(fingerprintVerifier);
+            staticMockLocalDate.when(LocalDate::now).thenReturn(testDate);
+
+            var remoteFile = mock(RemoteFile.class);
+            when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
+            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/DI_D_2022-01-01.xml", sourceDir));
+            when(sftpClient.open(remoteResourceInfo.getPath(), EnumSet.of(OpenMode.READ))).thenReturn(remoteFile);
+            when(remoteFile.length()).thenReturn(5L);
+
+            underTest.handleRequest(new Overrides(null), null);
+
+            verify(awsService).putInBucket(eq(ingestionBucket), eq("DI_D_2022-01-01.xml"), any(), eq(5L));
+        }
+    }
+
+    @Test
+    void pullFileWithEmptyFilenameDownloadsFile() throws IOException {
+        var testDate = LocalDate.parse("2022-01-01");
+        try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
+            when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
+            when(client.newSFTPClient()).thenReturn(sftpClient);
+        });
+             var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class);
+             var staticMockLocalDate = mockStatic(LocalDate.class)) {
+            var fingerprintVerifier = mock(FingerprintVerifier.class);
+
+            staticMockFingerprintVerifier.when(() -> FingerprintVerifier.getInstance(fingerprint)).thenReturn(fingerprintVerifier);
+            staticMockLocalDate.when(LocalDate::now).thenReturn(testDate);
+
+            var remoteFile = mock(RemoteFile.class);
+            when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
+            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/DI_D_2022-01-01.xml", sourceDir));
+            when(sftpClient.open(remoteResourceInfo.getPath(), EnumSet.of(OpenMode.READ))).thenReturn(remoteFile);
+            when(remoteFile.length()).thenReturn(5L);
+
+            underTest.handleRequest(emptyOverrides, null);
+
+            verify(awsService).putInBucket(eq(ingestionBucket), eq("DI_D_2022-01-01.xml"), any(), eq(5L));
+        }
+    }
+
+    @Test
+    void pullFileWithOverridesDownloadsFile() throws IOException {
+        try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
+            when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
+            when(client.newSFTPClient()).thenReturn(sftpClient);
+        });
              var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class)) {
             var fingerprintVerifier = mock(FingerprintVerifier.class);
 
@@ -83,31 +138,34 @@ class GroPullFileTest {
 
             var remoteFile = mock(RemoteFile.class);
             when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
-            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/dept_d_date.xml", sourceDir));
+            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/fileName.xml", sourceDir));
             when(sftpClient.open(remoteResourceInfo.getPath(), EnumSet.of(OpenMode.READ))).thenReturn(remoteFile);
             when(remoteFile.length()).thenReturn(5L);
 
-            underTest.handleRequest(null, null);
+            underTest.handleRequest(new Overrides("fileName.xml"), null);
 
-            verify(awsService).putInBucket(eq(ingestionBucket), eq("dept_d_date.xml"), any(), eq(5L));
+            verify(awsService).putInBucket(eq(ingestionBucket), eq("fileName.xml"), any(), eq(5L));
         }
     }
 
     @Test
     void pullFileThrowsExceptionIfNoFileExists() throws IOException {
+        var testDate = LocalDate.parse("2022-01-01");
         try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
             when(client.loadKeys(privateKey, null, null)).thenReturn(keyProvider);
             when(client.newSFTPClient()).thenReturn(sftpClient);
         });
-             var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class)) {
+             var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class);
+             var staticMockLocalDate = mockStatic(LocalDate.class)) {
             var fingerprintVerifier = mock(FingerprintVerifier.class);
 
             staticMockFingerprintVerifier.when(() -> FingerprintVerifier.getInstance(fingerprint)).thenReturn(fingerprintVerifier);
+            staticMockLocalDate.when(LocalDate::now).thenReturn(testDate);
             when(sftpClient.ls(sourceDir)).thenReturn(List.of());
 
-            var exception = assertThrows(GroSftpException.class, () -> underTest.handleRequest(null, null));
+            var exception = assertThrows(GroSftpException.class, () -> underTest.handleRequest(emptyOverrides, null));
 
-            assertEquals(String.format("File: dept_d_date.xml not found on GRO SFTP Server in directory: %s", sourceDir), exception.getMessage());
+            assertEquals(String.format("File: DI_D_2022-01-01.xml not found on GRO SFTP Server in directory: %s", sourceDir), exception.getMessage());
             verify(awsService, never()).putInBucket(any(), any(), any(), anyLong());
         }
     }
@@ -125,7 +183,7 @@ class GroPullFileTest {
             var innerException = new IOException();
             when(sftpClient.ls(sourceDir)).thenThrow(innerException);
 
-            var exception = assertThrows(GroSftpException.class, () -> underTest.handleRequest(null, null));
+            var exception = assertThrows(GroSftpException.class, () -> underTest.handleRequest(emptyOverrides, null));
 
             assertEquals(innerException, exception.getCause());
             verify(awsService, never()).putInBucket(any(), any(), any(), anyLong());

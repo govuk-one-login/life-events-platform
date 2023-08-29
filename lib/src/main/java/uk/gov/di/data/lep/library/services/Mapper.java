@@ -24,9 +24,9 @@ public class Mapper {
 
     public static XmlMapper xmlMapper() {
         return XmlMapper.builder()
-            .defaultUseWrapper(false)
-            .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
             .addModule(new JavaTimeModule())
+            .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+            .defaultUseWrapper(false)
             .build();
     }
 }

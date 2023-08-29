@@ -18,13 +18,14 @@ SLIs. Monitoring and alerting will be performed by using Prometheus and Grafana
 | End to end latency      | Time from event published by a supplier to being consumed by an acquirer                                                                                   | 99th centile of duration in a 24 hour window < 1h                       |
 | Service latency         | Time between an event being ingested to being available for an acquirer                                                                                    | 99th centile of duration in a 24 hour window < 5s                       |
 | Ingestion availability  | This will be defined per data source. For example with HMPO, is the file available within the agreed window?                                               | -                                                                       |
+| Target Capacity         | The service is able to meet the above SLAs with load not exceeding the target number of events in a given time window                                      | 6,000 events in a 24 hour window                                        |
 
-## Performance Testing
+## Performance Testing and Capacity
 
-Before go-live, we will test the service at twice an expected load (to approx ~6,000 events) and evaluate against the
-above - see [GPC-384](https://govukverify.atlassian.net/browse/GPC-384). In non production environments, the mock data
-generation averages 5 events per minute, or 7,200 in 24 hours, but gradually released through the day, so is not
-representative of a peak load.
+As above, the service is designed for a capacity approximately twice the expected peak load, and tested to such.
+In non production environments, the mock data generation averages 5 events per minute, or 7,200 in 24 hours, but 
+gradually released through the day, so is not representative of a peak load.
+If required additional peak load testing data can be arranged.
 
 ## RPO and RTO
 

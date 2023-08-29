@@ -23,9 +23,10 @@ public class Mapper {
     }
 
     public static XmlMapper xmlMapper() {
-        var mapper = new XmlMapper();
-        mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
-        mapper.registerModule(new JavaTimeModule());
-        return mapper;
+        return XmlMapper.builder()
+            .defaultUseWrapper(false)
+            .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+            .addModule(new JavaTimeModule())
+            .build();
     }
 }

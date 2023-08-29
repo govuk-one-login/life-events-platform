@@ -14,7 +14,7 @@ public class Mapper {
 
     public static ObjectMapper objectMapper() {
         var mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+        mapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL);
         mapper.registerModule(new JavaTimeModule());
         mapper.setFilterProvider(
             new SimpleFilterProvider().addFilter("DeathNotificationSet", SimpleBeanPropertyFilter.serializeAll())
@@ -25,7 +25,7 @@ public class Mapper {
     public static XmlMapper xmlMapper() {
         return XmlMapper.builder()
             .addModule(new JavaTimeModule())
-            .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
             .defaultUseWrapper(false)
             .build();
     }

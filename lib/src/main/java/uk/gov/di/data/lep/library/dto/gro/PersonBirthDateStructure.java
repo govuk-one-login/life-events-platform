@@ -10,10 +10,10 @@ import java.time.LocalDate;
 
 public record PersonBirthDateStructure(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_PATTERN)
-    @JsonProperty("PersonBirthDate")
+    @JsonProperty(value = "PersonBirthDate", namespace = Constants.PERSON_DESCRIPTIVES_NAMESPACE)
     LocalDate personBirthDate,
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonProperty("VerificationLevel")
+    @JsonProperty(value = "VerificationLevel", namespace = Constants.PERSON_DESCRIPTIVES_NAMESPACE)
     GroVerificationLevel verificationLevel
 ) {
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import uk.gov.di.data.lep.library.config.Constants;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 
@@ -27,10 +26,8 @@ public record GroJsonRecord(
     Integer recordUpdateReason,
     @JsonProperty("DeceasedName")
     GroPersonNameStructure deceasedName,
-    @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("DeceasedAliasName")
     List<GroPersonNameStructure> deceasedAliasNames,
-    @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("DeceasedAliasNameType")
     List<String> deceasedAliasNameTypes,
     @JsonProperty("DeceasedMaidenName")

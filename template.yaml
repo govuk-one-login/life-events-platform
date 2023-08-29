@@ -61,6 +61,11 @@ Conditions:
     Fn::Equals:
       - !Ref Environment
       - integration
+  IsNotProduction:
+    Fn::Not:
+      - Fn::Equals:
+          - !Ref Environment
+          - production
   UseCodeSigning:
     Fn::Not:
       - Fn::Equals:
@@ -1140,6 +1145,7 @@ Resources:
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   GroGenerateXmlFunction:
+    Condition: IsNotProduction
     Type: AWS::Serverless::Function
     DependsOn:
       - GroGenerateXmlFunctionLogGroup
@@ -1177,6 +1183,7 @@ Resources:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroGenerateXmlFunctionLogGroup:
+    Condition: IsNotProduction
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14

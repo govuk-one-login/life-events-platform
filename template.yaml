@@ -268,7 +268,7 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Sid: sqsAccess
+          - Sid: DwpIntegrationSqsAccess
             Effect: Allow
             Resource:
               - !Ref DwpDevDeathDeliveryQueue
@@ -280,7 +280,7 @@ Resources:
               - SQS:ChangeMessageVisibility
               - SQS:ReceiveMessage
               - SQS:DeleteMessage
-          - Sid: keyAccess
+          - Sid: DwpIntegrationKmsKeyAccess
             Effect: Allow
             Action:
               - kms:GenerateDataKey
@@ -294,16 +294,17 @@ Resources:
     Type: AWS::IAM::Group
     Condition: IsIntegration
     Properties:
-      GroupName: IamUserGroup
+      GroupName: dwp-integration-user-group
       ManagedPolicyArns:
         - !Ref DwpIntegrationManagedPolicy
 
-  DwpIntegrationUser:
+  DwpDevelopmentUser:
     Type: AWS::IAM::User
     Condition: IsIntegration
     Properties:
       Groups:
         - !Ref DwpIntegrationUserGroup
+      UserName: dwp-development-user
 
   DeveloperHostedZone:
     Type: AWS::Route53::HostedZone

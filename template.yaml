@@ -812,6 +812,13 @@ Resources:
             Condition:
               ArnLike:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Principal:
+              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Resource: "*"
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
 
   DwpDevDeathKmsKeyAlias:
     Condition: IsIntegration
@@ -980,6 +987,13 @@ Resources:
             Condition:
               ArnLike:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Principal:
+              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Resource: "*"
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
 
   DwpTestDeathKmsKeyAlias:
     Condition: IsIntegration
@@ -1148,6 +1162,13 @@ Resources:
             Condition:
               ArnLike:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Principal:
+              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Resource: "*"
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
 
   DwpStageDeathKmsKeyAlias:
     Condition: IsIntegration

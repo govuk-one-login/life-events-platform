@@ -730,6 +730,7 @@ Resources:
               - SQS:DeleteMessage
           - Sid: httpsonly
             Effect: Deny
+            Principal: "*"
             Action: sqs:*
             Resource: "*"
             Condition:

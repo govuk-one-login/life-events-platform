@@ -261,6 +261,70 @@ Resources:
           ScopeName: DeathNotification
       UserPoolId: !Ref UserPool
 
+  DwpIntegrationManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: sqsAccess
+            Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Resource:
+              - !Ref DwpDevDeathDeliveryQueue
+              - !Ref DwpTestDeathDeliveryQueue
+              - !Ref DwpStageDeathDeliveryQueue
+            Action:
+              - SQS:GetQueueUrl
+              - SQS:GetQueueAttributes
+              - SQS:ChangeMessageVisibility
+              - SQS:ReceiveMessage
+              - SQS:DeleteMessage
+          - Sid: keyAccess
+            Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
+            Resource:
+              - !Ref DwpDevDeathKmsKey
+              - !Ref DwpTestDeathKmsKey
+              - !Ref DwpStageDeathKmsKey
+#          - Sid: Enable IAM User Permissions
+#            Effect: Allow
+#            Principal: !Sub arn:aws:iam::${AWS::AccountId}:root
+#            Action: kms:*
+#            Resource: *
+      Groups:
+        - !Ref DwpIntegrationUserGroup
+
+  DwpIntegrationUserGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: IamUserGroup
+      ManagedPolicyArns:
+        - !Ref DwpIntegrationManagedPolicy
+
+  DwpDevUser:
+    Type: AWS::IAM::User
+    Properties:
+      Groups:
+        - !Ref DwpIntegrationUserGroup
+
+  DwpTestUser:
+    Type: AWS::IAM::User
+    Properties:
+      Groups:
+        - !Ref DwpIntegrationUserGroup
+
+  DwpStageUser:
+    Type: AWS::IAM::User
+    Properties:
+      Groups:
+        - !Ref DwpIntegrationUserGroup
+
   DeveloperHostedZone:
     Type: AWS::Route53::HostedZone
     Condition: IsDev

@@ -884,6 +884,23 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
+  DwpDevDeathOldFormatDeliveryQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-old-format-death-delivery
+      KmsMasterKeyId: !Ref DwpDevDeathKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !Ref DwpDevDeathOldFormatDeliveryDlq
+        maxReceiveCount: 5
+
+  DwpDevDeathOldFormatDeliveryDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-old-format-death-delivery-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
   DwpDevDeathMinimisationFunction:
     Condition: IsIntegration
     Type: AWS::Serverless::Function

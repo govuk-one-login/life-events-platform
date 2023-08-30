@@ -717,7 +717,7 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Sid: acquirerAccess
+          - Sid: AcquirerAccess
             Effect: Allow
             Principal:
               AWS: arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
@@ -728,7 +728,7 @@ Resources:
               - SQS:ChangeMessageVisibility
               - SQS:ReceiveMessage
               - SQS:DeleteMessage
-          - Sid: httpsonly
+          - Sid: HttpsOnly
             Effect: Deny
             Principal: "*"
             Action: sqs:*

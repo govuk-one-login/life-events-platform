@@ -261,6 +261,51 @@ Resources:
           ScopeName: DeathNotification
       UserPoolId: !Ref UserPool
 
+  DwpIntegrationManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: IsIntegration
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: DwpIntegrationSqsAccess
+            Effect: Allow
+            Resource:
+              - !Ref DwpDevDeathDeliveryQueue
+              - !Ref DwpTestDeathDeliveryQueue
+              - !Ref DwpStageDeathDeliveryQueue
+            Action:
+              - SQS:GetQueueUrl
+              - SQS:GetQueueAttributes
+              - SQS:ChangeMessageVisibility
+              - SQS:ReceiveMessage
+              - SQS:DeleteMessage
+          - Sid: DwpIntegrationKmsKeyAccess
+            Effect: Allow
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
+            Resource:
+              - !Ref DwpDevDeathKmsKey
+              - !Ref DwpTestDeathKmsKey
+              - !Ref DwpStageDeathKmsKey
+
+  DwpIntegrationUserGroup:
+    Type: AWS::IAM::Group
+    Condition: IsIntegration
+    Properties:
+      GroupName: dwp-integration-user-group
+      ManagedPolicyArns:
+        - !Ref DwpIntegrationManagedPolicy
+
+  DwpDevelopmentUser:
+    Type: AWS::IAM::User
+    Condition: IsIntegration
+    Properties:
+      Groups:
+        - !Ref DwpIntegrationUserGroup
+      UserName: dwp-development-user
+
   DeveloperHostedZone:
     Type: AWS::Route53::HostedZone
     Condition: IsDev
@@ -768,6 +813,13 @@ Resources:
             Condition:
               ArnLike:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Principal:
+              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Resource: "*"
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
 
   DwpDevDeathKmsKeyAlias:
     Condition: IsIntegration
@@ -936,6 +988,13 @@ Resources:
             Condition:
               ArnLike:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Principal:
+              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Resource: "*"
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
 
   DwpTestDeathKmsKeyAlias:
     Condition: IsIntegration
@@ -1104,6 +1163,13 @@ Resources:
             Condition:
               ArnLike:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
+          - Effect: Allow
+            Principal:
+              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+            Resource: "*"
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
 
   DwpStageDeathKmsKeyAlias:
     Condition: IsIntegration

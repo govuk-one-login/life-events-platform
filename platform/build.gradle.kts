@@ -100,7 +100,7 @@ dependencies {
   testRuntimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
   testRuntimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.16")
-  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")
+  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:3.0.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("io.mockk:mockk:1.13.7")
   testImplementation("com.ninja-squad:springmockk:4.0.2")

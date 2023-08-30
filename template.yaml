@@ -723,7 +723,7 @@ Resources:
               AWS: arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
             Resource: "*"
             Action:
-              - SQS:GetQueueURl
+              - SQS:GetQueueUrl
               - SQS:GetQueueAttributes
               - SQS:ChangeMessageVisibility
               - SQS:ReceiveMessage

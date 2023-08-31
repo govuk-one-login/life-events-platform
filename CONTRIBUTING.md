@@ -93,7 +93,7 @@ For a new configuration
 
 - If you have issues running like not being able to find localstack, manually spinning up services may help. In a
   terminal, run
--
+
   ```sh
   docker-compose up datashare-db oauth2 localstack -d
   ```

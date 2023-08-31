@@ -63,7 +63,7 @@ Restart terminal then run
 
 ```shell
 jenv add /Library/Java/JavaVirtualMachines/amazon-corretto-17.jdk/Contents/Home/
-jenv global corretto64-17.0.7
+jenv global corretto64-17.0.8.1
 ```
 
 Restart terminal then run in the project top directory

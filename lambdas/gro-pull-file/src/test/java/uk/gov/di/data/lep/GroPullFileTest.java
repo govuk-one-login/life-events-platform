@@ -89,13 +89,13 @@ class GroPullFileTest {
 
             var remoteFile = mock(RemoteFile.class);
             when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
-            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/DI_D_2022-01-01.xml", sourceDir));
+            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/DI_D_20220101.xml", sourceDir));
             when(sftpClient.open(remoteResourceInfo.getPath(), EnumSet.of(OpenMode.READ))).thenReturn(remoteFile);
             when(remoteFile.length()).thenReturn(5L);
 
             underTest.handleRequest(new Overrides(null), null);
 
-            verify(awsService).putInBucket(eq(ingestionBucket), eq("DI_D_2022-01-01.xml"), any(), eq(5L));
+            verify(awsService).putInBucket(eq(ingestionBucket), eq("DI_D_20220101.xml"), any(), eq(5L));
         }
     }
 
@@ -115,13 +115,13 @@ class GroPullFileTest {
 
             var remoteFile = mock(RemoteFile.class);
             when(sftpClient.ls(sourceDir)).thenReturn(List.of(remoteResourceInfo));
-            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/DI_D_2022-01-01.xml", sourceDir));
+            when(remoteResourceInfo.getPath()).thenReturn(String.format("%s/DI_D_20220101.xml", sourceDir));
             when(sftpClient.open(remoteResourceInfo.getPath(), EnumSet.of(OpenMode.READ))).thenReturn(remoteFile);
             when(remoteFile.length()).thenReturn(5L);
 
             underTest.handleRequest(emptyOverrides, null);
 
-            verify(awsService).putInBucket(eq(ingestionBucket), eq("DI_D_2022-01-01.xml"), any(), eq(5L));
+            verify(awsService).putInBucket(eq(ingestionBucket), eq("DI_D_20220101.xml"), any(), eq(5L));
         }
     }
 
@@ -165,7 +165,7 @@ class GroPullFileTest {
 
             var exception = assertThrows(GroSftpException.class, () -> underTest.handleRequest(emptyOverrides, null));
 
-            assertEquals(String.format("File: DI_D_2022-01-01.xml not found on GRO SFTP Server in directory: %s", sourceDir), exception.getMessage());
+            assertEquals(String.format("File: DI_D_20220101.xml not found on GRO SFTP Server in directory: %s", sourceDir), exception.getMessage());
             verify(awsService, never()).putInBucket(any(), any(), any(), anyLong());
         }
     }

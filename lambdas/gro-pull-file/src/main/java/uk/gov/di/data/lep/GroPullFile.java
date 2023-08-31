@@ -52,7 +52,7 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
     private String getGroFileName(String override) {
         var calculatedName = String.format(
             "DI_D_%s.xml",
-            LocalDate.now().format(DateTimeFormatter.ofPattern(Constants.LOCAL_DATE_PATTERN))
+            LocalDate.now().format(DateTimeFormatter.ofPattern(Constants.GRO_FILE_DATE_PATTERN))
         );
 
         return override == null || override.isEmpty() ? calculatedName : override;

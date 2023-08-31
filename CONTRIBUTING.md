@@ -74,7 +74,7 @@ eval $(assume-role gdx)
 
 Requirements
 
-- Java 17 (Coretto recommended) for local running, test running
+- Java 17 (Coretto recommended - installation instructions can be found in the [README](README.md) under `Working with SAM`) for local running, test running
 
 Generally, development is easier with
 
@@ -93,7 +93,7 @@ For a new configuration
 
 - If you have issues running like not being able to find localstack, manually spinning up services may help. In a
   terminal, run
-  
+
   ```sh
   docker-compose up datashare-db oauth2 localstack -d
   ```

@@ -271,9 +271,9 @@ Resources:
           - Sid: DwpIntegrationSqsAccess
             Effect: Allow
             Resource:
-              - !Ref DwpDevDeathDeliveryQueue
-              - !Ref DwpTestDeathDeliveryQueue
-              - !Ref DwpStageDeathDeliveryQueue
+              - !GetAtt DwpDevDeathDeliveryQueue.Arn
+              - !GetAtt DwpTestDeathDeliveryQueue.Arn
+              - !GetAtt DwpStageDeathDeliveryQueue.Arn
             Action:
               - SQS:GetQueueUrl
               - SQS:GetQueueAttributes
@@ -286,9 +286,9 @@ Resources:
               - kms:GenerateDataKey
               - kms:Decrypt
             Resource:
-              - !Ref DwpDevDeathKmsKey
-              - !Ref DwpTestDeathKmsKey
-              - !Ref DwpStageDeathKmsKey
+              - !GetAtt DwpDevDeathKmsKey.Arn
+              - !GetAtt DwpTestDeathKmsKey.Arn
+              - !GetAtt DwpStageDeathKmsKey.Arn
 
   DwpIntegrationUserGroup:
     Type: AWS::IAM::Group

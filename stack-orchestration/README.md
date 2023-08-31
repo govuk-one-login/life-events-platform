@@ -28,6 +28,6 @@ then run the below, replacing `<environment>`with one of `dev`, `build`, `stagin
 To update the parameters used for our stacks, please update the parameters in
 the `configuration/[ENVIRONMENT]/[PIPELINE]/parameters.json` files.
 
-For the updating the VPC pipelines, make sure you have the encryption key file as described above, and then run
+For updating the VPC pipelines, make sure you have the encryption key file as described above, and then run
 the `decrypt_vpc_parameters.sh` script. Afterwards you will be able to update the parameters. These updates will not be
-tracked unless you then run the `encrypt_vpc_parameters.sh` script afterwards.
+tracked unless you run the `encrypt_vpc_parameters.sh` script after making changes.

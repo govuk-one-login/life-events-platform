@@ -74,7 +74,7 @@ eval $(assume-role gdx)
 
 Requirements
 
-- Java 17 (Coretto recommended - installation instructions can be found in the [README](README.md) under `Working with SAM`) for local running, test running
+- Java 17 for local running, test running (Coretto recommended - installation instructions can be found in the [README](README.md) under `Working with SAM`)
 
 Generally, development is easier with
 

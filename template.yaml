@@ -1638,14 +1638,14 @@ Resources:
     Properties:
       Description: The Private Key used to access the GRO SFTP server
       KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sft-private-key
+      Name: !Sub ${Environment}${Developer}-gro-sftp-private-key
 
   GroSftpPublicKeySecret:
     Type: AWS::SecretsManager::Secret
     Properties:
       Description: The Public Key used to access the GRO SFTP server
       KmsKeyId: !Ref MainKmsKey
-      Name: !Sub ${Environment}${Developer}-gro-sft-public-key
+      Name: !Sub ${Environment}${Developer}-gro-sftp-public-key
 
   GroSftpSourceDirSecret:
     Type: AWS::SecretsManager::Secret

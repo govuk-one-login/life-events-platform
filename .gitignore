@@ -122,5 +122,5 @@ node_modules
 
 .aws-sam
 
-#stack-orchestration/configuration/**/vpc
+stack-orchestration/configuration/**/vpc
 !stack-orchestration/configuration/**/vpc.zip

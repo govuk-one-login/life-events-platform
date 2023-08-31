@@ -2,6 +2,23 @@ AWSTemplateFormatVersion: "2010-09-09"
 
 Description: Initial account setup
 
+Parameters:
+  Environment:
+    Description: The name of the environment to deploy to
+    Type: String
+    AllowedValues:
+      - dev
+      - build
+      - staging
+      - integration
+      - production
+
+Conditions:
+  IsIntegration:
+    Fn::Equals:
+      - !Ref Environment
+      - integration
+
 Resources:
   DynatraceApiToken:
     Type: AWS::SecretsManager::Secret
@@ -12,3 +29,19 @@ Resources:
       Tags:
         - Key: CheckovRulesToSkip
           Value: CKV_AWS_149
+
+  DwpIntegrationUserGroup:
+    Type: AWS::IAM::Group
+    Condition: IsIntegration
+    Properties:
+      GroupName: dwp-integration-user-group
+      ManagedPolicyArns:
+        - !ImportValue DwpIntegrationManagedPolicyArn
+
+  DwpDevelopmentUser:
+    Type: AWS::IAM::User
+    Condition: IsIntegration
+    Properties:
+      Groups:
+        - !Ref DwpIntegrationUserGroup
+      UserName: dwp-development-user

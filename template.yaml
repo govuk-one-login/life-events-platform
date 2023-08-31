@@ -265,6 +265,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Condition: IsIntegration
     Properties:
+      ManagedPolicyName: dwp-integration-managed-policy
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -289,22 +290,6 @@ Resources:
               - !GetAtt DwpDevDeathKmsKey.Arn
               - !GetAtt DwpTestDeathKmsKey.Arn
               - !GetAtt DwpStageDeathKmsKey.Arn
-
-  DwpIntegrationUserGroup:
-    Type: AWS::IAM::Group
-    Condition: IsIntegration
-    Properties:
-      GroupName: dwp-integration-user-group
-      ManagedPolicyArns:
-        - !Ref DwpIntegrationManagedPolicy
-
-  DwpDevelopmentUser:
-    Type: AWS::IAM::User
-    Condition: IsIntegration
-    Properties:
-      Groups:
-        - !Ref DwpIntegrationUserGroup
-      UserName: dwp-development-user
 
   DeveloperHostedZone:
     Type: AWS::Route53::HostedZone
@@ -815,7 +800,7 @@ Resources:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
           - Effect: Allow
             Principal:
-              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+              AWS: arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
             Resource: "*"
             Action:
               - kms:GenerateDataKey
@@ -990,7 +975,7 @@ Resources:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
           - Effect: Allow
             Principal:
-              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+              AWS: arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
             Resource: "*"
             Action:
               - kms:GenerateDataKey
@@ -1165,7 +1150,7 @@ Resources:
                 kms:EncryptionContext:aws:logs:arn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*
           - Effect: Allow
             Principal:
-              AWS:  arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
+              AWS: arn:aws:iam::731252101191:role/GDS-SQS-Role-nonprod
             Resource: "*"
             Action:
               - kms:GenerateDataKey
@@ -1891,3 +1876,10 @@ Resources:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-publish-record
       KmsKeyId: !GetAtt MainKmsKey.Arn
+
+Outputs:
+  DwpIntegrationManagedPolicyArn:
+    Condition: IsIntegration
+    Value: !Ref DwpIntegrationManagedPolicy
+    Export:
+      Name: DwpIntegrationManagedPolicyArn

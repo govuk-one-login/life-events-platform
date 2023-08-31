@@ -292,7 +292,7 @@ Resources:
 
   DwpIntegrationUserGroup:
     Type: AWS::IAM::Group
-    Condition: IsIntegration
+    Condition: IsIntegration`
     Properties:
       GroupName: dwp-integration-user-group
       ManagedPolicyArns:

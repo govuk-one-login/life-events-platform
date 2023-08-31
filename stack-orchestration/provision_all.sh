@@ -6,6 +6,8 @@ export AUTO_APPLY_CHANGESET=true
 export SKIP_AWS_AUTHENTICATION=true
 export AWS_PAGER=""
 
+./decrypt_vpc_parameters.sh
+
 ## Provision dependencies
 for dir in configuration/"$AWS_ACCOUNT"/*/; do
   STACK=$(basename "$dir")

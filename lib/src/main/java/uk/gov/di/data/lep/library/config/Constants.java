@@ -10,6 +10,7 @@ public class Constants {
     public static final String LOCAL_DATE_PATTERN = "yyyy-MM-dd";
     public static final String LOCAL_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss[.SSS]";
 
+    public static final String GRO_FILE_DATE_PATTERN = "yyyyMMdd";
     public static final String OGD_DEATH_EXTRACT_DWP_NAMESPACE = "http://www.ons.gov.uk/gro/OGDDeathExtractDWP";
     public static final String PERSON_DESCRIPTIVES_NAMESPACE = "http://www.govtalk.gov.uk/people/PersonDescriptives";
     public static final String GRO_ADDRESS_DESCRIPTIVES_NAMESPACE = "http://www.ons.gov.uk/gro/people/GROAddressDescriptives";

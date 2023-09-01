@@ -9,7 +9,7 @@ parallel = true
 lint = true
 
 [dev-oskwil.deploy.parameters]
-capabilities = "CAPABILITY_IAM"
+capabilities = "CAPABILITY_NAMED_IAM"
 confirm_changeset = true
 resolve_s3 = true
 region = "eu-west-2"
@@ -18,7 +18,7 @@ s3_prefix = "oskwil-lev"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"oskwil\""
 
 [dev-hanleo.deploy.parameters]
-capabilities = "CAPABILITY_IAM"
+capabilities = "CAPABILITY_NAMED_IAM"
 confirm_changeset = true
 resolve_s3 = true
 region = "eu-west-2"
@@ -27,10 +27,19 @@ s3_prefix = "hanleo-lev"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"hanleo\""
 
 [dev-mwillis.deploy.parameters]
-capabilities = "CAPABILITY_IAM"
+capabilities = "CAPABILITY_NAMED_IAM"
 confirm_changeset = true
 resolve_s3 = true
 region = "eu-west-2"
 stack_name = "mwillis-lev"
 s3_prefix = "mwillis-lev"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"mwillis\""
+
+[dev-hmpo.deploy.parameters]
+capabilities = "CAPABILITY_NAMED_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-west-2"
+stack_name = "hmpo-lep"
+s3_prefix = "hmpo-lep"
+parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"hmpo\""

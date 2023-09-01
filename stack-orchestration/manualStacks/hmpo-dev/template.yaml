@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Extra functionality added to dev environment for HMPO
+
+Parameters:
+  Environment:
+    Description: The name of the environment to deploy to
+    Type: String
+    AllowedValues:
+      - dev
+
+Resources:
+  HmpoDevUserGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: hmpo-dev-user-group
+      ManagedPolicyArns:
+        - !ImportValue HmpoDevManagedPolicyArn
+
+  HmpoDevUser:
+    Type: AWS::IAM::User
+    Properties:
+      Groups:
+        - !Ref HmpoDevUserGroup
+      UserName: hmpo-dev-development-user

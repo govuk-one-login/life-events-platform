@@ -54,28 +54,17 @@ Parameters:
 
 Conditions:
   IsDev:
-    Fn::Equals:
-      - !Ref Environment
-      - dev
+    !Equals [dev, !Ref Environment]
+  IsHmpoDev:
+    !And [!Equals [hmpo, !Ref Developer], Condition: IsDev ]
   IsIntegration:
-    Fn::Equals:
-      - !Ref Environment
-      - integration
+    !Equals [integration, !Ref Environment]
   IsNotProduction:
-    Fn::Not:
-      - Fn::Equals:
-          - !Ref Environment
-          - production
+    !Not [!Equals [production, !Ref Environment]]
   UseCodeSigning:
-    Fn::Not:
-      - Fn::Equals:
-          - !Ref CodeSigningConfigArn
-          - none
+    !Not [!Equals [none, !Ref CodeSigningConfigArn]]
   UsePermissionsBoundary:
-    Fn::Not:
-      - Fn::Equals:
-          - !Ref PermissionsBoundary
-          - none
+    !Not [!Equals [none, !Ref PermissionsBoundary]]
 
 Mappings:
   EnvironmentConfiguration:
@@ -290,6 +279,32 @@ Resources:
               - !GetAtt DwpDevDeathKmsKey.Arn
               - !GetAtt DwpTestDeathKmsKey.Arn
               - !GetAtt DwpStageDeathKmsKey.Arn
+
+  HmpoDevManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: IsHmpoDev
+    Properties:
+      ManagedPolicyName: hmpo-dev-managed-policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: HmpoDevSqsAccess
+            Effect: Allow
+            Resource:
+              - !GetAtt DwpDeathDeliveryQueue.Arn
+            Action:
+              - SQS:GetQueueUrl
+              - SQS:GetQueueAttributes
+              - SQS:ChangeMessageVisibility
+              - SQS:ReceiveMessage
+              - SQS:DeleteMessage
+          - Sid: HmpoDevKmsKeyAccess
+            Effect: Allow
+            Action:
+              - kms:GenerateDataKey
+              - kms:Decrypt
+            Resource:
+              - !GetAtt DwpDeathKmsKey.Arn
 
   DeveloperHostedZone:
     Type: AWS::Route53::HostedZone
@@ -1883,3 +1898,8 @@ Outputs:
     Value: !Ref DwpIntegrationManagedPolicy
     Export:
       Name: DwpIntegrationManagedPolicyArn
+  HmpoDevManagedPolicyArn:
+    Condition: IsHmpoDev
+    Value: !Ref HmpoDevManagedPolicy
+    Export:
+      Name: HmpoDevManagedPolicyArn

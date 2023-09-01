@@ -981,6 +981,7 @@ Resources:
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   ConvertSetToOldFormatFunction:
+    Condition: IsIntegration
     Type: AWS::Serverless::Function
     DependsOn:
       - ConvertSetToOldFormatFunctionLogGroup
@@ -1026,6 +1027,7 @@ Resources:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   ConvertSetToOldFormatFunctionLogGroup:
+    Condition: IsIntegration
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 14

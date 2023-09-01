@@ -38,7 +38,6 @@ public class ConvertSetToOldFormat
         super(awsService, config, objectMapper);
     }
 
-
     @Override
     @Tracing
     @Logging(clearState = true)
@@ -47,7 +46,6 @@ public class ConvertSetToOldFormat
             var sqsMessage = sqsEvent.getRecords().get(0);
             var minimisedData = objectMapper.readValue(sqsMessage.getBody(), DeathNotificationSet.class);
             var oldFormat = convertToOldFormat(minimisedData);
-
             return publish(oldFormat);
         } catch (JsonProcessingException e) {
             logger.error("Failed to minimise request due to mapping error");
@@ -60,6 +58,8 @@ public class ConvertSetToOldFormat
         var sourceId = events.deathRegistrationID().toString();
         var dateOfDeath = (LocalDate) events.deathDate().value();
         var subject = events.subject();
+        var names = getNames(subject);
+        var dateOfBirth = (LocalDate) subject.birthDate().get(0).value();
 
         LocalDateTime deathRegistrationTime = LocalDateTime.now();
         if (events instanceof DeathRegistrationEvent registrationEvent) {
@@ -67,9 +67,6 @@ public class ConvertSetToOldFormat
         } else if (events instanceof DeathRegistrationUpdateEvent registrationUpdateEvent) {
             deathRegistrationTime = registrationUpdateEvent.recordUpdateTime().value();
         }
-
-        var names = getNames(subject);
-        var dateOfBirth = (LocalDate) subject.birthDate().get(0).value();
 
         var oldFormatEventData = new OldFormatEventData(
             deathRegistrationTime.toLocalDate(),

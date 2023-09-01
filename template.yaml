@@ -275,7 +275,7 @@ Resources:
               - !GetAtt DwpDevDeathDeliveryQueue.Arn
               - !GetAtt DwpTestDeathDeliveryQueue.Arn
               - !GetAtt DwpStageDeathDeliveryQueue.Arn
-              - !GetAtt DwpOldFormatDeathDeliveryQueue.Arn
+              - !GetAtt DwpOldFormatConvertedDeathQueue.Arn
             Action:
               - SQS:GetQueueUrl
               - SQS:GetQueueAttributes
@@ -772,7 +772,7 @@ Resources:
         - !Ref DwpDevDeathDeliveryQueue
         - !Ref DwpTestDeathDeliveryQueue
         - !Ref DwpStageDeathDeliveryQueue
-        - !Ref DwpOldFormatDeathDeliveryQueue
+        - !Ref DwpOldFormatConvertedDeathQueue
 
   DwpDevDeathKmsKey:
     Condition: IsIntegration
@@ -1395,29 +1395,12 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
-  DwpOldFormatConvertFormatDeathQueue:
-    Condition: IsIntegration
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-convert-format-death
-      KmsMasterKeyId: !Ref MainKmsKey
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt DwpOldFormatConvertFormatDeathDlq.Arn
-        maxReceiveCount: 5
-
-  DwpOldFormatConvertFormatDeathDlq:
-    Condition: IsIntegration
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-convert-format-death-dlq
-      KmsMasterKeyId: !Ref MainKmsKey
-
   DwpOldFormatDeathDeliveryQueue:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-death-delivery
-      KmsMasterKeyId: !Ref DwpOldFormatDeathKmsKey
+      KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpOldFormatDeathDeliveryDlq.Arn
         maxReceiveCount: 5
@@ -1427,6 +1410,23 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-death-delivery-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpOldFormatConvertedDeathQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-convert-format-death
+      KmsMasterKeyId: !Ref DwpOldFormatDeathKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DwpOldFormatConvertedDeathDlq.Arn
+        maxReceiveCount: 5
+
+  DwpOldFormatConvertedDeathDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-convert-format-death-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
   DwpOldFormatDeathMinimisationFunction:
@@ -1444,7 +1444,7 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
-          TARGET_QUEUE: !GetAtt DwpOldFormatConvertFormatDeathQueue.QueueUrl
+          TARGET_QUEUE: !GetAtt DwpOldFormatDeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
@@ -1506,18 +1506,18 @@ Resources:
       Environment:
         Variables:
           POWERTOOLS_SERVICE_NAME: convert-set-to-old-format
-          TARGET_QUEUE: !GetAtt DwpOldFormatDeathDeliveryQueue.QueueUrl
+          TARGET_QUEUE: !GetAtt DwpOldFormatConvertedDeathQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
         DeathMinimisedEvent:
           Type: SQS
           Properties:
-            Queue: !GetAtt DwpOldFormatConvertFormatDeathQueue.Arn
+            Queue: !GetAtt DwpOldFormatDeathDeliveryQueue.Arn
             BatchSize: 1
       DeadLetterQueue:
         Type: SQS
-        TargetArn: !GetAtt DwpOldFormatConvertFormatDeathDlq.Arn
+        TargetArn: !GetAtt DwpOldFormatDeathDeliveryDlq.Arn
       Policies:
         - Statement:
             - Sid: MainKmsKeyAccess
@@ -1528,7 +1528,7 @@ Resources:
               Resource:
                 - !GetAtt MainKmsKey.Arn
         - SQSSendMessagePolicy:
-            QueueName: !GetAtt DwpOldFormatDeathDeliveryQueue.QueueUrl
+            QueueName: !GetAtt DwpOldFormatConvertedDeathQueue.QueueUrl
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA

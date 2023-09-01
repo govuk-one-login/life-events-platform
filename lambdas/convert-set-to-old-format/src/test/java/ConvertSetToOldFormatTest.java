@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -282,6 +283,18 @@ class ConvertSetToOldFormatTest {
         null,
         null
     );
+    private static final DeathNotificationSet deathNotificationSetWithNoEvent = new DeathNotificationSet(
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
 
     @BeforeAll
     static void setup() {
@@ -366,6 +379,21 @@ class ConvertSetToOldFormatTest {
         var result = underTest.handleRequest(sqsEvent, context);
 
         assertTrue(result.contains(expected));
+    }
+
+    @Test
+    void convertSetWithNoEventDoesNothing() throws JsonProcessingException {
+        var objectMapper = Mapper.objectMapper();
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(objectMapper.writeValueAsString(deathNotificationSetWithNoEvent));
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+
+        var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
+
+        var exception = assertThrows(NullPointerException.class,() -> underTest.handleRequest(sqsEvent, context));
+        
+        assertInstanceOf(NullPointerException.class, exception);
     }
 
     @Test

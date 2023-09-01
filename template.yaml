@@ -884,17 +884,34 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
-  DwpDevDeathOldFormatDeliveryQueue:
+  DwpDevConvertToOldFormatDeathQueue:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-convert-to-old-format-death
+      KmsMasterKeyId: !Ref DwpDevDeathKmsKey
+      RedrivePolicy:
+        deadLetterTargetArn: !Ref DwpDevConvertToOldFormatDeathDlq
+        maxReceiveCount: 5
+
+  DwpDevConvertToOldFormatDeathDlq:
+    Condition: IsIntegration
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Environment}${Developer}-dwp-dev-convert-to-old-format-death-dlq
+      KmsMasterKeyId: !Ref MainKmsKey
+
+  DwpDevOldFormatDeathDeliveryQueue:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-old-format-death-delivery
       KmsMasterKeyId: !Ref DwpDevDeathKmsKey
       RedrivePolicy:
-        deadLetterTargetArn: !Ref DwpDevDeathOldFormatDeliveryDlq
+        deadLetterTargetArn: !Ref DwpDevOldFormatDeathDeliveryDlq
         maxReceiveCount: 5
 
-  DwpDevDeathOldFormatDeliveryDlq:
+  DwpDevOldFormatDeathDeliveryDlq:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
@@ -961,6 +978,58 @@ Resources:
     Properties:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-dwp-dev-death-minimisation
+      KmsKeyId: !GetAtt MainKmsKey.Arn
+
+  ConvertSetToOldFormatFunction:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - ConvertSetToOldFormatFunctionLogGroup
+    Properties:
+      # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
+      # checkov:skip=CKV_AWS_117: VPC settings are set globally.
+      # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
+      FunctionName: !Sub ${Environment}${Developer}-convert-set-to-old-format
+      CodeUri: lambdas/convert-set-to-old-format
+      Handler: uk.gov.di.data.lep.ConvertSetToOldFormat::handleRequest
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: convert-set-to-old-format
+          TARGET_QUEUE: !GetAtt DwpDevOldFormatDeathDeliveryQueue.QueueUrl
+      AutoPublishAlias: latest
+      AutoPublishAliasAllProperties: true
+      Events:
+        DeathValidatedEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DwpDevConvertToOldFormatDeathQueue.Arn
+            BatchSize: 1
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DwpDevConvertToOldFormatDeathDlq.Arn
+      Policies:
+        - Statement:
+            - Sid: MainKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt MainKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt DwpDevOldFormatDeathDeliveryQueue.QueueUrl
+      VpcConfig:
+        SubnetIds:
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+
+  ConvertSetToOldFormatFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-convert-set-to-old-format
       KmsKeyId: !GetAtt MainKmsKey.Arn
 
   DwpTestDeathKmsKey:

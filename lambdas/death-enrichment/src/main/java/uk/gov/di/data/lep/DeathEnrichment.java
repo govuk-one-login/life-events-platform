@@ -9,6 +9,8 @@ import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathEnrichmentAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathEnrichmentAuditExtensions;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
@@ -34,7 +36,12 @@ public class DeathEnrichment
             var sqsMessage = sqsEvent.getRecords().get(0);
             var baseData = objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class);
             var enrichedData = enrichData(baseData);
-            return mapAndPublish(enrichedData);
+            var publishedData = mapAndPublish(enrichedData);
+
+            var auditData = generateAuditData(enrichedData);
+            addAuditDataToQueue(auditData);
+
+            return publishedData;
         } catch (JsonProcessingException e) {
             logger.error("Failed to enrich request due to mapping error");
             throw new MappingException(e);
@@ -46,5 +53,11 @@ public class DeathEnrichment
         logger.info("Enriching and mapping data (sourceId: {})", baseData.registrationID());
 
         return DeathNotificationSetMapper.generateDeathNotificationSet(baseData);
+    }
+
+    @Tracing
+    private DeathEnrichmentAudit generateAuditData(DeathNotificationSet enrichedData) {
+        var auditDataExtensions = new DeathEnrichmentAuditExtensions(enrichedData.hashCode());
+        return new DeathEnrichmentAudit(auditDataExtensions);
     }
 }

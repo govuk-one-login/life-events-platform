@@ -25,7 +25,6 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class ConvertSetToOldFormat

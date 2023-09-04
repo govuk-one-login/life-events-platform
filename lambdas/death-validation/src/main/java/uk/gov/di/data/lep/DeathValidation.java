@@ -10,6 +10,8 @@ import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathValidationAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathValidationAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -32,6 +34,8 @@ public class DeathValidation
         try {
             var event = validateRequest(apiRequest);
             mapAndPublish(event);
+            var auditData = generateAuditData(event);
+            addAuditDataToQueue(auditData);
             return new APIGatewayProxyResponseEvent().withStatusCode(201);
         } catch (MappingException e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400);
@@ -48,5 +52,11 @@ public class DeathValidation
             logger.error("Failed to validate request due to mapping error");
             throw new MappingException(e);
         }
+    }
+
+    @Tracing
+    private DeathValidationAudit generateAuditData(GroJsonRecord event) {
+        var auditDataExtensions = new DeathValidationAuditExtensions(event.registrationID());
+        return new DeathValidationAudit(auditDataExtensions);
     }
 }

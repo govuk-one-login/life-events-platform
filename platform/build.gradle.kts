@@ -36,7 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-aop")
 
   //  AWS dependencies for SNS, SQS etc
-  implementation(platform("software.amazon.awssdk:bom:2.20.137"))
+  implementation(platform("software.amazon.awssdk:bom:2.20.139"))
   implementation("software.amazon.awssdk:cloudwatch")
   implementation("software.amazon.awssdk:cognitoidentityprovider")
   implementation("software.amazon.awssdk:lambda")
@@ -89,7 +89,7 @@ dependencies {
   testImplementation(platform("org.testcontainers:testcontainers-bom:1.19.0"))
   testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.540") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
+  testImplementation("com.amazonaws:aws-java-sdk-core:1.12.541") // required for TestContainers https://github.com/testcontainers/testcontainers-java/issues/1442#issuecomment-694342883
 
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(module = "mockito-core")

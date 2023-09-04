@@ -63,7 +63,7 @@ Restart terminal then run
 
 ```shell
 jenv add /Library/Java/JavaVirtualMachines/amazon-corretto-17.jdk/Contents/Home/
-jenv global corretto64-17.0.7
+jenv global corretto64-17.0.8.1
 ```
 
 Restart terminal then run in the project top directory
@@ -80,12 +80,12 @@ git, so that we maintain a history of these stacks.
 
 ```ini
 [dev-<your-name>.deploy.parameters]
-capabilities = "CAPABILITY_IAM"
+capabilities = "CAPABILITY_NAMED_IAM"
 confirm_changeset = true
 resolve_s3 = true
 region = "eu-west-2"
-stack_name = "<your-name>-lev"
-s3_prefix = "<your-name>-lev"
+stack_name = "<your-name>-lep"
+s3_prefix = "<your-name>-lep"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"<your-name>\""
 ```
 

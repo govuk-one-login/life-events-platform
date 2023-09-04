@@ -5,10 +5,29 @@ weight: 93
 
 # Release Management
 
-<%= warning_text("Please note, these are currently draft and have yet to be agreed or signed off.") %>
-
 ## Non production environments
+
+For our non production environments we have a CI/CD pipeline. Code is submitted to our GitHub repo as a PR against the
+main branch. After a review process and automated checks this code is then merged into our main branch. On new pushes to
+main, a pipeline is run that will deploy our code into the `build` environment. This will then automatically be promoted
+into the `staging` upon a successful deployment, and after a successful deployment into `staging` it will be
+automatically promoted into `integration` and be ready for promotion after approval into `production`.
 
 ## Production environments
 
+For `production` release, we need to trigger the deployment of the code manually. The manual deployment will promote the
+code currently in `staging` into our `production` account. Any admin of the `production` account can do this, below are
+the steps:
+
+1. Log in to the AWS account
+2. Navigate to CodePipeline
+3. Open the only CodePipeline
+4. Click the Review button
+5. Approve the release, adding a comment if necessary
+
+This deployment has 0 expected downtime for a BAU release.
+
 ## Breaking Changes
+
+Any updates to our interfaces that would cause either a removal of a data field or changes to locations will be
+considered as a breaking change and fully communicated with any relevant parties, suppliers or consumers.

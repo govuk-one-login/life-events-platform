@@ -121,4 +121,14 @@ public class AwsService {
 
         return client.userPoolClient().clientSecret();
     }
+
+    @Tracing
+    public void putOnAuditQueue(String message) {
+        sqsClient.sendMessage(
+            SendMessageRequest.builder()
+                .queueUrl(config.getAuditQueue())
+                .messageBody(message)
+                .build()
+        );
+    }
 }

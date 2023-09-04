@@ -81,4 +81,8 @@ public class Config {
     public String getUserPoolId() {
         return System.getenv("USER_POOL_ID");
     }
+
+    public String getAuditQueue() {
+        return System.getenv("AUDIT_QUEUE");
+    }
 }

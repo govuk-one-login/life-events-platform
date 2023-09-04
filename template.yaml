@@ -378,7 +378,8 @@ Resources:
         deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
         maxReceiveCount: 10
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   AuditQueuePolicy:
     Type: AWS::SQS::QueuePolicy
@@ -405,7 +406,8 @@ Resources:
       MessageRetentionPeriod: 1209600
       KmsMasterKeyId: !Ref AuditKmsKeyAlias
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   ApiGateway:
     Type: AWS::Serverless::Api
@@ -476,7 +478,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-death-validation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DeathEnrichmentQueue:
     Type: AWS::SQS::Queue
@@ -487,7 +490,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DeathEnrichmentDlq:
     Type: AWS::SQS::Queue
@@ -495,7 +499,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-death-enrichment-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DeathDistributionTopic:
     Type: AWS::SNS::Topic
@@ -504,7 +509,8 @@ Resources:
       KmsMasterKeyId: !Ref MainKmsKey
       TracingConfig: Active
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DeathValidationFunction:
     Type: AWS::Serverless::Function
@@ -670,7 +676,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDeathDistributionTopicSubscription:
     Type: AWS::SNS::Subscription
@@ -691,7 +698,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDeathMinimisationDlq:
     Type: AWS::SQS::Queue
@@ -699,7 +707,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDeathDeliveryQueue:
     Type: AWS::SQS::Queue
@@ -710,7 +719,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDeathDeliveryDlq:
     Type: AWS::SQS::Queue
@@ -718,7 +728,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDeathMinimisationFunction:
     Type: AWS::Serverless::Function
@@ -879,7 +890,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDevDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -902,7 +914,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDevDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDevDeathMinimisationDlq:
     Condition: IsIntegration
@@ -911,7 +924,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDevDeathDeliveryQueue:
     Condition: IsIntegration
@@ -923,7 +937,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDevDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDevDeathDeliveryDlq:
     Condition: IsIntegration
@@ -932,7 +947,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpDevDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1064,7 +1080,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpTestDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1087,7 +1104,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpTestDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpTestDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1096,7 +1114,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpTestDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1108,7 +1127,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpTestDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpTestDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1117,7 +1137,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpTestDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1249,7 +1270,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpStageDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1272,7 +1294,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpStageDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpStageDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1281,7 +1304,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpStageDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1293,7 +1317,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpStageDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpStageDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1302,7 +1327,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   DwpStageDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1427,7 +1453,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   OgdDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1450,7 +1477,8 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   OgdDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1459,7 +1487,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   OgdDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1471,7 +1500,8 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   OgdDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1480,7 +1510,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        - SensitiveData: true
+         - Key: SensitiveData
+           Value: true
 
   OgdDeathMinimisationFunction:
     Condition: IsIntegration

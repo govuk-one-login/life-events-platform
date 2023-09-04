@@ -5,7 +5,7 @@ ext {
             aspectjrt          : "1.9.20",
             awsSdk             : "2.20.139",
             awsLambdaJavaCore  : "1.2.3",
-            awsLambdaJavaEvents: "3.11.2",
+            awsLambdaJavaEvents: "3.11.3",
             jackson            : "2.15.2",
             javaJwt            : "4.4.0",
             json               : "20230618",

@@ -25,6 +25,7 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ConvertSetToOldFormat
@@ -55,18 +56,21 @@ public class ConvertSetToOldFormat
 
     private String convertToOldFormat(DeathNotificationSet minimisedData) throws JsonProcessingException {
         var events = minimisedData.events();
+
+        LocalDateTime deathRegistrationTime;
+        if (events instanceof DeathRegistrationEvent registrationEvent) {
+            deathRegistrationTime = registrationEvent.deathRegistrationTime().value();
+        } else if (events instanceof DeathRegistrationUpdateEvent registrationUpdateEvent) {
+            deathRegistrationTime = registrationUpdateEvent.recordUpdateTime().value();
+        } else {
+            throw new MappingException(new RuntimeException());
+        }
+
         var sourceId = events.deathRegistrationID().toString();
         var dateOfDeath = (LocalDate) events.deathDate().value();
         var subject = events.subject();
         var names = getNames(subject);
         var dateOfBirth = (LocalDate) subject.birthDate().get(0).value();
-
-        LocalDateTime deathRegistrationTime = LocalDateTime.now();
-        if (events instanceof DeathRegistrationEvent registrationEvent) {
-            deathRegistrationTime = registrationEvent.deathRegistrationTime().value();
-        } else if (events instanceof DeathRegistrationUpdateEvent registrationUpdateEvent) {
-            deathRegistrationTime = registrationUpdateEvent.recordUpdateTime().value();
-        }
 
         var oldFormatEventData = new OldFormatEventData(
             deathRegistrationTime.toLocalDate(),

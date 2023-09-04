@@ -1,5 +1,6 @@
 rootProject.name = "di-data-life-events-platform"
 include "lambdas",
+        "lambdas:convert-set-to-old-format",
         "lambdas:death-enrichment",
         "lambdas:death-minimisation",
         "lambdas:death-validation",

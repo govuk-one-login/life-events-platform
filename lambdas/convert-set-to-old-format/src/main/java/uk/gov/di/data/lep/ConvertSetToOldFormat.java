@@ -62,7 +62,7 @@ public class ConvertSetToOldFormat
         } else if (events instanceof DeathRegistrationUpdateEvent registrationUpdateEvent) {
             deathRegistrationTime = registrationUpdateEvent.recordUpdateTime().value();
         } else {
-            throw new MappingException(new RuntimeException());
+            throw new MappingException(new RuntimeException("Failed to convert event due to unexpected event type"));
         }
 
         var sourceId = events.deathRegistrationID().toString();

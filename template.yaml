@@ -378,7 +378,7 @@ Resources:
         deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
         maxReceiveCount: 10
       Tags:
-        - SensitiveData: false
+        - SensitiveData: true
 
   AuditQueuePolicy:
     Type: AWS::SQS::QueuePolicy
@@ -405,7 +405,7 @@ Resources:
       MessageRetentionPeriod: 1209600
       KmsMasterKeyId: !Ref AuditKmsKeyAlias
       Tags:
-        - SensitiveData: false
+        - SensitiveData: true
 
   ApiGateway:
     Type: AWS::Serverless::Api
@@ -461,7 +461,7 @@ Resources:
           "responseLength":"$context.responseLength"
           }
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_120
+        CheckovRulesToSkip: CKV_AWS_120
 
   ApiGatewayLogGroup:
     Type: AWS::Logs::LogGroup
@@ -552,7 +552,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DeathValidationFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -604,7 +604,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DeathEnrichmentFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -771,7 +771,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DwpDeathMinimisationFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -986,7 +986,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DwpDevDeathMinimisationFunctionLogGroup:
     Condition: IsIntegration
@@ -1171,7 +1171,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DwpTestDeathMinimisationFunctionLogGroup:
     Condition: IsIntegration
@@ -1356,7 +1356,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DwpStageDeathMinimisationFunctionLogGroup:
     Condition: IsIntegration
@@ -1534,7 +1534,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   OgdDeathMinimisationFunctionLogGroup:
     Condition: IsIntegration
@@ -1806,7 +1806,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroPullFileFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -1851,7 +1851,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroGenerateXmlFunctionLogGroup:
     Condition: IsNotProduction
@@ -1908,7 +1908,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroConvertToJsonFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -1953,7 +1953,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroPublishRecordFunctionLogGroup:
     Type: AWS::Logs::LogGroup

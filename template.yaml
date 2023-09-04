@@ -140,6 +140,8 @@ Resources:
         RestrictPublicBuckets: true
       VersioningConfiguration:
         Status: Enabled
+      Tags:
+        SensitiveData: false
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -374,6 +376,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
         maxReceiveCount: 10
+      Tags:
+        SensitiveData: false
 
   AuditQueuePolicy:
     Type: AWS::SQS::QueuePolicy
@@ -399,6 +403,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-audit-dlq
       MessageRetentionPeriod: 1209600
       KmsMasterKeyId: !Ref AuditKmsKeyAlias
+      Tags:
+        SensitiveData: false
 
   ApiGateway:
     Type: AWS::Serverless::Api
@@ -468,6 +474,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-death-validation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DeathEnrichmentQueue:
     Type: AWS::SQS::Queue
@@ -477,12 +485,16 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DeathEnrichmentDlq:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-death-enrichment-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DeathDistributionTopic:
     Type: AWS::SNS::Topic
@@ -490,6 +502,8 @@ Resources:
       DisplayName: !Sub ${Environment}${Developer}-death-distribution-topic
       KmsMasterKeyId: !Ref MainKmsKey
       TracingConfig: Active
+      Tags:
+        SensitiveData: true
 
   DeathValidationFunction:
     Type: AWS::Serverless::Function
@@ -654,6 +668,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpDeathDistributionTopicSubscription:
     Type: AWS::SNS::Subscription
@@ -673,12 +689,16 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpDeathMinimisationDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DwpDeathMinimisationDlq:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpDeathDeliveryQueue:
     Type: AWS::SQS::Queue
@@ -688,12 +708,16 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpDeathDeliveryDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DwpDeathDeliveryDlq:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpDeathMinimisationFunction:
     Type: AWS::Serverless::Function
@@ -853,6 +877,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpDevDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -874,6 +900,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpDevDeathMinimisationDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DwpDevDeathMinimisationDlq:
     Condition: IsIntegration
@@ -881,6 +909,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpDevDeathDeliveryQueue:
     Condition: IsIntegration
@@ -891,6 +921,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpDevDeathDeliveryDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DwpDevDeathDeliveryDlq:
     Condition: IsIntegration
@@ -898,6 +930,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpDevDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1028,6 +1062,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpTestDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1049,6 +1085,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpTestDeathMinimisationDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DwpTestDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1056,6 +1094,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpTestDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1066,6 +1106,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpTestDeathDeliveryDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DwpTestDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1073,6 +1115,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpTestDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1203,6 +1247,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpStageDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1224,6 +1270,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpStageDeathMinimisationDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DwpStageDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1231,6 +1279,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpStageDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1241,6 +1291,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpStageDeathDeliveryDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   DwpStageDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1248,6 +1300,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   DwpStageDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1371,6 +1425,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   OgdDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1392,6 +1448,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt OgdDeathMinimisationDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   OgdDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1399,6 +1457,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   OgdDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1409,6 +1469,8 @@ Resources:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt OgdDeathDeliveryDlq.Arn
         maxReceiveCount: 5
+      Tags:
+        SensitiveData: true
 
   OgdDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1416,6 +1478,8 @@ Resources:
     Properties:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
+      Tags:
+        SensitiveData: true
 
   OgdDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1524,6 +1588,8 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+      Tags:
+        SensitiveData: true
 
   GroRecordsBucket:
     Type: AWS::S3::Bucket
@@ -1548,8 +1614,8 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       Tags:
-        - Key: CheckovRulesToSkip
-          Value: CKV_AWS_21
+        - CheckovRulesToSkip: CKV_AWS_21
+        - SensitiveData: true
 
   GroIngestionStateMachine:
     Type: AWS::Serverless::StateMachine

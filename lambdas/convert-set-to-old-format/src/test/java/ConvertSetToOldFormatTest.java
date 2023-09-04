@@ -125,28 +125,6 @@ class ConvertSetToOldFormatTest {
         ),
         List.of(Sex.FEMALE)
     );
-    private static final DeathRegistrationSubject deathRegistrationSubjectNoNames = new DeathRegistrationSubject(
-        List.of(new PostalAddress(
-            "United Kingdom",
-            null,
-            "Carlton House",
-            "10",
-            null,
-            null,
-            null,
-            null,
-            null,
-            "NE28 9FJ",
-            "Lancaster Drive",
-            null,
-            null,
-            null,
-            null
-        )),
-        List.of(new DateWithDescription(null, LocalDate.parse("1978-04-05"))),
-        List.of(),
-        List.of(Sex.FEMALE)
-    );
     private static final DeathRegistrationSubject deathRegistrationSubjectNoMaidenSurname = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -187,6 +165,88 @@ class ConvertSetToOldFormatTest {
         ),
         List.of(Sex.FEMALE)
     );
+    private static final DeathRegistrationSubject deathRegistrationSubjectNoFamilyName = new DeathRegistrationSubject(
+        List.of(new PostalAddress(
+            "United Kingdom",
+            null,
+            "Carlton House",
+            "10",
+            null,
+            null,
+            null,
+            null,
+            null,
+            "NE28 9FJ",
+            "Lancaster Drive",
+            null,
+            null,
+            null,
+            null
+        )),
+        List.of(new DateWithDescription(null, LocalDate.parse("1978-04-05"))),
+        List.of(
+            new Name(
+                null,
+                List.of(
+                    new NamePart(NamePartType.GIVEN_NAME, "JANE", null, null)
+                ),
+                null,
+                null
+            )),
+        List.of(Sex.FEMALE)
+    );
+    private static final DeathRegistrationSubject deathRegistrationSubjectNoGivenName = new DeathRegistrationSubject(
+        List.of(new PostalAddress(
+            "United Kingdom",
+            null,
+            "Carlton House",
+            "10",
+            null,
+            null,
+            null,
+            null,
+            null,
+            "NE28 9FJ",
+            "Lancaster Drive",
+            null,
+            null,
+            null,
+            null
+        )),
+        List.of(new DateWithDescription(null, LocalDate.parse("1978-04-05"))),
+        List.of(
+            new Name(
+                null,
+                List.of(
+                    new NamePart(NamePartType.FAMILY_NAME, "SMITH", null, null)
+                ),
+                null,
+                null
+            )),
+        List.of(Sex.FEMALE)
+    );
+    private static final DeathRegistrationSubject deathRegistrationSubjectNoNames = new DeathRegistrationSubject(
+        List.of(new PostalAddress(
+            "United Kingdom",
+            null,
+            "Carlton House",
+            "10",
+            null,
+            null,
+            null,
+            null,
+            null,
+            "NE28 9FJ",
+            "Lancaster Drive",
+            null,
+            null,
+            null,
+            null
+        )),
+        List.of(new DateWithDescription(null, LocalDate.parse("1978-04-05"))),
+        List.of(),
+        List.of(Sex.FEMALE)
+    );
     private static final DeathRegistrationEvent deathRegistrationEvent = new DeathRegistrationEvent(
         new DateWithDescription(null, LocalDate.parse("2020-01-01")),
         123456789,
@@ -207,6 +267,20 @@ class ConvertSetToOldFormatTest {
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoMaidenSurname
+    );
+    private static final DeathRegistrationEvent deathRegistrationEventNoGivenName = new DeathRegistrationEvent(
+        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        123456789,
+        null,
+        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        deathRegistrationSubjectNoGivenName
+    );
+    private static final DeathRegistrationEvent deathRegistrationEventNoFamilyName = new DeathRegistrationEvent(
+        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        123456789,
+        null,
+        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        deathRegistrationSubjectNoFamilyName
     );
     private static final DeathRegistrationEvent deathRegistrationEventNoNames = new DeathRegistrationEvent(
         new DateWithDescription(null, LocalDate.parse("2020-01-01")),
@@ -250,6 +324,30 @@ class ConvertSetToOldFormatTest {
     private static final DeathNotificationSet deathNotificationSetAliasNameNoMaidenSurname = new DeathNotificationSet(
         null,
         deathRegistrationEventAliasNameNoMaidenSurname,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
+    private static final DeathNotificationSet deathNotificationSetNoGivenName = new DeathNotificationSet(
+        null,
+        deathRegistrationEventNoGivenName,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
+    private static final DeathNotificationSet deathNotificationSetNoFamilyName = new DeathNotificationSet(
+        null,
+        deathRegistrationEventNoFamilyName,
         null,
         null,
         null,
@@ -391,42 +489,9 @@ class ConvertSetToOldFormatTest {
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
-        var exception = assertThrows(NullPointerException.class,() -> underTest.handleRequest(sqsEvent, context));
-        
+        var exception = assertThrows(NullPointerException.class, () -> underTest.handleRequest(sqsEvent, context));
+
         assertInstanceOf(NullPointerException.class, exception);
-    }
-
-    @Test
-    void convertSetToOldFormatConvertsDeathNotificationSetToOldFormatWithNoNames() throws JsonProcessingException {
-        var objectMapper = Mapper.objectMapper();
-        var sqsMessage = new SQSMessage();
-        sqsMessage.setBody(objectMapper.writeValueAsString(deathNotificationSetNoNames));
-        var sqsEvent = new SQSEvent();
-        sqsEvent.setRecords(List.of(sqsMessage));
-        var expected =
-            "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"\"," +
-                "\"lastName\":\"\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
-
-        var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
-
-        var result = underTest.handleRequest(sqsEvent, context);
-
-        assertTrue(result.contains(expected));
     }
 
     @Test
@@ -490,7 +555,105 @@ class ConvertSetToOldFormatTest {
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
         var result = underTest.handleRequest(sqsEvent, context);
-System.out.println(result);
+
+        assertTrue(result.contains(expected));
+    }
+
+    @Test
+    void convertSetToOldFormatConvertsDeathNotificationSetToOldFormatNoGivenName() throws JsonProcessingException {
+        var objectMapper = Mapper.objectMapper();
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(objectMapper.writeValueAsString(deathNotificationSetNoGivenName));
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+        var expected =
+            "\"type\":\"events\"," +
+                "\"attributes\":{" +
+                "\"eventType\":\"DEATH_NOTIFICATION\"," +
+                "\"sourceId\":\"123456789\"," +
+                "\"eventData\":{" +
+                "\"registrationDate\":\"2020-02-02\"," +
+                "\"firstNames\":\"\"," +
+                "\"lastName\":\"SMITH\"," +
+                "\"sex\":\"FEMALE\"," +
+                "\"dateOfDeath\":\"2020-01-01\"," +
+                "\"dateOfBirth\":\"1978-04-05\"," +
+                "\"birthPlace\":null," +
+                "\"deathPlace\":null," +
+                "\"maidenName\":\"\"," +
+                "\"occupation\":null," +
+                "\"retired\":null," +
+                "\"address\":\"NE28 9FJ\"";
+
+        var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
+        assertTrue(result.contains(expected));
+    }
+    @Test
+    void convertSetToOldFormatConvertsDeathNotificationSetToOldFormatNoFamilyName() throws JsonProcessingException {
+        var objectMapper = Mapper.objectMapper();
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(objectMapper.writeValueAsString(deathNotificationSetNoFamilyName));
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+        var expected =
+            "\"type\":\"events\"," +
+                "\"attributes\":{" +
+                "\"eventType\":\"DEATH_NOTIFICATION\"," +
+                "\"sourceId\":\"123456789\"," +
+                "\"eventData\":{" +
+                "\"registrationDate\":\"2020-02-02\"," +
+                "\"firstNames\":\"JANE\"," +
+                "\"lastName\":\"\"," +
+                "\"sex\":\"FEMALE\"," +
+                "\"dateOfDeath\":\"2020-01-01\"," +
+                "\"dateOfBirth\":\"1978-04-05\"," +
+                "\"birthPlace\":null," +
+                "\"deathPlace\":null," +
+                "\"maidenName\":\"\"," +
+                "\"occupation\":null," +
+                "\"retired\":null," +
+                "\"address\":\"NE28 9FJ\"";
+
+        var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
+        assertTrue(result.contains(expected));
+    }
+
+    @Test
+    void convertSetToOldFormatConvertsDeathNotificationSetToOldFormatWithNoNames() throws JsonProcessingException {
+        var objectMapper = Mapper.objectMapper();
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(objectMapper.writeValueAsString(deathNotificationSetNoNames));
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+        var expected =
+            "\"type\":\"events\"," +
+                "\"attributes\":{" +
+                "\"eventType\":\"DEATH_NOTIFICATION\"," +
+                "\"sourceId\":\"123456789\"," +
+                "\"eventData\":{" +
+                "\"registrationDate\":\"2020-02-02\"," +
+                "\"firstNames\":\"\"," +
+                "\"lastName\":\"\"," +
+                "\"sex\":\"FEMALE\"," +
+                "\"dateOfDeath\":\"2020-01-01\"," +
+                "\"dateOfBirth\":\"1978-04-05\"," +
+                "\"birthPlace\":null," +
+                "\"deathPlace\":null," +
+                "\"maidenName\":\"\"," +
+                "\"occupation\":null," +
+                "\"retired\":null," +
+                "\"address\":\"NE28 9FJ\"";
+
+        var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
         assertTrue(result.contains(expected));
     }
 

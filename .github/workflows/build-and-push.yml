@@ -60,7 +60,7 @@ jobs:
           build-args: BUILD_NUMBER=${{ steps.gitversion.outputs.majorMinorPatch }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.11.2
+        uses: aquasecurity/trivy-action@0.12.0
         with:
           image-ref: ${{ github.ref_name }}:latest
           trivyignores: platform/.trivyignore

@@ -1,11 +1,20 @@
+buildscript {
+    apply from: './dependencies.gradle'
+}
+
 plugins {
     id "java"
     id "org.sonarqube" version "4.2.1.3168"
     id "com.diffplug.spotless" version "6.21.0"
+    id "org.owasp.dependencycheck" version "8.4.0"
 }
 
 repositories {
     mavenCentral()
+}
+
+dependencies {
+    implementation "org.owasp:dependency-check-gradle:$dependencyVersions.dependencyCheckGradle"
 }
 
 java {
@@ -26,7 +35,7 @@ spotless {
     java {
         target 'lib/src/*/java/**/*.java', 'lambdas/**/src/*/java/**/*.java'
 
-        importOrder( 'com.acme', '', 'java|javax', '\\#com.acme', '\\#')
+        importOrder('com.acme', '', 'java|javax', '\\#com.acme', '\\#')
         removeUnusedImports()
     }
 }

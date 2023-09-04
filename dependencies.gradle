@@ -2,18 +2,19 @@ ext {
     postCompileWeavingVersion = "8.3"
 
     dependencyVersions = [
-            aspectjrt          : "1.9.20",
-            awsSdk             : "2.20.139",
-            awsLambdaJavaCore  : "1.2.3",
-            awsLambdaJavaEvents: "3.11.2",
-            jackson            : "2.15.2",
-            javaJwt            : "4.4.0",
-            json               : "20230618",
-            junitJupiter       : "5.10.0",
-            jwksRsa            : "0.22.1",
-            mockitoJunitJupiter: "5.5.0",
-            powertools         : "1.17.0",
-            sshj               : "0.35.0",
-            xrayInstrumentor   : "2.14.0"
+            aspectjrt            : "1.9.20",
+            awsSdk               : "2.20.139",
+            awsLambdaJavaCore    : "1.2.3",
+            awsLambdaJavaEvents  : "3.11.2",
+            dependencyCheckGradle: "8.4.0",
+            jackson              : "2.15.2",
+            javaJwt              : "4.4.0",
+            json                 : "20230618",
+            junitJupiter         : "5.10.0",
+            jwksRsa              : "0.22.1",
+            mockitoJunitJupiter  : "5.5.0",
+            powertools           : "1.17.0",
+            sshj                 : "0.35.0",
+            xrayInstrumentor     : "2.14.0"
     ]
 }

@@ -141,7 +141,8 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
       Tags:
-        SensitiveData: false
+        - Key: SensitiveData
+          Value: true
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -377,7 +378,7 @@ Resources:
         deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
         maxReceiveCount: 10
       Tags:
-        SensitiveData: false
+        - SensitiveData: false
 
   AuditQueuePolicy:
     Type: AWS::SQS::QueuePolicy
@@ -404,7 +405,7 @@ Resources:
       MessageRetentionPeriod: 1209600
       KmsMasterKeyId: !Ref AuditKmsKeyAlias
       Tags:
-        SensitiveData: false
+        - SensitiveData: false
 
   ApiGateway:
     Type: AWS::Serverless::Api
@@ -460,7 +461,7 @@ Resources:
           "responseLength":"$context.responseLength"
           }
       Tags:
-        CheckovRulesToSkip: CKV_AWS_120
+        - CheckovRulesToSkip: CKV_AWS_120
 
   ApiGatewayLogGroup:
     Type: AWS::Logs::LogGroup
@@ -475,7 +476,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-death-validation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DeathEnrichmentQueue:
     Type: AWS::SQS::Queue
@@ -486,7 +487,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DeathEnrichmentDlq:
     Type: AWS::SQS::Queue
@@ -494,7 +495,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-death-enrichment-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DeathDistributionTopic:
     Type: AWS::SNS::Topic
@@ -503,7 +504,7 @@ Resources:
       KmsMasterKeyId: !Ref MainKmsKey
       TracingConfig: Active
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DeathValidationFunction:
     Type: AWS::Serverless::Function
@@ -551,7 +552,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DeathValidationFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -603,7 +604,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DeathEnrichmentFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -669,7 +670,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDeathDistributionTopicSubscription:
     Type: AWS::SNS::Subscription
@@ -690,7 +691,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDeathMinimisationDlq:
     Type: AWS::SQS::Queue
@@ -698,7 +699,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDeathDeliveryQueue:
     Type: AWS::SQS::Queue
@@ -709,7 +710,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDeathDeliveryDlq:
     Type: AWS::SQS::Queue
@@ -717,7 +718,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDeathMinimisationFunction:
     Type: AWS::Serverless::Function
@@ -770,7 +771,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DwpDeathMinimisationFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -878,7 +879,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDevDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -901,7 +902,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDevDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDevDeathMinimisationDlq:
     Condition: IsIntegration
@@ -910,7 +911,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDevDeathDeliveryQueue:
     Condition: IsIntegration
@@ -922,7 +923,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDevDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDevDeathDeliveryDlq:
     Condition: IsIntegration
@@ -931,7 +932,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpDevDeathMinimisationFunction:
     Condition: IsIntegration
@@ -985,7 +986,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DwpDevDeathMinimisationFunctionLogGroup:
     Condition: IsIntegration
@@ -1063,7 +1064,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpTestDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1086,7 +1087,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpTestDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpTestDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1095,7 +1096,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpTestDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1107,7 +1108,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpTestDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpTestDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1116,7 +1117,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpTestDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1170,7 +1171,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DwpTestDeathMinimisationFunctionLogGroup:
     Condition: IsIntegration
@@ -1248,7 +1249,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpStageDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1271,7 +1272,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpStageDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpStageDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1280,7 +1281,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpStageDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1292,7 +1293,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpStageDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpStageDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1301,7 +1302,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   DwpStageDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1355,7 +1356,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   DwpStageDeathMinimisationFunctionLogGroup:
     Condition: IsIntegration
@@ -1426,7 +1427,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   OgdDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1449,7 +1450,7 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   OgdDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1458,7 +1459,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   OgdDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1470,7 +1471,7 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   OgdDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1479,7 +1480,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-        SensitiveData: true
+        - SensitiveData: true
 
   OgdDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1533,7 +1534,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
   OgdDeathMinimisationFunctionLogGroup:
     Condition: IsIntegration
@@ -1589,7 +1590,8 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       Tags:
-        SensitiveData: true
+        - Key: SensitiveData
+          Value: true
 
   GroRecordsBucket:
     Type: AWS::S3::Bucket
@@ -1614,8 +1616,10 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       Tags:
-        - CheckovRulesToSkip: CKV_AWS_21
-        - SensitiveData: true
+        - Key: CheckovRulesToSkip
+          Value: CKV_AWS_21
+        - Key: SensitiveData
+          Value: true
 
   GroIngestionStateMachine:
     Type: AWS::Serverless::StateMachine
@@ -1802,7 +1806,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroPullFileFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -1847,7 +1851,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroGenerateXmlFunctionLogGroup:
     Condition: IsNotProduction
@@ -1904,7 +1908,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroConvertToJsonFunctionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -1949,7 +1953,7 @@ Resources:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
-        CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
+        - CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 
   GroPublishRecordFunctionLogGroup:
     Type: AWS::Logs::LogGroup

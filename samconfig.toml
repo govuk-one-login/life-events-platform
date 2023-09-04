@@ -43,3 +43,12 @@ region = "eu-west-2"
 stack_name = "hmpo-lep"
 s3_prefix = "hmpo-lep"
 parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"hmpo\""
+
+[dev-cargil.deploy.parameters]
+capabilities = "CAPABILITY_NAMED_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-west-2"
+stack_name = "cargil-lep"
+s3_prefix = "cargil-lep"
+parameter_overrides = "Environment=\"dev\" VpcStackName=\"vpc\" Developer=\"cargil\""

@@ -141,7 +141,7 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
       Tags:
-        - Key: SensitiveData
+        - Key: PersonalIdentifyingInformation
           Value: true
 
   LambdaSecurityGroup:
@@ -378,7 +378,7 @@ Resources:
         deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
         maxReceiveCount: 10
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   AuditQueuePolicy:
@@ -406,7 +406,7 @@ Resources:
       MessageRetentionPeriod: 1209600
       KmsMasterKeyId: !Ref AuditKmsKeyAlias
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   ApiGateway:
@@ -478,7 +478,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-death-validation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DeathEnrichmentQueue:
@@ -490,7 +490,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DeathEnrichmentDlq:
@@ -499,7 +499,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-death-enrichment-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DeathDistributionTopic:
@@ -509,7 +509,7 @@ Resources:
       KmsMasterKeyId: !Ref MainKmsKey
       TracingConfig: Active
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DeathValidationFunction:
@@ -618,6 +618,9 @@ Resources:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-death-enrichment
       KmsKeyId: !GetAtt MainKmsKey.Arn
+      Tags:
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDeathKmsKey:
     Type: AWS::KMS::Key
@@ -676,7 +679,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDeathDistributionTopicSubscription:
@@ -698,7 +701,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDeathMinimisationDlq:
@@ -707,7 +710,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDeathDeliveryQueue:
@@ -719,7 +722,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDeathDeliveryDlq:
@@ -728,7 +731,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDeathMinimisationFunction:
@@ -890,7 +893,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDevDeathDistributionTopicSubscription:
@@ -914,7 +917,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDevDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDevDeathMinimisationDlq:
@@ -924,7 +927,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDevDeathDeliveryQueue:
@@ -937,7 +940,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDevDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDevDeathDeliveryDlq:
@@ -947,7 +950,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpDevDeathMinimisationFunction:
@@ -1080,7 +1083,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpTestDeathDistributionTopicSubscription:
@@ -1104,7 +1107,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpTestDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpTestDeathMinimisationDlq:
@@ -1114,7 +1117,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpTestDeathDeliveryQueue:
@@ -1127,7 +1130,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpTestDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpTestDeathDeliveryDlq:
@@ -1137,7 +1140,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpTestDeathMinimisationFunction:
@@ -1270,7 +1273,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpStageDeathDistributionTopicSubscription:
@@ -1294,7 +1297,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpStageDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpStageDeathMinimisationDlq:
@@ -1304,7 +1307,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpStageDeathDeliveryQueue:
@@ -1317,7 +1320,7 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpStageDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpStageDeathDeliveryDlq:
@@ -1327,7 +1330,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   DwpStageDeathMinimisationFunction:
@@ -1453,7 +1456,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   OgdDeathDistributionTopicSubscription:
@@ -1477,7 +1480,7 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   OgdDeathMinimisationDlq:
@@ -1487,7 +1490,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   OgdDeathDeliveryQueue:
@@ -1500,7 +1503,7 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   OgdDeathDeliveryDlq:
@@ -1510,7 +1513,7 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: SensitiveData
+         - Key: PersonalIdentifyingInformation
            Value: true
 
   OgdDeathMinimisationFunction:
@@ -1621,7 +1624,7 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       Tags:
-        - Key: SensitiveData
+        - Key: PersonalIdentifyingInformation
           Value: true
 
   GroRecordsBucket:
@@ -1649,7 +1652,7 @@ Resources:
       Tags:
         - Key: CheckovRulesToSkip
           Value: CKV_AWS_21
-        - Key: SensitiveData
+        - Key: PersonalIdentifyingInformation
           Value: true
 
   GroIngestionStateMachine:
@@ -1992,6 +1995,9 @@ Resources:
       RetentionInDays: 14
       LogGroupName: !Sub /aws/lambda/${Environment}${Developer}-gro-publish-record
       KmsKeyId: !GetAtt MainKmsKey.Arn
+      Tags:
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
 Outputs:
   DwpIntegrationManagedPolicyArn:

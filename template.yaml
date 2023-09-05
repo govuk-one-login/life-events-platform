@@ -1599,7 +1599,7 @@ Resources:
       # checkov:skip=CKV_AWS_115: We do not have enough data to allocate the concurrent execution allowance per function.
       # checkov:skip=CKV_AWS_117: VPC settings are set globally.
       # checkov:skip=CKV_AWS_173: Encryption settings are set globally.
-      FunctionName: !Sub ${Environment}${Developer}-swp-old-format-convert-set-to-old-format
+      FunctionName: !Sub ${Environment}${Developer}-dwp-old-format-convert-set-to-old-format
       CodeUri: lambdas/convert-set-to-old-format
       Handler: uk.gov.di.data.lep.ConvertSetToOldFormat::handleRequest
       Environment:

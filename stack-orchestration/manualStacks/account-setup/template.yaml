@@ -29,19 +29,3 @@ Resources:
       Tags:
         - Key: CheckovRulesToSkip
           Value: CKV_AWS_149
-
-  DwpIntegrationUserGroup:
-    Type: AWS::IAM::Group
-    Condition: IsIntegration
-    Properties:
-      GroupName: dwp-integration-user-group
-      ManagedPolicyArns:
-        - !ImportValue DwpIntegrationManagedPolicyArn
-
-  DwpDevelopmentUser:
-    Type: AWS::IAM::User
-    Condition: IsIntegration
-    Properties:
-      Groups:
-        - !Ref DwpIntegrationUserGroup
-      UserName: dwp-development-user

@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Set up for DWP development user
+
+Parameters:
+  Environment:
+    Description: The name of the environment to deploy to
+    Type: String
+    AllowedValues:
+      - integration
+
+Resources:
+  DwpDevelopmentUserGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: dwp-development-user-group
+      ManagedPolicyArns:
+        - !ImportValue DwpDevelopmentManagedPolicyArn
+
+  DwpDevelopmentUser:
+    Type: AWS::IAM::User
+    Properties:
+      Groups:
+        - !Ref DwpDevelopmentUserGroup
+      UserName: dwp-development-user

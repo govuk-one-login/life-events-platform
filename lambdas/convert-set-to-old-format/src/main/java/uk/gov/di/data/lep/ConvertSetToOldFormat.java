@@ -45,6 +45,7 @@ public class ConvertSetToOldFormat
         try {
             var sqsMessage = sqsEvent.getRecords().get(0);
             var minimisedData = objectMapper.readValue(sqsMessage.getBody(), DeathNotificationSet.class);
+            logger.info("Converting DeathNotificationSet to the old format");
             var oldFormat = convertToOldFormat(minimisedData);
             return publish(oldFormat);
         } catch (JsonProcessingException e) {

@@ -490,7 +490,9 @@ class ConvertSetToOldFormatTest {
         Integer deathRegistrationID,
         String freeFormatDeathDate,
         DeathRegistrationSubject subject
-    ) implements DeathRegistrationBaseEvent {}
+    ) implements DeathRegistrationBaseEvent {
+    }
+
     private static final DeathNotificationSet deathNotificationSetWithInvalidEvent = new DeathNotificationSet(
         null,
         new DeathNotificationWithInvalidEvent(null, null, null, null),
@@ -532,22 +534,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"JANE\"," +
-                "\"lastName\":\"SMITH\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"JACKSON\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"JANE\"," +
+            "\"lastName\":\"SMITH\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"JACKSON\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
@@ -565,22 +567,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-06-06\"," +
-                "\"firstNames\":\"JANE\"," +
-                "\"lastName\":\"SMITH\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"JACKSON\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-06-06\"," +
+            "\"firstNames\":\"JANE\"," +
+            "\"lastName\":\"SMITH\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"JACKSON\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
@@ -616,22 +618,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"JANE\"," +
-                "\"lastName\":\"SMITH\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"JANE\"," +
+            "\"lastName\":\"SMITH\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
@@ -649,22 +651,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"JANE\"," +
-                "\"lastName\":\"SMITH\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"JANE\"," +
+            "\"lastName\":\"SMITH\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
@@ -682,22 +684,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"\"," +
-                "\"lastName\":\"SMITH\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"\"," +
+            "\"lastName\":\"SMITH\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
@@ -715,22 +717,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"JANE\"," +
-                "\"lastName\":\"\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"JANE\"," +
+            "\"lastName\":\"\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
@@ -748,22 +750,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"\"," +
-                "\"lastName\":\"\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"\"," +
+            "\"lastName\":\"\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
@@ -781,22 +783,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"\"," +
-                "\"lastName\":\"\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"\"," +
+            "\"lastName\":\"\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 
@@ -814,22 +816,22 @@ class ConvertSetToOldFormatTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
             "\"type\":\"events\"," +
-                "\"attributes\":{" +
-                "\"eventType\":\"DEATH_NOTIFICATION\"," +
-                "\"sourceId\":\"123456789\"," +
-                "\"eventData\":{" +
-                "\"registrationDate\":\"2020-02-02\"," +
-                "\"firstNames\":\"JANE\"," +
-                "\"lastName\":\"SMITH\"," +
-                "\"sex\":\"FEMALE\"," +
-                "\"dateOfDeath\":\"2020-01-01\"," +
-                "\"dateOfBirth\":\"1978-04-05\"," +
-                "\"birthPlace\":null," +
-                "\"deathPlace\":null," +
-                "\"maidenName\":\"\"," +
-                "\"occupation\":null," +
-                "\"retired\":null," +
-                "\"address\":\"NE28 9FJ\"";
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"JANE\"," +
+            "\"lastName\":\"SMITH\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
 
         var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
 

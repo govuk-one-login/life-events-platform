@@ -1515,7 +1515,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-convert-format-death
+      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-converted-death
       KmsMasterKeyId: !Ref DwpOldFormatDeathKmsKey
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpOldFormatConvertedDeathDlq.Arn
@@ -1525,7 +1525,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-convert-format-death-dlq
+      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-converted-death-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
   DwpOldFormatDeathMinimisationFunction:

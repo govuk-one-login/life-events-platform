@@ -17,7 +17,7 @@ import uk.gov.di.data.lep.library.services.AwsService;
 
 public class DeathEnrichment
     extends LambdaHandler<DeathNotificationSet>
-    implements RequestHandler<SQSEvent, DeathNotificationSet> {
+    implements RequestHandler<SQSEvent, String> {
 
     public DeathEnrichment() {
     }
@@ -29,12 +29,12 @@ public class DeathEnrichment
     @Override
     @Tracing
     @Logging(clearState = true)
-    public DeathNotificationSet handleRequest(SQSEvent sqsEvent, Context context) {
+    public String handleRequest(SQSEvent sqsEvent, Context context) {
         try {
             var sqsMessage = sqsEvent.getRecords().get(0);
             var baseData = objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class);
             var enrichedData = enrichData(baseData);
-            return publish(enrichedData);
+            return mapAndPublish(enrichedData);
         } catch (JsonProcessingException e) {
             logger.error("Failed to enrich request due to mapping error");
             throw new MappingException(e);

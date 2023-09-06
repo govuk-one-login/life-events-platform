@@ -24,11 +24,13 @@ import uk.gov.di.data.lep.library.services.AwsService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.UUID;
 
 public class ConvertSetToOldFormat
-    extends LambdaHandler<String>
+    extends LambdaHandler<OldFormatDeathNotification>
     implements RequestHandler<SQSEvent, String> {
 
     public ConvertSetToOldFormat() {
@@ -46,14 +48,14 @@ public class ConvertSetToOldFormat
             var sqsMessage = sqsEvent.getRecords().get(0);
             var minimisedData = objectMapper.readValue(sqsMessage.getBody(), DeathNotificationSet.class);
             var oldFormat = convertToOldFormat(minimisedData);
-            return publish(oldFormat);
+            return mapAndPublish(oldFormat);
         } catch (JsonProcessingException e) {
             logger.error("Failed to minimise request due to mapping error");
             throw new MappingException(e);
         }
     }
 
-    private String convertToOldFormat(DeathNotificationSet minimisedData) throws JsonProcessingException {
+    private OldFormatDeathNotification convertToOldFormat(DeathNotificationSet minimisedData) {
         var events = minimisedData.events();
 
         LocalDateTime deathRegistrationTime;
@@ -66,10 +68,10 @@ public class ConvertSetToOldFormat
         }
 
         var sourceId = events.deathRegistrationID().toString();
-        var dateOfDeath = (LocalDate) events.deathDate().value();
+        var dateOfDeath = temporalAccessorToLocalDate(events.deathDate().value());
         var subject = events.subject();
         var names = getNames(subject);
-        var dateOfBirth = (LocalDate) subject.birthDate().get(0).value();
+        var dateOfBirth = temporalAccessorToLocalDate(subject.birthDate().get(0).value());
 
         var oldFormatEventData = new OldFormatEventData(
             deathRegistrationTime.toLocalDate(),
@@ -101,12 +103,11 @@ public class ConvertSetToOldFormat
             null
         );
 
-        var oldFormatDeathNotification = new OldFormatDeathNotification(
+        return new OldFormatDeathNotification(
             oldFormatData,
             null,
             null
         );
-        return objectMapper.writeValueAsString(oldFormatDeathNotification);
     }
 
     private static List<String> getNames(DeathRegistrationSubject subject) {
@@ -142,5 +143,17 @@ public class ConvertSetToOldFormat
         }
 
         return List.of(givenName, familyName, maidenName);
+    }
+
+    private LocalDate temporalAccessorToLocalDate(TemporalAccessor from) {
+        if (from.isSupported(ChronoField.YEAR) && from.isSupported(ChronoField.MONTH_OF_YEAR) && from.isSupported(ChronoField.DAY_OF_WEEK)) {
+            return LocalDate.from(from);
+        } else if (from.isSupported(ChronoField.YEAR) && from.isSupported(ChronoField.MONTH_OF_YEAR)) {
+            return LocalDate.of(from.get(ChronoField.YEAR), from.get(ChronoField.MONTH_OF_YEAR), 1);
+        } else if (from.isSupported(ChronoField.YEAR)) {
+            return LocalDate.of(from.get(ChronoField.YEAR), 1, 1);
+        } else {
+            return LocalDate.of(2015, 1, 1);
+        }
     }
 }

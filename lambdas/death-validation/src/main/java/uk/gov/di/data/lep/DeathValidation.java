@@ -31,7 +31,7 @@ public class DeathValidation
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent apiRequest, Context context) {
         try {
             var event = validateRequest(apiRequest);
-            publish(event);
+            mapAndPublish(event);
             return new APIGatewayProxyResponseEvent().withStatusCode(201);
         } catch (MappingException e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400);

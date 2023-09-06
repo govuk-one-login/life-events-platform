@@ -6,6 +6,7 @@ import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
@@ -21,11 +22,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DeathEnrichmentTest {
@@ -35,6 +38,10 @@ class DeathEnrichmentTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final DeathEnrichment underTest = new DeathEnrichment(awsService, config, objectMapper);
 
+    @BeforeAll
+    static void setup(){
+        when(config.getTargetTopic()).thenReturn("Target Topic");
+    }
     @BeforeEach
     void refreshSetup() {
         reset(objectMapper);
@@ -62,15 +69,17 @@ class DeathEnrichmentTest {
         var groJsonRecord = new GroJsonRecordBuilder().build();
         var deathNotificationSet = mock(DeathNotificationSet.class);
 
-        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class))
-            .thenReturn(groJsonRecord);
+        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class)).thenReturn(groJsonRecord);
+        when(objectMapper.writeValueAsString(deathNotificationSet)).thenReturn("Death notification set");
         var deathNotificationSetMapper = mockStatic(DeathNotificationSetMapper.class);
         deathNotificationSetMapper.when(() -> DeathNotificationSetMapper.generateDeathNotificationSet(groJsonRecord))
             .thenReturn(deathNotificationSet);
 
-        var result = underTest.handleRequest(sqsEvent, context);
+        underTest.handleRequest(sqsEvent, context);
 
-        assertEquals(deathNotificationSet, result);
+        verify(objectMapper).writeValueAsString(deathNotificationSet);
+        verify(awsService).putOnTopic("Death notification set");
+
         deathNotificationSetMapper.close();
     }
 

@@ -3,6 +3,9 @@ resource "aws_iam_role" "insert_xml_lambda" {
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_policy.json
 }
 
+# Trivy gives a false positive for iam access to the contents of an S3 bucket
+# https://github.com/aquasecurity/trivy/issues/5089
+#tfsec:ignore:aws-iam-no-policy-wildcards
 data "aws_iam_policy_document" "insert_xml_lambda" {
   statement {
     sid = "LambdaKMSAccess"

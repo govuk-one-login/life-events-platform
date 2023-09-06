@@ -972,7 +972,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpDevDeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
+          ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -1162,7 +1162,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpTestDeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
+          ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -1352,7 +1352,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpStageDeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
+          ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -1544,7 +1544,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpOldFormatDeathDeliveryQueue.QueueUrl
-          ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
+          ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:

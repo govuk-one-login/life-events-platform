@@ -1,5 +1,5 @@
 # This is the logging bucket, it doesn't need logs or versioning
-#tfsec:ignore:aws-s3-enable-bucket-logging
+#tfsec:ignore:aws-s3-enable-logging
 #tfsec:ignore:aws-s3-enable-versioning
 module "cloudfront_logs_bucket" {
   source = "../s3"

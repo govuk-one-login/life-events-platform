@@ -115,7 +115,7 @@ resource "aws_wafv2_web_acl_association" "waf_load_balancer" {
 }
 
 # This is the logging bucket, it doesn't need logs or versioning
-#tfsec:ignore:aws-s3-enable-bucket-logging
+#tfsec:ignore:aws-s3-enable-logging
 #tfsec:ignore:aws-s3-enable-versioning
 module "waf_lb_logs_bucket" {
   source = "../s3"
@@ -141,7 +141,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "load_balancer" {
 }
 
 # This is the logging bucket, it doesn't need logs or versioning
-#tfsec:ignore:aws-s3-enable-bucket-logging
+#tfsec:ignore:aws-s3-enable-logging
 #tfsec:ignore:aws-s3-enable-versioning
 module "waf_cloudfront_logs_bucket" {
   source = "../s3"

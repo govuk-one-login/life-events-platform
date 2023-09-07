@@ -20,6 +20,7 @@ import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -161,12 +162,12 @@ class DeathMinimisationTest {
     void minimiseEnrichedDataFailsIfBodyHasUnrecognisedProperties() throws JsonProcessingException {
         reset(objectMapper);
         when(objectMapper.readValue(sqsMessage.getBody(), DeathNotificationSet.class))
-            .thenThrow(mock(UnrecognizedPropertyException.class));
+            .thenThrow(UnrecognizedPropertyException.class);
 
         var underTest = new DeathMinimisation(awsService, config, objectMapper);
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
-        assert (exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
+        assertThat(exception.getCause()).isInstanceOf(UnrecognizedPropertyException.class);
     }
 }

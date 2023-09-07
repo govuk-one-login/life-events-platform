@@ -41,6 +41,7 @@ class DeathEnrichmentTest {
     static void setup(){
         when(config.getTargetTopic()).thenReturn("Target Topic");
     }
+
     @BeforeEach
     void refreshSetup() {
         reset(objectMapper);

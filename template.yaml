@@ -1515,7 +1515,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-convert-format-death
+      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-converted-death
       KmsMasterKeyId: !Ref DwpOldFormatDeathKmsKey
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DwpOldFormatConvertedDeathDlq.Arn
@@ -1525,7 +1525,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-convert-format-death-dlq
+      QueueName: !Sub ${Environment}${Developer}-dwp-old-format-converted-death-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
   DwpOldFormatDeathMinimisationFunction:
@@ -1565,13 +1565,6 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
-            - Sid: DwpOldFormatKmsKeyAccess
-              Effect: Allow
-              Action:
-                - kms:Decrypt
-                - kms:GenerateDataKey
-              Resource:
-                - !GetAtt DwpOldFormatDeathKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DwpOldFormatDeathDeliveryQueue.QueueName
       VpcConfig:
@@ -1626,8 +1619,15 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: DwpOldFormatKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt DwpOldFormatDeathKmsKey.Arn
         - SQSSendMessagePolicy:
-            QueueName: !GetAtt DwpOldFormatConvertedDeathQueue.QueueUrl
+            QueueName: !GetAtt DwpOldFormatConvertedDeathQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA

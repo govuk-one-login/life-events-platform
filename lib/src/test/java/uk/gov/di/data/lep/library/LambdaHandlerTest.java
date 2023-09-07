@@ -66,7 +66,7 @@ class LambdaHandlerTest {
         var jsonException = mock(JsonProcessingException.class);
         when(objectMapper.writeValueAsString(output)).thenThrow(jsonException);
 
-        var exception = assertThrows(MappingException.class, () -> underTest.publish(output));
+        var exception = assertThrows(MappingException.class, () -> underTest.mapAndPublish(output));
 
         assertEquals(jsonException, exception.getCause());
 
@@ -81,7 +81,7 @@ class LambdaHandlerTest {
         when(config.getTargetQueue()).thenReturn("targetQueueURL");
         when(objectMapper.writeValueAsString(output)).thenReturn("mappedQueueOutput");
 
-        underTest.publish(output);
+        underTest.mapAndPublish(output);
 
         verify(logger).info("Putting message on target queue: {}", "targetQueueURL");
 
@@ -95,7 +95,7 @@ class LambdaHandlerTest {
         when(config.getTargetTopic()).thenReturn("targetTopicARN");
         when(objectMapper.writeValueAsString(output)).thenReturn("mappedTopicOutput");
 
-        underTest.publish(output);
+        underTest.mapAndPublish(output);
 
         verify(logger).info("Putting message on target topic: {}", "targetTopicARN");
 

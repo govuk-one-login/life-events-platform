@@ -30,7 +30,7 @@ public abstract class LambdaHandler<O> {
     }
 
     @Tracing
-    public O publish(O output) {
+    public String mapAndPublish(O output) {
         String message;
         try {
             message = objectMapper.writeValueAsString(output);
@@ -38,7 +38,11 @@ public abstract class LambdaHandler<O> {
             logger.error("Failed to map lambda output to string for publishing");
             throw new MappingException(e);
         }
+        return publish(message);
+    }
 
+    @Tracing
+    public String publish(String message) {
         if (config.getTargetQueue() != null) {
             logger.info("Putting message on target queue: {}", config.getTargetQueue());
             awsService.putOnQueue(message);
@@ -47,7 +51,6 @@ public abstract class LambdaHandler<O> {
             logger.info("Putting message on target topic: {}", config.getTargetTopic());
             awsService.putOnTopic(message);
         }
-
-        return output;
+        return message;
     }
 }

@@ -25,6 +25,8 @@ import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -312,64 +314,142 @@ class ConvertSetToOldFormatTest {
         List.of(),
         List.of(Sex.FEMALE)
     );
+    private static final DeathRegistrationSubject deathRegistrationSubjectYear = new DeathRegistrationSubject(
+        List.of(new PostalAddress(
+            "United Kingdom",
+            null,
+            "Carlton House",
+            "10",
+            null,
+            null,
+            null,
+            null,
+            null,
+            "NE28 9FJ",
+            "Lancaster Drive",
+            null,
+            null,
+            null,
+            null
+        )),
+        List.of(new DateWithDescription(null, Year.of(1967))),
+        List.of(
+            new Name(
+                null,
+                List.of(
+                    new NamePart(NamePartType.GIVEN_NAME, "JANE", null, null),
+                    new NamePart(NamePartType.FAMILY_NAME, "SMITH", null, null)
+                ),
+                null,
+                null
+            )
+        ),
+        List.of(Sex.FEMALE)
+    );
+    private static final DeathRegistrationSubject deathRegistrationSubjectYearMonth = new DeathRegistrationSubject(
+        List.of(new PostalAddress(
+            "United Kingdom",
+            null,
+            "Carlton House",
+            "10",
+            null,
+            null,
+            null,
+            null,
+            null,
+            "NE28 9FJ",
+            "Lancaster Drive",
+            null,
+            null,
+            null,
+            null
+        )),
+        List.of(new DateWithDescription(null, YearMonth.of(1956, 5))),
+        List.of(
+            new Name(
+                null,
+                List.of(
+                    new NamePart(NamePartType.GIVEN_NAME, "JANE", null, null),
+                    new NamePart(NamePartType.FAMILY_NAME, "SMITH", null, null)
+                ),
+                null,
+                null
+            )
+        ),
+        List.of(Sex.FEMALE)
+    );
     private static final DeathRegistrationEvent deathRegistrationEvent = new DeathRegistrationEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubject
     );
     private static final DeathRegistrationEvent deathRegistrationEventAliasNameNoMaidenName = new DeathRegistrationEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectAliasNameNoMaidenName
     );
     private static final DeathRegistrationEvent deathRegistrationEventAliasNameNoMaidenSurname = new DeathRegistrationEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoMaidenSurname
     );
     private static final DeathRegistrationEvent deathRegistrationEventNoGivenName = new DeathRegistrationEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoGivenName
     );
     private static final DeathRegistrationEvent deathRegistrationEventNoFamilyName = new DeathRegistrationEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoFamilyName
     );
     private static final DeathRegistrationEvent deathRegistrationEventOnlyAliasNameDescription = new DeathRegistrationEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectOnlyAliasName
     );
     private static final DeathRegistrationEvent deathRegistrationEventEmptyNameDescription = new DeathRegistrationEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectEmptyNameDescription
     );
     private static final DeathRegistrationEvent deathRegistrationEventNoNames = new DeathRegistrationEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoNames
     );
+    private static final DeathRegistrationEvent deathRegistrationEventYear = new DeathRegistrationEvent(
+        new DateWithDescription(null, Year.of(2020)),
+        123456789,
+        null,
+        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        deathRegistrationSubjectYear
+    );
+    private static final DeathRegistrationEvent deathRegistrationEventYearMonth = new DeathRegistrationEvent(
+        new DateWithDescription(null, YearMonth.of(2020,3)),
+        123456789,
+        null,
+        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        deathRegistrationSubjectYearMonth
+    );
     private static final DeathRegistrationUpdateEvent deathRegistrationUpdateEvent = new DeathRegistrationUpdateEvent(
-        new DateWithDescription(null, LocalDate.parse("2020-01-01")),
+        new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         null,
@@ -472,6 +552,30 @@ class ConvertSetToOldFormatTest {
         null,
         null
     );
+    private static final DeathNotificationSet deathNotificationSetWithYear = new DeathNotificationSet(
+        null,
+        deathRegistrationEventYear,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
+    private static final DeathNotificationSet deathNotificationSetWithYearMonth = new DeathNotificationSet(
+        null,
+        deathRegistrationEventYearMonth,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    );
     private static final DeathNotificationSet deathNotificationSetWithUpdateEvent = new DeathNotificationSet(
         null,
         deathRegistrationUpdateEvent,
@@ -542,7 +646,7 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"JANE\"," +
             "\"lastName\":\"SMITH\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
@@ -575,7 +679,7 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"JANE\"," +
             "\"lastName\":\"SMITH\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
@@ -626,7 +730,7 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"JANE\"," +
             "\"lastName\":\"SMITH\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
@@ -659,7 +763,7 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"JANE\"," +
             "\"lastName\":\"SMITH\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
@@ -692,7 +796,7 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"\"," +
             "\"lastName\":\"SMITH\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
@@ -725,7 +829,7 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"JANE\"," +
             "\"lastName\":\"\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
@@ -758,7 +862,7 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"\"," +
             "\"lastName\":\"\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
@@ -791,7 +895,7 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"\"," +
             "\"lastName\":\"\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
@@ -824,8 +928,73 @@ class ConvertSetToOldFormatTest {
             "\"firstNames\":\"JANE\"," +
             "\"lastName\":\"SMITH\"," +
             "\"sex\":\"FEMALE\"," +
-            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfDeath\":\"2020-06-06\"," +
             "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
+
+        var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
+        assertTrue(result.contains(expected));
+    }
+
+    @Test
+    void convertSetToOldFormatConvertsDeathNotificationSetToOldFormatWithYear() throws JsonProcessingException {
+        var objectMapper = Mapper.objectMapper();
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(objectMapper.writeValueAsString(deathNotificationSetWithYear));
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+        var expected =
+            "\"type\":\"events\"," +
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"JANE\"," +
+            "\"lastName\":\"SMITH\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-01-01\"," +
+            "\"dateOfBirth\":\"1967-01-01\"," +
+            "\"birthPlace\":null," +
+            "\"deathPlace\":null," +
+            "\"maidenName\":\"\"," +
+            "\"occupation\":null," +
+            "\"retired\":null," +
+            "\"address\":\"NE28 9FJ\"";
+
+        var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
+
+        var result = underTest.handleRequest(sqsEvent, context);
+
+        assertTrue(result.contains(expected));
+    }
+    @Test
+    void convertSetToOldFormatConvertsDeathNotificationSetToOldFormatWithYearMonth() throws JsonProcessingException {
+        var objectMapper = Mapper.objectMapper();
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(objectMapper.writeValueAsString(deathNotificationSetWithYearMonth));
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+        var expected =
+            "\"type\":\"events\"," +
+            "\"attributes\":{" +
+            "\"eventType\":\"DEATH_NOTIFICATION\"," +
+            "\"sourceId\":\"123456789\"," +
+            "\"eventData\":{" +
+            "\"registrationDate\":\"2020-02-02\"," +
+            "\"firstNames\":\"JANE\"," +
+            "\"lastName\":\"SMITH\"," +
+            "\"sex\":\"FEMALE\"," +
+            "\"dateOfDeath\":\"2020-03-01\"," +
+            "\"dateOfBirth\":\"1956-05-01\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
             "\"maidenName\":\"\"," +

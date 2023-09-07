@@ -25,7 +25,6 @@ import static org.mockito.Mockito.when;
 class DeathEnrichmentIntegrationTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
-    private static final Context context = mock(Context.class);
     private static final DeathEnrichment underTest = new DeathEnrichment(awsService, config, Mapper.objectMapper());
 
     @Test
@@ -37,7 +36,7 @@ class DeathEnrichmentIntegrationTest {
         sqsEvent.setRecords(List.of(sqsMessage));
         when(config.getTargetTopic()).thenReturn("Target Topic");
 
-        underTest.handleRequest(sqsEvent, context);
+        underTest.handleRequest(sqsEvent, null);
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(awsService).putOnTopic(captor.capture());

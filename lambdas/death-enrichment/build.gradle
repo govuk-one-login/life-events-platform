@@ -26,6 +26,7 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
             "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
+            "org.assertj:assertj-core:$dependencyVersions.assertJ",
             testFixtures(project(":lib"))
 }
 

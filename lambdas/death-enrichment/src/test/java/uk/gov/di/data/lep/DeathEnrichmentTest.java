@@ -19,6 +19,7 @@ import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -82,10 +83,10 @@ class DeathEnrichmentTest {
         sqsEvent.setRecords(List.of(sqsMessage));
 
         when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class))
-            .thenThrow(mock(UnrecognizedPropertyException.class));
+            .thenThrow(UnrecognizedPropertyException.class);
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
-        assert (exception.getMessage().startsWith("Mock for UnrecognizedPropertyException"));
+        assertThat(exception.getCause()).isInstanceOf(UnrecognizedPropertyException.class);
     }
 }

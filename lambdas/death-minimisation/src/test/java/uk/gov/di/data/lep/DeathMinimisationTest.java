@@ -18,7 +18,6 @@ import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
-import java.beans.Beans;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

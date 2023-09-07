@@ -8,10 +8,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.approvaltests.Approvals;
+import org.approvaltests.core.Options;
+import org.approvaltests.scrubbers.GuidScrubber;
+import org.approvaltests.scrubbers.RegExScrubber;
+import org.approvaltests.scrubbers.Scrubbers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
@@ -169,5 +176,23 @@ class DeathMinimisationTest {
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
         assertThat(exception.getCause()).isInstanceOf(UnrecognizedPropertyException.class);
+    }
+
+    @Test
+    void minimsationSnapshotTest() {
+        when(config.getTargetTopic()).thenReturn("Target Topic");
+
+        var underTest = new DeathMinimisation(awsService, config, Mapper.objectMapper());
+
+        underTest.handleRequest(sqsEvent, null);
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(awsService).putOnTopic(captor.capture());
+
+        var options = new Options(Scrubbers.scrubAll(
+            new GuidScrubber(),
+            new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
+        );
+        Approvals.verify(captor.getValue(), options);
     }
 }

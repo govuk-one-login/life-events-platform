@@ -26,9 +26,10 @@ dependencies {
             "software.amazon.lambda:powertools-metrics:$dependencyVersions.powertools"
 
     testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
-            "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
-            "org.assertj:assertj-core:$dependencyVersions.assertJ",
-            testFixtures(project(":lib"))
+                       "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
+                       "org.assertj:assertj-core:$dependencyVersions.assertJ",
+                       "com.approvaltests:approvaltests:$dependencyVersions.approvalTests",
+                       testFixtures(project(":lib"))
 }
 
 java {

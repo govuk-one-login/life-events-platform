@@ -42,6 +42,12 @@ jobs:
           useConfigFile: true
           configFilePath: git-version.yml
 
+      - name: Copy lambdas gradle
+        run: |
+          cp -r gradle lambdas/gradle
+          cp gradlew lambdas/gradlew
+          cp gradlew.bat lambdas/gradlew.bat
+
       - name: Copy platform gradle
         run: |
           cp -r gradle platform/gradle
@@ -51,13 +57,20 @@ jobs:
       - name: Build and tag image
         uses: docker/build-push-action@v4
         with:
-          context: platform
+          #          context: platform
           push: false
           tags: ${{ github.ref_name }}:latest
           load: true
           cache-to: type=gha
           cache-from: type=gha
           build-args: BUILD_NUMBER=${{ steps.gitversion.outputs.majorMinorPatch }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.12.0
+        with:
+          image-ref: ${{ github.ref_name }}:latest
+          trivyignores: lambdas/.trivyignore
+          exit-code: 1
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.12.0

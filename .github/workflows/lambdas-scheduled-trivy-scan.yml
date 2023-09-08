@@ -10,15 +10,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - image: gdx
-            context: platform
-            trivyignore: platform/.trivyignore
-          - image: prometheus
-            context: prometheus
-            trivyignore: prometheus/.trivyignore
-          - image: grafana
-            context: grafana
-            trivyignore: grafana/.trivyignore
+          - image: gds
+            context: lambdas
+            trivyignore: lambdas/.trivyignore
       fail-fast: false
     name: Validate ${{ matrix.image }} image
     runs-on: ubuntu-latest
@@ -34,25 +28,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Copy gradle for gdx
-        if: matrix.image == 'gdx'
+      - name: Copy gradle for gds
+        if: matrix.image == 'gds'
         run: |
-          cp -r gradle platform/gradle
-          cp gradlew platform/gradlew
-          cp gradlew.bat platform/gradlew.bat
-
-      - name: Build and tag image
-        uses: docker/build-push-action@v4
-        with:
-          context: ${{ matrix.context }}
-          push: false
-          tags: ${{ github.ref_name }}:${{ matrix.image }}
-          load: true
-          cache-to: type=gha
-          cache-from: type=gha
+          cp -r gradle lambdas/gradle
+          cp gradlew lambdas/gradlew
+          cp gradlew.bat lambdas/gradlew.bat
 
       - id: trivy
         name: Run Trivy vulnerability scanner
@@ -80,50 +61,6 @@ jobs:
                if .Severity == "MEDIUM" then 2 else
                if .Severity == "LOW" then 3 else 4 end end end end) })
             | .[]' ${{ matrix.image }}.json \
-            | jq -s 'sort_by(.Order, .Vulnerability) | reduce .[] as $x ([]; .[0] += [$x.Vulnerability] | .[1] += [$x.Severity])
-            | map(join("\n"))
-            | [{ type: "mrkdwn", text: .[0]}, { type: "mrkdwn", text: .[1] }]' >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
-
-  validate-infra:
-    name: Validate infra code
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    outputs:
-      infra-outcome: ${{ steps.output.outputs.infra-outcome }}
-      infra-json: ${{ steps.output.outputs.infra-json }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - id: trivy
-        name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.12.0
-        continue-on-error: true
-        with:
-          scan-type: config
-          trivyignores: .trivyignore.docker
-          skip-dirs: lev-data/,stack-orchestration/
-          skip-files: template.yaml
-          exit-code: 1
-          format: json
-          output: infra.json
-
-      - id: output
-        name: Setup output
-        run: |
-          echo "infra-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "infra-json<<$EOF" >> $GITHUB_OUTPUT
-          jq '.Results[]
-            | select(.Misconfigurations != null)
-            | .Misconfigurations
-            | map({ Vulnerability: ("<"+.PrimaryURL+"|"+.AVDID+">"), Severity: .Severity, Order: (
-              if .Severity == "CRITICAL" then 0 else
-               if .Severity == "HIGH" then 1 else
-               if .Severity == "MEDIUM" then 2 else
-               if .Severity == "LOW" then 3 else 4 end end end end) })
-            | .[]' infra.json \
             | jq -s 'sort_by(.Order, .Vulnerability) | reduce .[] as $x ([]; .[0] += [$x.Vulnerability] | .[1] += [$x.Severity])
             | map(join("\n"))
             | [{ type: "mrkdwn", text: .[0]}, { type: "mrkdwn", text: .[1] }]' >> $GITHUB_OUTPUT

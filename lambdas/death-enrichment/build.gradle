@@ -14,21 +14,21 @@ repositories {
 
 dependencies {
     implementation "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
-            "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
-            "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
-            "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jackson",
-            "com.fasterxml.jackson.core:jackson-databind:$dependencyVersions.jackson",
-            project(":lib")
+                   "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+                   "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
+                   "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jackson",
+                   "com.fasterxml.jackson.core:jackson-databind:$dependencyVersions.jackson",
+                   project(":lib")
 
     aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
-            "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools",
-            "software.amazon.lambda:powertools-metrics:$dependencyVersions.powertools"
+           "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools",
+           "software.amazon.lambda:powertools-metrics:$dependencyVersions.powertools"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
-            "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
-            "org.assertj:assertj-core:$dependencyVersions.assertJ",
-            "com.approvaltests:approvaltests:$dependencyVersions.approvalTests",
-            testFixtures(project(":lib"))
+    testImplementation "com.approvaltests:approvaltests:$dependencyVersions.approvalTests",
+                       "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
+                       "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
+                       "org.assertj:assertj-core:$dependencyVersions.assertJ",
+                       testFixtures(project(":lib"))
 }
 
 java {

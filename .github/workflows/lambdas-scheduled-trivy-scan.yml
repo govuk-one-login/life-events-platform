@@ -6,48 +6,56 @@ on:
     - cron: '0 3 * * *'
 
 jobs:
-  validate-images:
+  variables:
+    runs-on: ubuntu-latest
+
+  validate-gds:
     strategy:
       matrix:
         include:
-          - image: gds
-            context: lambdas
+          - module: lambdas
+            scanref: ./lambdas
             trivyignore: lambdas/.trivyignore
+          - module: lib
+            scanref: ./lib
+            trivyignore: lib/.trivyignore
       fail-fast: false
-    name: Validate ${{ matrix.image }} image
+    name: Validate gds
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
-      gds-outcome: ${{ steps.output.outputs.gds-outcome || '' }}
-      gds-json: ${{ steps.output.outputs.gds-json || '' }}
+      gds-lambdas-outcome: ${{ steps.output.outputs.gds-lambdas-outcome || '' }}
+      gds-lambdas-json: ${{ steps.output.outputs.gds-lambdas-json || '' }}
+      gds-lib-outcome: ${{ steps.output.outputs.gds-lib-outcome || '' }}
+      gds-lib-json: ${{ steps.output.outputs.gds-lib-json || '' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy gradle for gds
-        if: matrix.image == 'gds'
+      - name: Copy gradle for gds lambdas
         run: |
-          cp -r gradle lambdas/gradle
-          cp gradlew lambdas/gradlew
-          cp gradlew.bat lambdas/gradlew.bat
+          cp -r gradle ${{ matrix.module }}/gradle
+          cp gradlew ${{ matrix.module }}/gradlew
+          cp gradlew.bat ${{ matrix.module }}/gradlew.bat
 
       - id: trivy
         name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.12.0
         continue-on-error: true
         with:
-          image-ref: ${{ github.ref_name }}:${{ matrix.image }}
+          scan-type: fs
+          scan-ref: ${{ matrix.scanref }}
           trivyignores: ${{ matrix.trivyignore }}
           exit-code: 1
           format: json
-          output: ${{ matrix.image }}.json
+          output: ${{ matrix.module }}.json
 
       - id: output
         name: Setup output
         run: |
-          echo "${{ matrix.image }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
+          echo "${{ matrix.module }}-outcome=${{ steps.trivy.outcome }}" >> $GITHUB_OUTPUT
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "${{ matrix.image }}-json<<$EOF" >> $GITHUB_OUTPUT
+          echo "${{ matrix.module }}-json<<$EOF" >> $GITHUB_OUTPUT
           jq '.Results[]
             | select(.Vulnerabilities != null)
             | .Vulnerabilities
@@ -56,7 +64,7 @@ jobs:
                if .Severity == "HIGH" then 1 else
                if .Severity == "MEDIUM" then 2 else
                if .Severity == "LOW" then 3 else 4 end end end end) })
-            | .[]' ${{ matrix.image }}.json \
+            | .[]' ${{ matrix.module }}.json \
             | jq -s 'sort_by(.Order, .Vulnerability) | reduce .[] as $x ([]; .[0] += [$x.Vulnerability] | .[1] += [$x.Severity])
             | map(join("\n"))
             | [{ type: "mrkdwn", text: .[0]}, { type: "mrkdwn", text: .[1] }]' >> $GITHUB_OUTPUT
@@ -64,7 +72,7 @@ jobs:
 
   notify-slack:
     name: Notify Slack
-    needs: [ validate-images, validate-infra ]
+    needs: [ validate-gds ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -91,11 +99,19 @@ jobs:
                   },
                   {
                     "type": "plain_text",
-                    "text": "GDS"
+                    "text": "GDS Lambdas"
                   },
                   {
                     "type": "plain_text",
-                    "text": "${{ needs.validate-images.outputs.gds-outcome }}"
+                    "text": "${{ needs.validate.outputs.lambdas-outcome }}"
+                  },
+                  {
+                    "type": "plain_text",
+                    "text": "GDS Lib"
+                  },
+                  {
+                    "type": "plain_text",
+                    "text": "${{ needs.validate.outputs.lib-outcome }}"
                   }
                 ]
               }
@@ -113,9 +129,9 @@ jobs:
             }
           ]'
 
-          if [ "${{ needs.validate-images.outputs.gds-outcome }}" = "failure"  ]
+          if [ "${{ needs.validate.outputs.lambdas-outcome }}" = "failure"  ]
           then
-            fields=$(jq '. += ${{ needs.validate-images.outputs.gds-json }}' <<< $base_vulnerability_fields)
+            fields=$(jq '. += ${{ needs.validate.outputs.lambdas-json }}' <<< $base_vulnerability_fields)
             payload=$(jq --argjson fields "$fields" '.blocks += [
               {
                 "type": "divider"
@@ -124,7 +140,25 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*GDS*"
+                  "text": "*GDS Lambdas*"
+                },
+                "fields": $fields
+              }
+            ]' <<< $payload)
+          fi
+
+          if [ "${{ needs.validate.outputs.lib-outcome }}" = "failure"  ]
+          then
+            fields=$(jq '. += ${{ needs.validate.outputs.lib-json }}' <<< $base_vulnerability_fields)
+            payload=$(jq --argjson fields "$fields" '.blocks += [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*GDS Lib*"
                 },
                 "fields": $fields
               }
@@ -138,7 +172,8 @@ jobs:
 
       - name: Send failure message to Slack
         if: |
-          needs.validate-images.outputs.gds-outcome != 'success'
+          needs.validate.outputs.lambdas-outcome != 'success' ||
+          needs.validate.outputs.lib-outcome != 'success'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}

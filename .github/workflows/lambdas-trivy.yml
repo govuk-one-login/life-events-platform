@@ -6,15 +6,8 @@ on:
   merge_group:
 
 jobs:
-  validate-images:
-    strategy:
-      matrix:
-        include:
-          - image: gds
-            context: lambdas
-            trivyignore: lambdas/.trivyignore
-      fail-fast: false
-    name: Validate ${{ matrix.image }} image
+  validate-lambdas:
+    name: Validate gds
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -22,7 +15,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Copy gradle for gds
-        if: matrix.image == 'gds'
         run: |
           cp -r gradle lambdas/gradle
           cp gradlew lambdas/gradlew
@@ -31,6 +23,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.12.0
         with:
-          image-ref: ${{ github.ref_name }}:${{ matrix.image }}
-          trivyignores: ${{ matrix.trivyignore }}
+          ref: ${{ github.ref_name }}:gds
+          trivyignores: lambdas/.trivyignore
+          scan-type: fs
           exit-code: 1

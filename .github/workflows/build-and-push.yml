@@ -42,7 +42,7 @@ jobs:
           useConfigFile: true
           configFilePath: git-version.yml
 
-      - name: Copy platform gradle
+      - name: Copy gradle
         run: |
           cp -r gradle platform/gradle
           cp gradlew platform/gradlew

@@ -13,6 +13,10 @@
     "Loggers": {
       "logger": [
         {
+          "name": "net.schmizz.sshj",
+          "level": "trace"
+        },
+        {
           "name": "JsonLogger",
           "level": "info",
           "additivity": false,

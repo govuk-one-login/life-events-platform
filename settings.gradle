@@ -8,5 +8,4 @@ include "lambdas",
         "lambdas:gro-generate-xml",
         "lambdas:gro-publish-record",
         "lambdas:gro-pull-file",
-        "lib",
-        "platform"
+        "lib"

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <!-- Disable mockk logging to prevent stdObjectAnswer MockKException when mocking time -->
-    <logger name="io.mockk.impl.instantiation.AbstractMockFactory" level="error"/>
-    <logger name="io.mockk.impl.recording.states.AnsweringState" level="error"/>
-</configuration>

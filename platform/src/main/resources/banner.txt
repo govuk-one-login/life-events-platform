@@ -1,8 +1,0 @@
-  G)gggg D)dddd   X)    xx    P)ppppp  l)L            t)    f)FFF                                 A)aa   P)ppppp  I)iiii
- G)      D)   dd   X)  xx     P)    pp  l)          t)tTTT f)                                    A)  aa  P)    pp   I)
-G)  ggg  D)    dd   X)xx      P)ppppp   l)  a)AAAA    t)   f)FFF   o)OOO   r)RRR   m)MM MMM     A)    aa P)ppppp    I)
-G)    gg D)    dd   X)xx      P)        l)   a)AAA    t)   f)     o)   OO r)   RR m)  MM  MM    A)aaaaaa P)         I)
- G)   gg D)    dd  X)  xx     P)        l)  a)   A    t)   f)     o)   OO r)      m)  MM  MM    A)    aa P)         I)
-  G)ggg  D)ddddd  X)    xx    P)       l)LL  a)AAAA   t)T  f)      o)OOO  r)      m)      MM    A)    aa P)       I)iiii
-${info.app.name}
-Powered by Spring Boot ${spring-boot.version}

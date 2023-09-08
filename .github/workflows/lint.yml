@@ -36,8 +36,8 @@ jobs:
         with:
           node-version: 18
 
-      - name: Update gradle lockfile
-        run: ./gradlew platform:dependencies --write-locks
+      - name: Update gradle lockfiles
+        run: ./gradlew resolveAndLockAll --write-locks
 
       - name: Fix formatting of all Kotlin files
         run: ./gradlew clean platform:formatKotlin
@@ -57,4 +57,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "GPC-NONE: Automatically lint files"
-          file_pattern: '*.kt *.ts *.tf platform/gradle.lockfile *.java'
+          file_pattern: '*.kt *.ts *.tf gradle.lockfile *.java'

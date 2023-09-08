@@ -13,17 +13,18 @@ repositories {
 }
 
 dependencies {
-    implementation "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
-                   "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+    implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
                    "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
+                   "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
                    project(":lib")
 
     aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
            "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
-                       "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
-                       "com.approvaltests:approvaltests:$dependencyVersions.approvalTests"
+    testImplementation "com.approvaltests:approvaltests:$dependencyVersions.approvalTests",
+                       "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
+                       "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter"
+
 }
 
 java {

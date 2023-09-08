@@ -13,20 +13,20 @@ repositories {
 }
 
 dependencies {
-    implementation "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
-                   "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
+    implementation "com.amazonaws:aws-lambda-java-core:$dependencyVersions.awsLambdaJavaCore",
                    "com.amazonaws:aws-lambda-java-events:$dependencyVersions.awsLambdaJavaEvents",
                    "com.fasterxml.jackson.core:jackson-annotations:$dependencyVersions.jackson",
                    "com.fasterxml.jackson.core:jackson-databind:$dependencyVersions.jackson",
                    "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$dependencyVersions.jackson",
+                   "org.aspectj:aspectjrt:$dependencyVersions.aspectjrt",
                    project(":lib")
 
     aspect "software.amazon.lambda:powertools-logging:$dependencyVersions.powertools",
            "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools",
            "software.amazon.lambda:powertools-metrics:$dependencyVersions.powertools"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
-                       "com.approvaltests:approvaltests:$dependencyVersions.approvalTests",
+    testImplementation "com.approvaltests:approvaltests:$dependencyVersions.approvalTests",
+                       "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
                        "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
                        testFixtures(project(":lib"))
 }

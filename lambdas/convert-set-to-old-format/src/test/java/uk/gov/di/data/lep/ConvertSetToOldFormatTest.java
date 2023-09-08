@@ -1082,10 +1082,7 @@ class ConvertSetToOldFormatTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(awsService).putOnTopic(captor.capture());
 
-        var options = new Options(Scrubbers.scrubAll(
-            new GuidScrubber(),
-            new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
-        );
+        var options = new Options(new GuidScrubber());
         Approvals.verify(captor.getValue(), Approvals.NAMES.withParameters(options, name));
     }
 }

@@ -24,6 +24,6 @@ jobs:
         uses: aquasecurity/trivy-action@0.12.0
         with:
           scan-type: fs
-          scan-ref: ${{ github.ref_name }}/lambdas
+          scan-ref: ./lambdas
           trivyignores: lambdas/.trivyignore
           exit-code: 1

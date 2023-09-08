@@ -19,11 +19,6 @@
           "AppenderRef": {
             "ref": "JsonAppender"
           }
-        },
-        {
-          "name": "net.schmizz.sshj",
-          "level": "trace",
-          "additivity": false
         }
       ],
       "Root": {

@@ -10,6 +10,9 @@ jobs:
     strategy:
       matrix:
         include:
+          - image: gds
+            context: lambdas
+            trivyignore: lambdas/.trivyignore
           - image: gdx
             context: platform
             trivyignore: platform/.trivyignore
@@ -29,6 +32,13 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+
+      - name: Copy gradle for gds
+        if: matrix.image == 'gds'
+        run: |
+          cp -r gradle lambdas/gradle
+          cp gradlew lambdas/gradlew
+          cp gradlew.bat lambdas/gradlew.bat
 
       - name: Copy gradle for gdx
         if: matrix.image == 'gdx'

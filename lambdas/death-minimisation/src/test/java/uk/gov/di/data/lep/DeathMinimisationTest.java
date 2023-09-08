@@ -207,7 +207,7 @@ class DeathMinimisationTest {
     }
 
     @Test
-    void minimsationSnapshotTest() {
+    void minimisationSnapshotTest() {
         when(config.getTargetTopic()).thenReturn("Target Topic");
 
         var underTest = new DeathMinimisation(awsService, config, Mapper.objectMapper());

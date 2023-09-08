@@ -22,8 +22,8 @@ dependencies {
             "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
 
     testImplementation "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
-            "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
-            testFixtures(project(":lib"))
+                       "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
+                       testFixtures(project(":lib"))
 }
 
 java {

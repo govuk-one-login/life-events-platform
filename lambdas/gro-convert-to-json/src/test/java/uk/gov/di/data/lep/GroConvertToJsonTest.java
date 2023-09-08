@@ -3,9 +3,18 @@ package uk.gov.di.data.lep;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.approvaltests.Approvals;
+import org.approvaltests.core.Options;
+import org.approvaltests.scrubbers.GuidScrubber;
+import org.approvaltests.scrubbers.RegExScrubber;
+import org.approvaltests.scrubbers.Scrubbers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventBucket;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventDetail;
@@ -23,6 +32,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -80,49 +90,49 @@ class GroConvertToJsonTest {
     );
     private static final String mockS3objectResponseOneRecord =
         "<DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">" +
-            "<DeathRegistration>" +
-            "<RegistrationID>1</RegistrationID>" +
-            "<DeceasedName>" +
-            "<ns4:PersonGivenName>ERICA</ns4:PersonGivenName>" +
-            "<ns4:PersonGivenName>CHRISTINA</ns4:PersonGivenName>" +
-            "<ns4:PersonFamilyName>BLOGG</ns4:PersonFamilyName>" +
-            "</DeceasedName>" +
-            "<DeceasedGender>2</DeceasedGender>" +
-            "<DeceasedAddress>" +
-            "<ns3:Line>263 Ave Maria Lane</ns3:Line>" +
-            "<ns3:Line>Bourton-on-the-hill</ns3:Line>" +
-            "<ns3:Postcode>BT62 4HL</ns3:Postcode>" +
-            "</DeceasedAddress>" +
-            "</DeathRegistration>" +
-            "</DeathRegistrationGroup>";
+        "<DeathRegistration>" +
+        "<RegistrationID>1</RegistrationID>" +
+        "<DeceasedName>" +
+        "<ns4:PersonGivenName>ERICA</ns4:PersonGivenName>" +
+        "<ns4:PersonGivenName>CHRISTINA</ns4:PersonGivenName>" +
+        "<ns4:PersonFamilyName>BLOGG</ns4:PersonFamilyName>" +
+        "</DeceasedName>" +
+        "<DeceasedGender>2</DeceasedGender>" +
+        "<DeceasedAddress>" +
+        "<ns3:Line>263 Ave Maria Lane</ns3:Line>" +
+        "<ns3:Line>Bourton-on-the-hill</ns3:Line>" +
+        "<ns3:Postcode>BT62 4HL</ns3:Postcode>" +
+        "</DeceasedAddress>" +
+        "</DeathRegistration>" +
+        "</DeathRegistrationGroup>";
     private static final String mockS3objectResponseMultipleRecords =
         "<DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">" +
-            "<DeathRegistration>" +
-            "<RegistrationID>1</RegistrationID>" +
-            "<DeceasedName>" +
-            "<ns4:PersonGivenName>ERICA</ns4:PersonGivenName>" +
-            "<ns4:PersonGivenName>CHRISTINA</ns4:PersonGivenName>" +
-            "<ns4:PersonFamilyName>BLOGG</ns4:PersonFamilyName>" +
-            "</DeceasedName>" +
-            "<DeceasedGender>2</DeceasedGender>" +
-            "<DeceasedAddress>" +
-            "<ns3:Line>263 Ave Maria Lane</ns3:Line>" +
-            "<ns3:Line>Bourton-on-the-hill</ns3:Line>" +
-            "<ns3:Postcode>BT62 4HL</ns3:Postcode>" +
-            "</DeceasedAddress>" +
-            "</DeathRegistration>" +
-            "<DeathRegistration>" +
-            "<RegistrationID>2</RegistrationID>" +
-            "<DeceasedName>" +
-            "<ns4:PersonGivenName>BOB</ns4:PersonGivenName>" +
-            "</DeceasedName>" +
-            "<DeceasedGender>1</DeceasedGender>" +
-            "<DeceasedBirthDate>" +
-            "<ns1:PersonBirthDate>1958-06-06</ns1:PersonBirthDate>" +
-            "<ns1:VerificationLevel>02</ns1:VerificationLevel>" +
-            "</DeceasedBirthDate>" +
-            "</DeathRegistration>" +
-            "</DeathRegistrationGroup>";
+        "<DeathRegistration>" +
+        "<RegistrationID>1</RegistrationID>" +
+        "<DeceasedName>" +
+        "<ns4:PersonGivenName>ERICA</ns4:PersonGivenName>" +
+        "<ns4:PersonGivenName>CHRISTINA</ns4:PersonGivenName>" +
+        "<ns4:PersonFamilyName>BLOGG</ns4:PersonFamilyName>" +
+        "</DeceasedName>" +
+        "<DeceasedGender>2</DeceasedGender>" +
+        "<DeceasedAddress>" +
+        "<ns3:Line>263 Ave Maria Lane</ns3:Line>" +
+        "<ns3:Line>Bourton-on-the-hill</ns3:Line>" +
+        "<ns3:Postcode>BT62 4HL</ns3:Postcode>" +
+        "</DeceasedAddress>" +
+        "</DeathRegistration>" +
+        "<DeathRegistration>" +
+        "<RegistrationID>2</RegistrationID>" +
+        "<DeceasedName>" +
+        "<ns4:PersonGivenName>BOB</ns4:PersonGivenName>" +
+        "</DeceasedName>" +
+        "<DeceasedGender>1</DeceasedGender>" +
+        "<DeceasedBirthDate>" +
+        "<ns1:PersonBirthDate>1958-06-06</ns1:PersonBirthDate>" +
+        "<ns1:VerificationLevel>02</ns1:VerificationLevel>" +
+        "</DeceasedBirthDate>" +
+        "</DeathRegistration>" +
+        "</DeathRegistrationGroup>";
     private static final String cognitoClientId = "cognitoClientId";
     private static final String cognitoClientSecret = "cognitoClientSecret";
     private static final String cognitoOauth2TokenUri = "https://cognitoDomainName.auth.awsRegion.amazoncognito.com/oauth2/token";
@@ -224,13 +234,13 @@ class GroConvertToJsonTest {
             anyString(),
             matches(
                 "\"RegistrationID\":1.*" +
-                    "\"PersonGivenName\":.*[\"ERICA\",\"CHRISTINA\"].*" +
-                    "\"PersonFamilyName\":\"BLOGG\".*" +
-                    "\"DeceasedGender\":2.*" +
-                    "\"RegistrationID\":2.*" +
-                    "\"PersonGivenName\":\\[\"BOB\"\\].*" +
-                    "\"DeceasedGender\":1.*" +
-                    "\"DeceasedBirthDate\":\\{\"PersonBirthDate\":\"1958-06-06\",\"VerificationLevel\":\"02\"\\}"
+                "\"PersonGivenName\":.*[\"ERICA\",\"CHRISTINA\"].*" +
+                "\"PersonFamilyName\":\"BLOGG\".*" +
+                "\"DeceasedGender\":2.*" +
+                "\"RegistrationID\":2.*" +
+                "\"PersonGivenName\":\\[\"BOB\"\\].*" +
+                "\"DeceasedGender\":1.*" +
+                "\"DeceasedBirthDate\":\\{\"PersonBirthDate\":\"1958-06-06\",\"VerificationLevel\":\"02\"\\}"
             )
         );
 
@@ -249,10 +259,10 @@ class GroConvertToJsonTest {
             eq("JsonBucketName"),
             anyString(),
             matches("\"RegistrationID\":1.*" +
-                "\"PersonGivenName\":\\[\"ERICA\",\"CHRISTINA\"\\].*" +
-                "\"PersonFamilyName\":\"BLOGG\".*" +
-                "\"DeceasedGender\":2.*" +
-                "\"DeceasedAddress\":.*[\"263 Ave Maria Lane\",\"Bourton-on-the-hill\"]")
+                    "\"PersonGivenName\":\\[\"ERICA\",\"CHRISTINA\"\\].*" +
+                    "\"PersonFamilyName\":\"BLOGG\".*" +
+                    "\"DeceasedGender\":2.*" +
+                    "\"DeceasedAddress\":.*[\"263 Ave Maria Lane\",\"Bourton-on-the-hill\"]")
         );
 
         httpClientMock.close();
@@ -272,5 +282,33 @@ class GroConvertToJsonTest {
         verify(awsService, never()).putInBucket(any(), any(), any());
 
         httpClientMock.close();
+    }
+
+    private static Stream<Arguments> groFiles() {
+        return Stream.of(
+            Arguments.of(mockS3objectResponseOneRecord, "mockS3objectResponseOneRecord"),
+            Arguments.of(mockS3objectResponseMultipleRecords, "mockS3objectResponseMultipleRecords")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("groFiles")
+    void groConvertToJsonSnapshotTest(String groFile, String name) {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
+        when(awsService.getFromBucket(anyString(), anyString())).thenReturn(groFile);
+
+        underTest.handleRequest(event, context);
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+
+        verify(awsService).putInBucket(anyString(), anyString(), captor.capture());
+
+        httpClientMock.close();
+
+        var options = new Options(Scrubbers.scrubAll(
+            new GuidScrubber(),
+            new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
+        );
+        Approvals.verify(captor.getValue(), Approvals.NAMES.withParameters(options, name));
     }
 }

@@ -5,8 +5,14 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import org.approvaltests.Approvals;
+import org.approvaltests.core.Options;
+import org.approvaltests.scrubbers.GuidScrubber;
+import org.approvaltests.scrubbers.RegExScrubber;
+import org.approvaltests.scrubbers.Scrubbers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
@@ -19,6 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DeathValidationTest {
@@ -69,5 +76,25 @@ class DeathValidationTest {
         var result = underTest.handleRequest(event, context);
 
         assertEquals(400, result.getStatusCode());
+    }
+
+    @Test
+    void deathValidationSnapshotTest() throws JsonProcessingException {
+        var event = new APIGatewayProxyRequestEvent().withBody(Mapper.objectMapper().writeValueAsString(new GroJsonRecordBuilder().build()));
+
+        when(config.getTargetTopic()).thenReturn("Target Topic");
+
+        var snapshotUnderTest = new DeathValidation(awsService, config, Mapper.objectMapper());
+
+        snapshotUnderTest.handleRequest(event, null);
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(awsService).putOnTopic(captor.capture());
+
+        var options = new Options(Scrubbers.scrubAll(
+            new GuidScrubber(),
+            new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
+        );
+        Approvals.verify(captor.getValue(), options);
     }
 }

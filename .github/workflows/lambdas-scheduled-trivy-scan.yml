@@ -18,12 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
-      gdx-outcome: ${{ steps.output.outputs.gdx-outcome || '' }}
-      gdx-json: ${{ steps.output.outputs.gdx-json || '' }}
-      prometheus-outcome: ${{ steps.output.outputs.prometheus-outcome || '' }}
-      prometheus-json: ${{ steps.output.outputs.prometheus-json || '' }}
-      grafana-outcome: ${{ steps.output.outputs.grafana-outcome || '' }}
-      grafana-json: ${{ steps.output.outputs.grafana-json || '' }}
+      gds-outcome: ${{ steps.output.outputs.gds-outcome || '' }}
+      gds-json: ${{ steps.output.outputs.gds-json || '' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -95,35 +91,11 @@ jobs:
                   },
                   {
                     "type": "plain_text",
-                    "text": "GDX"
+                    "text": "GDS"
                   },
                   {
                     "type": "plain_text",
-                    "text": "${{ needs.validate-images.outputs.gdx-outcome }}"
-                  },
-                  {
-                    "type": "plain_text",
-                    "text": "Prometheus"
-                  },
-                  {
-                    "type": "plain_text",
-                    "text": "${{ needs.validate-images.outputs.prometheus-outcome }}"
-                  },
-                  {
-                    "type": "plain_text",
-                    "text": "Grafana"
-                  },
-                  {
-                    "type": "plain_text",
-                    "text": "${{ needs.validate-images.outputs.grafana-outcome }}"
-                  },
-                  {
-                    "type": "plain_text",
-                    "text": "Infrastructure"
-                  },
-                  {
-                    "type": "plain_text",
-                    "text": "${{ needs.validate-infra.outputs.infra-outcome }}"
+                    "text": "${{ needs.validate-images.outputs.gds-outcome }}"
                   }
                 ]
               }
@@ -141,9 +113,9 @@ jobs:
             }
           ]'
 
-          if [ "${{ needs.validate-images.outputs.gdx-outcome }}" = "failure"  ]
+          if [ "${{ needs.validate-images.outputs.gds-outcome }}" = "failure"  ]
           then
-            fields=$(jq '. += ${{ needs.validate-images.outputs.gdx-json }}' <<< $base_vulnerability_fields)
+            fields=$(jq '. += ${{ needs.validate-images.outputs.gds-json }}' <<< $base_vulnerability_fields)
             payload=$(jq --argjson fields "$fields" '.blocks += [
               {
                 "type": "divider"
@@ -152,61 +124,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*GDX*"
-                },
-                "fields": $fields
-              }
-            ]' <<< $payload)
-          fi
-
-          if [ "${{ needs.validate-images.outputs.prometheus-outcome }}" = "failure" ]
-          then
-            fields=$(jq '. += ${{ needs.validate-images.outputs.prometheus-json }}' <<< $base_vulnerability_fields)
-            payload=$(jq --argjson fields "$fields" '.blocks += [
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*Prometheus*"
-                },
-                "fields": $fields
-              }
-            ]' <<< $payload)
-          fi
-
-          if [ "${{ needs.validate-images.outputs.grafana-outcome }}" = "failure" ]
-          then
-            fields=$(jq '. += ${{ needs.validate-images.outputs.grafana-json }}' <<< $base_vulnerability_fields)
-            payload=$(jq --argjson fields "$fields" '.blocks += [
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*Grafana*"
-                },
-                "fields": $fields
-              }
-            ]' <<< $payload)
-          fi
-
-          if [ "${{ needs.validate-infra.outputs.infra-outcome }}" = "failure" ]
-          then
-            fields=$(jq '. += ${{ needs.validate-infra.outputs.infra-json }}' <<< $base_vulnerability_fields)
-            payload=$(jq --argjson fields "$fields" '.blocks += [
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "*Infrastructure*"
+                  "text": "*GDS*"
                 },
                 "fields": $fields
               }
@@ -220,10 +138,7 @@ jobs:
 
       - name: Send failure message to Slack
         if: |
-          needs.validate-images.outputs.gdx-outcome != 'success' ||
-          needs.validate-images.outputs.prometheus-outcome != 'success' ||
-          needs.validate-images.outputs.grafana-outcome != 'success' ||
-          needs.validate-infra.outputs.infra-outcome != 'success'
+          needs.validate-images.outputs.gds-outcome != 'success'
         uses: slackapi/slack-github-action@v1.24.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}

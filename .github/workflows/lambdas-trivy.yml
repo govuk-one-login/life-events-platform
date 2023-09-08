@@ -23,7 +23,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.12.0
         with:
-          ref: ${{ github.ref_name }}:gds
+          scan-ref: ${{ github.ref_name }}:gds
           trivyignores: lambdas/.trivyignore
           scan-type: fs
           exit-code: 1

@@ -1,11 +1,21 @@
+package uk.gov.di.data.lep;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.approvaltests.Approvals;
+import org.approvaltests.core.Options;
+import org.approvaltests.scrubbers.GuidScrubber;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.gov.di.data.lep.ConvertSetToOldFormat;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.deathnotification.DateWithDescription;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
@@ -28,6 +38,7 @@ import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -41,6 +52,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ConvertSetToOldFormatTest {
@@ -616,6 +628,11 @@ class ConvertSetToOldFormatTest {
         when(config.getTargetQueue()).thenReturn("targetQueue");
     }
 
+    @BeforeEach
+    void reset() {
+        Mockito.reset(awsService);
+    }
+
     @Test
     void constructionCallsCorrectInstantiation() {
         try (var awsService = mockConstruction(AwsService.class);
@@ -1026,5 +1043,44 @@ class ConvertSetToOldFormatTest {
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
         assertEquals(mappingException, exception.getCause());
+    }
+
+    private static Stream<Arguments> sourceSets() {
+        return Stream.of(
+            Arguments.of(deathNotificationSet, "deathNotificationSet"),
+            Arguments.of(deathNotificationSetAliasNameNoMaidenName, "deathNotificationSetAliasNameNoMaidenName"),
+            Arguments.of(deathNotificationSetAliasNameNoMaidenSurname, "deathNotificationSetAliasNameNoMaidenSurname"),
+            Arguments.of(deathNotificationSetEmptyNameDescription, "deathNotificationSetEmptyNameDescription"),
+            Arguments.of(deathNotificationSetNoFamilyName, "deathNotificationSetNoFamilyName"),
+            Arguments.of(deathNotificationSetNoGivenName, "deathNotificationSetNoGivenName"),
+            Arguments.of(deathNotificationSetNoNames, "deathNotificationSetNoNames"),
+            Arguments.of(deathNotificationSetOnlyAliasNameDescription, "deathNotificationSetOnlyAliasNameDescription"),
+            Arguments.of(deathNotificationSetWithUpdateEvent, "deathNotificationSetWithUpdateEvent"),
+            Arguments.of(deathNotificationSetWithYear, "deathNotificationSetWithYear"),
+            Arguments.of(deathNotificationSetWithYearMonth, "deathNotificationSetWithYearMonth")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("sourceSets")
+    void convertSetApprovalTest(DeathNotificationSet sourceSet, String name) throws JsonProcessingException {
+        var objectMapper = Mapper.objectMapper();
+        var sqsMessage = new SQSMessage();
+
+        sqsMessage.setBody(objectMapper.writeValueAsString(sourceSet));
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+
+        var underTest = new ConvertSetToOldFormat(awsService, config, objectMapper);
+
+        when(config.getTargetTopic()).thenReturn("Target Topic");
+
+        underTest.handleRequest(sqsEvent, null);
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(awsService).putOnTopic(captor.capture());
+
+        var options = new Options(new GuidScrubber());
+        Approvals.verify(captor.getValue(), Approvals.NAMES.withParameters(options, name));
     }
 }

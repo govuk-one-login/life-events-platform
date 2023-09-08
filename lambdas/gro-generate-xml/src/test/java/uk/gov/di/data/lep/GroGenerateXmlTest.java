@@ -1,3 +1,5 @@
+package uk.gov.di.data.lep;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import uk.gov.di.data.lep.GroGenerateXml;
 import uk.gov.di.data.lep.dto.InsertDeathXmlRequest;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;

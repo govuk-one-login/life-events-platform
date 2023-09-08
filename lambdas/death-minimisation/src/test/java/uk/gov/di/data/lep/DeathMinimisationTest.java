@@ -8,9 +8,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.approvaltests.Approvals;
+import org.approvaltests.core.Options;
+import org.approvaltests.scrubbers.GuidScrubber;
+import org.approvaltests.scrubbers.RegExScrubber;
+import org.approvaltests.scrubbers.Scrubbers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
@@ -41,22 +47,51 @@ class DeathMinimisationTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final ObjectWriter writer = mock(ObjectWriter.class);
     private static final String sqsMessageBody =
-        "{\"events\":" +
-            "{" +
-            "\"https://ssf.account.gov.uk/v1/deathRegistrationUpdate\":{" +
-            "\"deathRegistrationID\":123456," +
-            "\"deathDate\":{\"value\":\"2011-11-29\"}," +
-            "\"recordUpdateTime\":{\"value\":\"2022-11-02T12:00:00\"}," +
-            "\"subject\":{" +
-            "\"address\":[{" +
-            "\"buildingNumber\":\"10\"," +
-            "\"streetName\":\"Alesham Avenue\"," +
-            "\"postalCode\":\"OX33 1DF\"" +
-            "}]," +
-            "\"birthDate\":[{\"value\":\"1954-11-13\"}]," +
-            "\"name\":[{\"nameParts\":[{\"type\":\"GivenName\", \"value\":\"JEREMY\"}]}]," +
-            "\"sex\":[\"Male\"]" +
-            "}}}}";
+        """
+        {
+          "iat": 1,
+          "txn": "496251f4-7718-4aa6-bb12-79b252ab24f3",
+          "events": {
+            "https://ssf.account.gov.uk/v1/deathRegistrationUpdate": {
+              "deathRegistrationID": 123456,
+              "deathDate": {
+                "value": "2011-11-29"
+              },
+              "recordUpdateTime": {
+                "value": "2022-11-02T12:00:00"
+              },
+              "subject": {
+                "address": [
+                  {
+                    "buildingNumber": "10",
+                    "streetName": "Alesham Avenue",
+                    "postalCode": "OX33 1DF"
+                  }
+                ],
+                "birthDate": [
+                  {
+                    "value": "1954-11-13"
+                  }
+                ],
+                "name": [
+                  {
+                    "nameParts": [
+                      {
+                        "type": "GivenName",
+                        "value": "JEREMY"
+                      }
+                    ]
+                  }
+                ],
+                "sex": [
+                  "Male"
+                ]
+              }
+            }
+          }
+        }
+""";
+
     private static final SQSMessage sqsMessage = new SQSMessage();
     private static final SQSEvent sqsEvent = new SQSEvent();
     private final DeathNotificationSet oldDeathNotificationSet = mock(DeathNotificationSet.class);
@@ -169,5 +204,23 @@ class DeathMinimisationTest {
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
         assertThat(exception.getCause()).isInstanceOf(UnrecognizedPropertyException.class);
+    }
+
+    @Test
+    void minimisationSnapshotTest() {
+        when(config.getTargetTopic()).thenReturn("Target Topic");
+
+        var underTest = new DeathMinimisation(awsService, config, Mapper.objectMapper());
+
+        underTest.handleRequest(sqsEvent, null);
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(awsService).putOnTopic(captor.capture());
+
+        var options = new Options(Scrubbers.scrubAll(
+            new GuidScrubber(),
+            new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
+        );
+        Approvals.verify(captor.getValue(), options);
     }
 }

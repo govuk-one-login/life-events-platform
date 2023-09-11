@@ -5,11 +5,13 @@ data for.
 
 ## Maximum Retention Periods
 
-All of our source queues have a maximum retention period of 4 days. This is to allow for any processing issues to be
+All of our source queues have a maximum retention period of 7 days. This is to allow for any processing issues to be
 identified in the event of problems over bank holidays, or periods of low team availability.
 
 Our dead letter queues have a retention period of 14 days, to maximise the time allowed to fix any issues causing
 message delivery (or processing) to fail.
+
+
 
 ## Alarms
 
@@ -25,3 +27,7 @@ There is an alarm for when any message is put on the DLQ.
 
 We have an alarm when a message is on the source processing queue for more than 1 hour, and when any message is put on
 the DLQ.
+
+## Audit Logs
+
+TODO GPC-574

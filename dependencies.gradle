@@ -5,7 +5,7 @@ ext {
             approvalTests      : "18.7.1",
             aspectjrt          : "1.9.20.1",
             assertJ            : "3.24.2",
-            awsSdk             : "2.20.143",
+            awsSdk             : "2.20.144",
             awsLambdaJavaCore  : "1.2.3",
             awsLambdaJavaEvents: "3.11.3",
             jackson            : "2.15.2",

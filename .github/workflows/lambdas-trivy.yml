@@ -17,7 +17,7 @@ jobs:
             scanref: ./lib
             trivyignore: lib/.trivyignore
       fail-fast: false
-    name: Validate gds
+    name: Validate gds ${{ matrix.module }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

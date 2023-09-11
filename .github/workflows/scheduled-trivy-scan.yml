@@ -131,7 +131,7 @@ jobs:
 
   notify-slack:
     name: Notify Slack
-    needs: [validate-images, validate-infra]
+    needs: [ validate-images, validate-infra ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

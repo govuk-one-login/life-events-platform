@@ -26,7 +26,23 @@ spotless {
     java {
         target 'lib/src/*/java/**/*.java', 'lambdas/**/src/*/java/**/*.java'
 
-        importOrder( 'com.acme', '', 'java|javax', '\\#com.acme', '\\#')
+        importOrder('com.acme', '', 'java|javax', '\\#com.acme', '\\#')
         removeUnusedImports()
+    }
+}
+
+allprojects { project ->
+    dependencyLocking {
+        lockAllConfigurations()
+    }
+    task resolveAndLockAll {
+        doFirst {
+            assert gradle.startParameter.writeDependencyLocks
+        }
+        doLast {
+            configurations.findAll {
+                it.canBeResolved
+            }.each {it.resolve()}
+        }
     }
 }

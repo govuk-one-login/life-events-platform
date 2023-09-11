@@ -9,7 +9,7 @@ All of our source queues have a maximum retention period of 4 days. This is to a
 identified in the event of problems over bank holidays, or periods of low team availability.
 
 Our dead letter queues have a retention period of 14 days, to maximise the time allowed to fix any issues causing
-message delivery to fail.
+message delivery (or processing) to fail.
 
 ## Alarms
 

@@ -6,7 +6,7 @@ on:
   merge_group:
 
 jobs:
-  validate-gds:
+  validate-lep:
     strategy:
       matrix:
         include:
@@ -17,14 +17,14 @@ jobs:
             scanref: ./lib
             trivyignore: lib/.trivyignore
       fail-fast: false
-    name: Validate gds ${{ matrix.module }}
+    name: Validate lep ${{ matrix.module }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy gradle for gds lambdas
+      - name: Copy gradle for lep lambdas
         run: |
           cp -r gradle ${{ matrix.module }}/gradle
           cp gradlew ${{ matrix.module }}/gradlew

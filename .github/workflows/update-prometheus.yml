@@ -45,7 +45,7 @@ jobs:
           trivyignores: prometheus/.trivyignore
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::776473272850:role/shared-github-oidc-deploy
           role-session-name: push-prometheus-image

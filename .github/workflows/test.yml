@@ -97,7 +97,7 @@ jobs:
           use-installer: true
 
       - name: Set up AWS creds
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         if: always()
         with:
           role-to-assume: ${{ secrets.SAM_APP_VALIDATE_ROLE_ARN }}

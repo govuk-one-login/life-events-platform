@@ -58,3 +58,4 @@ jobs:
         with:
           commit_message: "GPC-NONE: Automatically lint files"
           file_pattern: '*.kt *.ts *.tf **/gradle.lockfile *.java'
+          disable_globbing: true

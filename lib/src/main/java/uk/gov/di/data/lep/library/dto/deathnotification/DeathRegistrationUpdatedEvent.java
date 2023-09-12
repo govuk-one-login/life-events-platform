@@ -6,10 +6,12 @@ import uk.gov.di.data.lep.library.config.Constants;
 
 import java.time.LocalDateTime;
 
+import java.net.URI;
+
 @JsonFilter("DeathNotificationSet")
 public record DeathRegistrationUpdatedEvent(
     DateWithDescription deathDate,
-    Integer deathRegistrationID,
+    URI deathRegistration,
     DeathRegistrationUpdateReasonType deathRegistrationUpdateReason,
     String freeFormatDeathDate,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN)

@@ -67,7 +67,7 @@ public class ConvertSetToOldFormat
             throw new MappingException("Failed to convert event due to unexpected event type");
         }
 
-        var sourceId = events.deathRegistrationID().toString();
+        var sourceId = events.deathRegistration();
         var dateOfDeath = temporalAccessorToLocalDate(events.deathDate().value());
         var subject = events.subject();
         var names = getNames(subject);
@@ -92,7 +92,7 @@ public class ConvertSetToOldFormat
 
         var oldFormatDataAttributes = new OldFormatDataAttributes(
             EventType.DEATH_NOTIFICATION,
-            sourceId,
+            sourceId.toString(),
             oldFormatEventData,
             null
         );

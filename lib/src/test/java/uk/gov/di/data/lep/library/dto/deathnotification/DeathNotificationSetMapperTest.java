@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
 
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class DeathNotificationSetMapperTest {
     @Test
-    void mapperMapsNewEventCorrectly() {
+    void mapperMapsNewEventCorrectly() throws URISyntaxException {
         var eventTime = LocalDateTime.parse("2021-03-06T09:30:50");
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
@@ -35,7 +36,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperSetsAllValuesCorrectlyForUpdateEvent() {
+    void mapperSetsAllValuesCorrectlyForUpdateEvent() throws URISyntaxException {
         var eventTime = LocalDateTime.parse("2022-03-06T09:30:50");
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
@@ -54,7 +55,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsCurrentNameCorrectly() {
+    void mapperMapsCurrentNameCorrectly() throws URISyntaxException {
         var name = new GroPersonNameStructure(
             "Title",
             List.of("Bob", "Rob", "Robert"),
@@ -83,7 +84,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsMaidenNameCorrectly() {
+    void mapperMapsMaidenNameCorrectly() throws URISyntaxException {
         var name = new GroPersonNameStructure(
             "Title",
             List.of("Bob", "Rob", "Robert"),
@@ -126,7 +127,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsAliasNamesCorrectly() {
+    void mapperMapsAliasNamesCorrectly() throws URISyntaxException {
         var name = new GroPersonNameStructure(
             "Title",
             List.of("Bob", "Rob"),
@@ -194,7 +195,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsCompleteDeathDateCorrectly() {
+    void mapperMapsCompleteDeathDateCorrectly() throws URISyntaxException {
         var testDate = LocalDate.parse("2007-03-06");
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
@@ -205,7 +206,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsYearOnlyDeathDateCorrectly() {
+    void mapperMapsYearOnlyDeathDateCorrectly() throws URISyntaxException {
         var testYear = 2023;
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
@@ -219,7 +220,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsMonthYearDeathDateCorrectly() {
+    void mapperMapsMonthYearDeathDateCorrectly() throws URISyntaxException {
         var testYear = 2023;
         var testMonth = 12;
 
@@ -235,7 +236,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsMonthOnlyDeathDateCorrectly() {
+    void mapperMapsMonthOnlyDeathDateCorrectly() throws URISyntaxException {
         var testMonth = 12;
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(new GroJsonRecordBuilder()
@@ -248,7 +249,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsCompleteBirthDateCorrectly() {
+    void mapperMapsCompleteBirthDateCorrectly() throws URISyntaxException {
         var testDate = LocalDate.parse("2007-03-06");
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
@@ -259,7 +260,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsYearOnlyBirthDateCorrectly() {
+    void mapperMapsYearOnlyBirthDateCorrectly() throws URISyntaxException {
         var testYear = 2023;
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
@@ -273,7 +274,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsMonthYearBirthDateCorrectly() {
+    void mapperMapsMonthYearBirthDateCorrectly() throws URISyntaxException {
         var testYear = 2023;
         var testMonth = 12;
 
@@ -289,7 +290,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperMapsMonthOnlyBirthDateCorrectly() {
+    void mapperMapsMonthOnlyBirthDateCorrectly() throws URISyntaxException {
         var testMonth = 12;
 
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(new GroJsonRecordBuilder()

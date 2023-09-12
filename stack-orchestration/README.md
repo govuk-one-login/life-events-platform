@@ -10,14 +10,17 @@ Copy the encryption file into `stack-orchestration` with the name `encryption_ke
 
 To run this tool you will need the below CLI's
 
-* aws cli for managment of Cloudformation stacks
-* aws sso for authentication
+* aws cli for management of Cloudformation stacks
 * jq for formatting and conversion
 
 ## How to use
 
-Choose your account to run against. Login to this account with AWS SSO, setting your AWS_PROFILE environment variable,
-then run the below, replacing `<environment>`with one of `dev`, `build`, `staging`, `integration`, `production`:
+Login into AWS with SSO on the browser. Choose an account, and select `Command line or programmatic access`. In your
+terminal, run `aws configure sso` and enter the start URL and region from AWS on your browser. This will create a
+profile that you can set as an environment variable, by running `export AWS_PROFILE=<profile>`.
+
+After this you can then run the below, replacing `<environment>`with one
+of `dev`, `build`, `staging`, `integration`, `production`:
 
 ```shell
 ./provision_all.sh <environment>

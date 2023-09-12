@@ -8,8 +8,10 @@ import org.approvaltests.core.Options;
 import org.approvaltests.scrubbers.GuidScrubber;
 import org.approvaltests.scrubbers.RegExScrubber;
 import org.approvaltests.scrubbers.Scrubbers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -28,6 +30,11 @@ class DeathEnrichmentIntegrationTest {
     private static final Config config = mock(Config.class);
     private static final DeathEnrichment underTest = new DeathEnrichment(awsService, config, Mapper.objectMapper());
 
+    @BeforeEach
+    void reset() {
+        Mockito.reset(awsService);
+    }
+    
     @Test
     void approvalTestForOutput() throws JsonProcessingException {
         var groJsonRecord = new GroJsonRecordBuilder().build();
@@ -53,7 +60,7 @@ class DeathEnrichmentIntegrationTest {
     void approvalTestForUpdate() throws JsonProcessingException {
         var groJsonRecord = new GroJsonRecordBuilder()
             .withUpdateReason(1)
-            .withUpdateDateTime(LocalDateTime.of(2019, Month.APRIL,3, 10,1))
+            .withUpdateDateTime(LocalDateTime.of(2019, Month.APRIL, 3, 10, 1))
             .withLockedDateTime(null)
             .build();
         var sqsMessage = new SQSMessage();

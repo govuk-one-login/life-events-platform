@@ -28,7 +28,7 @@
     "@types/es-aggregate-error": "1.0.2",
     "@types/estree": "1.0.1",
     "@types/json-schema": "7.0.12",
-    "@types/node": "18.17.14",
+    "@types/node": "18.17.15",
     "@types/urijs": "1.19.20",
     "esbuild": "0.19.2",
     "fast-xml-parser": "4.2.7",

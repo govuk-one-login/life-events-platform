@@ -28,7 +28,6 @@ import uk.gov.di.data.lep.library.dto.deathnotification.NamePart;
 import uk.gov.di.data.lep.library.dto.deathnotification.NamePartType;
 import uk.gov.di.data.lep.library.dto.deathnotification.PostalAddress;
 import uk.gov.di.data.lep.library.dto.deathnotification.Sex;
-import uk.gov.di.data.lep.library.dto.deathnotification.StructuredDateTime;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -405,70 +404,70 @@ class ConvertSetToOldFormatTest {
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubject
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectAliasNameNoMaidenName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_SURNAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectNoMaidenSurname
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_GIVEN_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectNoGivenName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_FAMILY_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectNoFamilyName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ONLY_ALIAS_NAME_DESCRIPTION = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectOnlyAliasName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_EMPTY_NAME_DESCRIPTION = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectEmptyNameDescription
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_NAMES = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectNoNames
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_YEAR = new DeathRegisteredEvent(
         new DateWithDescription(null, Year.of(2020)),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectYear
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_YEAR_MONTH = new DeathRegisteredEvent(
-        new DateWithDescription(null, YearMonth.of(2020,3)),
+        new DateWithDescription(null, YearMonth.of(2020, 3)),
         123456789,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
+        LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectYearMonth
     );
     private static final DeathRegistrationUpdatedEvent DEATH_REGISTRATION_UPDATED_EVENT = new DeathRegistrationUpdatedEvent(
@@ -476,7 +475,7 @@ class ConvertSetToOldFormatTest {
         123456789,
         null,
         null,
-        new StructuredDateTime(LocalDateTime.parse("2020-06-06T00:00:00")),
+        LocalDateTime.parse("2020-06-06T00:00:00"),
         deathRegistrationSubject
     );
     private static final DeathNotificationSet deathNotificationSet = new DeathNotificationSet(
@@ -1004,6 +1003,7 @@ class ConvertSetToOldFormatTest {
 
         assertTrue(result.contains(expected));
     }
+
     @Test
     void convertSetToOldFormatConvertsDeathNotificationSetToOldFormatWithYearMonth() throws JsonProcessingException {
         var objectMapper = Mapper.objectMapper();

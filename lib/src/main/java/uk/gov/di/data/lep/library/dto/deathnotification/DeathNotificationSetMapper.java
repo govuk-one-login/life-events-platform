@@ -62,7 +62,7 @@ public class DeathNotificationSetMapper {
             deathDate,
             groJsonRecord.registrationID(),
             groJsonRecord.freeFormatDeathDate(),
-            new StructuredDateTime(groJsonRecord.recordLockedDateTime()),
+            groJsonRecord.recordLockedDateTime(),
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }
@@ -74,7 +74,7 @@ public class DeathNotificationSetMapper {
             groJsonRecord.registrationID(),
             DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason()),
             groJsonRecord.freeFormatDeathDate(),
-            new StructuredDateTime(groJsonRecord.recordUpdateDateTime()),
+            groJsonRecord.recordUpdateDateTime(),
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }

@@ -9,6 +9,7 @@ public record DeathRegistrationSubject (
     List<PostalAddress> address,
     List<DateWithDescription> birthDate,
     List<Name> name,
-    List<Sex> sex
+    List<Sex> sex,
+    String freeFormatBirthDate
 ){
 }

@@ -57,8 +57,8 @@ public class DeathNotificationSetMapper {
     }
 
     @Tracing
-    private static DeathRegistrationEvent generateDeathRegistrationEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
-        return new DeathRegistrationEvent(
+    private static DeathRegisteredEvent generateDeathRegistrationEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
+        return new DeathRegisteredEvent(
             deathDate,
             groJsonRecord.registrationID(),
             groJsonRecord.freeFormatDeathDate(),
@@ -68,8 +68,8 @@ public class DeathNotificationSetMapper {
     }
 
     @Tracing
-    private static DeathRegistrationUpdateEvent generateDeathRegistrationUpdateEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
-        return new DeathRegistrationUpdateEvent(
+    private static DeathRegistrationUpdatedEvent generateDeathRegistrationUpdateEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
+        return new DeathRegistrationUpdatedEvent(
             deathDate,
             groJsonRecord.registrationID(),
             DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason()),

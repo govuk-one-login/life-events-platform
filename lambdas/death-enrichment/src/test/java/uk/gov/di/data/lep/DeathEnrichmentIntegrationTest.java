@@ -15,6 +15,8 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -29,6 +31,31 @@ class DeathEnrichmentIntegrationTest {
     @Test
     void approvalTestForOutput() throws JsonProcessingException {
         var groJsonRecord = new GroJsonRecordBuilder().build();
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody(Mapper.objectMapper().writeValueAsString(groJsonRecord));
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+        when(config.getTargetTopic()).thenReturn("Target Topic");
+
+        underTest.handleRequest(sqsEvent, null);
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(awsService).putOnTopic(captor.capture());
+
+        var options = new Options(Scrubbers.scrubAll(
+            new GuidScrubber(),
+            new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
+        );
+        Approvals.verify(captor.getValue(), options);
+    }
+
+    @Test
+    void approvalTestForUpdate() throws JsonProcessingException {
+        var groJsonRecord = new GroJsonRecordBuilder()
+            .withUpdateReason(1)
+            .withUpdateDateTime(LocalDateTime.of(2019, Month.APRIL,3, 10,1))
+            .withLockedDateTime(null)
+            .build();
         var sqsMessage = new SQSMessage();
         sqsMessage.setBody(Mapper.objectMapper().writeValueAsString(groJsonRecord));
         var sqsEvent = new SQSEvent();

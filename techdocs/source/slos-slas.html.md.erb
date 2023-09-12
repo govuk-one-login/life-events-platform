@@ -16,14 +16,14 @@ SLIs. Monitoring and alerting will be performed by using Prometheus and Grafana
 | Aggregated Availability | the percentage of requests served successfully, i.e. 100 * (total requests served successfully 2XX status code / total valid requests 2XX/5XX status code) through the internal API Gateway | >99% of requests to POST /events result in a status 200 (not 500 error) |
 | Endpoint response time  | Response time for all API requests, including success and failure                                                                                                                           | 99th centile of duration in a 24 hour window < 1,000ms                  |
 | End to end latency      | Time from event published by a supplier to being consumed by an acquirer                                                                                                                    | 99th centile of duration in a 24 hour window < 1h                       |
-| Service latency         | Time between an event being ingested to being available for an acquirer                                                                                                                     | 99th centile of duration in a 24 hour window < 5s                       |
+| Service latency         | Time between an event being ingested to being available for an acquirer                                                                                                                     | 99th centile of duration in a 24 hour window < 5m                       |
 | Ingestion availability  | This will be defined per data source. For example with HMPO, is the file available within the agreed window?                                                                                | -                                                                       |
 | Target Capacity         | The service is able to meet the above SLAs with load not exceeding the target number of events in a given time window                                                                       | 6,000 events in a 24 hour window                                        |
 
 ## Service Capacity
 
 As above, the service is designed for a capacity approximately twice the expected peak load, and tested to such.
-In non production environments, the mock data generation averages 5 events per minute, or 7,200 in 24 hours, but 
+In non production environments, the mock data generation averages 5 events per minute, or 7,200 in 24 hours, but
 gradually released through the day, so is not representative of a peak load.
 If required additional peak load testing data can be arranged.
 
@@ -33,5 +33,7 @@ In addition to the Aggregated Availability and other SLOs above, we also have ta
 
 During the private beta, we're aiming for
 
-- restoration attempted during business hours, which may be 72 hours (over a weekend). Further details in the incident levels in [incident managment](/incident-management.html).
-- loss of up to one hour of metadata/audit data, but acquirers will receive all data from upstream suppliers, potentially with delay
+- restoration attempted during business hours, which may be 72 hours (over a weekend). Further details in the incident
+  levels in [incident managment](/incident-management.html).
+- loss of up to one hour of metadata/audit data, but acquirers will receive all data from upstream suppliers,
+  potentially with delay

@@ -15,19 +15,19 @@ Globals:
         AWS_LAMBDA_EXEC_WRAPPER: /opt/dynatrace
         DT_CONNECTION_AUTH_TOKEN: !Sub
           - '{{resolve:secretsmanager:${SecretArn}:SecretString:DT_CONNECTION_AUTH_TOKEN}}'
-          - SecretArn: !FindInMap [ Constants, DynatraceSecretArn, Value ]
+          - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
         DT_CONNECTION_BASE_URL: !Sub
           - '{{resolve:secretsmanager:${SecretArn}:SecretString:DT_CONNECTION_BASE_URL}}'
-          - SecretArn: !FindInMap [ Constants, DynatraceSecretArn, Value ]
+          - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
         DT_CLUSTER_ID: !Sub
           - '{{resolve:secretsmanager:${SecretArn}:SecretString:DT_CLUSTER_ID}}'
-          - SecretArn: !FindInMap [ Constants, DynatraceSecretArn, Value ]
+          - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
         DT_LOG_COLLECTION_AUTH_TOKEN: !Sub
           - '{{resolve:secretsmanager:${SecretArn}:SecretString:DT_LOG_COLLECTION_AUTH_TOKEN}}'
-          - SecretArn: !FindInMap [ Constants, DynatraceSecretArn, Value ]
+          - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
         DT_TENANT: !Sub
           - '{{resolve:secretsmanager:${SecretArn}:SecretString:DT_TENANT}}'
-          - SecretArn: !FindInMap [ Constants, DynatraceSecretArn, Value ]
+          - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
         DT_OPEN_TELEMETRY_ENABLE_INTEGRATION: "true"
     Runtime: java17
     Architectures:
@@ -48,9 +48,10 @@ Globals:
       - UsePermissionsBoundary
       - !Ref PermissionsBoundary
       - !Ref AWS::NoValue
-    Layers: !Sub
-      - '{{resolve:secretsmanager:${SecretArn}:SecretString:JAVA_LAYER}}'
-      - SecretArn: !FindInMap [ Constants, DynatraceSecretArn, Value ]
+    Layers:
+      [Fn::Sub]:
+        - '{{resolve:secretsmanager:${SecretArn}:SecretString:JAVA_LAYER}}'
+        - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
 
 
 Parameters:
@@ -86,32 +87,29 @@ Conditions:
     !Not [!Equals [none, !Ref CodeSigningConfigArn]]
   UsePermissionsBoundary:
     !Not [!Equals [none, !Ref PermissionsBoundary]]
-  IsProduction:
-    !Equals [production, !Ref Environment]
 
 Mappings:
   EnvironmentConfiguration:
     dev:
       domainName: life-events.dev.account.gov.uk
       txmaAccountArn: arn:aws:iam::248098332657:root
+      dynatraceSecretArn: arn:aws:secretsmanager:eu-west-2:216552277552:secret:DynatraceNonProductionVariables
     build:
       domainName: life-events.build.account.gov.uk
       txmaAccountArn: arn:aws:iam::750703655225:root
+      dynatraceSecretArn: arn:aws:secretsmanager:eu-west-2:216552277552:secret:DynatraceNonProductionVariables
     staging:
       domainName: life-events.staging.account.gov.uk
       txmaAccountArn: arn:aws:iam::178023842775:root
+      dynatraceSecretArn: arn:aws:secretsmanager:eu-west-2:216552277552:secret:DynatraceNonProductionVariables
     integration:
       domainName: life-events.integration.account.gov.uk
       txmaAccountArn: arn:aws:iam::729485541398:root
+      dynatraceSecretArn: arn:aws:secretsmanager:eu-west-2:216552277552:secret:DynatraceNonProductionVariables
     production:
       domainName: life-events.account.gov.uk
       txmaAccountArn: arn:aws:iam::451773080033:root
-  Constants:
-    DynatraceSecretArn:
-      Value: !If
-        - IsNotProduction
-        - arn:aws:secretsmanager:eu-west-2:216552277552:secret:DynatraceNonProductionVariables
-        - arn:aws:secretsmanager:eu-west-2:216552277552:secret:DynatraceProductionVariables
+      dynatraceSecretArn: arn:aws:secretsmanager:eu-west-2:216552277552:secret:DynatraceProductionVariables
 
 Resources:
   MainKmsKey:

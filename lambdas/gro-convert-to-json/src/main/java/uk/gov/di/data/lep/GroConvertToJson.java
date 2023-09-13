@@ -64,22 +64,6 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
         return new GroFileLocations(xmlBucket, xmlKey, jsonBucket, jsonKey);
     }
 
-    private String convertXmlDataToJson(String xmlData, String authorisationToken) {
-        try {
-            var deathRegistrationGroup = xmlMapper.readValue(xmlData, DeathRegistrationGroup.class);
-            var records = deathRegistrationGroup.deathRegistrations();
-
-            var recordsWithAuth = records.stream()
-                .map(r -> new GroJsonRecordWithAuth(r, authorisationToken))
-                .toList();
-
-            return objectMapper.writeValueAsString(recordsWithAuth);
-        } catch (JsonProcessingException e) {
-            logger.info("Failed to map DeathRegistrations xml to GroJsonRecord list");
-            throw new MappingException(e);
-        }
-    }
-
     // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,
     // and we do not need to rethrow the same exception
     @SuppressWarnings("java:S2142")
@@ -105,6 +89,30 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
         } catch (IOException | InterruptedException e) {
             logger.error("Failed to send authorisation request");
             throw new AuthException("Failed to send authorisation request", e);
+        }
+    }
+
+    private String convertXmlDataToJson(String xmlData, String authorisationToken) {
+        try {
+            var deathRegistrationGroup = xmlMapper.readValue(xmlData, DeathRegistrationGroup.class);
+            var records = deathRegistrationGroup.deathRegistrations();
+
+            if (records == null) {
+                if(deathRegistrationGroup.recordCount() == 0) {
+                    throw new MappingException("File contains no registration records");
+                } else {
+                    throw new MappingException(String.format("Expected %d records but none were found", deathRegistrationGroup.recordCount()));
+                }
+            }
+
+            var recordsWithAuth = records.stream()
+                .map(r -> new GroJsonRecordWithAuth(r, authorisationToken))
+                .toList();
+
+            return objectMapper.writeValueAsString(recordsWithAuth);
+        } catch (JsonProcessingException e) {
+            logger.info("Failed to map DeathRegistrations xml to GroJsonRecord list");
+            throw new MappingException(e);
         }
     }
 }

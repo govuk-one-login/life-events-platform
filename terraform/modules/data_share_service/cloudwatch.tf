@@ -22,25 +22,3 @@ resource "aws_cloudwatch_log_group" "prometheus_logs" {
 
   kms_key_id = aws_kms_key.log_key.arn
 }
-
-module "internal_alarm_dashboard" {
-  source           = "../cloudwatch_alarm_dashboard"
-  region           = var.region
-  dashboard_name   = "${var.environment}-queue-alarm-dashboard"
-  metric_namespace = local.metric_namespace
-  widgets = concat(
-    [
-      for alarm in aws_cloudwatch_metric_alarm.queue_process_error_rate :
-      {
-        title  = alarm.alarm_description,
-        alarms = [alarm.arn]
-      }
-    ],
-    [
-      for alarm in aws_cloudwatch_metric_alarm.queue_process_error_number :
-      {
-        title  = alarm.alarm_description,
-        alarms = [alarm.arn]
-      }
-  ])
-}

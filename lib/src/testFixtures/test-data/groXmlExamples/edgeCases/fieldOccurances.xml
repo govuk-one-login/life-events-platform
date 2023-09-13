@@ -44,67 +44,6 @@
         </DeceasedAddress>
     </DeathRegistration>
     <DeathRegistration>
-        <RegistrationID>500045737</RegistrationID>
-        <RecordLockedDateTime>2022-03-01T12:24:27</RecordLockedDateTime>
-        <DeceasedName>
-            <ns4:PersonGivenName>MAX</ns4:PersonGivenName>
-            <ns4:PersonGivenName>ALIAS</ns4:PersonGivenName>
-            <ns4:PersonFamilyName>NAMES</ns4:PersonFamilyName>
-        </DeceasedName>
-        <DeceasedAliasName>
-            <ns4:PersonGivenName>MAXI</ns4:PersonGivenName>
-        </DeceasedAliasName>
-        <DeceasedAliasName>
-            <ns4:PersonGivenName>MARNIE</ns4:PersonGivenName>
-        </DeceasedAliasName>
-        <DeceasedAliasName>
-            <ns4:PersonGivenName>AL</ns4:PersonGivenName>
-        </DeceasedAliasName>
-        <DeceasedAliasName>
-            <ns4:PersonGivenName>JON</ns4:PersonGivenName>
-        </DeceasedAliasName>
-        <DeceasedGender>1</DeceasedGender>
-        <DeceasedDeathDate>
-            <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
-        </DeceasedDeathDate>
-        <DeceasedBirthDate>
-            <ns1:PersonBirthDate>1991-06-01</ns1:PersonBirthDate>
-        </DeceasedBirthDate>
-        <DeceasedAddress>
-            <ns3:Line>197 East Smithfield</ns3:Line>
-            <ns3:Postcode>SU1 9GG</ns3:Postcode>
-        </DeceasedAddress>
-    </DeathRegistration>
-    <DeathRegistration>
-        <RegistrationID>500045738</RegistrationID>
-        <RecordLockedDateTime>2022-03-01T12:24:27</RecordLockedDateTime>
-        <DeceasedName>
-            <ns4:PersonGivenName>ALL</ns4:PersonGivenName>
-            <ns4:PersonGivenName>ALIASNAME</ns4:PersonGivenName>
-            <ns4:PersonFamilyName>TYPES</ns4:PersonFamilyName>
-        </DeceasedName>
-        <DeceasedAliasNameType>Otherwise</DeceasedAliasNameType>
-        <DeceasedAliasNameType>Otherwise</DeceasedAliasNameType>
-        <DeceasedAliasNameType>Otherwise</DeceasedAliasNameType>
-        <DeceasedAliasNameType>Formerly known as</DeceasedAliasNameType>
-        <DeceasedGender>1</DeceasedGender>
-        <DeceasedDeathDate>
-            <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
-        </DeceasedDeathDate>
-        <DeceasedBirthDate>
-            <ns1:PersonBirthDate>1991-06-01</ns1:PersonBirthDate>
-        </DeceasedBirthDate>
-        <DeceasedAddress>
-            <ns3:Line>197 West Smithfield</ns3:Line>
-            <ns3:Line>Max</ns3:Line>
-            <ns3:Line>Number</ns3:Line>
-            <ns3:Line>Of</ns3:Line>
-            <ns3:Line>Address</ns3:Line>
-            <ns3:Line>Lines</ns3:Line>
-            <ns3:Postcode>DD1 9GG</ns3:Postcode>
-        </DeceasedAddress>
-    </DeathRegistration>
-    <DeathRegistration>
         <RegistrationID>500045739</RegistrationID>
         <RecordLockedDateTime>2022-03-01T12:21:31</RecordLockedDateTime>
         <DeceasedName>

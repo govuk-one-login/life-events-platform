@@ -10,12 +10,8 @@
         <RecordLockedDateTime>1987-09-22T23:34:25.000</RecordLockedDateTime>
         <DeceasedName>
             <ns4:PersonGivenName>MaxLengthNames</ns4:PersonGivenName>
-            <ns4:PersonGivenName>
-                TestGivenNameOfMaxLength01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123
-            </ns4:PersonGivenName>
-            <ns4:PersonFamilyName>
-                TestFamilyNameOfMaxLength0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012
-            </ns4:PersonFamilyName>
+            <ns4:PersonGivenName>TestGivenNameOfMaxLength01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>TestFamilyNameOfMaxLength0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012</ns4:PersonFamilyName>
         </DeceasedName>
         <DeceasedAliasName>
             <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
@@ -158,9 +154,7 @@
             <ns4:PersonFamilyName>KIM</ns4:PersonFamilyName>
         </DeceasedName>
         <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
-        <DeceasedMaidenName>
-            MaxLengthMaidenName0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
-        </DeceasedMaidenName>
+        <DeceasedMaidenName>MaxLengthMaidenName0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678</DeceasedMaidenName>
         <DeceasedGender>9</DeceasedGender>
         <DeceasedDeathDate>
             <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
@@ -237,9 +231,7 @@
         <DeceasedAliasName>
             <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
             <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
-            <ns4:PersonFamilyName>DE
-                BASTIANI
-            </ns4:PersonFamilyName>
+            <ns4:PersonFamilyName>DE BASTIANI</ns4:PersonFamilyName>
         </DeceasedAliasName>
         <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
         <DeceasedMaidenName>PATEL</DeceasedMaidenName>
@@ -268,9 +260,7 @@
         <DeceasedAliasName>
             <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
             <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
-            <ns4:PersonFamilyName>DE
-                BASTIANI
-            </ns4:PersonFamilyName>
+            <ns4:PersonFamilyName>DE BASTIANI</ns4:PersonFamilyName>
         </DeceasedAliasName>
         <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
         <DeceasedGender>9</DeceasedGender>
@@ -325,9 +315,7 @@
         <DeceasedGender>9</DeceasedGender>
         <PartialMonthOfDeath>2</PartialMonthOfDeath>
         <PartialYearOfDeath>1998</PartialYearOfDeath>
-        <FreeFormatDeathDate>Max length for the free format death
-            date012345678901234567890123456789012345678901234567890123456789012345678901234567890123456
-        </FreeFormatDeathDate>
+        <FreeFormatDeathDate>Max length for the free format death date012345678901234567890123456789012345678901234567890123456789012345678901234567890123456</FreeFormatDeathDate>
         <DeceasedBirthDate>
             <ns1:PersonBirthDate>1975-01-01</ns1:PersonBirthDate>
             <ns1:VerificationLevel>03</ns1:VerificationLevel>

@@ -727,6 +727,23 @@ Resources:
          - Key: PersonalIdentifyingInformation
            Value: true
 
+  DwpDeathDeliveryQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: HttpsOnly
+            Effect: Deny
+            Principal: "*"
+            Action: sqs:*
+            Resource: "*"
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+      Queues:
+        - !Ref DwpDeathDeliveryQueue
+
   DwpDeathDeliveryDlq:
     Type: AWS::SQS::Queue
     Properties:

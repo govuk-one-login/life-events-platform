@@ -50,7 +50,7 @@ jobs:
           use-installer: true
 
       - name: Set up AWS creds
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.GH_ACTIONS_ROLE_ARN }}
           role-session-name: deploy-sam

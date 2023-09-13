@@ -47,7 +47,7 @@ jobs:
           python-version: 3.9
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ matrix.account_number }}:role/${{ matrix.env }}-github-oidc-deploy
           role-session-name: deploy-terraform

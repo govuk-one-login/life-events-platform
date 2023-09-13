@@ -6,7 +6,7 @@ public enum EnrichmentField {
     NAME("name"),
     SEX("sex"),
     DEATH_DATE(List.of("deathDate", "freeFormatDeathDate")),
-    BIRTH_DATE("birthDate"),
+    BIRTH_DATE(List.of("birthDate", "freeFormatBirthDate")),
     ADDRESS("address");
     private final List<String> fieldNames;
 

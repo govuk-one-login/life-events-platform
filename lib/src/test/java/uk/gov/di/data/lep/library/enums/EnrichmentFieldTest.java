@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EnrichmentFieldTest {
     @ParameterizedTest
-    @CsvSource(value = {"name:NAME", "sex:SEX", "birthDate:BIRTH_DATE", "address:ADDRESS"}, delimiter = ':')
+    @CsvSource(value = {"name:NAME", "sex:SEX", "address:ADDRESS"}, delimiter = ':')
     void enrichmentFieldMapsToCorrectSingleField(String input, EnrichmentField expected) {
         assertEquals(List.of(input), expected.getFieldNames());
     }
@@ -18,5 +18,6 @@ class EnrichmentFieldTest {
     @Test
     void enrichmentFieldMapsToCorrectMultipleFields() {
         assertEquals(List.of("deathDate", "freeFormatDeathDate"), EnrichmentField.DEATH_DATE.getFieldNames());
+        assertEquals(List.of("birthDate", "freeFormatBirthDate"), EnrichmentField.BIRTH_DATE.getFieldNames());
     }
 }

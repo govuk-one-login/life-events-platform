@@ -28,17 +28,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class DeathMinimisationTest {
     private static final AwsService awsService = mock(AwsService.class);
@@ -47,50 +39,51 @@ class DeathMinimisationTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final ObjectWriter writer = mock(ObjectWriter.class);
     private static final String sqsMessageBody =
-        """
-        {
-          "iat": 1,
-          "txn": "496251f4-7718-4aa6-bb12-79b252ab24f3",
-          "events": {
-            "https://ssf.account.gov.uk/v1/deathRegistrationUpdate": {
-              "deathRegistrationID": 123456,
-              "deathDate": {
-                "value": "2011-11-29"
-              },
-              "recordUpdateTime": {
-                "value": "2022-11-02T12:00:00"
-              },
-              "subject": {
-                "address": [
-                  {
-                    "buildingNumber": "10",
-                    "streetName": "Alesham Avenue",
-                    "postalCode": "OX33 1DF"
-                  }
-                ],
-                "birthDate": [
-                  {
-                    "value": "1954-11-13"
-                  }
-                ],
-                "name": [
-                  {
-                    "nameParts": [
-                      {
-                        "type": "GivenName",
-                        "value": "JEREMY"
-                      }
-                    ]
-                  }
-                ],
-                "sex": [
-                  "Male"
-                ]
-              }
-            }
-          }
-        }
-""";
+            """
+                            {
+                              "iat": 1,
+                              "txn": "496251f4-7718-4aa6-bb12-79b252ab24f3",
+                              "events": {
+                                "https://ssf.account.gov.uk/v1/deathRegistrationUpdate": {
+                                  "deathRegistrationID": 123456,
+                                  "deathDate": {
+                                    "value": "2011-11-29"
+                                  },
+                                  "recordUpdateTime": {
+                                    "value": "2022-11-02T12:00:00"
+                                  },
+                                  "subject": {
+                                    "address": [
+                                      {
+                                        "buildingNumber": "10",
+                                        "streetName": "Alesham Avenue",
+                                        "postalCode": "OX33 1DF"
+                                      }
+                                    ],
+                                    "birthDate": [
+                                      {
+                                        "value": "1954-11-13"
+                                      }
+                                    ],
+                                    "freeFormatBirthDate": "a free format birth date",
+                                    "name": [
+                                      {
+                                        "nameParts": [
+                                          {
+                                            "type": "GivenName",
+                                            "value": "JEREMY"
+                                          }
+                                        ]
+                                      }
+                                    ],
+                                    "sex": [
+                                      "Male"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                    """;
 
     private static final SQSMessage sqsMessage = new SQSMessage();
     private static final SQSEvent sqsEvent = new SQSEvent();
@@ -110,7 +103,7 @@ class DeathMinimisationTest {
         reset(writer);
 
         when(objectMapper.readValue(sqsMessage.getBody(), DeathNotificationSet.class))
-            .thenReturn(oldDeathNotificationSet);
+                .thenReturn(oldDeathNotificationSet);
     }
 
     @Test
@@ -134,35 +127,38 @@ class DeathMinimisationTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains("address"));
-        assertTrue(result.contains("name"));
-        assertFalse(result.contains("birthDate"));
-        assertFalse(result.contains("deathDate"));
-        assertFalse(result.contains("freeFormatDeathDate"));
-        assertFalse(result.contains("sex"));
+        assertThat(result).contains("address");
+        assertThat(result).contains("name");
+        assertThat(result).doesNotContain("birthDate");
+        assertThat(result).doesNotContain("freeFormatBirthDate");
+        assertThat(result).doesNotContain("deathDate");
+        assertThat(result).doesNotContain("freeFormatDeathDate");
+        assertThat(result).doesNotContain("sex");
     }
 
     @Test
     void minimiseEnrichedDataReturnsMinimisedDataAsStringAllFields() {
         when(config.getEnrichmentFields()).thenReturn(List.of(
-            EnrichmentField.ADDRESS,
-            EnrichmentField.BIRTH_DATE,
-            EnrichmentField.DEATH_DATE,
-            EnrichmentField.NAME,
-            EnrichmentField.SEX
+                EnrichmentField.ADDRESS,
+                EnrichmentField.BIRTH_DATE,
+                EnrichmentField.DEATH_DATE,
+                EnrichmentField.NAME,
+                EnrichmentField.SEX
         ));
 
         var underTest = new DeathMinimisation(awsService, config, Mapper.objectMapper());
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains("address"));
-        assertTrue(result.contains("birthDate"));
-        assertTrue(result.contains("deathDate"));
-        assertTrue(result.contains("freeFormatDeathDate"));
-        assertTrue(result.contains("name"));
-        assertTrue(result.contains("sex"));
+        assertThat(result).contains("address");
+        assertThat(result).contains("birthDate");
+        assertThat(result).contains("freeFormatBirthDate");
+        assertThat(result).contains("deathDate");
+        assertThat(result).contains("freeFormatDeathDate");
+        assertThat(result).contains("name");
+        assertThat(result).contains("sex");
     }
+
     @Test
     void minimiseEnrichedDataReturnsMinimisedDataAsStringNoFields() {
         when(config.getEnrichmentFields()).thenReturn(List.of());
@@ -171,12 +167,12 @@ class DeathMinimisationTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertFalse(result.contains("address"));
-        assertFalse(result.contains("birthDate"));
-        assertFalse(result.contains("deathDate"));
-        assertFalse(result.contains("freeFormatDeathDate"));
-        assertFalse(result.contains("name"));
-        assertFalse(result.contains("sex"));
+        assertThat(result).doesNotContain("address");
+        assertThat(result).doesNotContain("birthDate");
+        assertThat(result).doesNotContain("deathDate");
+        assertThat(result).doesNotContain("freeFormatDeathDate");
+        assertThat(result).doesNotContain("name");
+        assertThat(result).doesNotContain("sex");
     }
 
     @Test
@@ -197,7 +193,7 @@ class DeathMinimisationTest {
     void minimiseEnrichedDataFailsIfBodyHasUnrecognisedProperties() throws JsonProcessingException {
         reset(objectMapper);
         when(objectMapper.readValue(sqsMessage.getBody(), DeathNotificationSet.class))
-            .thenThrow(UnrecognizedPropertyException.class);
+                .thenThrow(UnrecognizedPropertyException.class);
 
         var underTest = new DeathMinimisation(awsService, config, objectMapper);
 
@@ -218,8 +214,8 @@ class DeathMinimisationTest {
         verify(awsService).putOnTopic(captor.capture());
 
         var options = new Options(Scrubbers.scrubAll(
-            new GuidScrubber(),
-            new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
+                new GuidScrubber(),
+                new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
         );
         Approvals.verify(captor.getValue(), options);
     }

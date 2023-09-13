@@ -97,7 +97,8 @@ class ConvertSetToOldFormatTest {
                 null
             )
         ),
-        List.of(Sex.FEMALE)
+        List.of(Sex.FEMALE),
+        null
     );
     private static final DeathRegistrationSubject deathRegistrationSubjectAliasNameNoMaidenName = new DeathRegistrationSubject(
         List.of(new PostalAddress(
@@ -117,7 +118,7 @@ class ConvertSetToOldFormatTest {
             null,
             null
         )),
-        List.of(new DateWithDescription(null, LocalDate.parse("1978-04-05"))),
+        null,
         List.of(
             new Name(
                 null,
@@ -138,8 +139,10 @@ class ConvertSetToOldFormatTest {
                 null
             )
         ),
-        List.of(Sex.FEMALE)
-    );
+        List.of(Sex.FEMALE),
+
+        "On or about April 1978"
+        );
     private static final DeathRegistrationSubject deathRegistrationSubjectOnlyAliasName = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -170,8 +173,9 @@ class ConvertSetToOldFormatTest {
                 null
             )
         ),
-        List.of(Sex.FEMALE)
-    );
+        List.of(Sex.FEMALE),
+        null
+        );
     private static final DeathRegistrationSubject deathRegistrationSubjectEmptyNameDescription = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -202,8 +206,8 @@ class ConvertSetToOldFormatTest {
                 null
             )
         ),
-        List.of(Sex.FEMALE)
-    );
+        List.of(Sex.FEMALE), null
+        );
     private static final DeathRegistrationSubject deathRegistrationSubjectNoMaidenSurname = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -242,8 +246,9 @@ class ConvertSetToOldFormatTest {
                 null
             )
         ),
-        List.of(Sex.FEMALE)
-    );
+        List.of(Sex.FEMALE),
+        null
+        );
     private static final DeathRegistrationSubject deathRegistrationSubjectNoGivenName = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -272,7 +277,8 @@ class ConvertSetToOldFormatTest {
                 null,
                 null
             )),
-        List.of(Sex.FEMALE)
+        List.of(Sex.FEMALE),
+        null
     );
     private static final DeathRegistrationSubject deathRegistrationSubjectNoFamilyName = new DeathRegistrationSubject(
         List.of(new PostalAddress(
@@ -302,7 +308,8 @@ class ConvertSetToOldFormatTest {
                 null,
                 null
             )),
-        List.of(Sex.FEMALE)
+        List.of(Sex.FEMALE),
+        null
     );
     private static final DeathRegistrationSubject deathRegistrationSubjectNoNames = new DeathRegistrationSubject(
         List.of(new PostalAddress(
@@ -324,7 +331,8 @@ class ConvertSetToOldFormatTest {
         )),
         List.of(new DateWithDescription(null, LocalDate.parse("1978-04-05"))),
         List.of(),
-        List.of(Sex.FEMALE)
+        List.of(Sex.FEMALE),
+        null
     );
     private static final DeathRegistrationSubject deathRegistrationSubjectYear = new DeathRegistrationSubject(
         List.of(new PostalAddress(
@@ -356,7 +364,9 @@ class ConvertSetToOldFormatTest {
                 null
             )
         ),
-        List.of(Sex.FEMALE)
+        List.of(Sex.FEMALE),
+        null
+
     );
     private static final DeathRegistrationSubject deathRegistrationSubjectYearMonth = new DeathRegistrationSubject(
         List.of(new PostalAddress(
@@ -388,7 +398,8 @@ class ConvertSetToOldFormatTest {
                 null
             )
         ),
-        List.of(Sex.FEMALE)
+        List.of(Sex.FEMALE),
+        null
     );
     private static final DeathRegistrationEvent deathRegistrationEvent = new DeathRegistrationEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
@@ -748,7 +759,7 @@ class ConvertSetToOldFormatTest {
             "\"lastName\":\"SMITH\"," +
             "\"sex\":\"FEMALE\"," +
             "\"dateOfDeath\":\"2020-06-06\"," +
-            "\"dateOfBirth\":\"1978-04-05\"," +
+            "\"dateOfBirth\":\"2015-01-01\"," +
             "\"birthPlace\":null," +
             "\"deathPlace\":null," +
             "\"maidenName\":\"\"," +

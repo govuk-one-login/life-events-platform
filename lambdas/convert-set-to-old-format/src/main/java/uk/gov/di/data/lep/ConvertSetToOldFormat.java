@@ -71,7 +71,9 @@ public class ConvertSetToOldFormat
         var dateOfDeath = temporalAccessorToLocalDate(events.deathDate().value());
         var subject = events.subject();
         var names = getNames(subject);
-        var dateOfBirth = temporalAccessorToLocalDate(subject.birthDate().get(0).value());
+        var dateOfBirth = subject.birthDate() == null || subject.birthDate().isEmpty()
+            ? temporalAccessorToLocalDate(null)
+            : temporalAccessorToLocalDate(subject.birthDate().get(0).value());
 
         var oldFormatEventData = new OldFormatEventData(
             deathRegistrationTime.toLocalDate(),
@@ -146,6 +148,9 @@ public class ConvertSetToOldFormat
     }
 
     private LocalDate temporalAccessorToLocalDate(TemporalAccessor from) {
+        if (from == null) {
+            return LocalDate.of(2015, 1, 1);
+        }
         if (from.isSupported(ChronoField.YEAR) && from.isSupported(ChronoField.MONTH_OF_YEAR) && from.isSupported(ChronoField.DAY_OF_WEEK)) {
             return LocalDate.from(from);
         } else if (from.isSupported(ChronoField.YEAR) && from.isSupported(ChronoField.MONTH_OF_YEAR)) {

@@ -112,7 +112,8 @@ public class DeathNotificationSetMapper {
             List.of(address),
             List.of(birthDate),
             names,
-            List.of(sex)
+            List.of(sex),
+            groJsonRecord.freeFormatBirthDate()
         );
     }
 

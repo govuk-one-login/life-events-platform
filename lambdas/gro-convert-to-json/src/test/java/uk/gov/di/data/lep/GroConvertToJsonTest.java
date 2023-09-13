@@ -105,6 +105,7 @@ class GroConvertToJsonTest {
         "<ns3:Postcode>BT62 4HL</ns3:Postcode>" +
         "</DeceasedAddress>" +
         "</DeathRegistration>" +
+        "<RecordCount>1</RecordCount>" +
         "</DeathRegistrationGroup>";
     private static final String mockS3objectResponseMultipleRecords =
         "<DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">" +
@@ -133,6 +134,7 @@ class GroConvertToJsonTest {
         "<ns1:VerificationLevel>02</ns1:VerificationLevel>" +
         "</DeceasedBirthDate>" +
         "</DeathRegistration>" +
+        "<RecordCount>2</RecordCount>" +
         "</DeathRegistrationGroup>";
     private static final String mockS3objectResponseNoRecords =
         "<DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">" +
@@ -141,6 +143,35 @@ class GroConvertToJsonTest {
     private static final String mockS3objectResponseExpectedRecordsButFoundNone =
         "<DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">" +
         "<RecordCount>6</RecordCount>" +
+        "</DeathRegistrationGroup>";
+    private static final String mockS3objectResponseExpectedRecordCountNotMatchingFoundRecordCount =
+        "<DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">" +
+        "<DeathRegistration>" +
+        "<RegistrationID>1</RegistrationID>" +
+        "<DeceasedName>" +
+        "<ns4:PersonGivenName>ERICA</ns4:PersonGivenName>" +
+        "<ns4:PersonGivenName>CHRISTINA</ns4:PersonGivenName>" +
+        "<ns4:PersonFamilyName>BLOGG</ns4:PersonFamilyName>" +
+        "</DeceasedName>" +
+        "<DeceasedGender>2</DeceasedGender>" +
+        "<DeceasedAddress>" +
+        "<ns3:Line>263 Ave Maria Lane</ns3:Line>" +
+        "<ns3:Line>Bourton-on-the-hill</ns3:Line>" +
+        "<ns3:Postcode>BT62 4HL</ns3:Postcode>" +
+        "</DeceasedAddress>" +
+        "</DeathRegistration>" +
+        "<DeathRegistration>" +
+        "<RegistrationID>2</RegistrationID>" +
+        "<DeceasedName>" +
+        "<ns4:PersonGivenName>BOB</ns4:PersonGivenName>" +
+        "</DeceasedName>" +
+        "<DeceasedGender>1</DeceasedGender>" +
+        "<DeceasedBirthDate>" +
+        "<ns1:PersonBirthDate>1958-06-06</ns1:PersonBirthDate>" +
+        "<ns1:VerificationLevel>02</ns1:VerificationLevel>" +
+        "</DeceasedBirthDate>" +
+        "</DeathRegistration>" +
+        "<RecordCount>5</RecordCount>" +
         "</DeathRegistrationGroup>";
     private static final String cognitoClientId = "cognitoClientId";
     private static final String cognitoClientSecret = "cognitoClientSecret";
@@ -323,6 +354,20 @@ class GroConvertToJsonTest {
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
 
         assertTrue(exception.getMessage().contains("Expected 6 records but none were found"));
+        verify(awsService, never()).putInBucket(any(), any(), any());
+
+        httpClientMock.close();
+    }
+
+    @Test
+    void convertToJsonThrowsMappingExceptionWhenExpectedRecordCountDoesntMatchFoundRecordCount() {
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
+        when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseExpectedRecordCountNotMatchingFoundRecordCount);
+
+        var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
+
+        assertTrue(exception.getMessage().contains("Expected 5 records but 2 were found"));
         verify(awsService, never()).putInBucket(any(), any(), any());
 
         httpClientMock.close();

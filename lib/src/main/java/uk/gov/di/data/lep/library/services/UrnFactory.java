@@ -10,9 +10,9 @@ public class UrnFactory {
         throw new IllegalStateException("Utility class");
     }
 
-    public static URI generateGroURN(int year, int recordId) {
+    public static URI generateGroUrn(int recordId) {
         try {
-            return new URI("urn:fdc:gro.gov.uk:" + year + ":" + recordId);
+            return new URI("urn:fdc:gro.gov.uk:2023:" + recordId);
         } catch (URISyntaxException e) {
             throw new URNGenerationException(e);
         }

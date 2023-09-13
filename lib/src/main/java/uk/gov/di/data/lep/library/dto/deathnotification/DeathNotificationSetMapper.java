@@ -57,7 +57,7 @@ public class DeathNotificationSetMapper {
     private static DeathRegisteredEvent generateDeathRegisteredEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
         return new DeathRegisteredEvent(
             deathDate,
-                UrnFactory.generateGroURN(groJsonRecord.recordLockedDateTime().getYear(), groJsonRecord.registrationID()),
+                UrnFactory.generateGroUrn(groJsonRecord.registrationID()),
             groJsonRecord.freeFormatDeathDate(),
             groJsonRecord.recordLockedDateTime(),
             generateDeathRegistrationSubject(groJsonRecord)
@@ -68,7 +68,7 @@ public class DeathNotificationSetMapper {
     private static DeathRegistrationUpdatedEvent generateDeathRegistrationUpdatedEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
         return new DeathRegistrationUpdatedEvent(
             deathDate,
-                UrnFactory.generateGroURN(groJsonRecord.recordUpdateDateTime().getYear(), groJsonRecord.registrationID()),
+                UrnFactory.generateGroUrn(groJsonRecord.registrationID()),
             DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason()),
             groJsonRecord.freeFormatDeathDate(),
             groJsonRecord.recordUpdateDateTime(),

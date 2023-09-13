@@ -1,6 +1,6 @@
 package uk.gov.di.data.lep.library.services;
 
-import uk.gov.di.data.lep.library.exceptions.URNGenerationException;
+import uk.gov.di.data.lep.library.exceptions.UrnGenerationException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,7 +14,7 @@ public class UrnFactory {
         try {
             return new URI("urn:fdc:gro.gov.uk:2023:" + recordId);
         } catch (URISyntaxException e) {
-            throw new URNGenerationException(e);
+            throw new UrnGenerationException(e);
         }
     }
 }

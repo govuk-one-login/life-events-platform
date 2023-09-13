@@ -34,7 +34,7 @@ import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
@@ -406,70 +406,70 @@ class ConvertSetToOldFormatTest {
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubject
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectAliasNameNoMaidenName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_SURNAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectNoMaidenSurname
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_GIVEN_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectNoGivenName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_FAMILY_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectNoFamilyName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ONLY_ALIAS_NAME_DESCRIPTION = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectOnlyAliasName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_EMPTY_NAME_DESCRIPTION = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectEmptyNameDescription
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_NAMES = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectNoNames
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_YEAR = new DeathRegisteredEvent(
         new DateWithDescription(null, Year.of(2020)),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectYear
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_YEAR_MONTH = new DeathRegisteredEvent(
         new DateWithDescription(null, YearMonth.of(2020, 3)),
             generateGroDeathUrn(123456789),
         null,
-        LocalDateTime.parse("2020-02-02T00:00:00"),
+        OffsetDateTime.parse("2020-02-02T00:00:00Z"),
         deathRegistrationSubjectYearMonth
     );
     private static final DeathRegistrationUpdatedEvent DEATH_REGISTRATION_UPDATED_EVENT = new DeathRegistrationUpdatedEvent(
@@ -478,7 +478,7 @@ class ConvertSetToOldFormatTest {
 
         null,
         null,
-        LocalDateTime.parse("2020-06-06T00:00:00"),
+        OffsetDateTime.parse("2020-06-06T00:00:00Z"),
         deathRegistrationSubject
     );
     private static final DeathNotificationSet deathNotificationSet = new DeathNotificationSet(

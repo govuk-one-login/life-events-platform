@@ -60,9 +60,9 @@ public class ConvertSetToOldFormat
 
         LocalDateTime deathRegistrationTime;
         if (events instanceof DeathRegisteredEvent registrationEvent) {
-            deathRegistrationTime = registrationEvent.deathRegistrationTime();
+            deathRegistrationTime = registrationEvent.deathRegistrationTime().toLocalDateTime();
         } else if (events instanceof DeathRegistrationUpdatedEvent registrationUpdateEvent) {
-            deathRegistrationTime = registrationUpdateEvent.recordUpdateTime();
+            deathRegistrationTime = registrationUpdateEvent.recordUpdateTime().toLocalDateTime();
         } else {
             throw new MappingException("Failed to convert event due to unexpected event type");
         }

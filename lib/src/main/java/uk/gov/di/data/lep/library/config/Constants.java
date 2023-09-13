@@ -9,6 +9,7 @@ public class Constants {
     public static final String YEAR_MONTH_PATTERN = "yyyy-MM";
     public static final String LOCAL_DATE_PATTERN = "yyyy-MM-dd";
     public static final String LOCAL_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss[.SSS]";
+    public static final String ZONED_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss[.SSS]X";
 
     public static final String GRO_FILE_DATE_PATTERN = "yyyyMMdd";
     public static final String OGD_DEATH_EXTRACT_DWP_NAMESPACE = "http://www.ons.gov.uk/gro/OGDDeathExtractDWP";

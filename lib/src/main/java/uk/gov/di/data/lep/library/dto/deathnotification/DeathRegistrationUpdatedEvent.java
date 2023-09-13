@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import uk.gov.di.data.lep.library.config.Constants;
 
 import java.net.URI;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @JsonFilter("DeathNotificationSet")
 public record DeathRegistrationUpdatedEvent(
@@ -13,8 +13,8 @@ public record DeathRegistrationUpdatedEvent(
     URI deathRegistration,
     DeathRegistrationUpdateReasonType deathRegistrationUpdateReason,
     String freeFormatDeathDate,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN)
-    LocalDateTime recordUpdateTime,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.ZONED_DATE_TIME_PATTERN)
+    OffsetDateTime recordUpdateTime,
     DeathRegistrationSubject subject
 ) implements DeathRegistrationBaseEvent {
 }

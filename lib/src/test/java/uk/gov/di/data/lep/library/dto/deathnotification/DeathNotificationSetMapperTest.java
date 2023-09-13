@@ -5,10 +5,9 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.Year;
 import java.time.YearMonth;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class DeathNotificationSetMapperTest {
     @Test
     void mapperMapsNewEventCorrectly() {
-        var eventTime = LocalDateTime.parse("2021-03-06T09:30:50");
+        var eventTime = OffsetDateTime.parse("2021-03-06T09:30:50Z");
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
-                .withLockedDateTime(eventTime)
+                .withLockedDateTime(eventTime.toLocalDateTime())
                 .withUpdateDateTime(null)
                 .withUpdateReason(null)
                 .build()
@@ -31,16 +30,16 @@ class DeathNotificationSetMapperTest {
         var event = (DeathRegisteredEvent) actual.events();
 
         assertEquals(eventTime, event.deathRegistrationTime());
-        assertEquals(eventTime.toEpochSecond(ZoneOffset.UTC), actual.toe());
+        assertEquals(eventTime.toEpochSecond(), actual.toe());
     }
 
     @Test
     void mapperSetsAllValuesCorrectlyForUpdateEvent() {
-        var eventTime = LocalDateTime.parse("2022-03-06T09:30:50");
+        var eventTime = OffsetDateTime.parse("2022-03-06T09:30:50Z");
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
                 .withLockedDateTime(null)
-                .withUpdateDateTime(eventTime)
+                .withUpdateDateTime(eventTime.toLocalDateTime())
                 .withUpdateReason(5)
                 .build()
         );
@@ -50,7 +49,7 @@ class DeathNotificationSetMapperTest {
 
         assertEquals(eventTime, event.recordUpdateTime());
         assertEquals(DeathRegistrationUpdateReasonType.CANCELLATION_REMOVED, event.deathRegistrationUpdateReason());
-        assertEquals(eventTime.toEpochSecond(ZoneOffset.UTC), actual.toe());
+        assertEquals(eventTime.toEpochSecond(), actual.toe());
     }
 
     @Test

@@ -1,0 +1,3 @@
+<DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP" xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives" xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\OGDDeathExtractDWP-v1-1.xsd">
+    <RecordCount>0</RecordCount>
+</DeathRegistrationGroup>

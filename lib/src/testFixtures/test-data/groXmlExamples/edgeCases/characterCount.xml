@@ -1,0 +1,341 @@
+<DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP"
+                        xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives"
+                        xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails"
+                        xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives"
+                        xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\OGDDeathExtractDWP-v1-1.xsd">
+    <DeathRegistration>
+        <RegistrationID>94168504</RegistrationID>
+        <RecordLockedDateTime>1987-09-22T23:34:25.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>MaxLengthNames</ns4:PersonGivenName>
+            <ns4:PersonGivenName>
+                TestGivenNameOfMaxLength01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123
+            </ns4:PersonGivenName>
+            <ns4:PersonFamilyName>
+                TestFamilyNameOfMaxLength0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012
+            </ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JIM</ns4:PersonGivenName>
+            <ns4:PersonGivenName>JACK</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>BARON</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
+        <DeceasedGender>9</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2000-08-28</ns1:PersonDeathDate>
+            <ns1:VerificationLevel>01</ns1:VerificationLevel>
+        </DeceasedDeathDate>
+        <PartialMonthOfBirth>12</PartialMonthOfBirth>
+        <PartialYearOfBirth>1965</PartialYearOfBirth>
+        <FreeFormatBirthDate>freeformatbirthdate</FreeFormatBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>10 Test Street</ns3:Line>
+            <ns3:Line>Test Town</ns3:Line>
+            <ns3:Line>Test County</ns3:Line>
+            <ns3:Postcode>PR8 1HY</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>24430014</RegistrationID>
+        <RecordLockedDateTime>1977-02-24T08:43:56.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>MinLengthNames</ns4:PersonGivenName>
+            <ns4:PersonGivenName></ns4:PersonGivenName>
+            <ns4:PersonFamilyName></ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Dr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>GROVES</ns4:PersonFamilyName>
+            <ns4:PersonNameSuffix>PhD</ns4:PersonNameSuffix>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>GROVES</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>PARR</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonGivenName>AMY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>PARR</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
+        <DeceasedGender>2</DeceasedGender>
+        <PartialMonthOfDeath>10</PartialMonthOfDeath>
+        <PartialYearOfDeath>2016</PartialYearOfDeath>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1996-12-23</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>02</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Flat>16</ns3:Flat>
+            <ns3:Building>Ancaster House</ns3:Building>
+            <ns3:Line>Westminster</ns3:Line>
+            <ns3:Line>London</ns3:Line>
+            <ns3:Postcode>G60 5EP</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>72229432</RegistrationID>
+        <RecordLockedDateTime>1970-09-10T04:58:14.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JAMES</ns4:PersonGivenName>
+            <ns4:PersonGivenName>MATTHEW</ns4:PersonGivenName>
+            <ns4:PersonGivenName>TIMOTHY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>SMITH</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CHRISTINA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>CHETWORTH</ns4:PersonFamilyName>
+            <ns4:PersonNameSuffix>OBE</ns4:PersonNameSuffix>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CHRIS</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>CHETWORTH</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
+        <DeceasedAliasNameType>Deceased alias name max length12</DeceasedAliasNameType>
+        <DeceasedMaidenName>LOVELACE</DeceasedMaidenName>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2009-01-11</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1996-12-23</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>02</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>65 Link Road</ns3:Line>
+            <ns3:Line>Derbyshire</ns3:Line>
+            <ns3:Postcode>BR2 7JG</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>84739370</RegistrationID>
+        <RecordLockedDateTime>1992-03-18T11:47:06.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mx</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CHRISTOF</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>KIM</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonGivenName>MinLengthAliasName</ns4:PersonGivenName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType></DeceasedAliasNameType>
+        <DeceasedMaidenName>PATEL</DeceasedMaidenName>
+        <DeceasedGender>9</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2009-01-11</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <PartialMonthOfBirth>12</PartialMonthOfBirth>
+        <PartialYearOfBirth>1965</PartialYearOfBirth>
+        <DeceasedAddress>
+            <ns3:Line>27 Brown Lane</ns3:Line>
+            <ns3:Line>Somerset</ns3:Line>
+            <ns3:Postcode>IV44 8RF</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>76379601</RegistrationID>
+        <RecordUpdateDateTime>2006-01-14T04:24:49.000</RecordUpdateDateTime>
+        <RecordUpdateReason>3</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>BARRY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>KIM</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
+        <DeceasedMaidenName>
+            MaxLengthMaidenName0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
+        </DeceasedMaidenName>
+        <DeceasedGender>9</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <PartialMonthOfBirth>12</PartialMonthOfBirth>
+        <PartialYearOfBirth>1965</PartialYearOfBirth>
+        <DeceasedAddress>
+            <ns3:Line>65 Link Road</ns3:Line>
+            <ns3:Line>Derbyshire</ns3:Line>
+            <ns3:Postcode>BR2 7JG</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>57895224</RegistrationID>
+        <RecordUpdateDateTime>1991-12-27T04:20:01.000</RecordUpdateDateTime>
+        <RecordUpdateReason>1</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>BARRY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>JONES</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonGivenName>MinLengthMaidenName</ns4:PersonGivenName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>alias name type</DeceasedAliasNameType>
+        <DeceasedMaidenName></DeceasedMaidenName>
+        <DeceasedGender>2</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2009-01-11</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1998-10-13</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>00</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>27 Brown Lane</ns3:Line>
+            <ns3:Line>Somerset</ns3:Line>
+            <ns3:Postcode>IV44 8RF</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>76219612</RegistrationID>
+        <RecordLockedDateTime>1979-09-10T13:25:46.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mx</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JAMES</ns4:PersonGivenName>
+            <ns4:PersonGivenName>MATTHEW</ns4:PersonGivenName>
+            <ns4:PersonGivenName>TIMOTHY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>KIM</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedMaidenName>LOVELACE</DeceasedMaidenName>
+        <DeceasedGender>2</DeceasedGender>
+        <PartialYearOfDeath>1990</PartialYearOfDeath>
+        <QualifierText>Max length qualifier text123</QualifierText>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1998-10-13</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>00</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>27 Brown Lane</ns3:Line>
+            <ns3:Line>Somerset</ns3:Line>
+            <ns3:Postcode>IV44 8RF</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>44593056</RegistrationID>
+        <RecordLockedDateTime>1989-08-16T06:47:03.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>MARY</ns4:PersonGivenName>
+            <ns4:PersonGivenName>ALICE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>SMITH</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>DE
+                BASTIANI
+            </ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
+        <DeceasedMaidenName>PATEL</DeceasedMaidenName>
+        <DeceasedGender>9</DeceasedGender>
+        <PartialYearOfDeath>1990</PartialYearOfDeath>
+        <QualifierText>a</QualifierText>
+        <PartialMonthOfBirth>9</PartialMonthOfBirth>
+        <PartialYearOfBirth>2021</PartialYearOfBirth>
+        <FreeFormatBirthDate>Free format birth date</FreeFormatBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>10 Test Street</ns3:Line>
+            <ns3:Line>Test Town</ns3:Line>
+            <ns3:Line>Test County</ns3:Line>
+            <ns3:Postcode>PR8 1HY</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>61333114</RegistrationID>
+        <RecordUpdateDateTime>2014-10-16T03:21:57.000</RecordUpdateDateTime>
+        <RecordUpdateReason>1</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mx</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>ALONZO</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>KIM</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>DE
+                BASTIANI
+            </ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
+        <DeceasedGender>9</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1967-09-06</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1998-10-13</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>00</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>10 Test Street</ns3:Line>
+            <ns3:Line>Test Town</ns3:Line>
+            <ns3:Line>Test County</ns3:Line>
+            <ns3:Postcode>PR8 1HY</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>28463370</RegistrationID>
+        <RecordLockedDateTime>2008-08-23T15:17:05.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JAMES</ns4:PersonGivenName>
+            <ns4:PersonGivenName>MATTHEW</ns4:PersonGivenName>
+            <ns4:PersonGivenName>TIMOTHY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>JONES</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Dr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>GROVES</ns4:PersonFamilyName>
+            <ns4:PersonNameSuffix>PhD</ns4:PersonNameSuffix>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>GROVES</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>PARR</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonGivenName>AMY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>PARR</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
+        <DeceasedMaidenName>TAYLOR</DeceasedMaidenName>
+        <DeceasedGender>9</DeceasedGender>
+        <PartialMonthOfDeath>2</PartialMonthOfDeath>
+        <PartialYearOfDeath>1998</PartialYearOfDeath>
+        <FreeFormatDeathDate>Max length for the free format death
+            date012345678901234567890123456789012345678901234567890123456789012345678901234567890123456
+        </FreeFormatDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1975-01-01</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>03</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>123 Max postcode length</ns3:Line>
+            <ns3:Postcode>DD12 9GG78</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <RecordCount>10</RecordCount>
+</DeathRegistrationGroup>

@@ -49,9 +49,7 @@ class DeathMinimisationTest {
               "deathDate": {
                 "value": "2011-11-29"
               },
-              "recordUpdateTime": {
-                "value": "2022-11-02T12:00:00"
-              },
+              "recordUpdateTime": "2022-11-02T12:00:00",
               "subject": {
                 "address": [
                   {

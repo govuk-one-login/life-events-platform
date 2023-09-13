@@ -49,7 +49,7 @@ Globals:
       - !Ref PermissionsBoundary
       - !Ref AWS::NoValue
     Layers:
-      [Fn::Sub]:
+      - !Sub
         - '{{resolve:secretsmanager:${SecretArn}:SecretString:JAVA_LAYER}}'
         - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
 

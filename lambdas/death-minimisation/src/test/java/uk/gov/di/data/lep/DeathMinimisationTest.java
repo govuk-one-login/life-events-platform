@@ -39,51 +39,52 @@ class DeathMinimisationTest {
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final ObjectWriter writer = mock(ObjectWriter.class);
     private static final String sqsMessageBody =
-            """
-                            {
-                              "iat": 1,
-                              "txn": "496251f4-7718-4aa6-bb12-79b252ab24f3",
-                              "events": {
-                                "https://ssf.account.gov.uk/v1/deathRegistrationUpdate": {
-                                  "deathRegistrationID": 123456,
-                                  "deathDate": {
-                                    "value": "2011-11-29"
-                                  },
-                                  "recordUpdateTime": {
-                                    "value": "2022-11-02T12:00:00"
-                                  },
-                                  "subject": {
-                                    "address": [
-                                      {
-                                        "buildingNumber": "10",
-                                        "streetName": "Alesham Avenue",
-                                        "postalCode": "OX33 1DF"
-                                      }
-                                    ],
-                                    "birthDate": [
-                                      {
-                                        "value": "1954-11-13"
-                                      }
-                                    ],
-                                    "freeFormatBirthDate": "a free format birth date",
-                                    "name": [
-                                      {
-                                        "nameParts": [
-                                          {
-                                            "type": "GivenName",
-                                            "value": "JEREMY"
-                                          }
-                                        ]
-                                      }
-                                    ],
-                                    "sex": [
-                                      "Male"
-                                    ]
-                                  }
-                                }
-                              }
-                            }
-                    """;
+        """
+        {
+          "iat": 1,
+          "txn": "496251f4-7718-4aa6-bb12-79b252ab24f3",
+          "events": {
+            "https://vocab.account.gov.uk/v1/deathRegistrationUpdated": {
+              "deathRegistrationID": 123456,
+              "deathDate": {
+                "value": "2011-11-29"
+              },
+              "recordUpdateTime": {
+                "value": "2022-11-02T12:00:00"
+              },
+              "subject": {
+                "address": [
+                  {
+                    "buildingNumber": "10",
+                    "streetName": "Alesham Avenue",
+                    "postalCode": "OX33 1DF"
+                  }
+                ],
+                "birthDate": [
+                  {
+                    "value": "1954-11-13"
+                  }
+                ],
+                "freeFormatBirthDate": "a free format birth date",
+                "name": [
+                  {
+                    "nameParts": [
+                      {
+                        "type": "GivenName",
+                        "value": "JEREMY"
+                      }
+                    ]
+                  }
+                ],
+                "sex": [
+                  "Male"
+                ]
+              }
+            }
+          }
+        }
+        """;
+                                   
 
     private static final SQSMessage sqsMessage = new SQSMessage();
     private static final SQSEvent sqsEvent = new SQSEvent();

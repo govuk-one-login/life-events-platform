@@ -52,13 +52,13 @@ public class DeathNotificationSetMapper {
         );
         var deathDate = new DateWithDescription(groJsonRecord.qualifierText(), dateOfDeath);
         return groJsonRecord.recordLockedDateTime() == null
-            ? generateDeathRegistrationUpdateEvent(groJsonRecord, deathDate)
-            : generateDeathRegistrationEvent(groJsonRecord, deathDate);
+            ? generateDeathRegistrationUpdatedEvent(groJsonRecord, deathDate)
+            : generateDeathRegisteredEvent(groJsonRecord, deathDate);
     }
 
     @Tracing
-    private static DeathRegistrationEvent generateDeathRegistrationEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
-        return new DeathRegistrationEvent(
+    private static DeathRegisteredEvent generateDeathRegisteredEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
+        return new DeathRegisteredEvent(
             deathDate,
             groJsonRecord.registrationID(),
             groJsonRecord.freeFormatDeathDate(),
@@ -68,8 +68,8 @@ public class DeathNotificationSetMapper {
     }
 
     @Tracing
-    private static DeathRegistrationUpdateEvent generateDeathRegistrationUpdateEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
-        return new DeathRegistrationUpdateEvent(
+    private static DeathRegistrationUpdatedEvent generateDeathRegistrationUpdatedEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
+        return new DeathRegistrationUpdatedEvent(
             deathDate,
             groJsonRecord.registrationID(),
             DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason()),

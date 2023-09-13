@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonTypeInfo(use = Id.NAME, include = As.WRAPPER_OBJECT)
 @JsonSubTypes(value = {
-    @JsonSubTypes.Type(value = DeathRegistrationEvent.class, name = "https://ssf.account.gov.uk/v1/deathRegistration"),
-    @JsonSubTypes.Type(value = DeathRegistrationUpdateEvent.class, name = "https://ssf.account.gov.uk/v1/deathRegistrationUpdate")
+    @JsonSubTypes.Type(value = DeathRegisteredEvent.class, name = "https://vocab.account.gov.uk/v1/deathRegistered"),
+    @JsonSubTypes.Type(value = DeathRegistrationUpdatedEvent.class, name = "https://vocab.account.gov.uk/v1/deathRegistrationUpdated")
 })
 public interface DeathRegistrationBaseEvent {
     DateWithDescription deathDate();

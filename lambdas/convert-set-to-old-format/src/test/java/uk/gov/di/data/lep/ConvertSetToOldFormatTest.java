@@ -19,10 +19,10 @@ import org.mockito.Mockito;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.deathnotification.DateWithDescription;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegisteredEvent;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationBaseEvent;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationEvent;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationSubject;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationUpdateEvent;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationUpdatedEvent;
 import uk.gov.di.data.lep.library.dto.deathnotification.Name;
 import uk.gov.di.data.lep.library.dto.deathnotification.NamePart;
 import uk.gov.di.data.lep.library.dto.deathnotification.NamePartType;
@@ -401,77 +401,77 @@ class ConvertSetToOldFormatTest {
         List.of(Sex.FEMALE),
         null
     );
-    private static final DeathRegistrationEvent deathRegistrationEvent = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubject
     );
-    private static final DeathRegistrationEvent deathRegistrationEventAliasNameNoMaidenName = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectAliasNameNoMaidenName
     );
-    private static final DeathRegistrationEvent deathRegistrationEventAliasNameNoMaidenSurname = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_SURNAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoMaidenSurname
     );
-    private static final DeathRegistrationEvent deathRegistrationEventNoGivenName = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_GIVEN_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoGivenName
     );
-    private static final DeathRegistrationEvent deathRegistrationEventNoFamilyName = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_FAMILY_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoFamilyName
     );
-    private static final DeathRegistrationEvent deathRegistrationEventOnlyAliasNameDescription = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ONLY_ALIAS_NAME_DESCRIPTION = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectOnlyAliasName
     );
-    private static final DeathRegistrationEvent deathRegistrationEventEmptyNameDescription = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_EMPTY_NAME_DESCRIPTION = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectEmptyNameDescription
     );
-    private static final DeathRegistrationEvent deathRegistrationEventNoNames = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_NAMES = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectNoNames
     );
-    private static final DeathRegistrationEvent deathRegistrationEventYear = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_YEAR = new DeathRegisteredEvent(
         new DateWithDescription(null, Year.of(2020)),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectYear
     );
-    private static final DeathRegistrationEvent deathRegistrationEventYearMonth = new DeathRegistrationEvent(
+    private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_YEAR_MONTH = new DeathRegisteredEvent(
         new DateWithDescription(null, YearMonth.of(2020,3)),
         123456789,
         null,
         new StructuredDateTime(LocalDateTime.parse("2020-02-02T00:00:00")),
         deathRegistrationSubjectYearMonth
     );
-    private static final DeathRegistrationUpdateEvent deathRegistrationUpdateEvent = new DeathRegistrationUpdateEvent(
+    private static final DeathRegistrationUpdatedEvent DEATH_REGISTRATION_UPDATED_EVENT = new DeathRegistrationUpdatedEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
         123456789,
         null,
@@ -481,7 +481,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSet = new DeathNotificationSet(
         null,
-        deathRegistrationEvent,
+        DEATH_REGISTERED_EVENT,
         null,
         null,
         null,
@@ -493,7 +493,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetAliasNameNoMaidenName = new DeathNotificationSet(
         null,
-        deathRegistrationEventAliasNameNoMaidenName,
+        DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_NAME,
         null,
         null,
         null,
@@ -505,7 +505,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetAliasNameNoMaidenSurname = new DeathNotificationSet(
         null,
-        deathRegistrationEventAliasNameNoMaidenSurname,
+        DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_SURNAME,
         null,
         null,
         null,
@@ -517,7 +517,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetNoGivenName = new DeathNotificationSet(
         null,
-        deathRegistrationEventNoGivenName,
+        DEATH_REGISTERED_EVENT_NO_GIVEN_NAME,
         null,
         null,
         null,
@@ -529,7 +529,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetNoFamilyName = new DeathNotificationSet(
         null,
-        deathRegistrationEventNoFamilyName,
+        DEATH_REGISTERED_EVENT_NO_FAMILY_NAME,
         null,
         null,
         null,
@@ -541,7 +541,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetOnlyAliasNameDescription = new DeathNotificationSet(
         null,
-        deathRegistrationEventOnlyAliasNameDescription,
+        DEATH_REGISTERED_EVENT_ONLY_ALIAS_NAME_DESCRIPTION,
         null,
         null,
         null,
@@ -553,7 +553,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetEmptyNameDescription = new DeathNotificationSet(
         null,
-        deathRegistrationEventEmptyNameDescription,
+        DEATH_REGISTERED_EVENT_EMPTY_NAME_DESCRIPTION,
         null,
         null,
         null,
@@ -565,7 +565,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetNoNames = new DeathNotificationSet(
         null,
-        deathRegistrationEventNoNames,
+        DEATH_REGISTERED_EVENT_NO_NAMES,
         null,
         null,
         null,
@@ -577,7 +577,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetWithYear = new DeathNotificationSet(
         null,
-        deathRegistrationEventYear,
+        DEATH_REGISTERED_EVENT_YEAR,
         null,
         null,
         null,
@@ -589,7 +589,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetWithYearMonth = new DeathNotificationSet(
         null,
-        deathRegistrationEventYearMonth,
+        DEATH_REGISTERED_EVENT_YEAR_MONTH,
         null,
         null,
         null,
@@ -601,7 +601,7 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathNotificationSet deathNotificationSetWithUpdateEvent = new DeathNotificationSet(
         null,
-        deathRegistrationUpdateEvent,
+        DEATH_REGISTRATION_UPDATED_EVENT,
         null,
         null,
         null,

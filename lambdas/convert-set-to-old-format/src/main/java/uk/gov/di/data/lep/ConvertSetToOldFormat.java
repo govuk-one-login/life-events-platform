@@ -14,9 +14,9 @@ import uk.gov.di.data.lep.dto.OldFormatEventData;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationEvent;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegisteredEvent;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationSubject;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationUpdateEvent;
+import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationUpdatedEvent;
 import uk.gov.di.data.lep.library.dto.deathnotification.NamePartType;
 import uk.gov.di.data.lep.library.enums.EventType;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
@@ -59,9 +59,9 @@ public class ConvertSetToOldFormat
         var events = minimisedData.events();
 
         LocalDateTime deathRegistrationTime;
-        if (events instanceof DeathRegistrationEvent registrationEvent) {
+        if (events instanceof DeathRegisteredEvent registrationEvent) {
             deathRegistrationTime = registrationEvent.deathRegistrationTime().value();
-        } else if (events instanceof DeathRegistrationUpdateEvent registrationUpdateEvent) {
+        } else if (events instanceof DeathRegistrationUpdatedEvent registrationUpdateEvent) {
             deathRegistrationTime = registrationUpdateEvent.recordUpdateTime().value();
         } else {
             throw new MappingException(new RuntimeException("Failed to convert event due to unexpected event type"));

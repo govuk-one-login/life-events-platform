@@ -99,9 +99,9 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
 
             if (records == null) {
                 if(deathRegistrationGroup.recordCount() == 0) {
-                    throw new MappingException(new RuntimeException("File contains no registration records"));
+                    throw new MappingException("File contains no registration records");
                 } else {
-                    throw new MappingException(new RuntimeException(String.format("Expected %d records but none were found", deathRegistrationGroup.recordCount())));
+                    throw new MappingException(String.format("Expected %d records but none were found", deathRegistrationGroup.recordCount()));
                 }
             }
 

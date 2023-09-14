@@ -39,10 +39,10 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -141,7 +141,7 @@ class ConvertSetToOldFormatTest {
         List.of(Sex.FEMALE),
 
         "On or about April 1978"
-        );
+    );
     private static final DeathRegistrationSubject deathRegistrationSubjectOnlyAliasName = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -174,7 +174,7 @@ class ConvertSetToOldFormatTest {
         ),
         List.of(Sex.FEMALE),
         null
-        );
+    );
     private static final DeathRegistrationSubject deathRegistrationSubjectEmptyNameDescription = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -206,7 +206,7 @@ class ConvertSetToOldFormatTest {
             )
         ),
         List.of(Sex.FEMALE), null
-        );
+    );
     private static final DeathRegistrationSubject deathRegistrationSubjectNoMaidenSurname = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -247,7 +247,7 @@ class ConvertSetToOldFormatTest {
         ),
         List.of(Sex.FEMALE),
         null
-        );
+    );
     private static final DeathRegistrationSubject deathRegistrationSubjectNoGivenName = new DeathRegistrationSubject(
         List.of(new PostalAddress(
             "United Kingdom",
@@ -686,7 +686,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -719,7 +719,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -770,7 +770,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -803,7 +803,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -836,7 +836,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -869,7 +869,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -902,7 +902,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -935,7 +935,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -968,7 +968,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -1001,7 +1001,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test
@@ -1034,7 +1034,7 @@ class ConvertSetToOldFormatTest {
 
         var result = underTest.handleRequest(sqsEvent, context);
 
-        assertTrue(result.contains(expected));
+        assertThat(result).contains(expected);
     }
 
     @Test

@@ -32,6 +32,7 @@ import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -53,6 +54,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.di.data.lep.library.services.UrnFactory.generateGroDeathUrn;
 
 class ConvertSetToOldFormatTest {
     private static final AwsService awsService = mock(AwsService.class);
@@ -402,77 +404,78 @@ class ConvertSetToOldFormatTest {
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubject
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectAliasNameNoMaidenName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ALIAS_NAME_NO_MAIDEN_SURNAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectNoMaidenSurname
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_GIVEN_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectNoGivenName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_FAMILY_NAME = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectNoFamilyName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_ONLY_ALIAS_NAME_DESCRIPTION = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectOnlyAliasName
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_EMPTY_NAME_DESCRIPTION = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectEmptyNameDescription
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_NO_NAMES = new DeathRegisteredEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectNoNames
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_YEAR = new DeathRegisteredEvent(
         new DateWithDescription(null, Year.of(2020)),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectYear
     );
     private static final DeathRegisteredEvent DEATH_REGISTERED_EVENT_YEAR_MONTH = new DeathRegisteredEvent(
         new DateWithDescription(null, YearMonth.of(2020, 3)),
-        123456789,
+            generateGroDeathUrn(123456789),
         null,
         LocalDateTime.parse("2020-02-02T00:00:00"),
         deathRegistrationSubjectYearMonth
     );
     private static final DeathRegistrationUpdatedEvent DEATH_REGISTRATION_UPDATED_EVENT = new DeathRegistrationUpdatedEvent(
         new DateWithDescription(null, LocalDate.parse("2020-06-06")),
-        123456789,
+           generateGroDeathUrn(123456789),
+
         null,
         null,
         LocalDateTime.parse("2020-06-06T00:00:00"),
@@ -613,7 +616,7 @@ class ConvertSetToOldFormatTest {
 
     private record DeathNotificationWithInvalidEvent(
         DateWithDescription deathDate,
-        Integer deathRegistrationID,
+        URI deathRegistration,
         String freeFormatDeathDate,
         DeathRegistrationSubject subject
     ) implements DeathRegistrationBaseEvent {
@@ -667,7 +670,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -700,7 +703,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-06-06\"," +
             "\"firstNames\":\"JANE\"," +
@@ -751,7 +754,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -784,7 +787,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -817,7 +820,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"\"," +
@@ -850,7 +853,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -883,7 +886,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"\"," +
@@ -916,7 +919,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"\"," +
@@ -949,7 +952,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -982,7 +985,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -1015,7 +1018,7 @@ class ConvertSetToOldFormatTest {
             "\"type\":\"events\"," +
             "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"123456789\"," +
+            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +

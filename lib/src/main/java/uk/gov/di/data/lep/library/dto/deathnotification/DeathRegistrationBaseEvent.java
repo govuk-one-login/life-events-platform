@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
+import java.net.URI;
+
 @JsonTypeInfo(use = Id.NAME, include = As.WRAPPER_OBJECT)
 @JsonSubTypes(value = {
     @JsonSubTypes.Type(value = DeathRegisteredEvent.class, name = "https://vocab.account.gov.uk/v1/deathRegistered"),
@@ -13,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 public interface DeathRegistrationBaseEvent {
     DateWithDescription deathDate();
 
-    Integer deathRegistrationID();
+    URI deathRegistration();
 
     String freeFormatDeathDate();
 

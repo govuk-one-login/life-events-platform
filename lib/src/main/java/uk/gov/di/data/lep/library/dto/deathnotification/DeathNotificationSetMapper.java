@@ -59,7 +59,7 @@ public class DeathNotificationSetMapper {
             deathDate,
                 UrnFactory.generateGroDeathUrn(groJsonRecord.registrationID()),
             groJsonRecord.freeFormatDeathDate(),
-            groJsonRecord.recordLockedDateTime(),
+            groJsonRecord.recordLockedDateTime().atOffset(ZoneOffset.UTC),
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }
@@ -71,7 +71,7 @@ public class DeathNotificationSetMapper {
                 UrnFactory.generateGroDeathUrn(groJsonRecord.registrationID()),
             DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason()),
             groJsonRecord.freeFormatDeathDate(),
-            groJsonRecord.recordUpdateDateTime(),
+            groJsonRecord.recordUpdateDateTime().atOffset(ZoneOffset.UTC) ,
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }

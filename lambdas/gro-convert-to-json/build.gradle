@@ -24,6 +24,7 @@ dependencies {
            "software.amazon.lambda:powertools-tracing:$dependencyVersions.powertools"
 
     testImplementation "com.approvaltests:approvaltests:$dependencyVersions.approvalTests",
+                       "org.assertj:assertj-core:$dependencyVersions.assertJ",
                        "org.junit.jupiter:junit-jupiter:$dependencyVersions.junitJupiter",
                        "org.mockito:mockito-junit-jupiter:$dependencyVersions.mockitoJunitJupiter",
                        project(":lib")

@@ -16,6 +16,7 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithAuth;
 import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
+import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -25,6 +26,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.UUID;
 
 public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
@@ -97,13 +99,7 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
             var deathRegistrationGroup = xmlMapper.readValue(xmlData, DeathRegistrationGroup.class);
             var records = deathRegistrationGroup.deathRegistrations();
 
-            if (records == null) {
-                if(deathRegistrationGroup.recordCount() == 0) {
-                    throw new MappingException("File contains no registration records");
-                } else {
-                    throw new MappingException(String.format("Expected %d records but none were found", deathRegistrationGroup.recordCount()));
-                }
-            }
+            validateRecordCount(records, deathRegistrationGroup.recordCount());
 
             var recordsWithAuth = records.stream()
                 .map(r -> new GroJsonRecordWithAuth(r, authorisationToken))
@@ -113,6 +109,18 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
         } catch (JsonProcessingException e) {
             logger.info("Failed to map DeathRegistrations xml to GroJsonRecord list");
             throw new MappingException(e);
+        }
+    }
+
+    private void validateRecordCount(List<GroJsonRecord> records, int recordCount) {
+        if (records == null) {
+            if (recordCount == 0) {
+                throw new MappingException("File contains no registration records");
+            } else {
+                throw new MappingException(String.format("Expected %d records but none were found", recordCount));
+            }
+        } else if (records.size() != recordCount) {
+            throw new MappingException(String.format("Expected %d records but %d were found", recordCount, records.size()));
         }
     }
 }

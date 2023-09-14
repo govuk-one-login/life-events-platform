@@ -175,12 +175,39 @@ public class DeathNotificationSetMapper {
     private static Name generateName(GroPersonNameStructure nameStructure, String description) {
         var givenNameParts =
             nameStructure.personGivenNames() == null
-                ? Stream.of(new NamePart(NamePartType.GIVEN_NAME, ""))
+                ? null
                 : nameStructure.personGivenNames().stream().map(n -> new NamePart(NamePartType.GIVEN_NAME, n)
             );
-        return new Name(
-            description,
-            Stream.concat(givenNameParts, Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName()))).toList()
-        );
+
+        if (description == null) {
+            return new Name(
+                null,
+                givenNameParts == null
+                    ? Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName())).toList()
+                    : Stream.concat(
+                    givenNameParts,
+                    Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName()))
+                ).toList()
+            );
+        } else {
+            return generateAliasName(givenNameParts, nameStructure.personFamilyName(), description);
+        }
+
+    }
+
+    private static Name generateAliasName(Stream<NamePart> givenNameParts, String familyName, String description) {
+        var familyNamePart = familyName == null
+                ? null
+                : new NamePart(NamePartType.FAMILY_NAME, familyName);
+
+        if (givenNameParts == null) {
+            return familyNamePart == null
+                ? null
+                : new Name(description, Stream.of(familyNamePart).toList());
+        } else {
+            return familyNamePart == null
+                ? new Name(description, givenNameParts.toList())
+                : new Name(description, Stream.concat(givenNameParts, Stream.of(familyNamePart)).toList());
+        }
     }
 }

@@ -90,7 +90,7 @@ class GroConvertToJsonTest {
         )
     );
     private static final String mockS3objectResponseOneRecord = """
-        <DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">
+        <DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP" xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives" xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd">
             <DeathRegistration>
                 <RegistrationID>1</RegistrationID>
                 <DeceasedName>
@@ -109,7 +109,7 @@ class GroConvertToJsonTest {
         </DeathRegistrationGroup>
         """;
     private static final String mockS3objectResponseMultipleRecords = """
-        <DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">
+        <DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP" xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives" xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd">
             <DeathRegistration>
                 <RegistrationID>1</RegistrationID>
                 <DeceasedName>
@@ -139,17 +139,17 @@ class GroConvertToJsonTest {
         </DeathRegistrationGroup>
         """;
     private static final String mockS3objectResponseNoRecords = """
-        <DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">
+        <DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP" xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives" xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd">
             <RecordCount>0</RecordCount>
         </DeathRegistrationGroup>
         """;
     private static final String mockS3objectResponseExpectedRecordsButFoundNone = """
-        <DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">
+        <DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP" xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives" xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd">
             <RecordCount>6</RecordCount>
         </DeathRegistrationGroup>
         """;
     private static final String mockS3objectResponseExpectedRecordCountNotMatchingFoundRecordCount = """
-        <DeathRegistrationGroup xmlns=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP\" xmlns:ns1=\"http://www.govtalk.gov.uk/people/PersonDescriptives\" xmlns:ns2=\"http://www.govtalk.gov.uk/people/AddressAndPersonalDetails\" xmlns:ns3=\"http://www.ons.gov.uk/gro/people/GROAddressDescriptives\" xmlns:ns4=\"http://www.ons.gov.uk/gro/people/GROPersonDescriptives\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd\">
+        <DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP" xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives" xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\\OGDDeathExtractDWP-v1-1.xsd">
             <DeathRegistration>
                 <RegistrationID>1</RegistrationID>
                 <DeceasedName>
@@ -344,7 +344,7 @@ class GroConvertToJsonTest {
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
 
-        assertThat(exception.getMessage().contains("File contains no registration records"));
+        assertThat(exception.getMessage()).contains("File contains no registration records");
         verify(awsService, never()).putInBucket(any(), any(), any());
 
         httpClientMock.close();
@@ -358,7 +358,7 @@ class GroConvertToJsonTest {
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
 
-        assertThat(exception.getMessage().contains("Expected 6 records but none were found"));
+        assertThat(exception.getMessage()).contains("Expected 6 records but none were found");
         verify(awsService, never()).putInBucket(any(), any(), any());
 
         httpClientMock.close();
@@ -372,7 +372,7 @@ class GroConvertToJsonTest {
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(event, context));
 
-        assertThat(exception.getMessage().contains("Expected 5 records but 2 were found"));
+        assertThat(exception.getMessage()).contains("Expected 5 records but 2 were found");
         verify(awsService, never()).putInBucket(any(), any(), any());
 
         httpClientMock.close();

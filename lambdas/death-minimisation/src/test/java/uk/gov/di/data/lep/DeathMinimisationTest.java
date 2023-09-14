@@ -45,7 +45,7 @@ class DeathMinimisationTest {
           "txn": "496251f4-7718-4aa6-bb12-79b252ab24f3",
           "events": {
             "https://vocab.account.gov.uk/v1/deathRegistrationUpdated": {
-              "deathRegistration": "urn:fd:gro.gov.uk:2022:123456",
+              "deathRegistration": "urn:fdc:gro.gov.uk:2023:death:123456",
               "deathDate": {
                 "value": "2011-11-29"
               },
@@ -82,7 +82,6 @@ class DeathMinimisationTest {
           }
         }
         """;
-                                   
 
     private static final SQSMessage sqsMessage = new SQSMessage();
     private static final SQSEvent sqsEvent = new SQSEvent();

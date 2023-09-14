@@ -21,7 +21,7 @@
     "test": "jest --coverage --silent"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.410.0",
+    "@aws-sdk/client-dynamodb": "3.413.0",
     "@aws-sdk/client-s3": "3.412.0",
     "@aws-sdk/util-dynamodb": "3.410.0",
     "@types/aws-lambda": "8.10.120",

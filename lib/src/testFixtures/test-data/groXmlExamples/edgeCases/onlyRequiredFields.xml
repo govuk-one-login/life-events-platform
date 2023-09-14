@@ -42,7 +42,8 @@
         <RegistrationID>54736195</RegistrationID>
         <RecordLockedDateTime>2022-03-01T12:09:33</RecordLockedDateTime>
         <DeceasedName>
-            <ns4:PersonFamilyName>LANE</ns4:PersonFamilyName></DeceasedName>
+            <ns4:PersonFamilyName>LANE</ns4:PersonFamilyName>
+        </DeceasedName>
         <DeceasedGender>1</DeceasedGender>
         <PartialMonthOfDeath>4</PartialMonthOfDeath>
         <PartialYearOfDeath>1989</PartialYearOfDeath>
@@ -51,7 +52,8 @@
         <RegistrationID>928194672</RegistrationID>
         <RecordLockedDateTime>2022-03-01T12:09:33</RecordLockedDateTime>
         <DeceasedName>
-            <ns4:PersonFamilyName>LISBUR</ns4:PersonFamilyName></DeceasedName>
+            <ns4:PersonFamilyName>LISBUR</ns4:PersonFamilyName>
+        </DeceasedName>
         <DeceasedGender>9</DeceasedGender>
         <PartialYearOfDeath>1978</PartialYearOfDeath>
     </DeathRegistration>
@@ -59,7 +61,12 @@
         <RegistrationID>58390275</RegistrationID>
         <RecordUpdateDateTime>2022-03-01T12:09:33</RecordUpdateDateTime>
         <DeceasedName>
-            <ns4:PersonFamilyName>ZANI</ns4:PersonFamilyName></DeceasedName>
+            <ns4:PersonFamilyName>ZANI</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonGivenName>ISLA</ns4:PersonGivenName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
         <DeceasedGender>1</DeceasedGender>
         <DeceasedDeathDate>
             <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
@@ -70,7 +77,8 @@
         <RecordUpdateDateTime>2022-03-01T12:09:33</RecordUpdateDateTime>
         <RecordUpdateReason>5</RecordUpdateReason>
         <DeceasedName>
-            <ns4:PersonFamilyName>CHISWICK</ns4:PersonFamilyName></DeceasedName>
+            <ns4:PersonFamilyName>CHISWICK</ns4:PersonFamilyName>
+        </DeceasedName>
         <DeceasedGender>2</DeceasedGender>
         <DeceasedDeathDate>
             <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>

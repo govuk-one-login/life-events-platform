@@ -89,5 +89,37 @@
             <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
         </DeceasedDeathDate>
     </DeathRegistration>
-    <RecordCount>7</RecordCount>
+    <DeathRegistration>
+        <RegistrationID>58390277</RegistrationID>
+        <RecordUpdateDateTime>2022-03-01T12:09:33</RecordUpdateDateTime>
+        <RecordUpdateReason>5</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonFamilyName>SHRAPNEL</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Dr</ns4:PersonNameTitle>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>became a doctor</DeceasedAliasNameType>
+        <DeceasedGender>2</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>58390278</RegistrationID>
+        <RecordUpdateDateTime>2022-03-01T12:09:33</RecordUpdateDateTime>
+        <RecordUpdateReason>5</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonFamilyName>TUTTI</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameSuffix>PhD</ns4:PersonNameSuffix>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>Got a phd</DeceasedAliasNameType>
+        <DeceasedGender>2</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+    </DeathRegistration>
+    <RecordCount>9</RecordCount>
 </DeathRegistrationGroup>

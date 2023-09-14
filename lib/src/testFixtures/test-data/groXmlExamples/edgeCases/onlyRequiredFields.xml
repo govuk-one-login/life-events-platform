@@ -54,12 +54,17 @@
         <DeceasedName>
             <ns4:PersonFamilyName>LISBUR</ns4:PersonFamilyName>
         </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonFamilyName>CRACKER</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
         <DeceasedGender>9</DeceasedGender>
         <PartialYearOfDeath>1978</PartialYearOfDeath>
     </DeathRegistration>
     <DeathRegistration>
         <RegistrationID>58390275</RegistrationID>
         <RecordUpdateDateTime>2022-03-01T12:09:33</RecordUpdateDateTime>
+        <RecordUpdateReason>1</RecordUpdateReason>
         <DeceasedName>
             <ns4:PersonFamilyName>ZANI</ns4:PersonFamilyName>
         </DeceasedName>

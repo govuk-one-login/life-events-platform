@@ -48,6 +48,7 @@ org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0=aspect,compileClasspath,runtim
 org.apiguardian:apiguardian-api:1.1.2=testCompileClasspath
 org.aspectj:aspectjrt:1.9.20.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.aspectj:aspectjrt:1.9.7=aspect
+org.assertj:assertj-core:3.24.2=testCompileClasspath,testRuntimeClasspath
 org.codehaus.woodstox:stax2-api:4.2.1=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.jacoco:org.jacoco.agent:0.8.9=jacocoAgent,jacocoAnt
 org.jacoco:org.jacoco.ant:0.8.9=jacocoAnt

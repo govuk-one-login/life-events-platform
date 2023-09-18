@@ -4,6 +4,7 @@ import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.UrnFactory;
 
 import java.time.Instant;
@@ -53,6 +54,9 @@ public class DeathNotificationSetMapper {
             groJsonRecord.partialMonthOfDeath()
         );
         var deathDate = new DateWithDescription(groJsonRecord.qualifierText(), dateOfDeath);
+        if (groJsonRecord.recordLockedDateTime() != null && groJsonRecord.recordUpdateDateTime() != null) {
+            throw new MappingException("Record has both recordLocked and recordUpdate dateTimes");
+        }
         return groJsonRecord.recordLockedDateTime() == null
             ? generateDeathRegistrationUpdatedEvent(groJsonRecord, deathDate)
             : generateDeathRegisteredEvent(groJsonRecord, deathDate);

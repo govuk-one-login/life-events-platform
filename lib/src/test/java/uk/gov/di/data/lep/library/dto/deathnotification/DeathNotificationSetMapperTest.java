@@ -66,7 +66,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperThrowsErrorIfBothLockedAndUpdateTimeIsGiven() {
+    void mapperThrowsErrorIfBothLockedAndUpdateTimeAreGiven() {
         var eventTime = OffsetDateTime.parse("2022-03-06T09:30:50Z");
         var groJsonRecord = new GroJsonRecordBuilder()
             .withLockedDateTime(eventTime.toLocalDateTime())
@@ -78,7 +78,7 @@ class DeathNotificationSetMapperTest {
     }
 
     @Test
-    void mapperThrowsErrorIfNoLockedOrUpdateTimeIsGiven() {
+    void mapperThrowsErrorIfNeitherLockedOrUpdateTimeAreGiven() {
         var groJsonRecord = new GroJsonRecordBuilder()
             .withLockedDateTime(null)
             .withUpdateDateTime(null)

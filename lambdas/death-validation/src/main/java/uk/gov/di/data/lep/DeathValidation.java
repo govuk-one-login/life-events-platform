@@ -54,6 +54,13 @@ public class DeathValidation
             var headers = event.getHeaders();
             var correlationID = headers != null && headers.get("CorrelationID") != null ? headers.get("CorrelationID") : UUID.randomUUID().toString();
             var groJsonRecord = objectMapper.readValue(event.getBody(), GroJsonRecord.class);
+            if (groJsonRecord.recordLockedDateTime() == null && groJsonRecord.recordUpdateDateTime() == null) {
+                logger.error("Record has neither recordLocked and recordUpdate dateTimes");
+                throw new MappingException("Record has neither recordLocked and recordUpdate dateTimes");
+            } else if (groJsonRecord.recordLockedDateTime() != null && groJsonRecord.recordUpdateDateTime() != null) {
+                logger.error("Record has both recordLocked and recordUpdate dateTimes");
+                throw new MappingException("Record has both recordLocked and recordUpdate dateTimes");
+            }
             return new GroJsonRecordWithCorrelationID(groJsonRecord, correlationID);
         } catch (JsonProcessingException e) {
             logger.error("Failed to validate request due to mapping error");

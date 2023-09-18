@@ -22,6 +22,7 @@ import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.util.Map;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.clearInvocations;
@@ -76,6 +77,39 @@ class DeathValidationTest {
         var event = new APIGatewayProxyRequestEvent().withBody("{\"notSourceId\":\"an id but not a source id\"}");
 
         when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenThrow(mock(UnrecognizedPropertyException.class));
+
+        var result = underTest.handleRequest(event, context);
+
+        assertEquals(400, result.getStatusCode());
+    }
+
+    @Test
+    void validateGroDeathEventDataThrowsExceptionIfBothLockedAndUpdateTimeAreGiven() throws JsonProcessingException {
+        var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+        var eventTime = OffsetDateTime.parse("2022-03-06T09:30:50Z");
+        var groJsonRecord = new GroJsonRecordBuilder()
+            .withLockedDateTime(eventTime.toLocalDateTime())
+            .withUpdateDateTime(eventTime.toLocalDateTime())
+            .withUpdateReason(5)
+            .build();
+
+        when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenReturn(groJsonRecord);
+
+        var result = underTest.handleRequest(event, context);
+
+        assertEquals(400, result.getStatusCode());
+    }
+
+    @Test
+    void validateGroDeathEventDataThrowsExceptionIfNeitherLockedOrUpdateTimeAreGiven() throws JsonProcessingException {
+        var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+        var groJsonRecord = new GroJsonRecordBuilder()
+            .withLockedDateTime(null)
+            .withUpdateDateTime(null)
+            .withUpdateReason(null)
+            .build();
+
+        when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenReturn(groJsonRecord);
 
         var result = underTest.handleRequest(event, context);
 

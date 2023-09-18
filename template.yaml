@@ -29,6 +29,7 @@ Globals:
           - '{{resolve:secretsmanager:${SecretArn}:SecretString:DT_TENANT}}'
           - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
         DT_OPEN_TELEMETRY_ENABLE_INTEGRATION: "true"
+        POWERTOOLS_METRICS_NAMESPACE: "di-data-lep"
     Runtime: java17
     Architectures:
       - x86_64

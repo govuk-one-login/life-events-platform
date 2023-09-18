@@ -7,7 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import software.amazon.cloudwatchlogs.emf.logger.MetricsLogger;
+import software.amazon.cloudwatchlogs.emf.model.Unit;
 import software.amazon.lambda.powertools.logging.Logging;
+import software.amazon.lambda.powertools.metrics.Metrics;
+import software.amazon.lambda.powertools.metrics.MetricsUtils;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
@@ -31,6 +35,7 @@ import java.util.UUID;
 
 public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
+    protected static MetricsLogger metricsLogger = MetricsUtils.metricsLogger();
     private final AwsService awsService;
     private final Config config;
     private final ObjectMapper objectMapper;
@@ -50,6 +55,7 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
     @Override
     @Tracing
     @Logging(clearState = true)
+    @Metrics(captureColdStart = true)
     public GroFileLocations handleRequest(S3ObjectCreatedNotificationEvent event, Context context) {
         var authorisationToken = getAuthorisationToken();
         logger.info("Converting XML to JSON");
@@ -113,14 +119,19 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
     }
 
     private void validateRecordCount(List<GroJsonRecord> records, int recordCount) {
+        metricsLogger.putMetric("SOURCE_RECORDS_EXPECTED", recordCount, Unit.COUNT);
+
         if (records == null) {
             if (recordCount == 0) {
                 throw new MappingException("File contains no registration records");
             } else {
                 throw new MappingException(String.format("Expected %d records but none were found", recordCount));
             }
-        } else if (records.size() != recordCount) {
-            throw new MappingException(String.format("Expected %d records but %d were found", recordCount, records.size()));
+        } else {
+            metricsLogger.putMetric("SOURCE_RECORDS_ACTUAL", records.size(), Unit.COUNT);
+            if (records.size() != recordCount) {
+                throw new MappingException(String.format("Expected %d records but %d were found", recordCount, records.size()));
+            }
         }
     }
 }

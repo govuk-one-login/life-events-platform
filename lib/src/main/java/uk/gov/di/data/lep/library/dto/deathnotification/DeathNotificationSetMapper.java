@@ -5,7 +5,11 @@ import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
 import uk.gov.di.data.lep.library.services.UrnFactory;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
 import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.UUID;
@@ -22,30 +26,30 @@ public class DeathNotificationSetMapper {
         var iat = Instant.now().getEpochSecond();
         var jti = UUID.randomUUID().toString();
         var toe = groRecord.recordLockedDateTime() == null
-                ? groRecord.recordUpdateDateTime().toEpochSecond(ZoneOffset.UTC)
-                : groRecord.recordLockedDateTime().toEpochSecond(ZoneOffset.UTC);
+            ? groRecord.recordUpdateDateTime().toEpochSecond(ZoneOffset.UTC)
+            : groRecord.recordLockedDateTime().toEpochSecond(ZoneOffset.UTC);
         var txn = UUID.randomUUID().toString();
 
         return new DeathNotificationSet(
-                null,
-                generateDeathRegistrationBaseEvent(groRecord),
-                null,
-                iat,
-                null,
-                jti,
-                null,
-                null,
-                toe,
-                txn
+            null,
+            generateDeathRegistrationBaseEvent(groRecord),
+            null,
+            iat,
+            null,
+            jti,
+            null,
+            null,
+            toe,
+            txn
         );
     }
 
     @Tracing
     private static DeathRegistrationBaseEvent generateDeathRegistrationBaseEvent(GroJsonRecord groJsonRecord) {
         var dateOfDeath = generateDate(
-                (groJsonRecord.deceasedDeathDate() == null ? null : groJsonRecord.deceasedDeathDate().personDeathDate()),
-                groJsonRecord.partialYearOfDeath(),
-                groJsonRecord.partialMonthOfDeath()
+            (groJsonRecord.deceasedDeathDate() == null ? null : groJsonRecord.deceasedDeathDate().personDeathDate()),
+            groJsonRecord.partialYearOfDeath(),
+            groJsonRecord.partialMonthOfDeath()
         );
         var deathDate = new DateWithDescription(groJsonRecord.qualifierText(), dateOfDeath);
         return groJsonRecord.recordLockedDateTime() == null
@@ -57,7 +61,7 @@ public class DeathNotificationSetMapper {
     private static DeathRegisteredEvent generateDeathRegisteredEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
         return new DeathRegisteredEvent(
             deathDate,
-                UrnFactory.generateGroDeathUrn(groJsonRecord.registrationID()),
+            UrnFactory.generateGroDeathUrn(groJsonRecord.registrationID()),
             groJsonRecord.freeFormatDeathDate(),
             groJsonRecord.recordLockedDateTime().atOffset(ZoneOffset.UTC),
             generateDeathRegistrationSubject(groJsonRecord)
@@ -68,10 +72,10 @@ public class DeathNotificationSetMapper {
     private static DeathRegistrationUpdatedEvent generateDeathRegistrationUpdatedEvent(GroJsonRecord groJsonRecord, DateWithDescription deathDate) {
         return new DeathRegistrationUpdatedEvent(
             deathDate,
-                UrnFactory.generateGroDeathUrn(groJsonRecord.registrationID()),
+            UrnFactory.generateGroDeathUrn(groJsonRecord.registrationID()),
             DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason()),
             groJsonRecord.freeFormatDeathDate(),
-            groJsonRecord.recordUpdateDateTime().atOffset(ZoneOffset.UTC) ,
+            groJsonRecord.recordUpdateDateTime().atOffset(ZoneOffset.UTC),
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }
@@ -79,26 +83,26 @@ public class DeathNotificationSetMapper {
     @Tracing
     private static DeathRegistrationSubject generateDeathRegistrationSubject(GroJsonRecord groJsonRecord) {
         var address = new PostalAddress(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                groJsonRecord.deceasedAddress().postcode(),
-                null,
-                null,
-                null,
-                null,
-                null
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            (groJsonRecord.deceasedAddress() == null ? null : groJsonRecord.deceasedAddress().postcode()),
+            null,
+            null,
+            null,
+            null,
+            null
         );
         var dateOfBirth = generateDate(
-                groJsonRecord.deceasedBirthDate() == null ? null : groJsonRecord.deceasedBirthDate().personBirthDate(),
-                groJsonRecord.partialYearOfBirth(),
-                groJsonRecord.partialMonthOfBirth()
+            groJsonRecord.deceasedBirthDate() == null ? null : groJsonRecord.deceasedBirthDate().personBirthDate(),
+            groJsonRecord.partialYearOfBirth(),
+            groJsonRecord.partialMonthOfBirth()
         );
 
         var birthDate = new DateWithDescription(null, dateOfBirth);
@@ -138,19 +142,21 @@ public class DeathNotificationSetMapper {
 
         if (groAliasNames != null && !groAliasNames.isEmpty()) {
             var aliasNames = IntStream.range(0, groAliasNames.size())
-                    .mapToObj(i -> generateName(
-                            groAliasNames.get(i),
-                            getAliasNameTypeOrNull(groJsonRecord.deceasedAliasNameTypes(), i)
-                    ));
+                .mapToObj(i -> generateName(
+                    groAliasNames.get(i),
+                    getAliasNameTypeOrNull(groJsonRecord.deceasedAliasNameTypes(), i)
+                ));
             names = Stream.concat(names, aliasNames);
         }
 
         if (groMaidenName != null) {
             var maidenName = new Name(
-                    "Name before marriage",
-                    Stream.concat(
-                            groName.personGivenNames().stream().map(n -> new NamePart(NamePartType.GIVEN_NAME, n)),
-                            Stream.of(new NamePart(NamePartType.FAMILY_NAME, groMaidenName))).toList()
+                "Name before marriage",
+                Stream.concat(
+                    groName.personGivenNames() == null
+                        ? Stream.of(new NamePart(NamePartType.GIVEN_NAME, ""))
+                        : groName.personGivenNames().stream().map(n -> new NamePart(NamePartType.GIVEN_NAME, n)),
+                    Stream.of(new NamePart(NamePartType.FAMILY_NAME, groMaidenName))).toList()
             );
             names = Stream.concat(names, Stream.of(maidenName));
         }
@@ -161,18 +167,45 @@ public class DeathNotificationSetMapper {
     @Tracing
     private static String getAliasNameTypeOrNull(List<String> deceasedAliasNameTypes, Integer index) {
         return deceasedAliasNameTypes.size() > index
-                ? deceasedAliasNameTypes.get(index)
-                : null;
+            ? deceasedAliasNameTypes.get(index)
+            : null;
     }
 
     @Tracing
     private static Name generateName(GroPersonNameStructure nameStructure, String description) {
-        var givenNameParts = nameStructure.personGivenNames().stream().map(n ->
-                new NamePart(NamePartType.GIVEN_NAME, n)
-        );
-        return new Name(
-                description,
-                Stream.concat(givenNameParts, Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName()))).toList()
-        );
+        var givenNameParts =
+            nameStructure.personGivenNames() == null
+                ? null
+                : nameStructure.personGivenNames().stream().map(n -> new NamePart(NamePartType.GIVEN_NAME, n)
+            );
+
+        if (description == null) {
+            return new Name(
+                null,
+                givenNameParts == null
+                    ? Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName())).toList()
+                    : Stream.concat(givenNameParts, Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName()))
+                ).toList()
+            );
+        } else {
+            return generateAliasName(givenNameParts, nameStructure.personFamilyName(), description);
+        }
+
+    }
+
+    private static Name generateAliasName(Stream<NamePart> givenNameParts, String familyName, String description) {
+        var familyNamePart = familyName == null
+            ? null
+            : new NamePart(NamePartType.FAMILY_NAME, familyName);
+
+        if (givenNameParts == null) {
+            return familyNamePart == null
+                ? null
+                : new Name(description, Stream.of(familyNamePart).toList());
+        } else {
+            return familyNamePart == null
+                ? new Name(description, givenNameParts.toList())
+                : new Name(description, Stream.concat(givenNameParts, Stream.of(familyNamePart)).toList());
+        }
     }
 }

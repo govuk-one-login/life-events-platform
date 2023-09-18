@@ -15,6 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class DeathNotificationSetMapperTest {
+    private final GroPersonNameStructure name = new GroPersonNameStructure(
+        "Title",
+        List.of("Bob", "Rob", "Robert"),
+        "Smith",
+        "Suffix"
+    );
+
     @Test
     void mapperMapsNewEventCorrectly() {
         var eventTime = OffsetDateTime.parse("2021-03-06T09:30:50Z");
@@ -54,12 +61,6 @@ class DeathNotificationSetMapperTest {
 
     @Test
     void mapperMapsCurrentNameCorrectly() {
-        var name = new GroPersonNameStructure(
-            "Title",
-            List.of("Bob", "Rob", "Robert"),
-            "Smith",
-            "Suffix"
-        );
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
                 .withName(name)
@@ -83,12 +84,6 @@ class DeathNotificationSetMapperTest {
 
     @Test
     void mapperMapsMaidenNameCorrectly() {
-        var name = new GroPersonNameStructure(
-            "Title",
-            List.of("Bob", "Rob", "Robert"),
-            "Smith",
-            "Suffix"
-        );
         var maidenName = "Jones";
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
@@ -126,12 +121,6 @@ class DeathNotificationSetMapperTest {
 
     @Test
     void mapperMapsAliasNamesCorrectly() {
-        var name = new GroPersonNameStructure(
-            "Title",
-            List.of("Bob", "Rob"),
-            "Smith",
-            "Suffix"
-        );
         var firstAliasName = new GroPersonNameStructure(
             null,
             List.of("Alias1"),
@@ -139,7 +128,7 @@ class DeathNotificationSetMapperTest {
             null
         );
         var secondAliasName = new GroPersonNameStructure(
-            null,
+            "Mr",
             List.of("Alias2"),
             "AliasSurname2",
             null
@@ -148,48 +137,121 @@ class DeathNotificationSetMapperTest {
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
                 .withName(name)
-                .withAliases(aliasNames, List.of("Alias type 1"))
+                .withAliases(aliasNames, List.of("Alias type 1", "Alias name type 2"))
                 .withMaidenName(null)
                 .build()
         );
         var actualNames = actual.events().subject().name();
 
-        var actualName = actualNames.stream().filter(n -> n.nameParts().size() == 3).toList().get(0);
+        var actualName = actualNames.stream().filter(n -> n != null && n.nameParts().size() == 4).toList().get(0);
         var actualFamilyName = actualName.nameParts().stream().filter(n -> n.type() == NamePartType.FAMILY_NAME).toList().get(0).value();
         var actualGivenNames = actualName.nameParts().stream().filter(n -> n.type() == NamePartType.GIVEN_NAME).map(NamePart::value).toList();
 
         assertNull(actualName.description());
         assertNull(actualName.validFrom());
         assertNull(actualName.validUntil());
-
         assertEquals(name.personFamilyName(), actualFamilyName);
         assertEquals(name.personGivenNames(), actualGivenNames);
-        assertEquals(3, actualName.nameParts().size());
+        assertEquals(4, actualName.nameParts().size());
 
-        var actualFirstAliasName = actualNames.stream().filter(n -> n.nameParts().size() == 2 && Objects.equals(n.description(), "Alias type 1")).toList().get(0);
+        var actualFirstAliasName = actualNames.stream().filter(n -> n != null && n.nameParts().size() == 2 && Objects.equals(n.description(), "Alias type 1")).toList().get(0);
         var actualFirstAliasFamilyName = actualFirstAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.FAMILY_NAME).toList().get(0).value();
         var actualFirstAliasGivenNames = actualFirstAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.GIVEN_NAME).map(NamePart::value).toList();
 
         assertEquals("Alias type 1", actualFirstAliasName.description());
-        assertNull(actualFirstAliasName.validFrom());
-        assertNull(actualFirstAliasName.validUntil());
-
         assertEquals("AliasSurname1", actualFirstAliasFamilyName);
         assertEquals(List.of("Alias1"), actualFirstAliasGivenNames);
         assertEquals(2, actualFirstAliasName.nameParts().size());
 
-        var actualSecondAliasName = actualNames.stream().filter(n -> n.nameParts().size() == 2 && n.description() == null).toList().get(0);
-        var actualSecondAliasFamilyName = actualSecondAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.FAMILY_NAME).toList().get(0).value();
+        var actualSecondAliasName = actualNames.stream().filter(n -> n != null && n.nameParts().size() == 2 && Objects.equals(n.description(), "Alias name type 2")).toList().get(0);
         var actualSecondAliasGivenNames = actualSecondAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.GIVEN_NAME).map(NamePart::value).toList();
 
-        assertNull(actualSecondAliasName.description());
-        assertNull(actualSecondAliasName.validFrom());
-        assertNull(actualSecondAliasName.validUntil());
-
-        assertEquals("AliasSurname2", actualSecondAliasFamilyName);
+        assertEquals("Alias name type 2", actualSecondAliasName.description());
         assertEquals(List.of("Alias2"), actualSecondAliasGivenNames);
         assertEquals(2, actualSecondAliasName.nameParts().size());
+    }
 
+    @Test
+    void mapperMapsGivenNameOnlyAliasNamesCorrectly() {
+        var aliasGivenName = new GroPersonNameStructure(
+            null,
+            List.of("GivenNameAlias"),
+            null,
+            null
+        );
+        var aliasNames = List.of(aliasGivenName);
+        var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
+            new GroJsonRecordBuilder()
+                .withName(name)
+                .withAliases(aliasNames, List.of("Alias only given name"))
+                .withMaidenName(null)
+                .build()
+        );
+        var actualNames = actual.events().subject().name();
+
+        var actualAliasName = actualNames.stream().filter(n -> n != null && n.nameParts().size() == 1 && Objects.equals(n.description(), "Alias only given name")).toList().get(0);
+        var actualAliasGivenNames = actualAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.GIVEN_NAME).map(NamePart::value).toList();
+
+        assertEquals("Alias only given name", actualAliasName.description());
+        assertEquals(0, actualAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.FAMILY_NAME).toList().size());
+        assertEquals(List.of("GivenNameAlias"), actualAliasGivenNames);
+        assertEquals(1, actualAliasName.nameParts().size());
+
+    }
+
+    @Test
+    void mapperMapsFamilyNameOnlyAliasNamesCorrectly() {
+        var aliasFamilyName = new GroPersonNameStructure(
+            null,
+            null,
+            "FamilyNameAlias",
+            null
+        );
+        var aliasNames = List.of(aliasFamilyName);
+        var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
+            new GroJsonRecordBuilder()
+                .withName(name)
+                .withAliases(aliasNames, List.of("Alias only family name"))
+                .withMaidenName(null)
+                .build()
+        );
+        var actualNames = actual.events().subject().name();
+
+        var actualAliasName = actualNames.stream().filter(n -> n != null && n.nameParts().size() == 1 && Objects.equals(n.description(), "Alias only family name")).toList().get(0);
+        var actualAliasFamilyName = actualAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.FAMILY_NAME).toList().get(0).value();
+
+        assertEquals("Alias only family name", actualAliasName.description());
+        assertEquals("FamilyNameAlias", actualAliasFamilyName);
+        assertEquals(0, actualAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.GIVEN_NAME).map(NamePart::value).toList().size());
+        assertEquals(1, actualAliasName.nameParts().size());
+    }
+
+    @Test
+    void mapperMapsTitleOrSuffixOnlyAliasNamesCorrectly() {
+        var aliasNameTitle = new GroPersonNameStructure(
+            "Dr4",
+            null,
+            null,
+            null
+        );
+        var aliasNameSuffix = new GroPersonNameStructure(
+            null,
+            null,
+            null,
+            "PhD"
+        );
+        var aliasNames = List.of(aliasNameTitle, aliasNameSuffix);
+        var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
+            new GroJsonRecordBuilder()
+                .withName(name)
+                .withAliases(aliasNames, List.of("Alias only name title", "Alias only name suffix"))
+                .withMaidenName(null)
+                .build()
+        );
+        var actualNames = actual.events().subject().name();
+        var actualName = actualNames.stream().filter(n -> n != null && (Objects.equals(n.description(), "Alias only name title") || Objects.equals(n.description(), "Alias only name suffix"))).toList();
+
+        assertEquals(0, actualName.size());
     }
 
     @Test

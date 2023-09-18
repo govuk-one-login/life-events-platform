@@ -21,6 +21,7 @@ class DeathNotificationSetMapperTest {
         "Smith",
         "Suffix"
     );
+
     @Test
     void mapperMapsNewEventCorrectly() {
         var eventTime = OffsetDateTime.parse("2021-03-06T09:30:50Z");
@@ -169,6 +170,7 @@ class DeathNotificationSetMapperTest {
         assertEquals(List.of("Alias2"), actualSecondAliasGivenNames);
         assertEquals(2, actualSecondAliasName.nameParts().size());
     }
+
     @Test
     void mapperMapsGivenNameOnlyAliasNamesCorrectly() {
         var aliasGivenName = new GroPersonNameStructure(
@@ -196,6 +198,7 @@ class DeathNotificationSetMapperTest {
         assertEquals(1, actualAliasName.nameParts().size());
 
     }
+
     @Test
     void mapperMapsFamilyNameOnlyAliasNamesCorrectly() {
         var aliasFamilyName = new GroPersonNameStructure(
@@ -222,6 +225,7 @@ class DeathNotificationSetMapperTest {
         assertEquals(0, actualAliasName.nameParts().stream().filter(n -> n.type() == NamePartType.GIVEN_NAME).map(NamePart::value).toList().size());
         assertEquals(1, actualAliasName.nameParts().size());
     }
+
     @Test
     void mapperMapsTitleOrSuffixOnlyAliasNamesCorrectly() {
         var aliasNameTitle = new GroPersonNameStructure(
@@ -240,7 +244,7 @@ class DeathNotificationSetMapperTest {
         var actual = DeathNotificationSetMapper.generateDeathNotificationSet(
             new GroJsonRecordBuilder()
                 .withName(name)
-                .withAliases(aliasNames, List.of("Alias only name title","Alias only name suffix"))
+                .withAliases(aliasNames, List.of("Alias only name title", "Alias only name suffix"))
                 .withMaidenName(null)
                 .build()
         );

@@ -184,9 +184,7 @@ public class DeathNotificationSetMapper {
                 null,
                 givenNameParts == null
                     ? Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName())).toList()
-                    : Stream.concat(
-                    givenNameParts,
-                    Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName()))
+                    : Stream.concat(givenNameParts, Stream.of(new NamePart(NamePartType.FAMILY_NAME, nameStructure.personFamilyName()))
                 ).toList()
             );
         } else {
@@ -197,8 +195,8 @@ public class DeathNotificationSetMapper {
 
     private static Name generateAliasName(Stream<NamePart> givenNameParts, String familyName, String description) {
         var familyNamePart = familyName == null
-                ? null
-                : new NamePart(NamePartType.FAMILY_NAME, familyName);
+            ? null
+            : new NamePart(NamePartType.FAMILY_NAME, familyName);
 
         if (givenNameParts == null) {
             return familyNamePart == null

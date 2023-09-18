@@ -604,9 +604,9 @@ Resources:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -656,9 +656,9 @@ Resources:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -848,9 +848,9 @@ Resources:
             QueueName: !GetAtt DwpDeathDeliveryQueue.QueueName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -1069,9 +1069,9 @@ Resources:
             QueueName: !GetAtt DwpDevDeathDeliveryQueue.QueueName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -1259,9 +1259,9 @@ Resources:
             QueueName: !GetAtt DwpTestDeathDeliveryQueue.QueueName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -1449,9 +1449,9 @@ Resources:
             QueueName: !GetAtt DwpStageDeathDeliveryQueue.QueueName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -1634,9 +1634,9 @@ Resources:
             QueueName: !GetAtt DwpOldFormatDeathDeliveryQueue.QueueName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -1695,9 +1695,9 @@ Resources:
             QueueName: !GetAtt DwpOldFormatConvertedDeathQueue.QueueName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -1878,9 +1878,9 @@ Resources:
             QueueName: !GetAtt OgdDeathDeliveryQueue.QueueName
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_117.CKV_AWS_173
 
@@ -2195,9 +2195,9 @@ Resources:
                 - !GetAtt MainKmsKey.Arn
       VpcConfig:
         SubnetIds:
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdA
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdB
-          - Fn::ImportValue: !Sub ${VpcStackName}-PrivateSubnetIdC
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdB
+          - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdC
       Tags:
         CheckovRulesToSkip: CKV_AWS_115.CKV_AWS_116.CKV_AWS_117.CKV_AWS_173
 

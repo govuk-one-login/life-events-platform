@@ -28,6 +28,9 @@ public class DeathNotificationSetMapper {
         var groRecord = groJsonRecordWithCorrelationID.groJsonRecord();
         var iat = Instant.now().getEpochSecond();
         var jti = UUID.randomUUID().toString();
+        if (groRecord.recordLockedDateTime() == null && groRecord.recordUpdateDateTime() == null) {
+            throw new MappingException("Record has neither recordLocked and recordUpdate dateTimes");
+        }
         var toe = groRecord.recordLockedDateTime() == null
             ? groRecord.recordUpdateDateTime().toEpochSecond(ZoneOffset.UTC)
             : groRecord.recordLockedDateTime().toEpochSecond(ZoneOffset.UTC);

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -14,6 +15,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DeathNotificationSetMapperTest {
     private final GroPersonNameStructure name = new GroPersonNameStructure(
@@ -61,6 +63,29 @@ class DeathNotificationSetMapperTest {
         assertEquals(eventTime, event.recordUpdateTime());
         assertEquals(DeathRegistrationUpdateReasonType.CANCELLATION_REMOVED, event.deathRegistrationUpdateReason());
         assertEquals(eventTime.toEpochSecond(), actual.toe());
+    }
+
+    @Test
+    void mapperThrowsErrorIfBothLockedAndUpdateTimeIsGiven() {
+        var eventTime = OffsetDateTime.parse("2022-03-06T09:30:50Z");
+        var groJsonRecord = new GroJsonRecordBuilder()
+            .withLockedDateTime(eventTime.toLocalDateTime())
+            .withUpdateDateTime(eventTime.toLocalDateTime())
+            .withUpdateReason(5)
+            .build();
+        var exception = assertThrows(MappingException.class, () -> DeathNotificationSetMapper.generateDeathNotificationSet(groJsonRecord));
+        assertEquals("Record has both recordLocked and recordUpdate dateTimes", exception.getMessage());
+    }
+
+    @Test
+    void mapperThrowsErrorIfNoLockedOrUpdateTimeIsGiven() {
+        var groJsonRecord = new GroJsonRecordBuilder()
+            .withLockedDateTime(null)
+            .withUpdateDateTime(null)
+            .withUpdateReason(null)
+            .build();
+        var exception = assertThrows(MappingException.class, () -> DeathNotificationSetMapper.generateDeathNotificationSet(groJsonRecord));
+        assertEquals("Record has neither recordLocked and recordUpdate dateTimes", exception.getMessage());
     }
 
     @Test

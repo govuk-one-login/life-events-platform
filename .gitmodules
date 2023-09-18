@@ -1,0 +1,4 @@
+[submodule "techdocs/digital-identity-architecture"]
+	path = techdocs/digital-identity-architecture
+	url = ../digital-identity-architecture.git
+	branch = 0056-physical-data-model-death-registration-event

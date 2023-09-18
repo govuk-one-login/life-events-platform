@@ -170,6 +170,27 @@ Resources:
       Tags:
         - Key: PersonalIdentifyingInformation
           Value: true
+  LogsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LogsBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:PutObject'
+            Effect: Allow
+            Principal:
+              Service: logging.s3.amazonaws.com
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref LogsBucket
+                - '/*'
+            Condition:
+              StringEquals:
+                'aws:SourceAccount': !Sub '${AWS::AccountId}'
+
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup

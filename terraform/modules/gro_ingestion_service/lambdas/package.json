@@ -24,7 +24,7 @@
     "@aws-sdk/client-dynamodb": "3.410.0",
     "@aws-sdk/client-s3": "3.412.0",
     "@aws-sdk/util-dynamodb": "3.410.0",
-    "@types/aws-lambda": "8.10.120",
+    "@types/aws-lambda": "8.10.121",
     "@types/es-aggregate-error": "1.0.2",
     "@types/estree": "1.0.1",
     "@types/json-schema": "7.0.12",

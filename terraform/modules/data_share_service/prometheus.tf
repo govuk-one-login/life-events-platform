@@ -81,17 +81,3 @@ alertmanager_config: |
           region: eu-west-2
 EOF
 }
-
-resource "aws_prometheus_rule_group_namespace" "alerts" {
-  name         = var.environment
-  workspace_id = aws_prometheus_workspace.prometheus.id
-  data         = <<EOF
-groups:
-  - name: records
-    rules:
-${local.metric_rules}
-  - name: alerts
-    rules:
-${local.alert_rules}
-EOF
-}

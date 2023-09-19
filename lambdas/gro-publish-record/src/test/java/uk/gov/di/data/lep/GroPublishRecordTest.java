@@ -41,6 +41,7 @@ class GroPublishRecordTest {
     private static final HttpRequest expectedGroRecordRequest = HttpRequest.newBuilder()
         .uri(URI.create("https://lifeEventsPlatformDomain/events/deathNotification"))
         .header("Authorization", "accessToken")
+        .header("CorrelationID", "correlationID")
         .POST(HttpRequest.BodyPublishers.ofString(eventAsString))
         .build();
 

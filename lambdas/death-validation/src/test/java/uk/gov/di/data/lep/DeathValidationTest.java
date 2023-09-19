@@ -19,6 +19,8 @@ import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
@@ -80,7 +82,10 @@ class DeathValidationTest {
 
     @Test
     void deathValidationSnapshotTest() throws JsonProcessingException {
-        var event = new APIGatewayProxyRequestEvent().withBody(Mapper.objectMapper().writeValueAsString(new GroJsonRecordBuilder().build()));
+        var groJsonRecord = new GroJsonRecordBuilder().build();
+        var event = new APIGatewayProxyRequestEvent()
+            .withBody(Mapper.objectMapper().writeValueAsString(groJsonRecord))
+            .withHeaders(Map.of("CorrelationID", "correlationID"));
 
         when(config.getTargetTopic()).thenReturn("Target Topic");
 

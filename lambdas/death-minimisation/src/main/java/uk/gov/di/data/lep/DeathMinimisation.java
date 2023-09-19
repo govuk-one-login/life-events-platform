@@ -11,8 +11,8 @@ import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathMinimisationAudit;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathMinimisationAuditExtensions;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathMinimisationAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathMinimisationAuditExtensions;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
@@ -45,12 +45,11 @@ public class DeathMinimisation
             var minimisedData = objectMapper
                 .writer(filterProvider)
                 .writeValueAsString(enrichedData);
-            var publishedData = publish(minimisedData);
 
-            var auditData = generateAuditData(minimisedData);
+            var auditData = generateAuditData(minimisedData, enrichedData.txn());
             addAuditDataToQueue(auditData);
 
-            return publishedData;
+            return publish(minimisedData);
         } catch (JsonProcessingException e) {
             logger.error("Failed to minimise request due to mapping error");
             throw new MappingException(e);
@@ -70,8 +69,8 @@ public class DeathMinimisation
     }
 
     @Tracing
-    private DeathMinimisationAudit generateAuditData(String minimisedData) {
-        var auditDataExtensions = new DeathMinimisationAuditExtensions(config.getTargetQueue(), minimisedData.hashCode());
+    private DeathMinimisationAudit generateAuditData(String minimisedData, String correlationID) {
+        var auditDataExtensions = new DeathMinimisationAuditExtensions(config.getTargetQueue(), minimisedData.hashCode(), correlationID);
         return new DeathMinimisationAudit(auditDataExtensions);
     }
 }

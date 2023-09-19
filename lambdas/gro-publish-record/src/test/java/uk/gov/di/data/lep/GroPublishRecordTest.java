@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
-import uk.gov.di.data.lep.library.dto.GroJsonRecordWithAuth;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithHeaders;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -35,7 +35,7 @@ class GroPublishRecordTest {
     private static final HttpClient httpClient = mock(HttpClient.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final GroPublishRecord underTest = new GroPublishRecord(config, objectMapper);
-    private static final GroJsonRecordWithAuth event = new GroJsonRecordWithAuth(new GroJsonRecordBuilder().build(), "accessToken");
+    private static final GroJsonRecordWithHeaders event = new GroJsonRecordWithHeaders(new GroJsonRecordBuilder().build(), "accessToken", "correlationID");
     private static final InputStream eventAsInputStream = mock(InputStream.class);
     private static final String eventAsString = "EventInStringRepresentation";
     private static final HttpRequest expectedGroRecordRequest = HttpRequest.newBuilder()
@@ -70,7 +70,7 @@ class GroPublishRecordTest {
     void publishRecordSendsGroRecordRequestsAndReturnsNull() throws IOException, InterruptedException {
         var httpClientMock = mockStatic(HttpClient.class);
         httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
-        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithAuth.class)).thenReturn(event);
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn(eventAsString);
 
         underTest.handleRequest(eventAsInputStream, null, null);
@@ -84,7 +84,7 @@ class GroPublishRecordTest {
     void publishRecordThrowsExceptionIfGroRecordRequestsFails() throws IOException, InterruptedException {
         var httpClientMock = mockStatic(HttpClient.class);
         httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
-        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithAuth.class)).thenReturn(event);
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn(eventAsString);
         var ioException = new IOException();
         when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenThrow(ioException);
@@ -101,7 +101,7 @@ class GroPublishRecordTest {
 
     @Test
     void publishRecordThrowsMappingExceptionIfGroRecordFailsToMap() throws IOException, InterruptedException {
-        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithAuth.class)).thenReturn(event);
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenReturn(event);
         var jsonProcessingException = mock(JsonProcessingException.class);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenThrow(jsonProcessingException);
 
@@ -115,7 +115,7 @@ class GroPublishRecordTest {
     @Test
     void publishRecordThrowsMappingExceptionIfInputStreamFailsToMap() throws IOException, InterruptedException {
         var ioException = mock(IOException.class);
-        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithAuth.class)).thenThrow(ioException);
+        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenThrow(ioException);
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(eventAsInputStream, null, null));
 

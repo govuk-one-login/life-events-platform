@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationId;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
@@ -68,12 +69,13 @@ class DeathEnrichmentTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var groJsonRecord = new GroJsonRecordBuilder().build();
+        var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationId(groJsonRecord, "correlationID");
         var deathNotificationSet = mock(DeathNotificationSet.class);
 
         when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecord.class)).thenReturn(groJsonRecord);
         when(objectMapper.writeValueAsString(deathNotificationSet)).thenReturn("Death notification set");
         var deathNotificationSetMapper = mockStatic(DeathNotificationSetMapper.class);
-        deathNotificationSetMapper.when(() -> DeathNotificationSetMapper.generateDeathNotificationSet(groJsonRecord))
+        deathNotificationSetMapper.when(() -> DeathNotificationSetMapper.generateDeathNotificationSet(groJsonRecordWithCorrelationID))
             .thenReturn(deathNotificationSet);
 
         underTest.handleRequest(sqsEvent, context);

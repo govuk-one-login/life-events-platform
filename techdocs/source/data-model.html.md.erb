@@ -1,0 +1,245 @@
+---
+title: Data model for life events
+weight: 15
+---
+# Physical Data Model for death notification events
+
+## Context
+
+The purpose of this RFC is to agree the physical data model to integrate Life Events from General Register Officer (GRO, part of the Home Office) to One Login. In scope required for MVP is death notification event which originates with GRO's "RON" system.
+
+Decisions about encryption and signing of these event payloads are out of scope.
+
+## Change log
+
+### 2023-08
+
+First draft to share internally and with DWP.
+
+### 2023-09
+
+Changes for consistency and future-proofing:
+
+* event name/URIs change to reflect "registered" and "registration updated" following standard event naming convention
+* change of `deathRegistrationID` to `deathRegistration`
+* change the identifier to be a URN based on the original ID
+* `recordUpdateTime` and `deathRegistrationTime` no longer wrapped in an object with a `value` property
+* add `freeFormatBirthDate`
+
+## Death event structure
+
+A death notification event is represented using a JSON object that conforms to the payload required of a Security Event Token
+(SET, see [IETF RFC 8417](https://www.rfc-editor.org/rfc/rfc8417.html)).
+
+We refer to this as the "event payload".
+
+The `iss` (issuer), `iat` (issued at) and `jti` (JWT identifier) claims are required.
+
+Other JWT claims such as `txn` may be present in the payload and should follow the requirements of this specification or the SET profile.
+
+Two types of event are defined in this specification - a "death registered" event and a "death registration updated" event.
+The data model is broadly the same but the meaning or presence of some properties depends on the type of event.
+
+In both cases, the value of the `events` claim is a JSON object with a single member, where the name indicates the type of the event, and the value is an "event object" as described in the rest of this document.
+
+
+> We intentionally define "event object" as distinct from "event payload" so that it's easy to be precise when talking about the different levels of the JSON structure.
+
+### Classes and types
+
+The specific classes and types described here will in future be found in the
+[Digital Identity Vocabulary](https://alphagov.github.io/di-identity-vocab/),
+the source of which is
+[available on GitHub](https://github.com/alphagov/di-identity-vocab).
+
+For now, JSON Schema files can be found at:
+
+* [DeathRegisteredJWT.json](https://alphagov.github.io/di-identity-vocab/v1/json-schemas/DeathRegisteredJWT.json)
+* [DeathRegistrationUpdatedJWT.json](https://alphagov.github.io/di-identity-vocab/v1/json-schemas/DeathRegistrationUpdatedJWT.json)
+
+We mention JSON types such as arrays, strings and objects, but also more specific types which imply some particular validation.
+
+We refer to a "list" type where we mean a JSON array in which the order may be significant.
+
+The "DateTime" type refers to a complete ISO date and time as [described by schema.org](https://schema.org/DateTime).
+All such properties must include a time zone specifier and the time zone should be UTC (even when daylight savings time applies).
+
+The "ISODate" type refers to a partial (or complete) ISO date, with no time part and in which the day part and month part are optional.
+
+### Death registered event
+
+The `toe` (time of event) claim must correspond to the [`deathRegistrationTime`](#death-registration-time) property.
+
+The event object will have the name
+
+```text
+https://vocab.account.gov.uk/v1/deathRegistered
+```
+
+
+> We may change the name of these event objects in future, for example we may decide to include a version number.
+> For example, `https://vocab.account.gov.uk/v1/deathRegistered/v3` could indicate "the third version of the death registered event in the first version of the event vocabulary".
+> If we decide to do this, the consequences will be discussed in a separate ADR.
+
+The event object schema is described below in [common event object properties](#common-event-object-properties).
+
+### Death registration updated event
+
+The `toe` (time of event) claim must correspond to the [`recordUpdateTime`](#record-update-time) property.
+
+The event object will have the name
+
+```text
+https://vocab.account.gov.uk/v1/deathRegistrationUpdated
+```
+
+The event object schema is described below in [common event object properties](#common-event-object-properties).
+The following properties are also defined:
+
+| Property        | Required | Description |
+|-----------------|----------|-------------|
+| `recordUpdateTime` | Required | A [DateTime representing the date/time the record was amended](#record-update-time). |
+| `deathRegistrationUpdateReason` | Required | An [identifier indicating the reason for the update](#record-update-reason). |
+
+#### Record update time
+
+The `recordUpdateTime` property is a DateTime and should specify the timezone as UTC, which we expect to be represented via a `Z` suffix.
+
+The string is therefore expected to be in a `yyyy-MM-ddThh:mm:ssZ` format.
+
+#### Record update reason
+
+The value for the `deathRegistrationUpdateReason` property must be one of the following identifiers:
+
+* `formal_correction`
+* `quality_assurance`
+* `typographical`
+* `cancelled`
+* `cancellation_removed`
+
+### Common event object properties
+
+The following properties are common to both types of event.
+Some properties are marked "expected" which means we expect to see them in our initial implementation which uses the RON, but data from other sources may vary.
+
+| Property | Required | Description |
+|---|---|---|
+| `subject` | Required | An [object containing details of a person](#subject-properties) that has died for matching against existing records. |
+| `deathRegistration` | Expected | A [URI representing the entry in the register](#death-registration-uri). |
+| `deathDate` | | An [object containing details of a person's death date](#death-date-properties). |
+| `freeFormatDeathDate` | | A string containing free format death date information, used where the death date could not be expressed as a partial or complete ISO date. This property is expected to be present if `deathDate` is not present, but could be used alongside `deathDate` in some cases. |
+| `deathRegistrationTime` | | A [DateTime representing the moment when a person's death was registered](#death-registration-time). |
+
+#### Subject properties
+
+The value for `subject` is an object with the following properties:
+
+| Property    | Required | Description |
+|-------------|----------|-------------|
+| `name`      | Required | A [list of names](#name-list). |
+| `sex`       | Expected | A [list with a single value representing the person's legal sex](#person-sex-list). |
+| `birthDate` | | A [list representing facts about the person's date of birth](#birth-date-list). |
+| `freeFormatBirthDate` | | A string containing free format birth date information, used where the birth date could not be expressed as a partial or complete ISO date. This property is expected to be present if `birthDate` is not present, but could be used alongside `birthDate` in some cases. |
+| `address`   | Expected | A [list representing postal addresses at which the user resided](#address-list). |
+
+##### Name list
+
+The value for `name` is a list of name objects with the following properties:
+
+| Property      | Required | Description |
+|---------------|----------|-------------|
+| `nameParts`   | Required | A list of name parts as described by the [core identity representation RFC](0011-identity-representation.md#4-names). |
+| `description` | | A human-readable description that may help with manual matching in cases where multiple name objects are in the list. |
+
+There must be at least one entry in the list of name objects.
+Where a person has (or has had) more than one name, there will be more than one entry in the list.
+
+The first entry in the list must reflect the person's full name when they died, as held on the official register.
+
+Where a record shows that the person changed their name as a result of marriage or civil partnership (ie they have a 'maiden name'), their given names must be duplicated, together with their family name at birth, into another entry in the list.
+
+Where a record shows that the person went by one or more other aliases, each alias (as a complete set of name parts, usually multiple given names and a family name) is a separate entry in the list.
+Each of these objects must include duplicates of any given names or family names that are common with other entries in the list so that it represents a full name.
+
+##### Person sex (list)
+
+The `sex` property captures a person's legal sex.
+
+A list of objects is used for consistency with other personal attributes that can change over time.
+Exactly one entry is allowed in a list for a life event originating from an official register.
+
+
+> Some sources in the UK use the term "gender" to refer to "legal sex".
+
+The properties allowed in each object are as follows:
+
+| Property | Type | Required | Allowed values |
+|---|---|---|---|
+| `value` | string | Required | `Male`, `Female`, `Indeterminate` |
+
+##### Birth date (list)
+
+The `birthDate` property is a list of objects because in some cases there may be a historical record of incorrect birth dates, that were previously considered to be correct.
+The value from the register (believed by the authorative source to be correct) must appear first in the list and is expected to be the only entry.
+
+The properties allowed in each object are as follows:
+
+| Property | Type | Required | Description | Allowed values |
+|---|---|---|---|---|
+| `value` | ISODate | Required | A possibly-partial ISO date. | `yyyy-MM-dd`, `yyyy-MM`, `yyyy` |
+| `validFrom` | DateTime | Not expected.| The earliest point in time that the historical record considered the incorrect birthDate value to be correct.| |
+| `validUntil` | DateTime | Not expected. | The latest point in time that the historical record considered the incorrect birthDate value to be correct.| |
+| `description` | string | Not expected.|  | |
+
+##### Address (list)
+
+The `address` property captures any postal addresses associated with a person in the register.
+The most recent known address per the register must be first in the list.
+
+The [address structure RFC](0020-address-structure.md) describes the objects appearing in the list.
+
+<%= warning_text('No guarantee is provided that a complete address object will be populated.') %>
+
+
+#### Death date properties
+
+The value for `deathDate` is an object with the following properties:
+
+| Property | Type | Required | Description | Allowed values |
+|---|---|---|---|---|
+| `value` | ISODate | Required | A possibly-partial ISO date. | `yyyy-MM-dd`, `yyyy-MM`, `yyyy` |
+| `description` | string | | A qualifier relating to the date, used when a partial date is provided. For example, 'On or about', 'Deceased found on', ‘Dead body found on’. | |
+
+If a date of death is not known or cannot be represented as a complete or partial ISO date, `freeFormatDeathDate` may be used instead.
+
+### Death registration URI
+
+`deathRegistration` must contain a URI for the relevant entry in the register of deaths, and is expected to be a
+[federated content URN](https://www.rfc-editor.org/rfc/rfc4198.html)
+based on an originator's identifier.
+
+### Death registration time
+
+The `deathRegistrationTime` property is a DateTime and is expected for registration events but not for update events.
+
+It should specify the timezone as UTC, which we expect to be represented via a `Z` suffix.
+
+The string is therefore expected to be in a `yyyy-MM-ddThh:mm:ssZ` format.
+
+## Examples
+
+Examples of output from the Life Events Platform are currently available
+[in GitHub](https://github.com/alphagov/di-identity-vocab/tree/main/v1/examples/life-events).
+
+## Future work
+
+In future we may capture a level of trust as defined by the UK Trust Framework.
+
+This could apply to the entire event, but might be overridden for specific attributes.
+
+### Change control
+
+Adding a property to an object should not be considered a breaking change to the schema.
+
+
+> We'll add further notes about how this specification may change over time in a future update.

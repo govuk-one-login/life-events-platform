@@ -107,11 +107,13 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
 
             validateRecordCount(records, deathRegistrationGroup.recordCount());
 
-            var recordsWithAuth = records.stream()
-                .map(r -> new GroJsonRecordWithAuth(r, authorisationToken))
+            var recordsWithHeaders = records.stream()
+                .map(r -> new GroJsonRecordWithHeaders(r, authorisationToken, UUID.randomUUID().toString()))
                 .toList();
 
-            return objectMapper.writeValueAsString(recordsWithAuth);
+            recordsWithHeaders.forEach(record -> addAuditDataToQueue(generateAuditData(record.correlationId(), xmlData.hashCode())));
+
+            return objectMapper.writeValueAsString(recordsWithHeaders);
         } catch (JsonProcessingException e) {
             logger.info("Failed to map DeathRegistrations xml to GroJsonRecord list");
             throw new MappingException(e);

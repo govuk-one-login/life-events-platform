@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
-import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationId;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
@@ -68,10 +68,10 @@ class DeathEnrichmentTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var groJsonRecord = new GroJsonRecordBuilder().build();
-        var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationId(groJsonRecord, "correlationID");
+        var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationID(groJsonRecord, "correlationID");
         var deathNotificationSet = mock(DeathNotificationSet.class);
 
-        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationId.class)).thenReturn(groJsonRecordWithCorrelationID);
+        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationID.class)).thenReturn(groJsonRecordWithCorrelationID);
         when(objectMapper.writeValueAsString(deathNotificationSet)).thenReturn("Death notification set");
         var deathNotificationSetMapper = mockStatic(DeathNotificationSetMapper.class);
         deathNotificationSetMapper.when(() -> DeathNotificationSetMapper.generateDeathNotificationSet(groJsonRecordWithCorrelationID))
@@ -92,7 +92,7 @@ class DeathEnrichmentTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
 
-        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationId.class))
+        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationID.class))
             .thenThrow(UnrecognizedPropertyException.class);
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));

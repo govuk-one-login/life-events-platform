@@ -9,7 +9,7 @@ import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
-import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationId;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
 import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAudit;
@@ -34,7 +34,7 @@ public class DeathEnrichment
     public String handleRequest(SQSEvent sqsEvent, Context context) {
         try {
             var sqsMessage = sqsEvent.getRecords().get(0);
-            var baseData = objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationId.class);
+            var baseData = objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationID.class);
             var enrichedData = enrichData(baseData);
 
             var auditData = generateAuditData(enrichedData);
@@ -48,7 +48,7 @@ public class DeathEnrichment
     }
 
     @Tracing
-    private DeathNotificationSet enrichData(GroJsonRecordWithCorrelationId baseData) {
+    private DeathNotificationSet enrichData(GroJsonRecordWithCorrelationID baseData) {
         logger.info("Enriching and mapping data (sourceId: {})", baseData.groJsonRecord().registrationID());
 
         return DeathNotificationSetMapper.generateDeathNotificationSet(baseData);

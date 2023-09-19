@@ -19,7 +19,7 @@ import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;
-import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationId;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithHeaders;
 import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class GroConvertToJson
-    extends LambdaHandler<GroJsonRecordWithCorrelationId>
+    extends LambdaHandler<GroJsonRecordWithCorrelationID>
     implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
     protected static MetricsLogger metricsLogger = MetricsUtils.metricsLogger();
@@ -117,7 +117,7 @@ public class GroConvertToJson
                 .map(r -> new GroJsonRecordWithHeaders(r, authorisationToken, UUID.randomUUID().toString()))
                 .toList();
 
-            recordsWithHeaders.forEach(record -> addAuditDataToQueue(generateAuditData(record.correlationId(), xmlData.hashCode())));
+            recordsWithHeaders.forEach(record -> addAuditDataToQueue(generateAuditData(record.correlationID(), xmlData.hashCode())));
 
             return objectMapper.writeValueAsString(recordsWithHeaders);
         } catch (JsonProcessingException e) {

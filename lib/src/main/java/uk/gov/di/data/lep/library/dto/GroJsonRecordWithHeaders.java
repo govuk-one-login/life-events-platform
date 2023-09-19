@@ -5,7 +5,6 @@ import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 public record GroJsonRecordWithHeaders(
     GroJsonRecord groJsonRecord,
     String authenticationToken,
-
-    String correlationId
+    String correlationID
 ) {
 }

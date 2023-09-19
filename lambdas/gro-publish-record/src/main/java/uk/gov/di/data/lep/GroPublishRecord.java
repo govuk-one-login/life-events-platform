@@ -42,8 +42,8 @@ public class GroPublishRecord implements RequestStreamHandler {
     @Logging(clearState = true)
     public void handleRequest(InputStream input, OutputStream output, Context context) {
         var event = readInputStream(input);
-        logger.info("Received record: {}", event.correlationId());
-        postRecordToLifeEvents(event.groJsonRecord(), event.authenticationToken(), event.correlationId());
+        logger.info("Received record: {}", event.groJsonRecord().registrationID());
+        postRecordToLifeEvents(event.groJsonRecord(), event.authenticationToken(), event.correlationID());
     }
 
     @Tracing
@@ -60,12 +60,12 @@ public class GroPublishRecord implements RequestStreamHandler {
     // and we do not need to rethrow the same exception
     @SuppressWarnings("java:S2142")
     @Tracing
-    private void postRecordToLifeEvents(GroJsonRecord event, String authorisationToken, String correlationId) {
+    private void postRecordToLifeEvents(GroJsonRecord event, String authorisationToken, String correlationID) {
         var httpClient = HttpClient.newHttpClient();
         var requestBuilder = HttpRequest.newBuilder()
             .uri(URI.create(String.format("https://%s/events/deathNotification", config.getLifeEventsPlatformDomain())))
             .header("Authorization", authorisationToken)
-            .header("CorrelationId", correlationId);
+            .header("CorrelationID", correlationID);
 
         try {
             requestBuilder.POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(event)));

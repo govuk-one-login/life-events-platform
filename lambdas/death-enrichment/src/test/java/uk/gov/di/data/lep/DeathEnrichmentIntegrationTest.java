@@ -14,7 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
-import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationId;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -39,7 +39,7 @@ class DeathEnrichmentIntegrationTest {
     @Test
     void approvalTestForOutput() throws JsonProcessingException {
         var groJsonRecord = new GroJsonRecordBuilder().build();
-        var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationId(groJsonRecord, "correlationID");
+        var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationID(groJsonRecord, "correlationID");
         var sqsMessage = new SQSMessage();
         sqsMessage.setBody(Mapper.objectMapper().writeValueAsString(groJsonRecordWithCorrelationID));
         var sqsEvent = new SQSEvent();
@@ -65,7 +65,7 @@ class DeathEnrichmentIntegrationTest {
             .withUpdateDateTime(LocalDateTime.of(2019, Month.APRIL, 3, 10, 1))
             .withLockedDateTime(null)
             .build();
-        var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationId(groJsonRecord, "correlationID");
+        var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationID(groJsonRecord, "correlationID");
         var sqsMessage = new SQSMessage();
         sqsMessage.setBody(Mapper.objectMapper().writeValueAsString(groJsonRecordWithCorrelationID));
         var sqsEvent = new SQSEvent();

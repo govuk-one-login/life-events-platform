@@ -2251,6 +2251,7 @@ Resources:
           COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
           USER_POOL_ID: !Ref UserPool
           GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Policies:
@@ -2273,6 +2274,8 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA

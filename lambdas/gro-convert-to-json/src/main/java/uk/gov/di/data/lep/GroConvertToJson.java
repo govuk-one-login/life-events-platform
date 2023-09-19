@@ -16,10 +16,14 @@ import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
 import uk.gov.di.data.lep.exceptions.AuthException;
+import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;
-import uk.gov.di.data.lep.library.dto.GroJsonRecordWithAuth;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationId;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithHeaders;
 import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
+import uk.gov.di.data.lep.library.dto.gro.audit.GroConvertToJsonAudit;
+import uk.gov.di.data.lep.library.dto.gro.audit.GroConvertToJsonAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -33,7 +37,9 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.UUID;
 
-public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
+public class GroConvertToJson
+    extends LambdaHandler<GroJsonRecordWithCorrelationId>
+    implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
     protected static MetricsLogger metricsLogger = MetricsUtils.metricsLogger();
     private final AwsService awsService;
@@ -135,5 +141,11 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
                 throw new MappingException(String.format("Expected %d records but %d were found", recordCount, records.size()));
             }
         }
+    }
+
+    @Tracing
+    private GroConvertToJsonAudit generateAuditData(String correlationID, Integer fileHash) {
+        var auditDataExtensions = new GroConvertToJsonAuditExtensions(correlationID, fileHash);
+        return new GroConvertToJsonAudit(auditDataExtensions);
     }
 }

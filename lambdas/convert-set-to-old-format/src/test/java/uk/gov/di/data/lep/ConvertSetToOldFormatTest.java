@@ -667,10 +667,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -700,10 +698,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-06-06\"," +
             "\"firstNames\":\"JANE\"," +
@@ -751,10 +747,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -784,10 +778,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -817,10 +809,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"\"," +
@@ -850,10 +840,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -883,10 +871,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"\"," +
@@ -916,10 +902,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"\"," +
@@ -949,10 +933,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -982,10 +964,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +
@@ -1015,10 +995,8 @@ class ConvertSetToOldFormatTest {
         var sqsEvent = new SQSEvent();
         sqsEvent.setRecords(List.of(sqsMessage));
         var expected =
-            "\"type\":\"events\"," +
-            "\"attributes\":{" +
             "\"eventType\":\"DEATH_NOTIFICATION\"," +
-            "\"sourceId\":\"urn:fdc:gro.gov.uk:2023:death:123456789\"," +
+            "\"sourceId\":\"123456789\"," +
             "\"eventData\":{" +
             "\"registrationDate\":\"2020-02-02\"," +
             "\"firstNames\":\"JANE\"," +

@@ -7,8 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
-import uk.gov.di.data.lep.dto.OldFormatData;
-import uk.gov.di.data.lep.dto.OldFormatDataAttributes;
 import uk.gov.di.data.lep.dto.OldFormatDeathNotification;
 import uk.gov.di.data.lep.dto.OldFormatEventData;
 import uk.gov.di.data.lep.library.LambdaHandler;
@@ -67,13 +65,16 @@ public class ConvertSetToOldFormat
             throw new MappingException("Failed to convert event due to unexpected event type");
         }
 
-        var sourceId = events.deathRegistration();
+        var sourceIdParts = events.deathRegistration().toString().split(":");
+        var sourceId = sourceIdParts[sourceIdParts.length - 1];
+
         var dateOfDeath = temporalAccessorToLocalDate(events.deathDate().value());
         var subject = events.subject();
         var names = getNames(subject);
         var dateOfBirth = subject.birthDate() == null || subject.birthDate().isEmpty()
             ? temporalAccessorToLocalDate(null)
             : temporalAccessorToLocalDate(subject.birthDate().get(0).value());
+
 
         var oldFormatEventData = new OldFormatEventData(
             deathRegistrationTime.toLocalDate(),
@@ -90,25 +91,13 @@ public class ConvertSetToOldFormat
             subject.address().get(0).postalCode()
         );
 
-        var oldFormatDataAttributes = new OldFormatDataAttributes(
-            EventType.DEATH_NOTIFICATION,
-            sourceId.toString(),
-            oldFormatEventData,
-            null
-        );
 
-        var oldFormatData = new OldFormatData(
-            UUID.randomUUID().toString(),
-            "events",
-            oldFormatDataAttributes,
-            null,
-            null
-        );
 
         return new OldFormatDeathNotification(
-            oldFormatData,
-            null,
-            null
+            UUID.randomUUID().toString(),
+            EventType.DEATH_NOTIFICATION,
+            sourceId,
+            oldFormatEventData
         );
     }
 

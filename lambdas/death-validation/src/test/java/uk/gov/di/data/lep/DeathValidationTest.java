@@ -18,6 +18,7 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAudit;
 import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
+import uk.gov.di.data.lep.library.exceptions.InvalidRecordFormatException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
@@ -95,9 +97,9 @@ class DeathValidationTest {
 
         when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenReturn(groJsonRecord);
 
-        var result = underTest.handleRequest(event, context);
+        var exception = assertThrows(InvalidRecordFormatException.class, () -> underTest.handleRequest(event, context));
 
-        assertEquals(400, result.getStatusCode());
+        assertEquals("Record has both recordLocked and recordUpdate dateTimes", exception.getMessage());
     }
 
     @Test
@@ -111,9 +113,9 @@ class DeathValidationTest {
 
         when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenReturn(groJsonRecord);
 
-        var result = underTest.handleRequest(event, context);
+        var exception = assertThrows(InvalidRecordFormatException.class, () -> underTest.handleRequest(event, context));
 
-        assertEquals(400, result.getStatusCode());
+        assertEquals("Record has neither recordLocked and recordUpdate dateTimes", exception.getMessage());
     }
 
     @Test

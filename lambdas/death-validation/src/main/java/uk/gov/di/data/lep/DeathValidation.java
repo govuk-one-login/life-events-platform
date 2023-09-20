@@ -14,6 +14,7 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAudit;
 import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
+import uk.gov.di.data.lep.library.exceptions.InvalidRecordFormatException;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 
@@ -55,11 +56,9 @@ public class DeathValidation
             var correlationID = headers != null && headers.get("CorrelationID") != null ? headers.get("CorrelationID") : UUID.randomUUID().toString();
             var groJsonRecord = objectMapper.readValue(event.getBody(), GroJsonRecord.class);
             if (groJsonRecord.recordLockedDateTime() == null && groJsonRecord.recordUpdateDateTime() == null) {
-                logger.error("Record has neither recordLocked and recordUpdate dateTimes");
-                throw new MappingException("Record has neither recordLocked and recordUpdate dateTimes");
+                throw new InvalidRecordFormatException("Record has neither recordLocked and recordUpdate dateTimes");
             } else if (groJsonRecord.recordLockedDateTime() != null && groJsonRecord.recordUpdateDateTime() != null) {
-                logger.error("Record has both recordLocked and recordUpdate dateTimes");
-                throw new MappingException("Record has both recordLocked and recordUpdate dateTimes");
+                throw new InvalidRecordFormatException("Record has both recordLocked and recordUpdate dateTimes");
             }
             return new GroJsonRecordWithCorrelationID(groJsonRecord, correlationID);
         } catch (JsonProcessingException e) {

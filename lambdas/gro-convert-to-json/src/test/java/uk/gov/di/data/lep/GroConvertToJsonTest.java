@@ -195,6 +195,7 @@ class GroConvertToJsonTest {
         when(config.getCognitoOauth2TokenUri()).thenReturn(cognitoOauth2TokenUri);
         when(config.getGroRecordsBucketName()).thenReturn("JsonBucketName");
         when(config.getUserPoolId()).thenReturn("userPoolId");
+        when(config.getAuditQueue()).thenReturn("auditQueue");
     }
 
     @BeforeEach

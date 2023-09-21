@@ -42,9 +42,6 @@ public class GroConvertToJson
     implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
     protected static MetricsLogger metricsLogger = MetricsUtils.metricsLogger();
-    private final AwsService awsService;
-    private final Config config;
-    private final ObjectMapper objectMapper;
     private final XmlMapper xmlMapper;
 
     public GroConvertToJson() {
@@ -52,9 +49,7 @@ public class GroConvertToJson
     }
 
     public GroConvertToJson(AwsService awsService, Config config, ObjectMapper objectMapper, XmlMapper xmlMapper) {
-        this.awsService = awsService;
-        this.config = config;
-        this.objectMapper = objectMapper;
+        super(awsService, config, objectMapper);
         this.xmlMapper = xmlMapper;
     }
 

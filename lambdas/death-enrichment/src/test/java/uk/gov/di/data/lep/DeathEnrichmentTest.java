@@ -127,5 +127,7 @@ class DeathEnrichmentTest {
 
         verify(objectMapper).writeValueAsString(deathEnrichmentAudit);
         verify(awsService).putOnAuditQueue("Audit data");
+
+        deathNotificationSetMapper.close();
     }
 }

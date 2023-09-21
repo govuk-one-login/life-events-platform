@@ -62,7 +62,7 @@ class LambdaHandlerTest {
     }
 
     @Test
-    void failingToWriteAsStringThrowsException() throws JsonProcessingException {
+    void publishFailingToWriteAsStringThrowsException() throws JsonProcessingException {
         var output = new GroJsonRecordBuilder().build();
 
         var jsonException = mock(JsonProcessingException.class);
@@ -114,6 +114,20 @@ class LambdaHandlerTest {
         underTest.addAuditDataToQueue(auditData);
 
         verify(awsService).putOnAuditQueue("mappedAuditData");
+    }
+
+    @Test
+    void addAuditDataToQueueFailingToWriteAsStringThrowsException() throws JsonProcessingException {
+        var auditData = new DeathValidationAudit(new DeathValidationAuditExtensions("correlationID"));
+
+        var jsonException = mock(JsonProcessingException.class);
+        when(objectMapper.writeValueAsString(auditData)).thenThrow(jsonException);
+
+        var exception = assertThrows(MappingException.class, () -> underTest.addAuditDataToQueue(auditData));
+
+        assertEquals(jsonException, exception.getCause());
+
+        verify(awsService, never()).putOnAuditQueue(any());
     }
 
     static class TestLambda extends LambdaHandler<GroJsonRecord> {

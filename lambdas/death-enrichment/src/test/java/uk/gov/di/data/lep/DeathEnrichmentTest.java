@@ -14,6 +14,8 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSetMapper;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAuditExtensions;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -37,6 +39,7 @@ class DeathEnrichmentTest {
     private static final Context context = mock(Context.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final DeathEnrichment underTest = new DeathEnrichment(awsService, config, objectMapper);
+
 
     @BeforeAll
     static void setup(){
@@ -98,5 +101,31 @@ class DeathEnrichmentTest {
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(sqsEvent, context));
 
         assertThat(exception.getCause()).isInstanceOf(UnrecognizedPropertyException.class);
+    }
+
+    @Test
+    void enrichGroDeathEventAuditsData() throws JsonProcessingException {
+        var sqsMessage = new SQSMessage();
+        sqsMessage.setBody("A message body");
+        var sqsEvent = new SQSEvent();
+        sqsEvent.setRecords(List.of(sqsMessage));
+
+        var groJsonRecord = new GroJsonRecordBuilder().build();
+        var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationID(groJsonRecord, "correlationID");
+        var deathNotificationSet = mock(DeathNotificationSet.class);
+        when(deathNotificationSet.txn()).thenReturn("correlationID");
+        var deathEnrichmentAudit = new DeathEnrichmentAudit(new DeathEnrichmentAuditExtensions(deathNotificationSet.hashCode(), "correlationID"));
+
+        when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationID.class)).thenReturn(groJsonRecordWithCorrelationID);
+        when(objectMapper.writeValueAsString(deathEnrichmentAudit)).thenReturn("Audit data");
+
+        var deathNotificationSetMapper = mockStatic(DeathNotificationSetMapper.class);
+        deathNotificationSetMapper.when(() -> DeathNotificationSetMapper.generateDeathNotificationSet(groJsonRecordWithCorrelationID))
+            .thenReturn(deathNotificationSet);
+
+        underTest.handleRequest(sqsEvent, context);
+
+        verify(objectMapper).writeValueAsString(deathEnrichmentAudit);
+        verify(awsService).putOnAuditQueue("Audit data");
     }
 }

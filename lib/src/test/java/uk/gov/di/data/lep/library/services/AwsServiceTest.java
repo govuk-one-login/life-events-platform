@@ -313,4 +313,41 @@ class AwsServiceTest {
             assertEquals("ClientSecret", secret);
         }
     }
+
+    @Test
+    void putOnAuditQueuePutsMessageOnAuditQueue() {
+        try (var staticClient = mockStatic(SqsClient.class);
+             var staticCredentialsProvider = mockStatic(DefaultCredentialsProvider.class);
+             var staticRequest = mockStatic(SendMessageRequest.class)) {
+
+            var client = mock(SqsClient.class);
+            var clientBuilder = mock(SqsClientBuilder.class);
+            var credentialsProvider = mock(DefaultCredentialsProvider.class);
+            var request = mock(SendMessageRequest.class);
+            var requestBuilder = mock(SendMessageRequest.Builder.class);
+
+            staticClient.when(SqsClient::builder).thenReturn(clientBuilder);
+            staticCredentialsProvider.when(DefaultCredentialsProvider::create).thenReturn(credentialsProvider);
+            staticRequest.when(SendMessageRequest::builder).thenReturn(requestBuilder);
+
+            when(config.getAuditQueue()).thenReturn("Audit Queue");
+
+            when(clientBuilder.region(Region.EU_WEST_2)).thenReturn(clientBuilder);
+            when(clientBuilder.credentialsProvider(credentialsProvider)).thenReturn(clientBuilder);
+            when(clientBuilder.build()).thenReturn(client);
+            when(requestBuilder.queueUrl("Audit Queue")).thenReturn(requestBuilder);
+            when(requestBuilder.messageBody("Message body")).thenReturn(requestBuilder);
+            when(requestBuilder.build()).thenReturn(request);
+
+            var underTest = new AwsService(config);
+
+            underTest.putOnAuditQueue("Message body");
+
+            verify(clientBuilder, times(1)).region(Region.EU_WEST_2);
+            verify(clientBuilder, times(1)).credentialsProvider(credentialsProvider);
+            verify(requestBuilder, times(1)).queueUrl("Audit Queue");
+            verify(requestBuilder, times(1)).messageBody("Message body");
+            verify(client, times(1)).sendMessage(request);
+        }
+    }
 }

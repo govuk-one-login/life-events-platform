@@ -7,7 +7,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.BaseAudit;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAuditExtensions;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -100,6 +105,18 @@ class LambdaHandlerTest {
         verify(logger).info("Putting message on target topic: {}", "targetTopicARN");
 
         verify(awsService).putOnTopic("mappedTopicOutput");
+    }
+
+    @Test
+    void addAuditDataToQueuePublishesMessageToQueue() throws JsonProcessingException {
+        var auditData = new DeathValidationAudit(new DeathValidationAuditExtensions("correlationID"));
+
+        when(config.getAuditQueue()).thenReturn("auditQueue");
+        when(objectMapper.writeValueAsString(auditData)).thenReturn("mappedAuditData");
+
+        underTest.addAuditDataToQueue(auditData);
+
+        verify(awsService).putOnAuditQueue("mappedAuditData");
     }
 
     static class TestLambda extends LambdaHandler<GroJsonRecord> {

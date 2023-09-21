@@ -2,7 +2,9 @@
 ROOT_DIR="$( git rev-parse --show-toplevel )"
 ARCH_DIR="$(mktemp -d)"
 
-git clone --depth 1 git@github.com:alphagov/digital-identity-architecture.git -b 0056-physical-data-model-death-registration-event "$ARCH_DIR"
+# Swap lines to run locally
+# git clone --depth 1 git@github.com:alphagov/digital-identity-architecture.git -b 0056-physical-data-model-death-registration-event "$ARCH_DIR"
+git clone --depth 1 "https://${ARCH_TOKEN}@github.com/alphagov/digital-identity-architecture.git" -b 0056-physical-data-model-death-registration-event "$ARCH_DIR"
 
 DATA_MODEL_ERB="$ROOT_DIR/techdocs/source/data-model.html.md.erb"
 echo "---
@@ -10,13 +12,15 @@ title: Data model for life events
 weight: 15
 ---" > "$DATA_MODEL_ERB"
 cat "$ARCH_DIR/rfc/0056-physical-data-model-death-notification-event.md" >> "$DATA_MODEL_ERB"
-sed -i "" "
+# This version works on Ubuntu for github actions. If for any reason you need to run this on a mac, replace with the line
+# sed -i "" "
+sed -i "
 s/RFC [0-9]* //
-s/\> \[\!NOTE\]//
-s/\> \[\!IMPORTANT\]//
-/\> \[\!WARNING\]$/{
+s/> \[\!NOTE\]//
+s/> \[\!IMPORTANT\]//
+/> \[\!WARNING\]$/{
   N
-  s/\> \[\!WARNING\]\n> \(.*\)/<%= warning_text\('\1'\) %>\n/
+  s/> \[\!WARNING\]\n> \(.*\)/<%= warning_text\('\1'\) %>\n/
 }
 " "$DATA_MODEL_ERB"
 

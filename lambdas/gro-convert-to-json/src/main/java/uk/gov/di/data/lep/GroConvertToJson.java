@@ -112,7 +112,7 @@ public class GroConvertToJson
                 .map(r -> new GroJsonRecordWithHeaders(r, authorisationToken, UUID.randomUUID().toString()))
                 .toList();
 
-            recordsWithHeaders.forEach(record -> addAuditDataToQueue(generateAuditData(record.correlationID(), xmlData.hashCode())));
+            generateAndAddListOfAuditDataToQueue(recordsWithHeaders, xmlData.hashCode());
 
             return objectMapper.writeValueAsString(recordsWithHeaders);
         } catch (JsonProcessingException e) {
@@ -139,8 +139,11 @@ public class GroConvertToJson
     }
 
     @Tracing
-    private GroConvertToJsonAudit generateAuditData(String correlationID, Integer fileHash) {
-        var auditDataExtensions = new GroConvertToJsonAuditExtensions(correlationID, fileHash);
-        return new GroConvertToJsonAudit(auditDataExtensions);
+    private void generateAndAddListOfAuditDataToQueue(List<GroJsonRecordWithHeaders> recordsWithHeaders, Integer fileHash) {
+        for (var recordWithHeader : recordsWithHeaders) {
+            var auditDataExtensions = new GroConvertToJsonAuditExtensions(recordWithHeader.correlationID(), fileHash);
+            var auditData = new GroConvertToJsonAudit(auditDataExtensions);
+            addAuditDataToQueue(auditData);
+        }
     }
 }

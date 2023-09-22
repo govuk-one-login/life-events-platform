@@ -2,6 +2,7 @@ package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.approvaltests.Approvals;
 import org.approvaltests.core.Options;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
+import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventBucket;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventDetail;
@@ -22,6 +24,7 @@ import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEventObject;
 import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
+import uk.gov.di.data.lep.library.dto.gro.audit.GroConvertToJsonAudit;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -56,10 +59,11 @@ class GroConvertToJsonTest {
     private static final Config config = mock(Config.class);
     private static final HttpClient httpClient = mock(HttpClient.class);
     private static final HttpResponse<String> httpResponse = mock(HttpResponse.class);
+    private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final GroConvertToJson underTest = new GroConvertToJson(
         awsService,
         config,
-        Mapper.objectMapper(),
+        objectMapper,
         Mapper.xmlMapper()
     );
     private static final Context context = mock(Context.class);
@@ -189,13 +193,15 @@ class GroConvertToJsonTest {
         ).build();
 
     @BeforeAll
-    static void setup() {
+    static void setup() throws JsonProcessingException {
         when(awsService.getCognitoClientSecret(anyString(), anyString())).thenReturn(cognitoClientSecret);
         when(config.getCognitoClientId()).thenReturn(cognitoClientId);
         when(config.getCognitoOauth2TokenUri()).thenReturn(cognitoOauth2TokenUri);
         when(config.getGroRecordsBucketName()).thenReturn("JsonBucketName");
         when(config.getUserPoolId()).thenReturn("userPoolId");
         when(config.getAuditQueue()).thenReturn("auditQueue");
+        var cognitoTokenResponse = mock(CognitoTokenResponse.class);
+        when(objectMapper.readValue(anyString(), eq(CognitoTokenResponse.class))).thenReturn(cognitoTokenResponse);
     }
 
     @BeforeEach
@@ -398,5 +404,24 @@ class GroConvertToJsonTest {
             new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
         );
         Approvals.verify(captor.getValue(), Approvals.NAMES.withParameters(options, name));
+    }
+
+    @Test
+    void convertToJsonAuditsData() throws JsonProcessingException{
+        var httpClientMock = mockStatic(HttpClient.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
+        when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
+
+        when(objectMapper.writeValueAsString(any(GroConvertToJsonAudit.class))).thenReturn("Audit data");
+
+        underTest.handleRequest(event, context);
+
+        ArgumentCaptor<GroConvertToJsonAudit> captor = ArgumentCaptor.forClass(GroConvertToJsonAudit.class);
+
+        verify(objectMapper, times(2)).writeValueAsString(captor.capture());
+        assertEquals(mockS3objectResponseMultipleRecords.hashCode(), captor.getValue().extensions().fileHash());
+        verify(awsService, times(2)).putOnAuditQueue("Audit data");
+
+        httpClientMock.close();
     }
 }

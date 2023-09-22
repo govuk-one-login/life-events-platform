@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathMinimisationAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathMinimisationAuditExtensions;
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -216,5 +218,24 @@ class DeathMinimisationTest {
                 new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
         );
         Approvals.verify(captor.getValue(), options);
+    }
+
+    @Test
+    void minimiseEnrichedDataAuditsData() throws JsonProcessingException {
+        var minimisedData = "Minimised death notification set";
+        when(oldDeathNotificationSet.txn()).thenReturn("correlationID");
+        when(objectMapper.writer(any(SimpleFilterProvider.class))).thenReturn(writer);
+        when(writer.writeValueAsString(any())).thenReturn(minimisedData);
+        when(config.getTargetQueue()).thenReturn("Target Queue");
+
+        var deathMinimisationAudit = new DeathMinimisationAudit(new DeathMinimisationAuditExtensions(config.getTargetQueue(), minimisedData.hashCode(), "correlationID"));
+        when(objectMapper.writeValueAsString(deathMinimisationAudit)).thenReturn("Audit data");
+
+        var underTest = new DeathMinimisation(awsService, config, objectMapper);
+
+        underTest.handleRequest(sqsEvent, context);
+
+        verify(objectMapper).writeValueAsString(deathMinimisationAudit);
+        verify(awsService).putOnAuditQueue("Audit data");
     }
 }

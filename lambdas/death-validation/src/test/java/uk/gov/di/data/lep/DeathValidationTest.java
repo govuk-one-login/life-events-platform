@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -101,5 +103,22 @@ class DeathValidationTest {
             new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
         );
         Approvals.verify(captor.getValue(), options);
+    }
+
+    @Test
+    void validateGroDeathEventAuditsData() throws JsonProcessingException {
+        var event = new APIGatewayProxyRequestEvent()
+            .withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}")
+            .withHeaders(Map.of("CorrelationID", "correlationID"));
+
+        when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenReturn(record);
+
+        var deathValidationAudit = new DeathValidationAudit(new DeathValidationAuditExtensions("correlationID"));
+        when(objectMapper.writeValueAsString(deathValidationAudit)).thenReturn("Audit data");
+
+        underTest.handleRequest(event, context);
+
+        verify(objectMapper).writeValueAsString(deathValidationAudit);
+        verify(awsService).putOnAuditQueue("Audit data");
     }
 }

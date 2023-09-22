@@ -49,7 +49,7 @@ public class DeathEnrichment
 
     @Tracing
     private DeathNotificationSet enrichData(GroJsonRecordWithCorrelationID baseData) {
-        logger.info("Enriching and mapping data (sourceId: {})", baseData.groJsonRecord().registrationID());
+        logger.info("Enriching and mapping data (correlationID: {})", baseData.correlationID());
 
         return DeathNotificationSetMapper.generateDeathNotificationSet(baseData);
     }

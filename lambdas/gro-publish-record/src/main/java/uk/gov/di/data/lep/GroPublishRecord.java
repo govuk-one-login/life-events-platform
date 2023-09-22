@@ -42,7 +42,7 @@ public class GroPublishRecord implements RequestStreamHandler {
     @Logging(clearState = true)
     public void handleRequest(InputStream input, OutputStream output, Context context) {
         var event = readInputStream(input);
-        logger.info("Received record: {}", event.groJsonRecord().registrationID());
+        logger.info("Received record: registrationID {}, correlationID {}", event.groJsonRecord().registrationID(), event.correlationID());
         postRecordToLifeEvents(event.groJsonRecord(), event.authenticationToken(), event.correlationID());
     }
 

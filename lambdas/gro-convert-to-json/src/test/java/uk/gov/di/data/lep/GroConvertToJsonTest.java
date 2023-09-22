@@ -59,11 +59,10 @@ class GroConvertToJsonTest {
     private static final Config config = mock(Config.class);
     private static final HttpClient httpClient = mock(HttpClient.class);
     private static final HttpResponse<String> httpResponse = mock(HttpResponse.class);
-    private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private static final GroConvertToJson underTest = new GroConvertToJson(
         awsService,
         config,
-        objectMapper,
+        Mapper.objectMapper(),
         Mapper.xmlMapper()
     );
     private static final Context context = mock(Context.class);
@@ -193,15 +192,13 @@ class GroConvertToJsonTest {
         ).build();
 
     @BeforeAll
-    static void setup() throws JsonProcessingException {
+    static void setup() {
         when(awsService.getCognitoClientSecret(anyString(), anyString())).thenReturn(cognitoClientSecret);
         when(config.getCognitoClientId()).thenReturn(cognitoClientId);
         when(config.getCognitoOauth2TokenUri()).thenReturn(cognitoOauth2TokenUri);
         when(config.getGroRecordsBucketName()).thenReturn("JsonBucketName");
         when(config.getUserPoolId()).thenReturn("userPoolId");
         when(config.getAuditQueue()).thenReturn("auditQueue");
-        var cognitoTokenResponse = mock(CognitoTokenResponse.class);
-        when(objectMapper.readValue(anyString(), eq(CognitoTokenResponse.class))).thenReturn(cognitoTokenResponse);
     }
 
     @BeforeEach
@@ -407,18 +404,29 @@ class GroConvertToJsonTest {
     }
 
     @Test
-    void convertToJsonAuditsData() throws JsonProcessingException{
+    void convertToJsonAuditsData() throws JsonProcessingException {
         var httpClientMock = mockStatic(HttpClient.class);
         httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
+
+        var objectMapperMock = mock(ObjectMapper.class);
+        var cognitoTokenResponse = mock(CognitoTokenResponse.class);
+        when(objectMapperMock.readValue(anyString(), eq(CognitoTokenResponse.class))).thenReturn(cognitoTokenResponse);
+
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(mockS3objectResponseMultipleRecords);
 
-        when(objectMapper.writeValueAsString(any(GroConvertToJsonAudit.class))).thenReturn("Audit data");
+        when(objectMapperMock.writeValueAsString(any(GroConvertToJsonAudit.class))).thenReturn("Audit data");
 
-        underTest.handleRequest(event, context);
+        var underTestWithMockObjectMapper = new GroConvertToJson(
+            awsService,
+            config,
+            objectMapperMock,
+            Mapper.xmlMapper()
+        );
+        underTestWithMockObjectMapper.handleRequest(event, context);
 
         ArgumentCaptor<GroConvertToJsonAudit> captor = ArgumentCaptor.forClass(GroConvertToJsonAudit.class);
 
-        verify(objectMapper, times(2)).writeValueAsString(captor.capture());
+        verify(objectMapperMock, times(2)).writeValueAsString(captor.capture());
         assertEquals(mockS3objectResponseMultipleRecords.hashCode(), captor.getValue().extensions().fileHash());
         verify(awsService, times(2)).putOnAuditQueue("Audit data");
 

@@ -78,7 +78,7 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.8.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.8.0")
 
-  implementation("com.toedter:spring-hateoas-jsonapi:2.0.5")
+  implementation("com.toedter:spring-hateoas-jsonapi:2.0.6")
 
   implementation("org.javers:javers-spring:7.3.3")
   implementation("org.javers:javers-persistence-sql:7.3.3")

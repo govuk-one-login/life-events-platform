@@ -26,3 +26,6 @@ CVE-2023-37788
 
 # GPC-528: Not vulnerable as we don't use OpenSSLs DH check function with unvalidated key lengths
 CVE-2023-3817
+
+# Libcurl unlikely to be used, removed soon
+CVE-2023-38039

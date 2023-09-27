@@ -10,33 +10,6 @@ Cross governmental data sharing platform, to simplify data acquisition and shari
 ## Documentation
 
 Techdocs for this service are available [here](https://alphagov.github.io/di-data-life-events-platform/).
-There are also [Swagger docs](https://dev.share-life-events.service.gov.uk/swagger-ui.html).
-
-## Running the service
-
-### Running locally
-
-See [contributing](CONTRIBUTING.md) for more info on running the service locally for development.
-
-For running locally against docker instances of the following services:
-
-- run this application independently e.g. in IntelliJ
-
-`docker-compose -f docker-compose-local.yml up`
-
-### Running all services including this service
-
-`docker-compose up`
-
-### Running remotely
-
-The service is deployed to AWS, accessible through
-
-| environment | url                                                                 |
-|-------------|---------------------------------------------------------------------|
-| dev         | https://dev.share-life-events.service.gov.uk/swagger-ui/index.html  |
-| demo        | https://demo.share-life-events.service.gov.uk/swagger-ui/index.html |
-| prod        | https://share-life-events.service.gov.uk/swagger-ui/index.html      |
 
 ## Working with SAM
 

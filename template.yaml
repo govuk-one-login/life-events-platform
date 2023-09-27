@@ -603,6 +603,13 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
         - SQSSendMessagePolicy:
@@ -658,6 +665,13 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
         - SQSSendMessagePolicy:
@@ -846,6 +860,13 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
             - Sid: DwpKmsKeyAccess
               Effect: Allow
               Action:
@@ -1070,6 +1091,13 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
             - Sid: DwpDevKmsKeyAccess
               Effect: Allow
               Action:
@@ -1263,6 +1291,13 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
             - Sid: DwpTestKmsKeyAccess
               Effect: Allow
               Action:
@@ -1456,6 +1491,13 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
             - Sid: DwpStageKmsKeyAccess
               Effect: Allow
               Action:
@@ -1650,6 +1692,15 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DwpOldFormatDeathDeliveryQueue.QueueName
       VpcConfig:
@@ -1888,6 +1939,13 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
             - Sid: OgdKmsKeyAccess
               Effect: Allow
               Action:
@@ -2274,6 +2332,13 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+            - Sid: AuditKmsKeyAccess
+              Effect: Allow
+              Action:
+                - kms:Decrypt
+                - kms:GenerateDataKey
+              Resource:
+                - !GetAtt AuditKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:

@@ -2,9 +2,13 @@
 ROOT_DIR="$( git rev-parse --show-toplevel )"
 ARCH_DIR="$(mktemp -d)"
 
-# Swap lines to run locally
-# git clone --depth 1 git@github.com:alphagov/digital-identity-architecture.git "$ARCH_DIR"
-git clone --depth 1 "https://${ARCH_TOKEN}@github.com/alphagov/digital-identity-architecture.git" "$ARCH_DIR"
+if [[ -z "${ARCH_TOKEN}" ]]; then
+  GIT_URI="git@github.com:"
+else
+  GIT_URI="https://${ARCH_TOKEN}@github.com/"
+fi
+
+git clone --depth 1 "${GIT_URI}alphagov/digital-identity-architecture.git" "$ARCH_DIR"
 
 DATA_MODEL_ERB="$ROOT_DIR/techdocs/source/data-model.html.md.erb"
 echo "---

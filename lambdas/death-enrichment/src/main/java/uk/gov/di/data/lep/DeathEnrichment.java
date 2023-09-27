@@ -37,8 +37,7 @@ public class DeathEnrichment
             var baseData = objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationID.class);
             var enrichedData = enrichData(baseData);
 
-            var auditData = generateAuditData(enrichedData);
-            addAuditDataToQueue(auditData);
+            audit(enrichedData);
 
             return mapAndPublish(enrichedData);
         } catch (JsonProcessingException e) {
@@ -55,8 +54,8 @@ public class DeathEnrichment
     }
 
     @Tracing
-    private DeathEnrichmentAudit generateAuditData(DeathNotificationSet enrichedData) {
+    private void audit(DeathNotificationSet enrichedData) {
         var auditDataExtensions = new DeathEnrichmentAuditExtensions(enrichedData.hashCode(), enrichedData.txn());
-        return new DeathEnrichmentAudit(auditDataExtensions);
+        addAuditDataToQueue(new DeathEnrichmentAudit(auditDataExtensions));
     }
 }

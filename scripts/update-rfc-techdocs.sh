@@ -11,10 +11,8 @@ echo "---
 title: Data model for life events
 weight: 15
 ---" > "$DATA_MODEL_ERB"
-cat "$ARCH_DIR/rfc/0056-physical-data-model-death-notification-event.md" >> "$DATA_MODEL_ERB"
-# This version works on Ubuntu for github actions. If for any reason you need to run this on a mac, replace with the line
-# sed -i "" "
-sed -i "
+
+sed "
 s/RFC [0-9]* //
 s/> \[\!NOTE\]//
 s/> \[\!IMPORTANT\]//
@@ -22,6 +20,6 @@ s/> \[\!IMPORTANT\]//
   N
   s/> \[\!WARNING\]\n> \(.*\)/<%= warning_text\('\1'\) %>\n/
 }
-" "$DATA_MODEL_ERB"
+" "$ARCH_DIR/rfc/0056-physical-data-model-death-notification-event.md" >> "$DATA_MODEL_ERB"
 
 rm -rf "$ARCH_DIR"

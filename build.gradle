@@ -1,7 +1,32 @@
 plugins {
     id "java"
     id "org.sonarqube" version "4.3.1.3277"
+    id 'jacoco-report-aggregation'
     id "com.diffplug.spotless" version "6.21.0"
+}
+
+dependencies {
+    jacocoAggregation project(":lambdas:convert-set-to-old-format")
+    jacocoAggregation project(":lambdas:death-enrichment")
+    jacocoAggregation project(":lambdas:death-minimisation")
+    jacocoAggregation project(":lambdas:death-validation")
+    jacocoAggregation project(":lambdas:gro-convert-to-json")
+    jacocoAggregation project(":lambdas:gro-generate-xml")
+    jacocoAggregation project(":lambdas:gro-publish-record")
+    jacocoAggregation project(":lambdas:gro-pull-file")
+    jacocoAggregation project(":lib")
+}
+
+reporting {
+    reports {
+        testCodeCoverageReport(JacocoCoverageReport) {
+            testType = TestSuiteType.UNIT_TEST
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
 }
 
 repositories {
@@ -14,13 +39,31 @@ java {
     }
 }
 
+String jacocoBuildReportPath = "reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+
 sonar {
     properties {
         property "sonar.projectKey", "alphagov_di-data-life-events-platform"
         property "sonar.organization", "alphagov"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "$project.buildDir/$jacocoBuildReportPath"
     }
 }
+
+subprojects {
+    sonar {
+        properties {
+            property 'sonar.coverage.jacoco.xmlReportPaths', "$projectDir.parentFile.path/build/$jacocoBuildReportPath"
+        }
+    }
+}
+
+project(":platform") {
+    sonar {
+        skipProject = true
+    }
+}
+
 
 spotless {
     java {

@@ -10,12 +10,17 @@ import software.amazon.lambda.powertools.logging.Logging;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 
+import java.util.UUID;
+
 public class DeathValidation
-    extends LambdaHandler<GroJsonRecord>
+    extends LambdaHandler<GroJsonRecordWithCorrelationID>
     implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     public DeathValidation() {
@@ -31,6 +36,9 @@ public class DeathValidation
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent apiRequest, Context context) {
         try {
             var event = validateRequest(apiRequest);
+
+            audit(event);
+
             mapAndPublish(event);
             return new APIGatewayProxyResponseEvent().withStatusCode(201);
         } catch (MappingException e) {
@@ -39,14 +47,23 @@ public class DeathValidation
     }
 
     @Tracing
-    private GroJsonRecord validateRequest(APIGatewayProxyRequestEvent event) {
+    private GroJsonRecordWithCorrelationID validateRequest(APIGatewayProxyRequestEvent event) {
         logger.info("Validating request");
 
         try {
-            return objectMapper.readValue(event.getBody(), GroJsonRecord.class);
+            var headers = event.getHeaders();
+            var correlationID = headers != null && headers.get("CorrelationID") != null ? headers.get("CorrelationID") : UUID.randomUUID().toString();
+            var groJsonRecord = objectMapper.readValue(event.getBody(), GroJsonRecord.class);
+            return new GroJsonRecordWithCorrelationID(groJsonRecord, correlationID);
         } catch (JsonProcessingException e) {
             logger.error("Failed to validate request due to mapping error");
             throw new MappingException(e);
         }
+    }
+
+    @Tracing
+    private void audit(GroJsonRecordWithCorrelationID event) {
+        var auditDataExtensions = new DeathValidationAuditExtensions(event.correlationID());
+        addAuditDataToQueue(new DeathValidationAudit(auditDataExtensions));
     }
 }

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathValidationAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
@@ -60,7 +62,7 @@ class LambdaHandlerTest {
     }
 
     @Test
-    void failingToWriteAsStringThrowsException() throws JsonProcessingException {
+    void publishFailingToWriteAsStringThrowsException() throws JsonProcessingException {
         var output = new GroJsonRecordBuilder().build();
 
         var jsonException = mock(JsonProcessingException.class);
@@ -100,6 +102,32 @@ class LambdaHandlerTest {
         verify(logger).info("Putting message on target topic: {}", "targetTopicARN");
 
         verify(awsService).putOnTopic("mappedTopicOutput");
+    }
+
+    @Test
+    void addAuditDataToQueuePublishesMessageToQueue() throws JsonProcessingException {
+        var auditData = new DeathValidationAudit(new DeathValidationAuditExtensions("correlationID"));
+
+        when(config.getAuditQueue()).thenReturn("auditQueue");
+        when(objectMapper.writeValueAsString(auditData)).thenReturn("mappedAuditData");
+
+        underTest.addAuditDataToQueue(auditData);
+
+        verify(awsService).putOnAuditQueue("mappedAuditData");
+    }
+
+    @Test
+    void addAuditDataToQueueFailingToWriteAsStringThrowsException() throws JsonProcessingException {
+        var auditData = new DeathValidationAudit(new DeathValidationAuditExtensions("correlationID"));
+
+        var jsonException = mock(JsonProcessingException.class);
+        when(objectMapper.writeValueAsString(auditData)).thenThrow(jsonException);
+
+        var exception = assertThrows(MappingException.class, () -> underTest.addAuditDataToQueue(auditData));
+
+        assertEquals(jsonException, exception.getCause());
+
+        verify(awsService, never()).putOnAuditQueue(any());
     }
 
     static class TestLambda extends LambdaHandler<GroJsonRecord> {

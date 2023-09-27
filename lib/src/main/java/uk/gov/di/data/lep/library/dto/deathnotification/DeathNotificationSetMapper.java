@@ -1,6 +1,7 @@
 package uk.gov.di.data.lep.library.dto.deathnotification;
 
 import software.amazon.lambda.powertools.tracing.Tracing;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
 import uk.gov.di.data.lep.library.services.UrnFactory;
@@ -22,13 +23,13 @@ public class DeathNotificationSetMapper {
     }
 
     @Tracing
-    public static DeathNotificationSet generateDeathNotificationSet(GroJsonRecord groRecord) {
+    public static DeathNotificationSet generateDeathNotificationSet(GroJsonRecordWithCorrelationID groJsonRecordWithCorrelationID) {
+        var groRecord = groJsonRecordWithCorrelationID.groJsonRecord();
         var iat = Instant.now().getEpochSecond();
         var jti = UUID.randomUUID().toString();
         var toe = groRecord.recordLockedDateTime() == null
             ? groRecord.recordUpdateDateTime().toEpochSecond(ZoneOffset.UTC)
             : groRecord.recordLockedDateTime().toEpochSecond(ZoneOffset.UTC);
-        var txn = UUID.randomUUID().toString();
 
         return new DeathNotificationSet(
             null,
@@ -40,7 +41,7 @@ public class DeathNotificationSetMapper {
             null,
             null,
             toe,
-            txn
+            groJsonRecordWithCorrelationID.correlationID()
         );
     }
 

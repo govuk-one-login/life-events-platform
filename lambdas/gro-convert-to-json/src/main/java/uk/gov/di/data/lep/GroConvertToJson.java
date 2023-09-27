@@ -16,11 +16,15 @@ import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
 import uk.gov.di.data.lep.exceptions.AuthException;
+import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;
-import uk.gov.di.data.lep.library.dto.GroJsonRecordWithAuth;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
+import uk.gov.di.data.lep.library.dto.GroJsonRecordWithHeaders;
 import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
+import uk.gov.di.data.lep.library.dto.gro.audit.GroConvertToJsonAudit;
+import uk.gov.di.data.lep.library.dto.gro.audit.GroConvertToJsonAuditExtensions;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
@@ -33,12 +37,11 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.UUID;
 
-public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
+public class GroConvertToJson
+    extends LambdaHandler<GroJsonRecordWithCorrelationID>
+    implements RequestHandler<S3ObjectCreatedNotificationEvent, GroFileLocations> {
     protected static Logger logger = LogManager.getLogger();
     protected static MetricsLogger metricsLogger = MetricsUtils.metricsLogger();
-    private final AwsService awsService;
-    private final Config config;
-    private final ObjectMapper objectMapper;
     private final XmlMapper xmlMapper;
 
     public GroConvertToJson() {
@@ -46,9 +49,7 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
     }
 
     public GroConvertToJson(AwsService awsService, Config config, ObjectMapper objectMapper, XmlMapper xmlMapper) {
-        this.awsService = awsService;
-        this.config = config;
-        this.objectMapper = objectMapper;
+        super(awsService, config, objectMapper);
         this.xmlMapper = xmlMapper;
     }
 
@@ -107,11 +108,13 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
 
             validateRecordCount(records, deathRegistrationGroup.recordCount());
 
-            var recordsWithAuth = records.stream()
-                .map(r -> new GroJsonRecordWithAuth(r, authorisationToken))
+            var recordsWithHeaders = records.stream()
+                .map(r -> new GroJsonRecordWithHeaders(r, authorisationToken, UUID.randomUUID().toString()))
                 .toList();
 
-            return objectMapper.writeValueAsString(recordsWithAuth);
+            generateAndAddListOfAuditDataToQueue(recordsWithHeaders, xmlData.hashCode());
+
+            return objectMapper.writeValueAsString(recordsWithHeaders);
         } catch (JsonProcessingException e) {
             logger.info("Failed to map DeathRegistrations xml to GroJsonRecord list");
             throw new MappingException(e);
@@ -132,6 +135,15 @@ public class GroConvertToJson implements RequestHandler<S3ObjectCreatedNotificat
             if (records.size() != recordCount) {
                 throw new MappingException(String.format("Expected %d records but %d were found", recordCount, records.size()));
             }
+        }
+    }
+
+    @Tracing
+    private void generateAndAddListOfAuditDataToQueue(List<GroJsonRecordWithHeaders> recordsWithHeaders, Integer fileHash) {
+        for (var recordWithHeader : recordsWithHeaders) {
+            var auditDataExtensions = new GroConvertToJsonAuditExtensions(recordWithHeader.correlationID(), fileHash);
+            var auditData = new GroConvertToJsonAudit(auditDataExtensions);
+            addAuditDataToQueue(auditData);
         }
     }
 }

@@ -579,6 +579,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-validation
           TARGET_QUEUE: !GetAtt DeathEnrichmentQueue.QueueUrl
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -604,6 +605,8 @@ Resources:
                 - !GetAtt MainKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DeathEnrichmentQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -634,6 +637,7 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: death-enrichment
           TARGET_TOPIC: !GetAtt DeathDistributionTopic.TopicArn
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -656,6 +660,8 @@ Resources:
                 - !GetAtt MainKmsKey.Arn
         - SNSPublishMessagePolicy:
             TopicName: !GetAtt DeathDistributionTopic.TopicName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -819,6 +825,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpDeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -848,6 +855,8 @@ Resources:
                 - !GetAtt DwpDeathKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DwpDeathDeliveryQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -1040,6 +1049,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpDevDeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -1069,6 +1079,8 @@ Resources:
                 - !GetAtt DwpDevDeathKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DwpDevDeathDeliveryQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -1230,6 +1242,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpTestDeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -1259,6 +1272,8 @@ Resources:
                 - !GetAtt DwpTestDeathKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DwpTestDeathDeliveryQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -1420,6 +1435,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt DwpStageDeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: NAME, SEX, DEATH_DATE, BIRTH_DATE, ADDRESS
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -1449,6 +1465,8 @@ Resources:
                 - !GetAtt DwpStageDeathKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt DwpStageDeathDeliveryQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -1849,6 +1867,7 @@ Resources:
           POWERTOOLS_SERVICE_NAME: death-minimisation
           TARGET_QUEUE: !GetAtt OgdDeathDeliveryQueue.QueueUrl
           ENRICHMENT_FIELDS: NAME, DEATH_DATE, BIRTH_DATE
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Events:
@@ -1878,6 +1897,8 @@ Resources:
                 - !GetAtt OgdDeathKmsKey.Arn
         - SQSSendMessagePolicy:
             QueueName: !GetAtt OgdDeathDeliveryQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA
@@ -2230,6 +2251,7 @@ Resources:
           COGNITO_DOMAIN_NAME: !Sub ${Environment}${Developer}-life-events
           USER_POOL_ID: !Ref UserPool
           GRO_RECORDS_BUCKET_NAME: !Ref GroRecordsBucket
+          AUDIT_QUEUE: !GetAtt AuditQueue.QueueUrl
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Policies:
@@ -2252,6 +2274,8 @@ Resources:
                 - kms:GenerateDataKey
               Resource:
                 - !GetAtt MainKmsKey.Arn
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt AuditQueue.QueueName
       VpcConfig:
         SubnetIds:
           - Fn::ImportValue: !Sub ${VpcStackName}-ProtectedSubnetIdA

@@ -1,0 +1,26 @@
+name: Update data model
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+      - name: Update model
+        env:
+          ARCH_TOKEN: ${{ secrets.ARCHITECTURE_READONLY_PAT }}
+        run: scripts/update-rfc-techdocs.sh
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "GPC-NONE: Automatically update data model"
+          file_pattern: '*.erb'

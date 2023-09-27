@@ -3,8 +3,8 @@ ROOT_DIR="$( git rev-parse --show-toplevel )"
 ARCH_DIR="$(mktemp -d)"
 
 # Swap lines to run locally
-# git clone --depth 1 git@github.com:alphagov/digital-identity-architecture.git -b 0056-physical-data-model-death-registration-event "$ARCH_DIR"
-git clone --depth 1 "https://${ARCH_TOKEN}@github.com/alphagov/digital-identity-architecture.git" -b 0056-physical-data-model-death-registration-event "$ARCH_DIR"
+# git clone --depth 1 git@github.com:alphagov/digital-identity-architecture.git "$ARCH_DIR"
+git clone --depth 1 "https://${ARCH_TOKEN}@github.com/alphagov/digital-identity-architecture.git" "$ARCH_DIR"
 
 DATA_MODEL_ERB="$ROOT_DIR/techdocs/source/data-model.html.md.erb"
 echo "---

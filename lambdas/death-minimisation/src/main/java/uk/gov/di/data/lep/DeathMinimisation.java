@@ -46,8 +46,7 @@ public class DeathMinimisation
                 .writer(filterProvider)
                 .writeValueAsString(enrichedData);
 
-            var auditData = generateAuditData(minimisedData, enrichedData.txn());
-            addAuditDataToQueue(auditData);
+            audit(minimisedData, enrichedData.txn());
 
             return publish(minimisedData);
         } catch (JsonProcessingException e) {
@@ -69,8 +68,8 @@ public class DeathMinimisation
     }
 
     @Tracing
-    private DeathMinimisationAudit generateAuditData(String minimisedData, String correlationID) {
+    private void audit(String minimisedData, String correlationID) {
         var auditDataExtensions = new DeathMinimisationAuditExtensions(config.getTargetQueue(), minimisedData.hashCode(), correlationID);
-        return new DeathMinimisationAudit(auditDataExtensions);
+        addAuditDataToQueue(new DeathMinimisationAudit(auditDataExtensions));
     }
 }

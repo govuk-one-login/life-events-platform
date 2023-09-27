@@ -37,8 +37,7 @@ public class DeathValidation
         try {
             var event = validateRequest(apiRequest);
 
-            var auditData = generateAuditData(event);
-            addAuditDataToQueue(auditData);
+            audit(event);
 
             mapAndPublish(event);
             return new APIGatewayProxyResponseEvent().withStatusCode(201);
@@ -63,8 +62,8 @@ public class DeathValidation
     }
 
     @Tracing
-    private DeathValidationAudit generateAuditData(GroJsonRecordWithCorrelationID event) {
+    private void audit(GroJsonRecordWithCorrelationID event) {
         var auditDataExtensions = new DeathValidationAuditExtensions(event.correlationID());
-        return new DeathValidationAudit(auditDataExtensions);
+        addAuditDataToQueue(new DeathValidationAudit(auditDataExtensions));
     }
 }

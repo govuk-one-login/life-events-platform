@@ -26,7 +26,7 @@
     "@aws-sdk/util-dynamodb": "3.417.0",
     "@types/aws-lambda": "8.10.122",
     "@types/es-aggregate-error": "1.0.2",
-    "@types/estree": "1.0.1",
+    "@types/estree": "1.0.2",
     "@types/json-schema": "7.0.13",
     "@types/node": "18.17.18",
     "@types/urijs": "1.19.20",

@@ -30,7 +30,7 @@
     "@types/json-schema": "7.0.13",
     "@types/node": "18.17.18",
     "@types/urijs": "1.19.20",
-    "esbuild": "0.19.3",
+    "esbuild": "0.19.4",
     "fast-xml-parser": "4.3.1",
     "object-hash": "3.0.0",
     "typescript": "5.2.2"

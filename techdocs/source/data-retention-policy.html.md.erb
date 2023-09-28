@@ -5,32 +5,88 @@ weight: 96
 
 # Data Retention Policy
 
-We want to prevent the loss of data when there are processing issues, whilst minimising the amount of time we hold any
-data for.
+## Changelog
+| Version | Date       | Changes       |
+|---------|------------|---------------|
+| 0.1     | 2023-09-27 | Initial draft |
 
-## Maximum Retention Periods
+## Purpose and scope
+This data retention policy has been established to prevent the loss of data when there are processing issues, whilst
+minimising the amount of time the Life Events Platform holds any data for.
 
-All of our source queues have a maximum retention period of 7 days. This is to allow for any processing issues to be
-identified in the event of problems over bank holidays, or periods of low team availability.
+This policy covers:
 
-Our dead letter queues have a retention period of 14 days, to maximise the time allowed to fix any issues causing
-message delivery (or processing) to fail.
+- Source queue retention periods
+- Dead letter queue retention periods
+- Alarms
+- Audit Logs
 
+## Queue retention periods
+These queues handle records received from the GRO. This data is not anonymised, and contains the full payload made
+available to DWP.
 
-## Alarms
+All __source queues__ have a maximum retention period of 7 calendar days.
 
-### Delivery Queues
+The expected retention time period required is much lower than this - less than 5 minutes.
 
-There is an alarm for when the oldest message on the source queue has reached 1 day, and a further alarm when there has
-been a message on the source queue for 3 days.
+A maximum retention period of 7 days has been set so that there is sufficient time to resolve an issue before any data
+is lost, taking into account long bank holiday weekends (E.g. Easter or Christmas), which would reduce time available to
+resolve an issue, if detected.
 
-There is an alarm for when any message is put on the DLQ.
+For example, if the system encountered an issue at 9pm on the Thursday before the 4 day Easter weekend, due to Good
+Friday and Easter Monday bank holidays, the team would not see that there is an issue until 4.5 days after the issues
+originally occurred. The 7 day retention period would enable a team, in this circumstance, to have 2 full working days
+to solve the issue before data is lost.
 
-### Processing Queues
+__Dead letter queues__ hold any messages that error on delivery or processing. The retention period of the dead letter
+queues is 14 calendar days.
 
-We have an alarm when a message is on the source processing queue for more than 1 minute, and when any message is put on
-the DLQ.
+This time period is measured from when a message is first put on a source queue. Messages will only end up on this queue
+when there is an issue with the system, so we have given a 14 day retention period to allow the team to fix any
+problems. Since messages may spend up to 7 days on the source queue before moving to the dead letter queue, the
+reasoning for this time period is as above - it allows the team sufficient time to identify and fix issues even around
+Bank Holidays and Christmas.
+
+Under normal circumstances, data will not go to the dead letter queues. The presence of data on the dead letter queues
+indicates a problem, which would be addressed as a priority by the team. The expected retention is therefore much less
+than 14 days, at around 2 working days to resolve the majority of issues.
+
+## Queue alarms
+We have set up alarms to notify the team if any message is on a queue longer than expected, or if a message errors. This
+allows us to work on any issues as soon as we can see they are causing an effect on the delivery of messages, and
+minimises the time the queue is in this state, and hence reduces the necessary maximum retention period.
+
+Alarms have been configured for the following scenarios:
+
+- When there has been a message on the delivery source queue for 1 day
+- When there has been a message on the delivery source queue for 3 days
+- When there has been a message on the processing source queue for 1 minute
+- When any message is put on a dead letter queue (DLQ)
+
+These thresholds reflect the expected working behaviour of the system.
 
 ## Audit Logs
+Anonymised data is sent to the audit queue. This data is held for 7 years, in line with GOV.UK One Login policy on audit
+logs. The audit logs contain cryptographic hashes of the data received from GRO and sent to DWP, as well as record
+identifiers. It is not possible to recover the original data from the hashes. These logs do not contain information such
+as name or date of death received from GRO.
 
-Anonymised data is sent to the audit queue. This data is held for 7 years.
+We also store access and change logs (CloudTrail logs and S3 Bucket access logs) for the AWS account in which the
+processing occurs.
+
+These logs are captured and stored to aid in any internal investigation into malfunction of the system, fraudulent
+activity or unauthorised access. They would also be used to assist DWP or GRO in any investigation that may occur, or
+the servicing of any complaints.
+
+The 7 year retention policy has been chosen as it is considered unlikely that an investigation would be required for
+data processed longer than 7 years ago.
+
+## Exceptions process
+While we expect to be able to resolve the vast majority of issues within the retention periods set out above, it is
+possible that some fixes will take longer than this. Under these circumstances, we will record the source identifiers
+and record dates of any data we have been unable to successfully process. This information will be used to trigger
+redelivery of the affected records from GRO once the processing issue is resolved. We will not record details such as
+name or date of death of the affected records. This allows us to process the records without data loss, while not
+exceeding the retention periods set out above.
+
+In the event that the above exceptions process is enacted, both GRO and DWP will be informed.

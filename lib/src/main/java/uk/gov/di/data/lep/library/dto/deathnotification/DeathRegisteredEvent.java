@@ -6,7 +6,6 @@ import uk.gov.di.data.lep.library.config.Constants;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.time.ZonedDateTime;
 
 @JsonFilter("DeathNotificationSet")
 public record DeathRegisteredEvent(

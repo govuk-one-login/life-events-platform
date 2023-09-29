@@ -8,7 +8,6 @@ import uk.gov.di.data.lep.library.dto.gro.PersonDeathDateStructure;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 

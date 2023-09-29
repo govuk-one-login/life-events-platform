@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.di.data.lep.library.config.Constants;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 

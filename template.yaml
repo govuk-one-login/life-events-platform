@@ -468,7 +468,8 @@ Resources:
       DisplayName: !Sub ${Environment}${Developer}-alert-topic
       TopicName: !Sub ${Environment}${Developer}-alert-topic
       Tags:
-        CheckovRulesToSkip: CKV_AWS_26
+        - Key: CheckovRulesToSkip
+          Value: CKV_AWS_26
 
   AlertTopicSubscription:
     Type: AWS::SNS::Subscription

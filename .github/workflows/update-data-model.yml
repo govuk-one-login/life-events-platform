@@ -23,7 +23,7 @@ jobs:
       - uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT }}
-          commit_message: "GPC-NONE: Automatically update data model"
+          commit-message: "GPC-NONE: Automatically update data model"
           branch: "update-data-model"
           title: "GPC-NONE: Automatically update data model"
 

@@ -76,8 +76,11 @@ public class GroPublishRecord implements RequestStreamHandler {
 
         try {
             logger.info("Sending GRO record request: {}", event.registrationID());
-            httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
+            var response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 400) {
+                throw new MappingException("Mapping exception during validation");
+            }
+        } catch (IOException | InterruptedException | MappingException e) {
             logger.error("Failed to send GRO record request");
             throw new GroApiCallException("Failed to send GRO record request", e);
         }

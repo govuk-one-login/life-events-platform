@@ -83,6 +83,22 @@ class DeathValidationTest {
     }
 
     @Test
+    void validateGroDeathEventDataThrowsExceptionIfNeitherLockedNorUpdateTimeAreGiven() throws JsonProcessingException {
+        var event = new APIGatewayProxyRequestEvent().withBody("{\"sourceId\":\"123a1234-a12b-12a1-a123-123456789012\"}");
+        var groJsonRecord = new GroJsonRecordBuilder()
+            .withLockedDateTime(null)
+            .withUpdateDateTime(null)
+            .withUpdateReason(null)
+            .build();
+
+        when(objectMapper.readValue(event.getBody(), GroJsonRecord.class)).thenReturn(groJsonRecord);
+
+        var result = underTest.handleRequest(event, context);
+
+        assertEquals(400, result.getStatusCode());
+    }
+
+    @Test
     void deathValidationSnapshotTest() throws JsonProcessingException {
         var groJsonRecord = new GroJsonRecordBuilder().build();
         var event = new APIGatewayProxyRequestEvent()

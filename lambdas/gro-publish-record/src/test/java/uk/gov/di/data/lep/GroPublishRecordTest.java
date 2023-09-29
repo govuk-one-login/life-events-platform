@@ -70,9 +70,12 @@ class GroPublishRecordTest {
     @Test
     void publishRecordSendsGroRecordRequestsAndReturnsNull() throws IOException, InterruptedException {
         var httpClientMock = mockStatic(HttpClient.class);
+        var httpResponseMock = mock(HttpResponse.class);
         httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn(eventAsString);
+        when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(httpResponseMock);
+        when(httpResponseMock.statusCode()).thenReturn(201);
 
         underTest.handleRequest(eventAsInputStream, null, null);
 

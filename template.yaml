@@ -474,24 +474,104 @@ Resources:
       Protocol: email
       TopicArn: !Ref AlertTopic
 
-  DeadLetterQueueAlarm:
+  AuditDeadLetterQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: dead-letter-queue-alarm
+      AlarmName: audit-dead-letter-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateNumberOfMessagesVisible
       Dimensions:
-        - Name: AuditDlq
+        - Name: QueueName
           Value: !GetAtt AuditDeadLetterQueue.QueueName
-        - Name: DeathValidationDlq
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DeathValidationDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: death-validation-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
           Value: !GetAtt DeathValidationDlq.QueueName
-        - Name: DeathEnrichmentDlq
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DeathEnrichmentDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: death-enrichment-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
           Value: !GetAtt DeathEnrichmentDlq.QueueName
-        - Name: DwpDeathDistributionDlq
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DwpDeathDistributionDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: dwp-death-distribution-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
           Value: !GetAtt DwpDeathDistributionDlq.QueueName
-        - Name: DwpDeathMinimisationDlq
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DwpDeathMinimisationDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: dwp-death-minimisation-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
           Value: !GetAtt DwpDeathMinimisationDlq.QueueName
-        - Name: DwpDeathDeliveryDlq
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DwpDeathDeliveryDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: dwp-death-delivery-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
           Value: !GetAtt DwpDeathDeliveryDlq.QueueName
       Statistic: Sum
       Period: 60
@@ -502,20 +582,68 @@ Resources:
       AlarmActions:
         - !Ref AlertTopic
 
-  OneHourOnQueueAlarm:
+  OneHourOnAuditQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: one-hour-on-queue-alarm
+      AlarmName: one-hour-on-audit-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateAgeOfOldestMessage
       Dimensions:
-        - Name: AuditQueue
+        - Name: QueueName
           Value: !GetAtt AuditQueue.QueueName
-        - Name: DeathEnrichmentQueue
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 5
+      Threshold: 3600
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  OneHourOnDeathEnrichmentQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: one-hour-on-death-enrichment-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: QueueName
           Value: !GetAtt DeathEnrichmentQueue.QueueName
-        - Name: DwpDeathMinimisationQueue
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 5
+      Threshold: 3600
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  OneHourOnDeathMinimisationQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: one-hour-on-death-minimisation-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: QueueName
           Value: !GetAtt DwpDeathMinimisationQueue.QueueName
-        - Name: DwpDeathDeliveryQueue
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 5
+      Threshold: 3600
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  OneHourOnDwpDeathDeliveryQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: one-hour-on-dwp-death-delivery-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: QueueName
           Value: !GetAtt DwpDeathDeliveryQueue.QueueName
       Statistic: Sum
       Period: 60
@@ -526,10 +654,10 @@ Resources:
       AlarmActions:
         - !Ref AlertTopic
 
-  OneDayOnDeathDeliveryQueueAlarm:
+  OneDayOnDwpDeathDeliveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: one-day-on-death-delivery-queue-alarm
+      AlarmName: one-day-on-dwp-death-delivery-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateAgeOfOldestMessage
       Dimensions:
@@ -544,10 +672,10 @@ Resources:
       AlarmActions:
         - !Ref AlertTopic
 
-  ThreeDaysOnDeathDeliveryQueueAlarm:
+  ThreeDaysOnDwpDeathDeliveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: three-days-on-death-delivery-queue-alarm
+      AlarmName: three-days-on-dwp-death-delivery-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateAgeOfOldestMessage
       Dimensions:

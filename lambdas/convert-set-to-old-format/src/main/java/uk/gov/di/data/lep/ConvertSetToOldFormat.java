@@ -13,7 +13,6 @@ import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegisteredEvent;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationSubject;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationUpdatedEvent;
 import uk.gov.di.data.lep.library.dto.deathnotification.Name;
 import uk.gov.di.data.lep.library.dto.deathnotification.NamePart;

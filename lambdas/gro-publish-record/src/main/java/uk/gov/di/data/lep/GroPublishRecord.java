@@ -80,6 +80,9 @@ public class GroPublishRecord implements RequestStreamHandler {
             if (response.statusCode() == 400) {
                 throw new MappingException("Mapping exception during validation");
             }
+            if (response.statusCode() != 201) {
+                throw new GroApiCallException("Unexpected status code from API Gateway response");
+            }
         } catch (IOException | InterruptedException | MappingException e) {
             logger.error("Failed to send GRO record request");
             throw new GroApiCallException("Failed to send GRO record request", e);

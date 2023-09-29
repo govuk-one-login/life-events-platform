@@ -2,11 +2,11 @@
 title: Data model for life events
 weight: 15
 ---
-# Physical Data Model for death notification events
+# Physical data model for death notification events
 
 ## Context
 
-The purpose of this RFC is to agree the physical data model to integrate Life Events from General Register Officer (GRO, part of the Home Office) to One Login. In scope required for MVP is death notification event which originates with GRO's "RON" system.
+The purpose of this RFC is to agree upon the physical data model required to integrate Life Events from General Register Officer (GRO) to GOV.UK One Login. In scope required for MVP is a death notification event which originates from GRO's Registration Online (RON) system.
 
 Decisions about encryption and signing of these event payloads are out of scope.
 
@@ -14,57 +14,57 @@ Decisions about encryption and signing of these event payloads are out of scope.
 
 ### 2023-08
 
-First draft to share internally and with DWP.
+First draft to share internally and with the Department for Work and Pensions (DWP).
 
 ### 2023-09
 
 Changes for consistency and future-proofing:
 
-* event name/URIs change to reflect "registered" and "registration updated" following standard event naming convention
-* change of `deathRegistrationID` to `deathRegistration`
-* change the identifier to be a URN based on the original ID
-* `recordUpdateTime` and `deathRegistrationTime` no longer wrapped in an object with a `value` property
-* add `freeFormatBirthDate`
+* follow standard event naming conventions by updating event names/URIs to match 'registered' and 'registration updated'
+* change `deathRegistrationID` to `deathRegistration`
+* modify that identifier to be a Uniform Resource Name (URN) based on the original ID
+* no longer wrap `recordUpdateTime` and `deathRegistrationTime` in an object with a `value` property
+* include `freeFormatBirthDate` property
 
 ## Death event structure
 
 A death notification event is represented using a JSON object that conforms to the payload required of a Security Event Token
 (SET, see [IETF RFC 8417](https://www.rfc-editor.org/rfc/rfc8417.html)).
 
-We refer to this as the "event payload".
+We refer to this as the 'event payload'.
 
 The `iss` (issuer), `iat` (issued at) and `jti` (JWT identifier) claims are required.
 
 Other JWT claims such as `txn` may be present in the payload and should follow the requirements of this specification or the SET profile.
 
-Two types of event are defined in this specification - a "death registered" event and a "death registration updated" event.
-The data model is broadly the same but the meaning or presence of some properties depends on the type of event.
+Two types of event are defined in this specification - a 'death registered' event and a 'death registration updated' event.
+The data model is broadly the same but the significance of certain properties depends on the type of event.
 
-In both cases, the value of the `events` claim is a JSON object with a single member, where the name indicates the type of the event, and the value is an "event object" as described in the rest of this document.
+In both cases, the value of the `events` claim is a JSON object with a single member, where the name indicates the type of the event, and the value is an 'event object' as described in the rest of this document.
 
 
-> We intentionally define "event object" as distinct from "event payload" so that it's easy to be precise when talking about the different levels of the JSON structure.
+> We intentionally define 'event object' as distinct from 'event payload' so that it's easy to be precise when talking about the different levels of the JSON structure.
 
 ### Classes and types
 
-The specific classes and types described here will in future be found in the
-[Digital Identity Vocabulary](https://alphagov.github.io/di-identity-vocab/),
-the source of which is
+The specific classes and types described here will be found in future within the
+[GOV.UK One Login vocabulary](https://alphagov.github.io/di-identity-vocab/),
+and the relevant source is
 [available on GitHub](https://github.com/alphagov/di-identity-vocab).
 
-For now, JSON Schema files can be found at:
+For now, [JSON Schema](https://json-schema.org/) files can be found at:
 
 * [DeathRegisteredJWT.json](https://alphagov.github.io/di-identity-vocab/v1/json-schemas/DeathRegisteredJWT.json)
 * [DeathRegistrationUpdatedJWT.json](https://alphagov.github.io/di-identity-vocab/v1/json-schemas/DeathRegistrationUpdatedJWT.json)
 
 We mention JSON types such as arrays, strings and objects, but also more specific types which imply some particular validation.
 
-We refer to a "list" type where we mean a JSON array in which the order may be significant.
+We refer to a 'list' type where we mean a JSON array in which the order may be significant.
 
-The "DateTime" type refers to a complete ISO date and time as [described by schema.org](https://schema.org/DateTime).
+The 'DateTime' type refers to a complete ISO date and time as [described by Schema.org](https://schema.org/DateTime).
 All such properties must include a time zone specifier and the time zone should be UTC (even when daylight savings time applies).
 
-The "ISODate" type refers to a partial (or complete) ISO date, with no time part and in which the day part and month part are optional.
+ The 'ISODate' type contains a complete or partial ISO date, without a 'time' part and in which the 'day' and 'month' parts are optional.
 
 ### Death registered event
 
@@ -78,7 +78,7 @@ https://vocab.account.gov.uk/v1/deathRegistered
 
 
 > We may change the name of these event objects in future, for example we may decide to include a version number.
-> For example, `https://vocab.account.gov.uk/v1/deathRegistered/v3` could indicate "the third version of the death registered event in the first version of the event vocabulary".
+> For example, `https://vocab.account.gov.uk/v1/deathRegistered/v3` could indicate 'the third version of the death registered event in the first version of the event vocabulary'.
 > If we decide to do this, the consequences will be discussed in a separate ADR.
 
 The event object schema is described below in [common event object properties](#common-event-object-properties).
@@ -120,7 +120,8 @@ The value for the `deathRegistrationUpdateReason` property must be one of the fo
 ### Common event object properties
 
 The following properties are common to both types of event.
-Some properties are marked "expected" which means we expect to see them in our initial implementation which uses the RON, but data from other sources may vary.
+Some properties are marked as 'expected' which means we expect to see them in our initial implementation which uses the RON.
+However, data from other sources may vary.
 
 | Property | Required | Description |
 |---|---|---|
@@ -152,11 +153,11 @@ The value for `name` is a list of name objects with the following properties:
 | `description` | | A human-readable description that may help with manual matching in cases where multiple name objects are in the list. |
 
 There must be at least one entry in the list of name objects.
-Where a person has (or has had) more than one name, there will be more than one entry in the list.
+Where a person currently has (or has previously had) more than one name, there will be more than one entry in the list.
 
 The first entry in the list must reflect the person's full name when they died, as held on the official register.
 
-Where a record shows that the person changed their name as a result of marriage or civil partnership (ie they have a 'maiden name'), their given names must be duplicated, together with their family name at birth, into another entry in the list.
+Where a record shows that the person changed their name as a result of marriage or civil partnership, their given names must be duplicated, together with their family name at birth (often described as a 'maiden name'), into another entry in the list.
 
 Where a record shows that the person went by one or more other aliases, each alias (as a complete set of name parts, usually multiple given names and a family name) is a separate entry in the list.
 Each of these objects must include duplicates of any given names or family names that are common with other entries in the list so that it represents a full name.
@@ -169,7 +170,7 @@ A list of objects is used for consistency with other personal attributes that ca
 Exactly one entry is allowed in a list for a life event originating from an official register.
 
 
-> Some sources in the UK use the term "gender" to refer to "legal sex".
+> Some sources in the UK use the term 'gender' to refer to 'legal sex'.
 
 The properties allowed in each object are as follows:
 
@@ -180,7 +181,7 @@ The properties allowed in each object are as follows:
 ##### Birth date (list)
 
 The `birthDate` property is a list of objects because in some cases there may be a historical record of incorrect birth dates, that were previously considered to be correct.
-The value from the register (believed by the authorative source to be correct) must appear first in the list and is expected to be the only entry.
+The value from the register (believed by the authoritative source to be correct) must appear first in the list and is expected to be the only entry.
 
 The properties allowed in each object are as follows:
 
@@ -198,7 +199,7 @@ The most recent known address per the register must be first in the list.
 
 The [address structure RFC](0020-address-structure.md) describes the objects appearing in the list.
 
-<%= warning_text('No guarantee is provided that a complete address object will be populated.') %>
+<%= warning_text('There is no guarantee that a complete address object will be populated.') %>
 
 
 #### Death date properties
@@ -226,7 +227,7 @@ It should specify the timezone as UTC, which we expect to be represented via a `
 
 The string is therefore expected to be in a `yyyy-MM-ddThh:mm:ssZ` format.
 
-## Examples
+## Examples of output from the Life Events Platform
 
 Examples of output from the Life Events Platform are currently available
 [in GitHub](https://github.com/alphagov/di-identity-vocab/tree/main/v1/examples/life-events).
@@ -239,7 +240,7 @@ This could apply to the entire event, but might be overridden for specific attri
 
 ### Change control
 
-Adding a property to an object should not be considered a breaking change to the schema.
+Adding a property to an object should not be considered as a breaking change to the schema.
 
 
 > We'll add further notes about how this specification may change over time in a future update.

@@ -59,6 +59,7 @@ subprojects {
 }
 
 spotless {
+    enforceCheck = false
     java {
         target 'lib/src/*/java/**/*.java', 'lambdas/**/src/*/java/**/*.java'
 

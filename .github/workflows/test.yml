@@ -45,8 +45,11 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Build and unit tests
-        run: ./gradlew clean build
+      - name: Build, test, and report sonar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew clean build sonar --parallel
 
       - name: Report test results
         uses: dorny/test-reporter@v1
@@ -56,12 +59,6 @@ jobs:
           path: ${{ github.workspace }}/**/build/test-results/test/TEST-*.xml
           reporter: java-junit
           only-summary: true
-
-      - name: Perform Static Analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar
 
   checkov:
     name: SAM checkov

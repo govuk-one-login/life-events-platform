@@ -20,7 +20,7 @@ import uk.gov.di.data.lep.library.services.Mapper;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
@@ -112,8 +112,8 @@ public class GroGenerateXml
         );
     }
 
-    private LocalDateTime getRandomLocalDateTime() {
-        return LocalDateTime.ofInstant(
+    private ZonedDateTime getRandomLocalDateTime() {
+        return ZonedDateTime.ofInstant(
             Instant.ofEpochSecond(randomiser.nextLong(1692614010)), TimeZone.getDefault().toZoneId()
         );
     }

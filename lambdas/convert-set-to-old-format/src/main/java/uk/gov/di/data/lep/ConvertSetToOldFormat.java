@@ -13,8 +13,9 @@ import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathNotificationSet;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegisteredEvent;
-import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationSubject;
 import uk.gov.di.data.lep.library.dto.deathnotification.DeathRegistrationUpdatedEvent;
+import uk.gov.di.data.lep.library.dto.deathnotification.Name;
+import uk.gov.di.data.lep.library.dto.deathnotification.NamePart;
 import uk.gov.di.data.lep.library.dto.deathnotification.NamePartType;
 import uk.gov.di.data.lep.library.enums.EventType;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
@@ -26,6 +27,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class ConvertSetToOldFormat
     extends LambdaHandler<OldFormatDeathNotification>
@@ -70,7 +72,6 @@ public class ConvertSetToOldFormat
 
         var dateOfDeath = temporalAccessorToLocalDate(events.deathDate().value());
         var subject = events.subject();
-        var names = getNames(subject);
         var dateOfBirth = subject.birthDate() == null || subject.birthDate().isEmpty()
             ? temporalAccessorToLocalDate(null)
             : temporalAccessorToLocalDate(subject.birthDate().get(0).value());
@@ -78,20 +79,18 @@ public class ConvertSetToOldFormat
 
         var oldFormatEventData = new OldFormatEventData(
             deathRegistrationTime.toLocalDate(),
-            names.get(0),
-            names.get(1),
+            extractNamePart(subject.name(), NamePartType.GIVEN_NAME, s -> s== null || s.isEmpty()),
+            extractNamePart(subject.name(), NamePartType.FAMILY_NAME, s -> s== null || s.isEmpty()),
             subject.sex().get(0).toString(),
             dateOfDeath,
             dateOfBirth,
             null,
             null,
-            names.get(2),
+            extractNamePart(subject.name(), NamePartType.FAMILY_NAME, "Name before marriage"::equals),
             null,
             null,
             subject.address().get(0).postalCode()
         );
-
-
 
         return new OldFormatDeathNotification(
             UUID.randomUUID().toString(),
@@ -101,39 +100,15 @@ public class ConvertSetToOldFormat
         );
     }
 
-    private static List<String> getNames(DeathRegistrationSubject subject) {
-        var givenName = "";
-        var familyName = "";
-        var maidenName = "";
-
-        var optionalName = subject.name().stream()
-            .filter(n -> n.description() == null || n.description().isEmpty())
-            .findFirst();
-        if (optionalName.isPresent()) {
-            var optionalGivenName = optionalName.get().nameParts().stream()
-                .filter(np -> np.type() == NamePartType.GIVEN_NAME).findFirst();
-            var optionalFamilyName = optionalName.get().nameParts().stream()
-                .filter(np -> np.type() == NamePartType.FAMILY_NAME).findFirst();
-            if (optionalGivenName.isPresent()) {
-                givenName = optionalGivenName.get().value();
-            }
-            if (optionalFamilyName.isPresent()) {
-                familyName = optionalFamilyName.get().value();
-            }
-        }
-
-        var optionalMaidenName = subject.name().stream()
-            .filter(n -> n.description() != null && n.description().equals("Name before marriage"))
-            .findFirst();
-        if (optionalMaidenName.isPresent()) {
-            var optionalMaidenFamilyName = optionalMaidenName.get().nameParts().stream()
-                .filter(np -> np.type() == NamePartType.FAMILY_NAME).findFirst();
-            if (optionalMaidenFamilyName.isPresent()) {
-                maidenName = optionalMaidenFamilyName.get().value();
-            }
-        }
-
-        return List.of(givenName, familyName, maidenName);
+    private static String extractNamePart(List<Name> names, NamePartType partType, Predicate<String> descriptionMatcher) {
+        return names.stream()
+            .filter(n -> descriptionMatcher.test(n.description()))
+            .findFirst()
+            .flatMap(o -> o.nameParts().stream()
+                .filter(np -> np.type() == partType)
+                .map(NamePart::value)
+                .findFirst()
+            ).orElse("");
     }
 
     private LocalDate temporalAccessorToLocalDate(TemporalAccessor from) {

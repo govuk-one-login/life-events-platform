@@ -464,13 +464,16 @@ Resources:
   AlertTopic:
     Type: AWS::SNS::Topic
     Properties:
+      # checkov:skip=CKV_AWS_26: We do not need to encrypt this data on the SNS topic as alerts aren't sensitive
       DisplayName: !Sub ${Environment}${Developer}-alert-topic
       TopicName: !Sub ${Environment}${Developer}-alert-topic
+      Tags:
+        CheckovRulesToSkip: CKV_AWS_26
 
   AlertTopicSubscription:
     Type: AWS::SNS::Subscription
     Properties:
-      Endpoint: email@email.com
+      Endpoint: di-life-events-platform@digital.cabinet-office.gov.uk
       Protocol: email
       TopicArn: !Ref AlertTopic
 

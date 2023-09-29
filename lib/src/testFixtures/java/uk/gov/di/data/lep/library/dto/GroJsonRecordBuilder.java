@@ -8,12 +8,12 @@ import uk.gov.di.data.lep.library.dto.gro.PersonDeathDateStructure;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class GroJsonRecordBuilder {
-    private LocalDateTime recordLockedDateTime;
-    private LocalDateTime recordUpdateDateTime;
+    private ZonedDateTime recordLockedDateTime;
+    private ZonedDateTime recordUpdateDateTime;
     private Integer recordUpdateReason;
     private GroPersonNameStructure deceasedName;
     private List<GroPersonNameStructure> deceasedAliasNames;
@@ -27,18 +27,18 @@ public class GroJsonRecordBuilder {
     private Integer partialYearOfBirth;
 
     public GroJsonRecordBuilder() {
-        recordLockedDateTime = LocalDateTime.parse("2023-03-06T09:30:50");
+        recordLockedDateTime = ZonedDateTime.parse("2023-03-06T09:30:50Z");
         deceasedName = new GroPersonNameStructure("Mrs", List.of("ERICA"), "BLOGG", null);
         deceasedDeathDate = new PersonDeathDateStructure(LocalDate.parse("2007-03-06"), null);
         deceasedBirthDate = new PersonBirthDateStructure(LocalDate.parse("1967-03-06"), null);
     }
 
-    public GroJsonRecordBuilder withLockedDateTime(LocalDateTime recordLockedDateTime) {
+    public GroJsonRecordBuilder withLockedDateTime(ZonedDateTime recordLockedDateTime) {
         this.recordLockedDateTime = recordLockedDateTime;
         return this;
     }
 
-    public GroJsonRecordBuilder withUpdateDateTime(LocalDateTime recordUpdateDateTime) {
+    public GroJsonRecordBuilder withUpdateDateTime(ZonedDateTime recordUpdateDateTime) {
         this.recordUpdateDateTime = recordUpdateDateTime;
         return this;
     }

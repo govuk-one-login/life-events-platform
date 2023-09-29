@@ -6,9 +6,9 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.dto.gro.GroPersonNameStructure;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,10 +25,10 @@ class DeathNotificationSetMapperTest {
 
     @Test
     void mapperMapsNewEventCorrectly() {
-        var eventTime = OffsetDateTime.parse("2021-03-06T09:30:50Z");
+        var eventTime = ZonedDateTime.parse("2021-03-06T09:30:50Z");
         var correlationID = "correlationID";
         var groJsonRecord = new GroJsonRecordBuilder()
-            .withLockedDateTime(eventTime.toLocalDateTime())
+            .withLockedDateTime(eventTime)
             .withUpdateDateTime(null)
             .withUpdateReason(null)
             .build();
@@ -45,11 +45,11 @@ class DeathNotificationSetMapperTest {
 
     @Test
     void mapperSetsAllValuesCorrectlyForUpdateEvent() {
-        var eventTime = OffsetDateTime.parse("2022-03-06T09:30:50Z");
+        var eventTime = ZonedDateTime.parse("2022-03-06T09:30:50Z");
         var correlationID = "correlationID";
         var groJsonRecord = new GroJsonRecordBuilder()
             .withLockedDateTime(null)
-            .withUpdateDateTime(eventTime.toLocalDateTime())
+            .withUpdateDateTime(eventTime)
             .withUpdateReason(5)
             .build();
 

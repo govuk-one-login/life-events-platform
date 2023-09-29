@@ -10,7 +10,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
-import java.time.ZoneOffset;
 import java.time.temporal.TemporalAccessor;
 import java.util.List;
 import java.util.UUID;
@@ -28,8 +27,8 @@ public class DeathNotificationSetMapper {
         var iat = Instant.now().getEpochSecond();
         var jti = UUID.randomUUID().toString();
         var toe = groRecord.recordLockedDateTime() == null
-            ? groRecord.recordUpdateDateTime().toEpochSecond(ZoneOffset.UTC)
-            : groRecord.recordLockedDateTime().toEpochSecond(ZoneOffset.UTC);
+            ? groRecord.recordUpdateDateTime().toEpochSecond()
+            : groRecord.recordLockedDateTime().toEpochSecond();
 
         return new DeathNotificationSet(
             null,
@@ -64,7 +63,7 @@ public class DeathNotificationSetMapper {
             deathDate,
             UrnFactory.generateGroDeathUrn(groJsonRecord.registrationID()),
             groJsonRecord.freeFormatDeathDate(),
-            groJsonRecord.recordLockedDateTime().atOffset(ZoneOffset.UTC),
+            groJsonRecord.recordLockedDateTime(),
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }
@@ -76,7 +75,7 @@ public class DeathNotificationSetMapper {
             UrnFactory.generateGroDeathUrn(groJsonRecord.registrationID()),
             DeathRegistrationUpdateReasonType.fromGroRegistrationType(groJsonRecord.recordUpdateReason()),
             groJsonRecord.freeFormatDeathDate(),
-            groJsonRecord.recordUpdateDateTime().atOffset(ZoneOffset.UTC),
+            groJsonRecord.recordUpdateDateTime(),
             generateDeathRegistrationSubject(groJsonRecord)
         );
     }

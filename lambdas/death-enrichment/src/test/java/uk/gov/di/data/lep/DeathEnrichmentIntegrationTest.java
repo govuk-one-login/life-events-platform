@@ -18,8 +18,8 @@ import uk.gov.di.data.lep.library.dto.GroJsonRecordWithCorrelationID;
 import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
-import java.time.LocalDateTime;
-import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -62,7 +62,7 @@ class DeathEnrichmentIntegrationTest {
     void approvalTestForUpdate() throws JsonProcessingException {
         var groJsonRecord = new GroJsonRecordBuilder()
             .withUpdateReason(1)
-            .withUpdateDateTime(LocalDateTime.of(2019, Month.APRIL, 3, 10, 1))
+            .withUpdateDateTime(ZonedDateTime.of(2019,4, 3, 10, 1,0, 0, ZoneId.of("UTC")))
             .withLockedDateTime(null)
             .build();
         var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationID(groJsonRecord, "correlationID");

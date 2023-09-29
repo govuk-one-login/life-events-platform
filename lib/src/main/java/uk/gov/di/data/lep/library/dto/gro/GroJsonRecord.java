@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.di.data.lep.library.config.Constants;
 import uk.gov.di.data.lep.library.enums.GenderAtRegistration;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @JsonInclude(Include.NON_EMPTY)
@@ -16,12 +16,12 @@ public record GroJsonRecord(
     Integer registrationID,
     @JsonProperty("RegistrationType")
     Integer registrationType,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN, timezone = "UTC")
     @JsonProperty("RecordLockedDateTime")
-    LocalDateTime recordLockedDateTime,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN)
+    ZonedDateTime recordLockedDateTime,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.LOCAL_DATE_TIME_PATTERN, timezone = "UTC")
     @JsonProperty("RecordUpdateDateTime")
-    LocalDateTime recordUpdateDateTime,
+    ZonedDateTime recordUpdateDateTime,
     @JsonProperty("RecordUpdateReason")
     Integer recordUpdateReason,
     @JsonProperty("DeceasedName")

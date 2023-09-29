@@ -58,13 +58,6 @@ subprojects {
     }
 }
 
-project(":platform") {
-    sonar {
-        skipProject = true
-    }
-}
-
-
 spotless {
     java {
         target 'lib/src/*/java/**/*.java', 'lambdas/**/src/*/java/**/*.java'

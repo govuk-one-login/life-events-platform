@@ -84,10 +84,6 @@ crash.*.log
 # to change depending on the environment.
 *.tfvars
 *.tfvars.json
-!terraform/tfvars/non-prod/dev.tfvars
-!terraform/tfvars/non-prod/demo.tfvars
-!terraform/tfvars/non-prod/shared.tfvars
-!terraform/tfvars/prod/shared.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
@@ -111,8 +107,6 @@ sonar-project.properties
 bin
 
 .env*
-
-oauth2-data/hsperfdata_root
 
 # Approval Tests
 *.received.txt

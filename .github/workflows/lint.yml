@@ -26,36 +26,14 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.8.1
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.4.5
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
       - name: Update gradle lockfiles
         run: ./gradlew resolveAndLockAll --write-locks
-
-      - name: Fix formatting of all Kotlin files
-        run: ./gradlew clean platform:formatKotlin
 
       - name: Fix formatting of java files
         run: ./gradlew spotlessApply
 
-      - name: Fix formatting of all Terraform files
-        run: terraform fmt -recursive
-
-      - name: Lint lambdas
-        working-directory: ./terraform/modules/gro_ingestion_service/lambdas
-        run: |
-          npm ci
-          npm run lintFix
-
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "GPC-NONE: Automatically lint files"
-          file_pattern: '*.kt *.ts *.tf **/gradle.lockfile *.java'
+          file_pattern: '*.ts *.tf **/gradle.lockfile *.java'
           disable_globbing: true

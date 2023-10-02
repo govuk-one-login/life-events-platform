@@ -18,6 +18,7 @@ import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAud
 import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAuditExtensions;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Hasher;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.util.List;
@@ -113,8 +114,11 @@ class DeathEnrichmentTest {
         var groJsonRecord = new GroJsonRecordBuilder().build();
         var groJsonRecordWithCorrelationID = new GroJsonRecordWithCorrelationID(groJsonRecord, "correlationID");
         var deathNotificationSet = mock(DeathNotificationSet.class);
+
         when(deathNotificationSet.txn()).thenReturn("correlationID");
-        var deathEnrichmentAudit = new DeathEnrichmentAudit(new DeathEnrichmentAuditExtensions(deathNotificationSet.hashCode(), "correlationID"));
+        when(objectMapper.writeValueAsString(deathNotificationSet)).thenReturn("Death notification set");
+
+        var deathEnrichmentAudit = new DeathEnrichmentAudit(new DeathEnrichmentAuditExtensions(Hasher.hash("Death notification set"), "correlationID"));
 
         when(objectMapper.readValue(sqsMessage.getBody(), GroJsonRecordWithCorrelationID.class)).thenReturn(groJsonRecordWithCorrelationID);
         when(objectMapper.writeValueAsString(deathEnrichmentAudit)).thenReturn("Audit data");

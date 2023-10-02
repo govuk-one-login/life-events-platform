@@ -17,6 +17,7 @@ import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathMinimisationA
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Hasher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class DeathMinimisation
 
     @Tracing
     private void audit(String minimisedData, String correlationID) {
-        var auditDataExtensions = new DeathMinimisationAuditExtensions(config.getTargetQueue(), minimisedData.hashCode(), correlationID);
+        var auditDataExtensions = new DeathMinimisationAuditExtensions(config.getTargetQueue(), Hasher.hash(minimisedData), correlationID);
         addAuditDataToQueue(new DeathMinimisationAudit(auditDataExtensions));
     }
 }

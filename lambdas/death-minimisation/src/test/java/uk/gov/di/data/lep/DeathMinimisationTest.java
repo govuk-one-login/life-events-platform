@@ -24,6 +24,7 @@ import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathMinimisationA
 import uk.gov.di.data.lep.library.enums.EnrichmentField;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Hasher;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.util.List;
@@ -228,7 +229,7 @@ class DeathMinimisationTest {
         when(writer.writeValueAsString(any())).thenReturn(minimisedData);
         when(config.getTargetQueue()).thenReturn("Target Queue");
 
-        var deathMinimisationAudit = new DeathMinimisationAudit(new DeathMinimisationAuditExtensions(config.getTargetQueue(), minimisedData.hashCode(), "correlationID"));
+        var deathMinimisationAudit = new DeathMinimisationAudit(new DeathMinimisationAuditExtensions(config.getTargetQueue(), Hasher.hash(minimisedData), "correlationID"));
         when(objectMapper.writeValueAsString(deathMinimisationAudit)).thenReturn("Audit data");
 
         var underTest = new DeathMinimisation(awsService, config, objectMapper);

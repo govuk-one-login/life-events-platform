@@ -78,17 +78,17 @@ Parameters:
 
 Conditions:
   IsDev:
-    !Equals [dev, !Ref Environment]
+    !Equals [ dev, !Ref Environment ]
   IsHmpoDev:
-    !And [!Equals [hmpo, !Ref Developer], Condition: IsDev ]
+    !And [ !Equals [ hmpo, !Ref Developer ], Condition: IsDev ]
   IsIntegration:
-    !Equals [integration, !Ref Environment]
+    !Equals [ integration, !Ref Environment ]
   IsNotProduction:
-    !Not [!Equals [production, !Ref Environment]]
+    !Not [ !Equals [ production, !Ref Environment ] ]
   UseCodeSigning:
-    !Not [!Equals [none, !Ref CodeSigningConfigArn]]
+    !Not [ !Equals [ none, !Ref CodeSigningConfigArn ] ]
   UsePermissionsBoundary:
-    !Not [!Equals [none, !Ref PermissionsBoundary]]
+    !Not [ !Equals [ none, !Ref PermissionsBoundary ] ]
 
 Mappings:
   EnvironmentConfiguration:
@@ -172,6 +172,7 @@ Resources:
       Tags:
         - Key: PersonalIdentifyingInformation
           Value: true
+
   LogsBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -192,7 +193,6 @@ Resources:
             Condition:
               StringEquals:
                 'aws:SourceAccount': !Sub '${AWS::AccountId}'
-
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -430,8 +430,8 @@ Resources:
         deadLetterTargetArn: !GetAtt AuditDeadLetterQueue.Arn
         maxReceiveCount: 10
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   AuditQueuePolicy:
     Type: AWS::SQS::QueuePolicy
@@ -458,8 +458,223 @@ Resources:
       MessageRetentionPeriod: 1209600
       KmsMasterKeyId: !Ref AuditKmsKeyAlias
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
+
+  AlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      # checkov:skip=CKV_AWS_26: We do not need to encrypt this data on the SNS topic as alerts aren't sensitive
+      DisplayName: !Sub ${Environment}${Developer}-alert-topic
+      TopicName: !Sub ${Environment}${Developer}-alert-topic
+      Tags:
+        - Key: CheckovRulesToSkip
+          Value: CKV_AWS_26
+
+  AlertTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: di-life-events-platform@digital.cabinet-office.gov.uk
+      Protocol: email
+      TopicArn: !Ref AlertTopic
+
+  AuditDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: audit-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt AuditDeadLetterQueue.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DeathValidationDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: death-validation-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DeathValidationDlq.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DeathEnrichmentDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: death-enrichment-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DeathEnrichmentDlq.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DwpDeathDistributionDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: dwp-death-distribution-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DwpDeathDistributionDlq.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DwpDeathMinimisationDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: dwp-death-minimisation-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DwpDeathMinimisationDlq.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  DwpDeathDeliveryDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: dwp-death-delivery-dead-letter-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DwpDeathDeliveryDlq.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  OneMinuteOnDeathEnrichmentQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: one-hour-on-death-enrichment-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DeathEnrichmentQueue.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 60
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  OneMinuteOnDeathMinimisationQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: one-hour-on-death-minimisation-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DwpDeathMinimisationQueue.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 60
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  OneMinuteOnDwpDeathDeliveryQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: one-hour-on-dwp-death-delivery-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt DwpDeathDeliveryQueue.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 60
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  OneDayOnDwpDeathDeliveryQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: one-day-on-dwp-death-delivery-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: DwpDeathDeliveryQueue
+          Value: !GetAtt DwpDeathDeliveryQueue.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 86400
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  ThreeDaysOnDwpDeathDeliveryQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: three-days-on-dwp-death-delivery-queue-alarm
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: DwpDeathDeliveryQueue
+          Value: !GetAtt DwpDeathDeliveryQueue.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 259200
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
 
   ApiGateway:
     Type: AWS::Serverless::Api
@@ -530,8 +745,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-death-validation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DeathEnrichmentQueue:
     Type: AWS::SQS::Queue
@@ -542,8 +757,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DeathEnrichmentDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DeathEnrichmentDlq:
     Type: AWS::SQS::Queue
@@ -551,8 +766,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-death-enrichment-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DeathDistributionTopic:
     Type: AWS::SNS::Topic
@@ -561,8 +776,8 @@ Resources:
       KmsMasterKeyId: !Ref MainKmsKey
       TracingConfig: Active
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DeathValidationFunction:
     Type: AWS::Serverless::Function
@@ -751,8 +966,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDeathDistributionTopicSubscription:
     Type: AWS::SNS::Subscription
@@ -773,8 +988,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDeathMinimisationDlq:
     Type: AWS::SQS::Queue
@@ -782,8 +997,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDeathDeliveryQueue:
     Type: AWS::SQS::Queue
@@ -794,8 +1009,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDeathDeliveryQueuePolicy:
     Type: AWS::SQS::QueuePolicy
@@ -820,8 +1035,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDeathMinimisationFunction:
     Type: AWS::Serverless::Function
@@ -993,8 +1208,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDevDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1017,8 +1232,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDevDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDevDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1027,8 +1242,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDevDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1040,8 +1255,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpDevDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDevDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1050,8 +1265,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpDevDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1193,8 +1408,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpTestDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1217,8 +1432,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpTestDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpTestDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1227,8 +1442,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpTestDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1240,8 +1455,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpTestDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpTestDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1250,8 +1465,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpTestDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1393,8 +1608,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpStageDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1417,8 +1632,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpStageDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpStageDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1427,8 +1642,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpStageDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1440,8 +1655,8 @@ Resources:
         deadLetterTargetArn: !GetAtt DwpStageDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpStageDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1450,8 +1665,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   DwpStageDeathMinimisationFunction:
     Condition: IsIntegration
@@ -1841,8 +2056,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   OgdDeathDistributionTopicSubscription:
     Condition: IsIntegration
@@ -1865,8 +2080,8 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathMinimisationDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   OgdDeathMinimisationDlq:
     Condition: IsIntegration
@@ -1875,8 +2090,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   OgdDeathDeliveryQueue:
     Condition: IsIntegration
@@ -1888,8 +2103,8 @@ Resources:
         deadLetterTargetArn: !GetAtt OgdDeathDeliveryDlq.Arn
         maxReceiveCount: 5
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   OgdDeathDeliveryDlq:
     Condition: IsIntegration
@@ -1898,8 +2113,8 @@ Resources:
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
-         - Key: PersonalIdentifyingInformation
-           Value: true
+        - Key: PersonalIdentifyingInformation
+          Value: true
 
   OgdDeathMinimisationFunction:
     Condition: IsIntegration

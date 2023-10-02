@@ -83,7 +83,7 @@ class DeathEnrichmentTest {
 
         underTest.handleRequest(sqsEvent, context);
 
-        verify(objectMapper).writeValueAsString(deathNotificationSet);
+        verify(objectMapper, times(2)).writeValueAsString(deathNotificationSet);
         verify(awsService).putOnTopic("Death notification set");
 
         deathNotificationSetMapper.close();

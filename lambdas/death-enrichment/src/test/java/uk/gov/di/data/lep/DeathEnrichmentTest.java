@@ -26,6 +26,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
@@ -50,6 +51,7 @@ class DeathEnrichmentTest {
     @BeforeEach
     void refreshSetup() {
         reset(objectMapper);
+        clearInvocations(awsService);
     }
 
     @Test

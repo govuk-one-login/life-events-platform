@@ -586,25 +586,7 @@ Resources:
       AlarmActions:
         - !Ref AlertTopic
 
-  OneHourOnAuditQueueAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      AlarmName: one-hour-on-audit-queue-alarm
-      Namespace: AWS/SQS
-      MetricName: ApproximateAgeOfOldestMessage
-      Dimensions:
-        - Name: QueueName
-          Value: !GetAtt AuditQueue.QueueName
-      Statistic: Sum
-      Period: 60
-      EvaluationPeriods: 5
-      Threshold: 3600
-      ComparisonOperator: GreaterThanThreshold
-      TreatMissingData: notBreaching
-      AlarmActions:
-        - !Ref AlertTopic
-
-  OneHourOnDeathEnrichmentQueueAlarm:
+  OneMinuteOnDeathEnrichmentQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: one-hour-on-death-enrichment-queue-alarm
@@ -615,14 +597,14 @@ Resources:
           Value: !GetAtt DeathEnrichmentQueue.QueueName
       Statistic: Sum
       Period: 60
-      EvaluationPeriods: 5
-      Threshold: 3600
+      EvaluationPeriods: 1
+      Threshold: 60
       ComparisonOperator: GreaterThanThreshold
       TreatMissingData: notBreaching
       AlarmActions:
         - !Ref AlertTopic
 
-  OneHourOnDeathMinimisationQueueAlarm:
+  OneMinuteOnDeathMinimisationQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: one-hour-on-death-minimisation-queue-alarm
@@ -633,14 +615,14 @@ Resources:
           Value: !GetAtt DwpDeathMinimisationQueue.QueueName
       Statistic: Sum
       Period: 60
-      EvaluationPeriods: 5
-      Threshold: 3600
+      EvaluationPeriods: 1
+      Threshold: 60
       ComparisonOperator: GreaterThanThreshold
       TreatMissingData: notBreaching
       AlarmActions:
         - !Ref AlertTopic
 
-  OneHourOnDwpDeathDeliveryQueueAlarm:
+  OneMinuteOnDwpDeathDeliveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
       AlarmName: one-hour-on-dwp-death-delivery-queue-alarm
@@ -651,8 +633,8 @@ Resources:
           Value: !GetAtt DwpDeathDeliveryQueue.QueueName
       Statistic: Sum
       Period: 60
-      EvaluationPeriods: 5
-      Threshold: 3600
+      EvaluationPeriods: 1
+      Threshold: 60
       ComparisonOperator: GreaterThanThreshold
       TreatMissingData: notBreaching
       AlarmActions:
@@ -669,7 +651,7 @@ Resources:
           Value: !GetAtt DwpDeathDeliveryQueue.QueueName
       Statistic: Sum
       Period: 60
-      EvaluationPeriods: 5
+      EvaluationPeriods: 1
       Threshold: 86400
       ComparisonOperator: GreaterThanThreshold
       TreatMissingData: notBreaching
@@ -687,7 +669,7 @@ Resources:
           Value: !GetAtt DwpDeathDeliveryQueue.QueueName
       Statistic: Sum
       Period: 60
-      EvaluationPeriods: 5
+      EvaluationPeriods: 1
       Threshold: 259200
       ComparisonOperator: GreaterThanThreshold
       TreatMissingData: notBreaching

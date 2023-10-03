@@ -481,7 +481,7 @@ Resources:
   AuditDeadLetterQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: audit-dead-letter-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-audit-dead-letter-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateNumberOfMessagesVisible
       Dimensions:
@@ -499,7 +499,7 @@ Resources:
   DeathValidationDeadLetterQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: death-validation-dead-letter-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-death-validation-dead-letter-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateNumberOfMessagesVisible
       Dimensions:
@@ -517,7 +517,7 @@ Resources:
   DeathEnrichmentDeadLetterQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: death-enrichment-dead-letter-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-death-enrichment-dead-letter-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateNumberOfMessagesVisible
       Dimensions:
@@ -535,7 +535,7 @@ Resources:
   DwpDeathDistributionDeadLetterQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: dwp-death-distribution-dead-letter-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-dwp-death-distribution-dead-letter-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateNumberOfMessagesVisible
       Dimensions:
@@ -553,7 +553,7 @@ Resources:
   DwpDeathMinimisationDeadLetterQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: dwp-death-minimisation-dead-letter-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-dwp-death-minimisation-dead-letter-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateNumberOfMessagesVisible
       Dimensions:
@@ -571,7 +571,7 @@ Resources:
   DwpDeathDeliveryDeadLetterQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: dwp-death-delivery-dead-letter-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-dwp-death-delivery-dead-letter-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateNumberOfMessagesVisible
       Dimensions:
@@ -589,7 +589,7 @@ Resources:
   OneMinuteOnDeathEnrichmentQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: one-hour-on-death-enrichment-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-one-hour-on-death-enrichment-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateAgeOfOldestMessage
       Dimensions:
@@ -607,7 +607,7 @@ Resources:
   OneMinuteOnDeathMinimisationQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: one-hour-on-death-minimisation-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-one-hour-on-death-minimisation-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateAgeOfOldestMessage
       Dimensions:
@@ -625,7 +625,7 @@ Resources:
   OneMinuteOnDwpDeathDeliveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: one-hour-on-dwp-death-delivery-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-one-hour-on-dwp-death-delivery-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateAgeOfOldestMessage
       Dimensions:
@@ -643,7 +643,7 @@ Resources:
   OneDayOnDwpDeathDeliveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: one-day-on-dwp-death-delivery-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-one-day-on-dwp-death-delivery-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateAgeOfOldestMessage
       Dimensions:
@@ -661,7 +661,7 @@ Resources:
   ThreeDaysOnDwpDeathDeliveryQueueAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: three-days-on-dwp-death-delivery-queue-alarm
+      AlarmName: !Sub ${Environment}${Developer}-three-days-on-dwp-death-delivery-queue-alarm
       Namespace: AWS/SQS
       MetricName: ApproximateAgeOfOldestMessage
       Dimensions:

@@ -62,10 +62,6 @@ jobs:
       - name: SAM build and test
         run: sam build
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
       - name: Deploy SAM app
         uses: alphagov/di-devplatform-upload-action@v3.3
         with:

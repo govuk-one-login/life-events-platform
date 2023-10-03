@@ -15,6 +15,7 @@ import software.amazon.lambda.powertools.metrics.MetricsUtils;
 import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.dto.CognitoTokenResponse;
 import uk.gov.di.data.lep.dto.S3ObjectCreatedNotificationEvent;
+import uk.gov.di.data.lep.library.dto.RecordLocation;
 import uk.gov.di.data.lep.exceptions.AuthException;
 import uk.gov.di.data.lep.library.LambdaHandler;
 import uk.gov.di.data.lep.library.config.Config;
@@ -34,6 +35,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,11 +68,13 @@ public class GroConvertToJson
         var deathRegistrations = convertXmlDataToJson(xmlData, authorisationToken);
 
         var jsonBucket = config.getGroRecordsBucketName();
-        var jsonKey = UUID.randomUUID() + ".json";
         logger.info("Putting DeathRegistrations in bucket: {}", jsonBucket);
-        awsService.putInBucket(jsonBucket, jsonKey, deathRegistrations);
-
-        return new GroFileLocations(xmlBucket, xmlKey, jsonBucket, jsonKey);
+        try {
+            var jsonKey = uploadIndividualRegistrations(jsonBucket, deathRegistrations);
+            return new GroFileLocations(xmlBucket, xmlKey, jsonBucket, jsonKey);
+        } catch (JsonProcessingException e) {
+            throw new MappingException(e);
+        }
     }
 
     // In this case, the fact that the thread has been interrupted is captured in our message and exception stack,
@@ -101,7 +105,7 @@ public class GroConvertToJson
         }
     }
 
-    private String convertXmlDataToJson(String xmlData, String authorisationToken) {
+    private List<GroJsonRecordWithHeaders> convertXmlDataToJson(String xmlData, String authorisationToken) {
         try {
             var deathRegistrationGroup = xmlMapper.readValue(xmlData, DeathRegistrationGroup.class);
             var records = deathRegistrationGroup.deathRegistrations();
@@ -114,7 +118,7 @@ public class GroConvertToJson
 
             generateAndAddListOfAuditDataToQueue(recordsWithHeaders, xmlData.hashCode());
 
-            return objectMapper.writeValueAsString(recordsWithHeaders);
+            return recordsWithHeaders;
         } catch (JsonProcessingException e) {
             logger.info("Failed to map DeathRegistrations xml to GroJsonRecord list");
             throw new MappingException(e);
@@ -145,5 +149,19 @@ public class GroConvertToJson
             var auditData = new GroConvertToJsonAudit(auditDataExtensions);
             addAuditDataToQueue(auditData);
         }
+    }
+
+    @Tracing
+    private String uploadIndividualRegistrations(String bucket, List<GroJsonRecordWithHeaders> deathRegistrations) throws JsonProcessingException {
+        var jsonKeys = new ArrayList<RecordLocation>();
+        for (var registration : deathRegistrations) {
+            var registrationJsonKey = registration.correlationID() + ".json";
+            jsonKeys.add(new RecordLocation(bucket, registrationJsonKey));
+            awsService.putInBucket(bucket, registrationJsonKey, objectMapper.writeValueAsString(registration));
+        }
+        var jsonKey = UUID.randomUUID() + ".json";
+        awsService.putInBucket(bucket, jsonKey, objectMapper.writeValueAsString(jsonKeys));
+
+        return jsonKey;
     }
 }

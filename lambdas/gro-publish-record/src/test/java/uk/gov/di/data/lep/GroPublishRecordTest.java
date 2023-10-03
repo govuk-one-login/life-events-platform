@@ -9,7 +9,9 @@ import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithHeaders;
+import uk.gov.di.data.lep.library.dto.RecordLocation;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
+import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
@@ -31,13 +33,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class GroPublishRecordTest {
+    private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final HttpClient httpClient = mock(HttpClient.class);
     private static final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private static final GroPublishRecord underTest = new GroPublishRecord(config, objectMapper);
+    private static final RecordLocation recordLocation = mock(RecordLocation.class);
+    private static final GroPublishRecord underTest = new GroPublishRecord(awsService, config, objectMapper);
     private static final GroJsonRecordWithHeaders event = new GroJsonRecordWithHeaders(new GroJsonRecordBuilder().build(), "accessToken", "correlationID");
     private static final InputStream eventAsInputStream = mock(InputStream.class);
     private static final String eventAsString = "EventInStringRepresentation";
+    private static final String recordFromBucket = "RecordFromBucket";
     private static final HttpRequest expectedGroRecordRequest = HttpRequest.newBuilder()
         .uri(URI.create("https://lifeEventsPlatformDomain/events/deathNotification"))
         .header("Authorization", "accessToken")
@@ -58,9 +63,11 @@ class GroPublishRecordTest {
 
     @Test
     void constructionCallsCorrectInstantiation() {
-        try (var config = mockConstruction(Config.class)) {
+        try (var awsService = mockConstruction(AwsService.class);
+             var config = mockConstruction(Config.class)) {
             var mapper = mockStatic(Mapper.class);
             new GroPublishRecord();
+            assertEquals(1, awsService.constructed().size());
             assertEquals(1, config.constructed().size());
             mapper.verify(Mapper::objectMapper, times(1));
             mapper.close();
@@ -72,7 +79,9 @@ class GroPublishRecordTest {
         var httpClientMock = mockStatic(HttpClient.class);
         var httpResponseMock = mock(HttpResponse.class);
         httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
-        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenReturn(event);
+        when(objectMapper.readValue(eventAsInputStream, RecordLocation.class)).thenReturn(recordLocation);
+        when(awsService.getFromBucket(recordLocation.jsonBucket(), recordLocation.jsonKey())).thenReturn(recordFromBucket);
+        when(objectMapper.readValue(recordFromBucket, GroJsonRecordWithHeaders.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn(eventAsString);
         when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(httpResponseMock);
         when(httpResponseMock.statusCode()).thenReturn(201);
@@ -88,7 +97,9 @@ class GroPublishRecordTest {
     void publishRecordThrowsExceptionIfGroRecordRequestsFails() throws IOException, InterruptedException {
         var httpClientMock = mockStatic(HttpClient.class);
         httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
-        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenReturn(event);
+        when(objectMapper.readValue(eventAsInputStream, RecordLocation.class)).thenReturn(recordLocation);
+        when(awsService.getFromBucket(recordLocation.jsonBucket(), recordLocation.jsonKey())).thenReturn(recordFromBucket);
+        when(objectMapper.readValue(recordFromBucket, GroJsonRecordWithHeaders.class)).thenReturn(event);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn(eventAsString);
         var ioException = new IOException();
         when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenThrow(ioException);
@@ -105,7 +116,9 @@ class GroPublishRecordTest {
 
     @Test
     void publishRecordThrowsMappingExceptionIfGroRecordFailsToMap() throws IOException, InterruptedException {
-        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenReturn(event);
+        when(objectMapper.readValue(eventAsInputStream, RecordLocation.class)).thenReturn(recordLocation);
+        when(awsService.getFromBucket(recordLocation.jsonBucket(), recordLocation.jsonKey())).thenReturn(recordFromBucket);
+        when(objectMapper.readValue(recordFromBucket, GroJsonRecordWithHeaders.class)).thenReturn(event);
         var jsonProcessingException = mock(JsonProcessingException.class);
         when(objectMapper.writeValueAsString(event.groJsonRecord())).thenThrow(jsonProcessingException);
 
@@ -119,7 +132,7 @@ class GroPublishRecordTest {
     @Test
     void publishRecordThrowsMappingExceptionIfInputStreamFailsToMap() throws IOException, InterruptedException {
         var ioException = mock(IOException.class);
-        when(objectMapper.readValue(eventAsInputStream, GroJsonRecordWithHeaders.class)).thenThrow(ioException);
+        when(objectMapper.readValue(eventAsInputStream, RecordLocation.class)).thenThrow(ioException);
 
         var exception = assertThrows(MappingException.class, () -> underTest.handleRequest(eventAsInputStream, null, null));
 

@@ -286,12 +286,23 @@ class GroConvertToJsonTest {
                 "\"RegistrationID\":1.*" +
                 "\"PersonGivenName\":.*[\"ERICA\",\"CHRISTINA\"].*" +
                 "\"PersonFamilyName\":\"BLOGG\".*" +
-                "\"DeceasedGender\":2.*" +
+                "\"DeceasedGender\":2.*"
+            )
+        );
+        verify(awsService).putInBucket(
+            eq("JsonBucketName"),
+            anyString(),
+            matches(
                 "\"RegistrationID\":2.*" +
                 "\"PersonGivenName\":\\[\"BOB\"\\].*" +
                 "\"DeceasedGender\":1.*" +
                 "\"DeceasedBirthDate\":\\{\"PersonBirthDate\":\"1958-06-06\",\"VerificationLevel\":\"02\"\\}"
             )
+        );
+        verify(awsService).putInBucket(
+            eq("JsonBucketName"),
+            anyString(),
+            matches("JsonBucketName.*.json.*JsonBucketName.*.json")
         );
 
         httpClientMock.close();
@@ -336,8 +347,8 @@ class GroConvertToJsonTest {
 
     private static Stream<Arguments> groFiles() {
         return Stream.of(
-            Arguments.of(mockS3objectResponseOneRecord, "mockS3objectResponseOneRecord"),
-            Arguments.of(mockS3objectResponseMultipleRecords, "mockS3objectResponseMultipleRecords")
+            Arguments.of(mockS3objectResponseOneRecord, "mockS3objectResponseOneRecord", 2),
+            Arguments.of(mockS3objectResponseMultipleRecords, "mockS3objectResponseMultipleRecords", 3)
         );
     }
 
@@ -385,7 +396,7 @@ class GroConvertToJsonTest {
 
     @ParameterizedTest
     @MethodSource("groFiles")
-    void groConvertToJsonSnapshotTest(String groFile, String name) {
+    void groConvertToJsonSnapshotTest(String groFile, String name, Integer times) {
         var httpClientMock = mockStatic(HttpClient.class);
         httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
         when(awsService.getFromBucket(anyString(), anyString())).thenReturn(groFile);
@@ -393,7 +404,7 @@ class GroConvertToJsonTest {
         underTest.handleRequest(event, context);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
 
-        verify(awsService).putInBucket(anyString(), anyString(), captor.capture());
+        verify(awsService, times(times)).putInBucket(anyString(), anyString(), captor.capture());
 
         httpClientMock.close();
 
@@ -401,7 +412,7 @@ class GroConvertToJsonTest {
             new GuidScrubber(),
             new RegExScrubber("\"iat\":\\d+,", n -> "\"iat\":" + n + ","))
         );
-        Approvals.verify(captor.getValue(), Approvals.NAMES.withParameters(options, name));
+        Approvals.verify(captor.getAllValues(), Approvals.NAMES.withParameters(options, name));
     }
 
     @Test

@@ -49,11 +49,40 @@
                 "BackoffRate": 2
               }
             ],
+            "Next": "SuccessDeleteJsonRecords",
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "Next": "FailureDeleteJsonRecords",
+                "ResultPath": "$.Error"
+              }
+            ],
+            "ResultPath": null
+          },
+          "FailureDeleteJsonRecords": {
+            "Type": "Task",
+            "Parameters": {
+              "Bucket.$": "$.jsonBucket",
+              "Key.$": "$.jsonKey"
+            },
+            "Resource": "arn:aws:states:::aws-sdk:s3:deleteObject",
+            "End": true
+          },
+          "SuccessDeleteJsonRecords": {
+            "Type": "Task",
+            "Parameters": {
+              "Bucket.$": "$.jsonBucket",
+              "Key.$": "$.jsonKey"
+            },
+            "Resource": "arn:aws:states:::aws-sdk:s3:deleteObject",
+            "ResultPath": null,
             "End": true
           }
         }
       },
-      "Next": "SuccessDeleteJsonRecords",
+      "Next": "SuccessDeleteJsonRecordLocations",
       "Label": "Map",
       "MaxConcurrency": 100,
       "ItemReader": {
@@ -71,25 +100,16 @@
           "ErrorEquals": [
             "States.ALL"
           ],
-          "Next": "FailureDeleteJsonRecords",
+          "Next": "Fail",
           "ResultPath": "$.Error"
         }
       ],
       "ResultPath": null
     },
-    "FailureDeleteJsonRecords": {
-      "Type": "Task",
-      "Next": "Fail",
-      "Parameters": {
-        "Bucket.$": "$.jsonBucket",
-        "Key.$": "$.jsonKey"
-      },
-      "Resource": "arn:aws:states:::aws-sdk:s3:deleteObject"
-    },
     "Fail": {
       "Type": "Fail"
     },
-    "SuccessDeleteJsonRecords": {
+    "SuccessDeleteJsonRecordLocations": {
       "Type": "Task",
       "Next": "SuccessDeleteXml",
       "Parameters": {

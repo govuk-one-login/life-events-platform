@@ -11,8 +11,10 @@ import software.amazon.lambda.powertools.tracing.Tracing;
 import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithHeaders;
+import uk.gov.di.data.lep.library.dto.RecordLocation;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
+import uk.gov.di.data.lep.library.services.AwsService;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
@@ -24,15 +26,17 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class GroPublishRecord implements RequestStreamHandler {
+    private final AwsService awsService;
     private final Config config;
     private final ObjectMapper objectMapper;
     protected static Logger logger = LogManager.getLogger();
 
     public GroPublishRecord() {
-        this(new Config(), Mapper.objectMapper());
+        this(new AwsService(), new Config(), Mapper.objectMapper());
     }
 
-    public GroPublishRecord(Config config, ObjectMapper objectMapper) {
+    public GroPublishRecord(AwsService awsService, Config config, ObjectMapper objectMapper) {
+        this.awsService = awsService;
         this.config = config;
         this.objectMapper = objectMapper;
     }
@@ -41,15 +45,20 @@ public class GroPublishRecord implements RequestStreamHandler {
     @Tracing
     @Logging(clearState = true)
     public void handleRequest(InputStream input, OutputStream output, Context context) {
-        var event = readInputStream(input);
+        var event = getRecord(input);
         logger.info("Received record: registrationID {}, correlationID {}", event.groJsonRecord().registrationID(), event.correlationID());
         postRecordToLifeEvents(event.groJsonRecord(), event.authenticationToken(), event.correlationID());
     }
 
     @Tracing
-    private GroJsonRecordWithHeaders readInputStream(InputStream input) {
+    private GroJsonRecordWithHeaders getRecord(InputStream input) {
         try {
-            return objectMapper.readValue(input, GroJsonRecordWithHeaders.class);
+            var recordLocation = objectMapper.readValue(input, RecordLocation.class);
+            logger.info("Fetching record: {}", recordLocation.jsonKey());
+            return objectMapper.readValue(
+                awsService.getFromBucket(recordLocation.jsonBucket(), recordLocation.jsonKey()),
+                GroJsonRecordWithHeaders.class
+            );
         } catch (IOException e) {
             logger.error("Failed to map Input Stream to GRO JSON record");
             throw new MappingException(e);

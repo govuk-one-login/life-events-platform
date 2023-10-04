@@ -55,7 +55,6 @@ Globals:
         - '{{resolve:secretsmanager:${SecretArn}:SecretString:JAVA_LAYER}}'
         - SecretArn: !FindInMap [ EnvironmentConfiguration, !Ref Environment, dynatraceSecretArn ]
 
-
 Parameters:
   Environment:
     Type: String
@@ -2269,6 +2268,8 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       Tags:
+        - Key: CheckovRulesToSkip
+          Value: CKV_AWS_21
         - Key: PersonalIdentifyingInformation
           Value: true
 
@@ -2327,9 +2328,9 @@ Resources:
         - LambdaInvokePolicy:
             FunctionName: !Ref GroPublishRecordFunction
         - S3CrudPolicy:
-            BucketName: !Ref GroRecordsBucket
-        - S3CrudPolicy:
             BucketName: !Ref GroIngestionBucket
+        - S3CrudPolicy:
+            BucketName: !Ref GroRecordsBucket
         - StepFunctionsExecutionPolicy:
             StateMachineName: !Sub ${Environment}${Developer}-ingestion-state-machine
         - Statement:
@@ -2628,6 +2629,8 @@ Resources:
       AutoPublishAlias: latest
       AutoPublishAliasAllProperties: true
       Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref GroRecordsBucket
         - Statement:
             - Sid: MainKmsKeyAccess
               Effect: Allow

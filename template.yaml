@@ -742,7 +742,7 @@ Resources:
   DeathValidationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-death-validation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -752,7 +752,7 @@ Resources:
   DeathEnrichmentQueue:
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-death-enrichment
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
@@ -765,7 +765,7 @@ Resources:
   DeathEnrichmentDlq:
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-death-enrichment-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -967,7 +967,7 @@ Resources:
   DwpDeathDistributionDlq:
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -987,7 +987,7 @@ Resources:
   DwpDeathMinimisationQueue:
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
@@ -1000,7 +1000,7 @@ Resources:
   DwpDeathMinimisationDlq:
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1010,7 +1010,7 @@ Resources:
   DwpDeathDeliveryQueue:
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery
       KmsMasterKeyId: !Ref DwpDeathKmsKey
       RedrivePolicy:
@@ -1040,7 +1040,7 @@ Resources:
   DwpDeathDeliveryDlq:
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1214,7 +1214,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1236,7 +1236,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
@@ -1250,7 +1250,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1261,7 +1261,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery
       KmsMasterKeyId: !Ref DwpDevDeathKmsKey
       RedrivePolicy:
@@ -1275,7 +1275,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-dev-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1419,7 +1419,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1441,7 +1441,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
@@ -1455,7 +1455,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1466,7 +1466,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery
       KmsMasterKeyId: !Ref DwpTestDeathKmsKey
       RedrivePolicy:
@@ -1480,7 +1480,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-test-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1624,7 +1624,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1646,7 +1646,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
@@ -1660,7 +1660,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1671,7 +1671,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery
       KmsMasterKeyId: !Ref DwpStageDeathKmsKey
       RedrivePolicy:
@@ -1685,7 +1685,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-stage-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -1829,7 +1829,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
@@ -1848,7 +1848,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-death-minimisation
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
@@ -1859,7 +1859,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
@@ -1867,7 +1867,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-death-delivery
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
@@ -1878,7 +1878,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
@@ -1886,7 +1886,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-converted-death
       KmsMasterKeyId: !Ref DwpOldFormatDeathKmsKey
       RedrivePolicy:
@@ -1897,7 +1897,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-dwp-old-format-converted-death-dlq
       KmsMasterKeyId: !Ref MainKmsKey
 
@@ -2084,7 +2084,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-ogd-death-distribution-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -2106,7 +2106,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation
       KmsMasterKeyId: !Ref MainKmsKey
       RedrivePolicy:
@@ -2120,7 +2120,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-ogd-death-minimisation-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:
@@ -2131,7 +2131,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 604800
+      MessageRetentionPeriod: 604800 # 7 days
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery
       KmsMasterKeyId: !Ref OgdDeathKmsKey
       RedrivePolicy:
@@ -2145,7 +2145,7 @@ Resources:
     Condition: IsIntegration
     Type: AWS::SQS::Queue
     Properties:
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       QueueName: !Sub ${Environment}${Developer}-ogd-death-delivery-dlq
       KmsMasterKeyId: !Ref MainKmsKey
       Tags:

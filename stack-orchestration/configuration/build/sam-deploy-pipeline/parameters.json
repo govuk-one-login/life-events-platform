@@ -16,6 +16,10 @@
     "ParameterValue": "di-data-life-events-platform"
   },
   {
+    "ParameterKey": "OneLoginRepositoryName",
+    "ParameterValue": "life-events-platform"
+  },
+  {
     "ParameterKey": "IncludePromotion",
     "ParameterValue": "Yes"
   },

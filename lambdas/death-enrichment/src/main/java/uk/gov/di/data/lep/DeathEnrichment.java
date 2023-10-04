@@ -16,6 +16,7 @@ import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAud
 import uk.gov.di.data.lep.library.dto.deathnotification.audit.DeathEnrichmentAuditExtensions;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Hasher;
 
 public class DeathEnrichment
     extends LambdaHandler<DeathNotificationSet>
@@ -55,7 +56,13 @@ public class DeathEnrichment
 
     @Tracing
     private void audit(DeathNotificationSet enrichedData) {
-        var auditDataExtensions = new DeathEnrichmentAuditExtensions(enrichedData.hashCode(), enrichedData.txn());
-        addAuditDataToQueue(new DeathEnrichmentAudit(auditDataExtensions));
+        try {
+            var enrichedDataHash = Hasher.hash(objectMapper.writeValueAsString(enrichedData));
+            var auditDataExtensions = new DeathEnrichmentAuditExtensions(enrichedDataHash, enrichedData.txn());
+            addAuditDataToQueue(new DeathEnrichmentAudit(auditDataExtensions));
+        } catch (JsonProcessingException e) {
+            logger.info("Failed to create audit log");
+            throw new MappingException(e);
+        }
     }
 }

@@ -27,6 +27,7 @@ import uk.gov.di.data.lep.library.dto.gro.audit.GroConvertToJsonAudit;
 import uk.gov.di.data.lep.library.dto.gro.audit.GroConvertToJsonAuditExtensions;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Hasher;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
@@ -112,7 +113,7 @@ public class GroConvertToJson
                 .map(r -> new GroJsonRecordWithHeaders(r, authorisationToken, UUID.randomUUID().toString()))
                 .toList();
 
-            generateAndAddListOfAuditDataToQueue(recordsWithHeaders, xmlData.hashCode());
+            generateAndAddListOfAuditDataToQueue(recordsWithHeaders, Hasher.hash(xmlData));
 
             return objectMapper.writeValueAsString(recordsWithHeaders);
         } catch (JsonProcessingException e) {
@@ -139,7 +140,7 @@ public class GroConvertToJson
     }
 
     @Tracing
-    private void generateAndAddListOfAuditDataToQueue(List<GroJsonRecordWithHeaders> recordsWithHeaders, Integer fileHash) {
+    private void generateAndAddListOfAuditDataToQueue(List<GroJsonRecordWithHeaders> recordsWithHeaders, String fileHash) {
         for (var recordWithHeader : recordsWithHeaders) {
             var auditDataExtensions = new GroConvertToJsonAuditExtensions(recordWithHeader.correlationID(), fileHash);
             var auditData = new GroConvertToJsonAudit(auditDataExtensions);

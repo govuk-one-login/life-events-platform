@@ -27,6 +27,7 @@ import uk.gov.di.data.lep.library.dto.gro.DeathRegistrationGroup;
 import uk.gov.di.data.lep.library.dto.gro.audit.GroConvertToJsonAudit;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Hasher;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
@@ -427,7 +428,7 @@ class GroConvertToJsonTest {
         ArgumentCaptor<GroConvertToJsonAudit> captor = ArgumentCaptor.forClass(GroConvertToJsonAudit.class);
 
         verify(objectMapperMock, times(2)).writeValueAsString(captor.capture());
-        assertEquals(mockS3objectResponseMultipleRecords.hashCode(), captor.getValue().extensions().fileHash());
+        assertEquals(Hasher.hash(mockS3objectResponseMultipleRecords), captor.getValue().extensions().fileHash());
         verify(awsService, times(2)).putOnAuditQueue("Audit data");
 
         httpClientMock.close();

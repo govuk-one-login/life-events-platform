@@ -962,7 +962,6 @@ Resources:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
         - !Ref DwpDeathMinimisationQueue
-        - !Ref DwpDeathDistributionDlq
 
   DwpDeathDistributionDlq:
     Type: AWS::SQS::Queue

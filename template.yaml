@@ -422,7 +422,7 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-audit
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       KmsMasterKeyId: !Ref AuditKmsKeyAlias
       RedriveAllowPolicy:
         redrivePermission: denyAll
@@ -455,7 +455,7 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub ${Environment}${Developer}-audit-dlq
-      MessageRetentionPeriod: 1209600
+      MessageRetentionPeriod: 1209600 # 14 days
       KmsMasterKeyId: !Ref AuditKmsKeyAlias
       Tags:
         - Key: PersonalIdentifyingInformation

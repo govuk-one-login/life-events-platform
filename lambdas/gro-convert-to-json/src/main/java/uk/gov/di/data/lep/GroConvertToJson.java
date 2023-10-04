@@ -70,7 +70,7 @@ public class GroConvertToJson
         var jsonBucket = config.getGroRecordsBucketName();
         logger.info("Putting DeathRegistrations in bucket: {}", jsonBucket);
         try {
-            var jsonKey = uploadIndividualRegistrations(jsonBucket, deathRegistrations);
+            var jsonKey = uploadIndividualRegistrations(jsonBucket, deathRegistrations, xmlKey);
             return new GroFileLocations(xmlBucket, xmlKey, jsonBucket, jsonKey);
         } catch (JsonProcessingException e) {
             throw new MappingException(e);
@@ -152,14 +152,14 @@ public class GroConvertToJson
     }
 
     @Tracing
-    private String uploadIndividualRegistrations(String bucket, List<GroJsonRecordWithHeaders> deathRegistrations) throws JsonProcessingException {
+    private String uploadIndividualRegistrations(String bucket, List<GroJsonRecordWithHeaders> deathRegistrations, String xmlKey) throws JsonProcessingException {
         var jsonKeys = new ArrayList<RecordLocation>();
         for (var registration : deathRegistrations) {
             var registrationJsonKey = registration.correlationID() + ".json";
             jsonKeys.add(new RecordLocation(bucket, registrationJsonKey));
             awsService.putInBucket(bucket, registrationJsonKey, objectMapper.writeValueAsString(registration));
         }
-        var jsonKey = UUID.randomUUID() + ".json";
+        var jsonKey = xmlKey + ".json";
         awsService.putInBucket(bucket, jsonKey, objectMapper.writeValueAsString(jsonKeys));
 
         return jsonKey;

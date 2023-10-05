@@ -32,8 +32,20 @@ jobs:
       - name: Fix formatting of java files
         run: ./gradlew spotlessApply
 
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@82a020f1f7f605c65dd2449b392a52c3fcfef7ef
+        with:
+          gpg_private_key: ${{ secrets.COMMIT_BOT_GPG_KEY }}
+          passphrase: ${{ secrets.COMMIT_BOT_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "GPC-NONE: Automatically lint files"
           file_pattern: '**/gradle.lockfile *.java'
           disable_globbing: true
+          commit_user_name: Life Events Platform[bot]
+          commit_user_email: di-life-events-platform@digital.cabinet-office.gov.uk
+          commit_author: Life Events Platform[bot] <di-life-events-platform@digital.cabinet-office.gov.uk>
+

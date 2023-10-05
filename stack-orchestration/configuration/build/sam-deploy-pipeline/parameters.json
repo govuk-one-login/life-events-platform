@@ -12,10 +12,6 @@
     "ParameterValue": "build"
   },
   {
-    "ParameterKey": "GitHubRepositoryName",
-    "ParameterValue": "none"
-  },
-  {
     "ParameterKey": "OneLoginRepositoryName",
     "ParameterValue": "life-events-platform"
   },

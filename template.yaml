@@ -953,7 +953,7 @@ Resources:
           - Sid: Allow SNS publish to SQS
             Effect: Allow
             Principal:
-              Service: sns.amazonaws.com
+              AWS: "*"
             Resource: "*"
             Action: SQS:SendMessage
             Condition:
@@ -961,6 +961,7 @@ Resources:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
         - !Ref DwpDeathMinimisationQueue
+        - !Ref DwpDeathDistributionDlq
 
   DwpDeathDistributionDlq:
     Type: AWS::SQS::Queue
@@ -1199,7 +1200,7 @@ Resources:
           - Sid: Allow SNS publish to SQS
             Effect: Allow
             Principal:
-              Service: sns.amazonaws.com
+              AWS: "*"
             Resource: "*"
             Action: SQS:SendMessage
             Condition:
@@ -1207,6 +1208,7 @@ Resources:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
         - !Ref DwpDevDeathMinimisationQueue
+        - !Ref DwpDevDeathDistributionDlq
 
   DwpDevDeathDistributionDlq:
     Condition: IsIntegration
@@ -1404,7 +1406,7 @@ Resources:
           - Sid: Allow SNS publish to SQS
             Effect: Allow
             Principal:
-              Service: sns.amazonaws.com
+              AWS: "*"
             Resource: "*"
             Action: SQS:SendMessage
             Condition:
@@ -1412,6 +1414,7 @@ Resources:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
         - !Ref DwpTestDeathMinimisationQueue
+        - !Ref DwpTestDeathDistributionDlq
 
   DwpTestDeathDistributionDlq:
     Condition: IsIntegration
@@ -1609,7 +1612,7 @@ Resources:
           - Sid: Allow SNS publish to SQS
             Effect: Allow
             Principal:
-              Service: sns.amazonaws.com
+              AWS: "*"
             Resource: "*"
             Action: SQS:SendMessage
             Condition:
@@ -1617,6 +1620,7 @@ Resources:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
         - !Ref DwpStageDeathMinimisationQueue
+        - !Ref DwpStageDeathDistributionDlq
 
   DwpStageDeathDistributionDlq:
     Condition: IsIntegration
@@ -1814,7 +1818,7 @@ Resources:
           - Sid: Allow SNS publish to SQS
             Effect: Allow
             Principal:
-              Service: sns.amazonaws.com
+              AWS: "*"
             Resource: "*"
             Action: SQS:SendMessage
             Condition:
@@ -1822,6 +1826,7 @@ Resources:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
         - !Ref DwpOldFormatDeathMinimisationQueue
+        - !Ref DwpOldFormatDeathDistributionDlq
 
   DwpOldFormatDeathDistributionDlq:
     Condition: IsIntegration
@@ -2069,7 +2074,7 @@ Resources:
           - Sid: Allow SNS publish to SQS
             Effect: Allow
             Principal:
-              Service: sns.amazonaws.com
+              AWS: "*"
             Resource: "*"
             Action: SQS:SendMessage
             Condition:
@@ -2077,6 +2082,7 @@ Resources:
                 aws:SourceArn: !Ref DeathDistributionTopic
       Queues:
         - !Ref OgdDeathMinimisationQueue
+        - !Ref OgdDeathDistributionDlq
 
   OgdDeathDistributionDlq:
     Condition: IsIntegration

@@ -4,7 +4,12 @@
 
 Clone the repo https://github.com/alphagov/di-devplatform-deploy in a directory next to this repo.
 
-Copy the encryption file into `stack-orchestration` with the name `encryption_key.txt`. This file is stored in keeper.
+Copy each of the configuration/<env>/vpc/parameters.json.templates files to parameters.json and replace <SFTP_IP> with
+the IP address of the GRO SFTP server for that environment. GRO will provide these during initial project setup, but
+they should subsequently be stored in SSM Parameter Store in the corresponding AWS account (they are required for the
+gro-pull-file lambda).
+
+Do not commit the SFTP server IP address!
 
 ### Required CLIs
 
@@ -30,7 +35,3 @@ of `dev`, `build`, `staging`, `integration`, `production`:
 
 To update the parameters used for our stacks, please update the parameters in
 the `configuration/[ENVIRONMENT]/[PIPELINE]/parameters.json` files.
-
-For updating the VPC pipelines, make sure you have the encryption key file as described above, and then run
-the `decrypt_vpc_parameters.sh` script. Afterwards you will be able to update the parameters. These updates will not be
-tracked unless you run the `encrypt_vpc_parameters.sh` script after making changes.

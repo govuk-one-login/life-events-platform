@@ -34,3 +34,5 @@ jobs:
           commit-message: "GPC-NONE: Automatically update data model"
           branch: "update-data-model"
           title: "GPC-NONE: Automatically update data model"
+          committer: Life Events Platform[bot] <di-life-events-platform@digital.cabinet-office.gov.uk>
+          auhtor: Life Events Platform[bot] <di-life-events-platform@digital.cabinet-office.gov.uk>

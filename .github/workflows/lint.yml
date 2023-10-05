@@ -45,6 +45,7 @@ jobs:
           commit_message: "GPC-NONE: Automatically lint files"
           file_pattern: '**/gradle.lockfile *.java'
           disable_globbing: true
-          commit_options: '-S'
           commit_user_name: Life Events Platform[bot]
           commit_user_email: di-life-events-platform@digital.cabinet-office.gov.uk
+          commit_author: Life Events Platform[bot] <di-life-events-platform@digital.cabinet-office.gov.uk>
+

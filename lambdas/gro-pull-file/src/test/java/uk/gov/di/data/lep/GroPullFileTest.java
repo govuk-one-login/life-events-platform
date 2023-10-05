@@ -22,13 +22,22 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class GroPullFileTest {
     private static final AwsService awsService = mock(AwsService.class);
     private static final Config config = mock(Config.class);
     private static final GroPullFile underTest = new GroPullFile(awsService, config);
-
     private final Overrides emptyOverrides = new Overrides("");
     private static final String ingestionBucket = "GroIngestionBucket";
     private static final String fingerprint = "fingerprint";
@@ -77,9 +86,9 @@ class GroPullFileTest {
     void pullFileWithNullFilenameDownloadsFile() throws IOException {
         var testDate = LocalDate.parse("2022-01-01");
         try (var ignored = mockConstruction(SSHClient.class, (client, context) -> {
-                when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
-                when(client.newSFTPClient()).thenReturn(sftpClient);
-            });
+            when(client.loadKeys("PrivateSSHKey", null, null)).thenReturn(keyProvider);
+            when(client.newSFTPClient()).thenReturn(sftpClient);
+        });
              var staticMockFingerprintVerifier = mockStatic(FingerprintVerifier.class);
              var staticMockLocalDate = mockStatic(LocalDate.class)) {
             var fingerprintVerifier = mock(FingerprintVerifier.class);

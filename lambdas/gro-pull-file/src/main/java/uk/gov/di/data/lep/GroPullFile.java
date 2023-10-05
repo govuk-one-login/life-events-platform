@@ -79,22 +79,17 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
             client.connect(host);
             client.authPublickey(username, privateKeyProvider);
 
-            logger.info("Pulling file {} from GRO", groFileName);
             try (var sftpClient = client.newSFTPClient()) {
                 var resources = sftpClient.ls(sourceDir);
-                logger.info(resources);
                 var sourceFileSearch = resources.stream().filter(r -> r.getPath().endsWith(groFileName)).findFirst();
-
                 if (sourceFileSearch.isEmpty()) {
                     throw new GroSftpException(
-                            String.format("File: %s not found on GRO SFTP Server in directory: %s", groFileName, sourceDir)
+                        String.format("File: %s not found on GRO SFTP Server in directory: %s", groFileName, sourceDir)
                     );
                 }
 
                 try (var file = sftpClient.open(sourceFileSearch.get().getPath(), EnumSet.of(OpenMode.READ));
-                    var fileStream = file.new RemoteFileInputStream()) {
-                    logger.info("Uploading file {} to S3", groFileName);
-
+                     var fileStream = file.new RemoteFileInputStream()) {
                     awsService.putInBucket(xmlBucket, groFileName, fileStream, file.length());
                 }
             }

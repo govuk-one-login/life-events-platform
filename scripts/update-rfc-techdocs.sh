@@ -16,14 +16,45 @@ title: Data model for life events
 weight: 15
 ---" > "$DATA_MODEL_ERB"
 
-sed "
-s/RFC [0-9]* //
-s/> \[\!NOTE\]//
-s/> \[\!IMPORTANT\]//
+CALLOUT_SUBS="s/> \[\!NOTE\]/> ⓘ Note\n>/
+s/>[ ]?\*\*Note\*\*/> ⓘ Note\n>/
+s/> \[\!IMPORTANT\]/> ⚠ Important\n>/
 /> \[\!WARNING\]$/{
   N
-  s/> \[\!WARNING\]\n> \(.*\)/<%= warning_text\('\1'\) %>\n/
+  s/> \[\!WARNING\]\n> (.*)/<%= warning_text\('\1'\) %>\n/
 }
-" "$ARCH_DIR/rfc/0056-physical-data-model-death-notification-event.md" >> "$DATA_MODEL_ERB"
+"
+
+REDUCE_HEADINGS="s/^#### /##### /
+s/^### /#### /
+s/^## /### /
+s/^# /## /
+"
+
+sed -E """
+s/RFC [0-9]* //
+$CALLOUT_SUBS
+s/\[address structure RFC\]\(0020-address-structure.md\)/[address structure section](#address-structure)/
+s/\[core identity representation RFC\]\(0011-identity-representation.md#4-names\)/[core identity atttributes section](#4-names)/
+
+""" "$ARCH_DIR/rfc/0056-physical-data-model-death-notification-event.md" >> "$DATA_MODEL_ERB"
+
+echo "
+
+" >> "$DATA_MODEL_ERB"
+sed -E """
+s/RFC [0-9]* //
+$CALLOUT_SUBS
+$REDUCE_HEADINGS
+""" "$ARCH_DIR/rfc/0020-address-structure.md" >> "$DATA_MODEL_ERB"
+
+echo "
+
+" >> "$DATA_MODEL_ERB"
+sed -E """
+s/RFC 0011 Data representation for identity and identity confidence/Core identity attributes/
+$CALLOUT_SUBS
+$REDUCE_HEADINGS
+""" "$ARCH_DIR/rfc/0011-identity-representation.md" >> "$DATA_MODEL_ERB"
 
 rm -rf "$ARCH_DIR"

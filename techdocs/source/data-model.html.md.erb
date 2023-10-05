@@ -42,7 +42,8 @@ The data model is broadly the same but the significance of certain properties de
 
 In both cases, the value of the `events` claim is a JSON object with a single member, where the name indicates the type of the event, and the value is an 'event object' as described in the rest of this document.
 
-
+> ⓘ Note
+>
 > We intentionally define 'event object' as distinct from 'event payload' so that it's easy to be precise when talking about the different levels of the JSON structure.
 
 ### Classes and types
@@ -76,7 +77,8 @@ The event object will have the name
 https://vocab.account.gov.uk/v1/deathRegistered
 ```
 
-
+> ⚠ Important
+>
 > We may change the name of these event objects in future, for example we may decide to include a version number.
 > For example, `https://vocab.account.gov.uk/v1/deathRegistered/v3` could indicate 'the third version of the death registered event in the first version of the event vocabulary'.
 > If we decide to do this, the consequences will be discussed in a separate ADR.
@@ -149,7 +151,7 @@ The value for `name` is a list of name objects with the following properties:
 
 | Property      | Required | Description |
 |---------------|----------|-------------|
-| `nameParts`   | Required | A list of name parts as described by the [core identity representation RFC](0011-identity-representation.md#4-names). |
+| `nameParts`   | Required | A list of name parts as described by the [core identity atttributes section](#4-names). |
 | `description` | | A human-readable description that may help with manual matching in cases where multiple name objects are in the list. |
 
 There must be at least one entry in the list of name objects.
@@ -169,7 +171,8 @@ The `sex` property captures a person's legal sex.
 A list of objects is used for consistency with other personal attributes that can change over time.
 Exactly one entry is allowed in a list for a life event originating from an official register.
 
-
+> ⓘ Note
+>
 > Some sources in the UK use the term 'gender' to refer to 'legal sex'.
 
 The properties allowed in each object are as follows:
@@ -197,7 +200,7 @@ The properties allowed in each object are as follows:
 The `address` property captures any postal addresses associated with a person in the register.
 The most recent known address per the register must be first in the list.
 
-The [address structure RFC](0020-address-structure.md) describes the objects appearing in the list.
+The [address structure section](#address-structure) describes the objects appearing in the list.
 
 <%= warning_text('There is no guarantee that a complete address object will be populated.') %>
 
@@ -242,5 +245,490 @@ This could apply to the entire event, but might be overridden for specific attri
 
 Adding a property to an object should not be considered as a breaking change to the schema.
 
-
+> ⓘ Note
+>
 > We'll add further notes about how this specification may change over time in a future update.
+
+
+
+## Address Structure
+
+Date: 2023-02-07
+Version: 1.0.3
+
+The definition of the Address schema for data for Identity Proofing and Verification (IPV).
+
+### 1. Background
+
+Data design consistent with widely acceptable practices leading to interoperability and adoption across government.
+The intention is to define the shape and interpretation of the Canonical Address Model.
+
+The aim is to model the Address Structure to that of the Address collector on to the Credential Issuer through to the Relying Party.
+
+Standards referenced:
+
+* [Postal address from schema.org](https://schema.org/PostalAddress)
+* [OS Places API][OS-Places]
+* [OS / Royal Mail AddressBase (PDF)][AddressBase]
+
+[OS-Places]: https://apidocs.os.uk/docs/os-places-dpa-output
+[AddressBase]: https://www.ordnancesurvey.co.uk/documents/product-support/tech-spec/addressbase-premium-technical-specification.pdf
+
+### 2. Attributes/Fields Included
+
+| Canonical Address Field        | type   | maxlength | Mandatory | Definition
+|--------------------------------|--------|----------:|-----------|------------
+| validFrom                      | [Date][D] |        | N         | See [metadata](#metadata)
+| validUntil                     | [Date][D] |        | N         | See [metadata](#metadata)
+| uprn                           | integer |        12 | N         | [Unique Property Reference Number][UPRN] (UK addresses only)
+| organisationName               | string |        60 | N         |
+| departmentName                 | string |        60 | N         |
+| subBuildingName                | string |        30 | N         |
+| buildingNumber                 | string |        30 | N         |
+| buildingName                   | string |        60 | N         |
+| dependentStreetName            | string |        60 | N         |
+| streetName                     | string |        60 | N         |
+| doubleDependentAddressLocality | string |        60 | N         |
+| dependentAddressLocality       | string |        60 | N         |
+| addressLocality                | string |        30 | N         |
+| postalCode                     | string |         9 | N         |
+| addressCountry                 | string |         2 | N         | Two-letter [ISO 3166-1 alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+
+[D]: https://schema.org/Date
+[UPRN]: https://www.gov.uk/government/publications/open-standards-for-government/identifying-property-and-street-information
+
+All fields, unless defined in the table above, have a definition given by the [OS Places API][OS-Places], per the
+[mapping below](#5-mapping-of-fields-to-data-sources-and-reference-standards).
+
+Addresses are UK (ISO 3166-1 code `GB`) addresses by default, unless specified in the `addressCountry` field.
+
+#### Metadata
+
+`validFrom` and `validUntil` are ISO 8601 strings representing the date that the user moved into, and away from, a particular address, if known.
+
+If a user tells us that an address is their current address, then `validUntil` must be omitted.
+
+If the month is unknown, then we will represent that as `01`; similarly an unknown day-of-month will be represented as `01`.
+
+* Ommitting year or month is permitted under ISO 8601 but we limit ourselves to complete dates as required by [RFC 3339][RFC-dates] because this is easily [validated using JSON Schema][JSON-schema-dates] and maximally interoperable.
+
+[RFC-dates]: https://datatracker.ietf.org/doc/html/rfc3339
+[JSON-schema-dates]: https://json-schema.org/understanding-json-schema/reference/string.html#dates-and-times
+
+### 3. JSON Schema
+
+Will link to JSON Schema when available
+
+### 4. Examples of JSON
+
+#### Building name and UPRN
+
+```json
+{
+  "uprn": 10002345923,
+  "buildingName": "SAWLEY MARINA",
+  "streetName": "INGWORTH ROAD",
+  "dependentAddressLocality": "LONG EATON",
+  "addressLocality": "NOTTINGHAM",
+  "postalCode": "BH12 1JY",
+  "addressCountry": "GB"
+}
+```
+
+#### Building number and name
+
+```json
+{
+  "uprn": 10022812929,
+  "organisationName": "FINCH GROUP",
+  "subBuildingName": "UNIT 2B",
+  "buildingNumber": "16",
+  "buildingName": "COY POND BUSINESS PARK",
+  "dependentStreetName": "KINGS PARK",
+  "streetName": "BIG STREET",
+  "doubleDependentAddressLocality": "SOME DISTRICT",
+  "dependentAddressLocality": "LONG EATON",
+  "addressLocality": "GREAT MISSENDEN",
+  "postalCode": "HP16 0AL",
+  "addressCountry": "GB"
+}
+```
+
+#### Building name without UPRN
+
+```json
+{
+  "buildingName": "R103",
+  "dependentStreetName": "KINGS PARK",
+  "streetName": "CREEK ROAD",
+  "doubleDependentAddressLocality": "",
+  "addressLocality": "CANVEY ISLAND",
+  "postalCode": "SS8 8QA",
+  "addressCountry": "GB"
+}
+```
+
+#### Sub building name with building name
+
+```json
+{
+  "subBuildingName": "FLAT 11",
+  "buildingName": "BLASHFORD",
+  "streetName": "ADELAIDE ROAD",
+  "addressLocality": "LONDON",
+  "postalCode": "NW3 3RX",
+  "addressCountry": "GB"
+}
+```
+
+#### Sub building name with building number
+
+```json
+{
+  "subBuildingName": "FLAT 6",
+  "buildingNumber": "45",
+  "streetName": "NAVARINO ROAD",
+  "addressLocality": "LONDON",
+  "postalCode": "E8 1AG",
+  "addressCountry": "GB"
+}
+```
+
+#### Building number with dependent address locality
+
+```json
+{
+  "uprn": 151001847,
+  "buildingNumber": "13",
+  "streetName": "CHURCH CRESCENT",
+  "dependentAddressLocality": "NEW PITSLIGO",
+  "addressLocality": "FRASERBURGH",
+  "postalCode": "AB43 6LP",
+  "addressCountry": "GB"
+}
+```
+
+#### Building number
+
+```json
+{
+  "uprn": 100110116546,
+  "buildingNumber": "3",
+  "streetName": "HILLEL WALK",
+  "addressLocality": "MIDDLESBROUGH",
+  "postalCode": "TS5 8DG",
+  "addressCountry": "GB"
+}
+```
+
+### 5. Mapping of fields to data sources and reference standards
+
+| Canonical                      | Experian CrossCore  | Schema.Org             | OS Places / AddressBase     | Comment  |
+|--------------------------------|---------------------|------------------------|-----------------------------|----------|
+| uprn                           | addressIdentifier   |                        | UPRN                        | [Unique Property Reference Number][UPRN] |
+| organisationName               | subBuilding         |                        | ORGANISATION_NAME           | |
+| departmentName                 | subBuilding         |                        | DEPARTMENT_NAME             | |
+| subBuildingName                | subBuilding         |                        | SUB_BUILDING_NAME           | May be used in combination with buildingName or buildingNumber|
+| buildingNumber                 | buildingNumber      |                        | BUILDING_NUMBER             | |
+| buildingName                   | buildingName        |                        | BUILDING_NAME               | |
+| dependentStreetName            | street              |                        | DEPENDENT_THOROUGHFARE_NAME | |
+| streetName                     | street              |                        | THOROUGHFARE_NAME           | |
+| doubleDependentAddressLocality |                     |                        | DOUBLE_DEPENDENT_LOCALITY   | |
+| dependentAddressLocality       | locality            |                        | DEPENDENT_LOCALITY          | |
+| addressLocality                | postTown            | [addressLocality][sAL] | POST_TOWN                   | Naming convention from schema.org |
+| postalCode                     | postal              | [postalCode][sPC]      | POST_CODE                   | Naming convention from schema.org |
+| addressCountry                 | countryCode         | [addressCountry][sAC]  |                             | 2-letter [ISO code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) per schema.org, not a COUNTRY_CODE per [AddressBase][AddressBase] which are single-character codes refering to constituent countries of the UK, and not a 3-letter ISO code as used by Experian. |
+
+[sAL]: https://schema.org/addressLocality
+[sPC]: https://schema.org/postalCode
+[sAC]: https://schema.org/addressCountry
+
+Care must be taken when mapping to or from address formats that are line-based (ie "address 1", "address 2", etc).
+A field such as `addressLocality` maps to a different line of the address, depending on the presence of other fields (in this case `dependentAddressLocality` and `doubleDependentAddressLocality`).
+
+
+
+## Core identity attributes
+
+### History
+
+March 2022 - approved for implementation
+January 2023 - mappings from other formats clarified
+
+### 1. Background
+
+We have
+[decided](../adr/0012-crossteam-how-rps-request-identity-data.md)
+to return verified identity data to relying parties (RPs) using a
+[JWT-encoded Verifiable Credential (VC)][VC-data-model-JWT], signed by the single point of trust.
+
+The Verifiable Credential will contain only data that has been proven to the GPG 45 level of confidence indicated.
+Other attributes (those which we can't prove are part of the user's verified identity) will be returned separately.
+
+[VC-data-model-JWT]: https://www.w3.org/TR/vc-data-model/#json-web-token
+
+### 2. Attributes included
+
+This RFC describes how the core identity attributes (name and date of birth) will be represented as they are provided by the
+[Single Point of Trust](../adr/0013-identity-single-point-of-trust.md).
+
+We also need to be able to represent the level of confidence achieved.
+
+> Our identity assurance process may also give us confidence in non-core attributes such as address and passport number.
+
+These may be returned separately to the RP, in which case they will need to be scored according to whether we were able to link them to the proven core identity attributes.
+This is out of scope for this RFC.
+
+> The Single Point of Trust needs to be told which attributes are to be included in the Verifiable Credential: this is out of scope for this RFC.
+
+### 3. General requirements
+
+Desirable properties of our representation of identities to relying parties are:
+
+* consistency with the way we represent identity data internally (eg between credential issuers);
+* the ability to represent a complete view of the user's identity attributes, including relevant metadata; and
+* allowing future change in predictable and backward-compatible ways;
+* to support matching of data we collect (and prove) against government systems that may contain inconsistent data.
+
+Only verified attributes (claims) may appear in the Core Identity verifiable credential; unverified claims must not be present.
+
+Most claims appear as properties of `credentialSubject` (which is an object within the `vc` JWT claim defined by the [VC JWT encoding][VC-data-model-JWT]).
+There are some exceptions where JWT claims are used.
+
+All claims within `credentialSubject` will be provided as arrays, to support future use cases where multiple identity attributes have been linked to a single identity.
+
+Each attribute is contained within a JSON object: we use the `validFrom` and `validUntil` properties as metadata, add other metadata properties as required, and represent the attribute itself using the `value` property.
+
+All identifiers (such as the [subject identifier `sub`](#7-other-jwt-claims)) must be a URI.
+
+### 4. Names
+
+We want:
+
+* to be able to represent multiple distinct names, if that's the most convenient way for a user (or a credential issuer) to represent a change of name;
+* for each name to be able to have metadata attached to it (for example, perhaps in future, a language code);
+* for each name to be composed of multiple parts, each one either being a given name or a family name;
+* for each part to be able to have separate metadata (for example, validity periods, so that we can conveniently represent the situation where just one part of a user's name changes);
+* to be able to attach metadata to either the entire name (i.e. all of the parts) as well as to individual parts.
+
+The `credentialSubject` will have a `name` property.
+Each `name` contains an array of objects.
+
+The array is ordered: a current name (one with no `validUntil` property) must be first.
+
+Each object represents a name that the user is, or has been, known by.
+It has the following properties:
+
+* `validFrom` - a schema.org [`Date`](https://schema.org/Date) or [`DateTime`](https://schema.org/DateTime)
+* `validUntil` - a schema.org [`Date`](https://schema.org/Date) or [`DateTime`](https://schema.org/DateTime)
+* `nameParts` - an array of objects as described below
+
+The `nameParts` array is ordered, reflecting the either the user's preferred order, or the order of names on a particular identity document.
+
+> ⓘ Note
+>
+>The order of name parts may be ignored when comparing names, for example in a matching process.
+>Comparison and matching rules are outside the scope of this specification.
+
+Each object in `nameParts` represents a part of a name, and describes how an individual uses (or acquired) that part of their name.
+It has the following properties:
+
+* `value` - a String (schema.org [Text](https://schema.org/Text)) containing some smallest unit of a user's name
+* `validFrom` - a schema.org [`Date`](https://schema.org/Date) or [`DateTime`](https://schema.org/DateTime)
+* `validUntil` - a schema.org [`Date`](https://schema.org/Date) or [`DateTime`](https://schema.org/DateTime)
+* `type` - either `GivenName` or `FamilyName`
+
+> ⓘ Note
+>
+>It's possible to capture a change of name either using multiple `name` objects (with varying validity periods), or with a single name `object` that contains `nameParts` of varying validity periods.
+>Some representations will be therefore be equivalent to each other: we anticipate that in some cases this is obvious, but no definition of name equivalence is given by this specification.
+>No parts of the system support anything other than a "current name", at the time of writing.
+
+#### Mapping to OpenID Connect
+
+OpenID Connect provides various name-related claims, and the following mapping is suggested to help consumers understand the format this specification proposes.
+
+All OpenID Connect fields map only to the user's current name (the first entry in the `name` array); name parts are split or joined using a space character.
+
+* `name`: derived by joining all of the name parts, in order (we have not yet defined a representation for titles and suffixes)
+* `given_name`: derived by joining all of the name parts of type `GivenName`, in order
+* `family_name`: derived by joining all of the name parts of type `FamilyName`, in order
+* `middle_name`: no mapping from this specification's format (to avoid unwanted duplication)
+
+To go from the OpenID Connect claims to this specification's format, a single `name` object could be constructed as follows:
+
+* `nameParts` starts as an empty array
+* `given_name` is split, and each part is assigned type `GivenName`, and appended to the array
+* `middle_name` is split, and each part is assigned type `GivenName`, and appended to the array
+* `family_name` is copied as-is to a single `FamilyName` name part (regardless of any spaces present) and appended to the array
+
+> ⓘ Note
+>
+> `family_name` is transposed to a single name part.
+> This is based on the UK-centric assumption that most end users for One Login have a single family name, which may contain a space (e.g. "Duncan Smith").
+> Considering names in a global context across multiple cultures, this expectation does not hold.
+> Consumers of this format should understand that multiple `FamilyName` parts may be used by One Login in future.
+
+##### Mapping from other formats
+
+Some name representations don't have a single obvious mapping, either to this specification's format, or to OpenID Connect.
+
+In these circumstances, a transformation must be chosen that is correct for as many users as possible, and it is reasonable to make improvements to that transformation as user needs are better understood, and as the capabilities of attribute providers (credential issuers) increase.
+
+> ⓘ Note
+>
+> For example, a UK passport machine readable zone (MRZ) cannot distinguish between
+>
+> * a hyphenated surname (eg "Brown-green")
+> * a compound surname without a hyphen (eg "Duncan Smith"), and
+> * two family names as found in Portuguese culture (eg "Sousa Carvalho").
+>
+> All these cases appear as a single string with the parts of the name separated by a space character.
+>
+> We have to choose between representing these as a single `FamilyName` part (containing spaces), or multiple `FamilyName` parts.
+> Unless we can confirm a preference from the user, we may choose to use a single name part as we are likely to have more users with hyphenated or compound surnames in comparison to Portuguese users whose names should be kept separate.
+
+### 5. Date of birth
+
+We want:
+
+* to allow multiple values for dates of birth to be recorded;
+* to be able to include metadata in future if necessary.
+
+We always expect to include year, month and day whenever a date of birth is supplied.
+
+The `credentialSubject` will have a `birthDate` property.
+Each `birthDate` contains an array of objects.
+
+> ⓘ Note
+>
+> While users only have one date of birth, previously-believed values may still be helpful for matching, so representation of multiple dates of birth is rare but could one day be required.
+> At MVP, the Single Point of Trust will only output a single date of birth, but this representation might be useful in future.
+
+The array is ordered: the date of birth that the issuer believes to be correct (the one with no `validUntil` property) must be first.
+
+> ⓘ Note
+>
+> This ensures compatibility with existing implementations should we ever capture multiple dates of birth.
+
+Each object represents a date of birth that some system believed was true for the user.
+It has the following properties:
+
+* `value` - a schema.org [`Date`](https://schema.org/Date) that is the user's date of birth
+* `validFrom` - a schema.org [`Date`](https://schema.org/Date) or [`DateTime`](https://schema.org/DateTime)`
+* `validUntil` - a schema.org [`Date`](https://schema.org/Date) or [`DateTime`](https://schema.org/DateTime)`
+
+### 6. Level of confidence
+
+The level of confidence achieved is strictly speaking neither a property of the credential subject (the user), nor of the account - it is a property of the credential itself and good for only as long as the VC we are issuing is valid.
+
+For greater consistency with
+[Vectors of Trust](https://datatracker.ietf.org/doc/html/rfc8485),
+we represent this in the JWT directly (see [ADR 12](..adr/0012-crossteam-how-rps-request-identity-data.md#decision)).
+
+This is also consistent with the approach taken in the
+[Verifiable Credentials Data Model][VC-data-model-JWT]
+which says that if in the JWT "specific claim names and header parameters are present, their respective counterpart in the standard verifiable credential and verifiable presentation MAY be omitted to avoid duplication".
+
+The JWT claims are as follows:
+
+* `vot` - `P1` for low confidence, `P2` for medium confidence, etc.
+* `vtm` - `https://oidc.account.gov.uk/trustmark` or some variation of that, depending on the environment
+
+### 7. Other JWT claims
+
+We also require the Core Identity JWT to include the following other JWT claims [defined by RFC 7519](https://www.rfc-editor.org/rfc/rfc7519#section-4.1):
+
+* `sub` (must be a URI)
+* `nbf`
+* `exp`
+* `iat`
+* `iss` (must be a URI)
+
+> ⓘ Note
+>
+> A `jti` claim (or corresponding VC `id` property) is not included, because we do not want to create identifiers that could be correlated.
+> If we do need credential identifiers, a new one would be generated each time the user presents their identity to a relying party.
+
+### 8. Other JSON objects / properties
+
+The `vc` object may have an `@context` property (to support future processing as JSON-LD) and this should be ignored by verifiers (see [schemas, below](#10-schemas)).
+
+The `vc` object must have a `type` property, which is an array containing the following strings: `"VerifiableCredential"`, `"VerifiableIdentityCredential"`.
+
+### 9. Example JWT
+
+In this example, JWT headers are not shown, but `alg` must be set per
+[JWS](https://datatracker.ietf.org/doc/html/rfc7515#section-5.2).
+Other headers (for example `typ`) should, if present, be constrained according to the
+[Verifiable Credential data model][VC-data-model-JWT].
+
+```json
+
+{
+  "sub": "urn:fdc:gov.uk:2022:JG0RJI1pYbnanbvPs-j4j5-a-PFcmhry9Qu9NCEp5d4",
+  "nbf": 1670336441,
+  "iss": "https://identity.account.gov.uk/",
+  "vot": "P2",
+  "exp": 1670338241,
+  "iat": 1670336441,
+  "vtm": "https://oidc.account.gov.uk/trustmark",
+  "vc": {
+    "type": [
+      "VerifiableCredential",
+      "VerifiableIdentityCredential"
+    ],
+    "credentialSubject": {
+      "name": [
+        {
+          "nameParts": [
+            {
+              "value": "Jane",
+              "type": "GivenName"
+            },
+            {
+              "value": "Wright",
+              "type": "FamilyName"
+            }
+          ],
+          "validFrom": "2019-04-01"
+        },
+        {
+          "nameParts": [
+            {
+              "value": "Jane",
+              "type": "GivenName"
+            },
+            {
+              "value": "Wright",
+              "type": "FamilyName"
+            }
+          ],
+          "validUntil": "2019-04-01"
+        }
+      ],
+      "birthDate": [
+        {
+          "value": "1989-07-06"
+        }
+      ]
+    }
+  }
+}
+```
+
+### 10. Schemas
+
+Relying parties should be able to process the data we generate using either JSON-LD-aware tooling, or using standard JSON tools and libraries.
+Therefore, we will be conservative in the JSON that we generate, and we'll publish and iterate a JSON Schema that constrains the JSON documents that the system can produce.
+
+A [draft JSON-Schema](https://vocab.london.cloudapps.digital/) is under development.
+
+Relying parties that do not use JSON-LD-aware tooling should be aware of the following requirement in the Verifiable Credentials Data Model:
+
+> All libraries or processors MUST ensure that the order of the values in the @context property is what is expected for the specific application.
+
+However, as the context URI for our schema has not yet been settled, this requirement SHOULD in practice be ommitted for now as an intentional (but temporary) violation.
+
+Relying parties MUST NOT dynamically load any JSON-LD context across the public Internet.
+RPs that decide to use JSON-LD-aware tooling MUST cache static copies of the applicable contexts, and have a process in place for updating them securely.

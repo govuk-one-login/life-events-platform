@@ -75,7 +75,7 @@ Architecture decision records start [here](doc/architecture/decisions/0001-use-a
 
 ## Glossary
 
-See [TechDocs](https://alphagov.github.io/di-data-life-events-platform/glossary.html).
+See [TechDocs](https://govuk-one-login.github.io/life-events-platform/glossary.html)
 
 ## Licence
 

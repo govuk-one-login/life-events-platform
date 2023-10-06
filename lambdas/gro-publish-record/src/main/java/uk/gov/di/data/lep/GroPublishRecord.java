@@ -50,7 +50,6 @@ public class GroPublishRecord implements RequestStreamHandler {
     public void handleRequest(InputStream input, OutputStream output, Context context) throws JsonProcessingException {
         var event = getRecord(input);
         logger.info("Received record: registrationID {}, correlationID {}", event.groJsonRecord().registrationID(), event.correlationID());
-        audit(event);
         postRecordToLifeEvents(event.groJsonRecord(), event.authenticationToken(), event.correlationID());
     }
 
@@ -59,10 +58,12 @@ public class GroPublishRecord implements RequestStreamHandler {
         try {
             var recordLocation = objectMapper.readValue(input, RecordLocation.class);
             logger.info("Fetching record: {}", recordLocation.jsonKey());
-            return objectMapper.readValue(
+            var event = objectMapper.readValue(
                 awsService.getFromBucket(recordLocation.jsonBucket(), recordLocation.jsonKey()),
                 GroJsonRecordWithHeaders.class
             );
+            audit(event);
+            return event;
         } catch (IOException e) {
             logger.error("Failed to map Input Stream to GRO JSON record");
             throw new MappingException(e);

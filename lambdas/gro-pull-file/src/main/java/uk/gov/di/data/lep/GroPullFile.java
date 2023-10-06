@@ -20,6 +20,7 @@ import uk.gov.di.data.lep.library.dto.deathnotification.audit.GroPullFileAudit;
 import uk.gov.di.data.lep.library.dto.deathnotification.audit.GroPullFileAuditExtensions;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -30,15 +31,17 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
     protected static Logger logger = LogManager.getLogger();
     private final AwsService awsService;
     private final Config config;
+    private final ObjectMapper objectMapper;
     private String groFileName;
 
     public GroPullFile() {
-        this(new AwsService(), new Config());
+        this(new AwsService(), new Config(), Mapper.objectMapper());
     }
 
-    public GroPullFile(AwsService awsService, Config config) {
+    public GroPullFile(AwsService awsService, Config config, ObjectMapper objectMapper) {
         this.awsService = awsService;
         this.config = config;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -111,7 +114,6 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
         var auditDataExtensions = new GroPullFileAuditExtensions(groFileName);
         var auditData = new GroPullFileAudit(auditDataExtensions);
 
-        var objectMapper = new ObjectMapper();
         try {
             awsService.putOnAuditQueue(objectMapper.writeValueAsString(auditData));
         } catch (JsonProcessingException e) {

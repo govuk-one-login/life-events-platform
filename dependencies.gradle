@@ -13,7 +13,7 @@ ext {
             json               : "20230618",
             junitJupiter       : "5.10.0",
             jwksRsa            : "0.22.1",
-            mockitoJunitJupiter: "5.5.0",
+            mockitoJunitJupiter: "5.6.0",
             powertools         : "1.17.0",
             sshj               : "0.36.0",
             xrayInstrumentor   : "2.14.0"

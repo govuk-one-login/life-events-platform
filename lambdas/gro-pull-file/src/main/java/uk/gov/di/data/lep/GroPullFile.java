@@ -113,9 +113,7 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
 
         var objectMapper = new ObjectMapper();
         try {
-            awsService.putOnAuditQueue(
-                objectMapper.writeValueAsString(auditData)
-            );
+            awsService.putOnAuditQueue(objectMapper.writeValueAsString(auditData));
         } catch (JsonProcessingException e) {
             logger.error("Failed to create {} audit log", auditData.eventName());
             throw new MappingException(e);

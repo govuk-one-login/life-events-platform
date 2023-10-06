@@ -12,9 +12,12 @@ import uk.gov.di.data.lep.exceptions.GroApiCallException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithHeaders;
 import uk.gov.di.data.lep.library.dto.RecordLocation;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.GroPublishRecordAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.GroPublishRecordAuditExtensions;
 import uk.gov.di.data.lep.library.dto.gro.GroJsonRecord;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Hasher;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
@@ -44,9 +47,10 @@ public class GroPublishRecord implements RequestStreamHandler {
     @Override
     @Tracing
     @Logging(clearState = true)
-    public void handleRequest(InputStream input, OutputStream output, Context context) {
+    public void handleRequest(InputStream input, OutputStream output, Context context) throws JsonProcessingException {
         var event = getRecord(input);
         logger.info("Received record: registrationID {}, correlationID {}", event.groJsonRecord().registrationID(), event.correlationID());
+        audit(event);
         postRecordToLifeEvents(event.groJsonRecord(), event.authenticationToken(), event.correlationID());
     }
 
@@ -95,6 +99,20 @@ public class GroPublishRecord implements RequestStreamHandler {
         } catch (IOException | InterruptedException | MappingException e) {
             logger.error("Failed to send GRO record request");
             throw new GroApiCallException("Failed to send GRO record request", e);
+        }
+    }
+
+    @Tracing
+    private void audit(GroJsonRecordWithHeaders event) throws JsonProcessingException {
+        var recordHash = Hasher.hash(objectMapper.writeValueAsString(event.groJsonRecord()));
+        var auditDataExtensions = new GroPublishRecordAuditExtensions(recordHash, event.correlationID());
+        var auditData = new GroPublishRecordAudit(auditDataExtensions);
+
+        try {
+            awsService.putOnAuditQueue(objectMapper.writeValueAsString(auditData));
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to create {} audit log", auditData.eventName());
+            throw new MappingException(e);
         }
     }
 }

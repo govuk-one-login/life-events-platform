@@ -116,6 +116,4 @@ node_modules
 
 .aws-sam
 
-stack-orchestration/encryption_key.txt
-stack-orchestration/configuration/**/vpc
-!stack-orchestration/configuration/**/vpc.zip
+stack-orchestration/configuration/**/vpc/parameters.json

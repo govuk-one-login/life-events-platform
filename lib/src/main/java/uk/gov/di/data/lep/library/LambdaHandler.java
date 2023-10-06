@@ -60,7 +60,7 @@ public abstract class LambdaHandler<O> {
         try {
             awsService.putOnAuditQueue(objectMapper.writeValueAsString(auditData));
         } catch (JsonProcessingException e) {
-            logger.info("Failed to create {} audit log", auditData.eventName());
+            logger.error("Failed to create {} audit log", auditData.eventName());
             throw new MappingException(e);
         }
     }

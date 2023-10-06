@@ -121,7 +121,7 @@ public class GroConvertToJson
 
             return recordsWithHeaders;
         } catch (JsonProcessingException e) {
-            logger.info("Failed to map DeathRegistrations xml to GroJsonRecord list");
+            logger.error("Failed to map DeathRegistrations xml to GroJsonRecord list");
             throw new MappingException(e);
         }
     }

@@ -61,7 +61,7 @@ public class DeathEnrichment
             var auditDataExtensions = new DeathEnrichmentAuditExtensions(enrichedDataHash, enrichedData.txn());
             addAuditDataToQueue(new DeathEnrichmentAudit(auditDataExtensions));
         } catch (JsonProcessingException e) {
-            logger.info("Failed to create audit log");
+            logger.error("Failed to create audit log");
             throw new MappingException(e);
         }
     }

@@ -179,6 +179,19 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
+          - Sid: "AllowSSLRequestsOnly"
+            Action:
+              - "s3:*"
+            Effect: Deny
+            Principal: "*"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref LogsBucket
+                - "/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: false
           - Action:
               - 's3:PutObject'
             Effect: Allow
@@ -2279,6 +2292,27 @@ Resources:
         - Key: PersonalIdentifyingInformation
           Value: true
 
+  GroIngestionBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref GroIngestionBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: "AllowSSLRequestsOnly"
+            Action:
+              - "s3:*"
+            Effect: Deny
+            Principal: "*"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref GroIngestionBucket
+                - "/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+
   GroRecordsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -2306,6 +2340,27 @@ Resources:
           Value: CKV_AWS_21
         - Key: PersonalIdentifyingInformation
           Value: true
+
+  GroRecordsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref GroRecordsBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: "AllowSSLRequestsOnly"
+            Action:
+              - "s3:*"
+            Effect: Deny
+            Principal: "*"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref GroRecordsBucket
+                - "/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: false
 
   GroIngestionStateMachine:
     Type: AWS::Serverless::StateMachine

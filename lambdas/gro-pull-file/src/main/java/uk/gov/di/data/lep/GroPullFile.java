@@ -87,6 +87,8 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
             client.connect(host);
             client.authPublickey(username, privateKeyProvider);
 
+            logger.info("Pulling file {} from GRO", groFileName);
+
             try (var sftpClient = client.newSFTPClient()) {
                 var resources = sftpClient.ls(sourceDir);
                 var sourceFileSearch = resources.stream().filter(r -> r.getPath().endsWith(groFileName)).findFirst();

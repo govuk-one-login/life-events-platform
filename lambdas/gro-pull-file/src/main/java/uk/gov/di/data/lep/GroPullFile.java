@@ -103,6 +103,7 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
 
                 try (var file = sftpClient.open(sourceFileSearch.get().getPath(), EnumSet.of(OpenMode.READ));
                      var fileStream = file.new RemoteFileInputStream()) {
+                    logger.info("Uploading file {} to S3", groFileName);
                     awsService.putInBucket(xmlBucket, groFileName, fileStream, file.length());
                 }
             }

@@ -104,15 +104,15 @@ public class GroPublishRecord implements RequestStreamHandler {
     }
 
     @Tracing
-    private void audit(GroJsonRecordWithHeaders event) throws JsonProcessingException {
-        var recordHash = Hasher.hash(objectMapper.writeValueAsString(event.groJsonRecord()));
-        var auditDataExtensions = new GroPublishRecordAuditExtensions(recordHash, event.correlationID());
-        var auditData = new GroPublishRecordAudit(auditDataExtensions);
-
+    private void audit(GroJsonRecordWithHeaders event) {
         try {
+            var recordHash = Hasher.hash(objectMapper.writeValueAsString(event.groJsonRecord()));
+            var auditDataExtensions = new GroPublishRecordAuditExtensions(recordHash, event.correlationID());
+            var auditData = new GroPublishRecordAudit(auditDataExtensions);
+
             awsService.putOnAuditQueue(objectMapper.writeValueAsString(auditData));
         } catch (JsonProcessingException e) {
-            logger.error("Failed to create {} audit log", auditData.eventName());
+            logger.error("Failed to create GRO_PUBLISH_RECORD audit log");
             throw new MappingException(e);
         }
     }

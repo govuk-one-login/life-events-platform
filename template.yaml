@@ -158,6 +158,13 @@ Resources:
               SSEAlgorithm: aws:kms
               KMSMasterKeyID: !Ref MainKmsKey
       BucketName: !Sub ${Environment}${Developer}-life-events-logs-bucket
+      LifecycleConfiguration:
+        Rules:
+          - Id: "logs-bucket-lifecycle-rule"
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 180
+                StorageClass: INTELLIGENT_TIERING
       NotificationConfiguration:
         EventBridgeConfiguration:
           EventBridgeEnabled: true

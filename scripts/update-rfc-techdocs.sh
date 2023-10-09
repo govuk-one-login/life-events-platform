@@ -1,14 +1,17 @@
 # We are temporarily publishing some RFCs in our techdocs as they aren't published elsewhere
 ROOT_DIR="$( git rev-parse --show-toplevel )"
-ARCH_DIR="$(mktemp -d)"
+if [ -z "$ARCH_DIR" ]; then
+  ARCH_DIR="$(mktemp -d)"
+  CREATED=1
 
-if [[ -z "${ARCH_TOKEN}" ]]; then
-  GIT_URI="git@github.com:"
-else
-  GIT_URI="https://${ARCH_TOKEN}@github.com/"
+  if [[ -z "${ARCH_TOKEN}" ]]; then
+    GIT_URI="git@github.com:"
+  else
+    GIT_URI="https://${ARCH_TOKEN}@github.com/"
+  fi
+
+  git clone --depth 1 "${GIT_URI}alphagov/digital-identity-architecture.git" "$ARCH_DIR"
 fi
-
-git clone --depth 1 "${GIT_URI}alphagov/digital-identity-architecture.git" "$ARCH_DIR"
 
 DATA_MODEL_ERB="$ROOT_DIR/techdocs/source/data-model.html.md.erb"
 echo "---
@@ -57,4 +60,6 @@ $CALLOUT_SUBS
 $REDUCE_HEADINGS
 """ "$ARCH_DIR/rfc/0011-identity-representation.md" >> "$DATA_MODEL_ERB"
 
-rm -rf "$ARCH_DIR"
+if [ $CREATED ]; then
+  rm -rf "$ARCH_DIR"
+fi

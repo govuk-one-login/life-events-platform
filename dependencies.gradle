@@ -1,5 +1,5 @@
 ext {
-    postCompileWeavingVersion = "8.3"
+    postCompileWeavingVersion = "8.4"
 
     dependencyVersions = [
             approvalTests      : "21.0.0",

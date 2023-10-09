@@ -2,6 +2,8 @@ package uk.gov.di.data.lep;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.OpenMode;
 import net.schmizz.sshj.transport.verification.FingerprintVerifier;
@@ -14,7 +16,11 @@ import uk.gov.di.data.lep.exceptions.GroSftpException;
 import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.config.Constants;
 import uk.gov.di.data.lep.library.dto.GroFileLocations;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.GroPullFileAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.GroPullFileAuditExtensions;
+import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -25,15 +31,17 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
     protected static Logger logger = LogManager.getLogger();
     private final AwsService awsService;
     private final Config config;
+    private final ObjectMapper objectMapper;
     private String groFileName;
 
     public GroPullFile() {
-        this(new AwsService(), new Config());
+        this(new AwsService(), new Config(), Mapper.objectMapper());
     }
 
-    public GroPullFile(AwsService awsService, Config config) {
+    public GroPullFile(AwsService awsService, Config config, ObjectMapper objectMapper) {
         this.awsService = awsService;
         this.config = config;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -80,26 +88,40 @@ public class GroPullFile implements RequestHandler<Overrides, GroFileLocations> 
             client.authPublickey(username, privateKeyProvider);
 
             logger.info("Pulling file {} from GRO", groFileName);
+
             try (var sftpClient = client.newSFTPClient()) {
                 var resources = sftpClient.ls(sourceDir);
-                logger.info(resources);
                 var sourceFileSearch = resources.stream().filter(r -> r.getPath().endsWith(groFileName)).findFirst();
 
                 if (sourceFileSearch.isEmpty()) {
                     throw new GroSftpException(
-                            String.format("File: %s not found on GRO SFTP Server in directory: %s", groFileName, sourceDir)
+                        String.format("File: %s not found on GRO SFTP Server in directory: %s", groFileName, sourceDir)
                     );
                 }
 
-                try (var file = sftpClient.open(sourceFileSearch.get().getPath(), EnumSet.of(OpenMode.READ));
-                    var fileStream = file.new RemoteFileInputStream()) {
-                    logger.info("Uploading file {} to S3", groFileName);
+                audit(groFileName);
 
+                try (var file = sftpClient.open(sourceFileSearch.get().getPath(), EnumSet.of(OpenMode.READ));
+                     var fileStream = file.new RemoteFileInputStream()) {
+                    logger.info("Uploading file {} to S3", groFileName);
                     awsService.putInBucket(xmlBucket, groFileName, fileStream, file.length());
                 }
             }
         } catch (IOException e) {
             throw new GroSftpException(e);
+        }
+    }
+
+    @Tracing
+    private void audit(String groFileName) {
+        var auditDataExtensions = new GroPullFileAuditExtensions(groFileName);
+        var auditData = new GroPullFileAudit(auditDataExtensions);
+
+        try {
+            awsService.putOnAuditQueue(objectMapper.writeValueAsString(auditData));
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to create {} audit log", auditData.eventName());
+            throw new MappingException(e);
         }
     }
 }

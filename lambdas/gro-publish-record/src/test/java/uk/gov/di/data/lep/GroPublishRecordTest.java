@@ -10,8 +10,11 @@ import uk.gov.di.data.lep.library.config.Config;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordBuilder;
 import uk.gov.di.data.lep.library.dto.GroJsonRecordWithHeaders;
 import uk.gov.di.data.lep.library.dto.RecordLocation;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.GroPublishRecordAudit;
+import uk.gov.di.data.lep.library.dto.deathnotification.audit.GroPublishRecordAuditExtensions;
 import uk.gov.di.data.lep.library.exceptions.MappingException;
 import uk.gov.di.data.lep.library.services.AwsService;
+import uk.gov.di.data.lep.library.services.Hasher;
 import uk.gov.di.data.lep.library.services.Mapper;
 
 import java.io.IOException;
@@ -23,6 +26,7 @@ import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
@@ -57,6 +61,8 @@ class GroPublishRecordTest {
 
     @BeforeEach
     void refreshSetup() {
+        clearInvocations(awsService);
+        clearInvocations(config);
         reset(httpClient);
         reset(objectMapper);
     }
@@ -139,5 +145,29 @@ class GroPublishRecordTest {
         assertEquals(ioException, exception.getCause());
 
         verify(httpClient, never()).send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString());
+    }
+
+    @Test
+    void groPublishRecordAuditsData() throws IOException, InterruptedException {
+        var httpClientMock = mockStatic(HttpClient.class);
+        var httpResponseMock = mock(HttpResponse.class);
+        httpClientMock.when(HttpClient::newHttpClient).thenReturn(httpClient);
+        when(objectMapper.readValue(eventAsInputStream, RecordLocation.class)).thenReturn(recordLocation);
+        when(awsService.getFromBucket(recordLocation.jsonBucket(), recordLocation.jsonKey())).thenReturn(recordFromBucket);
+        when(objectMapper.readValue(recordFromBucket, GroJsonRecordWithHeaders.class)).thenReturn(event);
+        when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn(eventAsString);
+        when(httpClient.send(expectedGroRecordRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(httpResponseMock);
+        when(httpResponseMock.statusCode()).thenReturn(201);
+
+        var groPublishRecordAudit = new GroPublishRecordAudit(
+            new GroPublishRecordAuditExtensions(Hasher.hash("Gro publish record"), "correlationID")
+        );
+        when(objectMapper.writeValueAsString(event.groJsonRecord())).thenReturn("Gro publish record");
+        when(objectMapper.writeValueAsString(groPublishRecordAudit)).thenReturn("Audit data");
+
+        underTest.handleRequest(eventAsInputStream, null, null);
+
+        verify(objectMapper).writeValueAsString(groPublishRecordAudit);
+        verify(awsService).putOnAuditQueue("Audit data");
     }
 }

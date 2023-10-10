@@ -200,18 +200,31 @@ Resources:
               Bool:
                 aws:SecureTransport: false
           - Action:
-              - 's3:PutObject'
+              - "s3:PutObject"
             Effect: Allow
             Principal:
               Service: logging.s3.amazonaws.com
             Resource: !Join
-              - ''
-              - - 'arn:aws:s3:::'
+              - ""
+              - - "arn:aws:s3:::"
                 - !Ref LogsBucket
-                - '/*'
+                - "/*"
             Condition:
               StringEquals:
-                'aws:SourceAccount': !Sub '${AWS::AccountId}'
+                aws:SourceAccount: !Sub "${AWS::AccountId}"
+          - Sid: "Require MFA for deletion"
+            Action:
+              - "s3:DeleteObject"
+            Effect: Deny
+            Principal: "*"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref LogsBucket
+                - "/*"
+            Condition:
+              BoolIfExists:
+                aws:MultiFactorAuthAge: false
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup

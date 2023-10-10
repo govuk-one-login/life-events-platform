@@ -2390,6 +2390,11 @@ Resources:
                 bucket:
                   name:
                     - !Ref GroIngestionBucket
+      Logging:
+        Destinations:
+          - CloudWatchLogsLogGroup: !GetAtt GroIngestionStateMachineLogGroup.Arn
+        IncludeExecutionData: true
+        Level: ALL
       Policies:
         - LambdaInvokePolicy:
             FunctionName: !Ref GroConvertToJsonFunction
@@ -2429,6 +2434,13 @@ Resources:
         - UsePermissionsBoundary
         - !Ref PermissionsBoundary
         - !Ref AWS::NoValue
+
+  GroIngestionStateMachineLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 14
+      LogGroupName: !Sub /aws/state-machine/${Environment}${Developer}-ingestion-state-machine
+      KmsKeyId: !GetAtt MainKmsKey.Arn
 
   GroDeathNotificationClient:
     Type: AWS::Cognito::UserPoolClient

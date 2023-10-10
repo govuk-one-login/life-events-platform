@@ -189,8 +189,7 @@ Resources:
           - Sid: AllowSSLRequestsOnly
             Action: s3:*
             Effect: Deny
-            Principal:
-              AWS: "*"
+            Principal: "*"
             Resource: !Join
               - ""
               - - "arn:aws:s3:::"
@@ -202,8 +201,7 @@ Resources:
           - Sid: EnforceTLSv12orHigher
             Action: s3:*
             Effect: Deny
-            Principal:
-              AWS: "*"
+            Principal: "*"
             Resource: !Join
               - ""
               - - "arn:aws:s3:::"
@@ -1061,8 +1059,7 @@ Resources:
           - Sid: HttpsOnly
             Action: sqs:*
             Effect: Deny
-            Principal:
-              AWS: "*"
+            Principal: "*"
             Resource: "*"
             Condition:
               Bool:
@@ -1171,8 +1168,7 @@ Resources:
           - Sid: HttpsOnly
             Action: sqs:*
             Effect: Deny
-            Principal:
-              AWS: "*"
+            Principal: "*"
             Resource: "*"
             Condition:
               Bool:
@@ -2324,8 +2320,7 @@ Resources:
           - Sid: AllowSSLRequestsOnly
             Action: s3:*
             Effect: Deny
-            Principal:
-              AWS: "*"
+            Principal: "*"
             Resource: !Join
               - ""
               - - "arn:aws:s3:::"
@@ -2337,8 +2332,7 @@ Resources:
           - Sid: EnforceTLSv12orHigher
             Action: s3:*
             Effect: Deny
-            Principal:
-              AWS: "*"
+            Principal: "*"
             Resource: !Join
               - ""
               - - "arn:aws:s3:::"
@@ -2386,8 +2380,7 @@ Resources:
           - Sid: AllowSSLRequestsOnly
             Action: s3:*
             Effect: Deny
-            Principal:
-              AWS: "*"
+            Principal: "*"
             Resource: !Join
               - ""
               - - "arn:aws:s3:::"
@@ -2399,8 +2392,7 @@ Resources:
           - Sid: EnforceTLSv12orHigher
             Action: s3:*
             Effect: Deny
-            Principal:
-              AWS: "*"
+            Principal: "*"
             Resource: !Join
               - ""
               - - "arn:aws:s3:::"

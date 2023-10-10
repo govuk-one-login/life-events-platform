@@ -186,9 +186,8 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Sid: "AllowSSLRequestsOnly"
-            Action:
-              - "s3:*"
+          - Sid: AllowSSLRequestsOnly
+            Action: s3:*
             Effect: Deny
             Principal: "*"
             Resource: !Join
@@ -199,19 +198,31 @@ Resources:
             Condition:
               Bool:
                 aws:SecureTransport: false
+          - Sid: EnforceTLSv12orHigher
+            Action: s3:*
+            Effect: Deny
+            Principal: "*"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref LogsBucket
+                - "/*"
+            Condition:
+              NumericLessThan:
+                s3:TlsVersion: 1.2
           - Action:
-              - 's3:PutObject'
+              - "s3:PutObject"
             Effect: Allow
             Principal:
               Service: logging.s3.amazonaws.com
             Resource: !Join
-              - ''
-              - - 'arn:aws:s3:::'
+              - ""
+              - - "arn:aws:s3:::"
                 - !Ref LogsBucket
-                - '/*'
+                - "/*"
             Condition:
               StringEquals:
-                'aws:SourceAccount': !Sub '${AWS::AccountId}'
+                'aws:SourceAccount': !Sub "${AWS::AccountId}"
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -429,7 +440,7 @@ Resources:
               AWS: !FindInMap [ EnvironmentConfiguration, !Ref Environment, txmaAccountArn ]
             Action:
               - kms:Decrypt*
-            Resource: '*'
+            Resource: "*"
 
   AuditKmsKeyAlias:
     Type: AWS::KMS::Alias
@@ -1046,9 +1057,9 @@ Resources:
         Version: 2012-10-17
         Statement:
           - Sid: HttpsOnly
+            Action: sqs:*
             Effect: Deny
             Principal: "*"
-            Action: sqs:*
             Resource: "*"
             Condition:
               Bool:
@@ -1155,9 +1166,9 @@ Resources:
               - SQS:ReceiveMessage
               - SQS:DeleteMessage
           - Sid: HttpsOnly
+            Action: sqs:*
             Effect: Deny
             Principal: "*"
-            Action: sqs:*
             Resource: "*"
             Condition:
               Bool:
@@ -2306,9 +2317,8 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Sid: "AllowSSLRequestsOnly"
-            Action:
-              - "s3:*"
+          - Sid: AllowSSLRequestsOnly
+            Action: s3:*
             Effect: Deny
             Principal: "*"
             Resource: !Join
@@ -2319,6 +2329,18 @@ Resources:
             Condition:
               Bool:
                 aws:SecureTransport: false
+          - Sid: EnforceTLSv12orHigher
+            Action: s3:*
+            Effect: Deny
+            Principal: "*"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref GroIngestionBucket
+                - "/*"
+            Condition:
+              NumericLessThan:
+                s3:TlsVersion: 1.2
 
   GroRecordsBucket:
     Type: AWS::S3::Bucket
@@ -2355,9 +2377,8 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Sid: "AllowSSLRequestsOnly"
-            Action:
-              - "s3:*"
+          - Sid: AllowSSLRequestsOnly
+            Action: s3:*
             Effect: Deny
             Principal: "*"
             Resource: !Join
@@ -2368,6 +2389,18 @@ Resources:
             Condition:
               Bool:
                 aws:SecureTransport: false
+          - Sid: EnforceTLSv12orHigher
+            Action: s3:*
+            Effect: Deny
+            Principal: "*"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref GroRecordsBucket
+                - "/*"
+            Condition:
+              NumericLessThan:
+                s3:TlsVersion: 1.2
 
   GroIngestionStateMachine:
     Type: AWS::Serverless::StateMachine

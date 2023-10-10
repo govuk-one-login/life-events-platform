@@ -2758,6 +2758,17 @@ Resources:
         - Key: PersonalIdentifyingInformation
           Value: true
 
+  VpcFlowLog:
+    Type: AWS::EC2::FlowLog
+    Properties:
+      ResourceType: VPC
+      ResourceId:
+        Fn::ImportValue: !Sub ${VpcStackName}-VpcId
+      TrafficType: REJECT
+      LogDestinationType: s3
+      LogDestination: !GetAtt LogsBucket.Arn
+
+
 Outputs:
   DwpIntegrationManagedPolicyArn:
     Condition: IsIntegration

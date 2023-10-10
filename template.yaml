@@ -2392,7 +2392,8 @@ Resources:
                     - !Ref GroIngestionBucket
       Logging:
         Destinations:
-          - CloudWatchLogsLogGroup: !GetAtt GroIngestionStateMachineLogGroup.Arn
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt GroIngestionStateMachineLogGroup.Arn
         IncludeExecutionData: true
         Level: ALL
       Policies:

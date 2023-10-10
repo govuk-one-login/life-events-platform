@@ -156,7 +156,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: aws:kms
-              KMSMasterKeyID: !Ref MainKmsKey
+              KMSMasterKeyID: !GetAtt MainKmsKey.Arn
       BucketName: !Sub ${Environment}${Developer}-life-events-logs-bucket
       LifecycleConfiguration:
         Rules:
@@ -2291,7 +2291,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: aws:kms
-              KMSMasterKeyID: !Ref MainKmsKey
+              KMSMasterKeyID: !GetAtt MainKmsKey.Arn
       BucketName: !Sub ${Environment}${Developer}-life-events-gro-ingestion-bucket
       LoggingConfiguration:
         DestinationBucketName: !Ref LogsBucket
@@ -2351,7 +2351,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: aws:kms
-              KMSMasterKeyID: !Ref MainKmsKey
+              KMSMasterKeyID: !GetAtt MainKmsKey.Arn
       BucketName: !Sub ${Environment}${Developer}-life-events-gro-records-bucket
       LoggingConfiguration:
         DestinationBucketName: !Ref LogsBucket
@@ -2757,6 +2757,17 @@ Resources:
       Tags:
         - Key: PersonalIdentifyingInformation
           Value: true
+
+  VpcFlowLog:
+    Type: AWS::EC2::FlowLog
+    Properties:
+      ResourceType: VPC
+      ResourceId:
+        Fn::ImportValue: !Sub ${VpcStackName}-VpcId
+      TrafficType: REJECT
+      LogDestinationType: s3
+      LogDestination: !GetAtt LogsBucket.Arn
+
 
 Outputs:
   DwpIntegrationManagedPolicyArn:

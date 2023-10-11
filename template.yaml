@@ -224,6 +224,16 @@ Resources:
               StringEquals:
                 'aws:SourceAccount': !Sub "${AWS::AccountId}"
 
+  VpcSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Limits security group egress traffic
+      SecurityGroupEgress:
+        - CidrIp: 127.0.0.1/32
+          IpProtocol: "-1"
+      VpcId:
+        Fn::ImportValue: !Sub ${VpcStackName}-VpcId
+
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

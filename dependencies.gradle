@@ -2,7 +2,7 @@ ext {
     postCompileWeavingVersion = "8.4"
 
     dependencyVersions = [
-            approvalTests      : "21.2.0",
+            approvalTests      : "22.0.0",
             aspectjrt          : "1.9.20.1",
             assertJ            : "3.24.2",
             awsSdk             : "2.21.0",

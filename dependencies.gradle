@@ -8,7 +8,7 @@ ext {
             awsSdk             : "2.21.0",
             awsLambdaJavaCore  : "1.2.3",
             awsLambdaJavaEvents: "3.11.3",
-            jackson            : "2.15.2",
+            jackson            : "2.15.3",
             javaJwt            : "4.4.0",
             json               : "20230618",
             junitJupiter       : "5.10.0",

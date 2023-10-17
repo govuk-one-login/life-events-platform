@@ -6,7 +6,10 @@ weight: 15
 
 ## Context
 
-The purpose of this RFC is to agree upon the physical data model required to integrate Life Events from General Register Officer (GRO) to GOV.UK One Login. In scope required for MVP is a death notification event which originates from GRO's Registration Online (RON) system.
+The purpose of this RFC is to agree upon the physical data model required to integrate Life Events from the
+[General Register Office (GRO)](https://www.gov.uk/general-register-office)
+to GOV.UK One Login.
+In scope required for MVP is a death notification event which originates from GRO's Registration Online (RON) system.
 
 Decisions about encryption and signing of these event payloads are out of scope.
 
@@ -33,7 +36,7 @@ A death notification event is represented using a JSON object that conforms to t
 
 We refer to this as the 'event payload'.
 
-The `iss` (issuer), `iat` (issued at) and `jti` (JWT identifier) claims are required.
+The [`iss`](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1) (issuer), [`iat`](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6) (issued at) and [`jti`](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7) (JWT identifier) claims as defined by [IETF JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) are required.
 
 Other JWT claims such as `txn` may be present in the payload and should follow the requirements of this specification or the SET profile.
 
@@ -237,7 +240,8 @@ Examples of output from the Life Events Platform are currently available
 
 ## Future work
 
-In future we may capture a level of trust as defined by the UK Trust Framework.
+In future we may capture a level of trust as defined by the
+[UK Trust Framework](https://www.gov.uk/government/publications/uk-digital-identity-and-attributes-trust-framework-beta-version).
 
 This could apply to the entire event, but might be overridden for specific attributes.
 

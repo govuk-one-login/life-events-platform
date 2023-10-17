@@ -4,7 +4,7 @@ host: https://docs.life-events.dev.account.gov.uk
 # Header-related options
 show_govuk_logo: true
 service_name: DI Life Events Platform
-service_link: https://dev.share-life-events.service.gov.uk/swagger-ui/index.html
+service_link: https://docs.life-events.dev.account.gov.uk
 phase:
 
 # Links to show on right-hand-side of header

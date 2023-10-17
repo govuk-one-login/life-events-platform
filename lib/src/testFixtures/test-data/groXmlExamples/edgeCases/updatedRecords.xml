@@ -1,0 +1,189 @@
+<DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP"
+                        xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives"
+                        xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails"
+                        xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives"
+                        xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\OGDDeathExtractDWP-v1-1.xsd">
+    <DeathRegistration>
+        <RegistrationID>45693014</RegistrationID>
+        <RecordUpdateDateTime>2022-03-01T12:09:33</RecordUpdateDateTime>
+        <RecordUpdateReason>1</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>BARRY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>JONES</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Dr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>GROVES</ns4:PersonFamilyName>
+            <ns4:PersonNameSuffix>PhD</ns4:PersonNameSuffix>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>GROVES</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>PARR</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JANE</ns4:PersonGivenName>
+            <ns4:PersonGivenName>AMY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>PARR</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
+        <DeceasedMaidenName>LOVELACE</DeceasedMaidenName>
+        <DeceasedGender>2</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>2012-07-31</ns1:PersonBirthDate>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>Springfield</ns3:Line>
+            <ns3:Line>Telham</ns3:Line>
+            <ns3:Line>Kent</ns3:Line>
+            <ns3:Postcode>NR99 1AB</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>93583363</RegistrationID>
+        <RecordUpdateDateTime>2014-12-30T06:56:14.000</RecordUpdateDateTime>
+        <RecordUpdateReason>2</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CHRISTOF</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>KIM</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>DE BASTIANI</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
+        <DeceasedMaidenName>LOVELACE</DeceasedMaidenName>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1998-10-13</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>00</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>27 Brown Lane</ns3:Line>
+            <ns3:Line>Somerset</ns3:Line>
+            <ns3:Postcode>IV44 8RF</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>21670696</RegistrationID>
+        <RecordUpdateDateTime>2008-10-01T07:22:10.000</RecordUpdateDateTime>
+        <RecordUpdateReason>3</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JAMES</ns4:PersonGivenName>
+            <ns4:PersonGivenName>MATTHEW</ns4:PersonGivenName>
+            <ns4:PersonGivenName>TIMOTHY</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>PEREZ</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>DE
+                BASTIANI
+            </ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
+        <DeceasedMaidenName>LOVELACE</DeceasedMaidenName>
+        <DeceasedGender>1</DeceasedGender>
+        <PartialYearOfDeath>1989</PartialYearOfDeath>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1996-12-23</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>02</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>Springfield</ns3:Line>
+            <ns3:Line>Telham</ns3:Line>
+            <ns3:Line>Kent</ns3:Line>
+            <ns3:Postcode>NR99 1AB</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>31345966</RegistrationID>
+        <RecordUpdateDateTime>2008-10-01T07:22:10.000</RecordUpdateDateTime>
+        <RecordUpdateReason>4</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>MARY</ns4:PersonGivenName>
+            <ns4:PersonGivenName>ALICE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>KIM</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CHRISTINA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>CHETWORTH</ns4:PersonFamilyName>
+            <ns4:PersonNameSuffix>OBE</ns4:PersonNameSuffix>
+        </DeceasedAliasName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CHRIS</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>CHETWORTH</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1975-01-01</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>03</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>10 Test Street</ns3:Line>
+            <ns3:Line>Test Town</ns3:Line>
+            <ns3:Line>Test County</ns3:Line>
+            <ns3:Postcode>PR8 1HY</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>98443712</RegistrationID>
+        <RecordUpdateDateTime>2022-03-01T12:09:33</RecordUpdateDateTime>
+        <RecordUpdateReason>5</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CHRISTOF</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>SMITH</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>DE
+                BASTIANI
+            </ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
+        <DeceasedMaidenName>LOVELACE</DeceasedMaidenName>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2000-08-28</ns1:PersonDeathDate>
+            <ns1:VerificationLevel>01</ns1:VerificationLevel>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1912-02-29</ns1:PersonBirthDate>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>10 Test Street</ns3:Line>
+            <ns3:Line>Test Town</ns3:Line>
+            <ns3:Line>Test County</ns3:Line>
+            <ns3:Postcode>PR8 1HY</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <RecordCount>5</RecordCount>
+</DeathRegistrationGroup>

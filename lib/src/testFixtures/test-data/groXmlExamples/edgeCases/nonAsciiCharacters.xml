@@ -1,0 +1,308 @@
+<DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP"
+                        xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives"
+                        xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails"
+                        xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives"
+                        xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\OGDDeathExtractDWP-v1-1.xsd">
+    <DeathRegistration>
+        <RegistrationID>49302177</RegistrationID>
+        <RecordUpdateDateTime>2012-03-12T17:39:54.000</RecordUpdateDateTime>
+        <RecordUpdateReason>3</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonGivenName>KARL</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>SCHÄFER</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>1</DeceasedGender>
+        <PartialMonthOfDeath>5</PartialMonthOfDeath>
+        <PartialYearOfDeath>1989</PartialYearOfDeath>
+        <QualifierText>Free format death date</QualifierText>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1975-01-01</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>03</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>197 Finsbury Avenue</ns3:Line>
+            <ns3:Line>Aston Subedge</ns3:Line>
+            <ns3:Postcode>DY6 8TS</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>24618614</RegistrationID>
+        <RecordLockedDateTime>1971-01-29T15:21:42.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Dr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>ANAÏS</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>SCHRÖDINGER</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>2</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1998-10-13</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>00</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>Springfield</ns3:Line>
+            <ns3:Line>Telham</ns3:Line>
+            <ns3:Line>Kent</ns3:Line>
+            <ns3:Postcode>NR99 1AB</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>98459035</RegistrationID>
+        <RecordLockedDateTime>2013-07-25T02:19:21.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>Maëlle</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>Gauthier</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JIM</ns4:PersonGivenName>
+            <ns4:PersonGivenName>JACK</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>BARON</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
+        <DeceasedGender>2</DeceasedGender>
+        <PartialMonthOfDeath>10</PartialMonthOfDeath>
+        <PartialYearOfDeath>1998</PartialYearOfDeath>
+        <PartialMonthOfBirth>4</PartialMonthOfBirth>
+        <PartialYearOfBirth>2007</PartialYearOfBirth>
+        <DeceasedAddress>
+            <ns3:Line>40 Llanforda Mead</ns3:Line>
+            <ns3:Line>Higher Ansford</ns3:Line>
+            <ns3:Postcode>EX2 8UY</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>38558894</RegistrationID>
+        <RecordLockedDateTime>1986-07-08T13:34:26.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>THOMAS</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>MÜLLER</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>2</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1996-12-23</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>02</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>24 Tedder Avenue</ns3:Line>
+            <ns3:Line>St Albans</ns3:Line>
+            <ns3:Postcode>BA8 0JT</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>57582322</RegistrationID>
+        <RecordLockedDateTime>2013-03-28T00:33:54.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>MÁTYÁS</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>VESELY</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>JIM</ns4:PersonGivenName>
+            <ns4:PersonGivenName>JACK</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>BARON</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2009-01-11</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <PartialMonthOfBirth>9</PartialMonthOfBirth>
+        <PartialYearOfBirth>1987</PartialYearOfBirth>
+        <DeceasedAddress>
+            <ns3:Line>1 Manor Cottages</ns3:Line>
+            <ns3:Line>Stamford Road</ns3:Line>
+            <ns3:Postcode>BA7 7JQ</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>47193233</RegistrationID>
+        <RecordLockedDateTime>2012-09-24T02:04:33.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CHLOÉ</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>BOND</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>1</DeceasedGender>
+        <PartialMonthOfDeath>2</PartialMonthOfDeath>
+        <PartialYearOfDeath>1998</PartialYearOfDeath>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1912-02-29</ns1:PersonBirthDate>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>62 Lacy Street</ns3:Line>
+            <ns3:Line>Templecombe</ns3:Line>
+            <ns3:Postcode>LL62 5EB</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>98202171</RegistrationID>
+        <RecordLockedDateTime>1970-11-07T01:53:54.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>RUAIRÍ</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>COLLINS</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>1</DeceasedGender>
+        <PartialMonthOfDeath>4</PartialMonthOfDeath>
+        <PartialYearOfDeath>1998</PartialYearOfDeath>
+        <FreeFormatDeathDate>Qualifier text</FreeFormatDeathDate>
+        <PartialYearOfBirth>1965</PartialYearOfBirth>
+        <DeceasedAddress>
+            <ns3:Line>Apartment 146</ns3:Line>
+            <ns3:Line>33 Gatland Lane</ns3:Line>
+            <ns3:Line>Deganwy</ns3:Line>
+            <ns3:Postcode>SR4 8BL</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>44555929</RegistrationID>
+        <RecordUpdateDateTime>1994-10-23T04:47:24.000</RecordUpdateDateTime>
+        <RecordUpdateReason>2</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mrs</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>MÓNICA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>LOPEZ</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>DE BASTIANI</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>otherwise</DeceasedAliasNameType>
+        <DeceasedGender>9</DeceasedGender>
+        <PartialMonthOfDeath>10</PartialMonthOfDeath>
+        <PartialYearOfDeath>1989</PartialYearOfDeath>
+        <QualifierText>freeformatdeathdate</QualifierText>
+        <PartialMonthOfBirth>6</PartialMonthOfBirth>
+        <PartialYearOfBirth>2019</PartialYearOfBirth>
+        <DeceasedAddress>
+            <ns3:Line>7 The Moat House</ns3:Line>
+            <ns3:Line>Nottingham</ns3:Line>
+            <ns3:Postcode>BD17 6SA</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>59789341</RegistrationID>
+        <RecordLockedDateTime>1998-07-23T14:25:41.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Dr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>REMI</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>FRANÇOIS</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>1</DeceasedGender>
+        <PartialMonthOfDeath>4</PartialMonthOfDeath>
+        <PartialYearOfDeath>1989</PartialYearOfDeath>
+        <FreeFormatDeathDate>Qualifier text</FreeFormatDeathDate>
+        <PartialMonthOfBirth>9</PartialMonthOfBirth>
+        <PartialYearOfBirth>2019</PartialYearOfBirth>
+        <FreeFormatBirthDate>Free format birth date</FreeFormatBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>1 Stable Cottages</ns3:Line>
+            <ns3:Line>Graves Avenue</ns3:Line>
+            <ns3:Line>Eardington</ns3:Line>
+            <ns3:Postcode>ME16 8PJ</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>48004110</RegistrationID>
+        <RecordLockedDateTime>1982-09-01T03:32:08.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>JACK</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>ERIŞÇI</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonNameTitle>Ms</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>CLARISSA</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>DE BASTIANI</ns4:PersonFamilyName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>formerly known as</DeceasedAliasNameType>
+        <DeceasedGender>9</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1996-12-23</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>02</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>Flat A</ns3:Line>
+            <ns3:Line>536 Gwendrona Close</ns3:Line>
+            <ns3:Line>Liverpool</ns3:Line>
+            <ns3:Postcode>LL31 9UP</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>93583363</RegistrationID>
+        <RecordUpdateDateTime>2014-12-30T06:56:14.000</RecordUpdateDateTime>
+        <RecordUpdateReason>2</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>EMRE</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>ALTUĞ</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1998-10-13</ns1:PersonBirthDate>
+            <ns1:VerificationLevel>00</ns1:VerificationLevel>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>13 Heron Road</ns3:Line>
+            <ns3:Line>Amersham</ns3:Line>
+            <ns3:Postcode>AL1 2LW</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>45693014</RegistrationID>
+        <RecordLockedDateTime>1978-10-24T12:34:32.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>Æstrid</ns4:PersonGivenName>
+        </DeceasedName>
+        <DeceasedGender>2</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>1943-11-19</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>2012-07-31</ns1:PersonBirthDate>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>Upper Flat</ns3:Line>
+            <ns3:Line>104B Park Farm Lane</ns3:Line>
+            <ns3:Line>Chichester</ns3:Line>
+            <ns3:Postcode>S36 1LS</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>98443712</RegistrationID>
+        <RecordLockedDateTime>1975-04-13T12:55:31.000</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonNameTitle>Mr</ns4:PersonNameTitle>
+            <ns4:PersonGivenName>ONDREJ</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>MATĚJ KOVÁŘ</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2000-08-28</ns1:PersonDeathDate>
+            <ns1:VerificationLevel>01</ns1:VerificationLevel>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1912-02-29</ns1:PersonBirthDate>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>2 Brier Drive</ns3:Line>
+            <ns3:Line>Five Roads</ns3:Line>
+            <ns3:Postcode>DE65 6GQ</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <RecordCount>13</RecordCount>
+</DeathRegistrationGroup>

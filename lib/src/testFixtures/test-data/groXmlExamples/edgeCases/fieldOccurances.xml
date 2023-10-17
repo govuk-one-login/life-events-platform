@@ -1,0 +1,100 @@
+<DeathRegistrationGroup xmlns="http://www.ons.gov.uk/gro/OGDDeathExtractDWP"
+                        xmlns:ns1="http://www.govtalk.gov.uk/people/PersonDescriptives"
+                        xmlns:ns2="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails"
+                        xmlns:ns3="http://www.ons.gov.uk/gro/people/GROAddressDescriptives"
+                        xmlns:ns4="http://www.ons.gov.uk/gro/people/GROPersonDescriptives"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://www.ons.gov.uk/gro/OGDDeathExtractDWP .\OGDDeathExtractDWP-v1-1.xsd">
+    <DeathRegistration>
+        <RegistrationID>500045736</RegistrationID>
+        <RecordUpdateDateTime>2022-03-01T12:19:00</RecordUpdateDateTime>
+        <RecordUpdateReason>1</RecordUpdateReason>
+        <DeceasedName>
+            <ns4:PersonGivenName>Alfred</ns4:PersonGivenName>
+            <ns4:PersonGivenName>Max alias names</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>MONTGOMERY</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedAliasName>
+            <ns4:PersonGivenName>Alfie</ns4:PersonGivenName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>Otherwise</DeceasedAliasNameType>
+        <DeceasedAliasName>
+            <ns4:PersonGivenName>Freddie</ns4:PersonGivenName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>Otherwise</DeceasedAliasNameType>
+        <DeceasedAliasName>
+            <ns4:PersonGivenName>Al</ns4:PersonGivenName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>Otherwise</DeceasedAliasNameType>
+        <DeceasedAliasName>
+            <ns4:PersonGivenName>Chris</ns4:PersonGivenName>
+        </DeceasedAliasName>
+        <DeceasedAliasNameType>Formerly known as</DeceasedAliasNameType>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1971-04-24</ns1:PersonBirthDate>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>271 Garlick Hill</ns3:Line>
+            <ns3:Line>Bibury</ns3:Line>
+            <ns3:Postcode>DT3 6FZ</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>500045739</RegistrationID>
+        <RecordLockedDateTime>2022-03-01T12:21:31</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>Rae</ns4:PersonGivenName>
+            <ns4:PersonGivenName>Lots of maiden names</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>MACKINNON</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedMaidenName>CLARK</DeceasedMaidenName>
+        <DeceasedMaidenName>SCRATCH</DeceasedMaidenName>
+        <DeceasedMaidenName>PARTEN</DeceasedMaidenName>
+        <DeceasedMaidenName>FIDDLE</DeceasedMaidenName>
+        <DeceasedMaidenName>JOHNS</DeceasedMaidenName>
+        <DeceasedGender>2</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>2022-02-28</ns1:PersonBirthDate>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Line>263 West Smithfield</ns3:Line>
+            <ns3:Line>Bourton-on-the-hill</ns3:Line>
+            <ns3:Postcode>DT3 6FZ</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <DeathRegistration>
+        <RegistrationID>500045740</RegistrationID>
+        <RecordLockedDateTime>2022-03-01T12:24:27</RecordLockedDateTime>
+        <DeceasedName>
+            <ns4:PersonGivenName>Oscar</ns4:PersonGivenName>
+            <ns4:PersonGivenName>Test</ns4:PersonGivenName>
+            <ns4:PersonFamilyName>KEIL</ns4:PersonFamilyName>
+        </DeceasedName>
+        <DeceasedGender>1</DeceasedGender>
+        <DeceasedDeathDate>
+            <ns1:PersonDeathDate>2022-03-01</ns1:PersonDeathDate>
+        </DeceasedDeathDate>
+        <DeceasedBirthDate>
+            <ns1:PersonBirthDate>1991-06-01</ns1:PersonBirthDate>
+        </DeceasedBirthDate>
+        <DeceasedAddress>
+            <ns3:Flat>46</ns3:Flat>
+            <ns3:Building>Chiltern House</ns3:Building>
+            <ns3:Line>West Smithfield</ns3:Line>
+            <ns3:Line>Max</ns3:Line>
+            <ns3:Line>Number</ns3:Line>
+            <ns3:Line>Of</ns3:Line>
+            <ns3:Line>Address</ns3:Line>
+            <ns3:Line>Lines</ns3:Line>
+            <ns3:Postcode>DD1 9GG</ns3:Postcode>
+        </DeceasedAddress>
+    </DeathRegistration>
+    <RecordCount>3</RecordCount>
+</DeathRegistrationGroup>

@@ -7,6 +7,8 @@
 
 Cross governmental data sharing platform, to simplify data acquisition and sharing in an event driven way.
 
+The project is paused, to get in contact whilst it's in this state, please email [Life Events Platform Feedback](life-events-platform-feedback@digital.cabinet-office.gov.uk).
+
 ## Documentation
 
 Techdocs for this service are available [here](https://alphagov.github.io/di-data-life-events-platform/).
